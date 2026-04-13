@@ -48,14 +48,14 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
 
   return (
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-100" style={{ backgroundColor: '#eef4f8' }}>
+      <div className="px-6 py-5 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#eef4f8' }}>
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-[#1E2D4D]">Getting Started with EvidLY</h2>
             <p className="text-sm text-[#1E2D4D]/70 mt-1">Follow these steps to get your kitchen compliance-ready</p>
           </div>
           {onClose && (
-            <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-gray-600 text-sm">Dismiss</button>
+            <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 text-sm">Dismiss</button>
           )}
         </div>
         <div className="mt-3">
@@ -66,7 +66,7 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
           <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
             <div
               className="h-2 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, backgroundColor: progress === 100 ? '#22c55e' : '#d4af37' }}
+              style={{ width: `${progress}%`, backgroundColor: progress === 100 ? '#22c55e' : '#A08C5A' }}
             />
           </div>
         </div>
@@ -78,17 +78,17 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
           return (
             <div
               key={step.id}
-              className={`px-6 py-4 flex items-start gap-3 transition-colors ${done ? 'bg-green-50/50' : 'hover:bg-gray-50'}`}
+              className={`px-6 py-4 flex items-start gap-3 transition-colors ${done ? 'bg-green-50/50' : 'hover:bg-[#FAF7F0]'}`}
             >
               <button onClick={() => toggleStep(step.id)} className="mt-0.5 flex-shrink-0">
                 {done ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
-                  <Circle className="h-5 w-5 text-gray-300" />
+                  <Circle className="h-5 w-5 text-[#1E2D4D]/30" />
                 )}
               </button>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${done ? 'text-[#1E2D4D]/30 line-through' : 'text-gray-900'}`}>
+                <p className={`text-sm font-medium ${done ? 'text-[#1E2D4D]/30 line-through' : 'text-[#1E2D4D]'}`}>
                   {i + 1}. {step.title}
                 </p>
                 <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{step.description}</p>

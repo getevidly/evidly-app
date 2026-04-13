@@ -185,7 +185,7 @@ function AssessmentLeadsPage() {
           <button
             key={t} onClick={() => setTab(t)}
             className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              tab === t ? 'bg-gray-100 text-gray-900' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+              tab === t ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {t === 'leads' ? 'Leads' : 'Analytics'}
@@ -203,18 +203,18 @@ function AssessmentLeadsPage() {
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search leads..." data-demo-allow
-                className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               />
             </div>
             <select value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}
               data-demo-allow
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
               <option value="all">All Grades</option>
               {['A', 'B', 'C', 'D', 'F'].map(g => <option key={g} value={g}>Grade {g}</option>)}
             </select>
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
               data-demo-allow
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
               <option value="date">Newest First</option>
               <option value="grade">Highest Risk First</option>
               <option value="exposure">Highest Exposure First</option>
@@ -240,7 +240,7 @@ function AssessmentLeadsPage() {
                   <button
                     onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
                     data-demo-allow
-                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-[#FAF7F0] transition-colors"
                   >
                     {/* Grade badge */}
                     <div
@@ -296,7 +296,7 @@ function AssessmentLeadsPage() {
 
                   {/* Expanded details */}
                   {expandedId === lead.id && (
-                    <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+                    <div className="px-4 pb-4 border-t border-[#1E2D4D]/5 pt-3">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
                           <p className="text-xs text-[#1E2D4D]/30 mb-1">Contact Info</p>

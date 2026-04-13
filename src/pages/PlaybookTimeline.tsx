@@ -120,7 +120,7 @@ export function PlaybookTimeline() {
   if (!incident || !template) {
     return (
       <div style={{ ...font, padding: 40, textAlign: 'center' }}>
-        <AlertTriangle size={48} color="#d4af37" style={{ marginBottom: 16 }} />
+        <AlertTriangle size={48} color="#A08C5A" style={{ marginBottom: 16 }} />
         <h2 style={{ color: '#1E2D4D', fontSize: 24, fontWeight: 700, margin: '0 0 8px' }}>
           Incident Not Found
         </h2>
@@ -308,10 +308,10 @@ export function PlaybookTimeline() {
       {/* ── Food Disposition Summary ──────────────────────────────────────── */}
       <div style={{
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
-        borderTop: `4px solid #d4af37`, padding: '16px 16px', marginBottom: 28,
+        borderTop: `4px solid #A08C5A`, padding: '16px 16px', marginBottom: 28,
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Thermometer size={18} color="#d4af37" /> Food Disposition Summary
+          <Thermometer size={18} color="#A08C5A" /> Food Disposition Summary
         </h3>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -430,7 +430,7 @@ export function PlaybookTimeline() {
         padding: '16px 16px', marginBottom: 28,
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <DollarSign size={18} color="#d4af37" /> Insurance Claim
+          <DollarSign size={18} color="#A08C5A" /> Insurance Claim
         </h3>
         {(() => {
           const ic = demoInsuranceClaim;
@@ -488,7 +488,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => toast.info('Insurance claim package coming soon')}
           style={{
-            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#d4af37',
+            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#A08C5A',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
             fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
@@ -522,7 +522,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => toast.info('Insurance sharing coming soon')}
           style={{
-            ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#d4af37',
+            ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#A08C5A',
             color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px',
             fontSize: 15, fontWeight: 700, cursor: 'pointer', minHeight: 44,
           }}

@@ -27,7 +27,7 @@ function projectProbability(base: number, trajectory: string, days: number): { l
 export const PredictiveRisk: React.FC<Props> = ({ predictions }) => (
   <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginTop: '16px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-      <span style={{ fontSize: '16px' }}>{'\uD83D\uDD2E'}</span>
+      <span className="text-base">{'\uD83D\uDD2E'}</span>
       <div>
         <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
           Predictive Risk Trajectory

@@ -221,9 +221,9 @@ export function AdminClientOnboarding() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-[#FAF7F0] rounded-lg p-6 space-y-4">
+            <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#d4af37]" />
+                <Building2 className="w-5 h-5 text-[#A08C5A]" />
                 Organization Details
               </h3>
 
@@ -237,7 +237,7 @@ export function AdminClientOnboarding() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder={isTribal ? 'Table Mountain Casino Resort' : 'Main Street Restaurant Group'}
                 />
               </div>
@@ -251,7 +251,7 @@ export function AdminClientOnboarding() {
                     id="industryType"
                     value={industryType}
                     onChange={(e) => setIndustryType(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="Restaurant">Restaurant</option>
                     <option value="Hotel">Hotel</option>
@@ -271,7 +271,7 @@ export function AdminClientOnboarding() {
                       id="industrySubtype"
                       value={industrySubtype}
                       onChange={(e) => setIndustrySubtype(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     >
                       <option value="restaurant-full">Full-Service</option>
                       <option value="restaurant-quick">Quick-Service</option>
@@ -293,7 +293,7 @@ export function AdminClientOnboarding() {
                       required
                       value={selectedTribe}
                       onChange={(e) => setSelectedTribe(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     >
                       <option value="">Select tribe...</option>
                       {TRIBAL_OPTIONS.map(t => (
@@ -320,7 +320,7 @@ export function AdminClientOnboarding() {
                     required
                     value={outletCount}
                     onChange={(e) => setOutletCount(parseInt(e.target.value) || 5)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                   <p className="text-xs text-[#1E2D4D]/50 mt-1">
                     Typical casino properties have 5-15 food outlets (buffet, steakhouse, cafe, etc.)
@@ -339,7 +339,7 @@ export function AdminClientOnboarding() {
                     required
                     value={locationCount}
                     onChange={(e) => setLocationCount(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                 </div>
               )}
@@ -347,7 +347,7 @@ export function AdminClientOnboarding() {
 
             {/* Tribal advisory mode info */}
             {isTribal && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                 <div className="flex items-start gap-2">
                   <ShieldAlert className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
                   <div>
@@ -364,9 +364,9 @@ export function AdminClientOnboarding() {
               </div>
             )}
 
-            <div className="bg-[#FAF7F0] rounded-lg p-6 space-y-4">
+            <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#d4af37]" />
+                <Users className="w-5 h-5 text-[#A08C5A]" />
                 Primary Contact / Owner
               </h3>
 
@@ -380,7 +380,7 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="John Smith"
                 />
               </div>
@@ -396,7 +396,7 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerEmail}
                   onChange={(e) => setOwnerEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="john@example.com"
                 />
               </div>
@@ -410,13 +410,13 @@ export function AdminClientOnboarding() {
                   type="tel"
                   value={ownerPhone}
                   onChange={(e) => setOwnerPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="(555) 123-4567"
                 />
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
               <p className="text-sm text-blue-800">
                 <strong>Note:</strong> The client will receive an email with instructions to claim their account and set their password. The organization will be pre-configured with industry-specific templates.
               </p>
@@ -426,7 +426,7 @@ export function AdminClientOnboarding() {
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-[#FAF7F0] transition-colors"
               >
                 Cancel
               </button>

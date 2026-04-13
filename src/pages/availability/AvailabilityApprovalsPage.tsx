@@ -83,11 +83,11 @@ export function AvailabilityApprovalsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+        <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Pending Approvals</p>
           <p className="text-xl font-bold mt-1" style={{ color: '#c2410c' }}>{submissions.length}</p>
         </div>
-        <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+        <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Status</p>
           <p className="text-sm font-bold mt-1.5" style={{ color: submissions.length === 0 ? '#16a34a' : '#c2410c' }}>
             {submissions.length === 0 ? 'All Clear' : 'Action Required'}
@@ -158,11 +158,11 @@ export function AvailabilityApprovalsPage() {
                       value={rejectReason}
                       onChange={e => setRejectReason(e.target.value)}
                       placeholder="Reason for rejection..."
-                      className="w-full px-3 py-2 text-sm border rounded-lg"
+                      className="w-full px-3 py-2 text-sm border rounded-xl"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                     />
                     <div className="flex gap-2">
-                      <button onClick={() => { setRejectingId(null); setRejectReason(''); }} className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+                      <button onClick={() => { setRejectingId(null); setRejectReason(''); }} className="flex-1 px-3 py-1.5 text-xs font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
                         Cancel
                       </button>
                       <button onClick={() => handleReject(sub.id)} className="flex-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#dc2626' }}>
@@ -181,7 +181,7 @@ export function AvailabilityApprovalsPage() {
                     </button>
                     <button
                       onClick={() => setRejectingId(sub.id)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-lg border"
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-xl border"
                       style={{ borderColor: '#dc2626', color: '#dc2626' }}
                     >
                       <XCircle className="w-3.5 h-3.5" /> Reject

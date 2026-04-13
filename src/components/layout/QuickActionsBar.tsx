@@ -107,12 +107,12 @@ export function QuickActionsBar() {
               className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                 isActive
                   ? 'bg-[#eef4f8]'
-                  : 'hover:bg-gray-50'
+                  : 'hover:bg-[#FAF7F0]'
               }`}
             >
               <span className="text-lg leading-none">{action.emoji}</span>
               <span
-                className="text-[9px] font-bold leading-tight"
+                className="text-[11px] font-bold leading-tight"
                 style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
               >
                 {action.label}
@@ -152,7 +152,7 @@ export function QuickActionsBar() {
               >
                 <span className="text-base leading-none">{action.emoji}</span>
                 <span
-                  className="text-[9px] font-bold"
+                  className="text-[11px] font-bold"
                   style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
                 >
                   {action.label}

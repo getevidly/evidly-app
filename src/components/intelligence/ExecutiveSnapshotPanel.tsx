@@ -111,7 +111,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       {/* ── 3. EXECUTIVE SUMMARY ──────────────────────── */}
       <CollapsibleSection title="Executive Summary" icon={FileText} defaultOpen={true}>
         <div className="flex items-center gap-2 mb-3">
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>Board Ready</span>
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>Board Ready</span>
           <button
             onClick={() => { navigator.clipboard.writeText(snapshot.executive_summary); }}
             className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded"
@@ -196,7 +196,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                   <td className="px-3 py-2" style={{ color: BODY_TEXT }}>{ca.internal_impact}</td>
                   <td className="px-3 py-2 text-center">
                     <span
-                      className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase"
+                      className="px-1.5 py-0.5 rounded text-[11px] font-bold uppercase"
                       style={{
                         backgroundColor: ca.strength === 'strong' ? '#fef2f2' : ca.strength === 'moderate' ? '#fffbeb' : '#f0fdf4',
                         color: ca.strength === 'strong' ? '#991b1b' : ca.strength === 'moderate' ? '#92400e' : '#166534',
@@ -229,7 +229,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         </p>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {DEMO_CLIENT_PROFILE.locations.map(loc => (
-            <span key={loc.id} className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
+            <span key={loc.id} className="px-1.5 py-0.5 rounded text-[11px] font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
               {loc.name} ({loc.county})
             </span>
           ))}
@@ -270,8 +270,8 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               <div className="flex items-center gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-1 mb-0.5">
-                    <span className="text-[9px] font-semibold" style={{ color: MUTED }}>Probability</span>
-                    <span className="text-[9px] font-bold" style={{ color: rf.probability >= 0.7 ? '#16a34a' : '#d97706' }}>{Math.round(rf.probability * 100)}%</span>
+                    <span className="text-[11px] font-semibold" style={{ color: MUTED }}>Probability</span>
+                    <span className="text-[11px] font-bold" style={{ color: rf.probability >= 0.7 ? '#16a34a' : '#d97706' }}>{Math.round(rf.probability * 100)}%</span>
                   </div>
                   <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: CARD_BG }}>
                     <div className="h-full rounded-full" style={{ width: `${rf.probability * 100}%`, backgroundColor: rf.probability >= 0.7 ? '#16a34a' : '#d97706' }} />
@@ -334,7 +334,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               </div>
               {/* Strictness gauge */}
               <div className="mb-2">
-                <div className="flex justify-between text-[9px] mb-0.5" style={{ color: TEXT_TERTIARY }}>
+                <div className="flex justify-between text-[11px] mb-0.5" style={{ color: TEXT_TERTIARY }}>
                   <span>Strictness</span>
                   <span>{ip.strictness_percentile}th %ile</span>
                 </div>
@@ -350,7 +350,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               </div>
               <div className="flex flex-wrap gap-1 mb-2">
                 {(ip.focus_areas || []).map(fa => (
-                  <span key={fa} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: CARD_BG, color: MUTED }}>{fa}</span>
+                  <span key={fa} className="px-1.5 py-0.5 rounded text-[11px]" style={{ backgroundColor: CARD_BG, color: MUTED }}>{fa}</span>
                 ))}
               </div>
               <p className="text-xs leading-snug" style={{ color: MUTED }}>{ip.recommendation}</p>
@@ -378,15 +378,15 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
             <li key={i} className="rounded-lg p-3" style={{ backgroundColor: sr.immediate ? '#fef2f2' : PANEL_BG, border: `1px solid ${sr.immediate ? '#fca5a5' : BORDER_SUBTLE}` }}>
               <div className="flex items-center gap-2 mb-1">
                 <span
-                  className="px-1.5 py-0.5 rounded text-[9px] font-bold"
+                  className="px-1.5 py-0.5 rounded text-[11px] font-bold"
                   style={{ backgroundColor: sr.priority <= 2 ? '#dc2626' : sr.priority <= 3 ? '#d97706' : '#1E2D4D', color: '#fff' }}
                 >
                   P{sr.priority}
                 </span>
                 {sr.immediate && (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-50 text-red-700">IMMEDIATE</span>
+                  <span className="px-1.5 py-0.5 rounded text-[11px] font-bold bg-red-50 text-red-700">IMMEDIATE</span>
                 )}
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{ backgroundColor: CARD_BG, color: MUTED }}>
+                <span className="px-1.5 py-0.5 rounded text-[11px] font-medium" style={{ backgroundColor: CARD_BG, color: MUTED }}>
                   <Clock className="h-3 w-3 inline mr-0.5" />{sr.timeframe}
                 </span>
               </div>
@@ -400,7 +400,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
 
       {/* ── 12. FULL NARRATIVE ────────────────────────── */}
       <CollapsibleSection title="Full Narrative" icon={FileText} defaultOpen={false}>
-        <div className="rounded-lg p-4" style={{ backgroundColor: '#fafbfc', border: `1px solid ${BORDER_SUBTLE}` }}>
+        <div className="rounded-xl p-4" style={{ backgroundColor: '#fafbfc', border: `1px solid ${BORDER_SUBTLE}` }}>
           {(snapshot.full_narrative || '').split('\n').map((line, i) => {
             if (line.match(/^[A-Z ]{4,}$/)) {
               return <h4 key={i} className="text-xs font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: MUTED }}>{line}</h4>;

@@ -182,12 +182,12 @@ export default function InsuranceRiskShared() {
             <div>
               <span className="text-lg font-bold">
                 <span className="text-white">Evid</span>
-                <span style={{ color: '#d4af37' }}>LY</span>
+                <span style={{ color: '#A08C5A' }}>LY</span>
               </span>
-              <p className="text-xs text-gray-300 -mt-0.5">Lead with Confidence</p>
+              <p className="text-xs text-[#1E2D4D]/30 -mt-0.5">Lead with Confidence</p>
             </div>
           </div>
-          <span className="text-xs text-gray-300 hidden sm:block">Insurance Risk Assessment</span>
+          <span className="text-xs text-[#1E2D4D]/30 hidden sm:block">Insurance Risk Assessment</span>
         </div>
       </div>
 
@@ -202,12 +202,12 @@ export default function InsuranceRiskShared() {
         {/* Location Info */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-            <div><span className="text-[#1E2D4D]/50">Location:</span> <span className="font-medium text-gray-900">{d.locationName}</span></div>
-            <div><span className="text-[#1E2D4D]/50">Organization:</span> <span className="font-medium text-gray-900">{d.orgName}</span></div>
-            <div><span className="text-[#1E2D4D]/50">Address:</span> <span className="font-medium text-gray-900">{d.address}</span></div>
-            <div><span className="text-[#1E2D4D]/50">Industry:</span> <span className="font-medium text-gray-900">{d.industrySegment}</span></div>
-            <div><span className="text-[#1E2D4D]/50">Jurisdiction:</span> <span className="font-medium text-gray-900">{d.jurisdiction}</span></div>
-            <div><span className="text-[#1E2D4D]/50">Data Period:</span> <span className="font-medium text-gray-900">{d.dataPeriod}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Location:</span> <span className="font-medium text-[#1E2D4D]">{d.locationName}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Organization:</span> <span className="font-medium text-[#1E2D4D]">{d.orgName}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Address:</span> <span className="font-medium text-[#1E2D4D]">{d.address}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Industry:</span> <span className="font-medium text-[#1E2D4D]">{d.industrySegment}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Jurisdiction:</span> <span className="font-medium text-[#1E2D4D]">{d.jurisdiction}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Data Period:</span> <span className="font-medium text-[#1E2D4D]">{d.dataPeriod}</span></div>
           </div>
         </div>
 
@@ -284,12 +284,12 @@ export default function InsuranceRiskShared() {
               return (
                 <g key={i}>
                   <line x1={40} x2={570} y1={y2} y2={y2} stroke="#f1f5f9" strokeWidth={1} />
-                  <text x={32} y={y2 + 4} textAnchor="end" className="text-xs fill-gray-400">{v}</text>
+                  <text x={32} y={y2 + 4} textAnchor="end" className="text-xs fill-[#1E2D4D]/40">{v}</text>
                 </g>
               );
             })}
             {d.trendData.map((pt, i) => (
-              <text key={i} x={40 + (i / 11) * 530} y={155} textAnchor="middle" className="text-[9px] fill-gray-400">{pt.month}</text>
+              <text key={i} x={40 + (i / 11) * 530} y={155} textAnchor="middle" className="text-[11px] fill-[#1E2D4D]/40">{pt.month}</text>
             ))}
             <path
               d={d.trendData.map((pt, i) => `${i === 0 ? 'M' : 'L'}${40 + (i / 11) * 530},${140 - ((pt.score - 55) / 50) * 120}`).join(' ')}
@@ -365,8 +365,8 @@ export default function InsuranceRiskShared() {
           <div className="flex items-center justify-center gap-2 mb-1">
             <EvidlyIcon size={16} />
             <span className="text-sm font-bold">
-              <span className="text-gray-900">Evid</span>
-              <span style={{ color: '#d4af37' }}>LY</span>
+              <span className="text-[#1E2D4D]">Evid</span>
+              <span style={{ color: '#A08C5A' }}>LY</span>
             </span>
           </div>
           <p className="text-xs text-[#1E2D4D]/30">Lead with Confidence · evidly.com</p>

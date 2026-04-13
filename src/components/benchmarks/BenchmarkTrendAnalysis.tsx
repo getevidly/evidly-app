@@ -53,7 +53,7 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
             <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 10 }} />
             <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 10 }} />
             <Line type="monotone" dataKey="yourScore" stroke="#1E2D4D" strokeWidth={3} dot={{ r: 3 }} name="Your Score" />
-            <Line type="monotone" dataKey="verticalAvg" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Restaurant Avg" />
+            <Line type="monotone" dataKey="verticalAvg" stroke="#A08C5A" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Restaurant Avg" />
             <Line type="monotone" dataKey="industryAvg" stroke="#3D5068" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Industry Avg" />
           </LineChart>
         </ResponsiveContainer>

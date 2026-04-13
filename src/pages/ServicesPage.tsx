@@ -171,7 +171,7 @@ export default function ServicesPage() {
         <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Vendor Services</h1>
         <p className="text-sm text-[#1E2D4D]/50 mb-6">Track and manage vendor service schedules across your locations.</p>
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <FileText className="h-12 w-12 mx-auto mb-4 text-[#1E2D4D]/30" />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Service Records Yet</h2>
           <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto">
             Add vendors and log service visits to track your maintenance schedules.
@@ -307,7 +307,7 @@ export default function ServicesPage() {
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             >
               {showAllLocationsOption() && <option value="all">All Locations</option>}
               {accessibleLocs.map((loc) => (
@@ -317,7 +317,7 @@ export default function ServicesPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             >
               <option value="all">All Categories</option>
               {VENDOR_CATEGORIES.map((cat) => (
@@ -340,7 +340,7 @@ export default function ServicesPage() {
           <h2 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wide mb-3">Service History</h2>
           {filteredRecords.length === 0 ? (
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-              <FileText className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <FileText className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
               <p className="text-sm font-medium text-[#1E2D4D]/70">No service records found</p>
               <p className="text-xs text-[#1E2D4D]/30 mt-1">Log a service to see records here.</p>
             </div>
@@ -366,12 +366,12 @@ export default function ServicesPage() {
                     {filteredRecords.map((record) => {
                       const required = isRequiredService(record.categoryId, record.serviceId);
                       return (
-                        <tr key={record.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(`/services/${record.id}`)}>
-                          <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                        <tr key={record.id} className="hover:bg-[#FAF7F0] transition-colors cursor-pointer" onClick={() => navigate(`/services/${record.id}`)}>
+                          <td className="px-4 py-3 whitespace-nowrap text-[#1E2D4D]">
                             {format(new Date(record.serviceDate), 'MMM d, yyyy')}
                           </td>
                           <td className="px-4 py-3">
-                            <span className="text-gray-900">{record.serviceName}</span>
+                            <span className="text-[#1E2D4D]">{record.serviceName}</span>
                             {required && (
                               <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700 font-semibold">Required</span>
                             )}
@@ -388,7 +388,7 @@ export default function ServicesPage() {
                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
                               record.result === 'pass' ? 'bg-emerald-50 text-emerald-700' :
                               record.result === 'fail' ? 'bg-red-50 text-red-700' :
-                              'bg-gray-100 text-[#1E2D4D]/70'
+                              'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'
                             }`}>
                               {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
                             </span>
@@ -425,7 +425,7 @@ export default function ServicesPage() {
                 {filteredRecords.map((record) => {
                   const required = isRequiredService(record.categoryId, record.serviceId);
                   return (
-                    <div key={record.id} className="p-4 space-y-2 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => navigate(`/services/${record.id}`)}>
+                    <div key={record.id} className="p-4 space-y-2 cursor-pointer hover:bg-[#FAF7F0] transition-colors" onClick={() => navigate(`/services/${record.id}`)}>
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-sm font-semibold text-[#1E2D4D]">
@@ -440,7 +440,7 @@ export default function ServicesPage() {
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
                             record.result === 'pass' ? 'bg-emerald-50 text-emerald-700' :
                             record.result === 'fail' ? 'bg-red-50 text-red-700' :
-                            'bg-gray-100 text-[#1E2D4D]/70'
+                            'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'
                           }`}>
                             {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
                           </span>
@@ -482,10 +482,10 @@ export default function ServicesPage() {
       {/* Log Service Modal */}
       {showLogService && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowLogService(false)} />
+          <div className="fixed inset-0 bg-black/50 z-50 modal-backdrop-enter" onClick={() => setShowLogService(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
-              className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto modal-content-enter"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/10">
@@ -499,7 +499,7 @@ export default function ServicesPage() {
                       <p className="text-sm text-[#1E2D4D]/50">Record a completed vendor service</p>
                     </div>
                   </div>
-                  <button onClick={() => setShowLogService(false)} className="text-[#1E2D4D]/30 hover:text-gray-600">
+                  <button onClick={() => setShowLogService(false)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                     <XCircle className="h-5 w-5" />
                   </button>
                 </div>
@@ -511,7 +511,7 @@ export default function ServicesPage() {
                   <select
                     value={logForm.locationId}
                     onChange={(e) => setLogForm({ ...logForm, locationId: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocs.map((loc) => (
@@ -533,7 +533,7 @@ export default function ServicesPage() {
                       }
                       setLogForm({ ...logForm, categoryId: catId, serviceId: '', vendorName: '' });
                     }}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select category...</option>
                     {VENDOR_CATEGORIES.map((cat) => {
@@ -555,7 +555,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.serviceId}
                       onChange={(e) => setLogForm({ ...logForm, serviceId: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select service...</option>
                       {selectedCategoryServices.map((svc) => (
@@ -574,7 +574,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.vendorName}
                       onChange={(e) => setLogForm({ ...logForm, vendorName: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select vendor...</option>
                       {selectedCategoryVendors.map((v) => (
@@ -591,7 +591,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.serviceDate}
                     onChange={(e) => setLogForm({ ...logForm, serviceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -603,7 +603,7 @@ export default function ServicesPage() {
                     value={logForm.technicianName}
                     onChange={(e) => setLogForm({ ...logForm, technicianName: e.target.value })}
                     placeholder="e.g., John Smith"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -614,7 +614,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.nextServiceDate}
                     onChange={(e) => setLogForm({ ...logForm, nextServiceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -634,7 +634,7 @@ export default function ServicesPage() {
                     onChange={(e) => { setLogForm({ ...logForm, notes: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
                     placeholder="Service details, observations, follow-up items..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                   />
                   {aiFields.has('notes') && <AIGeneratedIndicator />}
                 </div>
@@ -643,7 +643,7 @@ export default function ServicesPage() {
               <div className="p-4 sm:p-6 border-t border-[#1E2D4D]/10 flex justify-end gap-3">
                 <button
                   onClick={() => setShowLogService(false)}
-                  className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                  className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-[#FAF7F0] text-sm font-medium"
                 >
                   Cancel
                 </button>
@@ -661,7 +661,7 @@ export default function ServicesPage() {
 
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-xl shadow-sm flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium text-sm">{toastMessage}</span>
         </div>

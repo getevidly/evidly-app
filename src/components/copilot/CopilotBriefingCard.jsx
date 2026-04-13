@@ -107,7 +107,7 @@ export function CopilotBriefingCard() {
             width: 36, height: 36, borderRadius: 10,
             background: '#FDF8E8', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Bot style={{ width: 20, height: 20, color: '#d4af37' }} />
+            <Bot style={{ width: 20, height: 20, color: '#A08C5A' }} />
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary, #0B1628)' }}>
@@ -153,7 +153,7 @@ export function CopilotBriefingCard() {
             width: 36, height: 36, borderRadius: 10,
             background: '#FDF8E8', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Bot style={{ width: 20, height: 20, color: '#d4af37' }} />
+            <Bot style={{ width: 20, height: 20, color: '#A08C5A' }} />
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary, #0B1628)' }}>

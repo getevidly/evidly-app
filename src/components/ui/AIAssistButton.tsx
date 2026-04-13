@@ -74,16 +74,16 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
           <button
             type="button"
             onClick={() => generate('replace')}
-            className="px-2 py-1 rounded hover:bg-gray-100 transition min-h-[28px]"
+            className="px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
             style={{ color: '#A08C5A' }}
           >
             Replace
           </button>
-          <span className="text-gray-300">|</span>
+          <span className="text-[#1E2D4D]/30">|</span>
           <button
             type="button"
             onClick={() => generate('append')}
-            className="px-2 py-1 rounded hover:bg-gray-100 transition min-h-[28px]"
+            className="px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
             style={{ color: '#A08C5A' }}
           >
             Append
@@ -91,7 +91,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
           <button
             type="button"
             onClick={() => setShowChoice(false)}
-            className="px-1 py-1 text-[#1E2D4D]/30 hover:text-gray-600 min-h-[28px]"
+            className="px-1 py-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 min-h-[28px]"
           >
             &times;
           </button>
@@ -100,7 +100,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
         <button
           type="button"
           onClick={handleClick}
-          className="text-xs flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition min-h-[28px]"
+          className="text-xs flex items-center gap-1 px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
           style={{ color: '#A08C5A' }}
           title={`AI will draft ${fieldLabel.toLowerCase()} based on the information you've entered`}
         >

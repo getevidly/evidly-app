@@ -29,7 +29,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 const BADGE_TIERS = [
   { tier: 'verified', label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Score 80+ for 3 consecutive months', qualified: true },
   { tier: 'excellence', label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Score 90+ for 3 consecutive months', qualified: true },
-  { tier: 'elite', label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months', qualified: false },
+  { tier: 'elite', label: 'EvidLY Elite', icon: Crown, color: '#A08C5A', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months', qualified: false },
   { tier: 'platinum', label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months', qualified: false },
 ];
 
@@ -47,7 +47,7 @@ function ScoreBar({ value, max = 100, color }: { value: number; max?: number; co
       <div className="flex-1 h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
       </div>
-      <span className="text-sm font-semibold text-gray-800 w-10 text-right">{value}{max === 100 ? '' : ''}</span>
+      <span className="text-sm font-semibold text-[#1E2D4D]/90 w-10 text-right">{value}{max === 100 ? '' : ''}</span>
     </div>
   );
 }
@@ -70,7 +70,7 @@ function MiniTrendChart({ data }: { data: MonthlyTrend[] }) {
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full" style={{ maxHeight: 200 }}>
       {/* Y-axis labels */}
       {[min, min + (max - min) / 2, max].map((v, i) => (
-        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-xs fill-gray-400">{Math.round(v)}</text>
+        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-xs fill-[#1E2D4D]/40">{Math.round(v)}</text>
       ))}
       {/* Grid lines */}
       {[0, 0.25, 0.5, 0.75, 1].map((f, i) => (
@@ -78,22 +78,22 @@ function MiniTrendChart({ data }: { data: MonthlyTrend[] }) {
       ))}
       {/* Month labels */}
       {data.map((d, i) => (
-        <text key={i} x={toX(i)} y={h - 12} textAnchor="middle" className="text-[9px] fill-gray-400">{d.month}</text>
+        <text key={i} x={toX(i)} y={h - 12} textAnchor="middle" className="text-[11px] fill-[#1E2D4D]/40">{d.month}</text>
       ))}
       {/* Lines */}
       <path d={line('industryAvg')} fill="none" stroke="#3D5068" strokeWidth={1.5} strokeDasharray="4 3" />
       <path d={line('verticalAvg')} fill="none" stroke="#60a5fa" strokeWidth={1.5} />
-      <path d={line('yourScore')} fill="none" stroke="#d4af37" strokeWidth={2.5} />
+      <path d={line('yourScore')} fill="none" stroke="#A08C5A" strokeWidth={2.5} />
       {/* Dots on your line */}
       {data.map((d, i) => (
-        <circle key={i} cx={toX(i)} cy={toY(d.yourScore)} r={3} fill="#d4af37" />
+        <circle key={i} cx={toX(i)} cy={toY(d.yourScore)} r={3} fill="#A08C5A" />
       ))}
     </svg>
   );
 }
 
 function PercentileBadge({ pct }: { pct: number }) {
-  const color = pct >= 80 ? '#22c55e' : pct >= 50 ? '#d4af37' : '#ef4444';
+  const color = pct >= 80 ? '#22c55e' : pct >= 50 ? '#A08C5A' : '#ef4444';
   const bg = pct >= 80 ? '#f0fdf4' : pct >= 50 ? '#fdf8e8' : '#fef2f2';
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: bg, color }}>
@@ -207,7 +207,7 @@ export function Benchmarks() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-[#1E2D4D]/15 hover:bg-gray-50 min-h-[44px]"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-xl border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] min-h-[44px]"
             >
               <Filter className="h-4 w-4" /> Filters {showFilters ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             </button>
@@ -225,7 +225,7 @@ export function Benchmarks() {
         {/* ── Empty state for non-demo users ── */}
         {!isDemoMode && (
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-[#1E2D4D]/30" />
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Benchmarks Coming Soon</h2>
             <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto">
               As more kitchens join EvidLY, your compliance benchmarks will become available.
@@ -241,19 +241,19 @@ export function Benchmarks() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Vertical</label>
-                <select value={filters.vertical} onChange={e => setFilters({ vertical: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm">
+                <select value={filters.vertical} onChange={e => setFilters({ vertical: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm">
                   {VERTICALS.map(v => <option key={v}>{v}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">County</label>
-                <select value={filters.county} onChange={e => setFilters({ county: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm">
+                <select value={filters.county} onChange={e => setFilters({ county: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm">
                   {COUNTIES.map(v => <option key={v}>{v}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Organization Size</label>
-                <select value={filters.size} onChange={e => setFilters({ size: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm">
+                <select value={filters.size} onChange={e => setFilters({ size: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm">
                   {SIZE_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
@@ -267,9 +267,9 @@ export function Benchmarks() {
 
         {/* ── Section 1: Overall Ranking ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between cursor-pointer" onClick={() => toggleSection('overall')}>
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5 flex items-center justify-between cursor-pointer" onClick={() => toggleSection('overall')}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-              <Trophy className="h-5 w-5" style={{ color: '#d4af37' }} />
+              <Trophy className="h-5 w-5" style={{ color: '#A08C5A' }} />
               Overall Ranking
             </h2>
             {expandedSection === 'overall' ? <ChevronDown className="h-5 w-5 text-[#1E2D4D]/30" /> : <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30" />}
@@ -290,14 +290,14 @@ export function Benchmarks() {
             )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {/* vs Industry */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#f8fafc' }}>
+              <div className="text-center p-4 rounded-xl" style={{ backgroundColor: '#f8fafc' }}>
                 <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">vs Industry Average</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-[#1E2D4D]/50">Your Score</div>
                   </div>
-                  <div className="text-gray-300 text-lg pb-1">vs</div>
+                  <div className="text-[#1E2D4D]/30 text-lg pb-1">vs</div>
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D]/30">{benchmark.industryComparison.peerMean}</div>
                     <div className="text-xs text-[#1E2D4D]/50">Industry</div>
@@ -306,14 +306,14 @@ export function Benchmarks() {
                 <div className="mt-3"><PercentileBadge pct={benchmark.industryComparison.percentile} /></div>
               </div>
               {/* vs Vertical */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#f8fafc' }}>
+              <div className="text-center p-4 rounded-xl" style={{ backgroundColor: '#f8fafc' }}>
                 <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">vs {filters.vertical} Average</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-[#1E2D4D]/50">Your Score</div>
                   </div>
-                  <div className="text-gray-300 text-lg pb-1">vs</div>
+                  <div className="text-[#1E2D4D]/30 text-lg pb-1">vs</div>
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D]/30">{benchmark.verticalComparison.peerMean}</div>
                     <div className="text-xs text-[#1E2D4D]/50">{filters.vertical}</div>
@@ -322,14 +322,14 @@ export function Benchmarks() {
                 <div className="mt-3"><PercentileBadge pct={benchmark.verticalComparison.percentile} /></div>
               </div>
               {/* vs Geographic */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#f8fafc' }}>
+              <div className="text-center p-4 rounded-xl" style={{ backgroundColor: '#f8fafc' }}>
                 <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">vs {filters.county} Peers</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-[#1E2D4D]/50">Your Score</div>
                   </div>
-                  <div className="text-gray-300 text-lg pb-1">vs</div>
+                  <div className="text-[#1E2D4D]/30 text-lg pb-1">vs</div>
                   <div>
                     <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D]/30">{benchmark.geoComparison.peerMean}</div>
                     <div className="text-xs text-[#1E2D4D]/50">Geographic</div>
@@ -343,7 +343,7 @@ export function Benchmarks() {
 
         {/* ── Section 2: Category Breakdown ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <BarChart3 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Category Breakdown
@@ -364,22 +364,22 @@ export function Benchmarks() {
                 <tbody className="divide-y divide-[#1E2D4D]/5">
                   {pillarBenchmarks.map((pb) => (
                     <tr key={pb.pillar}>
-                      <td className="py-3 pr-4 text-sm text-gray-900">{pb.pillar}</td>
+                      <td className="py-3 pr-4 text-sm text-[#1E2D4D]">{pb.pillar}</td>
                       <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{pb.yourScore}</td>
                       <td className="py-3 px-2 text-center text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{pb.peerMean}</td>
                       <td className="py-3 px-2 text-center"><PercentileBadge pct={pb.percentile} /></td>
                       <td className="py-3 pl-4 hidden sm:table-cell">
-                        <ScoreBar value={pb.yourScore} color={pb.percentile >= 80 ? '#22c55e' : pb.percentile >= 50 ? '#d4af37' : '#ef4444'} />
+                        <ScoreBar value={pb.yourScore} color={pb.percentile >= 80 ? '#22c55e' : pb.percentile >= 50 ? '#A08C5A' : '#ef4444'} />
                       </td>
                     </tr>
                   ))}
                   <tr className="bg-[#FAF7F0] font-semibold">
-                    <td className="py-3 pr-4 text-sm text-gray-900">Overall</td>
+                    <td className="py-3 pr-4 text-sm text-[#1E2D4D]">Overall</td>
                     <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{yourScore}</td>
                     <td className="py-3 px-2 text-center text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{benchmark.verticalComparison.peerMean}</td>
                     <td className="py-3 px-2 text-center"><PercentileBadge pct={benchmark.verticalComparison.percentile} /></td>
                     <td className="py-3 pl-4 hidden sm:table-cell">
-                      <ScoreBar value={yourScore} color={benchmark.verticalComparison.percentile >= 80 ? '#22c55e' : benchmark.verticalComparison.percentile >= 50 ? '#d4af37' : '#ef4444'} />
+                      <ScoreBar value={yourScore} color={benchmark.verticalComparison.percentile >= 80 ? '#22c55e' : benchmark.verticalComparison.percentile >= 50 ? '#A08C5A' : '#ef4444'} />
                     </td>
                   </tr>
                 </tbody>
@@ -391,7 +391,7 @@ export function Benchmarks() {
         {/* ── Section 3: Subcategory Deep Dive ── */}
         <FeatureGate flagKey="industry-benchmarks">
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+            <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
               <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                 <Target className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                 Subcategory Deep Dive
@@ -416,7 +416,7 @@ export function Benchmarks() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Lead */}
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#f0fdf4' }}>
+            <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#f0fdf4' }}>
               <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
                 Where You Lead
@@ -444,7 +444,7 @@ export function Benchmarks() {
 
           {/* Lag */}
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fef2f2' }}>
+            <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#fef2f2' }}>
               <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                 <TrendingDown className="h-5 w-5 text-red-500" />
                 Where You Lag
@@ -481,7 +481,7 @@ export function Benchmarks() {
 
         {/* ── Section 5: Trend Analysis ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <TrendingUp className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               12-Month Trend Analysis
@@ -489,9 +489,9 @@ export function Benchmarks() {
           </div>
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-6 mb-4 text-xs flex-wrap">
-              <div className="flex items-center gap-2"><span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: '#d4af37', display: 'inline-block' }} /><span className="text-[#1E2D4D]/70 font-medium">Your Score</span></div>
+              <div className="flex items-center gap-2"><span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: '#A08C5A', display: 'inline-block' }} /><span className="text-[#1E2D4D]/70 font-medium">Your Score</span></div>
               <div className="flex items-center gap-2"><span className="w-6 h-0.5 rounded-full" style={{ backgroundColor: '#60a5fa', display: 'inline-block' }} /><span className="text-[#1E2D4D]/70 font-medium">{filters.vertical} Average</span></div>
-              <div className="flex items-center gap-2"><span className="w-6 h-0.5 rounded-full border-dashed border-t-2 border-gray-400" style={{ display: 'inline-block' }} /><span className="text-[#1E2D4D]/70 font-medium">Industry Average</span></div>
+              <div className="flex items-center gap-2"><span className="w-6 h-0.5 rounded-full border-dashed border-t-2 border-[#1E2D4D]/20" style={{ display: 'inline-block' }} /><span className="text-[#1E2D4D]/70 font-medium">Industry Average</span></div>
             </div>
             <MiniTrendChart data={trendData} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -509,7 +509,7 @@ export function Benchmarks() {
               </div>
               <div className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                 <div className="text-xs text-[#1E2D4D]/50 mb-1">Current Rank</div>
-                <div className="text-sm font-semibold text-gray-800">#{benchmark.industryComparison.rank} of {benchmark.industryComparison.totalPeers.toLocaleString()}</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]/90">#{benchmark.industryComparison.rank} of {benchmark.industryComparison.totalPeers.toLocaleString()}</div>
               </div>
               <div className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                 <div className="text-xs text-[#1E2D4D]/50 mb-1">Size Comparison</div>
@@ -521,7 +521,7 @@ export function Benchmarks() {
 
         {/* ── Multi-Location Internal Leaderboard ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <Building2 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Multi-Location Leaderboard
@@ -571,7 +571,7 @@ export function Benchmarks() {
 
             {/* Cross-Location Patterns */}
             {locationRankings.length > 1 && (
-              <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+              <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
                 <h3 className="text-sm font-bold text-[#1E2D4D] mb-3 flex items-center gap-2">
                   <Brain className="h-4 w-4" style={{ color: '#1E2D4D' }} />
                   Cross-Location Patterns
@@ -595,9 +595,9 @@ export function Benchmarks() {
 
         {/* ── Shareable Badges & Certificates ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-              <Award className="h-5 w-5" style={{ color: '#d4af37' }} />
+              <Award className="h-5 w-5" style={{ color: '#A08C5A' }} />
               Shareable Badges & Certificates
             </h2>
             <p className="text-xs text-[#1E2D4D]/50 mt-1">Earn and share compliance badges with customers, insurers, and franchise partners</p>
@@ -638,14 +638,14 @@ export function Benchmarks() {
                       </div>
                     </div>
                   ) : (
-                    <span className="inline-block px-2 py-0.5 bg-gray-100 text-[#1E2D4D]/50 text-xs font-bold rounded-full">Not Yet Qualified</span>
+                    <span className="inline-block px-2 py-0.5 bg-[#1E2D4D]/5 text-[#1E2D4D]/50 text-xs font-bold rounded-full">Not Yet Qualified</span>
                   )}
                 </div>
               ))}
             </div>
 
             {/* Share CTA */}
-            <div className="mt-6 p-4 rounded-lg border border-[#1E2D4D]/10 flex items-center justify-between flex-wrap gap-2">
+            <div className="mt-6 p-4 rounded-xl border border-[#1E2D4D]/10 flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h3 className="text-sm font-bold text-[#1E2D4D]">Share your achievements</h3>
                 <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Pre-written posts for LinkedIn, Facebook, and more. Include in insurance apps, franchise evaluations, and RFPs.</p>
@@ -655,7 +655,7 @@ export function Benchmarks() {
                   <button
                     key={platform}
                     onClick={() => toast.info(`Share to ${platform} (Demo)`)}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/15 hover:bg-gray-50"
+                    className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]"
                   >
                     {platform}
                   </button>
@@ -667,9 +667,9 @@ export function Benchmarks() {
 
         {/* ── EvidLY Compliance Index (Quarterly Public Report) ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" style={{ color: '#d4af37' }} />
+              <BarChart3 className="h-5 w-5" style={{ color: '#A08C5A' }} />
               EvidLY Compliance Index — Q4 2025
             </h2>
             <p className="text-xs text-[#1E2D4D]/70 mt-1">Quarterly public report based on anonymized data from {benchmark.industryComparison.sampleSize.toLocaleString()}+ commercial kitchens</p>
@@ -677,7 +677,7 @@ export function Benchmarks() {
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-2xl font-bold tracking-tight text-gray-800">{benchmark.industryComparison.peerMean}</div>
+                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]/90">{benchmark.industryComparison.peerMean}</div>
                 <div className="text-xs text-[#1E2D4D]/50">Industry Avg Score</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
@@ -685,11 +685,11 @@ export function Benchmarks() {
                 <div className="text-xs text-[#1E2D4D]/50">vs Q3 2025</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-2xl font-bold tracking-tight text-gray-800">{benchmark.industryComparison.sampleSize.toLocaleString()}</div>
+                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]/90">{benchmark.industryComparison.sampleSize.toLocaleString()}</div>
                 <div className="text-xs text-[#1E2D4D]/50">Kitchens Sampled</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-2xl font-bold tracking-tight text-gray-800">14</div>
+                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]/90">14</div>
                 <div className="text-xs text-[#1E2D4D]/50">Counties Covered</div>
               </div>
             </div>
@@ -719,7 +719,7 @@ export function Benchmarks() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-lg border border-[#1E2D4D]/10 bg-[#FAF7F0] flex-wrap gap-2">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/10 bg-[#FAF7F0] flex-wrap gap-2">
               <div className="text-sm">
                 <span className="font-semibold text-[#1E2D4D]">Full Q4 2025 Report</span>
                 <span className="text-[#1E2D4D]/50 ml-2 text-xs">Published Jan 15, 2026 — 10 sections, all 14 counties</span>

@@ -70,14 +70,14 @@ export function SignupLocations() {
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
                   <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#d4af37]">LY</span>
+                <span className="text-[#A08C5A]">LY</span>
               </span>
             </div>
           </div>
@@ -155,13 +155,13 @@ export function SignupLocations() {
 
         {selectedType === 'multiple' && (
           <div className="mb-8 bg-white rounded-xl p-6 border border-[#1E2D4D]/10">
-            <label className="block text-center text-lg font-medium text-gray-900 mb-4">
+            <label className="block text-center text-lg font-medium text-[#1E2D4D] mb-4">
               Number of Locations
             </label>
             <div className="flex items-center justify-center space-x-4">
               <button
                 onClick={() => setLocationCount(Math.max(2, locationCount - 1))}
-                className="w-12 h-12 rounded-full bg-[#1E2D4D]/8 hover:bg-gray-300 flex items-center justify-center transition-colors"
+                className="w-12 h-12 rounded-full bg-[#1E2D4D]/8 hover:bg-[#1E2D4D]/15 flex items-center justify-center transition-colors"
               >
                 <Minus className="h-6 w-6 text-[#1E2D4D]/80" />
               </button>
@@ -170,7 +170,7 @@ export function SignupLocations() {
               </div>
               <button
                 onClick={() => setLocationCount(Math.min(10, locationCount + 1))}
-                className="w-12 h-12 rounded-full bg-[#1E2D4D]/8 hover:bg-gray-300 flex items-center justify-center transition-colors"
+                className="w-12 h-12 rounded-full bg-[#1E2D4D]/8 hover:bg-[#1E2D4D]/15 flex items-center justify-center transition-colors"
               >
                 <Plus className="h-6 w-6 text-[#1E2D4D]/80" />
               </button>
@@ -186,16 +186,16 @@ export function SignupLocations() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="flex items-center space-x-3">
-                <Phone className="h-6 w-6 text-[#d4af37]" />
+                <Phone className="h-6 w-6 text-[#A08C5A]" />
                 <div>
-                  <div className="text-sm text-gray-300">Phone</div>
+                  <div className="text-sm text-[#1E2D4D]/30">Phone</div>
                   <div className="font-semibold">(855) 384-3591</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-6 w-6 text-[#d4af37]" />
+                <Mail className="h-6 w-6 text-[#A08C5A]" />
                 <div>
-                  <div className="text-sm text-gray-300">Email</div>
+                  <div className="text-sm text-[#1E2D4D]/30">Email</div>
                   <div className="font-semibold">sales@getevidly.com</div>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export function SignupLocations() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Your Plan</h2>
-                <div className="inline-flex items-center bg-[#d4af37] text-white px-4 py-2 rounded-full text-sm font-bold">
+                <div className="inline-flex items-center bg-[#A08C5A] text-white px-4 py-2 rounded-full text-sm font-bold">
                   Founder Pricing — Locked Forever
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function SignupLocations() {
                 <div className="flex justify-between items-center">
                   <span className="text-[#1E2D4D]/80">Base (1 location)</span>
                   <div className="flex items-center gap-3">
-                    <span className="font-semibold text-[#d4af37]">${pricing.founderBasePrice || 99}/mo</span>
+                    <span className="font-semibold text-[#1E2D4D]">${pricing.founderBasePrice || 99}/mo</span>
                     <span className="text-[#1E2D4D]/30 line-through">${pricing.standardBasePrice || 199}/mo</span>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export function SignupLocations() {
                   <div className="flex justify-between items-center">
                     <span className="text-[#1E2D4D]/80">Additional locations ({locationCount - 1})</span>
                     <div className="flex items-center gap-3">
-                      <span className="font-semibold text-[#d4af37]">${pricing.founderPerLocationPrice || 49} each</span>
+                      <span className="font-semibold text-[#1E2D4D]">${pricing.founderPerLocationPrice || 49} each</span>
                       <span className="text-[#1E2D4D]/30 line-through">${pricing.standardPerLocationPrice || 99} each</span>
                     </div>
                   </div>
@@ -249,13 +249,13 @@ export function SignupLocations() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-lg">
                   <span className="font-semibold text-[#1E2D4D]">Monthly Total</span>
-                  <span className="font-bold text-2xl tracking-tight text-[#d4af37]">${pricing.monthly}/mo</span>
+                  <span className="font-bold text-2xl tracking-tight text-[#1E2D4D]">${pricing.monthly}/mo</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-[#1E2D4D]/70">Standard price would be:</span>
                   <span className="text-[#1E2D4D]/30 line-through">${pricing.standardMonthly}/mo</span>
                 </div>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3 mt-2">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-green-800">YOU SAVE:</span>
                     <div className="text-right">
@@ -273,7 +273,7 @@ export function SignupLocations() {
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'monthly'
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 Monthly
@@ -283,7 +283,7 @@ export function SignupLocations() {
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'annual'
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 Annual

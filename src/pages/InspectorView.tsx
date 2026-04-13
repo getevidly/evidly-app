@@ -190,7 +190,7 @@ export function InspectorView() {
                       className={`flex-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         scenario === key
                           ? 'bg-[#1E2D4D] text-white'
-                          : 'bg-gray-100 text-[#1E2D4D]/70 hover:bg-gray-200'
+                          : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
                       }`}
                     >
                       <span className="font-bold">{key}:</span> {s.label}
@@ -300,7 +300,7 @@ export function InspectorView() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
                     <p className="text-xs text-[#1E2D4D]/50 uppercase">Date</p>
-                    <p className="text-sm font-medium text-gray-900">{data.lastInspection.date}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">{data.lastInspection.date}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#1E2D4D]/50 uppercase">Score</p>
@@ -310,7 +310,7 @@ export function InspectorView() {
                   </div>
                   <div>
                     <p className="text-xs text-[#1E2D4D]/50 uppercase">Inspector</p>
-                    <p className="text-sm font-medium text-gray-900">{data.lastInspection.inspectorName}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">{data.lastInspection.inspectorName}</p>
                   </div>
                   <div>
                     <p className="text-xs text-[#1E2D4D]/50 uppercase">Agency</p>
@@ -417,16 +417,16 @@ export function InspectorView() {
           {talkTrack.length > 0 && (
             <div className="bg-gradient-to-br from-[#1E2D4D] to-[#141E33] rounded-xl shadow-sm p-5 text-white">
               <div className="flex items-center gap-2 mb-3">
-                <MessageSquare className="h-4 w-4 text-[#d4af37]" />
+                <MessageSquare className="h-4 w-4 text-[#A08C5A]" />
                 <h3 className="text-sm font-bold uppercase tracking-wide">
                   Operator Talk-Track
                 </h3>
-                <Lightbulb className="h-3.5 w-3.5 text-[#d4af37] ml-1" />
+                <Lightbulb className="h-3.5 w-3.5 text-[#A08C5A] ml-1" />
               </div>
               <ul className="space-y-2">
                 {talkTrack.map((item, i) => (
                   <li key={i} className="text-sm flex items-start gap-2 text-white/90">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#d4af37] flex-shrink-0" />
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#A08C5A] flex-shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -447,7 +447,7 @@ export function InspectorView() {
                     className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <button
                       onClick={() => toggle(section.key)}
-                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors">
+                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#FAF7F0] transition-colors">
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-lg bg-[#eef4f8] flex items-center justify-center flex-shrink-0">
                           <SectionIcon className="h-5 w-5 text-[#1E2D4D]" />
@@ -474,10 +474,10 @@ export function InspectorView() {
                     </button>
 
                     {expanded && (
-                      <div className="border-t border-gray-100">
+                      <div className="border-t border-[#1E2D4D]/5">
                         {section.items.map((item, idx) => (
                           <div key={idx}
-                            className={`px-5 py-4 flex gap-3 ${idx !== section.items.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                            className={`px-5 py-4 flex gap-3 ${idx !== section.items.length - 1 ? 'border-b border-[#1E2D4D]/5' : ''}`}>
                             <div className="flex-shrink-0 pt-0.5">
                               {item.status === 'pass'
                                 ? <CheckCircle className="h-5 w-5 text-emerald-500" />
@@ -488,12 +488,12 @@ export function InspectorView() {
                                 <span className="inline-block text-xs font-mono text-[#1E2D4D]/50 bg-[#1E2D4D]/5 rounded px-1.5 py-0.5">
                                   {item.citation}
                                 </span>
-                                <span className="text-sm font-medium text-gray-900">{item.title}</span>
+                                <span className="text-sm font-medium text-[#1E2D4D]">{item.title}</span>
                               </div>
                               <ul className="space-y-0.5">
                                 {item.evidence.map((ev, evIdx) => (
                                   <li key={evIdx} className="text-xs text-[#1E2D4D]/50 flex items-start gap-1.5">
-                                    <span className="mt-1.5 h-1 w-1 rounded-full bg-gray-300 flex-shrink-0" />
+                                    <span className="mt-1.5 h-1 w-1 rounded-full bg-[#1E2D4D]/15 flex-shrink-0" />
                                     {ev}
                                   </li>
                                 ))}
@@ -538,18 +538,18 @@ export function InspectorView() {
 
       {/* ── Cert Quick-Pull Panel ────────────────────────────────── */}
       {showCertPanel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 print:bg-white print:static print:inset-auto">
-          <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full mx-4 max-h-[85vh] flex flex-col print:shadow-none print:rounded-none print:max-h-none">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 print:bg-white print:static print:inset-auto modal-backdrop-enter">
+          <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full mx-4 max-h-[85vh] flex flex-col print:shadow-none print:rounded-none print:max-h-none modal-content-enter">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10 print:border-b-2">
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-5 w-5 text-[#1E2D4D]" />
                 <h2 className="text-lg font-bold text-[#1E2D4D]">Employee Certifications — Quick Pull</h2>
               </div>
               <div className="flex items-center gap-2 print:hidden">
-                <button onClick={() => window.print()} className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] px-2 py-1 rounded-lg border border-[#1E2D4D]/10">
+                <button onClick={() => window.print()} className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] px-2 py-1 rounded-xl border border-[#1E2D4D]/10">
                   <Printer className="h-4 w-4" />
                 </button>
-                <button onClick={() => setShowCertPanel(false)} className="text-[#1E2D4D]/30 hover:text-gray-600 p-1 rounded-lg">
+                <button onClick={() => setShowCertPanel(false)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 p-1 rounded-lg">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -559,12 +559,12 @@ export function InspectorView() {
               <div>
                 <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-2">Certified Food Protection Managers (CFPM)</h3>
                 {data.certifications.cfpms.length > 0 ? (
-                  <div className="rounded-lg border border-[#1E2D4D]/10 overflow-hidden">
+                  <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead><tr className="bg-gray-50 border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Cert #</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Issued</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Expires</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
+                      <thead><tr className="bg-[#FAF7F0] border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Cert #</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Issued</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Expires</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
                       <tbody>
                         {data.certifications.cfpms.map((c, i) => (
-                          <tr key={i} className="border-b border-gray-100 last:border-0">
+                          <tr key={i} className="border-b border-[#1E2D4D]/5 last:border-0">
                             <td className="px-3 py-2 font-medium">{c.name}</td>
                             <td className="px-3 py-2"><code className="text-xs bg-[#1E2D4D]/5 px-1.5 py-0.5 rounded">{c.certNumber}</code></td>
                             <td className="px-3 py-2 text-[#1E2D4D]/70">{c.issued}</td>
@@ -584,12 +584,12 @@ export function InspectorView() {
               <div>
                 <h3 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">Food Handler Cards</h3>
                 {data.certifications.foodHandlers.length > 0 ? (
-                  <div className="rounded-lg border border-[#1E2D4D]/10 overflow-hidden">
+                  <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead><tr className="bg-gray-50 border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Location</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Cert #</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Expires</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
+                      <thead><tr className="bg-[#FAF7F0] border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Location</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Cert #</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Expires</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
                       <tbody>
                         {data.certifications.foodHandlers.map((r, i) => (
-                          <tr key={i} className="border-b border-gray-100 last:border-0">
+                          <tr key={i} className="border-b border-[#1E2D4D]/5 last:border-0">
                             <td className="px-3 py-2 font-medium">{r.name}</td>
                             <td className="px-3 py-2 text-[#1E2D4D]/70">{r.loc}</td>
                             <td className="px-3 py-2"><code className="text-xs bg-[#1E2D4D]/5 px-1.5 py-0.5 rounded">{r.num}</code></td>
@@ -609,12 +609,12 @@ export function InspectorView() {
               <div>
                 <h3 className="text-sm font-bold text-red-600 uppercase tracking-wide mb-2">Facility Safety Training</h3>
                 {data.certifications.facilitySafety.length > 0 ? (
-                  <div className="rounded-lg border border-[#1E2D4D]/10 overflow-hidden">
+                  <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead><tr className="bg-gray-50 border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Training</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Completed</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Next Due</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
+                      <thead><tr className="bg-[#FAF7F0] border-b hover:bg-[#1E2D4D]/[0.02] transition-colors"><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Name</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Training</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Completed</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Next Due</th><th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/70">Status</th></tr></thead>
                       <tbody>
                         {data.certifications.facilitySafety.map((r, i) => (
-                          <tr key={i} className="border-b border-gray-100 last:border-0">
+                          <tr key={i} className="border-b border-[#1E2D4D]/5 last:border-0">
                             <td className="px-3 py-2 font-medium">{r.name}</td>
                             <td className="px-3 py-2 text-[#1E2D4D]/70">{r.tr}</td>
                             <td className="px-3 py-2 text-[#1E2D4D]/70">{r.done}</td>

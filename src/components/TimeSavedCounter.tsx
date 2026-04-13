@@ -33,7 +33,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       label: 'Est. Money Saved',
       suffix: '',
       prefix: '$',
-      color: '#d4af37',
+      color: '#A08C5A',
       bgColor: '#fefce8',
       link: '/reports',
     },

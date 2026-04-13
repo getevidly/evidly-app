@@ -24,7 +24,7 @@ export function DemoCTABar() {
           <button
             onClick={() => navigate(isAuthenticatedDemo ? '/pricing' : '/signup')}
             className="px-4 py-2 text-sm font-semibold text-[#1E2D4D] rounded-lg transition-colors hover:opacity-90"
-            style={{ backgroundColor: '#d4af37' }}
+            style={{ backgroundColor: '#A08C5A' }}
           >
             {isAuthenticatedDemo ? 'Upgrade to Full Account' : 'Start Free Trial'}
           </button>
@@ -33,7 +33,7 @@ export function DemoCTABar() {
               href="https://calendly.com/founders-getevidly/60min"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-sm font-medium border border-[#1E2D4D]/15 rounded-lg hover:bg-gray-50 transition-colors text-[#1E2D4D]/80"
+              className="px-4 py-2 text-sm font-medium border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors text-[#1E2D4D]/80"
             >
               Book a Walkthrough
             </a>

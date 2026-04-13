@@ -27,7 +27,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
               </div>
               <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/70">
                 <span>You: <strong>{item.yourScore}%</strong></span>
-                <span className="text-gray-300">|</span>
+                <span className="text-[#1E2D4D]/30">|</span>
                 <span>Avg: {item.verticalAvg}%</span>
                 <span className="font-semibold text-green-600">
                   +{Math.abs(item.delta)} pts above
@@ -55,7 +55,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
               </div>
               <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/70 mb-2">
                 <span>You: <strong>{item.yourScore}%</strong></span>
-                <span className="text-gray-300">|</span>
+                <span className="text-[#1E2D4D]/30">|</span>
                 <span>Avg: {item.verticalAvg}%</span>
                 <span className="font-semibold text-red-600">
                   {item.delta} pts below

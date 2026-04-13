@@ -113,10 +113,10 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-[#1E2D4D]/80">{formatMonthYear(viewYear, viewMonth, locale)}</span>
-          <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-[#1E2D4D]/5 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <ChevronLeft size={16} className="text-[#1E2D4D]/50" />
           </button>
-          <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-[#1E2D4D]/5 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <ChevronRight size={16} className="text-[#1E2D4D]/50" />
           </button>
         </div>
@@ -144,7 +144,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
               type="button"
               onClick={() => setSelectedDay(isSelected ? null : day)}
               className={`relative flex flex-col items-center py-1.5 rounded-md transition-colors ${
-                isSelected ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                isSelected ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
               }`}
             >
               <span
@@ -185,7 +185,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100 flex-wrap">
+      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#1E2D4D]/5 flex-wrap">
         {Object.keys(typeColors).map(type => (
           <div key={type} className="flex items-center gap-1">
             <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: typeColors[type] }} />
@@ -196,7 +196,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
 
       {/* Selected day events */}
       {selectedDay !== null && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-[#1E2D4D]/5">
           <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-2">
             {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
@@ -209,11 +209,11 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
                   key={i}
                   type="button"
                   onClick={() => navigate('/calendar')}
-                  className="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-left hover:bg-[#FAF7F0] transition-colors"
                   style={{ borderLeft: `3px solid ${typeColors[evt.type] || '#6b7280'}` }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{evt.title}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]/90 truncate">{evt.title}</p>
                     <p className="text-xs text-[#1E2D4D]/50">{evt.location}</p>
                   </div>
                   <span
@@ -236,7 +236,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       <button
         type="button"
         onClick={() => navigate('/calendar')}
-        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
+        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-[#FAF7F0] transition-colors"
         style={{ color: '#1E2D4D' }}
       >
         {t('cards.viewFullCalendar')} &rarr;

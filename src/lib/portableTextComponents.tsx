@@ -52,7 +52,7 @@ export const portableTextComponents = {
       </h4>
     ),
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-[#d4af37] pl-4 my-6 italic text-[#1E2D4D]/70">
+      <blockquote className="border-l-4 border-[#A08C5A] pl-4 my-6 italic text-[#1E2D4D]/70">
         {children}
       </blockquote>
     ),

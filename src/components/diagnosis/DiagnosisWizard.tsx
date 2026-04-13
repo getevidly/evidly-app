@@ -146,7 +146,7 @@ export const DiagnosisWizard: React.FC = () => {
                   transition: 'all 0.15s ease',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#d4af37';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#A08C5A';
                   (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(212,175,55,0.15)';
                 }}
                 onMouseLeave={e => {

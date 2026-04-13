@@ -6,9 +6,9 @@ export default function WebinarSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-[#FAF7F0]">
       <div className="max-w-4xl mx-auto text-center">
-        <span className="inline-block text-sm font-bold uppercase tracking-wider mb-4" style={{ color: '#d4af37' }}>
+        <span className="inline-block text-sm font-bold uppercase tracking-wider mb-4" style={{ color: '#A08C5A' }}>
           Live Walkthrough
         </span>
         <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1E2D4D' }}>
@@ -27,7 +27,7 @@ export default function WebinarSection() {
               'See Founder pricing (limited to 100 customers)',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-3 text-[#1E2D4D]/80">
-                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" strokeWidth={3} style={{ color: '#d4af37' }} />
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" strokeWidth={3} style={{ color: '#A08C5A' }} />
                 <span>{item}</span>
               </li>
             ))}

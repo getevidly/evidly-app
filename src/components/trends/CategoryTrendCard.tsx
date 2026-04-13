@@ -38,7 +38,7 @@ export function CategoryTrendCard({
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+        className="w-full p-4 flex items-center justify-between text-left hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Mini sparkline */}
@@ -50,7 +50,7 @@ export function CategoryTrendCard({
             </ResponsiveContainer>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{label}</p>
+            <p className="text-sm font-medium text-[#1E2D4D] truncate">{label}</p>
             <p className="text-xs text-[#1E2D4D]/50">
               Current: {analysis.currentValue}{unit}
             </p>
@@ -63,7 +63,7 @@ export function CategoryTrendCard({
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 border-t border-gray-100">
+        <div className="px-4 pb-4 border-t border-[#1E2D4D]/5">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 text-xs text-[#1E2D4D]/70">
             <div>
               <p className="text-[#1E2D4D]/30">Start</p>

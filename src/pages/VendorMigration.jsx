@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { MigrationWizard } from '../components/migration/MigrationWizard';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
 const CREAM = '#FAF7F0';
@@ -117,7 +117,7 @@ export function VendorMigration() {
           <p className="text-2xl md:text-3xl font-medium mb-6" style={{ color: GOLD }}>
             Your kitchen deserves better.
           </p>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-[#1E2D4D]/30 max-w-3xl mx-auto mb-10 leading-relaxed">
             Import your entire compliance history from Zenput, Squadle, ComplianceMate, and CSV.
             No data left behind. No gaps in your record. No hardware to ship back.
           </p>
@@ -171,7 +171,7 @@ export function VendorMigration() {
             {painCards.map((card) => (
               <div
                 key={card.title}
-                className="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl p-8 border border-[#1E2D4D]/5 hover:shadow-md transition-shadow"
               >
                 <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-5"
@@ -216,7 +216,7 @@ export function VendorMigration() {
                     key={row.item}
                     className={i % 2 === 0 ? 'bg-white' : 'bg-[#FAF7F0]'}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">{row.item}</td>
+                    <td className="px-6 py-4 font-medium text-[#1E2D4D]">{row.item}</td>
                     <td className="px-6 py-4 text-center">
                       {row.transfers ? (
                         <span
@@ -327,7 +327,7 @@ export function VendorMigration() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to stop settling?
           </h2>
-          <p className="text-lg text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-[#1E2D4D]/30 mb-10 max-w-xl mx-auto leading-relaxed">
             Your kitchen runs on precision. Your compliance platform should too.
             Bring your history, leave the headaches behind.
           </p>

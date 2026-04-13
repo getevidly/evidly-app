@@ -20,14 +20,14 @@ export function EnterpriseLanding() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-1">
             <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
           </div>
           <p className="text-sm font-medium text-[#1E2D4D]/50 mb-6">for Enterprise</p>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">White-Label Compliance for Global Organizations</h1>
           <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto mb-4">
             Deploy EvidLY under your brand. Manage thousands of locations with SSO, custom hierarchy, and multi-region rollups.
           </p>
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border-2" style={{ borderColor: '#d4af37', color: '#d4af37' }}>
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border-2" style={{ borderColor: '#A08C5A', color: '#A08C5A' }}>
             Coming Soon
           </span>
         </div>

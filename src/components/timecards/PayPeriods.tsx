@@ -99,7 +99,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                   {isOpen && isAdmin && (
                     <button
                       onClick={() => onClosePeriod(pp.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors hover:bg-gray-50"
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors hover:bg-[#FAF7F0]"
                       style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
                     >
                       <Lock className="w-3.5 h-3.5" />
@@ -119,7 +119,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                   <div className="relative">
                     <button
                       onClick={() => setExportMenuId(exportMenuId === pp.id ? null : pp.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors hover:bg-gray-50"
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors hover:bg-[#FAF7F0]"
                       style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -127,12 +127,12 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                     </button>
                     {exportMenuId === pp.id && (
                       <div
-                        className="absolute right-0 top-full mt-1 w-40 rounded-lg border shadow-lg z-20"
+                        className="absolute right-0 top-full mt-1 w-40 rounded-xl border shadow-lg z-20"
                         style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
                       >
                         <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: '#E8EDF5' }}>
                           <span className="text-xs font-semibold" style={{ color: '#0B1628' }}>Export as</span>
-                          <button onClick={() => setExportMenuId(null)} className="p-2 -m-1 rounded-full hover:bg-gray-100">
+                          <button onClick={() => setExportMenuId(null)} className="p-2 -m-1 rounded-full hover:bg-[#1E2D4D]/5">
                             <X className="w-3 h-3" style={{ color: '#6B7F96' }} />
                           </button>
                         </div>
@@ -140,7 +140,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                           <button
                             key={fmt}
                             onClick={() => { onExportPeriod(pp.id, fmt); setExportMenuId(null); }}
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors"
+                            className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] transition-colors"
                             style={{ color: '#0B1628' }}
                           >
                             {fmt}

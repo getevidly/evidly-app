@@ -10,7 +10,7 @@ export function PageSkeleton() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
         <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
       </div>
     </div>
@@ -57,7 +57,7 @@ export function DashboardSkeleton() {
           <LoadingSkeleton className="h-6 w-32 mb-4" />
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-4 p-4 border border-[#1E2D4D]/10 rounded-lg">
+              <div key={i} className="flex items-center gap-4 p-4 border border-[#1E2D4D]/10 rounded-xl">
                 <LoadingSkeleton className="h-10 w-10 rounded" />
                 <div className="flex-1 space-y-2">
                   <LoadingSkeleton className="h-4 w-48" />

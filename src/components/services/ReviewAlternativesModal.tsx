@@ -73,7 +73,7 @@ export function ReviewAlternativesModal({
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-        <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+        <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center modal-content-enter">
           <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Date Confirmed!</h3>
           <p className="text-sm text-[#1E2D4D]/70 mb-6">
@@ -87,7 +87,7 @@ export function ReviewAlternativesModal({
                 href={getGoogleCalendarUrl(calEvent)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Google Calendar
@@ -96,14 +96,14 @@ export function ReviewAlternativesModal({
                 href={getOutlookCalendarUrl(calEvent)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Outlook Calendar
               </a>
               <button
                 onClick={() => downloadIcsFile(calEvent)}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Download .ics (Apple Calendar)
@@ -125,17 +125,17 @@ export function ReviewAlternativesModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+        <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/5">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Review Alternative Dates</h2>
-          <button onClick={onClose} className="p-2 text-[#1E2D4D]/30 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
+          <button onClick={onClose} className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 rounded-lg hover:bg-[#1E2D4D]/5" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-5">
           {/* Context */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <p className="text-sm text-blue-800">
               <strong>{request.vendor_name}</strong> wasn't available for your proposed dates and has suggested the following alternatives for <strong>{request.service_type}</strong>.
             </p>
@@ -153,10 +153,10 @@ export function ReviewAlternativesModal({
                   key={i}
                   type="button"
                   onClick={() => setSelectedSlot(slot)}
-                  className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-colors ${
+                  className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-colors ${
                     selectedSlot === slot
                       ? 'border-[#1E2D4D] bg-blue-50/50'
-                      : 'border-[#1E2D4D]/10 hover:border-gray-300'
+                      : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -165,7 +165,7 @@ export function ReviewAlternativesModal({
                     {selectedSlot === slot && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{formatDate(slot)}</p>
+                    <p className="font-medium text-[#1E2D4D] text-sm">{formatDate(slot)}</p>
                     <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </button>

@@ -1,7 +1,7 @@
 import { MapPin, ArrowRight } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 interface Props {
   companyName: string;

@@ -37,7 +37,7 @@ import {
 
 const FONT = "'DM Sans', sans-serif";
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const LIGHT_BG = '#eef4f8';
 
 type TimeFilter = '30d' | '6m' | '1y';

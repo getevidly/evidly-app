@@ -458,22 +458,22 @@ export function Alerts() {
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
-            <Bell className="h-8 w-8 text-[#d4af37]" />
+            <Bell className="h-8 w-8 text-[#A08C5A]" />
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">{t('pages.alerts.complianceAlerts')}</h2>
           </div>
-          <p className="text-gray-300">{t('pages.alerts.subtitle')}</p>
+          <p className="text-[#1E2D4D]/30">{t('pages.alerts.subtitle')}</p>
           <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Bell className="h-4 w-4 text-[#d4af37]" />
-                <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.activeAlerts')}</span>
+                <Bell className="h-4 w-4 text-[#A08C5A]" />
+                <span className="text-sm text-[#1E2D4D]/30 font-medium">{t('pages.alerts.activeAlerts')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold tracking-tight text-white text-center">{activeCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
-                <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.critical')}</span>
+                <span className="text-sm text-[#1E2D4D]/30 font-medium">{t('pages.alerts.critical')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-400 text-center">{urgentCount}</div>
             </div>
@@ -485,7 +485,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
             }`}
           >
             {t('pages.alerts.all')} ({activeCount})
@@ -493,7 +493,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('urgent')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+              filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
             }`}
           >
             {t('pages.alerts.critical')} ({urgentCount})
@@ -501,7 +501,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('upcoming')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
             }`}
           >
             {t('pages.alerts.upcoming')}
@@ -509,7 +509,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('snoozed')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+              filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
             }`}
           >
             {t('pages.alerts.snoozed')}
@@ -517,7 +517,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('resolved')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+              filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
             }`}
           >
             {t('pages.alerts.resolved')}
@@ -529,7 +529,7 @@ export function Alerts() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value as any)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           >
             <option value="all">{t('pages.alerts.allSeverities')}</option>
             <option value="high">{t('status.critical')}</option>
@@ -539,7 +539,7 @@ export function Alerts() {
           <select
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           >
             <option value="all">{t('pages.alerts.allLocations')}</option>
             {alertLocations.map(loc => (
@@ -549,7 +549,7 @@ export function Alerts() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           >
             {alertTypes.map(t => (
               <option key={t.value} value={t.value}>{t.label}</option>
@@ -558,7 +558,7 @@ export function Alerts() {
           {(severityFilter !== 'all' || locationFilter !== 'all' || typeFilter !== 'all') && (
             <button
               onClick={() => { setSeverityFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }}
-              className="px-3 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-900 underline"
+              className="px-3 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] underline"
             >
               {t('pages.alerts.clearFilters')}
             </button>
@@ -618,7 +618,7 @@ export function Alerts() {
                         </div>
                         <button
                           onClick={() => handleDismiss(alertItem.id)}
-                          className="text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
+                          className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
                         >
                           <X className="h-5 w-5" />
                         </button>
@@ -654,7 +654,7 @@ export function Alerts() {
                     {alertItem.navigate_to && (
                       <button
                         onClick={() => navigate(alertItem.navigate_to!)}
-                        className="px-4 py-2 min-h-[44px] bg-[#d4af37] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-[#A08C5A] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
                       >
                         <span>{t('pages.alerts.goTo')} {alertItem.navigate_to === '/documents' ? t('cards.documents') :
                           alertItem.navigate_to === '/temp-logs' ? t('cards.temperatures') :
@@ -678,7 +678,7 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-[#1E2D4D]/5 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#1E2D4D]/10 transition-colors flex items-center space-x-1"
                       >
                         <span>{t('pages.alerts.snooze')}</span>
                         <ChevronDown className="h-4 w-4" />
@@ -687,19 +687,19 @@ export function Alerts() {
                         <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-[#1E2D4D]/10 py-2 z-20 min-w-[150px]">
                           <button
                             onClick={() => handleSnooze(alertItem.id, 7)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
                           >
                             {t('pages.alerts.snooze7Days')}
                           </button>
                           <button
                             onClick={() => handleSnooze(alertItem.id, 30)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
                           >
                             {t('pages.alerts.snooze30Days')}
                           </button>
                           <button
                             onClick={() => setShowCustomDatePicker(true)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50 border-t"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] border-t"
                           >
                             {t('pages.alerts.customDate')}
                           </button>
@@ -726,7 +726,7 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-[#1E2D4D]/5 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#1E2D4D]/10 transition-colors flex items-center space-x-1"
                       >
                         <span>{t('pages.alerts.reassign')}</span>
                         <ChevronDown className="h-4 w-4" />
@@ -737,7 +737,7 @@ export function Alerts() {
                             <button
                               key={member.id}
                               onClick={() => handleReassign(alertItem.id, member.name)}
-                              className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
+                              className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
                             >
                               <div className="font-medium">{member.name}</div>
                               <div className="text-xs text-[#1E2D4D]/50">{member.role}</div>
@@ -765,7 +765,7 @@ export function Alerts() {
       {/* Resolve Modal */}
       {showResolveModal && selectedAlert && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full">
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full modal-content-enter">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">{t('pages.alerts.resolveAlert')}</h3>
             <p className="text-[#1E2D4D]/70 mb-6">{selectedAlert.title}</p>
 
@@ -777,7 +777,7 @@ export function Alerts() {
                 <select
                   value={resolutionType}
                   onChange={(e) => setResolutionType(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">{t('pages.alerts.selectResolutionType')}</option>
                   <option value="fixed">{t('pages.alerts.fixed')}</option>
@@ -804,7 +804,7 @@ export function Alerts() {
                   onChange={(e) => { setResolutionNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('resolutionNotes'); return n; }); }}
                   rows={4}
                   placeholder={t('pages.alerts.actionTakenPlaceholder')}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
                 {aiFields.has('resolutionNotes') && <AIGeneratedIndicator />}
               </div>
@@ -817,7 +817,7 @@ export function Alerts() {
                   type="text"
                   value="Current User"
                   disabled
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg bg-[#FAF7F0]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#FAF7F0]"
                 />
               </div>
 
@@ -825,7 +825,7 @@ export function Alerts() {
                 <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   {t('pages.alerts.supportingDocument')}
                 </label>
-                <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-4 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-4 text-center hover:border-[#1E2D4D]/20 transition-colors cursor-pointer">
                   <Upload className="h-8 w-8 text-[#1E2D4D]/30 mx-auto mb-2" />
                   <p className="text-sm text-[#1E2D4D]/70">{t('pages.alerts.clickToUpload')}</p>
                   <p className="text-xs text-[#1E2D4D]/50 mt-1">{t('pages.alerts.fileTypes')}</p>
@@ -840,7 +840,7 @@ export function Alerts() {
                   type="text"
                   value={format(new Date(), 'MMM d, yyyy')}
                   disabled
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg bg-[#FAF7F0]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#FAF7F0]"
                 />
               </div>
             </div>
@@ -848,7 +848,7 @@ export function Alerts() {
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowResolveModal(false)}
-                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
               >
                 {t('common.cancel')}
               </button>

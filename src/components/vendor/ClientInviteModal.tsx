@@ -494,7 +494,7 @@ export function ClientInviteModal({
                 cursor: 'pointer',
                 padding: '12px 16px',
                 borderRadius: '10px',
-                border: k2cReferral ? '1px solid #d4af37' : '1px solid #D1D9E6',
+                border: k2cReferral ? '1px solid #A08C5A' : '1px solid #D1D9E6',
                 background: k2cReferral ? '#fffdf5' : '#ffffff',
               }}
             >
@@ -502,7 +502,7 @@ export function ClientInviteModal({
                 type="checkbox"
                 checked={k2cReferral}
                 onChange={(e) => setK2cReferral(e.target.checked)}
-                style={{ accentColor: '#d4af37', width: '18px', height: '18px' }}
+                style={{ accentColor: '#A08C5A', width: '18px', height: '18px' }}
               />
               <div>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: '#0B1628' }}>

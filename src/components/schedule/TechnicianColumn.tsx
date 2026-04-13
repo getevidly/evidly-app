@@ -59,7 +59,7 @@ export function TechnicianColumn({ technician, jobs }: TechnicianColumnProps) {
               className="w-1.5 h-1.5 rounded-full"
               style={{ background: STATUS_DOT[technician.status] || STATUS_DOT.available }}
             />
-            <span className="text-[9px] capitalize" style={{ color: TEXT_TERTIARY }}>
+            <span className="text-[11px] capitalize" style={{ color: TEXT_TERTIARY }}>
               {technician.status}
             </span>
           </div>

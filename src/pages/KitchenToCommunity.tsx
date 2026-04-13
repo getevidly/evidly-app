@@ -91,7 +91,7 @@ export default function KitchenToCommunity() {
               { number: '3', label: 'months doubled' },
               { number: '$0', label: 'extra cost' },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-lg p-4" style={{ backgroundColor: WARM_BG }}>
+              <div key={stat.label} className="rounded-xl p-4" style={{ backgroundColor: WARM_BG }}>
                 <div className="text-2xl font-bold tracking-tight" style={{ color: GOLD }}>{stat.number}</div>
                 <div className="text-xs text-[#1E2D4D]/70 mt-1">{stat.label}</div>
               </div>
@@ -126,7 +126,7 @@ export default function KitchenToCommunity() {
               'Meal estimates based on No Kid Hungry\'s published figure: $1 ≈ 10 meals.',
               'Quarterly impact reports published with donation totals and partner confirmation.',
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-4 rounded-lg" style={{ backgroundColor: '#FAFAFA' }}>
+              <div key={i} className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: '#FAFAFA' }}>
                 <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
                   {i + 1}
                 </div>
@@ -159,7 +159,7 @@ export default function KitchenToCommunity() {
               className="px-6 py-3 rounded-xl font-semibold transition-colors border-2 flex items-center justify-center gap-2"
               style={{ color: '#1E2D4D', borderColor: '#1E2D4D' }}
             >
-              See the platform in action <ArrowRight className="w-4 h-4" />
+              See EvidLY in action <ArrowRight className="w-4 h-4" />
             </button>
           </div>
           <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month after 30-day free trial. Cancel anytime.</p>
@@ -167,7 +167,7 @@ export default function KitchenToCommunity() {
       </section>
 
       {/* Footer note */}
-      <div className="py-6 px-4 text-center border-t border-gray-100">
+      <div className="py-6 px-4 text-center border-t border-[#1E2D4D]/5">
         <p className="text-sm text-[#1E2D4D]/50 flex items-center justify-center gap-2">
           <Mail className="w-4 h-4" />
           Questions about Kitchen to Community?{' '}

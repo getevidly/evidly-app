@@ -62,7 +62,7 @@ export function AutoDocumentRequest() {
       {/* Header with automation status */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className={`w-3 h-3 rounded-full ${settings.autoRequestEnabled ? 'bg-green-500 animate-live-dot' : 'bg-gray-300'}`} />
+          <div className={`w-3 h-3 rounded-full ${settings.autoRequestEnabled ? 'bg-green-500 animate-live-dot' : 'bg-[#1E2D4D]/15'}`} />
           <div>
             <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Auto Document Requests</h3>
             <p className="text-sm text-[#1E2D4D]/50">
@@ -74,7 +74,7 @@ export function AutoDocumentRequest() {
         </div>
         <button
           onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#1E2D4D]/80 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50"
+          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#1E2D4D]/80 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0]"
         >
           <Settings className="w-4 h-4" />
           Settings
@@ -122,8 +122,8 @@ export function AutoDocumentRequest() {
           </thead>
           <tbody className="divide-y divide-[#1E2D4D]/5">
             {requests.map((req) => (
-              <tr key={req.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 text-sm font-medium text-gray-900">{req.vendorName}</td>
+              <tr key={req.id} className="hover:bg-[#FAF7F0] transition-colors">
+                <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{req.vendorName}</td>
                 <td className="px-4 py-3 text-sm text-[#1E2D4D]/70">{req.documentType}</td>
                 <td className="px-4 py-3 text-center">{getStatusBadge(req.status)}</td>
                 <td className="px-4 py-3 text-sm text-[#1E2D4D]/50 text-center">{req.sentDate}</td>
@@ -137,7 +137,7 @@ export function AutoDocumentRequest() {
                       <Link2 className="w-4 h-4" />
                     </button>
                   ) : (
-                    <span className="text-gray-300">—</span>
+                    <span className="text-[#1E2D4D]/30">—</span>
                   )}
                 </td>
               </tr>
@@ -148,11 +148,11 @@ export function AutoDocumentRequest() {
 
       {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 modal-backdrop-enter">
           <div className="bg-white rounded-xl p-6 max-w-lg w-full border border-[#1E2D4D]/10 animate-slide-up">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Auto-Request Settings</h3>
-              <button onClick={() => setShowSettings(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
+              <button onClick={() => setShowSettings(false)} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full">
                 <X className="w-5 h-5 text-[#1E2D4D]/30" />
               </button>
             </div>
@@ -160,12 +160,12 @@ export function AutoDocumentRequest() {
             <div className="space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">Enable Auto-Requests</p>
+                  <p className="font-medium text-[#1E2D4D]">Enable Auto-Requests</p>
                   <p className="text-sm text-[#1E2D4D]/50">Automatically request docs before expiration</p>
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, autoRequestEnabled: !settings.autoRequestEnabled })}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${settings.autoRequestEnabled ? 'bg-[#1E2D4D]' : 'bg-gray-300'}`}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${settings.autoRequestEnabled ? 'bg-[#1E2D4D]' : 'bg-[#1E2D4D]/15'}`}
                 >
                   <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${settings.autoRequestEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -176,7 +176,7 @@ export function AutoDocumentRequest() {
                 <select
                   value={settings.daysBefore}
                   onChange={(e) => setSettings({ ...settings, daysBefore: parseInt(e.target.value) })}
-                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm"
                 >
                   <option value={14}>14 days</option>
                   <option value={30}>30 days</option>
@@ -211,7 +211,7 @@ export function AutoDocumentRequest() {
                 <select
                   value={settings.notifyVia}
                   onChange={(e) => setSettings({ ...settings, notifyVia: e.target.value as any })}
-                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm"
                 >
                   <option value="email">Email only</option>
                   <option value="sms">SMS only</option>
@@ -224,7 +224,7 @@ export function AutoDocumentRequest() {
                 <select
                   value={settings.linkExpiresDays}
                   onChange={(e) => setSettings({ ...settings, linkExpiresDays: parseInt(e.target.value) })}
-                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                  className="w-full p-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm"
                 >
                   <option value={7}>7 days</option>
                   <option value={14}>14 days</option>
@@ -234,7 +234,7 @@ export function AutoDocumentRequest() {
             </div>
 
             <div className="flex gap-2 justify-end mt-6 pt-4 border-t border-[#1E2D4D]/10">
-              <button onClick={() => setShowSettings(false)} className="px-4 py-2 text-[#1E2D4D]/80 hover:bg-gray-100 rounded-lg text-sm">
+              <button onClick={() => setShowSettings(false)} className="px-4 py-2 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 rounded-lg text-sm">
                 Cancel
               </button>
               <button onClick={() => setShowSettings(false)} className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium">

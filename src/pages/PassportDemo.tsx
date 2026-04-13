@@ -50,7 +50,7 @@ export default function PassportDemo() {
           <EvidlyIcon size={40} />
           <div>
             <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">EvidLY Compliance Passport</h1>
-            <p className="text-sm text-gray-300">Live Compliance Status</p>
+            <p className="text-sm text-[#1E2D4D]/30">Live Compliance Status</p>
           </div>
         </div>
       </header>
@@ -143,7 +143,7 @@ export default function PassportDemo() {
             {recentActivity.map((item, index) => (
               <div
                 key={index}
-                className={`flex items-start gap-4 p-4 rounded-lg ${
+                className={`flex items-start gap-4 p-4 rounded-xl ${
                   item.status === 'success'
                     ? 'bg-green-50 border border-green-200'
                     : 'bg-yellow-50 border border-yellow-200'
@@ -155,7 +155,7 @@ export default function PassportDemo() {
                   }`}
                   strokeWidth={2}
                 />
-                <span className="text-gray-800 font-medium">{item.text}</span>
+                <span className="text-[#1E2D4D]/90 font-medium">{item.text}</span>
               </div>
             ))}
           </div>

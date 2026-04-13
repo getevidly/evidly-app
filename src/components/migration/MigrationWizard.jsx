@@ -5,7 +5,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
 
@@ -318,7 +318,7 @@ export function MigrationWizard() {
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-[#1E2D4D]/10 overflow-hidden">
       {/* Step indicator */}
-      <div className="px-6 py-5 border-b border-gray-100" style={{ background: '#FAFBFC' }}>
+      <div className="px-6 py-5 border-b border-[#1E2D4D]/5" style={{ background: '#FAFBFC' }}>
         <div className="flex items-center justify-between max-w-lg mx-auto">
           {STEPS.map((s, i) => (
             <div key={s.number} className="flex items-center">
@@ -373,7 +373,7 @@ export function MigrationWizard() {
                 <button
                   key={p.id}
                   onClick={() => setPlatform(p.id)}
-                  className="flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-all"
+                  className="flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all"
                   style={{
                     borderColor: platform === p.id ? PRIMARY : '#E5E7EB',
                     background: platform === p.id ? `${PRIMARY}08` : '#FFFFFF',
@@ -387,14 +387,14 @@ export function MigrationWizard() {
                       <div className="w-2.5 h-2.5 rounded-full" style={{ background: PRIMARY }} />
                     )}
                   </div>
-                  <span className="font-medium text-gray-900">{p.label}</span>
+                  <span className="font-medium text-[#1E2D4D]">{p.label}</span>
                 </button>
               ))}
             </div>
 
             {platform && (
               <div
-                className="rounded-lg p-4 border"
+                className="rounded-xl p-4 border"
                 style={{ background: `${GOLD}08`, borderColor: `${GOLD}30` }}
               >
                 <div className="flex gap-3">
@@ -458,7 +458,7 @@ export function MigrationWizard() {
             )}
 
             {parseError && (
-              <div className="mt-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
                 {parseError}
               </div>
             )}
@@ -508,7 +508,7 @@ export function MigrationWizard() {
                         <select
                           value={columnMapping[field] || ''}
                           onChange={(e) => updateColumnMapping(field, e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
+                          className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                           style={{ '--tw-ring-color': PRIMARY }}
                         >
                           <option value="">-- Select column --</option>
@@ -529,7 +529,7 @@ export function MigrationWizard() {
                     <h4 className="text-sm font-bold mb-3" style={{ color: NAVY }}>
                       Preview (first 5 rows)
                     </h4>
-                    <div className="overflow-x-auto rounded-lg border border-[#1E2D4D]/10">
+                    <div className="overflow-x-auto rounded-xl border border-[#1E2D4D]/10">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="bg-[#FAF7F0]">
@@ -559,7 +559,7 @@ export function MigrationWizard() {
                 {/* Summary */}
                 {summary.total > 0 && (
                   <div
-                    className="rounded-lg p-4 border"
+                    className="rounded-xl p-4 border"
                     style={{ background: `${PRIMARY}06`, borderColor: `${PRIMARY}20` }}
                   >
                     <p className="text-sm" style={{ color: NAVY }}>
@@ -590,7 +590,7 @@ export function MigrationWizard() {
               {equipmentMap.map((eq, i) => (
                 <div
                   key={eq.csvName}
-                  className="rounded-lg border border-[#1E2D4D]/10 p-4 hover:border-gray-300 transition-colors"
+                  className="rounded-xl border border-[#1E2D4D]/10 p-4 hover:border-[#1E2D4D]/15 transition-colors"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* CSV name */}
@@ -598,7 +598,7 @@ export function MigrationWizard() {
                       <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                         CSV Equipment Name
                       </label>
-                      <p className="font-medium text-gray-900">{eq.csvName}</p>
+                      <p className="font-medium text-[#1E2D4D]">{eq.csvName}</p>
                     </div>
 
                     {/* Action */}
@@ -609,7 +609,7 @@ export function MigrationWizard() {
                       <select
                         value={eq.action}
                         onChange={(e) => updateEquipment(i, { action: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
+                        className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                         style={{ '--tw-ring-color': PRIMARY }}
                       >
                         <option value="create_new">Create New Equipment</option>
@@ -633,7 +633,7 @@ export function MigrationWizard() {
                             maxTemp: thresholds.max,
                           });
                         }}
-                        className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
+                        className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                         style={{ '--tw-ring-color': PRIMARY }}
                       >
                         <option value="cooler">Cooler</option>
@@ -654,7 +654,7 @@ export function MigrationWizard() {
                           type="number"
                           value={eq.minTemp}
                           onChange={(e) => updateEquipment(i, { minTemp: Number(e.target.value) })}
-                          className="w-20 px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
+                          className="w-20 px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
                           style={{ '--tw-ring-color': PRIMARY }}
                         />
                       </div>
@@ -666,7 +666,7 @@ export function MigrationWizard() {
                           type="number"
                           value={eq.maxTemp}
                           onChange={(e) => updateEquipment(i, { maxTemp: Number(e.target.value) })}
-                          className="w-20 px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
+                          className="w-20 px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
                           style={{ '--tw-ring-color': PRIMARY }}
                         />
                       </div>
@@ -696,25 +696,25 @@ export function MigrationWizard() {
 
             {/* Summary cards */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+              <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
                 <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Total Records</p>
                 <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {summary.total.toLocaleString()}
                 </p>
               </div>
-              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+              <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
                 <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Date Range</p>
                 <p className="text-sm font-bold" style={{ color: NAVY }}>
                   {summary.dateRange}
                 </p>
               </div>
-              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+              <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
                 <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Equipment</p>
                 <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {equipmentMap.filter((e) => e.action !== 'skip').length}
                 </p>
               </div>
-              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+              <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
                 <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Est. HACCP Records</p>
                 <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {Math.ceil(summary.total * 0.12).toLocaleString()}
@@ -727,7 +727,7 @@ export function MigrationWizard() {
               <h4 className="text-sm font-bold mb-3" style={{ color: NAVY }}>
                 Equipment to Import
               </h4>
-              <div className="rounded-lg border border-[#1E2D4D]/10 overflow-hidden">
+              <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-[#FAF7F0]">
@@ -739,13 +739,13 @@ export function MigrationWizard() {
                   </thead>
                   <tbody>
                     {equipmentMap.map((eq) => (
-                      <tr key={eq.csvName} className="border-t border-gray-100">
-                        <td className="px-4 py-2 font-medium text-gray-900">{eq.csvName}</td>
+                      <tr key={eq.csvName} className="border-t border-[#1E2D4D]/5">
+                        <td className="px-4 py-2 font-medium text-[#1E2D4D]">{eq.csvName}</td>
                         <td className="px-4 py-2 text-[#1E2D4D]/70 capitalize">{eq.type.replace('_', ' ')}</td>
                         <td className="px-4 py-2 text-[#1E2D4D]/70">{eq.minTemp}\u00B0F \u2013 {eq.maxTemp}\u00B0F</td>
                         <td className="px-4 py-2">
                           {eq.action === 'skip' ? (
-                            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#1E2D4D]/50 font-medium">
+                            <span className="text-xs px-2 py-1 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50 font-medium">
                               Skipped
                             </span>
                           ) : (
@@ -766,7 +766,7 @@ export function MigrationWizard() {
 
             {/* Warning banner */}
             <div
-              className="rounded-lg p-4 border mb-6"
+              className="rounded-xl p-4 border mb-6"
               style={{ background: '#FFFBEB', borderColor: '#FDE68A' }}
             >
               <div className="flex gap-3">
@@ -873,12 +873,12 @@ export function MigrationWizard() {
 
       {/* Navigation footer */}
       {!importComplete && (
-        <div className="px-6 md:px-8 py-4 border-t border-gray-100 flex items-center justify-between" style={{ background: '#FAFBFC' }}>
+        <div className="px-6 md:px-8 py-4 border-t border-[#1E2D4D]/5 flex items-center justify-between" style={{ background: '#FAFBFC' }}>
           <div>
             {step > 1 && (
               <button
                 onClick={goBack}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:bg-[#1E2D4D]/5 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />

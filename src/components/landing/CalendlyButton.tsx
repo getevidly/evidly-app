@@ -33,7 +33,7 @@ export default function CalendlyButton({
   const baseClasses = 'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base transition-all hover:-translate-y-0.5 hover:shadow-lg min-h-[44px] cursor-pointer border-none';
 
   const variantStyles: Record<string, React.CSSProperties> = {
-    gold: { backgroundColor: '#d4af37', color: '#1E2D4D' },
+    gold: { backgroundColor: '#A08C5A', color: '#1E2D4D' },
     primary: { backgroundColor: '#1E2D4D', color: '#fff' },
     secondary: { backgroundColor: '#fff', color: '#1E2D4D', border: '2px solid #1E2D4D' },
   };

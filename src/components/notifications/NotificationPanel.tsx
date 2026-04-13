@@ -83,7 +83,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         }}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#faf8f3' }}>
+        <div className="px-4 py-3 border-b border-[#1E2D4D]/5 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#faf8f3' }}>
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold text-[#1E2D4D]">Notifications</h3>
             {unreadCount > 0 && (
@@ -104,7 +104,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
             )}
             <button
               onClick={onClose}
-              className="p-2.5 -m-1 rounded-lg hover:bg-gray-200 transition-colors"
+              className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/10 transition-colors"
               aria-label="Close"
             >
               <X className="h-4 w-4 text-[#1E2D4D]/50" />
@@ -123,7 +123,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         <div className="flex-1 overflow-y-auto">
           {filtered.length === 0 ? (
             <div className="text-center py-16 px-6">
-              <Bell className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <Bell className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
               <p className="text-sm font-medium text-[#1E2D4D]/50">No notifications</p>
               <p className="text-xs text-[#1E2D4D]/30 mt-1">
                 Alerts will appear here as your team uses EvidLY.
@@ -144,7 +144,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 border-t border-gray-100 bg-[#FAF7F0] flex-shrink-0">
+        <div className="px-4 py-2.5 border-t border-[#1E2D4D]/5 bg-[#FAF7F0] flex-shrink-0">
           <button
             onClick={() => handleNavigate('/settings/notifications')}
             className="w-full text-center text-xs font-semibold hover:underline"

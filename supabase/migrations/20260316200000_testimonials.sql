@@ -41,9 +41,9 @@ CREATE POLICY testimonials_select_admin ON public.testimonials
   FOR SELECT TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'platform_admin'
+      SELECT 1 FROM public.user_profiles
+      WHERE user_profiles.id = auth.uid()
+      AND user_profiles.role = 'platform_admin'
     )
   );
 
@@ -52,9 +52,9 @@ CREATE POLICY testimonials_update_admin ON public.testimonials
   FOR UPDATE TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'platform_admin'
+      SELECT 1 FROM public.user_profiles
+      WHERE user_profiles.id = auth.uid()
+      AND user_profiles.role = 'platform_admin'
     )
   );
 
@@ -63,8 +63,8 @@ CREATE POLICY testimonials_delete_admin ON public.testimonials
   FOR DELETE TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'platform_admin'
+      SELECT 1 FROM public.user_profiles
+      WHERE user_profiles.id = auth.uid()
+      AND user_profiles.role = 'platform_admin'
     )
   );

@@ -51,7 +51,7 @@ export function InspectionForecastCard({ forecast }) {
       </div>
 
       {/* Forecast Window */}
-      <div className="bg-[#F4F6FA] rounded-lg p-4 mb-5">
+      <div className="bg-[#F4F6FA] rounded-xl p-4 mb-5">
         <p className="text-xs text-[#6B7F96] uppercase tracking-wider font-medium mb-2">Estimated Inspection Window</p>
         <div className="flex items-center gap-3">
           <div className="text-center">

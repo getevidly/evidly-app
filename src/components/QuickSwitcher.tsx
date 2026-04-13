@@ -156,7 +156,7 @@ export function QuickSwitcher() {
             ref={inputRef}
             type="text"
             placeholder="Search locations, pages..."
-            className="flex-1 text-sm text-gray-900 placeholder-[#1E2D4D]/30 outline-none bg-transparent"
+            className="flex-1 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 outline-none bg-transparent"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -186,12 +186,12 @@ export function QuickSwitcher() {
                     key={item.id}
                     onClick={() => handleSelect(item)}
                     className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors ${
-                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
                     }`}
                   >
                     <MapPin className="h-4 w-4 mr-3 flex-shrink-0" style={{ color: '#1E2D4D' }} />
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 truncate">{item.label}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D] truncate">{item.label}</div>
                       {item.sublabel && <div className="text-xs text-[#1E2D4D]/30 truncate">{item.sublabel}</div>}
                     </div>
                     {scoreGrade && (
@@ -223,11 +223,11 @@ export function QuickSwitcher() {
                     key={item.id}
                     onClick={() => handleSelect(item)}
                     className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors ${
-                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
                     }`}
                   >
                     <Icon className="h-4 w-4 mr-3 flex-shrink-0 text-[#1E2D4D]/30" />
-                    <span className="text-sm font-medium text-gray-900 truncate">{item.label}</span>
+                    <span className="text-sm font-medium text-[#1E2D4D] truncate">{item.label}</span>
                   </div>
                 );
               })}
@@ -236,12 +236,12 @@ export function QuickSwitcher() {
         </div>
 
         {/* Footer hints */}
-        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-[#FAF7F0] border-t border-gray-100 text-xs text-[#1E2D4D]/30">
+        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-[#FAF7F0] border-t border-[#1E2D4D]/5 text-xs text-[#1E2D4D]/30">
           <div className="flex items-center gap-3">
-            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[9px]">&uarr;</kbd> <kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[9px]">&darr;</kbd> Navigate</span>
-            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[9px]">Enter</kbd> Select</span>
+            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">&uarr;</kbd> <kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">&darr;</kbd> Navigate</span>
+            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">Enter</kbd> Select</span>
           </div>
-          <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[9px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[9px]">K</kbd> Toggle</span>
+          <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">K</kbd> Toggle</span>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ export function DocumentScanAnimation({ onComplete }: DocumentScanAnimationProps
       <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full mx-4 animate-slide-up">
         <div className="mb-6">
           <div className="relative bg-[#1E2D4D]/5 rounded-lg p-8 h-64 flex items-center justify-center overflow-hidden">
-            <FileText className="w-24 h-24 text-gray-300" />
+            <FileText className="w-24 h-24 text-[#1E2D4D]/30" />
             {isScanning && (
               <div
                 className="absolute left-0 right-0 h-1 bg-blue-500 opacity-70"
@@ -79,7 +79,7 @@ export function DocumentScanAnimation({ onComplete }: DocumentScanAnimationProps
             {fields.map((field, index) => (
               <div
                 key={index}
-                className={`flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200 transition-all duration-300 ${
+                className={`flex items-center justify-between p-3 bg-blue-50 rounded-xl border border-blue-200 transition-all duration-300 ${
                   visibleFields.includes(index)
                     ? 'opacity-100 translate-x-0'
                     : 'opacity-0 -translate-x-4'

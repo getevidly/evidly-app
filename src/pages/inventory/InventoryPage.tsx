@@ -154,7 +154,7 @@ export function InventoryPage() {
           placeholder="Search items..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         />
       </div>
@@ -218,7 +218,7 @@ export function InventoryPage() {
                   return (
                     <tr
                       key={item.id}
-                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="cursor-pointer hover:bg-[#FAF7F0] transition-colors"
                       style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                       onClick={() => navigate(`/inventory/${item.id}`)}
                     >

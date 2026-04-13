@@ -165,7 +165,7 @@ export default function EventLog() {
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : events.length === 0 ? (
-          <EmptyState icon="📋" title="No events logged yet" subtitle="Events will appear here as the platform runs." />
+          <EmptyState icon="📋" title="No events logged yet" subtitle="Events will appear here as EvidLY runs." />
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>

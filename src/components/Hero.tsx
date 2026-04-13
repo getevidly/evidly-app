@@ -37,7 +37,7 @@ export default function Hero() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-5 py-3.5 border-2 border-[var(--color-gray-200)] rounded-xl text-base transition-colors focus:outline-none focus:border-[var(--color-gold)]"
+                className="flex-1 px-5 py-3.5 border-2 border-[#1E2D4D]/10 rounded-xl text-base transition-colors focus:outline-none focus:border-[var(--color-gold)]"
               />
               <button
                 type="submit"

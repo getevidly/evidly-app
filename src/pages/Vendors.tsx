@@ -269,7 +269,7 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
             className={`px-3 py-1.5 text-sm rounded-full font-medium transition-colors ${
               filter === f.id
                 ? 'bg-[#1E2D4D] text-white'
-                : 'bg-gray-100 text-[#1E2D4D]/70 hover:bg-gray-200'
+                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
             }`}
           >
             {f.label}
@@ -295,7 +295,7 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
       {/* Empty state */}
       {!loading && filtered.length === 0 && (
         <div className="py-12 text-center bg-white rounded-xl border border-[#1E2D4D]/10">
-          <Send className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <Send className="h-8 w-8 text-[#1E2D4D]/30 mx-auto mb-3" />
           <p className="text-[#1E2D4D]/50 font-medium">No service requests yet</p>
           <p className="text-sm text-[#1E2D4D]/30 mt-1">Use "New Request" to request service from a vendor.</p>
         </div>
@@ -668,7 +668,7 @@ export function Vendors() {
                   <span className="text-xs text-[#1E2D4D]/70">Auto-Request</span>
                   <button
                     onClick={() => toggleAutoRequest(selectedVendor.id)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${isAutoEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${isAutoEnabled ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`}
                   >
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${isAutoEnabled ? 'translate-x-4' : 'translate-x-1'}`} />
                   </button>
@@ -680,7 +680,7 @@ export function Vendors() {
 
           {/* Expiring document alerts */}
           {expiringDocs.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -706,8 +706,8 @@ export function Vendors() {
                 onClick={() => setDetailTab(tab)}
                 className={`px-5 py-3 font-medium whitespace-nowrap text-sm ${
                   detailTab === tab
-                    ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                    : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                    ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                    : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
                 }`}
               >
                 {tab === 'upload-link' ? 'Secure Upload Link' : tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -753,15 +753,15 @@ export function Vendors() {
                       current: 'bg-emerald-50 text-emerald-700',
                       due_soon: 'bg-amber-100 text-amber-800',
                       overdue: 'bg-red-50 text-red-700',
-                      not_tracked: 'bg-gray-100 text-[#1E2D4D]/70',
+                      not_tracked: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70',
                     };
 
                     return (
-                      <div key={loc.locationId} className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                      <div key={loc.locationId} className="p-3 rounded-xl border border-[#1E2D4D]/10">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <MapPin className="h-4 w-4 text-[#1E2D4D]/30" />
-                            <span className="font-medium text-gray-900 text-sm">{loc.locationName}</span>
+                            <span className="font-medium text-[#1E2D4D] text-sm">{loc.locationName}</span>
                           </div>
                           <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${statusTwClass[svcStatus] || statusTwClass.not_tracked}`}>
                             {STATUS_LABELS[svcStatus] ?? svcStatus}
@@ -815,13 +815,13 @@ export function Vendors() {
                     </div>
                     <div className="space-y-2">
                       {linkedEquipment.map((eq, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer" onClick={() => navigate('/equipment')}>
+                        <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] cursor-pointer" onClick={() => navigate('/equipment')}>
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                               <Wrench className="h-4 w-4 text-[#1E2D4D]" />
                             </div>
                             <div>
-                              <div className="font-medium text-sm text-gray-900">{eq.name}</div>
+                              <div className="font-medium text-sm text-[#1E2D4D]">{eq.name}</div>
                               <div className="text-xs text-[#1E2D4D]/50">{eq.location} · {eq.serviceType}</div>
                             </div>
                           </div>
@@ -873,7 +873,7 @@ export function Vendors() {
                         <Wrench className="h-4 w-4" style={{ color: '#A08C5A' }} />
                         <span className="text-sm text-[#1E2D4D]/50 font-medium">Quarter</span>
                       </div>
-                      <p className="text-xl sm:text-3xl font-bold tracking-tight text-center text-gray-900">{selectedPerf.servicesThisQuarter}</p>
+                      <p className="text-xl sm:text-3xl font-bold tracking-tight text-center text-[#1E2D4D]">{selectedPerf.servicesThisQuarter}</p>
                     </div>
                   </div>
                 </div>
@@ -912,7 +912,7 @@ export function Vendors() {
                   </button>
                   <button
                     onClick={() => setShowPhotoUpload(!showPhotoUpload)}
-                    className="flex items-center px-4 py-2 min-h-[44px] bg-gray-200 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-300 text-sm"
+                    className="flex items-center px-4 py-2 min-h-[44px] bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/15 text-sm"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload / Photo
@@ -921,7 +921,7 @@ export function Vendors() {
               </div>
 
               {showPhotoUpload && (
-                <div className="mb-4 p-4 bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10">
+                <div className="mb-4 p-4 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10">
                   <PhotoEvidence
                     photos={vendorPhotos}
                     onChange={setVendorPhotos}
@@ -948,11 +948,11 @@ export function Vendors() {
 
               <div className="space-y-3">
                 {selectedDocs.map((doc, idx) => (
-                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-[#1E2D4D]/10 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-[#1E2D4D]/10 rounded-xl hover:shadow-md transition-shadow">
                     <div className="flex items-start space-x-3 flex-1">
                       <FileText className="h-5 w-5 text-[#1E2D4D]/30 mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{doc.name}</p>
+                        <p className="font-medium text-[#1E2D4D] text-sm">{doc.name}</p>
                         <div className="flex flex-wrap gap-2 mt-1 items-center">
                           {getStatusBadge(doc.status)}
                           {doc.expirationDate && <span className="text-xs text-[#1E2D4D]/50">Exp: {format(new Date(doc.expirationDate), 'MMM d, yyyy')}</span>}
@@ -1019,7 +1019,7 @@ export function Vendors() {
                     <span className="text-sm text-[#1E2D4D]/70">{isAutoEnabled ? 'Enabled' : 'Disabled'}</span>
                     <button
                       onClick={() => toggleAutoRequest(selectedVendor.id)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isAutoEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isAutoEnabled ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`}
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isAutoEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
                     </button>
@@ -1028,20 +1028,20 @@ export function Vendors() {
 
                 {isAutoEnabled && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="border border-[#1E2D4D]/10 rounded-lg p-4">
+                    <div className="border border-[#1E2D4D]/10 rounded-xl p-4">
                       <div className="flex items-center space-x-2 mb-2">
                         <Clock className="h-5 w-5 text-[#1E2D4D]" />
-                        <h3 className="font-medium text-gray-900">Expiring Document Alerts</h3>
+                        <h3 className="font-medium text-[#1E2D4D]">Expiring Document Alerts</h3>
                       </div>
                       <p className="text-sm text-[#1E2D4D]/70">Auto-sends secure upload link when documents are within <strong>30 days</strong> of expiring</p>
                       <p className="text-xs text-green-600 mt-2 flex items-center">
                         <CheckCircle className="h-3 w-3 mr-1" /> Active — monitoring {selectedDocs.filter((d) => d.expirationDate).length} documents
                       </p>
                     </div>
-                    <div className="border border-[#1E2D4D]/10 rounded-lg p-4">
+                    <div className="border border-[#1E2D4D]/10 rounded-xl p-4">
                       <div className="flex items-center space-x-2 mb-2">
                         <Calendar className="h-5 w-5 text-[#1E2D4D]" />
-                        <h3 className="font-medium text-gray-900">Post-Service Document Request</h3>
+                        <h3 className="font-medium text-[#1E2D4D]">Post-Service Document Request</h3>
                       </div>
                       <p className="text-sm text-[#1E2D4D]/70">Auto-requests service documentation <strong>2 business days</strong> after service date with escalating reminders</p>
                       <p className="text-xs text-green-600 mt-2 flex items-center">
@@ -1084,7 +1084,7 @@ export function Vendors() {
                           step.status === 'vendor_responded' ? 'bg-[#1E2D4D]' :
                           step.status === 'escalated' ? 'bg-red-500' :
                           step.status === 'failed' ? 'bg-red-400' :
-                          'bg-gray-300';
+                          'bg-[#1E2D4D]/15';
                         const lineColor = step.status !== 'pending' ? 'bg-blue-300' : 'bg-[#1E2D4D]/8';
                         const badgeCls =
                           step.status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
@@ -1092,7 +1092,7 @@ export function Vendors() {
                           step.status === 'vendor_responded' ? 'bg-[#eef4f8] text-[#1E2D4D]' :
                           step.status === 'escalated' ? 'bg-red-50 text-red-700' :
                           step.status === 'failed' ? 'bg-red-100 text-red-600' :
-                          'bg-gray-100 text-[#1E2D4D]/70';
+                          'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
                         const badgeLabel =
                           step.status === 'completed' ? 'Confirmed' :
                           step.status === 'sent' ? 'Sent' :
@@ -1124,7 +1124,7 @@ export function Vendors() {
                                   <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
                                     step.vendorAction === 'completed' ? 'bg-emerald-50 text-emerald-700' :
                                     step.vendorAction === 'rescheduled' ? 'bg-blue-50 text-blue-700' :
-                                    'bg-gray-100 text-[#1E2D4D]/80'
+                                    'bg-[#1E2D4D]/5 text-[#1E2D4D]/80'
                                   }`}>
                                     {step.vendorAction === 'completed' ? 'Marked Complete' : step.vendorAction === 'rescheduled' ? 'Rescheduled' : 'Canceled'}
                                   </span>
@@ -1139,7 +1139,7 @@ export function Vendors() {
                     </div>
 
                     {/* Send Update Link CTA */}
-                    <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="mt-4 pt-4 border-t border-[#1E2D4D]/5">
                       <button
                         onClick={() => { /* Production: send secure service update link to vendor */ }}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
@@ -1152,7 +1152,7 @@ export function Vendors() {
 
                     {/* Verification status */}
                     {selectedVerification && (
-                      <div className={`mt-4 p-3 rounded-lg border ${
+                      <div className={`mt-4 p-3 rounded-xl border ${
                         selectedVerification.verificationStatus === 'confirmed' ? 'bg-green-50 border-green-200' :
                         selectedVerification.verificationStatus === 'disputed' ? 'bg-red-50 border-red-200' :
                         'bg-[#FAF7F0] border-[#1E2D4D]/10'
@@ -1181,7 +1181,7 @@ export function Vendors() {
 
               {!hasWorkflow && (
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 text-center text-[#1E2D4D]/50">
-                  <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                  <Calendar className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
                   <p className="font-medium">No active service workflows</p>
                   <p className="text-sm mt-1">Workflows will appear here when services are scheduled and reminders are sent.</p>
                 </div>
@@ -1198,7 +1198,7 @@ export function Vendors() {
                   Each vendor gets a unique, secure link to upload documents without needing an EvidLY account.
                 </p>
 
-                <div className="bg-[#FAF7F0] rounded-lg p-4 mb-4">
+                <div className="bg-[#FAF7F0] rounded-xl p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center space-x-2 min-w-0">
                       <Link2 className="h-5 w-5 text-[#1E2D4D] flex-shrink-0" />
@@ -1239,7 +1239,7 @@ export function Vendors() {
                   </button>
                   <button
                     onClick={() => showToast('Upload link regenerated.')}
-                    className="flex items-center px-4 py-2 bg-gray-200 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-300 text-sm"
+                    className="flex items-center px-4 py-2 bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/15 text-sm"
                   >
                     <Calendar className="h-4 w-4 mr-2" />
                     Regenerate Link
@@ -1255,11 +1255,11 @@ export function Vendors() {
                     <EvidlyIcon size={40} className="mx-auto mb-3" />
                     <h4 className="text-xl font-bold mb-1">
                       <span style={{ color: '#1E2D4D' }}>Evid</span>
-                      <span style={{ color: '#d4af37' }}>LY</span>
-                      <span className="text-gray-900"> Secure Upload</span>
+                      <span style={{ color: '#A08C5A' }}>LY</span>
+                      <span className="text-[#1E2D4D]"> Secure Upload</span>
                     </h4>
                     <p className="text-sm text-[#1E2D4D]/50 mb-4">{companyName} has requested documents from {selectedVendor.companyName}</p>
-                    <div className="bg-[#FAF7F0] rounded-lg p-4 text-left mb-4">
+                    <div className="bg-[#FAF7F0] rounded-xl p-4 text-left mb-4">
                       <p className="text-xs font-medium text-[#1E2D4D]/70 mb-2">Requested Documents:</p>
                       {selectedDocs.filter((d) => d.status === 'missing' || d.status === 'expired').map((doc, i) => (
                         <div key={i} className="flex items-center space-x-2 text-sm text-[#1E2D4D]/80 mb-1">
@@ -1271,7 +1271,7 @@ export function Vendors() {
                         <p className="text-sm text-green-600">All documents are current!</p>
                       )}
                     </div>
-                    <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-6 mb-4">
+                    <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-6 mb-4">
                       <Upload className="h-8 w-8 mx-auto text-[#1E2D4D]/30 mb-2" />
                       <p className="text-sm text-[#1E2D4D]/50">Drag & drop files or click to browse</p>
                       <p className="text-xs text-[#1E2D4D]/30 mt-1">PDF, JPG, PNG, DOC — Max 25MB</p>
@@ -1293,19 +1293,19 @@ export function Vendors() {
               <div className="space-y-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80">Company Name</label>
-                  <p className="mt-1 text-gray-900">{selectedVendor.companyName}</p>
+                  <p className="mt-1 text-[#1E2D4D]">{selectedVendor.companyName}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80">Contact Person</label>
-                  <p className="mt-1 text-gray-900">{selectedVendor.contactName}</p>
+                  <p className="mt-1 text-[#1E2D4D]">{selectedVendor.contactName}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80">Email</label>
-                  <p className="mt-1 text-gray-900">{selectedVendor.email}</p>
+                  <p className="mt-1 text-[#1E2D4D]">{selectedVendor.email}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80">Phone</label>
-                  <p className="mt-1 text-gray-900">{selectedVendor.phone}</p>
+                  <p className="mt-1 text-[#1E2D4D]">{selectedVendor.phone}</p>
                 </div>
               </div>
               <div className="pt-4 border-t border-[#1E2D4D]/10">
@@ -1323,7 +1323,7 @@ export function Vendors() {
 
         {/* Toast */}
         {toastMessage && (
-          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-xl shadow-sm flex items-center gap-2">
             <CheckCircle className="h-4 w-4" />
             <span className="font-medium text-sm">{toastMessage}</span>
           </div>
@@ -1353,14 +1353,14 @@ export function Vendors() {
         {vendorSignals.length > 0 && (
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-3">
-              <span style={{ fontSize: 16 }}>📡</span>
+              <span className="text-base">📡</span>
               <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>Vendor Intelligence</span>
             </div>
             <div className="space-y-3">
               {vendorSignals.map(vs => (
                 <div key={vs.id} className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-semibold text-gray-800 truncate">{vs.title}</div>
+                    <div className="text-sm font-semibold text-[#1E2D4D]/90 truncate">{vs.title}</div>
                     {vs.summary && (
                       <div className="text-xs text-[#1E2D4D]/50 mt-0.5 line-clamp-2">{vs.summary}</div>
                     )}
@@ -1384,7 +1384,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('list')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'list' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                activeTab === 'list' ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               Vendor List
@@ -1392,7 +1392,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('services')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'services' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                activeTab === 'services' ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               Services
@@ -1400,7 +1400,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('scorecard')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'scorecard' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                activeTab === 'scorecard' ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               Performance Scorecard
@@ -1408,14 +1408,14 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('requests')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'requests' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                activeTab === 'requests' ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               Requests
             </button>
             <button
               onClick={() => navigate('/vendors/review')}
-              className="px-6 py-3 font-medium whitespace-nowrap transition-colors text-[#1E2D4D]/50 hover:text-gray-700 flex items-center gap-1.5"
+              className="px-6 py-3 font-medium whitespace-nowrap transition-colors text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 flex items-center gap-1.5"
             >
               Document Review
               <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-[#C49A2B]/10 text-[#C49A2B]">NEW</span>
@@ -1458,7 +1458,7 @@ export function Vendors() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 >
                   <option value="all">All Statuses</option>
                   <option value="current">Current</option>
@@ -1468,7 +1468,7 @@ export function Vendors() {
                 <select
                   value={serviceFilter}
                   onChange={(e) => setServiceFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 >
                   <option value="all">All Service Types</option>
                   {SERVICE_TYPES.map((st) => (
@@ -1478,7 +1478,7 @@ export function Vendors() {
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 >
                   {showAllLocationsOption() && <option value="all">All Locations</option>}
                   {vendorAccessibleLocs.map((loc) => (
@@ -1512,7 +1512,7 @@ export function Vendors() {
                   <h3 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wide">{group.category.name}</h3>
                   <span className="text-xs text-[#1E2D4D]/30">({group.vendors.length})</span>
                   {(group.category.id === 'kitchen_exhaust' || group.category.id === 'fire_suppression') && (
-                    <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fdf8e8', color: '#d4af37', border: '1px solid #e8dfc0' }}>PSE-Relevant</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fdf8e8', color: '#A08C5A', border: '1px solid #e8dfc0' }}>PSE-Relevant</span>
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1538,7 +1538,7 @@ export function Vendors() {
                         <span className="text-xs text-[#1E2D4D]/50">{vendor.serviceType}</span>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-300 flex-shrink-0" />
+                    <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30 flex-shrink-0" />
                   </div>
 
                   {/* Status + Document Badges */}
@@ -1586,7 +1586,7 @@ export function Vendors() {
                     <p className="text-xs text-[#1E2D4D]/50 mb-1">{locationFilter !== 'all' ? 'Location:' : `Locations (${vendor.locations.length}):`}</p>
                     <div className="flex flex-wrap gap-1">
                       {displayLocations.map((loc) => (
-                        <span key={loc.locationId} className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-[#1E2D4D]/80 rounded">
+                        <span key={loc.locationId} className="inline-flex items-center px-2 py-0.5 text-xs bg-[#1E2D4D]/5 text-[#1E2D4D]/80 rounded">
                           <MapPin className="h-3 w-3 mr-0.5 text-[#1E2D4D]/30" />
                           {loc.locationName}
                           {locationFilter !== 'all' && (
@@ -1609,7 +1609,7 @@ export function Vendors() {
                   </div>
 
                   {/* Quick Action Buttons */}
-                  <div className="flex gap-2 pt-3 border-t border-gray-100">
+                  <div className="flex gap-2 pt-3 border-t border-[#1E2D4D]/5">
                     <button
                       onClick={(e) => { e.stopPropagation(); showToast('Schedule service for ' + vendor.companyName); }}
                       className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1E2D4D] rounded transition-colors"
@@ -1665,7 +1665,7 @@ export function Vendors() {
             {/* Production empty state — no locations */}
             {!loading && !isDemoMode && consolidatedVendors.length === 0 && (
               <div className="text-center py-12 text-[var(--text-secondary)]">
-                <MapPin className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                <MapPin className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
                 <p className="font-medium text-lg">Add a location to configure required vendor services.</p>
                 <p className="text-sm mt-1 mb-5">Once you add a location, EvidLY will identify required vendor services for your compliance needs.</p>
                 <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
@@ -1688,7 +1688,7 @@ export function Vendors() {
                   {missingRequiredCategories.map((cat) => (
                     <div key={cat.id} className="flex items-center justify-between bg-white rounded-xl border border-amber-200 p-3">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{cat.name}</p>
+                        <p className="text-sm font-medium text-[#1E2D4D]">{cat.name}</p>
                         <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-700 font-semibold">Required</span>
                       </div>
                       <button
@@ -1738,23 +1738,23 @@ export function Vendors() {
 
         {activeTab === 'scorecard' && (
           <>
-            <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
+            <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
               <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2">Vendor Performance Overview</h3>
-              <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
+              <p className="text-[#1E2D4D]/20 mb-4">Track reliability, service quality, and document compliance</p>
               {isDemoMode && (
               <div className="flex items-center space-x-6 flex-wrap gap-3">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-6 w-6 text-green-400" />
                   <div>
                     <div className="text-2xl font-bold tracking-tight text-center">{ENHANCED_VENDOR_PERFORMANCE.filter((v) => v.reliabilityScore >= 90).length}/{ENHANCED_VENDOR_PERFORMANCE.length}</div>
-                    <div className="text-sm text-gray-300">Fully Compliant</div>
+                    <div className="text-sm text-[#1E2D4D]/30">Fully Compliant</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Clock className="h-6 w-6 text-blue-300" />
                   <div>
                     <div className="text-2xl font-bold tracking-tight text-center">{Math.round(ENHANCED_VENDOR_PERFORMANCE.reduce((s, v) => s + v.responseTimeAvgHours, 0) / ENHANCED_VENDOR_PERFORMANCE.length)}h</div>
-                    <div className="text-sm text-gray-300">Avg Response</div>
+                    <div className="text-sm text-[#1E2D4D]/30">Avg Response</div>
                   </div>
                 </div>
               </div>
@@ -1830,7 +1830,7 @@ export function Vendors() {
                           <Wrench className="h-3.5 w-3.5" style={{ color: '#A08C5A' }} />
                           <span className="text-xs text-[#1E2D4D]/50 font-medium">This Quarter</span>
                         </div>
-                        <p className="text-xl font-bold text-center text-gray-900">{perf.servicesThisQuarter}</p>
+                        <p className="text-xl font-bold text-center text-[#1E2D4D]">{perf.servicesThisQuarter}</p>
                       </div>
                     </div>
 
@@ -1905,7 +1905,7 @@ export function Vendors() {
 
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-xl shadow-sm flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium text-sm">{toastMessage}</span>
         </div>

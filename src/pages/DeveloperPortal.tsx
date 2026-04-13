@@ -64,8 +64,8 @@ const WEBHOOK_EVENTS = [
 function CodeBlock({ code, language }: { code: string; language: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className="relative bg-gray-900 rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
+    <div className="relative bg-[#1E2D4D]/90 rounded-lg overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#1E2D4D]/70">
         <span className="text-xs text-[#1E2D4D]/30 font-mono uppercase">{language}</span>
         <button
           onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
@@ -89,7 +89,7 @@ function GettingStartedSection() {
         <p className="text-sm text-[#1E2D4D]/70">Build integrations that connect compliance data with your restaurant tech stack. The EvidLY API provides programmatic access to compliance scores, temperature logs, checklists, documents, and more.</p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
         <div className="flex items-start gap-2">
           <Zap className="h-4 w-4 text-blue-600 mt-0.5" />
           <div>
@@ -138,13 +138,13 @@ function GettingStartedSection() {
       <div>
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Base URL</h3>
         <div className="flex items-center gap-3">
-          <div className="bg-[#FAF7F0] rounded-lg px-4 py-2">
+          <div className="bg-[#FAF7F0] rounded-xl px-4 py-2">
             <code className="text-sm font-mono text-[#1E2D4D]/80">https://api.evidly.com/v1</code>
           </div>
           <span className="text-xs text-[#1E2D4D]/30">(Production)</span>
         </div>
         <div className="flex items-center gap-3 mt-2">
-          <div className="bg-[#FAF7F0] rounded-lg px-4 py-2">
+          <div className="bg-[#FAF7F0] rounded-xl px-4 py-2">
             <code className="text-sm font-mono text-[#1E2D4D]/80">https://sandbox.evidly.com/v1</code>
           </div>
           <span className="text-xs text-[#1E2D4D]/30">(Sandbox)</span>
@@ -246,10 +246,10 @@ function ApiReferenceSection() {
           const mc = methodColors[ep.method];
           const isExpanded = expandedIdx === i;
           return (
-            <div key={i} className="border-b border-gray-100 last:border-b-0">
+            <div key={i} className="border-b border-[#1E2D4D]/5 last:border-b-0">
               <button
                 onClick={() => setExpandedIdx(isExpanded ? null : i)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#FAF7F0] transition-colors text-left"
               >
                 <span className="text-xs font-bold px-2 py-0.5 rounded w-14 text-center" style={{ backgroundColor: mc.bg, color: mc.text }}>
                   {ep.method}
@@ -300,7 +300,7 @@ function verifyWebhook(payload, signature, secret) {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Available Events ({WEBHOOK_EVENTS.length})</h3>
         <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
           {WEBHOOK_EVENTS.map(we => (
-            <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-gray-50 last:border-b-0 flex-wrap">
+            <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-[#1E2D4D]/3 last:border-b-0 flex-wrap">
               <code className="text-xs font-mono bg-[#FAF7F0] px-2 py-0.5 rounded text-[#1E2D4D]/80 break-all sm:whitespace-nowrap">{we.event}</code>
               <span className="text-xs text-[#1E2D4D]/50">{we.desc}</span>
             </div>
@@ -368,7 +368,7 @@ function SandboxSection() {
               <div className="text-xs text-[#1E2D4D]/50 mb-1">Test API Key</div>
               <div className="bg-[#FAF7F0] rounded px-3 py-2 flex items-center justify-between">
                 <code className="text-xs font-mono text-[#1E2D4D]/80">evd_sandbox_sk_test_••••••••</code>
-                <button onClick={() => toast.info('Demo: Key copied')} className="text-[#1E2D4D]/30 hover:text-gray-600"><Copy className="h-3 w-3" /></button>
+                <button onClick={() => toast.info('Demo: Key copied')} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"><Copy className="h-3 w-3" /></button>
               </div>
             </div>
           </div>
@@ -412,7 +412,7 @@ function SdksSection() {
                 <span className="text-lg">{sdk.icon}</span>
                 <span className="text-sm font-semibold text-[#1E2D4D]">{sdk.lang}</span>
               </div>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sdk.status === 'stable' ? 'bg-green-50 text-green-700' : sdk.status === 'beta' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sdk.status === 'stable' ? 'bg-green-50 text-green-700' : sdk.status === 'beta' ? 'bg-yellow-50 text-yellow-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
                 {sdk.status}
               </span>
             </div>
@@ -469,8 +469,8 @@ function RateLimitsSection() {
               { plan: 'Enterprise', rpm: '1,000', rpd: 'Unlimited', wh: 'Unlimited', burst: '200 req/sec' },
               { plan: 'Sandbox', rpm: '120', rpd: '50,000', wh: '10', burst: '20 req/sec' },
             ].map(r => (
-              <tr key={r.plan} className="border-t border-gray-100">
-                <td className="px-4 py-3 font-medium text-gray-900">{r.plan}</td>
+              <tr key={r.plan} className="border-t border-[#1E2D4D]/5">
+                <td className="px-4 py-3 font-medium text-[#1E2D4D]">{r.plan}</td>
                 <td className="px-4 py-3 text-center text-[#1E2D4D]/70">{r.rpm}</td>
                 <td className="px-4 py-3 text-center text-[#1E2D4D]/70">{r.rpd}</td>
                 <td className="px-4 py-3 text-center text-[#1E2D4D]/70 hidden sm:table-cell">{r.wh}</td>
@@ -490,7 +490,7 @@ X-RateLimit-Reset: 1707580800
 Retry-After: 60`} />
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
         <div className="text-xs text-yellow-800">
           <strong>429 Too Many Requests:</strong> When rate limited, implement exponential backoff. The <code className="font-mono bg-yellow-100 px-1">Retry-After</code> header indicates seconds until the limit resets.
         </div>
@@ -531,7 +531,7 @@ function PricingSection() {
             highlight: false,
           },
         ].map(tier => (
-          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#d4af37]' : 'bg-white border border-[#1E2D4D]/10'}`}>
+          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#A08C5A]' : 'bg-white border border-[#1E2D4D]/10'}`}>
             <div className="text-sm font-semibold mb-1">{tier.name}</div>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-2xl font-bold tracking-tight">{tier.price}</span>
@@ -540,14 +540,14 @@ function PricingSection() {
             <ul className="space-y-2 mt-4">
               {tier.features.map(f => (
                 <li key={f} className="flex items-start gap-2 text-xs">
-                  <Check className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${tier.highlight ? 'text-[#d4af37]' : 'text-green-500'}`} />
+                  <Check className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${tier.highlight ? 'text-[#A08C5A]' : 'text-green-500'}`} />
                   <span className={tier.highlight ? 'text-white/90' : 'text-[#1E2D4D]/70'}>{f}</span>
                 </li>
               ))}
             </ul>
             <button
               onClick={() => toast.info(`Demo: ${tier.name} plan signup preview`)}
-              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#d4af37] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-gray-100'}`}
+              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#A08C5A] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'}`}
             >
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
             </button>
@@ -586,7 +586,7 @@ export function DeveloperPortal() {
         </button>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[#1E2D4D] rounded-lg">
-            <Code2 className="h-5 w-5 text-[#d4af37]" />
+            <Code2 className="h-5 w-5 text-[#A08C5A]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Developer Portal</h1>
@@ -607,7 +607,7 @@ export function DeveloperPortal() {
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
                   activeSection === sec.id
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'text-[#1E2D4D]/70 hover:bg-gray-50'
+                    : 'text-[#1E2D4D]/70 hover:bg-[#FAF7F0]'
                 }`}
               >
                 <sec.icon className="h-4 w-4" />
@@ -622,7 +622,7 @@ export function DeveloperPortal() {
           <select
             value={activeSection}
             onChange={e => setActiveSection(e.target.value as Section)}
-            className="w-full border border-[#1E2D4D]/10 rounded-lg px-3 py-2 text-sm min-h-[44px]"
+            className="w-full border border-[#1E2D4D]/10 rounded-xl px-3 py-2 text-sm min-h-[44px]"
           >
             {SECTIONS.map(sec => <option key={sec.id} value={sec.id}>{sec.label}</option>)}
           </select>

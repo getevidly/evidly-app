@@ -50,12 +50,12 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl border" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Edit Employee</h3>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
         </div>
 
         {/* Body */}
@@ -65,7 +65,7 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
             <div className="w-16 h-16 rounded-full flex items-center justify-center text-lg font-bold" style={{ backgroundColor: '#EEF1F7', color: NAVY }}>
               {employee.firstName[0]}{employee.lastName[0]}
             </div>
-            <button onClick={() => alert('Photo upload available in the live app.')} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>
+            <button onClick={() => alert('Photo upload available in the live app.')} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>
               <Upload className="w-3.5 h-3.5" /> Upload Photo
             </button>
           </div>
@@ -73,36 +73,36 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>First Name</label>
-              <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+              <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Last Name</label>
-              <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+              <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Email</label>
-            <input value={employee.email} disabled className="w-full px-3 py-2 border rounded-lg text-sm bg-[#FAF7F0] cursor-not-allowed" style={{ borderColor: '#D1D9E6', color: '#6B7F96' }} />
+            <input value={employee.email} disabled className="w-full px-3 py-2 border rounded-xl text-sm bg-[#FAF7F0] cursor-not-allowed" style={{ borderColor: '#D1D9E6', color: '#6B7F96' }} />
             <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>Email cannot be changed after creation</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Phone</label>
-            <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+            <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
           </div>
 
           {isAdmin && (
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Role</label>
-                <select value={role} onChange={e => setRole(e.target.value as EmployeeRole)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+                <select value={role} onChange={e => setRole(e.target.value as EmployeeRole)} className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
                   {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Status</label>
-                <select value={status} onChange={e => setStatus(e.target.value as EmployeeStatus)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+                <select value={status} onChange={e => setStatus(e.target.value as EmployeeStatus)} className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
                   {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
@@ -114,7 +114,7 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Hourly Rate</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#6B7F96' }}>$</span>
-                <input type="number" value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} className="w-full pl-7 pr-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+                <input type="number" value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} className="w-full pl-7 pr-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
               </div>
             </div>
           )}
@@ -123,7 +123,7 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
             <label className="block text-sm font-medium mb-2" style={{ color: '#0B1628' }}>Service Types</label>
             <div className="flex flex-wrap gap-2">
               {SERVICE_TYPES.map(s => (
-                <button key={s} onClick={() => toggleService(s)} className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors" style={{ borderColor: serviceTypes.includes(s) ? NAVY : '#D1D9E6', color: serviceTypes.includes(s) ? '#FFFFFF' : '#3D5068', backgroundColor: serviceTypes.includes(s) ? NAVY : '#FFFFFF' }}>
+                <button key={s} onClick={() => toggleService(s)} className="px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors" style={{ borderColor: serviceTypes.includes(s) ? NAVY : '#D1D9E6', color: serviceTypes.includes(s) ? '#FFFFFF' : '#3D5068', backgroundColor: serviceTypes.includes(s) ? NAVY : '#FFFFFF' }}>
                   {s}
                 </button>
               ))}
@@ -133,7 +133,7 @@ export function EmployeeFormModal({ employee, onClose, onSave, isAdmin }: Employ
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: '#D1D9E6' }}>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>Cancel</button>
           <button onClick={handleSave} className="flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-lg text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
             <Save className="w-4 h-4" /> Save Changes
           </button>

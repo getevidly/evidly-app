@@ -204,7 +204,7 @@ export default function DemoLauncher() {
         <div className="space-y-3">
 
           {/* Flow 1: Jurisdiction Reveal */}
-          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
             <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#EEF4F8' }}>
               <Globe size={18} style={{ color: NAVY }} />
             </div>
@@ -226,7 +226,7 @@ export default function DemoLauncher() {
           </div>
 
           {/* Flow 2: Live Notification */}
-          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
             <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#FEF2F2' }}>
               <Bell size={18} style={{ color: '#DC2626' }} />
             </div>
@@ -249,7 +249,7 @@ export default function DemoLauncher() {
               </button>
               <Link
                 to="/insights/intelligence"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-gray-100"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-[#1E2D4D]/5"
                 style={{ color: NAVY, border: '1px solid #E5E7EB' }}
               >
                 View Feed
@@ -258,7 +258,7 @@ export default function DemoLauncher() {
           </div>
 
           {/* Flow 3: Compliance Record */}
-          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
             <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#F0FDF4' }}>
               <FileText size={18} style={{ color: '#166534' }} />
             </div>
@@ -273,7 +273,7 @@ export default function DemoLauncher() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/documents"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-gray-100"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-[#1E2D4D]/5"
                 style={{ color: NAVY, border: '1px solid #E5E7EB' }}
               >
                 Documents
@@ -300,7 +300,7 @@ export default function DemoLauncher() {
             <Link
               key={l.path}
               to={l.path}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-gray-100"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
               style={{ color: NAVY, border: '1px solid #E5E7EB' }}
             >
               {l.label}
@@ -335,7 +335,7 @@ export default function DemoLauncher() {
                 value={form.prospectName}
                 onChange={e => setForm(f => ({ ...f, prospectName: e.target.value }))}
                 placeholder="Jane Smith"
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                className="w-full border rounded-xl px-3 py-2 text-sm"
               />
             </div>
             <div>
@@ -344,7 +344,7 @@ export default function DemoLauncher() {
                 value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
                 placeholder="Aramark Yosemite"
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                className="w-full border rounded-xl px-3 py-2 text-sm"
               />
             </div>
           </div>
@@ -355,7 +355,7 @@ export default function DemoLauncher() {
               <select
                 value={form.industry}
                 onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                className="w-full border rounded-xl px-3 py-2 text-sm"
               >
                 <option value="">Select industry...</option>
                 {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
@@ -368,7 +368,7 @@ export default function DemoLauncher() {
                 value={form.locationCount}
                 onChange={e => setForm(f => ({ ...f, locationCount: e.target.value }))}
                 placeholder="7"
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                className="w-full border rounded-xl px-3 py-2 text-sm"
               />
             </div>
           </div>
@@ -378,7 +378,7 @@ export default function DemoLauncher() {
             <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">
               Counties {form.counties.length > 0 && <span className="text-[#A08C5A] ml-1">({form.counties.length} selected)</span>}
             </label>
-            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-lg bg-[#FAF7F0]">
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-xl bg-[#FAF7F0]">
               {CA_COUNTIES.map(county => (
                 <button
                   key={county}
@@ -387,7 +387,7 @@ export default function DemoLauncher() {
                   className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                     form.counties.includes(county)
                       ? 'bg-[#1E2D4D] text-white'
-                      : 'bg-white border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-gray-400'
+                      : 'bg-white border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-[#1E2D4D]/20'
                   }`}
                 >
                   {county}
@@ -404,7 +404,7 @@ export default function DemoLauncher() {
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Key pain points, what they want to see, deal size..."
               rows={2}
-              className="w-full border rounded-lg px-3 py-2 text-sm resize-none"
+              className="w-full border rounded-xl px-3 py-2 text-sm resize-none"
             />
           </div>
 
@@ -437,7 +437,7 @@ export default function DemoLauncher() {
         ) : (
           <div className="space-y-2">
             {sessions.map(s => (
-              <div key={s.id} className="border rounded-lg p-3 text-sm flex items-center justify-between">
+              <div key={s.id} className="border rounded-xl p-3 text-sm flex items-center justify-between">
                 <div>
                   <p className="font-medium text-[#1E2D4D]">{s.prospect_name} — {s.company}</p>
                   <p className="text-xs text-[#1E2D4D]/50">

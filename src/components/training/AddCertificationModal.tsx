@@ -29,7 +29,7 @@ const CERT_TYPES = [
   { value: 'facility_safety_other', label: 'Other Facility Safety' },
 ];
 
-const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] bg-white';
+const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white';
 const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
 interface Props {
@@ -145,7 +145,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Award size={20} color={NAVY} />
@@ -153,7 +153,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
               {existingCert ? 'Edit Certification' : 'Add Certification'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close">
+          <button onClick={onClose} className="p-1 hover:bg-[#1E2D4D]/5 rounded" aria-label="Close">
             <X size={18} className="text-[#1E2D4D]/30" />
           </button>
         </div>
@@ -278,7 +278,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+            className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
           >
             Cancel
           </button>

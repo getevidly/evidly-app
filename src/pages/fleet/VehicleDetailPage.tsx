@@ -185,7 +185,7 @@ export function VehicleDetailPage() {
                 <div key={p.id} className="rounded-xl p-4 border" style={{ background: CARD_BG, borderColor: CARD_BORDER, boxShadow: CARD_SHADOW }}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold capitalize" style={{ color: NAVY }}>{p.policyType.replace('_', ' ')}</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
                       {p.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>

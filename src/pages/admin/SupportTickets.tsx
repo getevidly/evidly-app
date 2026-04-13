@@ -952,7 +952,7 @@ function TicketDrawer({
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         {reply.reply_type === 'internal_note' && (
-                          <span style={{ fontSize: 12 }}>&#128274;</span>
+                          <span className="text-xs">&#128274;</span>
                         )}
                         <span style={{ fontSize: 11, fontWeight: 700, color: NAVY }}>
                           {reply.author_name || reply.author_email}

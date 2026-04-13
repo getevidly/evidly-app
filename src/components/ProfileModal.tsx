@@ -93,10 +93,10 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full">
+      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full modal-content-enter">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">My Profile</h2>
-          <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-gray-600" aria-label="Close">
+          <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" aria-label="Close">
             <X className="h-6 w-6" />
           </button>
         </div>
@@ -112,7 +112,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             />
           </div>
 
@@ -125,7 +125,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               type="email"
               value={profileEmail}
               disabled
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg bg-gray-100 text-[#1E2D4D]/70"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#1E2D4D]/5 text-[#1E2D4D]/70"
             />
             <p className="text-xs text-[#1E2D4D]/50 mt-1">Email cannot be changed</p>
           </div>
@@ -141,7 +141,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9()\-\s+]/g, ''))}
               inputMode="tel"
               placeholder="(555) 123-4567"
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             />
           </div>
 
@@ -163,12 +163,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className="w-full px-4 py-2 pr-10 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest"
+                    className="w-full px-4 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPin(!showPin)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-gray-600"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
                     tabIndex={-1}
                   >
                     {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -186,14 +186,14 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest ${
+                    className={`w-full px-4 py-2 pr-10 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest ${
                       pinMismatch ? 'border-red-400' : 'border-[#1E2D4D]/15'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPin(!showConfirmPin)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-gray-600"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
                     tabIndex={-1}
                   >
                     {showConfirmPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -218,7 +218,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               Cancel
             </button>

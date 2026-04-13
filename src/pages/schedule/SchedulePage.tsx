@@ -86,7 +86,7 @@ export function SchedulePage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowUnassigned(!showUnassigned)}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors relative"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors relative"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               {showUnassigned ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
@@ -111,17 +111,17 @@ export function SchedulePage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           {/* Date navigation */}
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('prev')} className="p-1.5 rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER }}>
+            <button onClick={() => navigate('prev')} className="p-1.5 rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER }}>
               <ChevronLeft className="w-4 h-4" style={{ color: NAVY }} />
             </button>
             <button
               onClick={() => navigate('today')}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg border hover:bg-gray-50"
+              className="px-3 py-1.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Today
             </button>
-            <button onClick={() => navigate('next')} className="p-1.5 rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER }}>
+            <button onClick={() => navigate('next')} className="p-1.5 rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER }}>
               <ChevronRight className="w-4 h-4" style={{ color: NAVY }} />
             </button>
             <h2 className="text-base font-bold ml-2" style={{ color: NAVY }}>{dateLabel}</h2>
@@ -134,7 +134,7 @@ export function SchedulePage() {
               <select
                 value={techParam}
                 onChange={e => setParam('tech', e.target.value)}
-                className="px-2 py-1.5 text-sm rounded-lg border"
+                className="px-2 py-1.5 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               >
                 <option value="">All Technicians</option>
@@ -143,7 +143,7 @@ export function SchedulePage() {
             </div>
 
             {/* View toggle */}
-            <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+            <div className="flex rounded-xl border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
               {(['day', 'week', 'month'] as const).map(v => (
                 <button
                   key={v}

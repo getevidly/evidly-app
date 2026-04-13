@@ -107,14 +107,14 @@ export function EquipmentDetailPage() {
         <div className="flex items-center gap-2 relative">
           <button
             onClick={() => setShowEditModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             <Edit className="w-4 h-4" /> Edit
           </button>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
+            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             <MoreHorizontal className="w-4 h-4" />
@@ -122,16 +122,16 @@ export function EquipmentDetailPage() {
 
           {showMenu && (
             <div
-              className="absolute right-0 top-full mt-1 w-48 rounded-lg shadow-lg border py-1 z-10"
+              className="absolute right-0 top-full mt-1 w-48 rounded-xl shadow-lg border py-1 z-10"
               style={{ background: CARD_BG, borderColor: CARD_BORDER }}
             >
-              <button onClick={() => { setShowQRPrint(true); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: NAVY }}>
+              <button onClick={() => { setShowQRPrint(true); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: NAVY }}>
                 <QrCode className="w-4 h-4" /> Print QR Code
               </button>
-              <button onClick={() => { alert('Equipment deactivated (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: '#D97706' }}>
+              <button onClick={() => { alert('Equipment deactivated (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#D97706' }}>
                 <Power className="w-4 h-4" /> Deactivate
               </button>
-              <button onClick={() => { alert('Equipment deleted (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: '#DC2626' }}>
+              <button onClick={() => { alert('Equipment deleted (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#DC2626' }}>
                 <Trash2 className="w-4 h-4" /> Delete
               </button>
             </div>

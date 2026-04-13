@@ -147,7 +147,7 @@ function ScoreBar({ value, max = 100, color }: { value: number; max?: number; co
       <div className="flex-1 h-2.5 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
       </div>
-      <span className="text-sm font-semibold text-gray-800 w-8 text-right">{value}</span>
+      <span className="text-sm font-semibold text-[#1E2D4D]/90 w-8 text-right">{value}</span>
     </div>
   );
 }
@@ -170,7 +170,7 @@ function SeverityBadge({ severity }: { severity: string }) {
 
 function SectionHeader({ icon: Icon, title, number, children }: { icon: any; title: string; number: number; children?: React.ReactNode }) {
   return (
-    <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
+    <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5 flex items-center justify-between flex-wrap gap-2">
       <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
         <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: '#1E2D4D' }}>{number}</span>
         <Icon className="h-5 w-5" style={{ color: '#1E2D4D' }} />
@@ -200,16 +200,16 @@ function QuarterlyTrendChart({ data }: { data: typeof SEASONAL_DATA }) {
         <line key={i} x1={pad} x2={w - pad} y1={h - pad - f * (h - 2 * pad)} y2={h - pad - f * (h - 2 * pad)} stroke="#f1f5f9" strokeWidth={1} />
       ))}
       {data.map((d, i) => (
-        <text key={i} x={toX(i)} y={h - 10} textAnchor="middle" className="text-xs fill-gray-500" fontWeight={600}>{d.quarter}</text>
+        <text key={i} x={toX(i)} y={h - 10} textAnchor="middle" className="text-xs fill-[#1E2D4D]/60" fontWeight={600}>{d.quarter}</text>
       ))}
       {[min, (min + max) / 2, max].map((v, i) => (
-        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-[9px] fill-gray-400">{Math.round(v)}</text>
+        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-[11px] fill-[#1E2D4D]/40">{Math.round(v)}</text>
       ))}
       <path d={line} fill="none" stroke="#1E2D4D" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
       {data.map((d, i) => (
         <g key={i}>
           <circle cx={toX(i)} cy={toY(d.score)} r={5} fill="white" stroke="#1E2D4D" strokeWidth={2} />
-          <text x={toX(i)} y={toY(d.score) - 10} textAnchor="middle" className="text-xs fill-gray-800" fontWeight={700}>{d.score}</text>
+          <text x={toX(i)} y={toY(d.score) - 10} textAnchor="middle" className="text-xs fill-[#1E2D4D]/90" fontWeight={700}>{d.score}</text>
         </g>
       ))}
     </svg>
@@ -255,10 +255,10 @@ export function ComplianceIndex() {
                 <EvidlyIcon size={40} />
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight">EvidLY Compliance Index</h1>
-                  <p className="text-sm text-gray-200">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
+                  <p className="text-sm text-[#1E2D4D]/20">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-300 max-w-xl">
+              <p className="text-sm text-[#1E2D4D]/30 max-w-xl">
                 The definitive quarterly benchmark of commercial kitchen compliance across California.
                 Based on anonymized, aggregated data from {REPORT.totalLocations.toLocaleString()} locations
                 across {REPORT.counties} counties.
@@ -269,7 +269,7 @@ export function ComplianceIndex() {
               <button
                 onClick={() => guardAction('download', 'compliance reports', () => toast.info('Download PDF (Demo)'))}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
-                style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}
+                style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
               >
                 <Download className="h-4 w-4" /> Download PDF
               </button>
@@ -286,23 +286,23 @@ export function ComplianceIndex() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-xl sm:text-3xl font-bold tracking-tight">{REPORT.industryIndex}</div>
-              <div className="text-xs text-gray-300">Industry Index</div>
+              <div className="text-xs text-[#1E2D4D]/30">Industry Index</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.quarterChange}</div>
-              <div className="text-xs text-gray-300">vs Q{REPORT.quarter - 1 || 4} {REPORT.quarter === 1 ? REPORT.year - 1 : REPORT.year}</div>
+              <div className="text-xs text-[#1E2D4D]/30">vs Q{REPORT.quarter - 1 || 4} {REPORT.quarter === 1 ? REPORT.year - 1 : REPORT.year}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.yearChange}</div>
-              <div className="text-xs text-gray-300">vs Q{REPORT.quarter} {REPORT.year - 1}</div>
+              <div className="text-xs text-[#1E2D4D]/30">vs Q{REPORT.quarter} {REPORT.year - 1}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
-              <div className="text-xs text-gray-300">Kitchens Sampled</div>
+              <div className="text-xs text-[#1E2D4D]/30">Kitchens Sampled</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
-              <div className="text-xs text-gray-300">Counties Covered</div>
+              <div className="text-xs text-[#1E2D4D]/30">Counties Covered</div>
             </div>
           </div>
         </div>
@@ -363,8 +363,8 @@ export function ComplianceIndex() {
                 </div>
               </div>
             </div>
-            <div className="p-4 rounded-lg bg-[#FAF7F0] text-sm text-[#1E2D4D]/70">
-              <strong>Methodology:</strong> The overall industry readiness index is based on two compliance pillars
+            <div className="p-4 rounded-xl bg-[#FAF7F0] text-sm text-[#1E2D4D]/70">
+              <strong>Methodology:</strong> The overall industry readiness index is based on two compliance categorys
               — Food Safety and Facility Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
               locations on the EvidLY platform. All data is anonymized before aggregation.
             </div>
@@ -403,12 +403,12 @@ export function ComplianceIndex() {
                 <tbody className="divide-y divide-[#1E2D4D]/5">
                   {VERTICAL_SCORES.map((v) => (
                     <tr key={v.vertical}>
-                      <td className="py-3 text-sm font-medium text-gray-900">{v.vertical}</td>
+                      <td className="py-3 text-sm font-medium text-[#1E2D4D]">{v.vertical}</td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{v.score}</td>
                       <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.prev}</td>
                       <td className="py-3 text-center"><ChangeIndicator change={v.change} /></td>
                       <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.locations.toLocaleString()}</td>
-                      <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
+                      <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#A08C5A' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -446,14 +446,14 @@ export function ComplianceIndex() {
                 <tbody className="divide-y divide-[#1E2D4D]/5">
                   {COUNTY_SCORES.map((c) => (
                     <tr key={c.county}>
-                      <td className="py-2.5 text-sm text-gray-900 flex items-center gap-1.5">
+                      <td className="py-2.5 text-sm text-[#1E2D4D] flex items-center gap-1.5">
                         <MapPin className="h-3 w-3 text-[#1E2D4D]/30" />
                         {c.county} County
                       </td>
                       <td className="py-2.5 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{c.score}</td>
                       <td className="py-2.5 text-center"><ChangeIndicator change={c.change} /></td>
                       <td className="py-2.5 text-center text-xs text-[#1E2D4D]/50 hidden sm:table-cell">{c.locations}</td>
-                      <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
+                      <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#A08C5A' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -555,20 +555,20 @@ export function ComplianceIndex() {
               {TOP_VIOLATIONS.map((v) => (
                 <div
                   key={v.rank}
-                  className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden cursor-pointer hover:border-gray-300 transition-colors"
+                  className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden cursor-pointer hover:border-[#1E2D4D]/15 transition-colors"
                   onClick={() => setExpandedViolation(expandedViolation === v.rank ? null : v.rank)}
                 >
                   <div className="flex items-center gap-3 px-4 py-3">
                     <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#1E2D4D' }}>
                       {v.rank}
                     </span>
-                    <span className="flex-1 text-sm font-medium text-gray-900">{v.violation}</span>
+                    <span className="flex-1 text-sm font-medium text-[#1E2D4D]">{v.violation}</span>
                     <SeverityBadge severity={v.severity} />
                     <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{v.pct}%</span>
                     {expandedViolation === v.rank ? <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" /> : <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />}
                   </div>
                   {expandedViolation === v.rank && (
-                    <div className="px-4 pb-3 border-t border-gray-100 pt-2">
+                    <div className="px-4 pb-3 border-t border-[#1E2D4D]/5 pt-2">
                       <p className="text-xs text-[#1E2D4D]/70">{v.detail}</p>
                     </div>
                   )}
@@ -633,7 +633,7 @@ export function ComplianceIndex() {
                       className="h-full rounded-full"
                       style={{
                         width: `${reg.preparedness}%`,
-                        backgroundColor: reg.preparedness >= 60 ? '#22c55e' : reg.preparedness >= 40 ? '#d4af37' : '#ef4444',
+                        backgroundColor: reg.preparedness >= 60 ? '#22c55e' : reg.preparedness >= 40 ? '#A08C5A' : '#ef4444',
                       }}
                     />
                   </div>
@@ -664,7 +664,7 @@ export function ComplianceIndex() {
                 <tbody className="divide-y divide-[#1E2D4D]/5">
                   {PREDICTIONS.map((p) => (
                     <tr key={p.metric}>
-                      <td className="py-3 text-sm font-medium text-gray-900">{p.metric}</td>
+                      <td className="py-3 text-sm font-medium text-[#1E2D4D]">{p.metric}</td>
                       <td className="py-3 text-center text-sm text-[#1E2D4D]/70">{p.current}</td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{p.predicted}</td>
                       <td className="py-3 text-center">
@@ -678,7 +678,7 @@ export function ComplianceIndex() {
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 p-4 rounded-lg border border-amber-200 bg-amber-50">
+            <div className="mt-4 p-4 rounded-xl border border-amber-200 bg-amber-50">
               <div className="flex items-start gap-2">
                 <Info className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
                 <p className="text-xs text-amber-800">
@@ -692,9 +692,9 @@ export function ComplianceIndex() {
 
         {/* ── Blog Content Ideas ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-              <BookOpen className="h-5 w-5" style={{ color: '#d4af37' }} />
+              <BookOpen className="h-5 w-5" style={{ color: '#A08C5A' }} />
               Content Ideas from This Report
             </h2>
             <p className="text-xs text-[#1E2D4D]/70 mt-1">Auto-generated topics for blogs, press releases, and social campaigns</p>
@@ -702,7 +702,7 @@ export function ComplianceIndex() {
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {BLOG_IDEAS.map((idea, i) => (
-                <div key={i} className="p-3 rounded-lg border border-[#1E2D4D]/10 hover:border-gray-300 transition-colors">
+                <div key={i} className="p-3 rounded-xl border border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#eef4f8' }}>
                       <FileText className="h-3.5 w-3.5" style={{ color: '#1E2D4D' }} />
@@ -710,7 +710,7 @@ export function ComplianceIndex() {
                     <div>
                       <h3 className="text-sm font-semibold text-[#1E2D4D] leading-tight">{idea.title}</h3>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-[#1E2D4D]/50 font-medium">{idea.type}</span>
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#1E2D4D]/5 text-[#1E2D4D]/50 font-medium">{idea.type}</span>
                         <span className="text-xs text-[#1E2D4D]/30">{idea.targetAudience}</span>
                       </div>
                     </div>
@@ -723,7 +723,7 @@ export function ComplianceIndex() {
 
         {/* ── Data Integrity & Anonymization ── */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <EvidlyIcon size={20} />
               Data Integrity & Anonymization
@@ -776,22 +776,22 @@ export function ComplianceIndex() {
           <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
             Based on data from {REPORT.totalLocations.toLocaleString()}+ commercial kitchens
           </h3>
-          <p className="text-sm text-gray-300 max-w-lg mx-auto mb-4">
+          <p className="text-sm text-[#1E2D4D]/30 max-w-lg mx-auto mb-4">
             The EvidLY Compliance Index grows more accurate with every kitchen that joins.
             As our network expands, benchmarks become the industry standard.
           </p>
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+            <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalOrganizations}</div>
-              <div className="text-xs text-gray-300">Organizations</div>
+              <div className="text-xs text-[#1E2D4D]/30">Organizations</div>
             </div>
-            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+            <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
-              <div className="text-xs text-gray-300">Locations</div>
+              <div className="text-xs text-[#1E2D4D]/30">Locations</div>
             </div>
-            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+            <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
-              <div className="text-xs text-gray-300">Counties</div>
+              <div className="text-xs text-[#1E2D4D]/30">Counties</div>
             </div>
           </div>
 
@@ -799,7 +799,7 @@ export function ComplianceIndex() {
             <button
               onClick={() => guardAction('export', 'compliance reports', () => toast.success('Report link copied'))}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold"
-              style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}
+              style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
             >
               <Share2 className="h-4 w-4" /> Share This Report
             </button>

@@ -437,7 +437,7 @@ export function Documents() {
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}
-                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg shadow-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150"
+                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-xl shadow-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150"
               >
                 <Share2 className="h-5 w-5" />
                 <span>{t('pages.documents.shareSelected').replace('{{count}}', String(selectedDocs.length))}</span>
@@ -453,7 +453,7 @@ export function Documents() {
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border-2 border-[#1E2D4D] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border-2 border-[#1E2D4D] rounded-xl hover:bg-[#FAF7F0] shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
               <span className="hidden sm:inline">{t('pages.documents.takePhoto')}</span>
@@ -505,12 +505,12 @@ export function Documents() {
             </div>
             <div className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">{statusCounts.current}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-[#d4af37]" />
+              <Clock className="h-4 w-4 text-[#A08C5A]" />
               <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('status.expiringSoon')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#d4af37] text-center">{statusCounts.expiring}</div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{statusCounts.expiring}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #ef4444' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -568,8 +568,8 @@ export function Documents() {
             onClick={() => setActiveTab('documents')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'documents'
-                ? 'border-[#d4af37] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/70 hover:text-gray-900 hover:border-gray-300'
+                ? 'border-[#A08C5A] text-[#1E2D4D]'
+                : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
             }`}
           >
             {t('pages.documents.allDocuments')}
@@ -578,8 +578,8 @@ export function Documents() {
             onClick={() => setActiveTab('shared')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'shared'
-                ? 'border-[#d4af37] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/70 hover:text-gray-900 hover:border-gray-300'
+                ? 'border-[#A08C5A] text-[#1E2D4D]'
+                : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
             }`}
           >
             {t('pages.documents.shared')} ({sharedItems.length})
@@ -618,7 +618,7 @@ export function Documents() {
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                  selectedCategory === 'All' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+                  selectedCategory === 'All' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
                 }`}
               >
                 {t('pages.documents.all')} ({locationFilteredDocs.length})
@@ -630,7 +630,7 @@ export function Documents() {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                      selectedCategory === cat ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
+                      selectedCategory === cat ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
                     }`}
                   >
                     {categoryLabelMap[cat] || cat} {count > 0 ? `(${count})` : ''}
@@ -669,7 +669,7 @@ export function Documents() {
               ) : (
                 <div style={{ overflowX: 'auto' }}>
                   <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#FAF7F0]">
                       <tr>
                         <th className="px-4 py-3 text-left" style={{ width: '40px' }}>
                           <input
@@ -719,7 +719,7 @@ export function Documents() {
                         return (
                           <React.Fragment key={doc.id}>
                           <tr
-                            className={`${selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-gray-50'} ${hasAi ? 'cursor-pointer' : ''}`}
+                            className={`${selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-[#FAF7F0]'} ${hasAi ? 'cursor-pointer' : ''}`}
                             onClick={(e) => {
                               // Don't toggle if clicking checkbox, button, or select
                               const target = e.target as HTMLElement;
@@ -747,7 +747,7 @@ export function Documents() {
                                 )}
                                 <div>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-gray-900">{doc.title}</span>
+                                    <span className="text-sm font-medium text-[#1E2D4D]">{doc.title}</span>
                                     {doc.needs_attention && <NeedsAttentionBadge />}
                                     {doc.import_source && doc.import_source !== 'direct' && (
                                       <span
@@ -828,7 +828,7 @@ export function Documents() {
                               <div className="flex space-x-2">
                                 <button
                                   onClick={() => setEditingDocId(editingDocId === doc.id ? null : doc.id)}
-                                  style={{ color: editingDocId === doc.id ? '#d4af37' : '#6b7280' }}
+                                  style={{ color: editingDocId === doc.id ? '#A08C5A' : '#6b7280' }}
                                   onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1E2D4D'; }}
                                   onMouseLeave={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#6b7280'; }}
                                   title="Edit category"
@@ -866,7 +866,7 @@ export function Documents() {
                           {hasAi && isExpanded && doc.ai_analysis && (
                             <tr>
                               <td colSpan={9} className="p-0">
-                                <div className="bg-[#FAF7F0] border-t border-b border-gray-100">
+                                <div className="bg-[#FAF7F0] border-t border-b border-[#1E2D4D]/5">
                                   <AiAnalysisPanel
                                     analysis={doc.ai_analysis}
                                     isOpen={true}
@@ -904,7 +904,7 @@ export function Documents() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#FAF7F0]">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
                         {t('pages.documents.document')}
@@ -925,14 +925,14 @@ export function Documents() {
                   </thead>
                   <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                     {sharedItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50">
+                      <tr key={item.id} className="hover:bg-[#FAF7F0]">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <FileText className="h-5 w-5 text-[#1E2D4D]/30 mr-2" />
-                            <span className="text-sm font-medium text-gray-900">{item.document}</span>
+                            <span className="text-sm font-medium text-[#1E2D4D]">{item.document}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                           {item.recipient}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">

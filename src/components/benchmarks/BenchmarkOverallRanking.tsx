@@ -13,9 +13,9 @@ function PercentileColumn({ label, percentile, peerCount, avgScore, yourScore }:
 }) {
   const delta = yourScore - avgScore;
   return (
-    <div className="flex flex-col items-center p-4 rounded-xl border border-gray-100">
+    <div className="flex flex-col items-center p-4 rounded-xl border border-[#1E2D4D]/5">
       <p className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">{label}</p>
-      <div className="text-4xl font-black" style={{ color: '#d4af37' }}>{percentile}<span className="text-lg">th</span></div>
+      <div className="text-4xl font-black" style={{ color: '#A08C5A' }}>{percentile}<span className="text-lg">th</span></div>
       <p className="text-xs text-[#1E2D4D]/30 mt-1">Top {100 - percentile}%</p>
       <div className="mt-3 w-full h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
         <div className="h-full rounded-full" style={{ width: `${percentile}%`, backgroundColor: '#1E2D4D' }} />
@@ -26,7 +26,7 @@ function PercentileColumn({ label, percentile, peerCount, avgScore, yourScore }:
           {delta >= 0 ? '+' : ''}{delta}
         </span>
       </div>
-      <p className="text-xs text-gray-300 mt-1">{peerCount.toLocaleString()} peers</p>
+      <p className="text-xs text-[#1E2D4D]/30 mt-1">{peerCount.toLocaleString()} peers</p>
     </div>
   );
 }

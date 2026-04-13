@@ -55,7 +55,7 @@ CREATE POLICY "org_read_ca_history" ON corrective_action_history
   FOR SELECT USING (
     corrective_action_id IN (
       SELECT id FROM corrective_actions
-      WHERE organization_id = (SELECT org_id FROM user_profiles WHERE user_id = auth.uid())
+      WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
     )
   );
 
@@ -63,6 +63,6 @@ CREATE POLICY "org_insert_ca_history" ON corrective_action_history
   FOR INSERT WITH CHECK (
     corrective_action_id IN (
       SELECT id FROM corrective_actions
-      WHERE organization_id = (SELECT org_id FROM user_profiles WHERE user_id = auth.uid())
+      WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
     )
   );

@@ -143,10 +143,10 @@ export function RequestServiceModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+        <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/5">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Request Service</h2>
-          <button onClick={handleClose} className="p-2 text-[#1E2D4D]/30 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
+          <button onClick={handleClose} className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 rounded-lg hover:bg-[#1E2D4D]/5" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -173,7 +173,7 @@ export function RequestServiceModal({
                   href={getGoogleCalendarUrl(calEvent)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
                 >
                   <CalendarDays className="h-4 w-4" />
                   Google Calendar
@@ -182,14 +182,14 @@ export function RequestServiceModal({
                   href={getOutlookCalendarUrl(calEvent)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
                 >
                   <CalendarDays className="h-4 w-4" />
                   Outlook Calendar
                 </a>
                 <button
                   onClick={() => downloadIcsFile(calEvent)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-sm font-medium text-[#1E2D4D]/80"
                 >
                   <CalendarDays className="h-4 w-4" />
                   Download .ics
@@ -221,14 +221,14 @@ export function RequestServiceModal({
                     type="button"
                     onClick={() => toggleService(svc.id)}
                     className={`w-full flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
-                      selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-gray-300'
+                      selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center ${selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-[#1E2D4D]/15'}`}>
                       {selectedServices.includes(svc.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{svc.label}</p>
+                      <p className="font-medium text-[#1E2D4D] text-sm">{svc.label}</p>
                       <p className="text-xs text-[#1E2D4D]/50">{svc.desc}</p>
                     </div>
                   </button>
@@ -245,11 +245,11 @@ export function RequestServiceModal({
                     key={opt.id}
                     type="button"
                     onClick={() => setUrgency(opt.id)}
-                    className={`p-3 rounded-lg border-2 text-left transition-colors ${
-                      urgency === opt.id ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-gray-300'
+                    className={`p-3 rounded-xl border-2 text-left transition-colors ${
+                      urgency === opt.id ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                     }`}
                   >
-                    <p className="font-medium text-gray-900 text-sm">{opt.label}</p>
+                    <p className="font-medium text-[#1E2D4D] text-sm">{opt.label}</p>
                     <p className="text-xs text-[#1E2D4D]/50">{opt.desc}</p>
                   </button>
                 ))}
@@ -275,7 +275,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot1(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 1 (required)"
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -286,7 +286,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot2(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 2 (optional)"
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -297,7 +297,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot3(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 3 (optional)"
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -310,7 +310,7 @@ export function RequestServiceModal({
                 rows={3}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                 placeholder="Any special requirements or access instructions..."
               />
             </div>

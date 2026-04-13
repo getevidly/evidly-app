@@ -202,8 +202,8 @@ export function ReportSettings() {
           return (
             <div
               key={report.type}
-              className={`border rounded-lg p-4 transition-all ${
-                isActive ? 'border-[#d4af37] bg-[#faf8f3]' : 'border-[#1E2D4D]/10 bg-white'
+              className={`border rounded-xl p-4 transition-all ${
+                isActive ? 'border-[#A08C5A] bg-[#faf8f3]' : 'border-[#1E2D4D]/10 bg-white'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -211,13 +211,13 @@ export function ReportSettings() {
                   type="checkbox"
                   checked={isActive}
                   onChange={() => toggleReport(report.type, report.frequency)}
-                  className="mt-1 h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] rounded"
+                  className="mt-1 h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] rounded"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-[#1E2D4D]">{report.name}</h4>
                     {report.recommended && (
-                      <span className="text-xs bg-[#d4af37] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
+                      <span className="text-xs bg-[#A08C5A] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
                         Recommended
                       </span>
                     )}
@@ -237,7 +237,7 @@ export function ReportSettings() {
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'email'
                                 ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                             }`}
                           >
                             <Mail className="w-4 h-4" />
@@ -249,7 +249,7 @@ export function ReportSettings() {
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'sms'
                                 ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                             }`}
                           >
                             <Smartphone className="w-4 h-4" />
@@ -266,7 +266,7 @@ export function ReportSettings() {
                           <select
                             value={sub?.delivery_day || 1}
                             onChange={(e) => updateSubscription(report.type, 'delivery_day', parseInt(e.target.value))}
-                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                           >
                             {DAYS_OF_WEEK.map((day) => (
                               <option key={day.value} value={day.value}>
@@ -287,7 +287,7 @@ export function ReportSettings() {
                             type="time"
                             value={sub?.delivery_time || '07:00'}
                             onChange={(e) => updateSubscription(report.type, 'delivery_time', e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                           />
                         </div>
                       </div>

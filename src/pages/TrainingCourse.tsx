@@ -241,7 +241,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
         {/* Progress dots */}
         <div style={{ display: 'flex', gap: 4 }}>
           {questions.map((_, i) => (
-            <div key={i} style={{ width: 10, height: 10, borderRadius: 5, background: i < currentQ ? '#1E2D4D' : i === currentQ ? '#d4af37' : '#e5e7eb' }} />
+            <div key={i} style={{ width: 10, height: 10, borderRadius: 5, background: i < currentQ ? '#1E2D4D' : i === currentQ ? '#A08C5A' : '#e5e7eb' }} />
           ))}
         </div>
       </div>
@@ -349,7 +349,7 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 400 }}>
       <div style={{ padding: '12px 16px', background: '#fffbeb', borderBottom: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Brain size={18} color="#d4af37" />
+        <Brain size={18} color="#A08C5A" />
         <span style={{ fontWeight: 700, color: '#92400e', fontSize: 14 }}>AI Study Companion</span>
         <span style={{ fontSize: 12, color: '#92400e', opacity: 0.7 }}>(Powered by Claude)</span>
       </div>
@@ -388,9 +388,9 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
 function CertificateView({ cert, course }: { cert: TrainingCertificate; course: TCourse }) {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: '2px solid #d4af37', padding: 40, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
-      <div style={{ borderBottom: '2px solid #d4af37', paddingBottom: 24, marginBottom: 24 }}>
-        <Award size={48} color="#d4af37" />
+    <div style={{ background: '#fff', borderRadius: 12, border: '2px solid #A08C5A', padding: 40, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
+      <div style={{ borderBottom: '2px solid #A08C5A', paddingBottom: 24, marginBottom: 24 }}>
+        <Award size={48} color="#A08C5A" />
         <h2 style={{ fontSize: 28, fontWeight: 700, color: '#1E2D4D', margin: '12px 0 4px' }}>Certificate of Completion</h2>
         <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>EvidLY Training & Certification Platform</p>
       </div>
@@ -635,12 +635,12 @@ export function TrainingCourse() {
             {/* Certificate (if exists) */}
             {cert && (
               <div style={{ background: '#fffbeb', borderRadius: 10, border: '1px solid #fde68a', padding: 20, marginBottom: 16, textAlign: 'center' }}>
-                <Award size={32} color="#d4af37" />
+                <Award size={32} color="#A08C5A" />
                 <div style={{ fontWeight: 700, color: '#92400e', fontSize: 14, marginTop: 8, marginBottom: 4 }}>Certificate Earned</div>
                 <code style={{ fontSize: 12, color: '#6b7280' }}>{cert.certificateNumber}</code>
                 <div style={{ fontSize: 12, color: '#92400e', marginTop: 4 }}>{cert.employeeName} &middot; {cert.scorePercent}%</div>
                 <button onClick={() => setView('certificate')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fff', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 10, fontFamily: "'DM Sans', sans-serif" }}>
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fff', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 10, fontFamily: "'DM Sans', sans-serif" }}>
                   <Eye size={14} /> View
                 </button>
               </div>
@@ -648,7 +648,7 @@ export function TrainingCourse() {
 
             {/* AI Companion Toggle */}
             <button onClick={() => setShowAI(!showAI)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 16px', borderRadius: 10, border: '1px solid #d4af37', background: showAI ? '#fffbeb' : '#fff', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 16px', borderRadius: 10, border: '1px solid #A08C5A', background: showAI ? '#fffbeb' : '#fff', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={16} /> {showAI ? 'Hide' : 'Show'} AI Study Companion
             </button>
             {showAI && <AICompanion courseTitle={course.title} />}

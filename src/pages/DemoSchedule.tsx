@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { CheckCircle2, Calendar, Shield, Clock } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 // Default Calendly URL — configurable in admin settings
 const DEFAULT_CALENDLY_URL = 'https://calendly.com/founders-getevidly/60min';
@@ -130,7 +130,7 @@ export function DemoSchedule() {
 
             {/* Calendly Embed Area */}
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden mb-6">
-              <div className="p-4 border-b border-gray-100 flex items-center gap-2">
+              <div className="p-4 border-b border-[#1E2D4D]/5 flex items-center gap-2">
                 <Calendar className="w-5 h-5" style={{ color: NAVY }} />
                 <h2 className="font-semibold text-sm" style={{ color: NAVY }}>
                   Pick a time to meet with an EvidLY specialist

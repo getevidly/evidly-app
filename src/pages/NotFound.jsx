@@ -24,14 +24,14 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 bg-[#1E2D4D] text-white rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
+            className="inline-flex items-center gap-2 bg-[#1E2D4D] text-white rounded-xl px-6 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
           >
             <Home className="w-4 h-4" />
             Go to Dashboard
           </Link>
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
+            className="inline-flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-xl px-6 py-2.5 text-sm font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
           >
             <LogIn className="w-4 h-4" />
             Sign In

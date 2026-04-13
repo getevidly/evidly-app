@@ -37,7 +37,7 @@ export function CookieConsent() {
       <div className="flex gap-2 shrink-0">
         <button
           onClick={decline}
-          className="px-4 py-2 text-sm text-[#1E2D4D]/50 hover:text-gray-700 transition-colors"
+          className="px-4 py-2 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
         >
           Decline
         </button>

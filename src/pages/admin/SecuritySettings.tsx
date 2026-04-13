@@ -228,7 +228,7 @@ export function SecuritySettings() {
       <AdminBreadcrumb crumbs={[{ label: 'Security Settings' }]} />
 
       {isDemoMode && (
-        <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+        <div className="rounded-xl px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
           Demo Mode — changes are not persisted
         </div>
       )}
@@ -273,7 +273,7 @@ export function SecuritySettings() {
               type="number"
               value={config.hsts_max_age_seconds}
               onChange={e => setConfig(c => ({ ...c, hsts_max_age_seconds: parseInt(e.target.value) || 0 }))}
-              className="w-32 px-3 py-1.5 text-sm border rounded-lg text-right"
+              className="w-32 px-3 py-1.5 text-sm border rounded-xl text-right"
               style={{ borderColor: '#D1D9E6' }}
             />
           </div>
@@ -350,7 +350,7 @@ export function SecuritySettings() {
               value={config.cors_origins.join('\n')}
               onChange={e => setConfig(c => ({ ...c, cors_origins: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) }))}
               rows={4}
-              className="w-full px-3 py-2 text-sm border rounded-lg font-mono"
+              className="w-full px-3 py-2 text-sm border rounded-xl font-mono"
               style={{ borderColor: '#D1D9E6' }}
             />
           </div>
@@ -361,7 +361,7 @@ export function SecuritySettings() {
               - JWT expiry: 3600s (1 hour recommended)
               - Refresh token rotation: enabled
               These cannot be changed from the app — must be configured in Supabase Dashboard. */}
-          <div className="flex items-start gap-3 py-3 px-4 rounded-lg" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
+          <div className="flex items-start gap-3 py-3 px-4 rounded-xl" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
             <Info size={16} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
             <div>
               <p className="text-sm font-medium" style={{ color: '#0B1628' }}>Session Cookies</p>

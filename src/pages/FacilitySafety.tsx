@@ -27,7 +27,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#141E33';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const LIGHT_BLUE_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
 
@@ -261,7 +261,7 @@ export function FacilitySafety() {
           <select
             value={locationParam}
             onChange={e => navigate(`/facility-safety?location=${e.target.value}`)}
-            className="text-sm border border-[#1E2D4D]/15 rounded-lg px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2"
+            className="text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2"
             style={{ focusRingColor: GOLD } as any}
           >
             {locations.map(loc => (
@@ -275,7 +275,7 @@ export function FacilitySafety() {
       {/* Production empty state — no locations */}
       {locations.length === 0 && !isDemoMode && (
         <div className="text-center py-12 text-[var(--text-secondary)]">
-          <Flame size={32} className="mx-auto mb-3 text-gray-300" />
+          <Flame size={32} className="mx-auto mb-3 text-[#1E2D4D]/30" />
           <p className="font-medium text-lg">Add a location to begin facility safety tracking.</p>
           <p className="text-sm mt-1 mb-5">Once you add a location, your facility safety checklists and status will appear here.</p>
           <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
@@ -291,9 +291,9 @@ export function FacilitySafety() {
         const noData = completedCount === 0 && passCount === 0 && failCount === 0;
         const badgeText = noData ? 'No Status' : fireGrade;
         const badgeClass = noData
-          ? 'bg-gray-100 text-[#1E2D4D]/50'
+          ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'
           : fireStatus === 'passing' ? 'bg-emerald-50 text-emerald-700'
-          : fireStatus === 'at_risk' ? 'bg-gray-100 text-[#1E2D4D]/50'
+          : fireStatus === 'at_risk' ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'
           : 'bg-red-50 text-red-700';
 
         const facilityItems: StatusItem[] = override ? [
@@ -315,7 +315,7 @@ export function FacilitySafety() {
                   <div className={`text-xl font-bold px-3 py-1 rounded-full ${badgeClass}`}>{badgeText}<InfoTooltip content="Combined score based on service recency, documentation status, and inspection results." /></div>
                   <div className="text-xs text-[#1E2D4D]/50 mt-1">{fireSummary}</div>
                 </div>
-                <div className="h-10 w-px bg-gray-300" />
+                <div className="h-10 w-px bg-[#1E2D4D]/15" />
                 <div className="flex gap-6 text-sm">
                   <div className="text-center">
                     <div className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{completedCount}/{items.length}</div>
@@ -381,7 +381,7 @@ export function FacilitySafety() {
 
       {/* Submitted banner */}
       {submitted && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4 mb-4 flex items-center justify-between">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={18} className="text-green-600" />
             <span className="text-sm font-medium text-green-800">
@@ -479,7 +479,7 @@ export function FacilitySafety() {
                     </button>
                     <button
                       onClick={() => setExpandedItem(isExpanded ? null : item.id)}
-                      className="p-1.5 rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/30 hover:text-gray-600 hover:border-gray-300"
+                      className="p-1.5 rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 hover:border-[#1E2D4D]/15"
                     >
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                     </button>
@@ -507,7 +507,7 @@ export function FacilitySafety() {
                       placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                       rows={2}
                       disabled={submitted}
-                      className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
+                      className="w-full text-sm border border-red-200 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
                     />
                     {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
                   </div>
@@ -516,7 +516,7 @@ export function FacilitySafety() {
 
               {/* Expanded section */}
               {isExpanded && (
-                <div className="border-t border-gray-100 px-4 pb-4 pt-3 ml-10">
+                <div className="border-t border-[#1E2D4D]/5 px-4 pb-4 pt-3 ml-10">
                   <div className="grid gap-3">
                     {/* Authority note */}
                     <div className="flex items-start gap-2 text-xs text-[#1E2D4D]/50 bg-[#FAF7F0] rounded-lg p-2.5">
@@ -541,7 +541,7 @@ export function FacilitySafety() {
                         placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
-                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 resize-none"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 resize-none"
                       />
                       {aiFields.has(`notes_${item.id}`) && <AIGeneratedIndicator />}
                     </div>
@@ -567,7 +567,7 @@ export function FacilitySafety() {
                           placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                           rows={2}
                           disabled={submitted}
-                          className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
+                          className="w-full text-sm border border-red-200 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
                         />
                         {aiFields.has(`exp_corrective_${item.id}`) && <AIGeneratedIndicator />}
                       </div>
@@ -614,7 +614,7 @@ export function FacilitySafety() {
             {submitted ? (
               <button
                 onClick={handleReset}
-                className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50"
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
               >
                 {t('pages.facilitySafety.startNewChecklist')}
               </button>
@@ -638,7 +638,7 @@ export function FacilitySafety() {
       <div className="mt-8 rounded-xl border border-[#1E2D4D]/10 bg-white overflow-hidden">
         <button
           onClick={() => setExpandedItem(expandedItem === 'vendor-ref' ? null : 'vendor-ref')}
-          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-between p-4 hover:bg-[#FAF7F0] transition-colors"
         >
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-[#1E2D4D]/30" />
@@ -648,7 +648,7 @@ export function FacilitySafety() {
           {expandedItem === 'vendor-ref' ? <ChevronDown size={16} className="text-[#1E2D4D]/30" /> : <ChevronRight size={16} className="text-[#1E2D4D]/30" />}
         </button>
         {expandedItem === 'vendor-ref' && (
-          <div className="border-t border-gray-100 p-4">
+          <div className="border-t border-[#1E2D4D]/5 p-4">
             <div className="space-y-3">
               {(() => {
                 const locCookingType = (fireConfig as any)?.cooking_type as string | undefined;
@@ -662,9 +662,9 @@ export function FacilitySafety() {
                   { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
                 ];
               })().map(svc => (
-                <div key={svc.service} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <div key={svc.service} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0">
                   <div>
-                    <div className="text-sm font-medium text-gray-800">{svc.service}</div>
+                    <div className="text-sm font-medium text-[#1E2D4D]/90">{svc.service}</div>
                     <div className="text-xs text-[#1E2D4D]/50">{svc.vendor} · {svc.freq}</div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -673,7 +673,7 @@ export function FacilitySafety() {
                     </span>
                     <button
                       onClick={() => navigate('/equipment')}
-                      className="text-xs font-medium px-2.5 py-1 rounded border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50"
+                      className="text-xs font-medium px-2.5 py-1 rounded border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
                     >
                       {t('pages.facilitySafety.viewInEquipment')}
                     </button>

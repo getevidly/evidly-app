@@ -1638,7 +1638,7 @@ export function TempLogs() {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-4 rounded-lg shadow-sm flex items-center space-x-2">
+        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-4 rounded-xl shadow-sm flex items-center space-x-2">
           <Check className="h-5 w-5" />
           <span className="font-medium">{toastMessage}</span>
         </div>
@@ -1681,8 +1681,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('equipment')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'equipment'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('tempLogs.currentReadings')}
@@ -1691,8 +1691,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('receiving')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'receiving'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('tempLogs.receiving')}
@@ -1701,8 +1701,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('holding')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'holding'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <Thermometer className="h-3.5 w-3.5" />
@@ -1712,8 +1712,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('cooldown')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'cooldown'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('tempLogs.cooldown')}
@@ -1722,8 +1722,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('iot')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'iot'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <Radio className="h-3.5 w-3.5" />
@@ -1733,8 +1733,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('analytics')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'analytics'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <BarChart3 className="h-3.5 w-3.5" />
@@ -1744,8 +1744,8 @@ export function TempLogs() {
             onClick={() => setActiveTab('history')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('tempLogs.history')}
@@ -1767,7 +1767,7 @@ export function TempLogs() {
                   <select
                     value={locationFilter}
                     onChange={(e) => setLocationFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="all">{t('common.allLocations')}</option>
                     {locations.map(loc => (
@@ -1781,7 +1781,7 @@ export function TempLogs() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="outOfRange">{t('tempLogs.outOfRangeFirst')}</option>
                     <option value="alphabetical">{t('tempLogs.alphabetical')}</option>
@@ -1816,7 +1816,7 @@ export function TempLogs() {
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2.5">
                   <div
                     className="h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${getStorageEquipmentCount() > 0 ? (getLoggedTodayCount() / getStorageEquipmentCount()) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === getStorageEquipmentCount() ? '#16a34a' : '#d4af37' }}
+                    style={{ width: `${getStorageEquipmentCount() > 0 ? (getLoggedTodayCount() / getStorageEquipmentCount()) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === getStorageEquipmentCount() ? '#16a34a' : '#A08C5A' }}
                   />
                 </div>
                 {getLoggedTodayCount() === getStorageEquipmentCount() && (
@@ -1940,7 +1940,7 @@ export function TempLogs() {
                   value={foodCategory}
                   onChange={(e) => { setFoodCategory(e.target.value); setReceivingTemp(''); }}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">Select category...</option>
                   {Object.entries(CATEGORY_TEMP_CONFIG).map(([key, cfg]) => (
@@ -1973,8 +1973,8 @@ export function TempLogs() {
               </div>
 
               {/* Current Item Form */}
-              <form onSubmit={handleSubmitReceiving} className="space-y-4 p-4 bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10">
-                <h3 className="font-medium text-gray-900">{t('tempLogs.addItem')}</h3>
+              <form onSubmit={handleSubmitReceiving} className="space-y-4 p-4 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10">
+                <h3 className="font-medium text-[#1E2D4D]">{t('tempLogs.addItem')}</h3>
 
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.itemDescription')}</label>
@@ -1983,7 +1983,7 @@ export function TempLogs() {
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     placeholder="e.g., Ground Beef, Chicken Breast"
                   />
                 </div>
@@ -2009,18 +2009,18 @@ export function TempLogs() {
                             ? 'border-green-500 focus:ring-green-200 bg-green-50'
                             : isPass === false
                             ? 'border-red-500 focus:ring-red-200 bg-red-50'
-                            : 'border-[#1E2D4D]/15 focus:ring-[#d4af37]'
+                            : 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
                         }`}
                         placeholder="Enter temp"
                       />
                       {isPass === true && (
-                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-green-50 rounded-xl border border-green-200">
                           <Check className="h-5 w-5" style={{ color: '#2E7D32' }} />
                           <span className="font-bold text-lg" style={{ color: '#2E7D32' }}>PASS — Within acceptable range</span>
                         </div>
                       )}
                       {isPass === false && (
-                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-red-50 rounded-xl border border-red-200">
                           <AlertTriangle className="h-5 w-5" style={{ color: '#C62828' }} />
                           <span className="font-bold text-lg" style={{ color: '#C62828' }}>FAIL — Exceeds {maxTemp}°F limit</span>
                         </div>
@@ -2045,13 +2045,13 @@ export function TempLogs() {
 
               {/* CCP-04 Corrective Action Modal */}
               {showCcpModal && pendingFailItem && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                  <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+                  <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 modal-content-enter">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-6 w-6" style={{ color: '#C62828' }} />
                       <h3 className="text-lg font-bold" style={{ color: '#C62828' }}>CCP-04 Deviation — Corrective Action Required</h3>
                     </div>
-                    <div className="p-3 bg-red-50 rounded-lg border border-red-200 mb-4 text-sm">
+                    <div className="p-3 bg-red-50 rounded-xl border border-red-200 mb-4 text-sm">
                       <p className="font-medium text-red-800">
                         {pendingFailItem.itemDescription} received at {pendingFailItem.temperature}°F — exceeds {pendingFailItem.maxTemp}°F limit
                       </p>
@@ -2063,7 +2063,7 @@ export function TempLogs() {
                         <select
                           value={ccpActionTaken}
                           onChange={(e) => setCcpActionTaken(e.target.value)}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                         >
                           <option value="">Select action...</option>
                           <option value="Rejected Delivery">Rejected Delivery</option>
@@ -2087,7 +2087,7 @@ export function TempLogs() {
                           value={ccpNotes}
                           onChange={(e) => { setCcpNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('ccpNotes'); return s; }); }}
                           rows={3}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                           placeholder="Describe the corrective action taken..."
                         />
                         {aiFields.has('ccpNotes') && <AIGeneratedIndicator />}
@@ -2100,7 +2100,7 @@ export function TempLogs() {
                           step="0.1"
                           value={ccpReMeasuredTemp}
                           onChange={(e) => setCcpReMeasuredTemp(e.target.value)}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                           placeholder="°F"
                         />
                       </div>
@@ -2109,7 +2109,7 @@ export function TempLogs() {
                     <div className="flex gap-3 mt-6">
                       <button
                         onClick={() => { setShowCcpModal(false); setPendingFailItem(null); }}
-                        className="flex-1 px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg font-medium text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
+                        className="flex-1 px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
                       >
                         Cancel
                       </button>
@@ -2128,12 +2128,12 @@ export function TempLogs() {
               {/* Added Items List */}
               {receivingItems.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="font-medium text-gray-900">{t('tempLogs.itemsAdded')} ({receivingItems.length})</h3>
+                  <h3 className="font-medium text-[#1E2D4D]">{t('tempLogs.itemsAdded')} ({receivingItems.length})</h3>
                   {receivingItems.map((item, idx) => (
-                    <div key={idx} className={`p-3 rounded-lg border ${item.ccpDeviation ? 'bg-red-50 border-red-200' : 'bg-[#FAF7F0] border-[#1E2D4D]/10'}`}>
+                    <div key={idx} className={`p-3 rounded-xl border ${item.ccpDeviation ? 'bg-red-50 border-red-200' : 'bg-[#FAF7F0] border-[#1E2D4D]/10'}`}>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-gray-900">{item.itemDescription}</p>
+                          <p className="font-medium text-[#1E2D4D]">{item.itemDescription}</p>
                           <p className="text-sm text-[#1E2D4D]/70">{item.temperature > 0 || item.category === 'frozen' ? `${item.temperature}°F` : 'N/A (no temp required)'}</p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -2168,7 +2168,7 @@ export function TempLogs() {
                   value={receivedBy}
                   onChange={(e) => setReceivedBy(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">Select employee...</option>
                   {users.map((user) => (
@@ -2194,7 +2194,7 @@ export function TempLogs() {
                   value={receivingNotes}
                   onChange={(e) => { setReceivingNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('receivingNotes'); return s; }); }}
                   rows={3}
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="Additional notes..."
                 />
                 {aiFields.has('receivingNotes') && <AIGeneratedIndicator />}
@@ -2202,7 +2202,7 @@ export function TempLogs() {
 
               {/* Summary Card */}
               {receivingItems.length > 0 && vendorName && (
-                <div className="p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
+                <div className="p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
                   <h3 className="font-bold text-lg mb-2" style={{ color: '#1E2D4D' }}>{t('tempLogs.summary')}</h3>
                   <p style={{ color: '#2A3F6B' }}>
                     {receivingItems.length} items from {vendorName} - {' '}
@@ -2237,7 +2237,7 @@ export function TempLogs() {
                   <select
                     value={historyDateRange}
                     onChange={(e) => setHistoryDateRange(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="today">{t('common.today')}</option>
                     <option value="yesterday">{t('common.yesterday')}</option>
@@ -2255,7 +2255,7 @@ export function TempLogs() {
                         type="date"
                         value={customDateFrom}
                         onChange={(e) => setCustomDateFrom(e.target.value)}
-                        className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                        className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                       />
                     </div>
                     <div className="flex-1 min-w-0 sm:min-w-[150px]">
@@ -2264,7 +2264,7 @@ export function TempLogs() {
                         type="date"
                         value={customDateTo}
                         onChange={(e) => setCustomDateTo(e.target.value)}
-                        className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                        className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                       />
                     </div>
                   </>
@@ -2275,7 +2275,7 @@ export function TempLogs() {
                   <select
                     value={historyEquipment}
                     onChange={(e) => setHistoryEquipment(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="all">{t('tempLogs.allEquipment')}</option>
                     {equipment.map(eq => (
@@ -2289,7 +2289,7 @@ export function TempLogs() {
                   <select
                     value={historyStatus}
                     onChange={(e) => setHistoryStatus(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="all">{t('common.all')}</option>
                     <option value="pass">{t('tempLogs.inRange')}</option>
@@ -2302,7 +2302,7 @@ export function TempLogs() {
                   <select
                     value={historyMethod}
                     onChange={(e) => setHistoryMethod(e.target.value as 'all' | InputMethod)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="all">All Methods</option>
                     <option value="manual">Manual</option>
@@ -2316,7 +2316,7 @@ export function TempLogs() {
                   <select
                     value={historyShift}
                     onChange={(e) => setHistoryShift(e.target.value as 'all' | 'morning' | 'afternoon' | 'evening')}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="all">All Shifts</option>
                     <option value="morning">Morning</option>
@@ -2331,7 +2331,7 @@ export function TempLogs() {
                     className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'table'
                         ? 'bg-[#1E2D4D] text-white'
-                        : 'bg-gray-200 text-[#1E2D4D]/80 hover:bg-gray-300'
+                        : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/15'
                     }`}
                   >
                     {t('tempLogs.table')}
@@ -2341,7 +2341,7 @@ export function TempLogs() {
                     className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'chart'
                         ? 'bg-[#1E2D4D] text-white'
-                        : 'bg-gray-200 text-[#1E2D4D]/80 hover:bg-gray-300'
+                        : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/15'
                     }`}
                   >
                     {t('tempLogs.chart')}
@@ -2365,7 +2365,7 @@ export function TempLogs() {
                   <h2 className="text-xl font-bold text-[#1E2D4D]">Temperature History</h2>
                   <button
                     onClick={() => setShowHistoryDetails(!showHistoryDetails)}
-                    className="flex items-center space-x-2 text-sm text-[#1E2D4D]/70 hover:text-gray-900"
+                    className="flex items-center space-x-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D]"
                   >
                     <span>{showHistoryDetails ? 'Hide' : 'Show'} Details</span>
                     {showHistoryDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -2374,11 +2374,11 @@ export function TempLogs() {
 
                 <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#FAF7F0]">
                     <tr>
                       <th
                         onClick={() => handleHistoryHeaderClick('created_at')}
-                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-[#1E2D4D]/5"
                       >
                         <div className="flex items-center space-x-1">
                           <span>{t('tempLogs.dateTime')}</span>
@@ -2389,7 +2389,7 @@ export function TempLogs() {
                       </th>
                       <th
                         onClick={() => handleHistoryHeaderClick('equipment_name')}
-                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-[#1E2D4D]/5"
                       >
                         <div className="flex items-center space-x-1">
                           <span>{t('tempLogs.equipmentName')}</span>
@@ -2400,7 +2400,7 @@ export function TempLogs() {
                       </th>
                       <th
                         onClick={() => handleHistoryHeaderClick('temperature_value')}
-                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-[#1E2D4D]/5"
                       >
                         <div className="flex items-center space-x-1">
                           <span>{t('tempLogs.temp')}</span>
@@ -2411,7 +2411,7 @@ export function TempLogs() {
                       </th>
                       <th
                         onClick={() => handleHistoryHeaderClick('is_within_range')}
-                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-gray-100"
+                        className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase cursor-pointer hover:bg-[#1E2D4D]/5"
                       >
                         <div className="flex items-center space-x-1">
                           <span>{t('common.status')}</span>
@@ -2437,14 +2437,14 @@ export function TempLogs() {
                   <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                     {getFilteredHistory().map((log) => (
                       <Fragment key={log.id}>
-                        <tr className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr className="hover:bg-[#FAF7F0]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                             {format(new Date(log.created_at), 'MMM d, yyyy h:mm a')}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <Thermometer className="h-5 w-5 text-[#1E2D4D]/30 mr-2" />
-                              <span className="text-sm font-medium text-gray-900">{log.equipment_name}</span>
+                              <span className="text-sm font-medium text-[#1E2D4D]">{log.equipment_name}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1E2D4D]">
@@ -2682,7 +2682,7 @@ export function TempLogs() {
                     const lastCheck = cooldown.checks[cooldown.checks.length - 1];
                     const lastCheckAgo = formatDistanceToNow(lastCheck.time, { addSuffix: true });
 
-                    const timerBg = countdown.color === 'red' ? 'bg-red-900' : countdown.color === 'amber' ? 'bg-amber-800' : 'bg-gray-800';
+                    const timerBg = countdown.color === 'red' ? 'bg-red-900' : countdown.color === 'amber' ? 'bg-amber-800' : 'bg-[#1E2D4D]/70';
                     const timerBorder = countdown.color === 'red' ? 'border-red-500' : countdown.color === 'amber' ? 'border-amber-500' : 'border-green-500';
                     const timerText = countdown.color === 'red' ? 'text-red-400' : countdown.color === 'amber' ? 'text-amber-400' : 'text-green-400';
                     const borderColor = countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1E2D4D';
@@ -2810,7 +2810,7 @@ export function TempLogs() {
               <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#FAF7F0]">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Item</th>
@@ -2824,20 +2824,20 @@ export function TempLogs() {
                     {completedCooldowns.map(cooldown => {
                       const finalTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
                       return (
-                        <tr key={cooldown.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr key={cooldown.id} className="hover:bg-[#FAF7F0]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                             {format(cooldown.startTime, 'MMM d, yyyy')}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">
                             {cooldown.itemName}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                             {cooldown.startTemp}°F
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                             {finalTemp}°F
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                             {getTotalCooldownTime(cooldown)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -2877,7 +2877,7 @@ export function TempLogs() {
               description="Connect your first IoT sensor to start monitoring temperatures in real time."
             />
             {/* Supported Sensors CTA — informational, shown in all modes */}
-            <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#d4af37]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
+            <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#A08C5A]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
               <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
               <p className="text-xs text-[#1E2D4D]/70 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
               <div className="flex flex-wrap gap-2">
@@ -3009,7 +3009,7 @@ export function TempLogs() {
 
                       {/* Current Reading */}
                       <div className="flex items-baseline gap-2 mb-1">
-                        <span className={`text-3xl font-bold tracking-tight ${inRange ? 'text-gray-900' : 'text-red-600'}`}>
+                        <span className={`text-3xl font-bold tracking-tight ${inRange ? 'text-[#1E2D4D]' : 'text-red-600'}`}>
                           {sensor.currentTempF}°F
                         </span>
                         {inRange ? (
@@ -3037,7 +3037,7 @@ export function TempLogs() {
                       </div>
 
                       {/* Footer: provider, battery, signal */}
-                      <div className="flex items-center justify-between text-xs text-[#1E2D4D]/30 border-t border-gray-100 pt-2">
+                      <div className="flex items-center justify-between text-xs text-[#1E2D4D]/30 border-t border-[#1E2D4D]/5 pt-2">
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: provider?.color || '#888' }} />
                           <span>{provider?.name || sensor.providerSlug}</span>
@@ -3075,11 +3075,11 @@ export function TempLogs() {
                     </thead>
                     <tbody>
                       {combinedLog.map((entry, i) => (
-                        <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                        <tr key={i} className="border-t border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                           <td className="px-4 py-2.5 text-xs text-[#1E2D4D]/70 whitespace-nowrap">
                             {format(new Date(entry.time), 'h:mm a')}
                           </td>
-                          <td className="px-4 py-2.5 text-sm font-medium text-gray-900">{entry.equipment}</td>
+                          <td className="px-4 py-2.5 text-sm font-medium text-[#1E2D4D]">{entry.equipment}</td>
                           <td className="px-4 py-2.5 text-sm font-bold text-right">{entry.temp}°F</td>
                           <td className="px-4 py-2.5 text-center">
                             {entry.inRange ? (
@@ -3107,7 +3107,7 @@ export function TempLogs() {
               </div>
 
               {/* Supported Sensors CTA */}
-              <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#d4af37]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
+              <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#A08C5A]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
                 <p className="text-xs text-[#1E2D4D]/70 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
                 <div className="flex flex-wrap gap-2">
@@ -3177,11 +3177,11 @@ export function TempLogs() {
                       const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-[#1E2D4D]/5'}`}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 min-w-0">
                               {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
-                              <span className="text-sm text-gray-900 truncate">{eq.name}</span>
+                              <span className="text-sm text-[#1E2D4D] truncate">{eq.name}</span>
                               {isOverdue && (
                                 <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 shrink-0">CHECK OVERDUE</span>
                               )}
@@ -3238,11 +3238,11 @@ export function TempLogs() {
                       const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-[#1E2D4D]/5'}`}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 min-w-0">
                               {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
-                              <span className="text-sm text-gray-900 truncate">{eq.name}</span>
+                              <span className="text-sm text-[#1E2D4D] truncate">{eq.name}</span>
                               {isOverdue && (
                                 <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 shrink-0">CHECK OVERDUE</span>
                               )}
@@ -3287,10 +3287,10 @@ export function TempLogs() {
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
               <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Regulatory Reference</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-[#1E2D4D]/70">
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
                   <span className="font-semibold text-blue-800">CalCode §113996(a)</span> — Cold potentially hazardous food shall be held at 41°F or below
                 </div>
-                <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
+                <div className="p-3 bg-orange-50 rounded-xl border border-orange-100">
                   <span className="font-semibold text-orange-800">CalCode §113996(b)</span> — Hot potentially hazardous food shall be held at 135°F or above
                 </div>
               </div>
@@ -3413,7 +3413,7 @@ export function TempLogs() {
                         <XAxis dataKey="week" tick={{ fontSize: 11 }} />
                         <YAxis domain={[80, 100]} tick={{ fontSize: 11 }} />
                         <Tooltip formatter={(v: number) => `${v}%`} />
-                        <ReferenceLine y={95} stroke="#d4af37" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#d4af37', fontSize: 10 }} />
+                        <ReferenceLine y={95} stroke="#A08C5A" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#A08C5A', fontSize: 10 }} />
                         <Line type="monotone" dataKey="rate" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
@@ -3448,7 +3448,7 @@ export function TempLogs() {
                         <XAxis dataKey="time" tick={{ fontSize: 10 }} />
                         <YAxis tick={{ fontSize: 10 }} />
                         <Tooltip />
-                        <Bar dataKey="count" fill="#d4af37" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="count" fill="#A08C5A" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -3473,7 +3473,7 @@ export function TempLogs() {
       {/* Log Temperature Modal */}
       {showLogModal && selectedEquipment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
             <h3 className="text-2xl font-bold tracking-tight mb-2 text-center">{selectedEquipment.name}</h3>
             <p className="text-center text-[#1E2D4D]/70 mb-6">
               {t('tempLogs.range')} {selectedEquipment.min_temp}°{selectedEquipment.unit} - {selectedEquipment.max_temp}°
@@ -3496,7 +3496,7 @@ export function TempLogs() {
                       ? 'border-green-500 focus:ring-green-200 bg-green-50'
                       : temperature && !isWithinRange
                       ? 'border-red-500 focus:ring-red-200 bg-red-50'
-                      : 'border-[#1E2D4D]/15 focus:ring-[#d4af37]'
+                      : 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
                   }`}
                   placeholder="00.0"
                 />
@@ -3512,7 +3512,7 @@ export function TempLogs() {
               </div>
 
               {temperature && !isWithinRange && (
-                <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+                <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
                     <span className="text-lg font-bold text-red-600">
@@ -3552,7 +3552,7 @@ export function TempLogs() {
                         onChange={(e) => { setCorrectiveAction(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
                         required
                         rows={3}
-                        className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                        className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                         placeholder="Describe the corrective action taken..."
                       />
                       {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
@@ -3577,7 +3577,7 @@ export function TempLogs() {
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">Select employee...</option>
                   {users.map((user) => (
@@ -3592,7 +3592,7 @@ export function TempLogs() {
                 <button
                   type="button"
                   onClick={() => setShowLogModal(false)}
-                  className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white"
+                  className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white"
                 >
                   {t('common.cancel')}
                 </button>
@@ -3612,7 +3612,7 @@ export function TempLogs() {
       {/* Batch Log Modal */}
       {showBatchModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-y-auto modal-content-enter">
             <h3 className="text-2xl font-bold tracking-tight mb-6">Batch Temperature Logging</h3>
 
             <div className="mb-4">
@@ -3621,7 +3621,7 @@ export function TempLogs() {
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
                 required
-                className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               >
                 <option value="">Select employee...</option>
                 {users.map((user) => (
@@ -3664,7 +3664,7 @@ export function TempLogs() {
                             value={entry.temperature}
                             onChange={(e) => handleBatchTempChange(entry.equipment_id, e.target.value)}
                             placeholder="Temp"
-                            className="w-28 sm:w-32 px-3 sm:px-4 py-2 min-h-[44px] text-2xl font-bold tracking-tight text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                            className="w-28 sm:w-32 px-3 sm:px-4 py-2 min-h-[44px] text-2xl font-bold tracking-tight text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                           />
                           {entry.temperature && (
                             <span className={`font-bold text-lg ${isValid ? 'text-green-600' : 'text-red-600'}`}>
@@ -3680,7 +3680,7 @@ export function TempLogs() {
                         className={`ml-0 sm:ml-4 px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                           entry.skipped
                             ? 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
-                            : 'bg-gray-200 text-[#1E2D4D]/80 hover:bg-gray-300'
+                            : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/15'
                         }`}
                       >
                         {entry.skipped ? 'Include' : 'Skip'}
@@ -3695,7 +3695,7 @@ export function TempLogs() {
               <button
                 type="button"
                 onClick={() => setShowBatchModal(false)}
-                className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white"
+                className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white"
               >
                 {t('common.cancel')}
               </button>
@@ -3714,7 +3714,7 @@ export function TempLogs() {
       {/* Start Cooldown Modal */}
       {showStartCooldown && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
             <h3 className="text-2xl font-bold tracking-tight mb-6">Start New Cooldown</h3>
 
             <form onSubmit={handleStartCooldown} className="space-y-4">
@@ -3725,7 +3725,7 @@ export function TempLogs() {
                   value={cooldownForm.itemName}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, itemName: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="e.g., Rice Pilaf, Chicken Soup"
                 />
               </div>
@@ -3739,7 +3739,7 @@ export function TempLogs() {
                   value={cooldownForm.startTemp}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, startTemp: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="e.g., 165"
                 />
               </div>
@@ -3750,7 +3750,7 @@ export function TempLogs() {
                   type="datetime-local"
                   value={cooldownForm.startTime}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, startTime: e.target.value })}
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
                 <p className="text-xs text-[#1E2D4D]/50 mt-1">Leave blank to use current time</p>
               </div>
@@ -3761,7 +3761,7 @@ export function TempLogs() {
                   value={cooldownForm.location}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, location: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">Select location...</option>
                   {locations.map(loc => (
@@ -3776,7 +3776,7 @@ export function TempLogs() {
                   value={cooldownForm.startedBy}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, startedBy: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="">Select employee...</option>
                   {users.map((user) => (
@@ -3791,7 +3791,7 @@ export function TempLogs() {
                 <button
                   type="button"
                   onClick={() => setShowStartCooldown(false)}
-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
                 >
                   {t('common.cancel')}
                 </button>
@@ -3815,7 +3815,7 @@ export function TempLogs() {
       {/* Cooldown Check Modal */}
       {showCooldownCheckModal && selectedCooldown && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
             <h3 className="text-2xl font-bold tracking-tight mb-2">{selectedCooldown.itemName}</h3>
             <p className="text-[#1E2D4D]/70 mb-6">Log Temperature Reading</p>
 
@@ -3829,7 +3829,7 @@ export function TempLogs() {
                   value={cooldownCheckTemp}
                   onChange={(e) => setCooldownCheckTemp(e.target.value)}
                   required
-                  className="w-full px-4 py-6 text-4xl font-bold text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-6 text-4xl font-bold text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="00.0"
                 />
               </div>
@@ -3841,7 +3841,7 @@ export function TempLogs() {
                   value={cooldownCheckTime}
                   onChange={(e) => setCooldownCheckTime(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
 
@@ -3852,7 +3852,7 @@ export function TempLogs() {
                     setShowCooldownCheckModal(false);
                     setSelectedCooldown(null);
                   }}
-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
                 >
                   {t('common.cancel')}
                 </button>

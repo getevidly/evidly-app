@@ -45,16 +45,16 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-[80]" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50 z-[80] modal-backdrop-enter" onClick={onClose} />
       <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden modal-content-enter" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <EvidlyIcon size={28} />
               <div>
                 <span className="text-xl font-bold text-white">
-                  Evid<span className="text-[#d4af37]">LY</span>
+                  Evid<span className="text-[#A08C5A]">LY</span>
                 </span>
                 <p className="text-sm text-white/70">Interactive Demo</p>
               </div>
@@ -81,7 +81,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                   value={form.fullName}
                   onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                   placeholder="John Smith"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                 />
               </div>
             </div>
@@ -96,7 +96,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="john@company.com"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                   value={form.companyName}
                   onChange={(e) => setForm({ ...form, companyName: e.target.value })}
                   placeholder="e.g. Your Restaurant Group"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                 />
               </div>
             </div>
@@ -122,7 +122,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                 required
                 value={form.businessType}
                 onChange={(e) => setForm({ ...form, businessType: e.target.value })}
-                className="block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                className="block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
               >
                 <option value="">Select your industry...</option>
                 {BUSINESS_TYPES.map((bt) => (
@@ -135,7 +135,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
               type="submit"
               disabled={!canSubmit || submitting}
               className="w-full py-3 px-4 text-sm font-bold text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-              style={{ backgroundColor: '#d4af37' }}
+              style={{ backgroundColor: '#A08C5A' }}
             >
               {submitting ? 'Loading...' : 'Start My Demo'}
             </button>

@@ -259,7 +259,7 @@ export default function GuidedTours() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function GuidedTours() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Guided Tours</h1>
-          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance pillars</p>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance categorys</p>
         </div>
         <button
           onClick={() => setActiveTab('setup')}
@@ -295,7 +295,7 @@ export default function GuidedTours() {
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
               activeTab === tab.id
                 ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {tab.label}
@@ -391,12 +391,12 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
             const rate = prev > 0 ? Math.round(count / prev * 100) : 0;
             return (
               <div key={stage} className="flex items-center gap-2">
-                <div className="bg-[#FAF7F0] rounded-lg px-4 py-3 text-center min-w-[120px]">
+                <div className="bg-[#FAF7F0] rounded-xl px-4 py-3 text-center min-w-[120px]">
                   <div className="text-lg font-bold" style={{ color: DARK }}>{count}</div>
                   <div className="text-xs text-[#1E2D4D]/50 font-medium uppercase">{STAGE_LABELS[stage] || stage}</div>
                   {i > 0 && <div className="text-xs text-green-600 font-semibold mt-1">{rate}% conv</div>}
                 </div>
-                {i < funnelStages.length - 1 && <ChevronRight className="h-4 w-4 text-gray-300 flex-shrink-0" />}
+                {i < funnelStages.length - 1 && <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />}
               </div>
             );
           })}
@@ -469,7 +469,7 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
             {activeCampaigns.map(c => {
               const campTouches = touchpoints.filter(t => t.campaign_id === c.id).length;
               return (
-                <div key={c.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5 last:border-0">
                   <div>
                     <span className="text-sm font-semibold text-[#1E2D4D]">{c.name}</span>
                     <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{c.channel}</span>
@@ -885,7 +885,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
           </div>
           {scheduleType === 'later' && (
             <input type="datetime-local" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           )}
         </div>
 
@@ -893,7 +893,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
         <div>
           <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Notes (internal)</label>
           <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Internal notes — not shown to prospect"
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-none" />
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none" />
         </div>
 
         {/* ── MRR bar ── */}
@@ -1025,14 +1025,14 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
           </h3>
           <div className="space-y-2">
             {followUps.map(s => (
-              <div key={s.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-amber-100">
+              <div key={s.id} className="flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-amber-100">
                 <div>
                   <span className="text-sm font-semibold text-[#1E2D4D]">{s.account_name}</span>
                   <span className="ml-2 text-xs text-[#1E2D4D]/50">{s.prospect_name || s.user_email}</span>
                   <span className="ml-2 text-xs text-amber-600 font-medium">{formatDate(s.follow_up_at)}</span>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => handleAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded text-[#1E2D4D]/70 hover:bg-gray-50">Log Contact</button>
+                  <button onClick={() => handleAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">Log Contact</button>
                 </div>
               </div>
             ))}
@@ -1043,7 +1043,7 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide">Active Tours ({activeSessions.length})</h3>
-          <button onClick={onRefresh} className="text-xs text-[#1E2D4D]/50 hover:text-gray-700 flex items-center gap-1">
+          <button onClick={onRefresh} className="text-xs text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 flex items-center gap-1">
             <RefreshCw className="h-3 w-3" /> Refresh
           </button>
         </div>
@@ -1113,8 +1113,8 @@ function SessionRow({ session: s, updatingId, onStageUpdate, onFollowUp, onAddNo
   onAddNote: (id: string) => void;
 }) {
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-3 py-2 font-medium text-gray-900">{s.account_name}</td>
+    <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+      <td className="px-3 py-2 font-medium text-[#1E2D4D]">{s.account_name}</td>
       <td className="px-3 py-2 text-[#1E2D4D]/70">{s.prospect_name || s.user_email || '—'}</td>
       <td className="px-3 py-2 text-[#1E2D4D]/50 text-xs">{s.industry || s.county || '—'}</td>
       <td className="px-3 py-2 text-center text-[#1E2D4D]/50">{s.location_count || '—'}</td>
@@ -1132,10 +1132,10 @@ function SessionRow({ session: s, updatingId, onStageUpdate, onFollowUp, onAddNo
       <td className="px-3 py-2 text-xs text-[#1E2D4D]/50">{formatDate(s.started_at)}</td>
       <td className="px-3 py-2 text-right">
         <div className="flex items-center gap-1 justify-end">
-          <button onClick={() => onFollowUp(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-gray-50" title="Set follow-up">
+          <button onClick={() => onFollowUp(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0]" title="Set follow-up">
             <Calendar className="h-3 w-3" />
           </button>
-          <button onClick={() => onAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-gray-50" title="Add note">
+          <button onClick={() => onAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0]" title="Add note">
             <MessageSquare className="h-3 w-3" />
           </button>
         </div>
@@ -1197,7 +1197,7 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{t.target_segment?.replace(/_/g, ' ')}</span>
                     <span className="text-xs text-[#1E2D4D]/30">{t.duration_minutes} min</span>
                     <span className="text-xs text-[#1E2D4D]/30">{moduleCount} module{moduleCount !== 1 ? 's' : ''}</span>
-                    {!t.is_active && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-[#1E2D4D]/50">Inactive</span>}
+                    {!t.is_active && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50">Inactive</span>}
                   </div>
                 </div>
                 <button
@@ -1229,10 +1229,10 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Edit2 className="h-3 w-3" /> Edit
                 </button>
-                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Copy className="h-3 w-3" /> Duplicate
                 </button>
                 <button onClick={() => handleDelete(t.id)} className="px-2 py-1 text-xs border border-red-200 rounded hover:bg-red-50 text-red-600 flex items-center gap-1">
@@ -1295,14 +1295,14 @@ function TemplateModal({ template, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
         <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{template ? 'Edit Template' : 'New Template'}</h3>
         <div className="space-y-4">
           <Input label="Name *" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
           <div>
             <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Description</label>
             <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           </div>
           <Select label="Target Segment" value={form.target_segment} onChange={v => setForm(p => ({ ...p, target_segment: v }))}
             options={[{ value: 'default', label: 'Default' }, ...SEGMENTS.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))]} />
@@ -1310,7 +1310,7 @@ function TemplateModal({ template, onClose, onSave }: {
           <div>
             <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Duration (minutes)</label>
             <input type="number" min={5} value={form.duration_minutes} onChange={e => setForm(p => ({ ...p, duration_minutes: parseInt(e.target.value) || 20 }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           </div>
 
           {/* Module group toggles — replaces flat pill list */}
@@ -1320,7 +1320,7 @@ function TemplateModal({ template, onClose, onSave }: {
             </label>
             <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 12 }}>
               Select which features are highlighted during a tour using this template.
-              Grouped by how staff use the platform — start with daily tasks, end with admin.
+              Grouped by how staff use EvidLY — start with daily tasks, end with admin.
             </div>
             <ModuleGroupToggles
               enabled={form.modules_enabled}
@@ -1337,7 +1337,7 @@ function TemplateModal({ template, onClose, onSave }: {
           </label>
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">Cancel</button>
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">Cancel</button>
           <button onClick={handleSave} disabled={!form.name.trim() || saving}
             className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40" style={{ backgroundColor: NAVY }}>
             {saving ? 'Saving...' : 'Save Template'}
@@ -1357,7 +1357,7 @@ function Input({ label, value, onChange, placeholder, type = 'text' }: {
     <div>
       <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
     </div>
   );
 }
@@ -1370,7 +1370,7 @@ function Select({ label, value, onChange, options }: {
     <div>
       <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] bg-white">
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white">
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>

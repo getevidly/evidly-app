@@ -7,7 +7,7 @@ import { BULK_CSV_COLUMNS, generateCSVTemplate, type ClientInvitation } from '..
 // ── Brand colors ───────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 // ── Email regex ────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -227,9 +227,9 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
   const stepLabels = ['Upload', 'Preview', 'Send'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={handleClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 modal-backdrop-enter" onClick={handleClose}>
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col max-h-[90vh] modal-content-enter"
         onClick={e => e.stopPropagation()}
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
@@ -330,7 +330,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
               </button>
 
               {/* Column reference */}
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
+              <div className="rounded-xl p-4" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
                 <p className="text-xs font-semibold mb-2" style={{ color: '#0B1628' }}>
                   CSV Columns
                 </p>
@@ -394,7 +394,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
               </div>
 
               {/* Table preview (first 10) */}
-              <div className="border rounded-lg overflow-x-auto" style={{ borderColor: '#D1D9E6' }}>
+              <div className="border rounded-xl overflow-x-auto" style={{ borderColor: '#D1D9E6' }}>
                 <table className="w-full text-xs">
                   <thead>
                     <tr style={{ backgroundColor: '#F4F6FA' }}>

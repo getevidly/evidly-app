@@ -117,7 +117,7 @@ export function AdminVendorConnect() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
-                isActive ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                isActive ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export function AdminVendorConnect() {
                     key={f}
                     onClick={() => setAppFilter(f)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                      appFilter === f ? 'bg-[#1E2D4D] text-white' : 'bg-gray-100 text-[#1E2D4D]/70 hover:bg-gray-200'
+                      appFilter === f ? 'bg-[#1E2D4D] text-white' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -164,7 +164,7 @@ export function AdminVendorConnect() {
                     <div key={app.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                       <button
                         onClick={() => setExpandedApp(isExpanded ? null : app.id)}
-                        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between p-4 text-left hover:bg-[#FAF7F0] transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ background: '#1E2D4D' }}>
@@ -186,14 +186,14 @@ export function AdminVendorConnect() {
                         </div>
                       </button>
                       {isExpanded && (
-                        <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+                        <div className="px-4 pb-4 space-y-3 border-t border-[#1E2D4D]/5 pt-3">
                           <div className="grid md:grid-cols-2 gap-3 text-xs">
-                            <div><span className="text-[#1E2D4D]/50">Services:</span> <span className="text-gray-900 font-medium">{(app.service_types || []).join(', ') || '—'}</span></div>
-                            <div><span className="text-[#1E2D4D]/50">Counties:</span> <span className="text-gray-900 font-medium">{(app.service_areas || []).join(', ') || '—'}</span></div>
-                            <div><span className="text-[#1E2D4D]/50">Years:</span> <span className="text-gray-900 font-medium">{app.years_in_business || '—'}</span></div>
-                            <div><span className="text-[#1E2D4D]/50">IKECA:</span> <span className="text-gray-900 font-medium">{app.ikeca_certified ? 'Yes' : 'No'}</span></div>
-                            {app.phone && <div><span className="text-[#1E2D4D]/50">Phone:</span> <span className="text-gray-900 font-medium">{app.phone}</span></div>}
-                            {app.referred_by && <div><span className="text-[#1E2D4D]/50">Referred by:</span> <span className="text-gray-900 font-medium">{app.referred_by}</span></div>}
+                            <div><span className="text-[#1E2D4D]/50">Services:</span> <span className="text-[#1E2D4D] font-medium">{(app.service_types || []).join(', ') || '—'}</span></div>
+                            <div><span className="text-[#1E2D4D]/50">Counties:</span> <span className="text-[#1E2D4D] font-medium">{(app.service_areas || []).join(', ') || '—'}</span></div>
+                            <div><span className="text-[#1E2D4D]/50">Years:</span> <span className="text-[#1E2D4D] font-medium">{app.years_in_business || '—'}</span></div>
+                            <div><span className="text-[#1E2D4D]/50">IKECA:</span> <span className="text-[#1E2D4D] font-medium">{app.ikeca_certified ? 'Yes' : 'No'}</span></div>
+                            {app.phone && <div><span className="text-[#1E2D4D]/50">Phone:</span> <span className="text-[#1E2D4D] font-medium">{app.phone}</span></div>}
+                            {app.referred_by && <div><span className="text-[#1E2D4D]/50">Referred by:</span> <span className="text-[#1E2D4D] font-medium">{app.referred_by}</span></div>}
                           </div>
                           {app.why_apply && (
                             <div className="bg-[#FAF7F0] rounded-lg p-3">
@@ -221,7 +221,7 @@ export function AdminVendorConnect() {
                               <button
                                 onClick={() => updateApplicationStatus(app.id, 'waitlisted')}
                                 disabled={processing === app.id}
-                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-[#1E2D4D]/70 border border-[#1E2D4D]/10 hover:bg-gray-50 disabled:opacity-50"
+                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-[#1E2D4D]/70 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] disabled:opacity-50"
                               >
                                 <Clock className="w-3 h-3" /> Waitlist
                               </button>
@@ -269,7 +269,7 @@ export function AdminVendorConnect() {
                         <div className="text-xs text-[#1E2D4D]/30">Jobs</div>
                       </div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-semibold ${p.is_active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}
+                        className={`px-2 py-0.5 rounded-full text-xs font-semibold ${p.is_active ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}
                       >
                         {p.is_active ? 'Active' : 'Suspended'}
                       </span>
@@ -285,7 +285,7 @@ export function AdminVendorConnect() {
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                  <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase">County</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase">Service Type</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase">Max</th>
@@ -298,11 +298,11 @@ export function AdminVendorConnect() {
                   {spots.map(spot => {
                     const remaining = spot.max_spots - spot.filled_spots;
                     return (
-                      <tr key={spot.id} className="border-b border-gray-50 hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900 font-medium">{spot.county}</td>
+                      <tr key={spot.id} className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0]">
+                        <td className="px-4 py-3 text-[#1E2D4D] font-medium">{spot.county}</td>
                         <td className="px-4 py-3 text-[#1E2D4D]/70">{spot.service_type.replace(/_/g, ' ')}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{spot.max_spots}</td>
-                        <td className="px-4 py-3 text-center text-gray-900">{spot.filled_spots}</td>
+                        <td className="px-4 py-3 text-center text-[#1E2D4D]">{spot.max_spots}</td>
+                        <td className="px-4 py-3 text-center text-[#1E2D4D]">{spot.filled_spots}</td>
                         <td className="px-4 py-3 text-center">
                           <span className={`font-semibold ${remaining > 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {remaining}
@@ -331,7 +331,7 @@ export function AdminVendorConnect() {
                   return (
                     <div key={lead.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{lead.operator_name || 'Operator'}</p>
+                        <p className="text-sm font-medium text-[#1E2D4D]">{lead.operator_name || 'Operator'}</p>
                         <p className="text-xs text-[#1E2D4D]/50">
                           {lead.service_type?.replace(/_/g, ' ')} · {lead.location_address || '—'}
                         </p>
@@ -358,7 +358,7 @@ export function AdminVendorConnect() {
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                      <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                         <th className="px-4 py-3 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase">#</th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase">Partner</th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase">County</th>
@@ -370,14 +370,14 @@ export function AdminVendorConnect() {
                     </thead>
                     <tbody>
                       {partners.map((p, i) => (
-                        <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50">
+                        <tr key={p.id} className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0]">
                           <td className="px-4 py-3 text-[#1E2D4D]/30 font-medium">{i + 1}</td>
-                          <td className="px-4 py-3 text-gray-900 font-medium">{p.company_name}</td>
+                          <td className="px-4 py-3 text-[#1E2D4D] font-medium">{p.company_name}</td>
                           <td className="px-4 py-3 text-[#1E2D4D]/70">{p.primary_county || '—'}</td>
                           <td className="px-4 py-3 text-center font-bold" style={{ color: p.performance_score >= 90 ? '#16a34a' : '#d97706' }}>
                             {p.performance_score || 0}
                           </td>
-                          <td className="px-4 py-3 text-center text-gray-900">{p.total_jobs_completed || 0}</td>
+                          <td className="px-4 py-3 text-center text-[#1E2D4D]">{p.total_jobs_completed || 0}</td>
                           <td className="px-4 py-3 text-center text-[#1E2D4D]/70">{p.on_time_rate ? `${Math.round(p.on_time_rate)}%` : '—'}</td>
                           <td className="px-4 py-3"><PartnerBadge tier={p.partner_tier} size="sm" /></td>
                         </tr>

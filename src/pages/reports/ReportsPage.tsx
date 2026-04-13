@@ -59,7 +59,7 @@ export function ReportsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search reports..."
-            className="pl-9 pr-4 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+            className="pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY, width: 260 }}
           />
         </div>

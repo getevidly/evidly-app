@@ -2,7 +2,7 @@ import { CheckCircle2, Circle, Loader2, Sparkles } from 'lucide-react';
 import type { GenerationProgress } from '../../lib/demoDataGenerator';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 interface Props {
   companyName: string;
@@ -39,11 +39,11 @@ export function DemoGenerationLoading({ companyName, city, state, steps }: Props
               ) : step.status === 'in_progress' ? (
                 <Loader2 className="w-5 h-5 flex-shrink-0 animate-spin" style={{ color: NAVY }} />
               ) : (
-                <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                <Circle className="w-5 h-5 text-[#1E2D4D]/30 flex-shrink-0" />
               )}
               <span className={`text-sm ${
                 step.status === 'complete' ? 'text-[#1E2D4D]/80' :
-                step.status === 'in_progress' ? 'text-gray-900 font-medium' :
+                step.status === 'in_progress' ? 'text-[#1E2D4D] font-medium' :
                 'text-[#1E2D4D]/30'
               }`}>
                 {step.label}

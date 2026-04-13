@@ -583,7 +583,7 @@ export function AuditReport() {
                 <select
                   value={dateRange}
                   onChange={e => setDateRange(e.target.value as DateRange)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="7">Last 7 days</option>
                   <option value="30">Last 30 days</option>
@@ -604,7 +604,7 @@ export function AuditReport() {
                 <select
                   value={locationFilter}
                   onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="all">All Locations</option>
                   {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
@@ -617,7 +617,7 @@ export function AuditReport() {
                 <select
                   value={reportType}
                   onChange={e => applyReportType(e.target.value as ReportType)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="full">Full Compliance Report</option>
                   <option value="food_safety">Food Safety Report</option>
@@ -632,7 +632,7 @@ export function AuditReport() {
                 <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Include Photos</label>
                 <button
                   onClick={() => setIncludePhotos(!includePhotos)}
-                  className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
+                  className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-medium transition-colors ${
                     includePhotos ? 'border-[#1E2D4D] bg-blue-50 text-[#1E2D4D]' : 'border-[#1E2D4D]/15 text-[#1E2D4D]/50'
                   }`}
                 >
@@ -653,7 +653,7 @@ export function AuditReport() {
                       <button
                         key={s.id}
                         onClick={() => toggleSection(s.id)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-colors ${
                           s.enabled ? 'border-[#1E2D4D] bg-blue-50 text-[#1E2D4D]' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/30 bg-[#FAF7F0]'
                         }`}
                       >
@@ -691,13 +691,13 @@ export function AuditReport() {
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
-                <button onClick={handleEmail} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
+                <button onClick={handleEmail} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                   <Mail className="h-4 w-4" /> Email Report
                 </button>
-                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
+                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                   <Share2 className="h-4 w-4" /> Share Link
                 </button>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
+                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                   <Printer className="h-4 w-4" /> Print
                 </button>
               </div>
@@ -711,7 +711,7 @@ export function AuditReport() {
                   <EvidlyIcon size={32} />
                   <span className="text-2xl font-bold tracking-tight">
                     <span className="text-white">Evid</span>
-                    <span className="text-[#d4af37]">LY</span>
+                    <span className="text-[#A08C5A]">LY</span>
                   </span>
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight mb-1">{reportTitle}</h2>
@@ -745,7 +745,7 @@ export function AuditReport() {
                       <a
                         key={s.id}
                         href={`#section-${s.id}`}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-[#1E2D4D]/80 font-medium"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#FAF7F0] text-sm text-[#1E2D4D]/80 font-medium"
                       >
                         <span className="text-xs text-[#1E2D4D]/30 font-mono w-4">{idx + 1}.</span>
                         <Icon className="h-4 w-4 text-[#1E2D4D]" />
@@ -767,7 +767,7 @@ export function AuditReport() {
                   {expandedSections.summary && (
                     <div className="mt-4">
                       {/* Compliance Score */}
-                      <div className="flex items-center gap-6 mb-6 p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+                      <div className="flex items-center gap-6 mb-6 p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
                         <div className="relative w-24 h-24 flex-shrink-0">
                           <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                             <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
@@ -778,7 +778,7 @@ export function AuditReport() {
                           </div>
                         </div>
                         <div>
-                          <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
+                          <h4 className="font-bold text-lg text-[#1E2D4D]">Overall Compliance Score</h4>
                           <p className="text-sm text-[#1E2D4D]/70">Food Safety Score + Facility Safety Score</p>
                           <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
                             {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
@@ -788,24 +788,24 @@ export function AuditReport() {
 
                       {/* KPI grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="p-3 rounded-lg border border-[#1E2D4D]/10 text-center">
+                        <div className="p-3 rounded-xl border border-[#1E2D4D]/10 text-center">
                           <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{summary.totalTemps.toLocaleString()}</div>
                           <div className="text-xs text-[#1E2D4D]/50">Temperature Readings</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.tempPassRate}% pass rate</div>
                         </div>
-                        <div className="p-3 rounded-lg border border-[#1E2D4D]/10 text-center">
+                        <div className="p-3 rounded-xl border border-[#1E2D4D]/10 text-center">
                           <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{summary.totalChecklists}</div>
                           <div className="text-xs text-[#1E2D4D]/50">Checklists Completed</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.avgScore}% avg score</div>
                         </div>
-                        <div className="p-3 rounded-lg border border-[#1E2D4D]/10 text-center">
+                        <div className="p-3 rounded-xl border border-[#1E2D4D]/10 text-center">
                           <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{summary.totalIncidents}</div>
                           <div className="text-xs text-[#1E2D4D]/50">Incidents Logged</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.openIncidents > 0 ? '#d97706' : '#16a34a' }}>
                             {summary.resolvedIncidents} resolved, {summary.openIncidents} open
                           </div>
                         </div>
-                        <div className="p-3 rounded-lg border border-[#1E2D4D]/10 text-center">
+                        <div className="p-3 rounded-xl border border-[#1E2D4D]/10 text-center">
                           <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{summary.totalDocs}</div>
                           <div className="text-xs text-[#1E2D4D]/50">Documents on File</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.expiredDocs > 0 ? '#dc2626' : '#16a34a' }}>
@@ -820,7 +820,7 @@ export function AuditReport() {
                           <h4 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Location Scores</h4>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {summary.locationStats.map((ls: any) => (
-                              <div key={ls.name} className="p-3 rounded-lg border border-[#1E2D4D]/10 flex items-center gap-3">
+                              <div key={ls.name} className="p-3 rounded-xl border border-[#1E2D4D]/10 flex items-center gap-3">
                                 <div className="relative w-14 h-14 flex-shrink-0">
                                   <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                                     <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="10" />
@@ -831,7 +831,7 @@ export function AuditReport() {
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-sm font-medium text-gray-900">{ls.name}</div>
+                                  <div className="text-sm font-medium text-[#1E2D4D]">{ls.name}</div>
                                   <div className="text-xs font-semibold" style={{ color: getScoreColor(ls.score) }}>
                                     {ls.score >= 90 ? 'Inspection Ready' : ls.score >= 70 ? 'Needs Attention' : 'Critical'}
                                   </div>

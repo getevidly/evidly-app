@@ -27,7 +27,7 @@ const steps = [
     icon: EvidlyIcon,
     title: 'Score Updates Live',
     description: 'Your compliance score updates in real-time across 3 pillars.',
-    color: '#d4af37',
+    color: '#A08C5A',
     bg: '#fefce8',
   },
   {
@@ -69,7 +69,7 @@ export function VisualWorkflow() {
                 <p className="text-xs text-[#1E2D4D]/50 leading-relaxed">{step.description}</p>
               </div>
               {index < steps.length - 1 && (
-                <ArrowRight className="w-5 h-5 text-gray-300 mt-5 mx-1 flex-shrink-0" />
+                <ArrowRight className="w-5 h-5 text-[#1E2D4D]/30 mt-5 mx-1 flex-shrink-0" />
               )}
             </div>
           );

@@ -13,7 +13,7 @@ import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
 
 // ── Brand ─────────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const BORDER = '#b8d4e8';
 
 // ── Static safeguard config (never from DB) ───────────────────

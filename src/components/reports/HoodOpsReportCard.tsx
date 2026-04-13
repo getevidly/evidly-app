@@ -42,9 +42,9 @@ export function HoodOpsReportCard({
         {onToggleFavorite && (
           <button
             onClick={e => { e.stopPropagation(); onToggleFavorite(); }}
-            className="p-2.5 -m-1 rounded hover:bg-gray-100 transition-colors"
+            className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
           >
-            <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`} />
+            <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400 text-amber-400' : 'text-[#1E2D4D]/30'}`} />
           </button>
         )}
       </div>

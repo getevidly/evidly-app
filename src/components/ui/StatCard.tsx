@@ -9,14 +9,14 @@ interface StatCardProps {
 
 export function StatCard({ label, value, valueColor = 'default', icon }: StatCardProps) {
   const colorClasses = {
-    default: 'text-gray-900',
+    default: 'text-[#1E2D4D]',
     warning: 'text-amber-600',
     danger: 'text-red-600',
     success: 'text-green-600',
   };
 
   return (
-    <div className="bg-stone-100 rounded-lg p-4 text-center">
+    <div className="bg-stone-100 rounded-xl p-4 text-center">
       {icon && <div className="flex justify-center mb-2">{icon}</div>}
       <p className="text-xs text-[#1E2D4D]/50 mb-1">{label}</p>
       <p className={`text-2xl font-medium ${colorClasses[valueColor]}`}>{value}</p>

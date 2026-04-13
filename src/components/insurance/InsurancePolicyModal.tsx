@@ -62,16 +62,16 @@ export function InsurancePolicyModal({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto modal-content-enter">
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-lg font-bold" style={{ color: NAVY }}>Add Insurance Policy</h2>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="px-6 py-4 space-y-4">
           {/* Scope toggle */}
-          <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+          <div className="flex rounded-xl border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
             <button
               onClick={() => { setScope('company'); setPolicyType('general_liability'); }}
               className="flex-1 px-4 py-2 text-sm font-medium transition-colors"
@@ -93,7 +93,7 @@ export function InsurancePolicyModal({ onClose }: Props) {
             <select
               value={policyType}
               onChange={e => setPolicyType(e.target.value)}
-              className="w-full px-3 py-2 text-sm border rounded-lg"
+              className="w-full px-3 py-2 text-sm border rounded-xl"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               {types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -111,11 +111,11 @@ export function InsurancePolicyModal({ onClose }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: TEXT_TERTIARY }}>Effective Date *</label>
-              <input type="date" value={effectiveDate} onChange={e => setEffectiveDate(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-lg" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+              <input type="date" value={effectiveDate} onChange={e => setEffectiveDate(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-xl" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </div>
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: TEXT_TERTIARY }}>Expiry Date *</label>
-              <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-lg" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+              <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-xl" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </div>
           </div>
 
@@ -123,7 +123,7 @@ export function InsurancePolicyModal({ onClose }: Props) {
             <Field label="Premium ($)" value={premium} onChange={setPremium} placeholder="5000" />
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: TEXT_TERTIARY }}>Payment Frequency</label>
-              <select value={frequency} onChange={e => setFrequency(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-lg" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+              <select value={frequency} onChange={e => setFrequency(e.target.value)} className="w-full px-3 py-2 text-sm border rounded-xl" style={{ borderColor: CARD_BORDER, color: NAVY }}>
                 {FREQ.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
               </select>
             </div>
@@ -137,7 +137,7 @@ export function InsurancePolicyModal({ onClose }: Props) {
         </div>
 
         <div className="flex justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: CARD_BORDER }}>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }}>Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>Cancel</button>
           <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white rounded-lg" style={{ background: NAVY }}>Save Policy</button>
         </div>
       </div>
@@ -149,7 +149,7 @@ function Field({ label, value, onChange, placeholder }: { label: string; value: 
   return (
     <div>
       <label className="block text-xs font-medium mb-1" style={{ color: TEXT_TERTIARY }}>{label}</label>
-      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full px-3 py-2 text-sm border rounded-lg" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full px-3 py-2 text-sm border rounded-xl" style={{ borderColor: CARD_BORDER, color: NAVY }} />
     </div>
   );
 }

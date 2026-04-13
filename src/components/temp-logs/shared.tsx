@@ -16,10 +16,10 @@ export function ModalShell({ open, onClose, title, subtitle, children }: ModalSh
   if (!open) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[440px] max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[440px] max-w-lg max-h-[90vh] overflow-y-auto relative modal-content-enter">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
+          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors bg-transparent border-none cursor-pointer"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -62,7 +62,7 @@ export function ReadingMethodSelect({ value, onChange }: ReadingMethodSelectProp
     <select
       value={value}
       onChange={(e) => onChange(e.target.value as ReadingMethod)}
-      className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] bg-white"
+      className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white"
     >
       <option value="manual_thermometer">Manual Thermometer</option>
       <option value="infrared_gun">Infrared Gun</option>
@@ -88,7 +88,7 @@ export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAct
     : `${minTemp}–${maxTemp}°F`;
 
   return (
-    <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4">
+    <div className="bg-amber-50 border-2 border-amber-400 rounded-xl p-4">
       <div className="flex items-center gap-2 mb-2">
         <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0" />
         <span className="text-sm font-bold text-amber-700">
@@ -111,7 +111,7 @@ export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAct
         onChange={(e) => { onCorrectiveActionChange(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
         rows={2}
         placeholder="Describe corrective action taken..."
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
       />
       {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
     </div>
@@ -125,7 +125,7 @@ export function isOutOfRange(temp: number, min: number, max: number): boolean {
 
 export function tempInputClass(temp: string, inRange: boolean | null): string {
   const base = 'w-full px-4 py-4 text-3xl font-bold tracking-tight text-center border-3 rounded-lg focus:outline-none focus:ring-4 transition-all';
-  if (!temp) return `${base} border-[#1E2D4D]/15 focus:ring-[#d4af37]`;
+  if (!temp) return `${base} border-[#1E2D4D]/15 focus:ring-[#A08C5A]`;
   if (inRange) return `${base} border-green-500 focus:ring-green-200 bg-green-50`;
   return `${base} border-red-500 focus:ring-red-200 bg-red-50`;
 }
@@ -135,6 +135,6 @@ export function formatDateTimeLocal(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]';
+export const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]';
 export const BTN_PRIMARY = 'flex-1 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-semibold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]';
-export const BTN_CANCEL = 'flex-1 px-6 py-3 border-2 border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg font-medium hover:bg-gray-50 transition-colors min-h-[44px]';
+export const BTN_CANCEL = 'flex-1 px-6 py-3 border-2 border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]';

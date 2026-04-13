@@ -140,13 +140,13 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       {/* Status summary row */}
       <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-4" style={{ backgroundColor: '#eef4f8' }}>
         <span className="text-sm font-semibold text-[#1E2D4D]">{data.total} Total</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#16a34a' }}>
           {data.operational} OK
         </span>
         {data.needsRepair > 0 && (
           <>
-            <span className="text-gray-300">|</span>
+            <span className="text-[#1E2D4D]/30">|</span>
             <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#d97706' }}>
               {data.needsRepair} Repair
             </span>
@@ -154,7 +154,7 @@ export function EquipmentHealthWidget({ locationId }: Props) {
         )}
         {data.outOfService > 0 && (
           <>
-            <span className="text-gray-300">|</span>
+            <span className="text-[#1E2D4D]/30">|</span>
             <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#dc2626' }}>
               {data.outOfService} Down
             </span>
@@ -193,7 +193,7 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       )}
 
       {/* Footer stats */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-[#1E2D4D]/5">
         <div className="flex items-center gap-1.5 text-sm">
           <DollarSign className="h-4 w-4 text-[#1E2D4D]/30" />
           <span className="text-[#1E2D4D]/50">YTD Maintenance:</span>

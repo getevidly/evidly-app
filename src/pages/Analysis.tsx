@@ -38,6 +38,17 @@ interface PredictiveAlert {
 
 // ── Font ───────────────────────────────────────────────────────────
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
+// Brand color mapping for inline styles
+const CLR = {
+  navy: '#1E2D4D',
+  navyBody: 'rgba(30,45,77,0.8)',
+  navySec: 'rgba(30,45,77,0.6)',
+  navyMuted: 'rgba(30,45,77,0.4)',
+  navyBorder: 'rgba(30,45,77,0.15)',
+  navyBorderLight: 'rgba(30,45,77,0.1)',
+  cream: '#FAF7F0',
+  creamAlt: 'rgba(30,45,77,0.05)',
+};
 
 // DEMO ONLY — never reaches production render paths.
 // Team members for demo assign dropdown; production reads from Supabase team table.
@@ -567,7 +578,7 @@ export function Analysis() {
       MEDIUM: { bg: '#fef9c3', text: '#854d0e' },
       LOW: { bg: '#dcfce7', text: '#166534' },
     };
-    const s = styles[priority] || { bg: '#f3f4f6', text: '#374151' };
+    const s = styles[priority] || { bg: CLR.creamAlt, text: CLR.navyBody };
     return (
       <span style={{ backgroundColor: s.bg, color: s.text, padding: '2px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, ...F }}>
         {priority}
@@ -575,7 +586,7 @@ export function Analysis() {
     );
   };
 
-  const selectStyle: React.CSSProperties = { padding: '7px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', cursor: 'pointer', ...F };
+  const selectStyle: React.CSSProperties = { padding: '7px 12px', border: `1px solid ${CLR.navyBorder}`, borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', cursor: 'pointer', ...F };
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -605,8 +616,8 @@ export function Analysis() {
         {/* Header */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px' }}>
           <div>
-            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: 0, ...F }}>Predictive Compliance Analysis</h1>
-            <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px', ...F }}>AI-driven early warnings before compliance issues become violations</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: CLR.navy, margin: 0, ...F }}>Predictive Compliance Analysis</h1>
+            <p style={{ fontSize: '14px', color: CLR.navySec, marginTop: '4px', ...F }}>AI-driven early warnings before compliance issues become violations</p>
           </div>
           <select data-demo-allow value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} style={selectStyle}>
             {showAllLocationsOption() && <option value="all">All Locations (Org Average)</option>}
@@ -618,10 +629,10 @@ export function Analysis() {
 
         {/* Empty state — non-demo with no locations */}
         {!isDemoMode && locations.length === 0 && alerts.length === 0 && !loading && (
-          <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '48px 24px', textAlign: 'center', marginBottom: '20px' }}>
-            <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151', marginBottom: '8px', ...F }}>No compliance analysis data yet</h2>
-            <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px', ...F }}>Add a location to begin receiving predictive compliance alerts.</p>
+          <div style={{ backgroundColor: 'white', border: `1px solid ${CLR.navyBorderLight}`, borderRadius: '12px', padding: '48px 24px', textAlign: 'center', marginBottom: '20px' }}>
+            <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: CLR.navyMuted }} />
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: CLR.navyBody, marginBottom: '8px', ...F }}>No compliance analysis data yet</h2>
+            <p style={{ fontSize: '14px', color: CLR.navySec, marginBottom: '20px', ...F }}>Add a location to begin receiving predictive compliance alerts.</p>
             <button onClick={() => navigate('/org-hierarchy')} style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: '#1E2D4D', border: 'none', borderRadius: '8px', cursor: 'pointer', ...F }}>
               Add Location
             </button>
@@ -629,7 +640,7 @@ export function Analysis() {
         )}
 
         {/* Filter Bar */}
-        <div data-demo-allow style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+        <div data-demo-allow style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', padding: '12px 16px', backgroundColor: CLR.cream, borderRadius: '10px', border: `1px solid ${CLR.navyBorderLight}` }}>
           <select value={alertSeverityFilter} onChange={e => setAlertSeverityFilter(e.target.value as any)} style={selectStyle}>
             <option value="all">All Severities</option>
             <option value="high">High</option>
@@ -664,7 +675,7 @@ export function Analysis() {
         {loading && (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
             <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1E2D4D' }} />
-            <span style={{ marginLeft: '12px', color: '#6b7280', fontSize: '14px', ...F }}>Loading alerts...</span>
+            <span style={{ marginLeft: '12px', color: CLR.navySec, fontSize: '14px', ...F }}>Loading alerts...</span>
           </div>
         )}
 
@@ -692,13 +703,13 @@ export function Analysis() {
             {/* Risk Forecast Cards */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: 0, ...F }}>Risk Forecast (Next 30 Days)</h2>
-                <span style={{ fontSize: '13px', color: '#6b7280', ...F }}>{filteredAlerts.length} alert{filteredAlerts.length !== 1 ? 's' : ''}</span>
+                <h2 style={{ fontSize: '18px', fontWeight: 600, color: CLR.navy, margin: 0, ...F }}>Risk Forecast (Next 30 Days)</h2>
+                <span style={{ fontSize: '13px', color: CLR.navySec, ...F }}>{filteredAlerts.length} alert{filteredAlerts.length !== 1 ? 's' : ''}</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {filteredAlerts.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af', fontSize: '14px', ...F }}>
+                  <div style={{ textAlign: 'center', padding: '40px 20px', color: CLR.navyMuted, fontSize: '14px', ...F }}>
                     No alerts match the selected filters.
                   </div>
                 ) : filteredAlerts.map(alert => {
@@ -707,24 +718,24 @@ export function Analysis() {
                   const isSnoozed = alert.status === 'snoozed';
 
                   return (
-                    <div key={alert.id} style={{ backgroundColor: isResolved ? '#f9fafb' : s.bg, border: `2px solid ${isResolved ? '#d1d5db' : s.border}`, borderRadius: '12px', padding: '16px', opacity: isResolved ? 0.75 : 1, position: 'relative' }}>
+                    <div key={alert.id} style={{ backgroundColor: isResolved ? CLR.cream : s.bg, border: `2px solid ${isResolved ? CLR.navyBorder : s.border}`, borderRadius: '12px', padding: '16px', opacity: isResolved ? 0.75 : 1, position: 'relative' }}>
                       {/* Header row */}
                       <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '8px', gap: '8px', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
                           {isResolved ? <CheckCircle className="h-5 w-5 flex-shrink-0" style={{ color: '#16a34a' }} /> : getSeverityIcon(alert.severity)}
-                          <h3 style={{ fontWeight: 600, fontSize: '14px', color: isResolved ? '#6b7280' : s.text, margin: 0, ...F }}>{alert.title}</h3>
+                          <h3 style={{ fontWeight: 600, fontSize: '14px', color: isResolved ? CLR.navySec : s.text, margin: 0, ...F }}>{alert.title}</h3>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           <span style={{ backgroundColor: s.badge, color: s.badgeText, padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', ...F }}>{alert.severity}</span>
-                          <span style={{ backgroundColor: '#f3f4f6', color: '#6b7280', padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 500, ...F }}>{ALERT_TYPE_LABELS[alert.alert_type]}</span>
+                          <span style={{ backgroundColor: CLR.creamAlt, color: CLR.navySec, padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 500, ...F }}>{ALERT_TYPE_LABELS[alert.alert_type]}</span>
                         </div>
                       </div>
 
                       {/* Description */}
-                      <p style={{ fontSize: '13px', color: isResolved ? '#9ca3af' : s.text, opacity: 0.85, marginBottom: '10px', lineHeight: '1.5', ...F }}>{alert.description}</p>
+                      <p style={{ fontSize: '13px', color: isResolved ? CLR.navyMuted : s.text, opacity: 0.85, marginBottom: '10px', lineHeight: '1.5', ...F }}>{alert.description}</p>
 
                       {/* Location + timestamp */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '12px', color: '#6b7280', flexWrap: 'wrap', ...F }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '12px', color: CLR.navySec, flexWrap: 'wrap', ...F }}>
                         <span>📍 {alert.location}</span>
                         <span>⏱ {formatDate(alert.created_at)}</span>
                         {alert.assigned_to && <span>👤 {alert.assigned_to}</span>}
@@ -743,8 +754,8 @@ export function Analysis() {
                       {/* Recommended Action */}
                       {!isResolved && (
                         <div style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: '8px', padding: '10px 12px', marginBottom: '10px', border: '1px solid rgba(0,0,0,0.05)' }}>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', ...F }}>Recommended Action</div>
-                          <div style={{ fontSize: '13px', color: '#374151', lineHeight: '1.4', ...F }}>{alert.recommended_action}</div>
+                          <div style={{ fontSize: '11px', fontWeight: 600, color: CLR.navySec, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', ...F }}>Recommended Action</div>
+                          <div style={{ fontSize: '13px', color: CLR.navyBody, lineHeight: '1.4', ...F }}>{alert.recommended_action}</div>
                         </div>
                       )}
 
@@ -752,7 +763,7 @@ export function Analysis() {
                       {!isResolved && alert.data_points.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
                           {alert.data_points.map((dp, i) => (
-                            <span key={i} style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '6px', padding: '3px 8px', fontSize: '11px', color: '#374151', ...F }}>{dp}</span>
+                            <span key={i} style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '6px', padding: '3px 8px', fontSize: '11px', color: CLR.navyBody, ...F }}>{dp}</span>
                           ))}
                         </div>
                       )}
@@ -780,7 +791,7 @@ export function Analysis() {
                               <Clock className="h-3.5 w-3.5" /> Snooze <ChevronDown className="h-3 w-3" />
                             </button>
                             {openSnoozeId === alert.id && (
-                              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb', zIndex: 50, minWidth: '120px' }}>
+                              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: `1px solid ${CLR.navyBorderLight}`, zIndex: 50, minWidth: '120px' }}>
                                 {SNOOZE_OPTIONS.map(opt => (
                                   <button key={opt.days} onClick={() => snoozeAlert(alert.id, opt.days)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', fontSize: '13px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', ...F }}>
                                     {opt.label}
@@ -796,7 +807,7 @@ export function Analysis() {
                               <UserPlus className="h-3.5 w-3.5" /> Assign <ChevronDown className="h-3 w-3" />
                             </button>
                             {openAssignId === alert.id && (
-                              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb', zIndex: 50, minWidth: '160px' }}>
+                              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: '4px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: `1px solid ${CLR.navyBorderLight}`, zIndex: 50, minWidth: '160px' }}>
                                 {TEAM_MEMBERS.map(name => (
                                   <button key={name} onClick={() => assignAlert(alert.id, name)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', fontSize: '13px', border: 'none', backgroundColor: alert.assigned_to === name ? '#eef4f8' : 'transparent', cursor: 'pointer', ...F }}>
                                     {name} {alert.assigned_to === name && '✓'}
@@ -807,7 +818,7 @@ export function Analysis() {
                           </div>
 
                           {/* Dismiss */}
-                          <button onClick={() => dismissAlert(alert.id)} style={{ backgroundColor: '#f3f4f6', color: '#6b7280', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, border: '1px solid #e5e7eb', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', ...F }}>
+                          <button onClick={() => dismissAlert(alert.id)} style={{ backgroundColor: CLR.creamAlt, color: CLR.navySec, padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, border: `1px solid ${CLR.navyBorderLight}`, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', ...F }}>
                             <X className="h-3.5 w-3.5" /> Dismiss
                           </button>
 
@@ -825,7 +836,7 @@ export function Analysis() {
 
             {/* Score Projection */}
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: 600, color: CLR.navy, marginBottom: '16px', ...F }}>Score Projection</h2>
               {scoreProjectionData.length > 0 ? (
                 <>
                   <ResponsiveContainer width="100%" height={300}>
@@ -854,9 +865,9 @@ export function Analysis() {
                   </div>
                 </>
               ) : (
-                <div style={{ textAlign: 'center', padding: '48px 20px', color: '#9ca3af' }}>
-                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
-                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
+                <div style={{ textAlign: 'center', padding: '48px 20px', color: CLR.navyMuted }}>
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: CLR.navyBorder }} />
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: CLR.navySec, marginBottom: '4px', ...F }}>Insufficient data</p>
                   <p style={{ fontSize: '13px', ...F }}>Score projections available after 30 days of activity</p>
                 </div>
               )}
@@ -867,8 +878,8 @@ export function Analysis() {
               <div className="p-4 sm:p-6 pb-4">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
-                    <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', ...F }}>Actions to Improve Score</h2>
-                    <p style={{ fontSize: '13px', color: '#6b7280', ...F }}>Complete these actions to increase your compliance score — sorted by priority then point impact</p>
+                    <h2 style={{ fontSize: '18px', fontWeight: 600, color: CLR.navy, ...F }}>Actions to Improve Score</h2>
+                    <p style={{ fontSize: '13px', color: CLR.navySec, ...F }}>Complete these actions to increase your compliance score — sorted by priority then point impact</p>
                   </div>
                   <div data-demo-allow className="flex items-center gap-3">
                     <select value={actionLocationFilter} onChange={(e) => setActionLocationFilter(e.target.value)} style={selectStyle}>
@@ -888,7 +899,7 @@ export function Analysis() {
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#FAF7F0]">
                     <tr>
                       <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Priority</th>
                       <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Action</th>
@@ -906,9 +917,9 @@ export function Analysis() {
                         </td>
                       </tr>
                     ) : actionsToImproveScore.map((action, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
+                      <tr key={index} className="hover:bg-[#FAF7F0]">
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
-                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{action.action}</td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-[#1E2D4D]">{action.action}</td>
                         <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap">
                           <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Facility Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1E2D4D' : action.pillar === 'Facility Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
@@ -930,7 +941,7 @@ export function Analysis() {
 
             {/* Compliance Trends */}
             <div>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: 600, color: CLR.navy, marginBottom: '16px', ...F }}>Compliance Trends</h2>
               {currentTrends.foodSafety.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 sm:p-4">
@@ -968,9 +979,9 @@ export function Analysis() {
                 </div>
               ) : (
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6" style={{ textAlign: 'center' }}>
-                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
-                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
-                  <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Compliance trends available after 30 days of activity</p>
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: CLR.navyBorder }} />
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: CLR.navySec, marginBottom: '4px', ...F }}>Insufficient data</p>
+                  <p style={{ fontSize: '13px', color: CLR.navyMuted, ...F }}>Compliance trends available after 30 days of activity</p>
                 </div>
               )}
             </div>
@@ -981,17 +992,17 @@ export function Analysis() {
 
             {/* Alert Trends */}
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '16px', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '12px', ...F }}>Alert Trends (4 Weeks)</h3>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: CLR.navy, marginBottom: '12px', ...F }}>Alert Trends (4 Weeks)</h3>
               {alertTrends.map((week, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < alertTrends.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-                  <span style={{ fontSize: '12px', color: '#6b7280', ...F }}>{week.week}</span>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < alertTrends.length - 1 ? `1px solid ${CLR.creamAlt}` : 'none' }}>
+                  <span style={{ fontSize: '12px', color: CLR.navySec, ...F }}>{week.week}</span>
                   <div style={{ display: 'flex', gap: '12px', fontSize: '12px', ...F }}>
                     <span style={{ color: '#dc2626', fontWeight: 500 }}>+{week.generated}</span>
                     <span style={{ color: '#16a34a', fontWeight: 500 }}>-{week.resolved}</span>
                   </div>
                 </div>
               ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#9ca3af', ...F }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: CLR.navyMuted, ...F }}>
                 <span>🔴 Generated</span>
                 <span>🟢 Resolved</span>
               </div>
@@ -999,20 +1010,20 @@ export function Analysis() {
 
             {/* Top Risk Areas */}
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '16px', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '12px', ...F }}>Top Risk Areas</h3>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', ...F }}>By Location</div>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: CLR.navy, marginBottom: '12px', ...F }}>Top Risk Areas</h3>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: CLR.navySec, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', ...F }}>By Location</div>
               {topRiskAreas.map(([loc, count], i) => (
                 <div key={loc} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
-                  <span style={{ fontSize: '13px', color: '#374151', ...F }}>📍 {loc}</span>
-                  <span style={{ backgroundColor: i === 0 ? '#fee2e2' : '#f3f4f6', color: i === 0 ? '#991b1b' : '#374151', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, ...F }}>{count}</span>
+                  <span style={{ fontSize: '13px', color: CLR.navyBody, ...F }}>📍 {loc}</span>
+                  <span style={{ backgroundColor: i === 0 ? '#fee2e2' : CLR.creamAlt, color: i === 0 ? '#991b1b' : CLR.navyBody, padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, ...F }}>{count}</span>
                 </div>
               ))}
-              <div style={{ borderTop: '1px solid #f3f4f6', marginTop: '12px', paddingTop: '12px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', ...F }}>By Type</div>
+              <div style={{ borderTop: `1px solid ${CLR.creamAlt}`, marginTop: '12px', paddingTop: '12px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: CLR.navySec, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', ...F }}>By Type</div>
                 {topAlertTypes.map(([type, count]) => (
                   <div key={type} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0' }}>
-                    <span style={{ fontSize: '12px', color: '#374151', ...F }}>{type}</span>
-                    <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500, ...F }}>{count}</span>
+                    <span style={{ fontSize: '12px', color: CLR.navyBody, ...F }}>{type}</span>
+                    <span style={{ fontSize: '12px', color: CLR.navySec, fontWeight: 500, ...F }}>{count}</span>
                   </div>
                 ))}
               </div>
@@ -1020,35 +1031,35 @@ export function Analysis() {
 
             {/* Prevention Score — DEMO ONLY values; production computes from resolved vs missed alerts */}
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '16px' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '12px', ...F }}>Prevention Score</h3>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: CLR.navy, marginBottom: '12px', ...F }}>Prevention Score</h3>
               {isDemoMode ? (
                 <>
                   <div style={{ textAlign: 'center', padding: '12px 0' }}>
                     <div style={{ position: 'relative', width: '100px', height: '100px', margin: '0 auto' }}>
                       <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(30,45,77,0.1)" strokeWidth="8" />
                         <circle cx="50" cy="50" r="42" fill="none" stroke="#16a34a" strokeWidth="8" strokeDasharray={`${78 * 2.64} ${100 * 2.64}`} strokeDashoffset="0" transform="rotate(-90 50 50)" strokeLinecap="round" />
                       </svg>
                       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '24px', fontWeight: 700, color: '#166534', ...F }}>78%</div>
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px', lineHeight: '1.4', ...F }}>
+                    <p style={{ fontSize: '12px', color: CLR.navySec, marginTop: '8px', lineHeight: '1.4', ...F }}>
                       Alerts resolved before becoming actual violations
                     </p>
                   </div>
-                  <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '12px', marginTop: '4px' }}>
+                  <div style={{ borderTop: `1px solid ${CLR.creamAlt}`, paddingTop: '12px', marginTop: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', ...F }}>
-                      <span style={{ color: '#6b7280' }}>Prevented</span>
+                      <span style={{ color: CLR.navySec }}>Prevented</span>
                       <span style={{ color: '#166534', fontWeight: 600 }}>32 violations</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginTop: '4px', ...F }}>
-                      <span style={{ color: '#6b7280' }}>Missed</span>
+                      <span style={{ color: CLR.navySec }}>Missed</span>
                       <span style={{ color: '#991b1b', fontWeight: 600 }}>9 violations</span>
                     </div>
                   </div>
                 </>
               ) : (
                 <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                  <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Available after 30 days of activity</p>
+                  <p style={{ fontSize: '13px', color: CLR.navyMuted, ...F }}>Available after 30 days of activity</p>
                 </div>
               )}
             </div>

@@ -117,7 +117,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
             right: '24px',
             width: '56px',
             height: '56px',
-            backgroundColor: '#d4af37',
+            backgroundColor: '#A08C5A',
             color: 'white',
           }}
           title="AI Compliance Advisor"
@@ -161,7 +161,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3" style={{ backgroundColor: '#faf8f3' }}>
           {messages.length === 0 && !isTyping && (
             <div className="text-center pt-8">
-              <Brain className="h-10 w-10 mx-auto mb-3" style={{ color: '#d4af37' }} />
+              <Brain className="h-10 w-10 mx-auto mb-3" style={{ color: '#A08C5A' }} />
               <p className="text-sm font-semibold text-[#1E2D4D]/80 mb-1">AI Compliance Advisor</p>
               <p className="text-xs text-[#1E2D4D]/50 mb-4">{advisorIntro}</p>
               <div className="flex flex-wrap gap-2 justify-center">
@@ -185,7 +185,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
                 className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
                   msg.role === 'user'
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-white border border-[#1E2D4D]/10 text-gray-800'
+                    : 'bg-white border border-[#1E2D4D]/10 text-[#1E2D4D]/90'
                 }`}
               >
                 {msg.role === 'assistant' ? (
@@ -197,12 +197,12 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
                   <span>{msg.content}</span>
                 )}
                 {msg.suggestions && msg.suggestions.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2 pt-2 border-t border-gray-100">
+                  <div className="flex flex-wrap gap-1.5 mt-2 pt-2 border-t border-[#1E2D4D]/5">
                     {msg.suggestions.map((s, i) => (
                       <button
                         key={i}
                         onClick={() => sendMessage(s)}
-                        className="px-2 py-1 rounded-md text-xs border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
+                        className="px-2 py-1 rounded-md text-xs border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
                       >
                         {s}
                       </button>
@@ -216,7 +216,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
           {isTyping && (
             <div className="flex justify-start">
               <div className="bg-white border border-[#1E2D4D]/10 rounded-xl px-3 py-2 flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin text-[#d4af37]" />
+                <Loader2 className="h-4 w-4 animate-spin text-[#A08C5A]" />
                 <span className="text-xs text-[#1E2D4D]/50">Analyzing your data...</span>
               </div>
             </div>
@@ -234,7 +234,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
               placeholder="Ask about compliance..."
-              className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+              className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
               disabled={isTyping}
             />
             <button

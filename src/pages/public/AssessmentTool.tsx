@@ -258,7 +258,7 @@ export function AssessmentTool() {
                 <input
                   type="text" value={leadData.businessName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, businessName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.businessName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
+                  className={`w-full px-3 py-2 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.businessName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="e.g. Joe's Kitchen"
                 />
                 {leadErrors.businessName && <p className="text-xs text-red-500 mt-1">{leadErrors.businessName}</p>}
@@ -270,7 +270,7 @@ export function AssessmentTool() {
                 <input
                   type="text" value={leadData.contactName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, contactName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.contactName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
+                  className={`w-full px-3 py-2 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.contactName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="Your full name"
                 />
                 {leadErrors.contactName && <p className="text-xs text-red-500 mt-1">{leadErrors.contactName}</p>}
@@ -282,7 +282,7 @@ export function AssessmentTool() {
                 <input
                   type="email" value={leadData.email} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, email: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.email ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
+                  className={`w-full px-3 py-2 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.email ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="you@company.com"
                 />
                 {leadErrors.email && <p className="text-xs text-red-500 mt-1">{leadErrors.email}</p>}
@@ -294,7 +294,7 @@ export function AssessmentTool() {
                 <input
                   type="tel" value={leadData.phone} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, phone: e.target.value }))}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   placeholder="(555) 555-5555"
                 />
               </div>
@@ -306,7 +306,7 @@ export function AssessmentTool() {
                   <input
                     type="text" value={leadData.city} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, city: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.city ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
+                    className={`w-full px-3 py-2 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.city ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                     placeholder="City"
                   />
                   {leadErrors.city && <p className="text-xs text-red-500 mt-1">{leadErrors.city}</p>}
@@ -316,7 +316,7 @@ export function AssessmentTool() {
                   <input
                     type="text" value={leadData.zipCode} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, zipCode: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.zipCode ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
+                    className={`w-full px-3 py-2 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.zipCode ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                     placeholder="90210"
                   />
                   {leadErrors.zipCode && <p className="text-xs text-red-500 mt-1">{leadErrors.zipCode}</p>}
@@ -329,7 +329,7 @@ export function AssessmentTool() {
                 <select
                   value={leadData.referralSource} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, referralSource: e.target.value }))}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
                 >
                   <option value="">Select...</option>
                   <option value="google">Google search</option>
@@ -378,7 +378,7 @@ export function AssessmentTool() {
 
             {/* Section header */}
             {showSectionHeader && (
-              <div className="mb-4 pb-3 border-b border-gray-100">
+              <div className="mb-4 pb-3 border-b border-[#1E2D4D]/5">
                 <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: GOLD }}>
                   Section: {currentSection}
                 </span>
@@ -399,10 +399,10 @@ export function AssessmentTool() {
                     key={opt.value}
                     onClick={() => handleAnswer(opt.value)}
                     data-demo-allow
-                    className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
+                    className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${
                       selected
                         ? 'border-blue-500 bg-blue-50'
-                        : 'border-[#1E2D4D]/10 hover:border-gray-300 bg-white'
+                        : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15 bg-white'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -426,7 +426,7 @@ export function AssessmentTool() {
                 onClick={handleBack}
                 disabled={currentIdx === 0}
                 data-demo-allow
-                className="px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D]/90 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Back
               </button>
@@ -456,7 +456,7 @@ export function AssessmentTool() {
                   className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
                     resultsTab === tab
                       ? 'text-white shadow-sm'
-                      : 'text-[#1E2D4D]/70 hover:text-gray-800'
+                      : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]/90'
                   }`}
                   style={resultsTab === tab ? { backgroundColor: NAVY } : {}}
                 >
@@ -618,10 +618,10 @@ export function AssessmentTool() {
                       </Link>
                       <Link
                         to="/demo"
-                        className="inline-block px-4 py-2 text-sm font-semibold rounded-lg border-2 transition-colors"
+                        className="inline-block px-4 py-2 text-sm font-semibold rounded-xl border-2 transition-colors"
                         style={{ borderColor: BRAND, color: BRAND }}
                       >
-                        See the Platform
+                        See EvidLY
                       </Link>
                     </div>
                   </div>

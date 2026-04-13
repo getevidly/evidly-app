@@ -108,14 +108,14 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
         <button
           type="button"
           onClick={() => setMode('check')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'}`}
         >
           Log Check on Existing
         </button>
         <button
           type="button"
           onClick={() => setMode('new')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'}`}
         >
           New Cooldown
         </button>
@@ -201,7 +201,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
             )}
 
             {stageWarning && (
-              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
                 <p className="text-xs text-amber-700">{stageWarning}</p>
               </div>

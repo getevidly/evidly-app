@@ -42,7 +42,7 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#EFF6FF' }}>
@@ -135,7 +135,7 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
                   {idx < sortedJobs.length - 1 && (
                     <div className="flex items-center gap-1 mt-1.5 px-2 py-1 rounded" style={{ background: '#F8FAFC' }}>
                       <ArrowRight className="w-3 h-3" style={{ color: TEXT_TERTIARY }} />
-                      <span className="text-[9px] font-medium" style={{ color: TEXT_TERTIARY }}>
+                      <span className="text-[11px] font-medium" style={{ color: TEXT_TERTIARY }}>
                         Travel to next stop
                       </span>
                     </div>

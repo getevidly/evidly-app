@@ -196,7 +196,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
                 className={`w-10 h-10 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   days[i]
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-gray-100 text-[#1E2D4D]/50 border border-[#1E2D4D]/15 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 border border-[#1E2D4D]/15 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 {label}

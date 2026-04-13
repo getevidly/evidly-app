@@ -97,7 +97,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       </Helmet>
       {/* Gold top border when presenter mode is active */}
       {presenterMode && (
-        <div className="fixed top-0 left-0 right-0 h-0.5 z-[99998]" style={{ backgroundColor: '#d4af37' }} />
+        <div className="fixed top-0 left-0 right-0 h-0.5 z-[99998]" style={{ backgroundColor: '#A08C5A' }} />
       )}
       <Suspense fallback={null}><DemoBanner /></Suspense>
       <Sidebar />

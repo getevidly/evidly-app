@@ -11,7 +11,7 @@ export function PrivacyPolicy() {
         <div className="prose prose-sm max-w-none text-[#1E2D4D]/80 space-y-6">
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">1. Information We Collect</h2>
-            <p>We collect information you provide directly, including: name, email address, company information, and payment details. We also collect operational data you input into the platform such as temperature logs, checklist completions, documents, photos, and compliance records.</p>
+            <p>We collect information you provide directly, including: name, email address, company information, and payment details. We also collect operational data you input into EvidLY such as temperature logs, checklist completions, documents, photos, and compliance records.</p>
           </section>
 
           <section>
@@ -26,7 +26,7 @@ export function PrivacyPolicy() {
 
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">4. Data Sharing</h2>
-            <p>We do not sell your personal information. We may share data with: (a) service providers who assist in operating the platform (hosting, payment processing); (b) health inspectors or regulatory bodies at your explicit request; (c) law enforcement when required by law.</p>
+            <p>We do not sell your personal information. We may share data with: (a) service providers who assist in operating EvidLY (hosting, payment processing); (b) health inspectors or regulatory bodies at your explicit request; (c) law enforcement when required by law.</p>
           </section>
 
           <section>
@@ -36,7 +36,7 @@ export function PrivacyPolicy() {
 
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">6. Cookies and Analytics</h2>
-            <p>We use essential cookies to maintain your session and preferences. We use analytics tools to understand how the platform is used and to improve the Service. You can manage cookie preferences through your browser settings.</p>
+            <p>We use essential cookies to maintain your session and preferences. We use analytics tools to understand how EvidLY is used and to improve the Service. You can manage cookie preferences through your browser settings.</p>
           </section>
 
           <section>
@@ -51,7 +51,7 @@ export function PrivacyPolicy() {
 
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">9. Changes to This Policy</h2>
-            <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email or through the platform. Continued use of the Service after changes constitutes acceptance of the updated policy.</p>
+            <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email or through EvidLY. Continued use of the Service after changes constitutes acceptance of the updated policy.</p>
           </section>
 
           <section>

@@ -41,7 +41,7 @@ const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof Ev
   food_safety_handler: { label: 'Food Safety – Handler', icon: EvidlyIcon, color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1E2D4D', bg: '#e0f2fe' },
   facility_safety: { label: 'Facility Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
-  compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#d4af37', bg: '#fef3c7' },
+  compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#A08C5A', bg: '#fef3c7' },
   custom: { label: 'Custom', icon: Brain, color: '#7c3aed', bg: '#ede9fe' },
 };
 
@@ -80,7 +80,7 @@ function CourseCatalogTab() {
         {[
           { label: 'Active Courses', value: trainingCourses.filter(c => c.isActive).length, icon: BookOpen, color: '#1E2D4D' },
           { label: 'Total Enrolled', value: trainingEnrollments.length, icon: Users, color: '#15803d' },
-          { label: 'Completed', value: trainingEnrollments.filter(e => e.status === 'completed').length, icon: CheckCircle2, color: '#d4af37' },
+          { label: 'Completed', value: trainingEnrollments.filter(e => e.status === 'completed').length, icon: CheckCircle2, color: '#A08C5A' },
           { label: 'Certificates Issued', value: trainingCertificates.length, icon: Award, color: '#7c3aed' },
         ].map(s => (
           <div key={s.label} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb' }}>
@@ -739,7 +739,7 @@ function AdminTab() {
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</div>
               </div>
               <div style={{ width: 100, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', flexShrink: 0 }}>
-                <div style={{ width: `${c.rate}%`, height: '100%', background: c.rate >= 75 ? '#15803d' : c.rate >= 50 ? '#d4af37' : '#dc2626', borderRadius: 3 }} />
+                <div style={{ width: `${c.rate}%`, height: '100%', background: c.rate >= 75 ? '#15803d' : c.rate >= 50 ? '#A08C5A' : '#dc2626', borderRadius: 3 }} />
               </div>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', minWidth: 70, textAlign: 'right' }}>{c.completedCount}/{c.enrolledCount} ({c.rate}%)</span>
             </div>
@@ -842,7 +842,7 @@ const PRICING_TIERS = [
     name: 'Enterprise',
     price: 'Custom',
     period: 'per location',
-    color: '#d4af37',
+    color: '#A08C5A',
     features: [
       { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Unlimited' },
       { name: 'CFPM prep modules', included: true },
@@ -937,7 +937,7 @@ function PricingTab() {
 
 function AchievementBadges() {
   const badges = [
-    { id: 'fast-learner', name: 'Fast Learner', desc: 'Completed under estimated time', icon: Zap, color: '#d4af37', bg: '#fffbeb', earned: true },
+    { id: 'fast-learner', name: 'Fast Learner', desc: 'Completed under estimated time', icon: Zap, color: '#A08C5A', bg: '#fffbeb', earned: true },
     { id: 'perfect-score', name: 'Perfect Score', desc: '100% on first attempt', icon: Star, color: '#7c3aed', bg: '#ede9fe', earned: false },
     { id: 'streak', name: '5-Lesson Streak', desc: 'Completed 5 lessons in a row', icon: Flame, color: '#dc2626', bg: '#fee2e2', earned: true },
     { id: 'team-player', name: 'Team Player', desc: 'All team members certified', icon: Users, color: '#15803d', bg: '#dcfce7', earned: false },
@@ -945,7 +945,7 @@ function AchievementBadges() {
   return (
     <div style={{ marginBottom: 24 }}>
       <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Star size={16} color="#d4af37" /> Achievement Badges
+        <Star size={16} color="#A08C5A" /> Achievement Badges
       </h3>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {badges.map(b => (
@@ -1051,7 +1051,7 @@ export function TrainingDashboardWidget() {
   const overdue = trainingEnrollments.filter(e => (e.status === 'in_progress' || e.status === 'not_started') && e.expiresAt && new Date(e.expiresAt) < new Date()).length;
   const total = trainingEnrollments.length;
 
-  const statusColor = overdue > 0 ? '#dc2626' : inProgress > 0 ? '#d4af37' : '#15803d';
+  const statusColor = overdue > 0 ? '#dc2626' : inProgress > 0 ? '#A08C5A' : '#15803d';
 
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 20, cursor: 'pointer' }}
@@ -1073,7 +1073,7 @@ export function TrainingDashboardWidget() {
           <div style={{ fontSize: 11, color: '#6b7280' }}>Up to Date</div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#d4af37' }}>{inProgress}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#A08C5A' }}>{inProgress}</div>
           <div style={{ fontSize: 11, color: '#6b7280' }}>In Progress</div>
         </div>
         <div style={{ textAlign: 'center' }}>
@@ -1084,7 +1084,7 @@ export function TrainingDashboardWidget() {
       {/* Mini progress bar */}
       <div style={{ height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', display: 'flex' }}>
         <div style={{ width: `${(upToDate / total) * 100}%`, background: '#15803d' }} />
-        <div style={{ width: `${(inProgress / total) * 100}%`, background: '#d4af37' }} />
+        <div style={{ width: `${(inProgress / total) * 100}%`, background: '#A08C5A' }} />
         <div style={{ width: `${(overdue / total) * 100}%`, background: '#dc2626' }} />
       </div>
       <div style={{ marginTop: 8, fontSize: 12, color: '#1E2D4D', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -1137,7 +1137,7 @@ function RequirementsTab() {
         </div>
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
           <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Recommended</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#d4af37' }}>{recommendedCount}</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#A08C5A' }}>{recommendedCount}</div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>best practice</div>
         </div>
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
@@ -1326,7 +1326,7 @@ function ComplianceOverviewTab() {
             )}
             {/* Mini progress bar */}
             <div style={{ height: 4, background: '#f3f4f6', borderRadius: 2, overflow: 'hidden', marginTop: 8 }}>
-              <div style={{ width: `${loc.pct}%`, height: '100%', background: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#d4af37' : '#dc2626', borderRadius: 2 }} />
+              <div style={{ width: `${loc.pct}%`, height: '100%', background: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#A08C5A' : '#dc2626', borderRadius: 2 }} />
             </div>
           </div>
         ))}
@@ -1439,7 +1439,7 @@ export function TrainingHub() {
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => guardAction('chat', 'AI Study Companion', () => toast.info('AI Study Companion (Demo)'))}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={14} /> AI Study Companion
             </button>
           </div>

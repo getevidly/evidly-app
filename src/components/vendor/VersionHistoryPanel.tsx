@@ -25,7 +25,7 @@ export function VersionHistoryPanel({ documentId, documentType }: VersionHistory
 
   return (
     <div
-      className="rounded-lg border p-3"
+      className="rounded-xl border p-3"
       style={{ backgroundColor: '#FAFBFC', borderColor: '#E5E7EB' }}
     >
       <h5 className="text-xs font-semibold text-[#1E2D4D]/70 mb-2">

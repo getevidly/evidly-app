@@ -189,7 +189,7 @@ export default function VendorDetail() {
           <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: vendor.companyName }]} />
           <button
             onClick={() => navigate('/vendors')}
-            className="flex items-center text-[#1E2D4D]/70 hover:text-gray-900 mb-4 min-h-[44px]"
+            className="flex items-center text-[#1E2D4D]/70 hover:text-[#1E2D4D] mb-4 min-h-[44px]"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to All Vendors
@@ -224,7 +224,7 @@ export default function VendorDetail() {
                 className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm min-h-[44px] ${
                   activeTab === tab
                     ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 hover:border-[#1E2D4D]/15'
                 }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -291,7 +291,7 @@ export default function VendorDetail() {
                   </button>
                   <button
                     onClick={() => guardAction('upload', 'Vendor Documents', () => toast.info('Upload'))}
-                    className="flex items-center px-4 py-2 bg-gray-200 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-300 min-h-[44px]"
+                    className="flex items-center px-4 py-2 bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/15 min-h-[44px]"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
@@ -354,11 +354,11 @@ export default function VendorDetail() {
 
               <div className="space-y-4">
                 {documents.map((doc, idx) => (
-                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-[#1E2D4D]/10 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-[#1E2D4D]/10 rounded-xl hover:shadow-md transition-shadow">
                     <div className="flex items-start space-x-3 flex-1">
                       <FileText className="h-5 w-5 text-[#1E2D4D]/30 mt-1" />
                       <div>
-                        <p className="font-medium text-gray-900">{doc.name}</p>
+                        <p className="font-medium text-[#1E2D4D]">{doc.name}</p>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {getStatusBadge(doc.status)}
                           {doc.expirationDate && (
@@ -409,19 +409,19 @@ export default function VendorDetail() {
             <div className="space-y-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-[#1E2D4D]/80">Company Name</label>
-                <p className="mt-1 text-gray-900">{vendor.companyName}</p>
+                <p className="mt-1 text-[#1E2D4D]">{vendor.companyName}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1E2D4D]/80">Contact Person</label>
-                <p className="mt-1 text-gray-900">{vendor.contactName}</p>
+                <p className="mt-1 text-[#1E2D4D]">{vendor.contactName}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1E2D4D]/80">Email</label>
-                <p className="mt-1 text-gray-900">{vendor.email}</p>
+                <p className="mt-1 text-[#1E2D4D]">{vendor.email}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1E2D4D]/80">Phone</label>
-                <p className="mt-1 text-gray-900">{vendor.phone}</p>
+                <p className="mt-1 text-[#1E2D4D]">{vendor.phone}</p>
               </div>
             </div>
             <div className="pt-4 border-t border-[#1E2D4D]/10">
@@ -439,7 +439,7 @@ export default function VendorDetail() {
 
       {showRequestModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-md">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-md modal-content-enter">
             <h3 className="text-lg font-semibold tracking-tight mb-4">Request Document</h3>
             <p className="text-[#1E2D4D]/70 mb-4">
               An email will be sent to {vendor.email} requesting the missing documents with a secure upload link.
@@ -447,7 +447,7 @@ export default function VendorDetail() {
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 text-[#1E2D4D]/80 hover:bg-gray-100 rounded-lg min-h-[44px]"
+                className="px-4 py-2 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 rounded-lg min-h-[44px]"
               >
                 Cancel
               </button>

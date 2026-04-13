@@ -204,7 +204,7 @@ export function Deficiencies() {
         <select
           value={statusFilter}
           onChange={(e) => setFilter('status', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="all">All Statuses</option>
@@ -218,7 +218,7 @@ export function Deficiencies() {
         <select
           value={severityFilter}
           onChange={(e) => setFilter('severity', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="all">All Severities</option>
@@ -235,7 +235,7 @@ export function Deficiencies() {
             value={searchQuery}
             onChange={(e) => setFilter('q', e.target.value)}
             placeholder="Search deficiencies..."
-            className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+            className="w-full pl-9 pr-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
           />
         </div>
@@ -243,7 +243,7 @@ export function Deficiencies() {
         <select
           value={sortBy}
           onChange={(e) => setFilter('sort', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="severity">Sort: Severity</option>
@@ -276,7 +276,7 @@ export function Deficiencies() {
                 <tr
                   key={d.id}
                   onClick={() => navigate(`/deficiencies/${d.id}`)}
-                  className="cursor-pointer hover:bg-gray-50 transition-colors border-t"
+                  className="cursor-pointer hover:bg-[#FAF7F0] transition-colors border-t"
                   style={{
                     borderColor: '#E8EDF5',
                     ...(d.severity === 'critical' ? { borderLeft: '4px solid #dc2626' } : {}),

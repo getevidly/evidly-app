@@ -12,7 +12,7 @@ export function Card({ children, title, className = '', noPadding, action }: Car
       className={`bg-white rounded-xl border border-[#1E2D4D]/10 ${noPadding ? '' : 'p-4 sm:p-5'} ${className}`}
     >
       {title && (
-        <div className={`flex justify-between items-center text-base font-semibold text-[#1E2D4D] mb-4 pb-3 border-b border-gray-100 ${noPadding ? 'px-5 pt-4' : ''}`}>
+        <div className={`flex justify-between items-center text-base font-semibold text-[#1E2D4D] mb-4 pb-3 border-b border-[#1E2D4D]/5 ${noPadding ? 'px-5 pt-4' : ''}`}>
           <span>{title}</span>
           {action}
         </div>

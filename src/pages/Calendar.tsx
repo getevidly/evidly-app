@@ -35,7 +35,7 @@ const eventTypes: EventType[] = [
   { id: 'vendor', label: 'Vendor Service', color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   { id: 'inspection', label: 'Inspection', color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
   { id: 'corrective', label: 'Corrective Action', color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
-  { id: 'certification', label: 'Certification', color: '#d4af37', bg: '#fefce8', border: '#fde68a' },
+  { id: 'certification', label: 'Certification', color: '#A08C5A', bg: '#fefce8', border: '#fde68a' },
   { id: 'meeting', label: 'Meeting', color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
 ];
 
@@ -950,7 +950,7 @@ export function Calendar() {
                       width: '32px', height: '32px', borderRadius: '50%',
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                       backgroundColor: isToday ? 'transparent' : 'transparent',
-                      border: isToday ? '2px solid #d4af37' : 'none',
+                      border: isToday ? '2px solid #A08C5A' : 'none',
                     }}>
                       {day.getDate()}
                     </div>
@@ -1069,7 +1069,7 @@ export function Calendar() {
                 key={idx}
                 onClick={() => { setCurrentDate(day); setView('day'); }}
                 style={{
-                  border: `1px solid ${isToday ? '#d4af37' : '#e5e7eb'}`,
+                  border: `1px solid ${isToday ? '#A08C5A' : '#e5e7eb'}`,
                   borderRadius: '12px', overflow: 'hidden', cursor: 'pointer',
                   backgroundColor: isToday ? '#fffbeb' : 'white',
                   fontFamily: "'DM Sans', sans-serif",
@@ -1172,7 +1172,7 @@ export function Calendar() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: isToday ? '#fffbeb' : 'transparent',
-                    border: isToday ? '2px solid #d4af37' : 'none',
+                    border: isToday ? '2px solid #A08C5A' : 'none',
                     marginTop: '2px',
                   }}>
                     {day.getDate()}
@@ -1293,10 +1293,10 @@ export function Calendar() {
             if (shiftStart) {
               elements.push(
                 <div key={`shift-${hour}`} className="pl-[60px] sm:pl-[80px]" style={{ display: 'flex', alignItems: 'center', paddingTop: '6px', paddingRight: '12px', paddingBottom: '6px', gap: '10px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#d4af37', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#A08C5A', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {shiftStart.name} Shift
                   </div>
-                  <div style={{ flex: 1, borderBottom: '2px dashed #d4af37' }} />
+                  <div style={{ flex: 1, borderBottom: '2px dashed #A08C5A' }} />
                 </div>
               );
             }
@@ -1615,7 +1615,7 @@ export function Calendar() {
                 onClick={goToday}
                 style={{
                   padding: '8px 16px', borderRadius: '8px',
-                  border: '2px solid #d4af37', backgroundColor: '#fffbeb',
+                  border: '2px solid #A08C5A', backgroundColor: '#fffbeb',
                   fontWeight: 700, fontSize: '13px', color: '#92400e',
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                   transition: 'all 0.15s',

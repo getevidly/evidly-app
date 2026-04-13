@@ -34,10 +34,10 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
-const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent';
+const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent';
 
 /* ── Sensor Type Config ──────────────────────────────────── */
 
@@ -129,7 +129,7 @@ function batteryIcon(pct: number) {
 }
 
 function signalBars(rssi: number) {
-  if (rssi === 0) return <WifiOff className="h-3.5 w-3.5 text-gray-300" />;
+  if (rssi === 0) return <WifiOff className="h-3.5 w-3.5 text-[#1E2D4D]/30" />;
   const strength = rssi > -45 ? 3 : rssi > -55 ? 2 : 1;
   return (
     <div className="flex items-end gap-px">
@@ -293,10 +293,10 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[480px] max-w-lg max-h-[90vh] overflow-y-auto relative" style={F}>
+      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[480px] max-w-lg max-h-[90vh] overflow-y-auto relative modal-content-enter" style={F}>
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -332,10 +332,10 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
                     key={opt.value}
                     type="button"
                     onClick={() => setSensorType(opt.value)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
                       selected
                         ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]'
-                        : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-gray-300'
+                        : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-[#1E2D4D]/15'
                     }`}
                   >
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -438,7 +438,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 text-sm font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-gray-200 rounded-lg transition-colors"
+              className="flex-1 px-4 py-3 text-sm font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-[#1E2D4D]/10 rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -621,7 +621,7 @@ export function SensorHub() {
 
         {/* Empty state card */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <Radio className="h-12 w-12 mx-auto mb-4 text-[#1E2D4D]/30" />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Sensors Configured</h2>
           <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-6">
             Add your first IoT sensor to start monitoring temperatures, humidity, and more across your locations.
@@ -729,7 +729,7 @@ export function SensorHub() {
               <p className="text-xs text-[#1E2D4D]/50 mb-3 leading-relaxed">{m.desc}</p>
               <div className="flex flex-wrap gap-1">
                 {m.providers.map(p => (
-                  <span key={p} className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-[#1E2D4D]/70">{p}</span>
+                  <span key={p} className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1E2D4D]/5 text-[#1E2D4D]/70">{p}</span>
                 ))}
               </div>
             </div>
@@ -747,13 +747,13 @@ export function SensorHub() {
               placeholder="Search sensors by name, zone, or MAC address..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
             />
           </div>
           <select
             value={locationFilter}
             onChange={e => setLocationFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
+            className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Locations</option>
             {locations.map(l => <option key={l} value={l}>{l}</option>)}
@@ -761,7 +761,7 @@ export function SensorHub() {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
+            className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Status</option>
             <option value="online">Online</option>
@@ -778,7 +778,7 @@ export function SensorHub() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: LIGHT_BG }}>
+              <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: LIGHT_BG }}>
                 <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3">Device</th>
                 <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Brand</th>
                 <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Zone</th>
@@ -798,7 +798,7 @@ export function SensorHub() {
                 return (
                   <tr
                     key={sensor.id}
-                    className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0] cursor-pointer transition-colors"
                     onClick={() => navigate(`/sensors/${sensor.id}`)}
                     style={alert ? { backgroundColor: '#fef2f2' } : undefined}
                   >
@@ -854,7 +854,7 @@ export function SensorHub() {
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell">{signalBars(sensor.signalRssi)}</td>
                     <td className="px-4 py-3">
-                      <ChevronRight className="h-4 w-4 text-gray-300" />
+                      <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />
                     </td>
                   </tr>
                 );
@@ -877,11 +877,11 @@ export function SensorHub() {
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Recent Ingestion Activity</h3>
           <div className="space-y-2">
             {iotIngestionLog.slice(0, 5).map(log => (
-              <div key={log.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 flex-wrap gap-2">
+              <div key={log.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <span className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-400' : log.status === 'partial' ? 'bg-yellow-400' : 'bg-red-400'}`} />
                   <span className="text-sm text-[#1E2D4D]/80">{log.provider}</span>
-                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-[#1E2D4D]/50">
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-[#1E2D4D]/5 text-[#1E2D4D]/50">
                     {log.method === 'api_pull' ? 'API Pull' : log.method === 'webhook' ? 'Webhook' : log.method === 'bluetooth' ? 'Bluetooth' : 'Manual'}
                   </span>
                 </div>

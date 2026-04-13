@@ -14,7 +14,7 @@ export function ShiftSummaryCard({ summary }) {
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="h-4 w-4 text-[#A08C5A]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[9px] font-medium rounded">AI</span>
+          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI</span>
         </div>
         <p className="text-xs text-[#6B7F96] text-center py-4">No shift data available for summary</p>
       </div>
@@ -29,7 +29,7 @@ export function ShiftSummaryCard({ summary }) {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-[#A08C5A]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[9px] font-medium rounded">AI Summary</span>
+          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI Summary</span>
         </div>
         <span className="text-xs text-[#6B7F96]">{shiftLabel}</span>
       </div>
@@ -46,7 +46,7 @@ export function ShiftSummaryCard({ summary }) {
           <p className="text-lg font-bold text-[#0B1628]">{completionStats.tempLogsRecorded}</p>
           <p className="text-xs text-[#6B7F96]">Temp Logs</p>
           {completionStats.tempFailures > 0 && (
-            <p className="text-[9px] text-[#991B1B] font-medium">{completionStats.tempFailures} out of range</p>
+            <p className="text-[11px] text-[#991B1B] font-medium">{completionStats.tempFailures} out of range</p>
           )}
         </div>
         <div className="bg-[#F4F6FA] rounded-lg p-3 text-center">

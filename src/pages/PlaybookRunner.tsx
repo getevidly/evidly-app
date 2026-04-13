@@ -574,7 +574,7 @@ export function PlaybookRunner() {
               </button>
               <button
                 onClick={() => guardAction('export', 'Incident Playbooks', () => toast.success('Insurance claim report generated'))}
-                style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
+                style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <DollarSign size={14} /> Insurance Report
               </button>

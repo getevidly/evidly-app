@@ -45,13 +45,13 @@ export function NotificationItem({
 
   return (
     <div
-      className="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer"
+      className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0] transition-colors cursor-pointer"
       style={{ backgroundColor: isUnread ? '#fafbff' : 'white' }}
     >
       <div className="px-4 py-3 flex gap-3" onClick={handleClick}>
         {/* Category icon */}
         <div
-          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5"
+          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 min-h-[44px] min-w-[44px]"
           style={{ backgroundColor: catColors?.bg || '#f8fafc' }}
         >
           <CategoryIcon className="h-4 w-4" style={{ color: catColors?.color || '#6B7F96' }} />
@@ -103,7 +103,7 @@ export function NotificationItem({
               {isUnread && (
                 <button
                   onClick={() => onMarkAsRead(n.id)}
-                  className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
+                  className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
                   title="Mark as read"
                 >
                   <Check className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
@@ -111,14 +111,14 @@ export function NotificationItem({
               )}
               <button
                 onClick={() => onSnooze(n.id)}
-                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
+                className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
                 title="Snooze 24h"
               >
                 <Clock className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
               </button>
               <button
                 onClick={() => onDismiss(n.id)}
-                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
+                className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
                 title="Dismiss"
               >
                 <X className="h-3.5 w-3.5 text-[#1E2D4D]/30" />

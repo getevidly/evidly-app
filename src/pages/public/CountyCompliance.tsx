@@ -112,7 +112,7 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
         </thead>
         <tbody>
           {letterKeys.filter(k => config[k]).map(k => (
-            <tr key={k} className="border-b border-gray-100">
+            <tr key={k} className="border-b border-[#1E2D4D]/5">
               <td className="py-1.5 font-semibold">{k}</td>
               <td className="py-1.5">{config[k][0]} &ndash; {config[k][1]}</td>
             </tr>
@@ -271,7 +271,7 @@ export function CountyCompliance() {
               We're expanding our jurisdiction coverage across California. Sign up to be notified when {countyName} County data becomes available.
             </p>
             <div className="flex justify-center gap-3">
-              <Link to="/compliance/california" className="px-5 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50">
+              <Link to="/compliance/california" className="px-5 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                 Browse All Counties
               </Link>
               <Link to="/signup" className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1E2D4D' }}>
@@ -310,11 +310,11 @@ export function CountyCompliance() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-[#1E2D4D]/50 mb-6 flex items-center gap-1 flex-wrap">
-            <Link to="/" className="hover:text-gray-700">Home</Link>
+            <Link to="/" className="hover:text-[#1E2D4D]/80">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link to="/compliance/california" className="hover:text-gray-700">California</Link>
+            <Link to="/compliance/california" className="hover:text-[#1E2D4D]/80">California</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-gray-900 font-medium">{j.county} County</span>
+            <span className="text-[#1E2D4D] font-medium">{j.county} County</span>
           </nav>
 
           {/* Page header */}
@@ -328,7 +328,7 @@ export function CountyCompliance() {
                 <p className="text-lg text-[#1E2D4D]/70 mt-1">{j.agency_name}</p>
               </div>
               {j.data_source_tier && (
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-[#1E2D4D]/70">
+                <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
                   {TIER_LABELS[j.data_source_tier]}
                 </span>
               )}
@@ -360,12 +360,12 @@ export function CountyCompliance() {
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-[#1E2D4D]/50">Method</p>
-                  <p className="font-medium text-gray-900">{SCORING_TYPE_LABELS[j.scoring_type] || j.scoring_type}</p>
+                  <p className="font-medium text-[#1E2D4D]">{SCORING_TYPE_LABELS[j.scoring_type] || j.scoring_type}</p>
                 </div>
                 {j.pass_threshold != null && (
                   <div>
                     <p className="text-[#1E2D4D]/50">Pass Threshold</p>
-                    <p className="font-medium text-gray-900">{j.pass_threshold}</p>
+                    <p className="font-medium text-[#1E2D4D]">{j.pass_threshold}</p>
                   </div>
                 )}
                 {j.warning_threshold != null && (
@@ -396,30 +396,30 @@ export function CountyCompliance() {
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-[#1E2D4D]/50">Authority Having Jurisdiction</p>
-                    <p className="font-medium text-gray-900">{j.fire_ahj_name}</p>
+                    <p className="font-medium text-[#1E2D4D]">{j.fire_ahj_name}</p>
                   </div>
                   {j.fire_ahj_type && (
                     <div>
                       <p className="text-[#1E2D4D]/50">Type</p>
-                      <p className="font-medium text-gray-900">{FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type}</p>
+                      <p className="font-medium text-[#1E2D4D]">{FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type}</p>
                     </div>
                   )}
                   {j.fire_code_edition && (
                     <div>
                       <p className="text-[#1E2D4D]/50">Fire Code Edition</p>
-                      <p className="font-medium text-gray-900">{j.fire_code_edition}</p>
+                      <p className="font-medium text-[#1E2D4D]">{j.fire_code_edition}</p>
                     </div>
                   )}
                   {j.nfpa96_edition && (
                     <div>
                       <p className="text-[#1E2D4D]/50">NFPA 96 Edition</p>
-                      <p className="font-medium text-gray-900">{j.nfpa96_edition}</p>
+                      <p className="font-medium text-[#1E2D4D]">{j.nfpa96_edition}</p>
                     </div>
                   )}
                   {j.hood_cleaning_default && (
                     <div>
                       <p className="text-[#1E2D4D]/50">Default Hood Cleaning</p>
-                      <p className="font-medium text-gray-900 capitalize">{j.hood_cleaning_default}</p>
+                      <p className="font-medium text-[#1E2D4D] capitalize">{j.hood_cleaning_default}</p>
                     </div>
                   )}
                 </div>
@@ -444,19 +444,19 @@ export function CountyCompliance() {
                 {j.data_source_tier && (
                   <div>
                     <p className="text-[#1E2D4D]/50">Data Source</p>
-                    <p className="font-medium text-gray-900">{TIER_LABELS[j.data_source_tier]}</p>
+                    <p className="font-medium text-[#1E2D4D]">{TIER_LABELS[j.data_source_tier]}</p>
                   </div>
                 )}
                 {j.data_version != null && (
                   <div>
                     <p className="text-[#1E2D4D]/50">Data Version</p>
-                    <p className="font-medium text-gray-900">v{j.data_version}</p>
+                    <p className="font-medium text-[#1E2D4D]">v{j.data_version}</p>
                   </div>
                 )}
                 {j.last_crawled_at && (
                   <div>
                     <p className="text-[#1E2D4D]/50">Last Updated</p>
-                    <p className="font-medium text-gray-900 flex items-center gap-1">
+                    <p className="font-medium text-[#1E2D4D] flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
                       {new Date(j.last_crawled_at).toLocaleDateString()}
                     </p>
@@ -496,7 +496,7 @@ export function CountyCompliance() {
               <Link
                 to="/demo"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm text-white"
-                style={{ backgroundColor: '#d4af37' }}
+                style={{ backgroundColor: '#A08C5A' }}
               >
                 Try Free Demo
               </Link>
@@ -514,10 +514,10 @@ export function CountyCompliance() {
           <footer className="mt-12 pt-8 border-t border-[#1E2D4D]/10 text-center text-sm text-[#1E2D4D]/50 pb-8">
             <p>Data sourced from {j.agency_name} and California Department of Public Health.</p>
             <div className="flex justify-center gap-4 mt-3">
-              <Link to="/compliance/california" className="hover:text-gray-700">All CA Counties</Link>
-              <Link to="/terms" className="hover:text-gray-700">Terms</Link>
-              <Link to="/privacy" className="hover:text-gray-700">Privacy</Link>
-              <Link to="/" className="hover:text-gray-700">EvidLY.com</Link>
+              <Link to="/compliance/california" className="hover:text-[#1E2D4D]/80">All CA Counties</Link>
+              <Link to="/terms" className="hover:text-[#1E2D4D]/80">Terms</Link>
+              <Link to="/privacy" className="hover:text-[#1E2D4D]/80">Privacy</Link>
+              <Link to="/" className="hover:text-[#1E2D4D]/80">EvidLY.com</Link>
             </div>
           </footer>
         </div>

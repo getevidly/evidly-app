@@ -16,7 +16,7 @@ const VARIANTS: Record<TouchpointVariant, { icon: typeof Gift; title: string; me
     title: 'You earned a badge!',
     message: 'Share your Compliance Champion badge and earn a free month when someone signs up.',
     cta: 'Share Badge',
-    color: '#d4af37',
+    color: '#A08C5A',
   },
   score_improved: {
     icon: Share2,
@@ -66,7 +66,7 @@ export function ReferralTouchpoint() {
       <div className="bg-white rounded-xl shadow-xl border border-[#1E2D4D]/10 p-4 relative">
         <button
           onClick={() => setVisible(false)}
-          className="absolute top-2 right-2 p-1 text-gray-300 hover:text-gray-500 cursor-pointer"
+          className="absolute top-2 right-2 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/60 cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>

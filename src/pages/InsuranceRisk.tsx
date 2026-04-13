@@ -666,7 +666,7 @@ export function InsuranceRisk() {
             <div key={cat.key} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
               {/* Card Header */}
               <div
-                className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors"
+                className="p-4 sm:p-5 cursor-pointer hover:bg-[#FAF7F0] transition-colors"
                 onClick={() => setExpandedCategory(isExpanded ? null : cat.key)}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -698,7 +698,7 @@ export function InsuranceRisk() {
 
               {/* Expanded Sub-factors */}
               {isExpanded && (
-                <div className="border-t border-gray-100 px-3 sm:px-5 py-3 overflow-x-auto">
+                <div className="border-t border-[#1E2D4D]/5 px-3 sm:px-5 py-3 overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="text-xs text-[#1E2D4D]/30 uppercase tracking-wider">
@@ -710,11 +710,11 @@ export function InsuranceRisk() {
                     </thead>
                     <tbody>
                       {cat.factors.map((factor, fi) => (
-                        <tr key={fi} className="border-t border-gray-50">
+                        <tr key={fi} className="border-t border-[#1E2D4D]/3">
                           <td className="py-2.5">
-                            <div className="text-xs font-medium text-gray-800">{factor.name}</div>
+                            <div className="text-xs font-medium text-[#1E2D4D]/90">{factor.name}</div>
                             <div className="text-xs text-[#1E2D4D]/30 mt-0.5">{factor.detail}</div>
-                            <div className="text-xs text-gray-300 mt-0.5">Ref: {factor.reference}</div>
+                            <div className="text-xs text-[#1E2D4D]/30 mt-0.5">Ref: {factor.reference}</div>
                           </td>
                           <td className="text-center py-2.5"><StatusIcon status={factor.status} /></td>
                           <td className="text-right py-2.5">
@@ -741,7 +741,7 @@ export function InsuranceRisk() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="text-xs text-[#1E2D4D]/30 uppercase tracking-wider border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <tr className="text-xs text-[#1E2D4D]/30 uppercase tracking-wider border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                   <th className="text-left py-2 font-semibold">Location</th>
                   <th className="text-center py-2 font-semibold">Overall</th>
                   <th className="text-center py-2 font-semibold">Facility Safety</th>
@@ -757,9 +757,9 @@ export function InsuranceRisk() {
                   if (!locResult) return null;
                   const locTier = getInsuranceRiskTier(locResult.overall);
                   return (
-                    <tr key={loc.urlId} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => handleLocationChange(loc.urlId)}>
+                    <tr key={loc.urlId} className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0] cursor-pointer" onClick={() => handleLocationChange(loc.urlId)}>
                       <td className="py-3">
-                        <div className="text-sm font-medium text-gray-900">{loc.name}</div>
+                        <div className="text-sm font-medium text-[#1E2D4D]">{loc.name}</div>
                         <div className="text-xs text-[#1E2D4D]/30">Food Safety: {locationScores[loc.urlId]?.foodSafety || 0}</div>
                       </td>
                       <td className="text-center py-3">
@@ -803,7 +803,7 @@ export function InsuranceRisk() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div className="p-4 rounded-lg" style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
             <div className="flex items-center gap-2 mb-2">
               <Flame className="h-4 w-4 text-red-500" />
               <span className="text-sm font-semibold text-[#1E2D4D]">Property Insurance (Fire)</span>
@@ -818,7 +818,7 @@ export function InsuranceRisk() {
             </ul>
           </div>
 
-          <div className="p-4 rounded-lg" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
             <div className="flex items-center gap-2 mb-2">
               <EvidlyIcon size={16} />
               <span className="text-sm font-semibold text-[#1E2D4D]">General Liability</span>
@@ -834,9 +834,9 @@ export function InsuranceRisk() {
         </div>
 
         {/* PSE Explanation */}
-        <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
+        <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: '#fdf8e8', border: '1px solid #A08C5A' }}>
           <div className="flex items-center gap-2 mb-2">
-            <Lock className="h-4 w-4" style={{ color: '#d4af37' }} />
+            <Lock className="h-4 w-4" style={{ color: '#A08C5A' }} />
             <span className="text-sm font-semibold text-[#1E2D4D]">Protective Safeguard Endorsement (PSE)</span>
           </div>
           <p className="text-xs text-[#1E2D4D]/80 leading-relaxed">
@@ -870,7 +870,7 @@ export function InsuranceRisk() {
             </div>
             <button
               onClick={() => navigate(`/improve-score?location=${locationParam}`)}
-              className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors min-h-[44px]"
+              className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
               style={{ color: '#1E2D4D', border: '1px solid #b8d4e8' }}
             >
               <TrendingUp className="h-4 w-4" /> View Full Improvement Plan <ArrowRight className="h-3.5 w-3.5" />
@@ -880,21 +880,21 @@ export function InsuranceRisk() {
             {riskResult.actionItems.slice(0, 8).map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="flex items-center gap-4 p-3 rounded-xl border border-[#1E2D4D]/5 hover:border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors cursor-pointer"
                 onClick={() => navigate(item.actionLink)}
               >
                 <div className="flex-shrink-0">
                   <PriorityBadge priority={item.priority} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 truncate">{item.title}</div>
+                  <div className="text-sm font-medium text-[#1E2D4D] truncate">{item.title}</div>
                   <div className="text-xs text-[#1E2D4D]/30">{item.category} — {item.action}</div>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className="text-xs font-bold text-green-600">+{item.potentialGain} pts</div>
                   <div className="text-xs text-[#1E2D4D]/30">potential gain</div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-gray-300 flex-shrink-0" />
+                <ArrowRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />
               </div>
             ))}
           </div>
@@ -915,11 +915,11 @@ export function InsuranceRisk() {
 
         <FeatureGate flagKey="ai-predictive-insights">
           <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-[#FAF7F0] font-mono text-xs">
+            <div className="p-4 rounded-xl bg-[#FAF7F0] font-mono text-xs">
               <div className="text-[#1E2D4D]/50 mb-2">// API Endpoint</div>
-              <div className="text-gray-900">GET /api/v1/risk-score</div>
+              <div className="text-[#1E2D4D]">GET /api/v1/risk-score</div>
               <div className="text-[#1E2D4D]/50 mt-3 mb-1">// Authentication</div>
-              <div className="text-gray-900">Header: X-API-Key: &lt;carrier_api_key&gt;</div>
+              <div className="text-[#1E2D4D]">Header: X-API-Key: &lt;carrier_api_key&gt;</div>
               <div className="text-[#1E2D4D]/50 mt-3 mb-1">// Sample Response</div>
               <pre className="text-[#1E2D4D]/80 whitespace-pre-wrap">{JSON.stringify({
                 organization_id: "org_abc123",
@@ -1018,13 +1018,13 @@ export function InsuranceRisk() {
               return (
                 <g key={i}>
                   <line x1={40} x2={570} y1={y} y2={y} stroke="#f1f5f9" strokeWidth={1} />
-                  <text x={32} y={y + 4} textAnchor="end" className="text-xs fill-gray-400">{v}</text>
+                  <text x={32} y={y + 4} textAnchor="end" className="text-xs fill-[#1E2D4D]/40">{v}</text>
                 </g>
               );
             })}
             {/* Month labels */}
             {SCORE_TREND.map((d, i) => (
-              <text key={i} x={40 + (i / 11) * 530} y={175} textAnchor="middle" className="text-[9px] fill-gray-400">{d.month}</text>
+              <text key={i} x={40 + (i / 11) * 530} y={175} textAnchor="middle" className="text-[11px] fill-[#1E2D4D]/40">{d.month}</text>
             ))}
             {/* Line */}
             <path
@@ -1112,14 +1112,14 @@ export function InsuranceRisk() {
       {/* Share with Insurer Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto modal-content-enter">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                   <Share2 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   {shareGenerated ? 'Share Link Created' : 'Share Risk Score'}
                 </h2>
-                <button onClick={() => { setShowShareModal(false); setShareGenerated(false); setShareRecipient(''); setShareEmail(''); }} className="p-1 hover:bg-gray-100 rounded-lg">
+                <button onClick={() => { setShowShareModal(false); setShareGenerated(false); setShareRecipient(''); setShareEmail(''); }} className="p-1 hover:bg-[#1E2D4D]/5 rounded-lg">
                   <X className="h-5 w-5 text-[#1E2D4D]/30" />
                 </button>
               </div>
@@ -1135,7 +1135,7 @@ export function InsuranceRisk() {
                       value={shareRecipient}
                       onChange={(e) => setShareRecipient(e.target.value)}
                       placeholder="State Farm — Agent John Smith"
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     />
                   </div>
 
@@ -1146,7 +1146,7 @@ export function InsuranceRisk() {
                       value={shareEmail}
                       onChange={(e) => setShareEmail(e.target.value)}
                       placeholder="agent@statefarm.com"
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     />
                   </div>
 
@@ -1157,7 +1157,7 @@ export function InsuranceRisk() {
                         <button
                           key={d}
                           onClick={() => setShareExpiry(d)}
-                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${shareExpiry === d ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50'}`}
+                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${shareExpiry === d ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]'}`}
                         >
                           {d} days
                         </button>
@@ -1185,7 +1185,7 @@ export function InsuranceRisk() {
                             className="rounded border-[#1E2D4D]/15"
                           />
                           <span className={item.locked ? 'text-[#1E2D4D]/30' : 'text-[#1E2D4D]/80'}>{item.label}</span>
-                          {item.locked && <Lock className="h-3 w-3 text-gray-300" />}
+                          {item.locked && <Lock className="h-3 w-3 text-[#1E2D4D]/30" />}
                         </label>
                       ))}
                     </div>
@@ -1194,7 +1194,7 @@ export function InsuranceRisk() {
                   <div className="flex gap-2 pt-2">
                     <button
                       onClick={() => { setShowShareModal(false); }}
-                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 hover:bg-gray-50 min-h-[44px]"
+                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] min-h-[44px]"
                     >
                       Cancel
                     </button>
@@ -1221,12 +1221,12 @@ export function InsuranceRisk() {
                   <div>
                     <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Secure Link</label>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 px-3 py-2 bg-[#FAF7F0] border border-[#1E2D4D]/10 rounded-lg text-xs font-mono text-[#1E2D4D]/80 truncate">
+                      <div className="flex-1 px-3 py-2 bg-[#FAF7F0] border border-[#1E2D4D]/10 rounded-xl text-xs font-mono text-[#1E2D4D]/80 truncate">
                         {window.location.origin}/risk/{shareToken}
                       </div>
                       <button
                         onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/risk/${shareToken}`); toast.success('Link copied to clipboard'); }}
-                        className="p-2 rounded-lg hover:bg-gray-100 flex-shrink-0"
+                        className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 flex-shrink-0"
                         title="Copy link"
                       >
                         <Copy className="h-4 w-4 text-[#1E2D4D]/50" />
@@ -1242,7 +1242,7 @@ export function InsuranceRisk() {
                   {shareEmail && (
                     <button
                       onClick={() => toast.success(`Email sent to ${shareEmail}`)}
-                      className="w-full px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 min-h-[44px] border border-[#1E2D4D]/15 hover:bg-gray-50"
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 min-h-[44px] border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]"
                     >
                       <Mail className="h-4 w-4" /> Send to {shareEmail}
                     </button>

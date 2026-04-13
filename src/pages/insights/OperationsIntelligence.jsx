@@ -155,7 +155,7 @@ export function OperationsIntelligence() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors"
             style={{ borderColor: '#D1D9E6', color: '#4B5563' }}
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />

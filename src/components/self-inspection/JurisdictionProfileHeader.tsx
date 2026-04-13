@@ -24,7 +24,7 @@ function ProfileCard({ config, label }: { config: JurisdictionScoringConfig; lab
   const tierColor = getTierColor(config.dataSourceTier);
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
       {label && (
         <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
           {label}

@@ -11,7 +11,7 @@ import { DemoConversionModal } from '../../components/demo/DemoConversionModal';
 import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 type PipelineTab = 'active' | 'expiring_soon' | 'expired' | 'converted' | 'scheduled';
 
@@ -60,7 +60,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
   const remaining = daysUntil(session.expires_at);
 
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 hover:border-gray-300 transition-colors">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 hover:border-[#1E2D4D]/15 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
@@ -105,9 +105,9 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       {/* Meta */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#1E2D4D]/50 mb-3">
         <span>{getKitchenTypeLabel(session.company_type)}</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span>{getOperationLabel(session.operation_type)} volume</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span>{session.num_locations} location{session.num_locations > 1 ? 's' : ''}</span>
       </div>
 
@@ -150,7 +150,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       )}
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1E2D4D]/5">
         {session.status === 'scheduled' && (
           <>
             <button onClick={() => onAction('generate', session)}
@@ -159,7 +159,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <Sparkles className="w-3 h-3" /> Generate Demo
             </button>
             <button onClick={() => onAction('reschedule', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Reschedule
             </button>
             <button onClick={() => onAction('cancel', session)}
@@ -176,11 +176,11 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <CheckCircle2 className="w-3 h-3" /> Convert to Live
             </button>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Clock className="w-3 h-3" /> Extend 7 Days
             </button>
             <button onClick={() => onAction('preview', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Eye className="w-3 h-3" /> View Demo
             </button>
           </>
@@ -188,7 +188,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         {session.status === 'expired' && (
           <>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Re-activate
             </button>
             <button onClick={() => onAction('reengage', session)}
@@ -196,14 +196,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <Mail className="w-3 h-3" /> Re-engage Email
             </button>
             <button onClick={() => onAction('delete', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Trash2 className="w-3 h-3" /> Archive
             </button>
           </>
         )}
         {session.status === 'converted' && (
           <button onClick={() => onAction('delete', session)}
-            className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-gray-50 flex items-center gap-1">
+            className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
             <Trash2 className="w-3 h-3" /> Archive
           </button>
         )}
@@ -405,7 +405,7 @@ export function DemoPipeline() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.key ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+              activeTab === tab.key ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {tab.label}
@@ -427,7 +427,7 @@ export function DemoPipeline() {
       <div className="space-y-3">
         {loading ? (
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2" />
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#1E2D4D]/20 mx-auto mb-2" />
             <p className="text-sm text-[#1E2D4D]/50">Loading demo pipeline...</p>
           </div>
         ) : filtered.length === 0 ? (

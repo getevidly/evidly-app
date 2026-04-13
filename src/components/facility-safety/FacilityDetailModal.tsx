@@ -76,14 +76,14 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
   const label = statusLabel(data.status);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter" onClick={onClose}>
       <div
-        className="bg-white rounded-xl w-full max-w-xl max-h-[85vh] flex flex-col relative"
+        className="bg-white rounded-xl w-full max-w-xl max-h-[85vh] flex flex-col relative modal-content-enter"
         style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 pb-3 border-b border-gray-100">
+        <div className="flex items-center justify-between p-5 pb-3 border-b border-[#1E2D4D]/5">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
               <Shield size={18} style={{ color }} />
@@ -98,7 +98,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-[#1E2D4D]/30 hover:text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-1.5 rounded-lg text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors" aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -137,7 +137,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             {!data.vendor ? (
               <EmptyState message="No vendor assigned. Assign a vendor to track services." />
             ) : (
-              <div className="rounded-lg border border-gray-100 p-3 space-y-1.5">
+              <div className="rounded-xl border border-[#1E2D4D]/5 p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[#1E2D4D]">{data.vendor.name}</span>
                   <StarRating rating={data.vendor.rating} />
@@ -179,7 +179,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                 <span className="font-medium text-[#1E2D4D]/80">{data.compliance.jurisdiction}</span>
               </div>
               {data.compliance.notes && (
-                <p className="text-xs text-[#1E2D4D]/30 pt-1 border-t border-gray-100 mt-1">{data.compliance.notes}</p>
+                <p className="text-xs text-[#1E2D4D]/30 pt-1 border-t border-[#1E2D4D]/5 mt-1">{data.compliance.notes}</p>
               )}
             </div>
           </div>
@@ -210,7 +210,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
         </div>
 
         {/* Footer actions */}
-        <div className="border-t border-gray-100 p-4 flex flex-wrap gap-2">
+        <div className="border-t border-[#1E2D4D]/5 p-4 flex flex-wrap gap-2">
           <button
             onClick={() => onAction('schedule', data.category)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
@@ -223,14 +223,14 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
           </button>
           <button
             onClick={() => onAction('change_vendor', data.category)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
           >
             <Building2 size={13} />
             Change Vendor
           </button>
           <button
             onClick={() => onAction('upload', data.category)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
           >
             <Upload size={13} />
             Upload Document
@@ -238,7 +238,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
           <div className="flex-1" />
           <button
             onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#1E2D4D]/50 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
           >
             Close
           </button>

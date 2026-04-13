@@ -112,13 +112,13 @@ export function VendorConnect() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search partners..."
-              className="w-full border border-[#1E2D4D]/15 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+              className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
             />
           </div>
           <select
             value={serviceFilter}
             onChange={e => setServiceFilter(e.target.value)}
-            className="border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
+            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
           >
             {SERVICE_FILTERS.map(f => (
               <option key={f.value} value={f.value}>{f.label}</option>
@@ -127,7 +127,7 @@ export function VendorConnect() {
           <select
             value={countyFilter}
             onChange={e => setCountyFilter(e.target.value)}
-            className="border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
+            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
           >
             <option value="all">All Counties</option>
             {counties.map(c => (
@@ -179,7 +179,7 @@ export function VendorConnect() {
                         <img
                           src={partner.logo_url}
                           alt={partner.company_name}
-                          className="w-12 h-12 rounded-lg object-cover border border-gray-100"
+                          className="w-12 h-12 rounded-lg object-cover border border-[#1E2D4D]/5"
                         />
                       ) : (
                         <div
@@ -238,7 +238,7 @@ export function VendorConnect() {
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2 pt-3 border-t border-[#1E2D4D]/5">
                       <button
                         onClick={() => navigate(`/vendors?tab=requests&action=new`)}
                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
@@ -249,7 +249,7 @@ export function VendorConnect() {
                       {partner.phone && (
                         <a
                           href={`tel:${partner.phone}`}
-                          className="p-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50"
+                          className="p-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0]"
                         >
                           <Phone className="w-3.5 h-3.5 text-[#1E2D4D]/50" />
                         </a>
@@ -257,7 +257,7 @@ export function VendorConnect() {
                       {partner.email && (
                         <a
                           href={`mailto:${partner.email}`}
-                          className="p-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50"
+                          className="p-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0]"
                         >
                           <Mail className="w-3.5 h-3.5 text-[#1E2D4D]/50" />
                         </a>
@@ -267,7 +267,7 @@ export function VendorConnect() {
                           href={partner.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50"
+                          className="p-2 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0]"
                         >
                           <ExternalLink className="w-3.5 h-3.5 text-[#1E2D4D]/50" />
                         </a>

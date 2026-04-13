@@ -195,15 +195,15 @@ export function DocumentChecklist() {
       return (
         <div
           key={doc.id}
-          className="flex items-start gap-3 py-3 px-4 rounded-lg"
+          className="flex items-start gap-3 py-3 px-4 rounded-xl"
           style={{ backgroundColor: '#f0fdf4' }}
         >
           <CheckCircle size={20} className="mt-0.5 flex-shrink-0" style={{ color: '#16a34a' }} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-gray-900">{doc.name}</span>
+              <span className="font-medium text-[#1E2D4D]">{doc.name}</span>
               {entry.status === 'not_applicable' && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-[#1E2D4D]/70">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[#1E2D4D]/10 text-[#1E2D4D]/70">
                   N/A
                 </span>
               )}
@@ -243,10 +243,10 @@ export function DocumentChecklist() {
     // Pending state
     return (
       <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-xl bg-white border border-[#1E2D4D]/10">
-        <Circle size={20} className="mt-0.5 flex-shrink-0 text-gray-300" />
+        <Circle size={20} className="mt-0.5 flex-shrink-0 text-[#1E2D4D]/30" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-gray-900">{doc.name}</span>
+            <span className="font-medium text-[#1E2D4D]">{doc.name}</span>
             {doc.required && <Star size={12} className="text-red-500 fill-red-500" />}
             <span
               className="text-xs px-2 py-0.5 rounded-full"
@@ -276,7 +276,7 @@ export function DocumentChecklist() {
             </button>
             {CONDITIONAL_IDS.has(doc.id) && (
               <button
-                className="text-sm text-[#1E2D4D]/50 hover:text-gray-700 underline"
+                className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 underline"
                 onClick={() => guardAction('edit', 'Document Checklist', () => openNaModal(doc))}
               >
                 Not Applicable
@@ -307,7 +307,7 @@ export function DocumentChecklist() {
       {/* Celebration banner */}
       {allRequiredDone && (
         <div
-          className="rounded-lg p-4 flex items-start gap-3"
+          className="rounded-xl p-4 flex items-start gap-3"
           style={{ backgroundColor: '#dcfce7', border: '1px solid #86efac' }}
         >
           <span className="text-2xl" role="img" aria-label="party">
@@ -338,7 +338,7 @@ export function DocumentChecklist() {
 
       {/* Progress bar */}
       <div
-        className="rounded-lg p-4"
+        className="rounded-xl p-4"
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
         <div className="flex items-center justify-between mb-2">
@@ -356,7 +356,7 @@ export function DocumentChecklist() {
               width: `${progressPct}%`,
               background: allRequiredDone
                 ? '#16a34a'
-                : `linear-gradient(90deg, #d4af37, #16a34a)`,
+                : `linear-gradient(90deg, #A08C5A, #16a34a)`,
             }}
           />
         </div>
@@ -440,14 +440,14 @@ export function DocumentChecklist() {
       )}
 
       {naModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4 modal-content-enter">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
                 Not Applicable: {naModal.docName}
               </h2>
               <button
-                className="p-1 rounded hover:bg-gray-100"
+                className="p-1 rounded hover:bg-[#1E2D4D]/5"
                 onClick={() => setNaModal(null)}
               >
                 <X size={18} className="text-[#1E2D4D]/50" />
@@ -486,7 +486,7 @@ export function DocumentChecklist() {
 
             <div className="flex justify-end gap-3 pt-2">
               <button
-                className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors"
                 onClick={() => setNaModal(null)}
               >
                 Cancel

@@ -16,7 +16,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const MUTED_GOLD = '#A08C5A';
 
 // ── Integration catalog (static — matches DB seed) ────────
@@ -168,7 +168,7 @@ export function IntegrationHub() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
             <div>
               <h2 className="text-lg font-bold text-white">Platform Ecosystem</h2>
-              <p className="text-sm text-gray-300 mt-1">
+              <p className="text-sm text-[#1E2D4D]/30 mt-1">
                 EvidLY connects with the tools your kitchen already uses — POS, accounting, HR, IoT sensors, insurance carriers, and more.
               </p>
             </div>
@@ -184,8 +184,8 @@ export function IntegrationHub() {
             {ecosystemStats.map(stat => (
               <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <stat.icon className="h-4 w-4 text-[#d4af37]" />
-                  <span className="text-xs text-gray-300">{stat.label}</span>
+                  <stat.icon className="h-4 w-4 text-[#A08C5A]" />
+                  <span className="text-xs text-[#1E2D4D]/30">{stat.label}</span>
                 </div>
                 <div className="text-xl font-bold text-white">{stat.value}</div>
               </div>
@@ -207,7 +207,7 @@ export function IntegrationHub() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search integrations..."
-              className="pl-9 pr-4 py-2 border border-[#1E2D4D]/10 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] w-56"
+              className="pl-9 pr-4 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] w-56"
             />
           </div>
           <button
@@ -233,7 +233,7 @@ export function IntegrationHub() {
             return (
               <div
                 key={integration.slug}
-                className="bg-white rounded-xl border-2 border-gray-100 p-4 hover:border-[#d4af37] hover:shadow-md transition-all cursor-pointer group"
+                className="bg-white rounded-xl border-2 border-[#1E2D4D]/5 p-4 hover:border-[#A08C5A] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0] group-hover:bg-amber-50 transition-colors">
@@ -287,7 +287,7 @@ export function IntegrationHub() {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               activeCategory === cat.id
                 ? 'text-white'
-                : 'bg-gray-100 text-[#1E2D4D]/70 hover:bg-gray-200'
+                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
             }`}
             style={activeCategory === cat.id ? { backgroundColor: NAVY } : undefined}
           >
@@ -322,7 +322,7 @@ export function IntegrationHub() {
                   <p className="text-xs text-[#1E2D4D]/50 mt-1 line-clamp-2">{integration.description}</p>
                 </div>
               </div>
-              <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+              <div className="mt-3 flex items-center justify-between border-t border-[#1E2D4D]/5 pt-3">
                 <span className="text-xs font-medium text-[#1E2D4D]/30 uppercase">
                   {CATEGORIES.find(c => c.id === integration.category)?.label}
                 </span>
@@ -358,7 +358,7 @@ export function IntegrationHub() {
 
       {filtered.length === 0 && (
         <div className="text-center py-12">
-          <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+          <Search className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
           <p className="text-[#1E2D4D]/50 font-medium">No integrations found</p>
           <p className="text-sm text-[#1E2D4D]/30 mt-1">Try a different search or category filter</p>
         </div>
@@ -382,7 +382,7 @@ export function IntegrationHub() {
       {/* ── Request Integration Modal ── */}
       {showRequestForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full modal-content-enter">
             <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Request an Integration</h3>
             <div className="space-y-4">
               <div>
@@ -393,7 +393,7 @@ export function IntegrationHub() {
                   value={requestName}
                   onChange={e => setRequestName(e.target.value)}
                   placeholder="e.g., Restaurant365, Lightspeed POS"
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
               <div>
@@ -403,14 +403,14 @@ export function IntegrationHub() {
                   onChange={e => setRequestDescription(e.target.value)}
                   placeholder="Tell us how this integration would help your operation..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-none"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowRequestForm(false)}
-                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
               >
                 Cancel
               </button>

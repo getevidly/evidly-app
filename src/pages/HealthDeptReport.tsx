@@ -65,7 +65,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false, badge 
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-3">
           {icon}
@@ -74,7 +74,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false, badge 
         </div>
         {open ? <ChevronUp className="h-5 w-5 text-[#1E2D4D]/30" /> : <ChevronDown className="h-5 w-5 text-[#1E2D4D]/30" />}
       </button>
-      {open && <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-100">{children}</div>}
+      {open && <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-[#1E2D4D]/5">{children}</div>}
     </div>
   );
 }
@@ -86,7 +86,7 @@ function CountBadge({ count, color }: { count: number; color: string }) {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       minWidth: 20, height: 20, borderRadius: 10, fontSize: 11, fontWeight: 700,
       backgroundColor: color === 'red' ? '#fef2f2' : color === 'amber' ? '#fffbeb' : '#f0fdf4',
-      color: color === 'red' ? '#ef4444' : color === 'amber' ? '#d4af37' : '#22c55e',
+      color: color === 'red' ? '#ef4444' : color === 'amber' ? '#A08C5A' : '#22c55e',
       border: `1px solid ${color === 'red' ? '#fecaca' : color === 'amber' ? '#fef3c7' : '#bbf7d0'}`,
       padding: '0 6px',
     }}>
@@ -323,8 +323,8 @@ export function HealthDeptReport() {
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-5 py-3 min-h-[44px] font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
                 activeView === tab.id
-                  ? 'border-[#d4af37] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/70 hover:text-gray-900 hover:border-gray-300'
+                  ? 'border-[#A08C5A] text-[#1E2D4D]'
+                  : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
               }`}
             >
               {tab.icon}
@@ -347,7 +347,7 @@ export function HealthDeptReport() {
                     <select
                       value={selectedLocation}
                       onChange={e => setSelectedLocation(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm"
                     >
                       {locations.map(loc => (
                         <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
@@ -359,7 +359,7 @@ export function HealthDeptReport() {
                     <select
                       value={countyTemplate}
                       onChange={e => setCountyTemplate(e.target.value as CountyTemplate)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm"
                     >
                       {Object.entries(COUNTY_TEMPLATES).map(([key, tmpl]) => (
                         <option key={key} value={key}>{tmpl.name} — {tmpl.gradingSystem}</option>
@@ -373,7 +373,7 @@ export function HealthDeptReport() {
                     <select
                       value={dateRange}
                       onChange={e => setDateRange(e.target.value as any)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm"
                     >
                       <option value="30">Last 30 Days</option>
                       <option value="60">Last 60 Days</option>
@@ -406,14 +406,14 @@ export function HealthDeptReport() {
 
                 {!isPaidTier && (
                   <div style={{ padding: '12px 16px', backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Lock className="h-5 w-5 text-[#d4af37]" />
+                    <Lock className="h-5 w-5 text-[#A08C5A]" />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>Free Tier — Limited Report</div>
                       <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Facility Safety, Vendor Docs, and Corrective Actions sections.</div>
                     </div>
                     <button
                       onClick={() => setIsPaidTier(true)}
-                      style={{ marginLeft: 'auto', padding: '6px 16px', backgroundColor: '#d4af37', color: 'white', borderRadius: 8, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      style={{ marginLeft: 'auto', padding: '6px 16px', backgroundColor: '#A08C5A', color: 'white', borderRadius: 8, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
                     >
                       Upgrade Now
                     </button>
@@ -425,7 +425,7 @@ export function HealthDeptReport() {
               {missingDocs.length > 0 && (
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-[#d4af37]" />
+                    <AlertTriangle className="h-5 w-5 text-[#A08C5A]" />
                     <h3 className="font-semibold text-[#1E2D4D]">Missing Documentation Alerts</h3>
                     <CountBadge count={missingDocs.filter(d => d.severity === 'critical').length} color="red" />
                     <CountBadge count={missingDocs.filter(d => d.severity === 'warning').length} color="amber" />
@@ -439,7 +439,7 @@ export function HealthDeptReport() {
                       }}>
                         {doc.severity === 'critical'
                           ? <XCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                          : <AlertCircle className="h-5 w-5 text-[#d4af37] flex-shrink-0 mt-0.5" />
+                          : <AlertCircle className="h-5 w-5 text-[#A08C5A] flex-shrink-0 mt-0.5" />
                         }
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 600, color: doc.severity === 'critical' ? '#991b1b' : '#92400e' }}>{doc.document}</div>
@@ -506,7 +506,7 @@ export function HealthDeptReport() {
                     type="checkbox"
                     checked={isPaidTier}
                     onChange={e => setIsPaidTier(e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: '#d4af37' }}
+                    style={{ width: 16, height: 16, accentColor: '#A08C5A' }}
                   />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
@@ -552,7 +552,7 @@ export function HealthDeptReport() {
           <>
             {!generatedReport ? (
               <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-12 text-center">
-                <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <FileText className="h-16 w-16 text-[#1E2D4D]/30 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Report Generated</h3>
                 <p className="text-[#1E2D4D]/70 mb-4">Generate a report from the configuration tab first.</p>
                 <button
@@ -577,11 +577,11 @@ export function HealthDeptReport() {
                       {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                       {pdfLoading ? 'Generating PDF...' : 'Download PDF'}
                     </button>
-                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
+                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-[#FAF7F0] transition-colors text-sm font-medium">
                       <Share2 className="h-4 w-4" />
                       Share
                     </button>
-                    <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gray-100 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                    <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D]/5 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/10 transition-colors text-sm font-medium">
                       Print
                     </button>
                   </div>
@@ -651,7 +651,7 @@ export function HealthDeptReport() {
                   >
                     <div className="overflow-x-auto mt-4">
                       <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#FAF7F0]">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">Category</th>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Item</th>
@@ -662,12 +662,12 @@ export function HealthDeptReport() {
                         </thead>
                         <tbody className="divide-y divide-[#1E2D4D]/10">
                           {generatedReport.foodSafety.map((item, i) => (
-                            <tr key={i} className="hover:bg-gray-50">
+                            <tr key={i} className="hover:bg-[#FAF7F0]">
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{item.category}</td>
-                              <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.item}</td>
+                              <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{item.item}</td>
                               <td className="px-4 py-3 text-center">
                                 {item.status === 'compliant' && <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />}
-                                {item.status === 'needs-attention' && <AlertCircle className="h-5 w-5 text-[#d4af37] mx-auto" />}
+                                {item.status === 'needs-attention' && <AlertCircle className="h-5 w-5 text-[#A08C5A] mx-auto" />}
                                 {item.status === 'non-compliant' && <XCircle className="h-5 w-5 text-red-500 mx-auto" />}
                               </td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{item.details}</td>
@@ -696,7 +696,7 @@ export function HealthDeptReport() {
                   >
                     <div className="overflow-x-auto mt-4">
                       <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#FAF7F0]">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Name</th>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">Role</th>
@@ -708,8 +708,8 @@ export function HealthDeptReport() {
                         </thead>
                         <tbody className="divide-y divide-[#1E2D4D]/10">
                           {generatedReport.employeeCerts.map((cert, i) => (
-                            <tr key={i} className="hover:bg-gray-50">
-                              <td className="px-4 py-3 text-sm font-medium text-gray-900">{cert.name}</td>
+                            <tr key={i} className="hover:bg-[#FAF7F0]">
+                              <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{cert.name}</td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{cert.role}</td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70">{cert.certType}</td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/50 font-mono hidden sm:table-cell">{cert.certNumber}</td>
@@ -741,7 +741,7 @@ export function HealthDeptReport() {
                   >
                     <div className="overflow-x-auto mt-4">
                       <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#FAF7F0]">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Equipment</th>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">Location</th>
@@ -753,8 +753,8 @@ export function HealthDeptReport() {
                         </thead>
                         <tbody className="divide-y divide-[#1E2D4D]/10">
                           {generatedReport.facilitySafety.map((item, i) => (
-                            <tr key={i} className="hover:bg-gray-50">
-                              <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.equipment}</td>
+                            <tr key={i} className="hover:bg-[#FAF7F0]">
+                              <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{item.equipment}</td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{item.location}</td>
                               <td className="px-4 py-3 text-center text-sm text-[#1E2D4D]/70">{item.lastInspection}</td>
                               <td className="px-4 py-3 text-center text-sm text-[#1E2D4D]/70">{item.nextDue}</td>
@@ -786,7 +786,7 @@ export function HealthDeptReport() {
                   >
                     <div className="overflow-x-auto mt-4">
                       <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#FAF7F0]">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Vendor</th>
                             <th className="px-4 py-2 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Document</th>
@@ -797,12 +797,12 @@ export function HealthDeptReport() {
                         </thead>
                         <tbody className="divide-y divide-[#1E2D4D]/10">
                           {generatedReport.vendorDocs.map((doc, i) => (
-                            <tr key={i} className="hover:bg-gray-50">
-                              <td className="px-4 py-3 text-sm font-medium text-gray-900">{doc.vendor}</td>
+                            <tr key={i} className="hover:bg-[#FAF7F0]">
+                              <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{doc.vendor}</td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70">{doc.docType}</td>
                               <td className="px-4 py-3 text-center text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{doc.expiryDate}</td>
                               <td className="px-4 py-3 text-center text-sm font-semibold hidden sm:table-cell" style={{
-                                color: doc.daysUntilExpiry < 0 ? '#ef4444' : doc.daysUntilExpiry <= 30 ? '#d4af37' : '#22c55e'
+                                color: doc.daysUntilExpiry < 0 ? '#ef4444' : doc.daysUntilExpiry <= 30 ? '#A08C5A' : '#22c55e'
                               }}>
                                 {doc.daysUntilExpiry < 0 ? `${Math.abs(doc.daysUntilExpiry)} overdue` : `${doc.daysUntilExpiry} days`}
                               </td>
@@ -835,7 +835,7 @@ export function HealthDeptReport() {
                       {generatedReport.correctiveActions.map((action) => (
                         <div key={action.id} style={{
                           padding: '12px 16px', borderRadius: 8, border: '1px solid #e5e7eb',
-                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1E2D4D'}`,
+                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#A08C5A' : '#1E2D4D'}`,
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, flexWrap: 'wrap', gap: 4 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -843,7 +843,7 @@ export function HealthDeptReport() {
                               <span style={{
                                 padding: '1px 8px', borderRadius: 10, fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
                                 backgroundColor: action.priority === 'critical' ? '#fef2f2' : action.priority === 'high' ? '#fff7ed' : action.priority === 'medium' ? '#fffbeb' : '#eff6ff',
-                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1E2D4D',
+                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#A08C5A' : '#1E2D4D',
                               }}>
                                 {action.priority}
                               </span>
@@ -896,7 +896,7 @@ export function HealthDeptReport() {
                             <Tooltip />
                             <Legend />
                             <Line type="monotone" dataKey="tempCompliance" name="Temp Compliance" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 3 }} />
-                            <Line type="monotone" dataKey="checklistCompletion" name="Checklist Completion" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 3 }} />
+                            <Line type="monotone" dataKey="checklistCompletion" name="Checklist Completion" stroke="#A08C5A" strokeWidth={1.5} dot={{ r: 3 }} />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -964,7 +964,7 @@ export function HealthDeptReport() {
                 <select
                   value={selectedLocation}
                   onChange={e => setSelectedLocation(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm"
                 >
                   {locations.map(loc => (
                     <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
@@ -993,7 +993,7 @@ export function HealthDeptReport() {
                       <div style={{ fontSize: 12, color: '#991b1b' }}>Failing</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7' }}>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#d4af37' }}>{reviewCount}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: '#A08C5A' }}>{reviewCount}</div>
                       <div style={{ fontSize: 12, color: '#92400e' }}>Needs Review</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fef2f2', borderRadius: 8, border: '1px solid #fecaca' }}>
@@ -1001,7 +1001,7 @@ export function HealthDeptReport() {
                       <div style={{ fontSize: 12, color: '#991b1b' }}>Points Lost</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7' }}>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#d4af37' }}>-{atRiskPoints}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: '#A08C5A' }}>-{atRiskPoints}</div>
                       <div style={{ fontSize: 12, color: '#92400e' }}>At Risk</div>
                     </div>
                   </div>
@@ -1031,7 +1031,7 @@ export function HealthDeptReport() {
                         }}>
                           {item.status === 'pass' && <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />}
                           {item.status === 'fail' && <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
-                          {item.status === 'needs-review' && <AlertCircle className="h-5 w-5 text-[#d4af37] flex-shrink-0" />}
+                          {item.status === 'needs-review' && <AlertCircle className="h-5 w-5 text-[#A08C5A] flex-shrink-0" />}
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{item.item}</div>
                             <div style={{ fontSize: 12, color: '#6b7280' }}>{item.requirement}</div>
@@ -1059,7 +1059,7 @@ export function HealthDeptReport() {
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#FAF7F0]">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Report</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Location</th>
@@ -1071,9 +1071,9 @@ export function HealthDeptReport() {
                   </thead>
                   <tbody className="divide-y divide-[#1E2D4D]/10">
                     {reportHistory.map(report => (
-                      <tr key={report.id} className="hover:bg-gray-50">
+                      <tr key={report.id} className="hover:bg-[#FAF7F0]">
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">{report.reportType}</div>
+                          <div className="text-sm font-medium text-[#1E2D4D]">{report.reportType}</div>
                           <div className="text-xs text-[#1E2D4D]/50">{report.dateRange}</div>
                         </td>
                         <td className="px-6 py-4 text-sm text-[#1E2D4D]/70">{report.locationName}</td>
@@ -1122,28 +1122,28 @@ export function HealthDeptReport() {
             <div className="w-[95vw] sm:w-auto" style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, maxWidth: 440 }}>
               <h3 style={{ fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 16 }}>Share Report</h3>
               <div className="space-y-3">
-                <button onClick={() => handleShare('link')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors text-left">
+                <button onClick={() => handleShare('link')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors text-left">
                   <Link2 className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Create Shareable Link</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Link expires in 7 days</div>
                   </div>
                 </button>
-                <button onClick={() => handleShare('email-health-dept')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors text-left">
+                <button onClick={() => handleShare('email-health-dept')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors text-left">
                   <Mail className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Email to Health Department</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Send directly to county health dept</div>
                   </div>
                 </button>
-                <button onClick={() => handleShare('email-insurance')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors text-left">
+                <button onClick={() => handleShare('email-insurance')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors text-left">
                   <Send className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Share with Insurance Broker</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Send compliance proof to insurer</div>
                   </div>
                 </button>
-                <button onClick={() => handleShare('email-corporate')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors text-left">
+                <button onClick={() => handleShare('email-corporate')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors text-left">
                   <Building2 className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Share with Corporate/Franchisor</div>
@@ -1153,7 +1153,7 @@ export function HealthDeptReport() {
               </div>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="w-full mt-4 px-4 py-2 text-[#1E2D4D]/70 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="w-full mt-4 px-4 py-2 text-[#1E2D4D]/70 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] transition-colors text-sm"
               >
                 Cancel
               </button>

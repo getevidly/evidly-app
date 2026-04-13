@@ -53,7 +53,7 @@ export default function ReferralRedirect() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-[#1E2D4D]/5">
           <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
             <CheckCircle className="h-6 w-6" style={{ color: '#1E2D4D' }} />
           </div>

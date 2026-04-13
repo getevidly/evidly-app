@@ -113,7 +113,7 @@ export default function VendorDemoDashboard() {
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Vendor Connect Status</h2>
             <div className="grid grid-cols-3 gap-4">
               {Object.entries(slots).map(([county, data]) => (
-                <div key={county} className="border border-[#1E2D4D]/10 rounded-lg p-4">
+                <div key={county} className="border border-[#1E2D4D]/10 rounded-xl p-4">
                   <p className="font-medium text-[#1E2D4D] capitalize">{county} County</p>
                   <div className="mt-2 space-y-1">
                     <div className="flex justify-between text-sm">
@@ -173,7 +173,7 @@ export default function VendorDemoDashboard() {
                 <p className="text-xs text-[#1E2D4D]/50">Overdue Locations</p>
               </div>
               <div>
-                <p className="text-2xl font-bold tracking-tight text-[#A08C5A]">5</p>
+                <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">5</p>
                 <p className="text-xs text-[#1E2D4D]/50">In Your Counties</p>
               </div>
               <div>

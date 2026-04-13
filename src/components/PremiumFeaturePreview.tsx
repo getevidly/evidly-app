@@ -64,7 +64,7 @@ function BlurPreview({ feature, currentTier, children }: PremiumFeaturePreviewPr
               width: 48,
               height: 48,
               borderRadius: '50%',
-              background: '#d4af37',
+              background: '#A08C5A',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -82,7 +82,7 @@ function BlurPreview({ feature, currentTier, children }: PremiumFeaturePreviewPr
           <button
             onClick={() => navigate('/settings?tab=billing')}
             style={{
-              background: '#d4af37',
+              background: '#A08C5A',
               color: '#fff',
               border: 'none',
               borderRadius: 8,
@@ -121,7 +121,7 @@ function IndustryBenchmarksSample() {
   const rows: { label: string; value: number; color: string }[] = [
     { label: 'Your Score: 92%', value: 92, color: '#22c55e' },
     { label: 'Industry Average: 78%', value: 78, color: '#6B7F96' },
-    { label: 'Top 10%: 95%', value: 95, color: '#d4af37' },
+    { label: 'Top 10%: 95%', value: 95, color: '#A08C5A' },
   ];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -148,7 +148,7 @@ function InsuranceRiskScoreSample() {
           width: 88,
           height: 88,
           borderRadius: '50%',
-          border: '4px solid #d4af37',
+          border: '4px solid #A08C5A',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -233,8 +233,8 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
             marginLeft: 'auto',
             fontSize: 11,
             fontWeight: 600,
-            color: '#d4af37',
-            border: '1px solid #d4af37',
+            color: '#A08C5A',
+            border: '1px solid #A08C5A',
             borderRadius: 6,
             padding: '2px 8px',
           }}
@@ -251,7 +251,7 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
         style={{
           marginTop: 20,
           background: '#fdf8e8',
-          border: '1px solid #d4af37',
+          border: '1px solid #A08C5A',
           borderRadius: 8,
           padding: '10px 14px',
           display: 'flex',
@@ -271,7 +271,7 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
         style={{
           marginTop: 16,
           width: '100%',
-          background: '#d4af37',
+          background: '#A08C5A',
           color: '#fff',
           border: 'none',
           borderRadius: 8,
@@ -355,7 +355,7 @@ function LockedPreview({ feature, currentTier }: PremiumFeaturePreviewProps) {
         <button
           onClick={() => navigate('/settings?tab=billing')}
           style={{
-            background: '#d4af37',
+            background: '#A08C5A',
             color: '#fff',
             border: 'none',
             borderRadius: 8,

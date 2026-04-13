@@ -13,7 +13,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 function statusDot(s: IoTSensor['status']) {
   return { online: '#22c55e', warning: '#f59e0b', error: '#ef4444', offline: '#9ca3af' }[s];
@@ -208,11 +208,11 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
       {/* Summary Bar */}
       <div className="flex items-center gap-3 px-5 py-2 mx-4 mb-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
         <span className="flex items-center gap-1 text-xs font-medium"><span className="w-1.5 h-1.5 rounded-full bg-green-400" />{online} online</span>
-        <span className="text-gray-300 text-xs">|</span>
+        <span className="text-[#1E2D4D]/30 text-xs">|</span>
         <span className="flex items-center gap-1 text-xs font-medium" style={{ color: violations > 0 ? '#ef4444' : '#22c55e' }}>
           {violations} violation{violations !== 1 ? 's' : ''}
         </span>
-        <span className="text-gray-300 text-xs">|</span>
+        <span className="text-[#1E2D4D]/30 text-xs">|</span>
         <span className="flex items-center gap-1 text-xs font-medium" style={{ color: warnings > 0 ? '#f59e0b' : '#22c55e' }}>
           {warnings} warning{warnings !== 1 ? 's' : ''}
         </span>
@@ -228,24 +228,24 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
               <div
                 key={sensor.id}
                 onClick={() => navigate(`/sensors/${sensor.id}`)}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#FAF7F0] cursor-pointer transition-colors"
                 style={color === '#ef4444' ? { backgroundColor: '#fef2f2' } : undefined}
               >
                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: statusDot(sensor.status) }} />
-                <span className="text-xs font-medium text-gray-900 flex-1 min-w-0 truncate">{sensor.name}</span>
+                <span className="text-xs font-medium text-[#1E2D4D] flex-1 min-w-0 truncate">{sensor.name}</span>
                 <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0 w-6 text-right">{timeAgo(sensor.lastSeenAt)}</span>
                 {sparkData && <MiniSparkline data={sparkData} />}
                 {sensor.status !== 'offline' ? (
                   <span className="text-xs font-bold flex-shrink-0 w-14 text-right" style={{ color }}>{sensor.currentTempF}°F</span>
                 ) : (
-                  <span className="text-xs text-gray-300 flex-shrink-0 w-14 text-right">--</span>
+                  <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0 w-14 text-right">--</span>
                 )}
               </div>
             );
           })}
         </div>
         {sensors.length > 8 && (
-          <button onClick={() => navigate('/iot/hub')} className="w-full mt-2 py-1.5 text-center text-xs font-medium rounded-lg hover:bg-gray-50" style={{ color: PRIMARY }}>
+          <button onClick={() => navigate('/iot/hub')} className="w-full mt-2 py-1.5 text-center text-xs font-medium rounded-lg hover:bg-[#FAF7F0]" style={{ color: PRIMARY }}>
             +{sensors.length - 8} more sensors
           </button>
         )}

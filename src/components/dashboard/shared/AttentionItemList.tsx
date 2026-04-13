@@ -20,7 +20,7 @@ export function AttentionItemList({ items }: AttentionItemListProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
       <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>What Needs Attention</h3>
       </div>
@@ -37,7 +37,7 @@ export function AttentionItemList({ items }: AttentionItemListProps) {
               key={item.id}
               type="button"
               onClick={() => navigate(item.route)}
-              className="w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+              className="w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
               style={{ borderBottom: '1px solid #F0F0F0', backgroundColor: bgColor }}
             >
               <Icon size={16} className="shrink-0 mt-0.5" style={{ color: iconColor }} />

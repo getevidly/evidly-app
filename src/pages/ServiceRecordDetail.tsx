@@ -432,7 +432,7 @@ function QATab({ record, onApprove, onFlagClick }: QATabProps) {
           Review Status
         </h3>
 
-        <div className="rounded-lg p-4" style={{ background: qa.bg }}>
+        <div className="rounded-xl p-4" style={{ background: qa.bg }}>
           <div className="flex items-center gap-2 mb-1">
             <qa.Icon className="w-5 h-5" style={{ color: qa.color }} />
             <span className="text-sm font-bold" style={{ color: qa.color }}>{qa.label}</span>

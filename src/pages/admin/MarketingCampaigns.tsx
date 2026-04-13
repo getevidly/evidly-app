@@ -60,7 +60,7 @@ export default function MarketingCampaigns() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function MarketingCampaigns() {
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}>{tab.label}</button>
         ))}
       </div>
@@ -186,8 +186,8 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
               </thead>
               <tbody>
                 {channelPerf.map(([ch, v]) => (
-                  <tr key={ch} className="border-b border-gray-100">
-                    <td className="px-3 py-2 font-medium text-gray-900 capitalize">{ch.replace(/_/g, ' ')}</td>
+                  <tr key={ch} className="border-b border-[#1E2D4D]/5">
+                    <td className="px-3 py-2 font-medium text-[#1E2D4D] capitalize">{ch.replace(/_/g, ' ')}</td>
                     <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.touches}</td>
                     <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.tours}</td>
                     <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.won}</td>
@@ -209,11 +209,11 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
         ) : (
           <div className="space-y-2">
             {topCampaigns.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5 last:border-0">
                 <div>
                   <span className="text-sm font-semibold text-[#1E2D4D]">{c.name}</span>
                   <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 capitalize">{c.channel?.replace(/_/g, ' ')}</span>
-                  <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>{c.status}</span>
+                  <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>{c.status}</span>
                 </div>
                 <div className="text-xs text-[#1E2D4D]/50">
                   {c.touches} touches · {c.tours} tours
@@ -266,16 +266,16 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
           </thead>
           <tbody>
             {enriched.map(c => (
-              <tr key={c.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
+              <tr key={c.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                <td className="px-4 py-3 font-medium text-[#1E2D4D]">{c.name}</td>
                 <td className="px-4 py-3 capitalize text-[#1E2D4D]/70">{c.channel?.replace(/_/g, ' ')}</td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>{c.status}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>{c.status}</span>
                 </td>
                 <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDate(c.start_date)}</td>
                 <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDate(c.end_date)}</td>
                 <td className="px-4 py-3 text-right text-[#1E2D4D]/70">{c.budget_cents > 0 ? formatCents(c.budget_cents) : '—'}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">{c.tours}</td>
+                <td className="px-4 py-3 text-right font-medium text-[#1E2D4D]">{c.tours}</td>
               </tr>
             ))}
             {enriched.length === 0 && (
@@ -336,7 +336,7 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
         <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">New Campaign</h3>
         <div className="space-y-4">
           <FormInput label="Campaign Name *" value={form.name} onChange={v => { setFieldErrors(p => ({ ...p, name: '' })); setForm(p => ({ ...p, name: v })); }} error={fieldErrors.name} />
@@ -346,18 +346,18 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
           <div>
             <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Budget ($)</label>
             <input type="number" min={0} value={form.budget_cents / 100} onChange={e => setForm(p => ({ ...p, budget_cents: Math.round(parseFloat(e.target.value || '0') * 100) }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Start Date</label>
               <input type="date" value={form.start_date} onChange={e => setForm(p => ({ ...p, start_date: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
             </div>
             <div>
               <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">End Date</label>
               <input type="date" value={form.end_date} onChange={e => setForm(p => ({ ...p, end_date: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
             </div>
           </div>
           {isGoogleChannel && (
@@ -369,7 +369,7 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
           )}
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">Cancel</button>
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">Cancel</button>
           <button onClick={handleSave} disabled={!form.name.trim() || saving}
             className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40" style={{ backgroundColor: NAVY }}>
             {saving ? 'Creating...' : 'Create Campaign'}
@@ -422,10 +422,10 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm font-medium text-[#1E2D4D]/80">Attribution Model:</span>
         <button onClick={() => setAttrModel('first_touch')}
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'first_touch' ? 'text-white' : 'bg-gray-100 text-[#1E2D4D]/70'}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'first_touch' ? 'text-white' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}
           style={attrModel === 'first_touch' ? { backgroundColor: NAVY } : undefined}>First Touch</button>
         <button onClick={() => setAttrModel('last_touch')}
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'last_touch' ? 'text-white' : 'bg-gray-100 text-[#1E2D4D]/70'}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'last_touch' ? 'text-white' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}
           style={attrModel === 'last_touch' ? { backgroundColor: NAVY } : undefined}>Last Touch</button>
       </div>
 
@@ -447,8 +447,8 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
               </thead>
               <tbody>
                 {attributedDeals.map(d => (
-                  <tr key={d.id} className="border-b border-gray-100">
-                    <td className="px-3 py-2 font-medium text-gray-900">{d.org_name}</td>
+                  <tr key={d.id} className="border-b border-[#1E2D4D]/5">
+                    <td className="px-3 py-2 font-medium text-[#1E2D4D]">{d.org_name}</td>
                     <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{formatCents(d.estimated_mrr_cents)}/mo</td>
                     <td className="px-3 py-2 text-[#1E2D4D]/70">{d.campaign?.name || '— No campaign —'}</td>
                     <td className="px-3 py-2 text-[#1E2D4D]/50 capitalize">{d.touchpoint?.channel?.replace(/_/g, ' ') || '—'}</td>
@@ -495,7 +495,7 @@ function FormInput({ label, value, onChange, placeholder, type = 'text', error }
     <div>
       <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] ${error ? 'border-red-500' : 'border-[#1E2D4D]/15'}`} />
+        className={`w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] ${error ? 'border-red-500' : 'border-[#1E2D4D]/15'}`} />
       {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );
@@ -508,7 +508,7 @@ function FormSelect({ label, value, onChange, options }: {
     <div>
       <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>

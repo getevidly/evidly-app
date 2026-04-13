@@ -84,14 +84,14 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
           <div className="flex gap-2">
             <button
               onClick={onPrintQR}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <Printer className="w-3.5 h-3.5" /> Print
             </button>
             <button
               onClick={() => alert('QR download (demo)')}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <Download className="w-3.5 h-3.5" /> Download
@@ -119,7 +119,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
               <div className="flex gap-2">
@@ -132,7 +132,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 </button>
                 <button
                   onClick={() => { setNotes(equipment.notes || ''); setEditingNotes(false); }}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg border"
+                  className="px-3 py-1.5 text-xs font-medium rounded-xl border"
                   style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
                 >
                   Cancel

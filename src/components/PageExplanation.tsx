@@ -55,7 +55,7 @@ export function PageExplanation() {
         <p className="text-sm text-[#1E2D4D]/80 flex-1">{explanation}</p>
         <button
           onClick={() => setShow(false)}
-          className="text-[#1E2D4D]/30 hover:text-gray-600 flex-shrink-0"
+          className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 flex-shrink-0"
         >
           <X className="h-4 w-4" />
         </button>

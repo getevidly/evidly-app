@@ -131,12 +131,12 @@ function WeekDayCell({ dayKey, jobs, overflow, isToday: today, isWeekend, onJobC
         <JobBlock key={job.id} job={job} compact onClick={onJobClick} />
       ))}
       {overflow > 0 && !isExpanded && (
-        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: '#1E2D4D' }}>
+        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-[#1E2D4D]/5" style={{ color: '#1E2D4D' }}>
           +{overflow} more
         </button>
       )}
       {isExpanded && overflow > 0 && (
-        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: TEXT_TERTIARY }}>
+        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-[#1E2D4D]/5" style={{ color: TEXT_TERTIARY }}>
           Show less
         </button>
       )}

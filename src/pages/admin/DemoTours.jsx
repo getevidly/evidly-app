@@ -155,7 +155,7 @@ function StatusBadge({ status }) {
     pending: 'bg-amber-50 text-amber-700',
     scheduled: 'bg-blue-50 text-blue-700',
     active: 'bg-emerald-50 text-emerald-700',
-    completed: 'bg-gray-100 text-[#1E2D4D]/80',
+    completed: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80',
     cleaned: 'bg-[#FAF7F0] text-[#1E2D4D]/30',
   };
   return (
@@ -427,7 +427,7 @@ export default function DemoTours() {
               className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}>
               <Icon size={15} />
               {tab.label}
@@ -517,14 +517,14 @@ export default function DemoTours() {
                     <span className="text-xs text-[#1E2D4D]/50">First Name *</span>
                     <input value={form.first_name}
                       onChange={e => updateForm('first_name', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                       placeholder="Jane" />
                   </label>
                   <label className="block">
                     <span className="text-xs text-[#1E2D4D]/50">Last Name *</span>
                     <input value={form.last_name}
                       onChange={e => updateForm('last_name', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                       placeholder="Smith" />
                   </label>
                 </div>
@@ -533,14 +533,14 @@ export default function DemoTours() {
                     <span className="text-xs text-[#1E2D4D]/50">Email</span>
                     <input type="email" value={form.email}
                       onChange={e => updateForm('email', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                       placeholder="jane@example.com" />
                   </label>
                   <label className="block">
                     <span className="text-xs text-[#1E2D4D]/50">Phone</span>
                     <input value={form.phone}
                       onChange={e => updateForm('phone', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                       placeholder="(555) 123-4567" />
                   </label>
                 </div>
@@ -548,7 +548,7 @@ export default function DemoTours() {
                   <span className="text-xs text-[#1E2D4D]/50">Business Name *</span>
                   <input value={form.business_name}
                     onChange={e => updateForm('business_name', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                     placeholder="Aramark Yosemite" />
                 </label>
               </fieldset>
@@ -562,7 +562,7 @@ export default function DemoTours() {
                   <span className="text-xs text-[#1E2D4D]/50">Industry Type</span>
                   <select value={form.industry_type}
                     onChange={e => updateForm('industry_type', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
                     {templates.map(t => (
                       <option key={t.industry_type} value={t.industry_type}>
                         {INDUSTRY_ICONS[t.industry_type] || ''} {t.industry_label}
@@ -578,7 +578,7 @@ export default function DemoTours() {
                     <span className="text-xs text-[#1E2D4D]/50">County</span>
                     <select value={form.county}
                       onChange={e => updateForm('county', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
                       {CA_COUNTIES.map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
@@ -587,7 +587,7 @@ export default function DemoTours() {
                   <label className="block">
                     <span className="text-xs text-[#1E2D4D]/50">State</span>
                     <input value={form.state} readOnly
-                      className="mt-1 w-full border border-[#1E2D4D]/10 rounded-lg px-3 py-2 text-sm bg-[#FAF7F0] text-[#1E2D4D]/50" />
+                      className="mt-1 w-full border border-[#1E2D4D]/10 rounded-xl px-3 py-2 text-sm bg-[#FAF7F0] text-[#1E2D4D]/50" />
                   </label>
                 </div>
 
@@ -605,10 +605,10 @@ export default function DemoTours() {
                   <span className="text-xs text-[#1E2D4D]/50">Number of Locations</span>
                   <div className="flex items-center gap-3 mt-1">
                     <button onClick={() => updateForm('num_locations', Math.max(1, form.num_locations - 1))}
-                      className="w-8 h-8 rounded-lg border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-gray-50">−</button>
+                      className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">−</button>
                     <span className="text-lg font-bold text-[#1E2D4D] w-8 text-center">{form.num_locations}</span>
                     <button onClick={() => updateForm('num_locations', Math.min(9, form.num_locations + 1))}
-                      className="w-8 h-8 rounded-lg border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-gray-50">+</button>
+                      className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">+</button>
                   </div>
                 </label>
                 <PricingPreview numLocations={form.num_locations} />
@@ -623,14 +623,14 @@ export default function DemoTours() {
                   <span className="text-xs text-[#1E2D4D]/50">Schedule For (optional)</span>
                   <input type="datetime-local" value={form.scheduled_for}
                     onChange={e => updateForm('scheduled_for', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
                 </label>
                 <label className="block">
                   <span className="text-xs text-[#1E2D4D]/50">Internal Notes</span>
                   <textarea value={form.notes}
                     onChange={e => updateForm('notes', e.target.value)}
                     rows={3}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                     placeholder="Notes for Arthur (not shown to prospect)" />
                 </label>
               </fieldset>
@@ -728,7 +728,7 @@ export default function DemoTours() {
                 <StatusBadge status={tour.status} />
                 {tour.status === 'completed' && (
                   <button onClick={() => handleManualCleanup(tour.id)}
-                    className="px-3 py-1.5 text-red-600 border border-red-200 rounded-lg text-xs hover:bg-red-50 transition-colors">
+                    className="px-3 py-1.5 text-red-600 border border-red-200 rounded-xl text-xs hover:bg-red-50 transition-colors">
                     <Trash2 size={12} className="inline mr-1" /> Clean Up Now
                   </button>
                 )}

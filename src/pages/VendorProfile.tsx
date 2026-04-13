@@ -47,13 +47,13 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
       <span className={`font-bold ${textSize}`} style={{ color: '#1E2D4D' }}>{rating.toFixed(1)}</span>
       <div className="flex items-center">
         {Array.from({ length: fullStars }).map((_, i) => (
-          <Star key={`f-${i}`} className={starSize} fill="#d4af37" stroke="#d4af37" />
+          <Star key={`f-${i}`} className={starSize} fill="#A08C5A" stroke="#A08C5A" />
         ))}
         {hasHalf && (
-          <Star key="half" className={`${starSize} text-gray-300`} fill="#d4af37" stroke="#d4af37" style={{ clipPath: 'inset(0 50% 0 0)' }} />
+          <Star key="half" className={`${starSize} text-[#1E2D4D]/30`} fill="#A08C5A" stroke="#A08C5A" style={{ clipPath: 'inset(0 50% 0 0)' }} />
         )}
         {Array.from({ length: emptyStars }).map((_, i) => (
-          <Star key={`e-${i}`} className={`${starSize} text-gray-300`} />
+          <Star key={`e-${i}`} className={`${starSize} text-[#1E2D4D]/30`} />
         ))}
       </div>
     </div>
@@ -275,9 +275,9 @@ function ProductionVendorProfile() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
-                activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#d4af37', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
             >
               {tab.label}
             </button>
@@ -295,8 +295,8 @@ function ProductionVendorProfile() {
                 <div className="space-y-2">
                   {vendor.certifications.map((cert, idx) => (
                     <div key={idx} className="flex items-center gap-2 bg-white rounded-xl border border-[#1E2D4D]/10 p-3">
-                      {cert.verified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-gray-300" />}
-                      <span className="text-sm text-gray-900">{cert.name}</span>
+                      {cert.verified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-[#1E2D4D]/30" />}
+                      <span className="text-sm text-[#1E2D4D]">{cert.name}</span>
                       {cert.expirationDate && <span className="text-xs text-[#1E2D4D]/30 ml-auto">Exp: {cert.expirationDate}</span>}
                     </div>
                   ))}
@@ -352,9 +352,9 @@ function ProductionVendorProfile() {
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
                       <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
                       <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
                       </div>
                       <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
                     </div>
@@ -377,7 +377,7 @@ function ProductionVendorProfile() {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[32px] ${
                     sourceFilter === tab.id
                       ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
-                      : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-gray-300'
+                      : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                   }`}
                 >
                   {tab.label}
@@ -572,7 +572,7 @@ export function VendorProfile() {
               </button>
               <button
                 onClick={() => guardAction('message', 'Vendor Services', () => toast.info("Messaging"))}
-                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
+                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor
               </button>
@@ -604,9 +604,9 @@ export function VendorProfile() {
               className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-b-2 font-semibold'
-                  : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                  : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#d4af37', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
             >
               {tab.label}
             </button>
@@ -751,7 +751,7 @@ export function VendorProfile() {
                       ? <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                       : <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 text-sm">{ins.type}</div>
+                      <div className="font-medium text-[#1E2D4D] text-sm">{ins.type}</div>
                       <div className="text-xs text-[#1E2D4D]/50">Expires {ins.expirationDate}</div>
                     </div>
                     {expired ? (
@@ -775,7 +775,7 @@ export function VendorProfile() {
                       ? <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                       : <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 text-sm">{cert.name}</div>
+                      <div className="font-medium text-[#1E2D4D] text-sm">{cert.name}</div>
                       {cert.expirationDate && (
                         <div className="text-xs text-[#1E2D4D]/50">Expires {cert.expirationDate}</div>
                       )}
@@ -818,9 +818,9 @@ export function VendorProfile() {
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
                       <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
                       <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
                       </div>
                       <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
                     </div>
@@ -833,7 +833,7 @@ export function VendorProfile() {
             <div className="mb-6">
               <button
                 onClick={() => guardAction('review', 'Vendor Services', () => toast.info("Reviews require a completed service"))}
-                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
+                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Write a Review
               </button>
@@ -929,8 +929,8 @@ export function VendorProfile() {
       {/* SERVICE REQUEST MODAL                                  */}
       {/* ═══════════════════════════════════════════════════════ */}
       {showRequestModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 modal-content-enter">
             <h2 className="text-lg font-bold text-[#1E2D4D] mb-4">
               Request Quote from {vendor.companyName}
             </h2>
@@ -940,7 +940,7 @@ export function VendorProfile() {
             <select
               value={requestForm.serviceType}
               onChange={e => setRequestForm(prev => ({ ...prev, serviceType: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
             >
               <option value="">Select a service...</option>
               {vendor.serviceOfferings.map(s => (
@@ -953,7 +953,7 @@ export function VendorProfile() {
             <select
               value={requestForm.location}
               onChange={e => setRequestForm(prev => ({ ...prev, location: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
             >
               <option value="">Select a location...</option>
               {locations.map(l => (
@@ -968,7 +968,7 @@ export function VendorProfile() {
               value={requestForm.preferredDates}
               onChange={e => setRequestForm(prev => ({ ...prev, preferredDates: e.target.value }))}
               placeholder="e.g., Next week, March 1-5"
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
             />
 
             {/* Description */}
@@ -986,7 +986,7 @@ export function VendorProfile() {
               onChange={e => { setRequestForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('requestDescription'); return s; }); }}
               placeholder="Describe your needs..."
               rows={3}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
             />
             {aiFields.has('requestDescription') && <AIGeneratedIndicator />}
 
@@ -995,7 +995,7 @@ export function VendorProfile() {
             <select
               value={requestForm.urgency}
               onChange={e => setRequestForm(prev => ({ ...prev, urgency: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] mb-6"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-6"
             >
               <option value="Low">Low</option>
               <option value="Normal">Normal</option>
@@ -1007,7 +1007,7 @@ export function VendorProfile() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors min-h-[44px]"
+                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
               >
                 Cancel
               </button>

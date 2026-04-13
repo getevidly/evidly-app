@@ -164,7 +164,7 @@ export function InviteAccept() {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
           <p className="mt-4 text-[#1E2D4D]/70">Loading invitation...</p>
         </div>
       </div>
@@ -197,8 +197,8 @@ export function InviteAccept() {
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
-              <div className="p-3 bg-[#d4af37]/10 rounded-full">
-                <UserPlus className="w-8 h-8 text-[#d4af37]" />
+              <div className="p-3 bg-[#A08C5A]/10 rounded-full">
+                <UserPlus className="w-8 h-8 text-[#A08C5A]" />
               </div>
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Join Your Team</h2>
@@ -224,7 +224,7 @@ export function InviteAccept() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
               />
             </div>
 
@@ -252,7 +252,7 @@ export function InviteAccept() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
                 />
                 <button
                   type="button"
@@ -260,16 +260,16 @@ export function InviteAccept() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>
             </div>
 
             {password && (
-              <div className="bg-[#FAF7F0] rounded-lg p-4 space-y-2">
+              <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-2">
                 <p className="text-sm font-medium text-[#1E2D4D]/80">Password Requirements:</p>
                 <div className="space-y-1 text-sm">
                   <div className={`flex items-center gap-2 ${passwordRequirements.length ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
@@ -307,7 +307,7 @@ export function InviteAccept() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
                 />
                 <button
                   type="button"
@@ -315,9 +315,9 @@ export function InviteAccept() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>

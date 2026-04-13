@@ -103,7 +103,7 @@ export function CompliancePackage() {
               className={`p-4 rounded-xl border-2 text-left transition-all ${
                 selectedType === type
                   ? 'border-[#1E2D4D] bg-blue-50'
-                  : 'border-[#1E2D4D]/10 hover:border-gray-300'
+                  : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
               }`}
             >
               <Icon className={`w-6 h-6 mb-2 ${selectedType === type ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`} />
@@ -121,7 +121,7 @@ export function CompliancePackage() {
           <span className="text-sm text-[#1E2D4D]/50">{includedDocs.length} documents</span>
         </div>
         {missingCount > 0 && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg mb-4 text-sm text-amber-800">
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl mb-4 text-sm text-amber-800">
             ⚠ {missingCount} document(s) are expired or missing — package will note these gaps
           </div>
         )}
@@ -131,8 +131,8 @@ export function CompliancePackage() {
             return (
               <label
                 key={doc.name}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
-                  isSelected ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-gray-100 hover:bg-gray-50'
+                className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                  isSelected ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/5 hover:bg-[#FAF7F0]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ export function CompliancePackage() {
                     className="w-4 h-4 text-[#1E2D4D] rounded"
                   />
                   <div>
-                    <span className="text-sm font-medium text-gray-900">{doc.name}</span>
+                    <span className="text-sm font-medium text-[#1E2D4D]">{doc.name}</span>
                     <span className="text-xs text-[#1E2D4D]/30 ml-2">{doc.category}</span>
                   </div>
                 </div>
@@ -187,16 +187,16 @@ export function CompliancePackage() {
           <>
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D] border border-[#1E2D4D] rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-blue-50 transition-colors font-medium"
             >
               <Share2 className="w-4 h-4" />
               Share Link
             </button>
-            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors">
               <Mail className="w-4 h-4" />
               Email
             </button>
-            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors">
               <Printer className="w-4 h-4" />
               Print
             </button>
@@ -205,7 +205,7 @@ export function CompliancePackage() {
       </div>
 
       {generated && (
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
           <CheckCircle className="w-5 h-5 text-green-600" />
           <div>
             <p className="text-sm font-medium text-green-800">Package ready — {preset.label}</p>

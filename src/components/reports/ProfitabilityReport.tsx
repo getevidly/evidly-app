@@ -33,7 +33,7 @@ export function ProfitabilityReport({ data }: ProfitabilityProps) {
 
       {/* Flagged jobs alert */}
       {flagged.length > 0 && (
-        <div className="flex items-start gap-3 p-4 rounded-lg" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
           <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm font-semibold text-red-800">{flagged.length} job{flagged.length > 1 ? 's' : ''} below {MARGIN_THRESHOLD}% margin</p>

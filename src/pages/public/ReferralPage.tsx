@@ -72,7 +72,7 @@ export function ReferralPage() {
           <h1 className="text-3xl font-bold tracking-tight mb-2">Professional Kitchen Exhaust Cleaning</h1>
           <p className="text-blue-100 text-lg mb-4">You've been referred by a trusted partner</p>
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-6 py-3">
-            <DollarSign className="w-5 h-5 text-[#d4af37]" />
+            <DollarSign className="w-5 h-5 text-[#A08C5A]" />
             <span className="font-semibold text-lg">$25 off your first service</span>
           </div>
           {code && <p className="text-blue-200 text-sm mt-3">Referral code: <code className="text-white font-mono">{code}</code></p>}
@@ -111,46 +111,46 @@ export function ReferralPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Your Name *</label>
-                    <input type="text" required value={formData.contactName} onChange={e => setFormData(d => ({ ...d, contactName: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="text" required value={formData.contactName} onChange={e => setFormData(d => ({ ...d, contactName: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Business Name</label>
-                    <input type="text" value={formData.businessName} onChange={e => setFormData(d => ({ ...d, businessName: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="text" value={formData.businessName} onChange={e => setFormData(d => ({ ...d, businessName: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Email *</label>
-                    <input type="email" required value={formData.email} onChange={e => setFormData(d => ({ ...d, email: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="email" required value={formData.email} onChange={e => setFormData(d => ({ ...d, email: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Phone</label>
-                    <input type="tel" value={formData.phone} onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="tel" value={formData.phone} onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Address</label>
-                  <input type="text" value={formData.address} onChange={e => setFormData(d => ({ ...d, address: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                  <input type="text" value={formData.address} onChange={e => setFormData(d => ({ ...d, address: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">City</label>
-                    <input type="text" value={formData.city} onChange={e => setFormData(d => ({ ...d, city: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="text" value={formData.city} onChange={e => setFormData(d => ({ ...d, city: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">State</label>
-                    <input type="text" value={formData.state} onChange={e => setFormData(d => ({ ...d, state: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="text" value={formData.state} onChange={e => setFormData(d => ({ ...d, state: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">ZIP</label>
-                    <input type="text" value={formData.zip} onChange={e => setFormData(d => ({ ...d, zip: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
+                    <input type="text" value={formData.zip} onChange={e => setFormData(d => ({ ...d, zip: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Services Needed</label>
                   <div className="flex flex-wrap gap-2">
                     {['Hood Cleaning', 'Fan Maintenance', 'Grease Trap', 'Fire Suppression'].map(svc => (
-                      <button key={svc} type="button" onClick={() => toggleService(svc)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${formData.services.includes(svc) ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-gray-300'}`}>
+                      <button key={svc} type="button" onClick={() => toggleService(svc)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${formData.services.includes(svc) ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'}`}>
                         {svc}
                       </button>
                     ))}
@@ -158,7 +158,7 @@ export function ReferralPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Notes</label>
-                  <textarea rows={3} value={formData.notes} onChange={e => setFormData(d => ({ ...d, notes: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none" placeholder="Tell us about your kitchen setup..." />
+                  <textarea rows={3} value={formData.notes} onChange={e => setFormData(d => ({ ...d, notes: e.target.value }))} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none" placeholder="Tell us about your kitchen setup..." />
                 </div>
                 <button type="submit" disabled={submitting} className="w-full bg-[#1E2D4D] text-white py-3 rounded-xl font-semibold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 min-h-[44px]">
                   {submitting ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" /> : <><Send className="w-4 h-4" /> Get My Quote</>}

@@ -247,7 +247,7 @@ export function AdminIntelligenceQueue() {
         </div>
         <button
           onClick={fetchInsights}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -279,7 +279,7 @@ export function AdminIntelligenceQueue() {
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
                 ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {tab.label} ({tab.count})
@@ -290,7 +290,7 @@ export function AdminIntelligenceQueue() {
       {/* Loading */}
       {loading && (
         <div className="text-center py-16">
-          <RefreshCw className="h-8 w-8 mx-auto text-gray-300 mb-3 animate-spin" />
+          <RefreshCw className="h-8 w-8 mx-auto text-[#1E2D4D]/30 mb-3 animate-spin" />
           <p className="text-[#1E2D4D]/50 text-sm">Loading insights...</p>
         </div>
       )}
@@ -298,7 +298,7 @@ export function AdminIntelligenceQueue() {
       {/* Empty State */}
       {!loading && filteredInsights.length === 0 && (
         <div className="text-center py-16">
-          <Shield className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <Shield className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
           <p className="text-[#1E2D4D]/50 font-medium">No {activeTab} insights</p>
           <p className="text-[#1E2D4D]/30 text-sm mt-1">
             {activeTab === 'pending'
@@ -323,7 +323,7 @@ export function AdminIntelligenceQueue() {
               <div key={insight.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                 {/* Card Header */}
                 <div
-                  className="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
+                  className="p-4 cursor-pointer hover:bg-[#FAF7F0]/50 transition-colors"
                   onClick={() => setExpandedId(isExpanded ? null : insight.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -338,7 +338,7 @@ export function AdminIntelligenceQueue() {
                         </span>
 
                         {/* Source badge */}
-                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-[#1E2D4D]/70">
+                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
                           {insight.source_id}
                         </span>
 
@@ -351,7 +351,7 @@ export function AdminIntelligenceQueue() {
 
                         {/* Demo eligible flag */}
                         {insight.is_demo_eligible && (
-                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#d4af37', border: '1px solid #fde68a' }}>
+                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#A08C5A', border: '1px solid #fde68a' }}>
                             Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}
                           </span>
                         )}
@@ -377,7 +377,7 @@ export function AdminIntelligenceQueue() {
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 p-4 bg-[#FAF7F0]">
+                  <div className="border-t border-[#1E2D4D]/5 p-4 bg-[#FAF7F0]">
                     {/* Summary */}
                     <p className="text-sm text-[#1E2D4D]/80 mb-3">{insight.summary}</p>
 
@@ -447,7 +447,7 @@ export function AdminIntelligenceQueue() {
                     {insight.tags?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
                         {insight.tags.map(tag => (
-                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-[#1E2D4D]/50">
+                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-[#1E2D4D]/5 text-[#1E2D4D]/50">
                             {tag}
                           </span>
                         ))}
@@ -481,7 +481,7 @@ export function AdminIntelligenceQueue() {
                           onChange={e => { setRejectReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rejectReason'); return n; }); }}
                           rows={2}
                           placeholder="Why is this insight being rejected?"
-                          className="w-full border border-red-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-300 focus:border-transparent outline-none resize-none"
+                          className="w-full border border-red-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-red-300 focus:border-transparent outline-none resize-none"
                         />
                         {aiFields.has('rejectReason') && <AIGeneratedIndicator />}
                         <div className="flex gap-2">
@@ -494,7 +494,7 @@ export function AdminIntelligenceQueue() {
                           </button>
                           <button
                             onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                            className="px-3 py-1.5 text-xs rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-100 transition-colors"
+                            className="px-3 py-1.5 text-xs rounded-xl border border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/5 transition-colors"
                           >
                             Cancel
                           </button>
@@ -511,7 +511,7 @@ export function AdminIntelligenceQueue() {
                             type="checkbox"
                             checked={demoEligible}
                             onChange={e => setDemoEligible(e.target.checked)}
-                            className="rounded border-[#1E2D4D]/15 text-[#d4af37] focus:ring-[#d4af37]"
+                            className="rounded border-[#1E2D4D]/15 text-[#A08C5A] focus:ring-[#A08C5A]"
                           />
                           Demo
                         </label>
@@ -562,7 +562,7 @@ export function AdminIntelligenceQueue() {
                           <span className="ml-1">by {insight.reviewed_by}</span>
                         )}
                         {insight.is_demo_eligible && (
-                          <span className="ml-1 text-[#d4af37] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
+                          <span className="ml-1 text-[#A08C5A] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
                         )}
                       </div>
                     )}

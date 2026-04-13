@@ -85,7 +85,7 @@ export function EmployeeOverview({ employee, isAdmin, onResendInvite }: Employee
             } />
           </div>
           {isPending && (
-            <button onClick={onResendInvite} className="mt-3 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#1E2D4D' }}>
+            <button onClick={onResendInvite} className="mt-3 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6', color: '#1E2D4D' }}>
               <Send className="w-3.5 h-3.5" /> Resend Invite
             </button>
           )}

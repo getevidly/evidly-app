@@ -48,13 +48,13 @@ export function GhostInput({
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         placeholder={suggestion || placeholder}
-        className={`w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm
+        className={`w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm
                     focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent
                     ${className ?? ''}`}
         {...props}
       />
       {suggestion && !value && (
-        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-300 pointer-events-none select-none">
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#1E2D4D]/30 pointer-events-none select-none">
           Tab ↹
         </span>
       )}

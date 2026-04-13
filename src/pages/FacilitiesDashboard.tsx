@@ -194,7 +194,7 @@ export function FacilitiesDashboard() {
   return (
     <>
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 sm:p-6 text-white">
           <h1 className="text-2xl font-bold tracking-tight mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
@@ -210,7 +210,7 @@ export function FacilitiesDashboard() {
               return (
                 <div
                   key={equipment.id}
-                  className={`rounded-lg border-2 p-4 sm:p-5 transition-all ${getStatusBg(equipment.status)}`}
+                  className={`rounded-xl border-2 p-4 sm:p-5 transition-all ${getStatusBg(equipment.status)}`}
                 >
                   <div className="flex items-start space-x-3 mb-4">
                     <div className={`p-2 rounded-xl bg-white ${getStatusColor(equipment.status)}`}>
@@ -225,11 +225,11 @@ export function FacilitiesDashboard() {
                   <div className="space-y-2 text-sm mb-4">
                     <div className="flex justify-between">
                       <span className="text-[#1E2D4D]/70">Last Service:</span>
-                      <span className="font-medium text-gray-900">{equipment.lastService}</span>
+                      <span className="font-medium text-[#1E2D4D]">{equipment.lastService}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#1E2D4D]/70">Next Due:</span>
-                      <span className="font-medium text-gray-900">{equipment.nextDue}</span>
+                      <span className="font-medium text-[#1E2D4D]">{equipment.nextDue}</span>
                     </div>
                   </div>
 
@@ -259,7 +259,7 @@ export function FacilitiesDashboard() {
         />
 
         {vendorActions.length > 0 && (
-          <div className={`rounded-lg p-4 sm:p-6 ${overdueCount > 0 ? 'bg-red-50 border-l-4 border-red-600' : 'bg-yellow-50 border-l-4 border-yellow-500'}`}>
+          <div className={`rounded-xl p-4 sm:p-6 ${overdueCount > 0 ? 'bg-red-50 border-l-4 border-red-600' : 'bg-yellow-50 border-l-4 border-yellow-500'}`}>
             <div className="flex items-start space-x-3">
               <AlertTriangle className={`h-6 w-6 flex-shrink-0 mt-0.5 ${overdueCount > 0 ? 'text-red-600' : 'text-yellow-600'}`} />
               <div className="flex-1">
@@ -301,12 +301,12 @@ export function FacilitiesDashboard() {
               <div
                 key={doc.id}
                 onClick={() => navigate(doc.link)}
-                className="flex items-center justify-between p-4 rounded-lg border-2 border-[#1E2D4D]/10 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all"
+                className="flex items-center justify-between p-4 rounded-xl border-2 border-[#1E2D4D]/10 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all"
               >
                 <div className="flex items-center space-x-3 flex-1">
                   <FileText className={`h-5 w-5 ${getDocumentStatusColor(doc.status)}`} />
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900">{doc.name}</div>
+                    <div className="font-medium text-[#1E2D4D]">{doc.name}</div>
                     {doc.expiryDate && (
                       <div className="text-sm text-[#1E2D4D]/70">Expires: {doc.expiryDate}</div>
                     )}

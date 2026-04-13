@@ -128,7 +128,7 @@ export function EquipmentList({ items, onBulkPrintQR }: EquipmentListProps) {
                   <tr
                     key={item.id}
                     onClick={() => navigate(`/equipment/${item.id}`)}
-                    className="cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="cursor-pointer hover:bg-[#FAF7F0] transition-colors"
                     style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                   >
                     <td className="px-3 py-2" onClick={e => e.stopPropagation()}>

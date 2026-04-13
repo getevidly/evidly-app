@@ -123,7 +123,7 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
                 required
                 placeholder="00.0"
                 className={`w-full px-4 py-4 text-3xl font-bold tracking-tight text-center border-3 rounded-lg focus:outline-none focus:ring-4 transition-all ${
-                  !temperature ? 'border-[#1E2D4D]/15 focus:ring-[#d4af37]'
+                  !temperature ? 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
                   : isPass ? 'border-green-500 focus:ring-green-200 bg-green-50'
                   : 'border-red-500 focus:ring-red-200 bg-red-50'
                 }`}

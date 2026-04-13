@@ -52,7 +52,7 @@ export const DEFAULT_BRANDING: BrandingConfig = {
     primary: '#1E2D4D',
     primaryLight: '#2A3F6B',
     primaryDark: '#141E33',
-    accent: '#d4af37',
+    accent: '#A08C5A',
     sidebarBg: '#0f1f35',
     sidebarText: '#ffffff',
   },

@@ -49,7 +49,7 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-lg p-4 text-center"
+      className="rounded-xl p-4 text-center"
       style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       <div
@@ -100,7 +100,7 @@ export function EquipmentIncidentsPage() {
 
   // ── Skeletons ──────────────────────────────────────────────
   const StatSkeleton = () => (
-    <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+    <div className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
       <div className="h-9 w-9 bg-[#1E2D4D]/8 rounded-lg mx-auto mb-2" />
       <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded mx-auto mb-2" />
       <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
@@ -201,7 +201,7 @@ export function EquipmentIncidentsPage() {
                   return (
                     <tr
                       key={inc.id}
-                      className="hover:bg-gray-50/50 transition-colors"
+                      className="hover:bg-[#FAF7F0]/50 transition-colors"
                       style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                     >
                       <td className="px-4 py-3" style={{ color: NAVY }}>{formatDate(inc.incidentDate)}</td>

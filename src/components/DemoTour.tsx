@@ -166,9 +166,9 @@ export function DemoTour() {
   if (isCelebration) {
     return (
       <>
-        <div className="fixed inset-0 z-[99990] bg-black/60 flex items-center justify-center">
+        <div className="fixed inset-0 z-[99990] bg-black/60 flex items-center justify-center modal-backdrop-enter">
           <div
-            className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md mx-4 overflow-hidden"
+            className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md mx-4 overflow-hidden modal-content-enter"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8 text-center">
@@ -222,7 +222,7 @@ export function DemoTour() {
                       key={i}
                       className="absolute w-2 h-2 rounded-full"
                       style={{
-                        backgroundColor: i % 2 === 0 ? '#d4af37' : '#1E2D4D',
+                        backgroundColor: i % 2 === 0 ? '#A08C5A' : '#1E2D4D',
                         top: `${15 + Math.random() * 70}%`,
                         left: `${10 + Math.random() * 80}%`,
                         animation: `sparkle ${1 + Math.random()}s ease-in-out ${Math.random() * 0.5}s infinite`,
@@ -272,7 +272,7 @@ export function DemoTour() {
         <div className="absolute inset-0 bg-black/50" />
         {step?.target && (
           <div
-            className="absolute border-2 border-[#d4af37] rounded-lg"
+            className="absolute border-2 border-[#A08C5A] rounded-lg"
             style={{
               top: highlightRect.top,
               left: highlightRect.left,
@@ -294,14 +294,14 @@ export function DemoTour() {
         <div className="p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold text-[#1E2D4D]">{step?.title}</h3>
-            <button onClick={completeTour} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
+            <button onClick={completeTour} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full transition-colors" aria-label="Close">
               <X className="w-4 h-4 text-[#1E2D4D]/30" />
             </button>
           </div>
           <p className="text-sm text-[#1E2D4D]/70 leading-relaxed">{step?.content}</p>
         </div>
 
-        <div className="flex items-center justify-between px-5 py-3 bg-[#FAF7F0] rounded-b-xl border-t border-gray-100">
+        <div className="flex items-center justify-between px-5 py-3 bg-[#FAF7F0] rounded-b-xl border-t border-[#1E2D4D]/5">
           <div className="flex items-center gap-3">
             {/* Progress dots */}
             <div className="flex items-center gap-1.5">
@@ -310,7 +310,7 @@ export function DemoTour() {
                   key={i}
                   className={`w-2 h-2 rounded-full transition-all ${
                     i === tourStep ? 'bg-[#1E2D4D] w-4' :
-                    i < tourStep ? 'bg-[#d4af37]' : 'bg-gray-300'
+                    i < tourStep ? 'bg-[#A08C5A]' : 'bg-[#1E2D4D]/15'
                   }`}
                 />
               ))}
@@ -319,12 +319,12 @@ export function DemoTour() {
           <div className="flex items-center gap-2">
             <button
               onClick={completeTour}
-              className="px-3 py-1.5 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
+              className="px-3 py-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
             >
               Skip Tour
             </button>
             {tourStep > 0 && (
-              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#1E2D4D]/70 hover:text-gray-900 transition-colors">
+              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors">
                 <ChevronLeft className="w-4 h-4" />
                 Back
               </button>

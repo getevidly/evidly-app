@@ -60,7 +60,7 @@ export function ConfidenceBanner({ status, headline, locationCount, attentionCou
 
   return (
     <div
-      className="flex items-center gap-3 rounded-lg px-4 py-3"
+      className="flex items-center gap-3 rounded-xl px-4 py-3"
       style={{
         backgroundColor: config.bgColor,
         borderLeft: `4px solid ${config.borderColor}`,

@@ -14,7 +14,7 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const LIGHT_BG = '#eef4f8';
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -189,7 +189,7 @@ export function SensorSetupWizard() {
       {/* Back */}
       <button
         onClick={() => step === 1 ? navigate('/iot/platform') : setStep((step - 1) as Step)}
-        className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4"
+        className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4"
       >
         <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Back to Sensor Platform' : 'Previous Step'}
       </button>
@@ -212,7 +212,7 @@ export function SensorSetupWizard() {
                 >
                   {done ? <Check className="h-3.5 w-3.5" /> : stepNum}
                 </div>
-                <span className={`text-xs font-medium hidden md:block ${active ? 'text-gray-900' : 'text-[#1E2D4D]/30'}`}>{label}</span>
+                <span className={`text-xs font-medium hidden md:block ${active ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`}>{label}</span>
               </div>
               {i < 4 && <div className="flex-1 h-px" style={{ backgroundColor: done ? '#22c55e' : '#e5e7eb' }} />}
             </div>
@@ -232,7 +232,7 @@ export function SensorSetupWizard() {
               <div className="py-8 text-center text-sm text-[#1E2D4D]/30">Loading equipment...</div>
             ) : equipment.length === 0 ? (
               <div className="py-8 text-center">
-                <Thermometer className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                <Thermometer className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
                 <p className="text-sm text-[#1E2D4D]/50 mb-3">No equipment configured yet.</p>
                 <button onClick={() => navigate('/equipment')} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
                   Add Equipment First
@@ -329,9 +329,9 @@ export function SensorSetupWizard() {
                       type="text"
                       value={webhookUrl}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
                     />
-                    <button onClick={handleCopyWebhook} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 flex-shrink-0">
+                    <button onClick={handleCopyWebhook} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
                     </button>
                   </div>
@@ -341,11 +341,11 @@ export function SensorSetupWizard() {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-xs font-semibold text-[#1E2D4D]/80">Required Payload Format</label>
-                    <button onClick={handleCopyPayload} className="text-xs text-[#1E2D4D]/30 hover:text-gray-600 flex items-center gap-1">
+                    <button onClick={handleCopyPayload} className="text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 flex items-center gap-1">
                       <Copy className="h-3 w-3" /> Copy
                     </button>
                   </div>
-                  <pre className="p-4 rounded-lg bg-gray-900 text-green-400 text-xs font-mono overflow-x-auto">
+                  <pre className="p-4 rounded-xl bg-[#1E2D4D]/90 text-green-400 text-xs font-mono overflow-x-auto">
                     {payloadExample}
                   </pre>
                 </div>
@@ -359,7 +359,7 @@ export function SensorSetupWizard() {
                   )}
                   {testStatus === 'testing' && (
                     <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/50">
-                      <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-[#1E2D4D]/20 border-t-transparent rounded-full animate-spin" />
                       Testing connection...
                     </div>
                   )}
@@ -399,7 +399,7 @@ export function SensorSetupWizard() {
                 <a href="mailto:arthur@getevidly.com" className="px-5 py-2.5 rounded-xl text-sm font-bold text-white inline-block" style={{ backgroundColor: PRIMARY }}>
                   Contact Support
                 </a>
-                <button onClick={() => setTestStatus('success')} className="block mx-auto mt-3 text-xs text-[#1E2D4D]/30 hover:text-gray-600">
+                <button onClick={() => setTestStatus('success')} className="block mx-auto mt-3 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                   Skip — configure later
                 </button>
               </div>
@@ -413,9 +413,9 @@ export function SensorSetupWizard() {
                       type="text"
                       value={`evidly/${profile?.organization_id || '<org_id>'}/${selectedEquipment}/temperature`}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
                     />
-                    <button onClick={() => { navigator.clipboard.writeText(`evidly/${profile?.organization_id}/${selectedEquipment}/temperature`); toast.success('Topic copied'); }} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 flex-shrink-0">
+                    <button onClick={() => { navigator.clipboard.writeText(`evidly/${profile?.organization_id}/${selectedEquipment}/temperature`); toast.success('Topic copied'); }} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
                     </button>
                   </div>
@@ -451,7 +451,7 @@ export function SensorSetupWizard() {
                   <button
                     key={opt.key}
                     onClick={() => setAlertThreshold(opt.key)}
-                    className="w-full text-left flex items-center gap-3 p-3 rounded-lg border-2 transition-all"
+                    className="w-full text-left flex items-center gap-3 p-3 rounded-xl border-2 transition-all"
                     style={{
                       borderColor: alertThreshold === opt.key ? PRIMARY : '#e5e7eb',
                       backgroundColor: alertThreshold === opt.key ? LIGHT_BG : 'white',
@@ -461,7 +461,7 @@ export function SensorSetupWizard() {
                       {alertThreshold === opt.key && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: PRIMARY }} />}
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{opt.label}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D]">{opt.label}</div>
                       <div className="text-xs text-[#1E2D4D]/30">{opt.desc}</div>
                     </div>
                   </button>
@@ -483,7 +483,7 @@ export function SensorSetupWizard() {
                   <button
                     key={opt.value}
                     onClick={() => setAlertDelay(opt.value)}
-                    className="px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all"
+                    className="px-4 py-2 rounded-xl border-2 text-sm font-medium transition-all"
                     style={{
                       borderColor: alertDelay === opt.value ? PRIMARY : '#e5e7eb',
                       backgroundColor: alertDelay === opt.value ? LIGHT_BG : 'white',
@@ -505,9 +505,9 @@ export function SensorSetupWizard() {
                   { key: 'email' as const, label: 'Email', desc: 'Detailed alert with temperature history', locked: false },
                   { key: 'sms' as const, label: 'SMS', desc: 'Critical alerts via text message', locked: false },
                 ].map(ch => (
-                  <div key={ch.key} className="flex items-center justify-between p-3 rounded-lg border border-[#1E2D4D]/10">
+                  <div key={ch.key} className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/10">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{ch.label}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D]">{ch.label}</div>
                       <div className="text-xs text-[#1E2D4D]/30">{ch.desc}</div>
                     </div>
                     <button
@@ -540,7 +540,7 @@ export function SensorSetupWizard() {
                 value={sensorLabel}
                 onChange={e => setSensorLabel(e.target.value)}
                 placeholder="e.g., Walk-in Cooler #1 — North Wall Sensor"
-                className="w-full px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
               />
             </div>
 
@@ -549,17 +549,17 @@ export function SensorSetupWizard() {
               <h3 className="text-sm font-bold mb-3" style={{ color: PRIMARY }}>Setup Summary</h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="text-[#1E2D4D]/50">Equipment:</div>
-                <div className="font-medium text-gray-900">{selectedEquipObj?.name}</div>
+                <div className="font-medium text-[#1E2D4D]">{selectedEquipObj?.name}</div>
                 <div className="text-[#1E2D4D]/50">Sensor type:</div>
-                <div className="font-medium text-gray-900">{SENSOR_TYPES.find(t => t.key === sensorType)?.label}</div>
+                <div className="font-medium text-[#1E2D4D]">{SENSOR_TYPES.find(t => t.key === sensorType)?.label}</div>
                 <div className="text-[#1E2D4D]/50">Alert trigger:</div>
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-[#1E2D4D]">
                   {alertThreshold === 'out_of_range' ? 'Out of range' : alertThreshold === 'near_threshold' ? 'Near threshold' : 'Every reading'}
                 </div>
                 <div className="text-[#1E2D4D]/50">Alert delay:</div>
-                <div className="font-medium text-gray-900">{alertDelay === 0 ? 'Immediate' : `${alertDelay} min`}</div>
+                <div className="font-medium text-[#1E2D4D]">{alertDelay === 0 ? 'Immediate' : `${alertDelay} min`}</div>
                 <div className="text-[#1E2D4D]/50">Channels:</div>
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-[#1E2D4D]">
                   {[alertChannels.inApp && 'In-App', alertChannels.email && 'Email', alertChannels.sms && 'SMS'].filter(Boolean).join(', ')}
                 </div>
               </div>
@@ -568,10 +568,10 @@ export function SensorSetupWizard() {
         )}
 
         {/* ── Navigation ──────────────────────────────────── */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#1E2D4D]/5">
           <button
             onClick={() => step > 1 ? setStep((step - 1) as Step) : navigate('/iot/platform')}
-            className="text-sm text-[#1E2D4D]/50 hover:text-gray-700"
+            className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80"
           >
             {step === 1 ? 'Cancel' : 'Back'}
           </button>

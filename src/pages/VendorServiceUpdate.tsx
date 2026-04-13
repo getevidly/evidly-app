@@ -176,7 +176,7 @@ export function VendorServiceUpdate() {
           {cfg.icon}
           <h1 className={`text-xl font-bold mb-3 ${cfg.color}`}>{cfg.title}</h1>
           <p className="text-[#1E2D4D]/70 text-sm mb-6">{cfg.message}</p>
-          <div className="border-t border-gray-100 pt-4">
+          <div className="border-t border-[#1E2D4D]/5 pt-4">
             <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
               <EvidlyIcon size={20} />
               <span className="text-xs font-medium">Powered by EvidLY</span>
@@ -212,7 +212,7 @@ export function VendorServiceUpdate() {
               <EvidlyIcon size={36} />
               <div>
                 <h1 className="text-lg font-bold text-white">Service Update</h1>
-                <p className="text-xs text-gray-300">Update your service status for {tokenData.organizationName}</p>
+                <p className="text-xs text-[#1E2D4D]/30">Update your service status for {tokenData.organizationName}</p>
               </div>
             </div>
           </div>
@@ -265,7 +265,7 @@ export function VendorServiceUpdate() {
             <div className="space-y-3">
               <button
                 onClick={() => setPhase('form-completed')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-5 w-5 text-green-600" />
@@ -279,7 +279,7 @@ export function VendorServiceUpdate() {
 
               <button
                 onClick={() => setPhase('form-rescheduled')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -293,7 +293,7 @@ export function VendorServiceUpdate() {
 
               <button
                 onClick={() => setPhase('form-canceled')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-gray-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-[#1E2D4D]/5 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
@@ -327,7 +327,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => setTechnicianName(e.target.value)}
                   required
                   placeholder="e.g., John Smith"
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -337,7 +337,7 @@ export function VendorServiceUpdate() {
                   value={completionDate}
                   onChange={(e) => setCompletionDate(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -355,7 +355,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setCompletionNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('completionNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any observations or notes about the service performed..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('completionNotes') && <AIGeneratedIndicator />}
               </div>
@@ -363,7 +363,7 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -398,7 +398,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => setRescheduleDate(e.target.value)}
                   required
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -407,7 +407,7 @@ export function VendorServiceUpdate() {
                   value={rescheduleReason}
                   onChange={(e) => setRescheduleReason(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
                 >
                   <option value="">Select reason...</option>
                   {RESCHEDULE_REASONS.map((r) => (
@@ -430,7 +430,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setRescheduleNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('rescheduleNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the schedule change..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('rescheduleNotes') && <AIGeneratedIndicator />}
               </div>
@@ -438,7 +438,7 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -471,7 +471,7 @@ export function VendorServiceUpdate() {
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
                 >
                   <option value="">Select reason...</option>
                   {CANCEL_REASONS.map((r) => (
@@ -494,11 +494,11 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setCancelNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('cancelNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the cancellation..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('cancelNotes') && <AIGeneratedIndicator />}
               </div>
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <p className="text-xs text-amber-700">
                   Canceling this service will notify the client. They may contact you to discuss alternatives.
                 </p>
@@ -507,7 +507,7 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>

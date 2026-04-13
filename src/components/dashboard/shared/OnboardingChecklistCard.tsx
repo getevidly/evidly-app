@@ -60,9 +60,9 @@ function K2CReferralModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
+        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
         onClick={e => e.stopPropagation()}
         style={FONT}
       >
@@ -195,7 +195,7 @@ export function OnboardingChecklistCard() {
   if (isAllComplete) {
     return (
       <div
-        className="bg-white rounded-lg overflow-hidden"
+        className="bg-white rounded-xl overflow-hidden"
         style={{ border: '1px solid #e5e7eb', ...FONT }}
       >
         <div className="flex items-center justify-between px-4 py-3">
@@ -236,7 +236,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => navigate(step.route)}
-                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-gray-100"
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
                     style={{ color: '#6B7F96' }}
                   >
                     <Pencil size={10} />
@@ -292,7 +292,7 @@ export function OnboardingChecklistCard() {
       )}
 
       <div
-        className="bg-white rounded-lg overflow-hidden"
+        className="bg-white rounded-xl overflow-hidden"
         style={{ border: '1px solid #D1D9E6', ...FONT }}
       >
         {/* Gold accent bar */}
@@ -402,7 +402,7 @@ export function OnboardingChecklistCard() {
         {/* Current step detail panel */}
         {currentStep && (
           <div
-            className="mx-3 my-3 p-4 rounded-lg transition-all"
+            className="mx-3 my-3 p-4 rounded-xl transition-all"
             style={{
               backgroundColor: currentStep.completed ? STEP_BG_COMPLETED : STEP_BG_ACTIVE,
               borderLeft: `3px solid ${currentStep.completed ? STEP_BORDER_COMPLETED : STEP_BORDER_ACTIVE}`,
@@ -456,7 +456,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => navigate(currentStep.route)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-gray-100"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
                     style={{ color: '#6B7F96', border: '1px solid #D1D9E6' }}
                   >
                     <Pencil size={12} />
@@ -549,7 +549,7 @@ export function OnboardingChecklistCard() {
                   ) : isLocked ? (
                     <Lock size={8} color="#9CA3AF" />
                   ) : (
-                    <span className="text-[9px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
+                    <span className="text-[11px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
                   )}
                 </div>
 
@@ -579,7 +579,7 @@ export function OnboardingChecklistCard() {
                     <button
                       type="button"
                       onClick={() => navigate(step.route)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-gray-100 shrink-0"
+                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5 shrink-0"
                       style={{ color: '#6B7F96' }}
                     >
                       <Pencil size={10} />
@@ -601,7 +601,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => goToStep(i)}
-                    className="shrink-0 p-0.5 rounded hover:bg-gray-100 transition-colors"
+                    className="shrink-0 p-0.5 rounded hover:bg-[#1E2D4D]/5 transition-colors"
                   >
                     <ChevronRight size={12} style={{ color: '#9CA3AF' }} />
                   </button>

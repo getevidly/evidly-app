@@ -242,7 +242,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Dashboard' }]} />
       {isDemoMode && (
-        <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+        <div className="rounded-xl px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
           Demo Mode — displaying sample data
         </div>
       )}
@@ -456,7 +456,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
           </thead>
           <tbody>
             {filtered.map(f => (
-              <tr key={f.id} className="border-b hover:bg-gray-50" style={{ borderColor: '#f1f5f9' }}>
+              <tr key={f.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
                 <td className="py-2 px-2"><StatusDot status={f.status} /> <span className="text-xs ml-1">{f.status}</span></td>
                 <td className="py-2 px-2 font-medium" style={{ color: '#0B1628' }}>{f.feed_name}</td>
                 <td className="py-2 px-2 hidden sm:table-cell">
@@ -537,7 +537,7 @@ function EventLogTab({ events }: { events: EventRow[] }) {
 
       <div className="space-y-0.5 max-h-[60vh] overflow-y-auto">
         {filtered.map(e => (
-          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-gray-50">
+          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-[#FAF7F0]">
             <LevelBadge level={e.level} />
             <span className="flex-shrink-0" style={{ color: TEXT_TERT }}>{fmtDate(e.event_time)}</span>
             {e.category && <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
@@ -572,7 +572,7 @@ function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
       ) : (
         <div className="space-y-2">
           {keys.map(k => (
-            <div key={k.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={k.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Key size={16} style={{ color: GOLD }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{k.name}</p>
@@ -619,7 +619,7 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
             {leads.map(l => {
               const sc = statusColors[l.status] || statusColors.new;
               return (
-                <tr key={l.id} className="border-b hover:bg-gray-50" style={{ borderColor: '#f1f5f9' }}>
+                <tr key={l.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
                   <td className="py-2 px-2 font-medium">{l.business_name}</td>
                   <td className="py-2 px-2 hidden sm:table-cell" style={{ color: TEXT_SEC }}>{l.county || '—'}</td>
                   <td className="py-2 px-2">
@@ -661,7 +661,7 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
         {KNOWN_FUNCTIONS.map(fn => {
           const errCount = edgeErrors.filter(e => e.message?.includes(fn) || e.metadata?.feedId === fn).length;
           return (
-            <div key={fn} className="flex items-center gap-2 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={fn} className="flex items-center gap-2 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Zap size={14} style={{ color: errCount > 0 ? '#dc2626' : '#16a34a' }} />
               <span className="text-sm font-medium flex-1">{fn}</span>
               {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700">{errCount} err</span>}
@@ -684,7 +684,7 @@ function DemoSessionsTab({ sessions }: { sessions: DemoSessionRow[] }) {
       ) : (
         <div className="space-y-2">
           {sessions.map(s => (
-            <div key={s.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Play size={14} style={{ color: BRAND }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{s.account_name}</p>
@@ -751,7 +751,7 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
       </div>
       <div className="space-y-2">
         {donations.map(d => (
-          <div key={d.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+          <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
             <Heart size={14} style={{ color: '#dc2626' }} />
             <div className="flex-1">
               <p className="text-sm font-medium">{d.account_name}</p>
@@ -877,7 +877,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
           <div className="relative group">
             <MiniStat label="Time Saved" value={`${metrics.time_saved_hours.toLocaleString()} hrs`} color="#8b5cf6" />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 8 min/temp log + 12 min/checklist + 20 min/doc + 25 min/corrective action
               </div>
             </div>
@@ -885,7 +885,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
           <div className="relative group">
             <MiniStat label="Est. Money Saved" value={`$${metrics.money_saved_dollars.toLocaleString()}`} color={GOLD} />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 $28/hr labor + $500 x 15% fine avoidance + $200/loc/yr insurance
               </div>
             </div>

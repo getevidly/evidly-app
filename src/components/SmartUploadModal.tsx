@@ -336,18 +336,18 @@ export function SmartUploadModal({
   // -----------------------------------------------------------------------
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col modal-content-enter">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
           <div className="flex items-center gap-2">
-            <Sparkles size={20} style={{ color: '#d4af37' }} />
+            <Sparkles size={20} style={{ color: '#A08C5A' }} />
             <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               {presetDocLabel ? `Upload: ${presetDocLabel}` : 'Smart Document Upload'}
             </h2>
           </div>
           <button
-            className="p-2.5 -m-1 rounded hover:bg-gray-100"
+            className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5"
             onClick={handleClose}
             aria-label="Close"
           >
@@ -360,8 +360,8 @@ export function SmartUploadModal({
           {/* Drop zone — always visible if under max files */}
           {files.length < maxFiles && (
             <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                isDragging ? 'border-[#1E2D4D] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-gray-400'
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                isDragging ? 'border-[#1E2D4D] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-[#1E2D4D]/20'
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
@@ -441,7 +441,7 @@ export function SmartUploadModal({
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-[#1E2D4D]/10">
           <button
-            className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors"
+            className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors"
             onClick={handleClose}
           >
             Cancel
@@ -498,11 +498,11 @@ function FileClassificationCard({
   // Status-based rendering
   if (entry.status === 'classifying') {
     return (
-      <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+      <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
         <div className="flex items-center gap-3">
           <Loader2 size={18} className="animate-spin text-[#1E2D4D]" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-[#1E2D4D] truncate">
               {entry.file.name}
             </p>
             <p className="text-xs text-[#1E2D4D]/50">Analyzing with AI...</p>
@@ -512,7 +512,7 @@ function FileClassificationCard({
               className="h-full rounded-full animate-pulse"
               style={{
                 width: '60%',
-                background: 'linear-gradient(90deg, #1E2D4D, #d4af37)',
+                background: 'linear-gradient(90deg, #1E2D4D, #A08C5A)',
               }}
             />
           </div>
@@ -523,10 +523,10 @@ function FileClassificationCard({
 
   if (entry.status === 'pending') {
     return (
-      <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+      <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
         <div className="flex items-center gap-3">
           <FileText size={18} className="text-[#1E2D4D]/30" />
-          <p className="text-sm font-medium text-gray-900 truncate flex-1">
+          <p className="text-sm font-medium text-[#1E2D4D] truncate flex-1">
             {entry.file.name}
           </p>
           <span className="text-xs text-[#1E2D4D]/30">Queued</span>
@@ -542,14 +542,14 @@ function FileClassificationCard({
 
   return (
     <div
-      className="rounded-lg border overflow-hidden"
+      className="rounded-xl border overflow-hidden"
       style={{
         borderColor: level === 'high' ? '#86efac' : level === 'medium' ? '#fde68a' : '#fecaca',
       }}
     >
       {/* Summary row */}
       <button
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-[#FAF7F0] transition-colors"
         onClick={onToggle}
       >
         {/* Confidence icon */}
@@ -559,7 +559,7 @@ function FileClassificationCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
+          <p className="text-sm font-medium text-[#1E2D4D] truncate">
             {entry.file.name}
           </p>
           <p className="text-xs text-[#1E2D4D]/70 truncate mt-0.5">
@@ -611,7 +611,7 @@ function FileClassificationCard({
 
       {/* Expanded detail — edit form */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t border-[#1E2D4D]/5 pt-3">
           {/* Low-confidence banner */}
           {confidence < 0.7 && (
             <div
@@ -681,7 +681,7 @@ function FileClassificationCard({
             {!presetDocType && (
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
-                  Compliance Pillar
+                  compliance category
                 </label>
                 <select
                   className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"

@@ -175,7 +175,7 @@ export function VendorScheduleResponse() {
           {cfg.icon}
           <h1 className="text-xl font-bold text-[#1E2D4D] mb-3">{cfg.title}</h1>
           <p className="text-[#1E2D4D]/70 text-sm mb-6">{cfg.message}</p>
-          <div className="border-t border-gray-100 pt-4">
+          <div className="border-t border-[#1E2D4D]/5 pt-4">
             <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
               <EvidlyIcon size={20} />
               <span className="text-xs font-medium">Powered by EvidLY</span>
@@ -218,7 +218,7 @@ export function VendorScheduleResponse() {
               <EvidlyIcon size={36} />
               <div>
                 <h1 className="text-lg font-bold text-white">Schedule Service</h1>
-                <p className="text-xs text-gray-300">Respond to scheduling request from {data.organization_name}</p>
+                <p className="text-xs text-[#1E2D4D]/30">Respond to scheduling request from {data.organization_name}</p>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export function VendorScheduleResponse() {
                 <div key={i} className="flex items-center gap-3 p-3 bg-[#FAF7F0] rounded-lg">
                   <CalendarDays className="h-5 w-5 text-[#1E2D4D] flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{formatDate(slot)}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">{formatDate(slot)}</p>
                     <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export function VendorScheduleResponse() {
             <div className="space-y-3">
               <button
                 onClick={() => setPhase('select-slot')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-5 w-5 text-green-600" />
@@ -300,7 +300,7 @@ export function VendorScheduleResponse() {
 
               <button
                 onClick={() => setPhase('propose-alternatives')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -314,7 +314,7 @@ export function VendorScheduleResponse() {
 
               <button
                 onClick={() => setPhase('decline')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-gray-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-[#1E2D4D]/5 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
@@ -341,10 +341,10 @@ export function VendorScheduleResponse() {
                 <button
                   key={i}
                   onClick={() => setSelectedSlot(slot)}
-                  className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-colors ${
+                  className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-colors ${
                     selectedSlot === slot
                       ? 'border-green-500 bg-green-50'
-                      : 'border-[#1E2D4D]/10 hover:border-gray-300'
+                      : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -353,7 +353,7 @@ export function VendorScheduleResponse() {
                     {selectedSlot === slot && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{formatDate(slot)}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">{formatDate(slot)}</p>
                     <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </button>
@@ -362,7 +362,7 @@ export function VendorScheduleResponse() {
             <div className="flex gap-3">
               <button
                 onClick={() => setPhase('schedule-info')}
-                className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
               >
                 Back
               </button>
@@ -394,7 +394,7 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setAltSlot1(e.target.value)}
                   required
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -404,7 +404,7 @@ export function VendorScheduleResponse() {
                   value={altSlot2}
                   onChange={(e) => setAltSlot2(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -414,7 +414,7 @@ export function VendorScheduleResponse() {
                   value={altSlot3}
                   onChange={(e) => setAltSlot3(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -424,14 +424,14 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setAltNotes(e.target.value)}
                   rows={3}
                   placeholder="Any scheduling constraints or notes..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setPhase('schedule-info')}
-                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -462,10 +462,10 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setDeclineNotes(e.target.value)}
                   rows={3}
                   placeholder="Any reason for declining..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <p className="text-xs text-amber-700">
                   Declining this request will notify the client. They may contact you to discuss alternatives.
                 </p>
@@ -474,7 +474,7 @@ export function VendorScheduleResponse() {
                 <button
                   type="button"
                   onClick={() => setPhase('schedule-info')}
-                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>

@@ -266,7 +266,7 @@ export function Onboarding() {
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
                   placeholder="e.g., Main Street Restaurant"
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   fieldLabel="Location Name"
                   formContext={{ address: locationAddress || '' }}
                   entityType="location"
@@ -279,7 +279,7 @@ export function Onboarding() {
                   value={locationAddress}
                   onChange={(e) => setLocationAddress(e.target.value)}
                   placeholder="123 Main St, City, State"
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
             </div>
@@ -300,7 +300,7 @@ export function Onboarding() {
                   <select
                     value={shiftOpenTime}
                     onChange={(e) => setShiftOpenTime(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     {allTimes.filter(t => {
                       const h = parseInt(t.value.split(':')[0]);
@@ -315,7 +315,7 @@ export function Onboarding() {
                   <select
                     value={shiftCloseTime}
                     onChange={(e) => setShiftCloseTime(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     {allTimes.filter(t => {
                       const h = parseInt(t.value.split(':')[0]);
@@ -333,7 +333,7 @@ export function Onboarding() {
                 <select
                   value={shiftChangeover}
                   onChange={(e) => setShiftChangeover(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   {allTimes.filter(t => {
                     const h = parseInt(t.value.split(':')[0]);
@@ -344,15 +344,15 @@ export function Onboarding() {
                 </select>
               </div>
 
-              <div className="bg-[#FAF7F0] rounded-lg p-4">
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Shift Preview</h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-3 bg-white border border-[#1E2D4D]/10 rounded-md">
-                    <span className="font-medium text-gray-900">Morning Shift</span>
+                    <span className="font-medium text-[#1E2D4D]">Morning Shift</span>
                     <span className="text-[#1E2D4D]/70">{formatTime24to12(shiftOpenTime)} — {formatTime24to12(shiftChangeover)}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-white border border-[#1E2D4D]/10 rounded-md">
-                    <span className="font-medium text-gray-900">Evening Shift</span>
+                    <span className="font-medium text-[#1E2D4D]">Evening Shift</span>
                     <span className="text-[#1E2D4D]/70">{formatTime24to12(shiftChangeover)} — {formatTime24to12(shiftCloseTime)}</span>
                   </div>
                 </div>
@@ -390,7 +390,7 @@ export function Onboarding() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">{stepTitles[currentStep]}</h2>
             {industryType && (
-              <p className="text-sm text-[#d4af37] font-medium mb-4">
+              <p className="text-sm text-[#A08C5A] font-medium mb-4">
                 {industryType} Template
               </p>
             )}
@@ -398,7 +398,7 @@ export function Onboarding() {
 
             <div className="space-y-6 max-h-[400px] overflow-y-auto">
               {displayCategories.map(category => (
-                <div key={category} className="bg-[#FAF7F0] rounded-lg p-4">
+                <div key={category} className="bg-[#FAF7F0] rounded-xl p-4">
                   <h3 className="font-semibold text-[#1E2D4D] mb-3">{getCategoryLabel(category)}</h3>
                   <div className="space-y-2">
                     {groupedItems[category].map((item, index) => {
@@ -406,15 +406,15 @@ export function Onboarding() {
                       return (
                         <label
                           key={index}
-                          className="flex items-start space-x-3 p-3 bg-white border border-[#1E2D4D]/10 rounded-md hover:bg-gray-50 cursor-pointer"
+                          className="flex items-start space-x-3 p-3 bg-white border border-[#1E2D4D]/10 rounded-md hover:bg-[#FAF7F0] cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={item.enabled}
                             onChange={() => toggleTemplateItem(globalIndex)}
-                            className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] mt-1"
+                            className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] mt-1"
                           />
-                          <span className={`flex-1 ${!item.required ? 'text-[#1E2D4D]/50' : 'text-gray-900'}`}>
+                          <span className={`flex-1 ${!item.required ? 'text-[#1E2D4D]/50' : 'text-[#1E2D4D]'}`}>
                             {item.name}
                             {item.custom && (
                               <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
@@ -433,7 +433,7 @@ export function Onboarding() {
                         value={customItems[category] || ''}
                         onChange={(e) => setCustomItems({ ...customItems, [category]: e.target.value })}
                         onKeyPress={(e) => e.key === 'Enter' && addCustomItem(category)}
-                        className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-sm"
+                        className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm"
                         fieldLabel="Custom Item"
                         formContext={{}}
                         entityType="checklist"
@@ -441,7 +441,7 @@ export function Onboarding() {
                       <button
                         type="button"
                         onClick={() => addCustomItem(category)}
-                        className="px-3 py-2 bg-white border border-[#1E2D4D]/15 rounded-md hover:bg-gray-50 transition-colors"
+                        className="px-3 py-2 bg-white border border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] transition-colors"
                       >
                         <Plus className="w-4 h-4 text-[#1E2D4D]/70" />
                       </button>
@@ -456,7 +456,7 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={handleSkip}
-                  className="text-sm text-[#1E2D4D]/70 hover:text-gray-800"
+                  className="text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D]/90"
                 >
                   I'll set this up later →
                 </button>
@@ -510,7 +510,7 @@ export function Onboarding() {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'sms'
                         ? 'bg-[#1E2D4D] text-white'
-                        : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     SMS
@@ -521,7 +521,7 @@ export function Onboarding() {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'email'
                         ? 'bg-[#1E2D4D] text-white'
-                        : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     Email
@@ -532,7 +532,7 @@ export function Onboarding() {
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'both'
                         ? 'bg-[#1E2D4D] text-white'
-                        : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     Both
@@ -565,7 +565,7 @@ export function Onboarding() {
       case 10:
         return (
           <div className="text-center">
-            <PartyPopper className="h-24 w-24 text-[#d4af37] mx-auto mb-6" />
+            <PartyPopper className="h-24 w-24 text-[#A08C5A] mx-auto mb-6" />
             <h2 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-4">You're All Set!</h2>
             <p className="text-lg text-[#1E2D4D]/70 mb-8">
               Your EvidLY account is ready. Start logging temperatures, completing checklists, and staying compliant.
@@ -590,8 +590,8 @@ export function Onboarding() {
                     step.id < currentStep
                       ? 'bg-green-500 text-white'
                       : step.id === currentStep
-                      ? 'bg-[#d4af37] text-white'
-                      : 'bg-gray-200 text-[#1E2D4D]/50'
+                      ? 'bg-[#A08C5A] text-white'
+                      : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/50'
                   }`}
                 >
                   {step.id < currentStep ? <Check className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
@@ -621,7 +621,7 @@ export function Onboarding() {
           {currentStep !== 4 ? (
             <button
               onClick={handleSkip}
-              className="px-6 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-md hover:bg-gray-50 bg-white"
+              className="px-6 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-md hover:bg-[#FAF7F0] bg-white"
             >
               Skip
             </button>

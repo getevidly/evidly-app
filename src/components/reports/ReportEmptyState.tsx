@@ -23,7 +23,7 @@ export function ReportEmptyState({
         {message || `No data available${reportTitle ? ` for ${reportTitle}` : ''}`}
       </h3>
       <p className="text-sm text-[#1E2D4D]/50 max-w-md leading-relaxed">
-        {guidance || 'Add locations and start using the platform to generate reports.'}
+        {guidance || 'Add locations and start using EvidLY to generate reports.'}
       </p>
     </div>
   );

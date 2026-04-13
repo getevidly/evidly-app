@@ -79,7 +79,7 @@ export function JurisdictionSignalFeed({ signals }) {
         {filtered.map((signal, i) => {
           const severity = SEVERITY_STYLES[signal.ai_urgency] || SEVERITY_STYLES.info;
           return (
-            <div key={signal.id || i} className={`border rounded-lg p-4 ${severity.border}`}>
+            <div key={signal.id || i} className={`border rounded-xl p-4 ${severity.border}`}>
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${severity.bg} ${severity.text}`}>

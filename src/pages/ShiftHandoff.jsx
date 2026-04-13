@@ -188,7 +188,7 @@ export function ShiftHandoff() {
           onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="Anything the next team should know..."
           rows={3}
-          className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-[#1E2D4D]"
+          className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-[#1E2D4D]"
           style={{ fontSize: 16 }}
         />
       </div>

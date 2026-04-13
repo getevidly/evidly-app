@@ -305,7 +305,7 @@ export function DemoGenerator() {
 
           {/* Login URL */}
           {credentials && (
-            <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 mb-4 text-left">
+            <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-2" style={{ color: NAVY }}>Login URL</h3>
               <div className="flex items-center gap-2">
                 <code className="flex-1 font-mono text-sm text-blue-800 bg-white px-3 py-1.5 rounded border border-blue-200 truncate">{LOGIN_URL}</code>
@@ -322,16 +322,16 @@ export function DemoGenerator() {
 
           {/* Credentials display */}
           {credentials && (
-            <div className="bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10 p-4 mb-4 text-left">
+            <div className="bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-[#1E2D4D]/50">Email:</span>
-                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.email}</code>
+                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.email}</code>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[#1E2D4D]/50">Password:</span>
-                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.temp_password}</code>
+                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.temp_password}</code>
                 </div>
                 {demoExpiresAt && (
                   <div className="flex items-center justify-between pt-1 border-t border-[#1E2D4D]/10">
@@ -342,7 +342,7 @@ export function DemoGenerator() {
               </div>
               <button
                 onClick={copyCredentials}
-                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-[#1E2D4D]/15 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-[#1E2D4D]/15 hover:bg-[#1E2D4D]/5 transition-colors flex items-center justify-center gap-2"
               >
                 {copied ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Credentials</>}
               </button>
@@ -354,9 +354,9 @@ export function DemoGenerator() {
             <button
               onClick={sendViaEmail}
               className="w-full mb-6 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition-colors flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#d4af37' }}
+              style={{ backgroundColor: '#A08C5A' }}
               onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#b8982e'}
-              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#d4af37'}
+              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#A08C5A'}
             >
               <Mail className="w-4 h-4" /> Send Credentials via Email
             </button>
@@ -372,7 +372,7 @@ export function DemoGenerator() {
             </button>
             <button
               onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setLinkCopied(false); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
-              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50"
+              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               Generate Another
             </button>
@@ -382,7 +382,7 @@ export function DemoGenerator() {
     );
   }
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
   const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   return (

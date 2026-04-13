@@ -45,7 +45,7 @@ export default function AllFeatures() {
     <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
+          <span className="inline-block text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-4">
             Complete Feature List
           </span>
           <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1E2D4D] tracking-tight mb-4">
@@ -60,7 +60,7 @@ export default function AllFeatures() {
           {featureCategories.map((category, idx) => (
             <div
               key={idx}
-              className="bg-[#FAF7F0] rounded-xl p-6 border border-[#1E2D4D]/10 hover:border-[#d4af37] transition-all hover:shadow-md"
+              className="bg-[#FAF7F0] rounded-xl p-6 border border-[#1E2D4D]/10 hover:border-[#A08C5A] transition-all hover:shadow-md"
             >
               <div className="flex items-center gap-3 mb-5">
                 <h3 className="text-[1.3rem] font-bold text-[#1E2D4D]">{category.title}</h3>
@@ -71,12 +71,12 @@ export default function AllFeatures() {
               <ul className="space-y-4">
                 {category.features.map((feature, featureIdx) => (
                   <li key={featureIdx} className="flex items-start gap-3">
-                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.comingSoon ? 'text-[#1E2D4D]/30' : 'text-[#d4af37]'}`} strokeWidth={3} />
+                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.comingSoon ? 'text-[#1E2D4D]/30' : 'text-[#A08C5A]'}`} strokeWidth={3} />
                     <div>
-                      <span className="font-semibold text-gray-800">
+                      <span className="font-semibold text-[#1E2D4D]/90">
                         {feature.name}
                         {feature.comingSoon && (
-                          <span className="ml-2 text-xs font-bold uppercase tracking-wider text-[#d4af37] bg-[#d4af37]/10 px-2 py-0.5 rounded-full">Coming Soon</span>
+                          <span className="ml-2 text-xs font-bold uppercase tracking-wider text-[#1E2D4D] bg-[#A08C5A]/10 px-2 py-0.5 rounded-full">Coming Soon</span>
                         )}
                       </span>
                       <p className="text-sm text-[#1E2D4D]/70 mt-0.5 leading-relaxed">{feature.description}</p>

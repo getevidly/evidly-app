@@ -23,14 +23,14 @@ function DeadlineCountdown() {
 
   if (expired) {
     return (
-      <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4 text-center">
+      <div className="bg-gradient-to-r from-[#A08C5A]/10 to-[#A08C5A]/5 border border-[#A08C5A]/30 rounded-xl p-4 text-center">
         <span className="text-sm font-bold text-[#1E2D4D]">Founder pricing has ended. Contact us for current rates.</span>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4">
+    <div className="bg-gradient-to-r from-[#A08C5A]/10 to-[#A08C5A]/5 border border-[#A08C5A]/30 rounded-xl p-4">
       <p className="text-sm font-bold text-[#1E2D4D] text-center mb-3">
         Founder pricing locks in forever &mdash; offer ends July 4, 2026
       </p>
@@ -101,10 +101,10 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-gray-50">
+    <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-[#FAF7F0]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
-          <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
+          <span className="inline-block text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-4">
             Pricing
           </span>
           <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1E2D4D] tracking-tight">
@@ -126,18 +126,18 @@ export default function Pricing() {
             Not convinced? Get a <strong>full refund within 45 days</strong> of your first payment. No questions asked.
           </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-[#1E2D4D]/70">
-            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#d4af37]" />30-day free trial</span>
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />30-day free trial</span>
             <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />45-day money-back</span>
-            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#d4af37]" />Cancel anytime</span>
+            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />Cancel anytime</span>
           </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 max-w-6xl mx-auto">
           {/* Founder Single Card */}
           <div className="relative">
-            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-sm shadow-[#d4af37]/20 h-full flex flex-col">
+            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#A08C5A] shadow-sm shadow-[#A08C5A]/20 h-full flex flex-col">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex gap-2">
-                <span className="px-4 py-2 bg-[#d4af37] text-[#1E2D4D] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
+                <span className="px-4 py-2 bg-[#A08C5A] text-[#1E2D4D] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
                   Best Value
                 </span>
                 <span className="px-4 py-2 bg-[#16a34a] text-white text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
@@ -150,7 +150,7 @@ export default function Pricing() {
               </div>
 
               <div className="mb-6">
-                <div className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-1">
+                <div className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-1">
                   {founderSingle.name}
                 </div>
                 <div className="text-sm font-semibold text-[#1E2D4D]">{founderSingle.subtitle} &mdash; Price Locked Forever</div>
@@ -179,7 +179,7 @@ export default function Pricing() {
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'monthly'
                       ? 'bg-white text-[#1E2D4D] shadow-sm'
-                      : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                      : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
                   }`}
                 >
                   Monthly
@@ -189,7 +189,7 @@ export default function Pricing() {
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'annual'
                       ? 'bg-white text-[#1E2D4D] shadow-sm'
-                      : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                      : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
                   }`}
                 >
                   Annual
@@ -199,7 +199,7 @@ export default function Pricing() {
               <ul className="space-y-3 mb-8 flex-grow">
                 {founderSingle.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-[#1E2D4D]/80">
-                    <Check className="w-5 h-5 text-[#d4af37] flex-shrink-0 mt-0.5" strokeWidth={3} />
+                    <Check className="w-5 h-5 text-[#A08C5A] flex-shrink-0 mt-0.5" strokeWidth={3} />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -221,7 +221,7 @@ export default function Pricing() {
           <div className="relative">
             <div className="bg-white rounded-xl p-5 sm:p-8 relative border-2 border-[#1E2D4D] shadow-sm h-full flex flex-col">
               <div className="mb-6 pt-2">
-                <div className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-1">
+                <div className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-1">
                   {founderMulti.name}
                 </div>
                 <div className="text-sm font-semibold text-[#1E2D4D]">{founderMulti.subtitle}</div>

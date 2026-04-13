@@ -30,11 +30,11 @@ const CATEGORIES = [
 const SEVERITIES = [
   { value: 'critical', label: 'Critical', color: '#dc2626' },
   { value: 'high', label: 'High', color: '#ea580c' },
-  { value: 'medium', label: 'Medium', color: '#d4af37' },
+  { value: 'medium', label: 'Medium', color: '#A08C5A' },
   { value: 'low', label: 'Low', color: '#16a34a' },
 ] as const;
 
-const COLOR_OPTIONS = ['#dc2626', '#1E2D4D', '#15803d', '#7c3aed', '#d4af37', '#0369a1'];
+const COLOR_OPTIONS = ['#dc2626', '#1E2D4D', '#15803d', '#7c3aed', '#A08C5A', '#0369a1'];
 
 const LOCATIONS = [
   { id: 'loc-downtown', name: 'Location 1' }, // demo

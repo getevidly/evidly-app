@@ -139,13 +139,27 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 CREATE INDEX IF NOT EXISTS idx_rfp_sources_status ON rfp_sources(status);
 CREATE INDEX IF NOT EXISTS idx_rfp_sources_states ON rfp_sources USING GIN (states_covered);
 
--- rfp_listings indexes
-CREATE INDEX IF NOT EXISTS idx_rfp_listings_source ON rfp_listings(source_id);
-CREATE INDEX IF NOT EXISTS idx_rfp_listings_state ON rfp_listings(state);
-CREATE INDEX IF NOT EXISTS idx_rfp_listings_status ON rfp_listings(status);
-CREATE INDEX IF NOT EXISTS idx_rfp_listings_due ON rfp_listings(due_date) WHERE due_date IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_rfp_listings_naics ON rfp_listings(naics_code) WHERE naics_code IS NOT NULL;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_rfp_listings_dedup ON rfp_listings(dedup_hash) WHERE dedup_hash IS NOT NULL;
+-- rfp_listings indexes (only create if column exists — table may have been created by earlier migration)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'source_id') THEN
+    CREATE INDEX IF NOT EXISTS idx_rfp_listings_source ON rfp_listings(source_id);
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'state') THEN
+    CREATE INDEX IF NOT EXISTS idx_rfp_listings_state ON rfp_listings(state);
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_rfp_listings_status ON rfp_listings(status);
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'due_date') THEN
+    CREATE INDEX IF NOT EXISTS idx_rfp_listings_due ON rfp_listings(due_date) WHERE due_date IS NOT NULL;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'naics_code') THEN
+    CREATE INDEX IF NOT EXISTS idx_rfp_listings_naics ON rfp_listings(naics_code) WHERE naics_code IS NOT NULL;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'rfp_listings' AND column_name = 'dedup_hash') THEN
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_rfp_listings_dedup ON rfp_listings(dedup_hash) WHERE dedup_hash IS NOT NULL;
+  END IF;
+END $$;
 
 -- rfp_classifications indexes
 CREATE INDEX IF NOT EXISTS idx_rfp_class_rfp ON rfp_classifications(rfp_id);

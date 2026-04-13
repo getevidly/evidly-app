@@ -89,7 +89,7 @@ export default function AssociationDemoDashboard() {
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Member Coverage by County</h2>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(countyCoverage).map(([county, memberNames]) => (
-                <div key={county} className="border border-[#1E2D4D]/10 rounded-lg p-4">
+                <div key={county} className="border border-[#1E2D4D]/10 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin size={16} className="text-[#A08C5A]" />
                     <p className="font-medium text-[#1E2D4D]">{county} County</p>

@@ -164,7 +164,7 @@ export default function VendorDocumentReview() {
             <button
               type="button"
               onClick={() => setExpandedId(isExpanded ? null : sub.id)}
-              className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-[#FAF7F0] transition-colors"
             >
               <div
                 className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
@@ -386,7 +386,7 @@ export default function VendorDocumentReview() {
 
       {/* Decline modal */}
       {declineModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
           <div
             className="rounded-xl p-6 w-full max-w-md"
             style={{ backgroundColor: CARD_BG }}
@@ -427,8 +427,8 @@ export default function VendorDocumentReview() {
 
       {/* Demo upgrade modal */}
       {showUpgrade && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center modal-content-enter">
             <h3 className="text-lg font-semibold tracking-tight mb-2">{upgradeFeature || 'Feature'}</h3>
             <p className="text-sm text-[#1E2D4D]/50 mb-4">This feature requires a live account.</p>
             <button

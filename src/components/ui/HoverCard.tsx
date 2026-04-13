@@ -18,7 +18,7 @@ export const HoverCard: React.FC<HoverCardProps> = ({ children, onClick, classNa
       style={{
         cursor: onClick ? 'pointer' : 'default',
         transition: 'border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease',
-        borderColor: hovered ? '#d4af37' : undefined,
+        borderColor: hovered ? '#A08C5A' : undefined,
         boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.08)' : undefined,
         transform: hovered && onClick ? 'translateY(-1px)' : 'none',
         ...style,

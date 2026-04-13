@@ -11,7 +11,7 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
 const CREAM = '#FAF7F0';
@@ -93,17 +93,17 @@ function CostCalculator() {
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Equipment units</label>
           <input type="number" value={units} onChange={e => setUnits(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
+            className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Checks per unit/day</label>
           <input type="number" value={checksPerDay} onChange={e => setChecksPerDay(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
+            className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Minutes per check</label>
           <input type="number" value={minsPerCheck} onChange={e => setMinsPerCheck(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
+            className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
       </div>
 
@@ -507,7 +507,7 @@ export function IoTSensorPlatform() {
       </section>
 
       {/* ── Bottom CTA ─────────────────────────────────────── */}
-      <section className="text-center py-8 border-t border-gray-100">
+      <section className="text-center py-8 border-t border-[#1E2D4D]/5">
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Ready to connect your first sensor?</h2>
         <p className="text-sm text-[#1E2D4D]/50 mb-6">Your compliance history is waiting. Sensors make it automatic.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

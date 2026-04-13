@@ -151,7 +151,7 @@ export function TempLogScan() {
             </button>
             <button
               onClick={() => navigate('/temp-logs')}
-              className="w-full px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-900 transition-colors"
+              className="w-full px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
             >
               View All Temperature Logs
             </button>
@@ -182,10 +182,10 @@ export function TempLogScan() {
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden">
           <div className="px-6 py-4" style={{ backgroundColor: '#1E2D4D' }}>
             <div className="flex items-center gap-3">
-              <QrCode className="h-7 w-7 text-[#d4af37]" />
+              <QrCode className="h-7 w-7 text-[#A08C5A]" />
               <div>
                 <h1 className="text-lg font-bold text-white">{matched.name}</h1>
-                <p className="text-xs text-gray-300">{matched.location} — {matched.type}</p>
+                <p className="text-xs text-[#1E2D4D]/30">{matched.location} — {matched.type}</p>
               </div>
             </div>
           </div>
@@ -207,10 +207,10 @@ export function TempLogScan() {
                 value={temperature}
                 onChange={e => setTemperature(e.target.value)}
                 placeholder="Enter reading..."
-                className={`w-full px-4 py-4 border rounded-lg text-2xl font-bold tracking-tight text-center focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
+                className={`w-full px-4 py-4 border rounded-xl text-2xl font-bold tracking-tight text-center focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
                   isInRange === false ? 'border-red-300 bg-red-50' : 'border-[#1E2D4D]/15'
                 }`}
-                style={{ fontSize: 16 }}
+                className="text-base"
                 autoFocus
               />
               {isInRange === false && (
@@ -228,7 +228,7 @@ export function TempLogScan() {
             </div>
 
             {isInRange === false && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-bold text-red-800">
                     {matched.ccp} Corrective Action Required
@@ -245,7 +245,7 @@ export function TempLogScan() {
                   onChange={e => { setCorrectiveAction(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
                   placeholder="Describe corrective action taken..."
                   rows={2}
-                  className="w-full px-3 py-2 border border-red-200 rounded-lg text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 bg-white"
+                  className="w-full px-3 py-2 border border-red-200 rounded-xl text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 bg-white"
                 />
                 {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
                 {!correctiveAction.trim() && (
@@ -269,7 +269,7 @@ export function TempLogScan() {
                 onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }}
                 placeholder="Any observations..."
                 rows={2}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
               />
               {aiFields.has('notes') && <AIGeneratedIndicator />}
             </div>
@@ -278,7 +278,7 @@ export function TempLogScan() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-semibold rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
               >
                 Cancel
               </button>
@@ -323,10 +323,10 @@ export function TempLogScan() {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden">
         <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">
-            <QrCode className="h-8 w-8 text-[#d4af37]" />
+            <QrCode className="h-8 w-8 text-[#A08C5A]" />
             <div>
               <h1 className="text-lg font-bold text-white">Scan Equipment QR</h1>
-              <p className="text-xs text-gray-300">Point camera at equipment label</p>
+              <p className="text-xs text-[#1E2D4D]/30">Point camera at equipment label</p>
             </div>
           </div>
         </div>
@@ -334,19 +334,19 @@ export function TempLogScan() {
         {/* Camera viewfinder (demo simulation) */}
         <div className="p-6">
           <div
-            className="relative bg-gray-900 rounded-xl overflow-hidden aspect-square flex items-center justify-center cursor-pointer group"
+            className="relative bg-[#1E2D4D]/90 rounded-xl overflow-hidden aspect-square flex items-center justify-center cursor-pointer group"
             onClick={handleDemoScan}
           >
             {/* Scan frame corners */}
             <div className="absolute inset-8 border-2 border-white/30 rounded-lg">
-              <div className="absolute -top-0.5 -left-0.5 w-6 h-6 border-t-2 border-l-2 border-[#d4af37] rounded-tl" />
-              <div className="absolute -top-0.5 -right-0.5 w-6 h-6 border-t-2 border-r-2 border-[#d4af37] rounded-tr" />
-              <div className="absolute -bottom-0.5 -left-0.5 w-6 h-6 border-b-2 border-l-2 border-[#d4af37] rounded-bl" />
-              <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 border-b-2 border-r-2 border-[#d4af37] rounded-br" />
+              <div className="absolute -top-0.5 -left-0.5 w-6 h-6 border-t-2 border-l-2 border-[#A08C5A] rounded-tl" />
+              <div className="absolute -top-0.5 -right-0.5 w-6 h-6 border-t-2 border-r-2 border-[#A08C5A] rounded-tr" />
+              <div className="absolute -bottom-0.5 -left-0.5 w-6 h-6 border-b-2 border-l-2 border-[#A08C5A] rounded-bl" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 border-b-2 border-r-2 border-[#A08C5A] rounded-br" />
             </div>
 
             {/* Scanning line animation */}
-            <div className="absolute inset-x-8 h-0.5 bg-[#d4af37]/60 animate-bounce" style={{ top: '50%' }} />
+            <div className="absolute inset-x-8 h-0.5 bg-[#A08C5A]/60 animate-bounce" style={{ top: '50%' }} />
 
             <div className="text-center z-10">
               <Camera className="h-12 w-12 text-white/40 mx-auto mb-3" />
@@ -365,7 +365,7 @@ export function TempLogScan() {
           {!showManualInput ? (
             <button
               onClick={() => setShowManualInput(true)}
-              className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors mx-auto"
+              className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors mx-auto"
             >
               <Keyboard className="h-3.5 w-3.5" />
               Enter code manually
@@ -377,7 +377,7 @@ export function TempLogScan() {
                 value={manualInput}
                 onChange={e => setManualInput(e.target.value)}
                 placeholder="EVIDLY-EQ-..."
-                className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-xs font-mono focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-xs font-mono focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 onKeyDown={e => e.key === 'Enter' && handleManualLookup()}
               />
               <button
@@ -390,10 +390,10 @@ export function TempLogScan() {
           )}
         </div>
 
-        <div className="px-6 pb-4 border-t border-gray-100 pt-3">
+        <div className="px-6 pb-4 border-t border-[#1E2D4D]/5 pt-3">
           <button
             onClick={() => navigate('/temp-logs')}
-            className="flex items-center gap-1 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
+            className="flex items-center gap-1 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
           >
             <ArrowLeft className="h-3 w-3" />
             Back to Temperature Logs

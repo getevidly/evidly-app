@@ -40,7 +40,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); setShowQrModal(true); }}
-          className="absolute top-1 right-1 p-2 -m-1 rounded hover:bg-gray-100 transition-colors"
+          className="absolute top-1 right-1 p-2 -m-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
           title="Share Passport"
           style={{ lineHeight: 0 }}
         >
@@ -73,14 +73,14 @@ export default function LocationCard({ locationId, locationName, score, onClick,
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={() => setShowQrModal(false)} />
 
-            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full modal-content-enter">
               {/* Header */}
               <div style={{ background: '#1E2D4D' }} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold tracking-tight text-white">{locationName}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm text-gray-300">Compliance Score:</span>
+                      <span className="text-sm text-[#1E2D4D]/30">Compliance Score:</span>
                       <span className="text-sm font-bold" style={{ color: getReadinessColor(score) }}>{score}</span>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
                 <p className="text-xs text-[#1E2D4D]/50 mb-4">Scan to view live compliance passport</p>
 
                 {/* Copyable URL */}
-                <div className="w-full flex items-center gap-2 p-2 bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10">
+                <div className="w-full flex items-center gap-2 p-2 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10">
                   <input
                     type="text"
                     readOnly

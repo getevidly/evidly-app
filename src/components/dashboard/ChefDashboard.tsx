@@ -108,7 +108,7 @@ export default function ChefDashboard() {
       <button
         type="button"
         onClick={() => navigate('/haccp')}
-        className="w-full rounded-lg px-4 py-4 text-left"
+        className="w-full rounded-xl px-4 py-4 text-left"
         style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
       >
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>HACCP CCP Status</h3>

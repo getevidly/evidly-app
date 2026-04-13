@@ -248,7 +248,7 @@ export function IntelligenceFeedWidget() {
                 background: lc.bg, color: lc.text, border: `1px solid ${lc.text}18`,
                 display: 'inline-flex', alignItems: 'center', gap: 2,
               }}>
-              <span style={{ fontSize: 10 }}>{meta.icon}</span>
+              <span className="text-[11px]">{meta.icon}</span>
               {d.level === 'critical' ? 'CRIT' : d.level.toUpperCase().slice(0, 4)}
             </span>
           );
@@ -286,7 +286,7 @@ export function IntelligenceFeedWidget() {
   // Loading state (production only)
   if (!isDemoMode && loading) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
@@ -308,7 +308,7 @@ export function IntelligenceFeedWidget() {
   // Error state (production only)
   if (!isDemoMode && error) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
@@ -331,11 +331,11 @@ export function IntelligenceFeedWidget() {
   // Empty state — always show widget, never return null
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <button
           type="button"
           onClick={() => navigate('/insights/intelligence')}
-          className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+          className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
           style={{ borderBottom: '1px solid #F0F0F0' }}
         >
           <div className="flex items-center gap-2">
@@ -369,12 +369,12 @@ export function IntelligenceFeedWidget() {
   }
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
       <button
         type="button"
         onClick={() => navigate('/insights/intelligence')}
-        className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+        className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
         style={{ borderBottom: '1px solid #F0F0F0' }}
       >
         <div className="flex items-center gap-2">
@@ -414,12 +414,12 @@ export function IntelligenceFeedWidget() {
               <div className="flex-1 min-w-0">
                 {/* Priority badge + category + time */}
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded"
+                  <span className="text-[11px] font-black px-1.5 py-0.5 rounded"
                     style={{ background: PRIORITY_DOT[item.priority] + '15', color: PRIORITY_DOT[item.priority] || MUTED }}>
                     {item.priority.toUpperCase()}
                   </span>
                   {item.category && (
-                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded" style={{ background: '#F0FDF4', color: '#065F46' }}>
+                    <span className="text-[11px] font-medium px-1.5 py-0.5 rounded" style={{ background: '#F0FDF4', color: '#065F46' }}>
                       {item.category.replace(/_/g, ' ')}
                     </span>
                   )}
@@ -479,7 +479,7 @@ export function IntelligenceFeedWidget() {
         <button
           type="button"
           onClick={() => navigate('/insights/intelligence')}
-          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
           style={{ color: NAVY }}
         >
           +{items.length - 3} more intelligence items →

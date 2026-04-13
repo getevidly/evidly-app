@@ -147,7 +147,7 @@ export function IncidentDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/safety/incidents')}
-            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
+            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER }}
           >
             <ArrowLeft className="w-4 h-4" style={{ color: NAVY }} />
@@ -188,7 +188,7 @@ export function IncidentDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/safety/incidents')}
-            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
+            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER }}
           >
             <ArrowLeft className="w-4 h-4" style={{ color: NAVY }} />
@@ -421,7 +421,7 @@ export function IncidentDetailPage() {
         )}
         <button
           onClick={() => alert('Update status flow coming soon.')}
-          className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
+          className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           Update Status

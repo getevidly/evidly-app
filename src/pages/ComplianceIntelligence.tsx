@@ -156,7 +156,7 @@ export function ComplianceIntelligence() {
               className={`flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -180,8 +180,8 @@ export function ComplianceIntelligence() {
 
       {/* Powered By */}
       {enterpriseTenant.showPoweredBy && (
-        <footer className="text-center py-4 border-t border-gray-100 bg-white mt-6">
-          <p className="text-xs text-[#1E2D4D]/30">Powered by <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span></p>
+        <footer className="text-center py-4 border-t border-[#1E2D4D]/5 bg-white mt-6">
+          <p className="text-xs text-[#1E2D4D]/30">Powered by <span style={{ color: '#A08C5A', fontWeight: 600 }}>EvidLY</span></p>
         </footer>
       )}
 
@@ -337,7 +337,7 @@ function CommandCenterTab() {
             <YAxis domain={[75, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} />
             <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e5e7eb' }} />
             <Legend wrapperStyle={{ fontSize: 10 }} />
-            <ReferenceLine x="Jul" stroke="#d4af37" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#d4af37', fontWeight: 600 } }} />
+            <ReferenceLine x="Jul" stroke="#A08C5A" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#A08C5A', fontWeight: 600 } }} />
             <ReferenceLine x="Nov" stroke="#6b21a8" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'FDA Update', position: 'top', style: { fontSize: 9, fill: '#6b21a8', fontWeight: 600 } }} />
             <Line type="monotone" dataKey="compositeScore" name="Composite" stroke="#1E2D4D" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="fire" name="Facility Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
@@ -349,13 +349,13 @@ function CommandCenterTab() {
       {/* Row 3 — AI Intelligence Insights */}
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Zap className="h-4 w-4" style={{ color: '#d4af37' }} />
+          <Zap className="h-4 w-4" style={{ color: '#A08C5A' }} />
           <h3 className="text-sm font-semibold text-[#1E2D4D]">This Week's Intelligence Briefing</h3>
           <span className="text-xs text-[#1E2D4D]/30 ml-auto">{weeklyInsights.length} insights</span>
         </div>
         <div className="space-y-3">
           {weeklyInsights.map(insight => (
-            <div key={insight.id} className={`p-4 rounded-lg border ${
+            <div key={insight.id} className={`p-4 rounded-xl border ${
               insight.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
               insight.severity === 'advisory' ? 'border-amber-200 bg-amber-50/50' :
               'border-blue-200 bg-blue-50/50'
@@ -367,7 +367,7 @@ function CommandCenterTab() {
                   'bg-blue-50 text-blue-700'
                 }`}>{insight.severity.toUpperCase()}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-800 leading-relaxed">{insight.text}</p>
+                  <p className="text-xs text-[#1E2D4D]/90 leading-relaxed">{insight.text}</p>
                   <div className="flex items-center gap-4 mt-2">
                     <span className="text-xs text-[#1E2D4D]/30"><Target className="h-3 w-3 inline mr-0.5" />{insight.scope}</span>
                     <span className="text-xs text-[#1E2D4D]/30"><Zap className="h-3 w-3 inline mr-0.5" />{insight.action}</span>
@@ -376,7 +376,7 @@ function CommandCenterTab() {
                     <button onClick={() => toast.info(insight.drillDownLabel + ' — coming soon')} className="text-xs font-medium text-[#1E2D4D] hover:underline cursor-pointer flex items-center gap-0.5">
                       <ChevronRight className="h-3 w-3" />{insight.drillDownLabel}
                     </button>
-                    <button onClick={() => toast.info('Share insight coming soon')} className="text-xs font-medium text-[#1E2D4D]/30 hover:text-gray-600 cursor-pointer flex items-center gap-0.5">
+                    <button onClick={() => toast.info('Share insight coming soon')} className="text-xs font-medium text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 cursor-pointer flex items-center gap-0.5">
                       <Share2 className="h-3 w-3" />Share
                     </button>
                   </div>
@@ -450,18 +450,18 @@ function CompareTab() {
                   placeholder="Search locations..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 />
               </div>
-              <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
+              <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-2">
                 <option value="all">All Regions</option>
                 {regions.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
-              <select value={verticalFilter} onChange={e => setVerticalFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
+              <select value={verticalFilter} onChange={e => setVerticalFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-2">
                 <option value="all">All Verticals</option>
                 {verticals.map(v => <option key={v} value={v}>{v}</option>)}
               </select>
-              <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Export to Excel coming soon'))} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Export to Excel coming soon'))} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] cursor-pointer">
                 <Download className="h-3.5 w-3.5" /> Export
               </button>
               <span className="text-xs text-[#1E2D4D]/30">{filtered.length} of {TOTAL_LOCATIONS} locations</span>
@@ -472,7 +472,7 @@ function CompareTab() {
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
             <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
               <table className="w-full text-xs">
-                <thead className="sticky top-0 z-10 bg-gray-50">
+                <thead className="sticky top-0 z-10 bg-[#FAF7F0]">
                   <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                     <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('rank')}>Rank<SortArrow col="rank" /></th>
                     <th className="text-left px-3 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('name')}>Location<SortArrow col="name" /></th>
@@ -487,9 +487,9 @@ function CompareTab() {
                 </thead>
                 <tbody>
                   {filtered.slice(0, 100).map(loc => (
-                    <tr key={loc.id} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => toast.info(`View ${loc.name} coming soon`)}>
+                    <tr key={loc.id} className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0] cursor-pointer" onClick={() => toast.info(`View ${loc.name} coming soon`)}>
                       <td className="px-2 py-2 text-center text-[#1E2D4D]/30 font-mono">{loc.rank}</td>
-                      <td className="px-3 py-2 font-medium text-gray-900">{loc.name}</td>
+                      <td className="px-3 py-2 font-medium text-[#1E2D4D]">{loc.name}</td>
                       <td className="px-2 py-2 text-[#1E2D4D]/50 hidden sm:table-cell">{loc.region}</td>
                       <td className="px-2 py-2 text-center"><span className="font-bold" style={{ color: scoreColor(loc.compositeScore) }}>{loc.compositeScore}</span></td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.fire) }}>{loc.fire}</td>
@@ -501,7 +501,7 @@ function CompareTab() {
                           <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${loc.actionItems >= 5 ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
                             {loc.actionItems >= 5 ? '🔴' : '⚠️'} {loc.actionItems}
                           </span>
-                        ) : <span className="text-gray-300">—</span>}
+                        ) : <span className="text-[#1E2D4D]/30">—</span>}
                       </td>
                     </tr>
                   ))}
@@ -509,7 +509,7 @@ function CompareTab() {
               </table>
             </div>
             {filtered.length > 100 && (
-              <div className="text-center py-3 text-xs text-[#1E2D4D]/30 border-t border-gray-100">
+              <div className="text-center py-3 text-xs text-[#1E2D4D]/30 border-t border-[#1E2D4D]/5">
                 Showing top 100 of {filtered.length} locations · Export for full list
               </div>
             )}
@@ -560,7 +560,7 @@ function CompareTab() {
                 <Legend wrapperStyle={{ fontSize: 10 }} />
                 <Bar dataKey="avgScore" name="Avg Score" fill="#1E2D4D" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="avgChecklist" name="Checklist %" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="avgTraining" name="Training %" fill="#d4af37" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avgTraining" name="Training %" fill="#A08C5A" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -568,11 +568,11 @@ function CompareTab() {
           {/* Quartile Narrative */}
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Zap className="h-4 w-4" style={{ color: '#d4af37' }} />
+              <Zap className="h-4 w-4" style={{ color: '#A08C5A' }} />
               <h3 className="text-sm font-semibold text-[#1E2D4D]">What Separates Top from Bottom?</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+              <div className="p-4 rounded-xl bg-green-50 border border-green-200">
                 <h4 className="text-xs font-semibold text-green-800 mb-2">Top Quartile Characteristics</h4>
                 <ul className="space-y-1.5 text-xs text-green-700">
                   <li>• {quartileStats[0].avgChecklist}% checklist completion (vs {quartileStats[3].avgChecklist}% bottom)</li>
@@ -582,7 +582,7 @@ function CompareTab() {
                   <li>• {quartileStats[0].avgTraining}% training completion rate</li>
                 </ul>
               </div>
-              <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+              <div className="p-4 rounded-xl bg-red-50 border border-red-200">
                 <h4 className="text-xs font-semibold text-red-800 mb-2">Bottom Quartile Characteristics</h4>
                 <ul className="space-y-1.5 text-xs text-red-700">
                   <li>• Only {quartileStats[3].avgChecklist}% checklist completion</li>
@@ -675,7 +675,7 @@ function TrendsTab() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Regulatory Impact Analysis</h3>
         <div className="space-y-3">
           {regulatoryEvents.map(evt => (
-            <div key={evt.id} className="p-4 rounded-lg border border-[#1E2D4D]/10 bg-[#FAF7F0]">
+            <div key={evt.id} className="p-4 rounded-xl border border-[#1E2D4D]/10 bg-[#FAF7F0]">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700">{evt.date}</span>
@@ -715,7 +715,7 @@ function TrendsTab() {
             {fastestImproving.slice(0, 7).map((loc, i) => (
               <div key={loc.id} className="flex items-center gap-3 p-2 rounded-lg bg-green-50/50">
                 <span className="text-xs text-[#1E2D4D]/30 w-4 text-right">{i + 1}</span>
-                <span className="text-xs font-medium text-gray-900 flex-1 truncate">{loc.name}</span>
+                <span className="text-xs font-medium text-[#1E2D4D] flex-1 truncate">{loc.name}</span>
                 <span className="text-xs text-[#1E2D4D]/30">{loc.region}</span>
                 <TrendBadge value={loc.trend} />
               </div>
@@ -728,7 +728,7 @@ function TrendsTab() {
             {fastestDeclining.slice(0, 7).map((loc, i) => (
               <div key={loc.id} className="flex items-center gap-3 p-2 rounded-lg bg-red-50/50">
                 <span className="text-xs text-[#1E2D4D]/30 w-4 text-right">{i + 1}</span>
-                <span className="text-xs font-medium text-gray-900 flex-1 truncate">{loc.name}</span>
+                <span className="text-xs font-medium text-[#1E2D4D] flex-1 truncate">{loc.name}</span>
                 <span className="text-xs text-[#1E2D4D]/30">{loc.region}</span>
                 <TrendBadge value={loc.trend} />
               </div>
@@ -758,7 +758,7 @@ function RiskTab() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Low Risk', count: riskSummary.low, color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0', desc: 'No predicted issues next 90 days' },
-            { label: 'Moderate Risk', count: riskSummary.moderate, color: '#d4af37', bg: '#fefce8', border: '#fde68a', desc: '1-2 predicted issues' },
+            { label: 'Moderate Risk', count: riskSummary.moderate, color: '#A08C5A', bg: '#fefce8', border: '#fde68a', desc: '1-2 predicted issues' },
             { label: 'High Risk', count: riskSummary.high, color: '#f59e0b', bg: '#fff7ed', border: '#fdba74', desc: '3+ predicted issues' },
             { label: 'Critical Risk', count: riskSummary.critical, color: '#ef4444', bg: '#fef2f2', border: '#fca5a5', desc: 'Intervention recommended' },
           ].map(r => (
@@ -776,7 +776,7 @@ function RiskTab() {
         {[
           { label: 'Fire Lapse Risk', value: expiringThisQuarter.fireSuppression, icon: Flame, desc: 'locations with >70% lapse probability', color: '#ef4444' },
           { label: 'Inspection Failure', value: predictedInspectionFailures, icon: ClipboardCheck, desc: 'predicted B or lower grade', color: '#f59e0b' },
-          { label: 'Single-CFPM Risk', value: singleCFPMLocations, icon: Users, desc: 'locations — 1 departure = non-compliant', color: '#d4af37' },
+          { label: 'Single-CFPM Risk', value: singleCFPMLocations, icon: Users, desc: 'locations — 1 departure = non-compliant', color: '#A08C5A' },
           { label: 'Equipment Aging', value: equipmentReplacementDue, icon: Clock, desc: 'approaching replacement cycle', color: '#6b21a8' },
         ].map(f => (
           <div key={f.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
@@ -795,7 +795,7 @@ function RiskTab() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">High & Critical Risk Locations — Mitigation Plans</h3>
         <div className="space-y-3">
           {riskPredictions.map(pred => (
-            <div key={pred.id} className="rounded-lg border" style={{ borderColor: riskBorder(pred.riskLevel), backgroundColor: expandedRisk === pred.id ? riskBg(pred.riskLevel) : 'white' }}>
+            <div key={pred.id} className="rounded-xl border" style={{ borderColor: riskBorder(pred.riskLevel), backgroundColor: expandedRisk === pred.id ? riskBg(pred.riskLevel) : 'white' }}>
               <button
                 onClick={() => setExpandedRisk(expandedRisk === pred.id ? null : pred.id)}
                 className="w-full flex items-center gap-3 p-4 text-left cursor-pointer"
@@ -825,11 +825,11 @@ function RiskTab() {
                         <div key={i} className="flex items-center gap-3 text-xs">
                           <div className="w-16">
                             <div className="h-1.5 bg-[#1E2D4D]/8 rounded-full">
-                              <div className="h-full rounded-full" style={{ width: `${f.probability}%`, backgroundColor: f.severity === 'high' ? '#ef4444' : f.severity === 'medium' ? '#f59e0b' : '#d4af37' }} />
+                              <div className="h-full rounded-full" style={{ width: `${f.probability}%`, backgroundColor: f.severity === 'high' ? '#ef4444' : f.severity === 'medium' ? '#f59e0b' : '#A08C5A' }} />
                             </div>
                           </div>
                           <span className="text-[#1E2D4D]/30 w-8 text-right font-mono">{f.probability}%</span>
-                          <span className={`px-1.5 py-0.5 text-[9px] font-semibold rounded ${
+                          <span className={`px-1.5 py-0.5 text-[11px] font-semibold rounded ${
                             f.severity === 'high' ? 'bg-red-50 text-red-700' : f.severity === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-amber-50 text-amber-700'
                           }`}>{f.severity.toUpperCase()}</span>
                           <span className="text-[#1E2D4D]/80 flex-1">{f.label}</span>
@@ -854,12 +854,12 @@ function RiskTab() {
                         </thead>
                         <tbody>
                           {pred.mitigationSteps.map((step, j) => (
-                            <tr key={j} className="border-b border-gray-100">
+                            <tr key={j} className="border-b border-[#1E2D4D]/5">
                               <td className="py-1.5 pr-3 text-[#1E2D4D]/30">{j + 1}</td>
-                              <td className="py-1.5 pr-3 text-gray-800 font-medium">{step.action}</td>
+                              <td className="py-1.5 pr-3 text-[#1E2D4D]/90 font-medium">{step.action}</td>
                               <td className="py-1.5 pr-3 text-[#1E2D4D]/50">{step.effort}</td>
                               <td className="py-1.5 pr-3">
-                                <span className={`px-1.5 py-0.5 text-[9px] font-semibold rounded ${
+                                <span className={`px-1.5 py-0.5 text-[11px] font-semibold rounded ${
                                   step.impact === 'Critical' ? 'bg-red-50 text-red-700' : step.impact === 'High' ? 'bg-amber-100 text-amber-700' : 'bg-blue-50 text-blue-700'
                                 }`}>{step.impact}</span>
                               </td>
@@ -871,7 +871,7 @@ function RiskTab() {
                     </div>
                     <div className="flex gap-2 mt-3">
                       <button onClick={() => toast.info('Assign mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md cursor-pointer text-white min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>Assign Plan</button>
-                      <button onClick={() => toast.info('Export mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50 min-h-[44px]">Export PDF</button>
+                      <button onClick={() => toast.info('Export mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0] min-h-[44px]">Export PDF</button>
                     </div>
                   </div>
                 </div>
@@ -896,8 +896,8 @@ function RiskTab() {
 
 function InsightCallout({ text }: { text: string }) {
   return (
-    <div className="mt-2 p-2.5 rounded-lg border border-[#d4af37]/30 bg-[#fefce8]">
-      <p className="text-xs text-amber-800"><Zap className="h-3 w-3 inline mr-1 text-[#d4af37]" />{text}</p>
+    <div className="mt-2 p-2.5 rounded-xl border border-[#A08C5A]/30 bg-[#fefce8]">
+      <p className="text-xs text-amber-800"><Zap className="h-3 w-3 inline mr-1 text-[#A08C5A]" />{text}</p>
     </div>
   );
 }
@@ -1008,7 +1008,7 @@ function StaffingTab() {
               <YAxis dataKey="y" type="number" name="Checklist %" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Checklist %', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
               <ZAxis range={[20, 20]} />
               <Tooltip content={<CustomScatterTooltip />} />
-              <Scatter data={checklistData} fill="#d4af37" fillOpacity={0.5} />
+              <Scatter data={checklistData} fill="#A08C5A" fillOpacity={0.5} />
             </ScatterChart>
           </ResponsiveContainer>
           <InsightCallout text={staffingChecklistInsight} />
@@ -1041,10 +1041,10 @@ function StaffingTab() {
           {[
             { type: 'high-turnover' as const, label: 'High Turnover', icon: TrendingDown, color: '#ef4444' },
             { type: 'cfpm-departure' as const, label: 'CFPM Departure', icon: Users, color: '#f59e0b' },
-            { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#d4af37' },
+            { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#A08C5A' },
             { type: 'manager-vacancy' as const, label: 'Manager Vacancy', icon: AlertTriangle, color: '#ef4444' },
           ].map(rt => (
-            <div key={rt.type} className="rounded-lg border border-[#1E2D4D]/10 p-4">
+            <div key={rt.type} className="rounded-xl border border-[#1E2D4D]/10 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <rt.icon className="h-4 w-4" style={{ color: rt.color }} />
                 <span className="text-xs font-semibold text-[#1E2D4D]/80">{rt.label}</span>
@@ -1056,23 +1056,23 @@ function StaffingTab() {
         </div>
         <div className="space-y-2">
           {staffingRiskIndicators.map((ind, i) => (
-            <div key={i} className={`flex items-center gap-3 p-3 rounded-lg border ${
+            <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${
               ind.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
               ind.severity === 'high' ? 'border-amber-200 bg-amber-50/50' :
-              'border-[#1E2D4D]/10 bg-gray-50/50'
+              'border-[#1E2D4D]/10 bg-[#FAF7F0]/50'
             }`}>
-              <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full flex-shrink-0 ${
+              <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full flex-shrink-0 ${
                 ind.severity === 'critical' ? 'bg-red-50 text-red-700' :
                 ind.severity === 'high' ? 'bg-amber-100 text-amber-700' :
-                'bg-gray-100 text-[#1E2D4D]/70'
+                'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'
               }`}>{ind.severity.toUpperCase()}</span>
               <div className="flex-1 min-w-0">
-                <span className="text-xs font-medium text-gray-900">{ind.locationName}</span>
+                <span className="text-xs font-medium text-[#1E2D4D]">{ind.locationName}</span>
                 <span className="text-xs text-[#1E2D4D]/30 ml-2">{ind.region} · {ind.district}</span>
                 <p className="text-xs text-[#1E2D4D]/70 mt-0.5">{ind.description}</p>
               </div>
               <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0">{ind.detectedDate}</span>
-              <button onClick={() => toast.info(`Investigate ${ind.locationName} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50 flex-shrink-0 min-h-[44px]">Investigate</button>
+              <button onClick={() => toast.info(`Investigate ${ind.locationName} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0] flex-shrink-0 min-h-[44px]">Investigate</button>
             </div>
           ))}
         </div>
@@ -1143,7 +1143,7 @@ function FinancialTab() {
                   <ul className="mt-2 space-y-1">
                     {cat.details.map((d, i) => (
                       <li key={i} className="text-xs text-[#1E2D4D]/50 flex items-start gap-1.5">
-                        <span className="text-gray-300 mt-0.5">•</span>
+                        <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                         <span>{d}</span>
                       </li>
                     ))}
@@ -1156,9 +1156,9 @@ function FinancialTab() {
       </div>
 
       {/* Executive ROI Summary */}
-      <div className="bg-white rounded-xl border-2 border-[#d4af37]/30 p-4 sm:p-6">
+      <div className="bg-white rounded-xl border-2 border-[#A08C5A]/30 p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="h-5 w-5" style={{ color: '#d4af37' }} />
+          <TrendingUp className="h-5 w-5" style={{ color: '#A08C5A' }} />
           <h3 className="text-base font-bold text-[#1E2D4D]">Executive ROI Summary</h3>
           <span className="text-xs text-[#1E2D4D]/30 ml-auto">Board-ready view</span>
         </div>
@@ -1166,11 +1166,11 @@ function FinancialTab() {
           {/* Left — Investment */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide">Annual Compliance Investment</h4>
-            <div className="p-4 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
+            <div className="p-4 rounded-xl bg-[#FAF7F0] border border-[#1E2D4D]/10">
               <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{formatDollars(roiSummary.annualInvestment)}<span className="text-sm font-normal text-[#1E2D4D]/30">/year</span></p>
               <p className="text-xs text-[#1E2D4D]/50 mt-1">EvidLY platform subscription (487 locations)</p>
             </div>
-            <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+            <div className="p-4 rounded-xl bg-red-50 border border-red-200">
               <p className="text-xs font-semibold text-red-700 mb-1">Without EvidLY — Estimated Annual Exposure</p>
               <p className="text-xl font-bold text-red-600">{formatDollars(roiSummary.riskReductionLow)} – {formatDollars(roiSummary.riskReductionHigh)}</p>
               <p className="text-xs text-red-500 mt-1">penalties + incidents + closures + premium impact</p>
@@ -1193,14 +1193,14 @@ function FinancialTab() {
                 <span className="text-sm font-bold text-green-700">{formatDollars(roiSummary.riskReductionLow)} – {formatDollars(roiSummary.riskReductionHigh)}</span>
               </div>
             </div>
-            <div className="p-4 rounded-lg border-2 border-[#d4af37] bg-[#fefce8] text-center">
+            <div className="p-4 rounded-xl border-2 border-[#A08C5A] bg-[#fefce8] text-center">
               <p className="text-xs text-[#1E2D4D]/70 mb-1">Net ROI</p>
-              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#d4af37' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
               <p className="text-xs text-[#1E2D4D]/50 mt-1">return on compliance investment</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 flex-wrap gap-2">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#1E2D4D]/5 flex-wrap gap-2">
           <p className="text-xs text-[#1E2D4D]/30 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
           <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Generate Board Report coming soon'))} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>Generate Board Report</button>
         </div>
@@ -1222,8 +1222,8 @@ function FinancialTab() {
             </thead>
             <tbody>
               {historicalIncidents.map((inc, i) => (
-                <tr key={i} className="border-b border-gray-100">
-                  <td className="py-2 pr-3 font-medium text-gray-800">{inc.type}</td>
+                <tr key={i} className="border-b border-[#1E2D4D]/5">
+                  <td className="py-2 pr-3 font-medium text-[#1E2D4D]/90">{inc.type}</td>
                   <td className="py-2 pr-3 text-[#1E2D4D]/70">{inc.location}</td>
                   <td className="py-2 pr-3 text-[#1E2D4D]/50">{inc.date}</td>
                   <td className="py-2 pr-3 text-right font-semibold text-red-600">${inc.cost.toLocaleString()}</td>
@@ -1275,16 +1275,16 @@ function ReportsTab() {
             <div key={rpt.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-semibold text-[#1E2D4D]">{rpt.title}</h4>
-                <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
+                <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full ${
                   rpt.type === 'monthly' ? 'bg-blue-50 text-blue-700' :
                   rpt.type === 'quarterly' ? 'bg-purple-100 text-purple-700' :
-                  'bg-gray-100 text-[#1E2D4D]/70'
+                  'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'
                 }`}>{rpt.type.charAt(0).toUpperCase() + rpt.type.slice(1)}</span>
               </div>
               <p className="text-xs text-[#1E2D4D]/30 mb-2">{rpt.pages} pages · Last generated: {rpt.lastGenerated}</p>
               <div className="flex flex-wrap gap-1 mb-3">
                 {rpt.sections.map(s => (
-                  <span key={s} className="px-1.5 py-0.5 text-[9px] rounded bg-gray-100 text-[#1E2D4D]/50">{s}</span>
+                  <span key={s} className="px-1.5 py-0.5 text-[11px] rounded bg-[#1E2D4D]/5 text-[#1E2D4D]/50">{s}</span>
                 ))}
               </div>
               <div className="flex items-center gap-1.5">
@@ -1295,7 +1295,7 @@ function ReportsTab() {
                 )}
                 <div className="flex-1" />
                 <button onClick={() => toast.info(`Generating ${rpt.title}`)} className="px-2.5 py-1 text-xs font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Generate</button>
-                <button onClick={() => toast.info(`Schedule ${rpt.title} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Schedule</button>
+                <button onClick={() => toast.info(`Schedule ${rpt.title} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0]">Schedule</button>
               </div>
             </div>
           ))}
@@ -1322,7 +1322,7 @@ function ReportsTab() {
           <div className="space-y-3">
             <div>
               <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Date Range</label>
-              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
+              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-2">
                 <option value="last-30">Last 30 Days</option>
                 <option value="last-90">Last 90 Days</option>
                 <option value="ytd">Year to Date</option>
@@ -1331,7 +1331,7 @@ function ReportsTab() {
             </div>
             <div>
               <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Scope</label>
-              <select value={scope} onChange={e => setScope(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
+              <select value={scope} onChange={e => setScope(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-2">
                 <option value="organization">Entire Organization</option>
                 <option value="west">West Region</option>
                 <option value="midwest">Midwest Region</option>
@@ -1350,10 +1350,10 @@ function ReportsTab() {
                 { label: 'PowerPoint', desc: 'Editable slide deck' },
                 { label: 'Interactive Web Link', desc: 'Shareable dashboard link' },
               ].map(fmt => (
-                <button key={fmt.label} onClick={() => toast.info(`Building ${fmt.label} report`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer text-left">
+                <button key={fmt.label} onClick={() => toast.info(`Building ${fmt.label} report`)} className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] cursor-pointer text-left">
                   <Download className="h-4 w-4 text-[#1E2D4D]/30" />
                   <div>
-                    <p className="text-xs font-medium text-gray-800">{fmt.label}</p>
+                    <p className="text-xs font-medium text-[#1E2D4D]/90">{fmt.label}</p>
                     <p className="text-xs text-[#1E2D4D]/30">{fmt.desc}</p>
                   </div>
                 </button>
@@ -1361,7 +1361,7 @@ function ReportsTab() {
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-3 border-t border-[#1E2D4D]/5">
           <p className="text-xs text-[#1E2D4D]/30">{selectedMetrics.length} sections selected</p>
           <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Building custom report'))} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Build Report</button>
         </div>
@@ -1371,7 +1371,7 @@ function ReportsTab() {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="text-sm font-semibold text-[#1E2D4D]">Distribution List</h3>
-          <button onClick={() => toast.info('Add recipient coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">
+          <button onClick={() => toast.info('Add recipient coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0]">
             <Plus className="h-3 w-3" /> Add Recipient
           </button>
         </div>
@@ -1388,12 +1388,12 @@ function ReportsTab() {
             </thead>
             <tbody>
               {distributionList.map((rec, i) => (
-                <tr key={i} className="border-b border-gray-100">
-                  <td className="py-2 pr-3 font-medium text-gray-800">{rec.name}</td>
+                <tr key={i} className="border-b border-[#1E2D4D]/5">
+                  <td className="py-2 pr-3 font-medium text-[#1E2D4D]/90">{rec.name}</td>
                   <td className="py-2 pr-3 text-[#1E2D4D]/70">{rec.role}</td>
                   <td className="py-2 pr-3 text-[#1E2D4D]/50 hidden sm:table-cell">{rec.email}</td>
                   <td className="py-2 pr-3 hidden sm:table-cell">
-                    <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
+                    <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
                       rec.deliveryMethod === 'email' ? 'bg-blue-50 text-blue-700' :
                       rec.deliveryMethod === 'teams' ? 'bg-purple-100 text-purple-700' :
                       'bg-emerald-50 text-emerald-700'
@@ -1409,7 +1409,7 @@ function ReportsTab() {
         </div>
         <div className="flex gap-2 mt-3">
           <button onClick={() => toast.info('Send to all recipients coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Send Now</button>
-          <button onClick={() => toast.info('Schedule distribution coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
+          <button onClick={() => toast.info('Schedule distribution coming soon')} className="px-4 py-2 text-xs font-semibold rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0]">Schedule Delivery</button>
         </div>
       </div>
     </div>
@@ -1470,24 +1470,24 @@ function AnomalyTab() {
         </div>
         <div className="space-y-3 max-h-[600px] overflow-y-auto">
           {sortedAlerts.map(a => (
-            <div key={a.id} className={`p-4 rounded-lg border ${
+            <div key={a.id} className={`p-4 rounded-xl border ${
               a.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
               a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' :
-              'border-[#1E2D4D]/10 bg-gray-50/50'
+              'border-[#1E2D4D]/10 bg-[#FAF7F0]/50'
             }`}>
               <div className="flex items-start gap-3">
                 <div className="flex flex-col gap-1 flex-shrink-0">
-                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full text-center ${
+                  <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full text-center ${
                     a.severity === 'critical' ? 'bg-red-50 text-red-700' :
                     a.severity === 'warning' ? 'bg-amber-100 text-amber-700' :
                     'bg-blue-50 text-blue-700'
                   }`}>{a.severity.toUpperCase()}</span>
-                  <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full text-center ${
+                  <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full text-center ${
                     a.type === 'score' ? 'bg-red-50 text-red-600' :
                     a.type === 'behavioral' ? 'bg-amber-50 text-amber-600' :
                     'bg-purple-50 text-purple-600'
                   }`}>{a.type}</span>
-                  <span className={`px-2 py-0.5 text-[9px] rounded-full text-center ${
+                  <span className={`px-2 py-0.5 text-[11px] rounded-full text-center ${
                     a.confidence === 'high' ? 'bg-green-50 text-green-700' :
                     a.confidence === 'medium' ? 'bg-yellow-50 text-yellow-700' :
                     'bg-[#FAF7F0] text-[#1E2D4D]/50'
@@ -1496,11 +1496,11 @@ function AnomalyTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-semibold text-[#1E2D4D]">{a.location}</span>
-                    <span className={`px-1.5 py-0.5 text-[9px] font-medium rounded ${
+                    <span className={`px-1.5 py-0.5 text-[11px] font-medium rounded ${
                       a.status === 'new' ? 'bg-blue-50 text-blue-700' :
                       a.status === 'investigating' ? 'bg-amber-100 text-amber-700' :
                       a.status === 'resolved' ? 'bg-emerald-50 text-emerald-700' :
-                      'bg-gray-100 text-[#1E2D4D]/50'
+                      'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'
                     }`}>{a.status}</span>
                     <span className="text-xs text-[#1E2D4D]/30 ml-auto">{a.detectedAt}</span>
                   </div>
@@ -1509,7 +1509,7 @@ function AnomalyTab() {
                   <p className="text-xs text-[#1E2D4D]/50 mt-1"><strong>Suggested:</strong> {a.suggestedAction}</p>
                   <div className="flex gap-2 mt-2">
                     <button onClick={() => toast.info(`Investigating ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Investigate</button>
-                    <button onClick={() => toast.success(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Update Status</button>
+                    <button onClick={() => toast.success(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-[#FAF7F0]">Update Status</button>
                   </div>
                 </div>
               </div>
@@ -1527,11 +1527,11 @@ function AnomalyTab() {
         <p className="text-xs text-[#1E2D4D]/30 mb-4">These flags indicate data patterns that may warrant review — not accusations of misconduct. Enterprise analytics must be trustworthy.</p>
         <div className="space-y-3">
           {antiGamingFlags.map(flag => (
-            <div key={flag.id} className="p-4 rounded-lg border border-amber-100 bg-amber-50/50">
+            <div key={flag.id} className="p-4 rounded-xl border border-amber-100 bg-amber-50/50">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-semibold text-[#1E2D4D]">{flag.location}</span>
                 <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
+                  <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
                     flag.confidence === 'high' ? 'bg-red-50 text-red-700' : 'bg-amber-100 text-amber-700'
                   }`}>{flag.confidence} confidence</span>
                   <span className="text-xs text-[#1E2D4D]/30">{flag.detectedAt}</span>
@@ -1544,7 +1544,7 @@ function AnomalyTab() {
         </div>
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-100 flex-wrap gap-2">
           <p className="text-xs text-amber-700 italic">Recommend on-site data quality inspection for flagged locations.</p>
-          <button onClick={() => toast.info('Schedule on-site inspection coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50 min-h-[44px]">Schedule Inspection</button>
+          <button onClick={() => toast.info('Schedule on-site inspection coming soon')} className="px-4 py-2 text-xs font-semibold rounded-xl border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50 min-h-[44px]">Schedule Inspection</button>
         </div>
       </div>
     </div>
@@ -1557,7 +1557,7 @@ function AnomalyTab() {
 
 function StatRow({ label, stats }: { label: string; stats: AggregationStats }) {
   return (
-    <tr className="border-b border-gray-50 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+    <tr className="border-b border-[#1E2D4D]/3 hover:bg-[#1E2D4D]/[0.02] transition-colors">
       <td className="py-2 text-xs font-semibold text-[#1E2D4D] pr-4">{label}</td>
       <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.mean}</td>
       <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.median}</td>
@@ -1591,12 +1591,12 @@ function PlatformTab() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {cSuitePitch.valueProps.map((prop, i) => (
               <div key={i} className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" />
                 <span className="text-[#1E2D4D]/80 text-xs">{prop}</span>
               </div>
             ))}
           </div>
-          <p className="text-[#d4af37] text-xs font-semibold mt-4 italic">{cSuitePitch.closingLine}</p>
+          <p className="text-[#1E2D4D] text-xs font-semibold mt-4 italic">{cSuitePitch.closingLine}</p>
         </div>
       </div>
 
@@ -1610,7 +1610,7 @@ function PlatformTab() {
           <select
             value={selectedRegion}
             onChange={e => setSelectedRegion(e.target.value)}
-            className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-1.5 text-[#1E2D4D]/80"
+            className="text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-1.5 text-[#1E2D4D]/80"
           >
             <option value="enterprise">Enterprise (All {enterpriseAggregation.compositeScore.count} locations)</option>
             {regionAggregations.map(r => (
@@ -1646,7 +1646,7 @@ function PlatformTab() {
         </div>
 
         {/* Period-over-Period Changes */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-gray-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-[#1E2D4D]/5">
           {Object.entries(activeAgg.periodChanges).map(([key, change]) => (
             <div key={key} className="text-center p-3 rounded-lg bg-[#FAF7F0]">
               <p className="text-xs text-[#1E2D4D]/50 mb-1">{change.label}</p>
@@ -1675,7 +1675,7 @@ function PlatformTab() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {dataFreshness.map(d => (
-            <div key={d.metric} className="p-3 rounded-lg border border-gray-100">
+            <div key={d.metric} className="p-3 rounded-xl border border-[#1E2D4D]/5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-[#1E2D4D]">{d.metric}</span>
                 <span className={`w-2 h-2 rounded-full ${
@@ -1698,10 +1698,10 @@ function PlatformTab() {
         </div>
         <div className="space-y-2">
           {databaseTables.map(table => (
-            <div key={table.name} className="border border-gray-100 rounded-lg overflow-hidden">
+            <div key={table.name} className="border border-[#1E2D4D]/5 rounded-xl overflow-hidden">
               <button
                 onClick={() => setExpandedTable(expandedTable === table.name ? null : table.name)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer text-left"
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#FAF7F0] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3">
                   <code className="text-xs font-mono font-bold text-[#1E2D4D]">{table.name}</code>
@@ -1713,21 +1713,21 @@ function PlatformTab() {
                 </div>
               </button>
               {expandedTable === table.name && (
-                <div className="border-t border-gray-100 px-4 py-3 bg-[#FAF7F0]">
+                <div className="border-t border-[#1E2D4D]/5 px-4 py-3 bg-[#FAF7F0]">
                   <p className="text-xs text-[#1E2D4D]/70 mb-2">{table.description}</p>
                   <p className="text-xs text-[#1E2D4D]/30 mb-3">Refresh: {table.refreshSchedule}</p>
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Column</th>
-                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Type</th>
-                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Description</th>
+                        <th className="text-left text-[11px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Column</th>
+                        <th className="text-left text-[11px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Type</th>
+                        <th className="text-left text-[11px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Description</th>
                       </tr>
                     </thead>
                     <tbody>
                       {table.columns.map(col => (
-                        <tr key={col.name} className="border-b border-gray-50">
-                          <td className="py-1.5 text-xs font-mono text-gray-800">{col.name}</td>
+                        <tr key={col.name} className="border-b border-[#1E2D4D]/3">
+                          <td className="py-1.5 text-xs font-mono text-[#1E2D4D]/90">{col.name}</td>
                           <td className="py-1.5 text-xs font-mono text-purple-600">{col.type}</td>
                           <td className="py-1.5 text-xs text-[#1E2D4D]/50">{col.description}</td>
                         </tr>
@@ -1736,7 +1736,7 @@ function PlatformTab() {
                   </table>
                   {table.indexes.length > 0 && (
                     <div className="mt-2 pt-2 border-t border-[#1E2D4D]/10">
-                      <span className="text-[9px] uppercase text-[#1E2D4D]/50 font-semibold">Indexes: </span>
+                      <span className="text-[11px] uppercase text-[#1E2D4D]/50 font-semibold">Indexes: </span>
                       <span className="text-xs font-mono text-[#1E2D4D]/70">{table.indexes.join(' · ')}</span>
                     </div>
                   )}
@@ -1767,7 +1767,7 @@ function PlatformTab() {
             </thead>
             <tbody>
               {edgeFunctions.map(fn => (
-                <tr key={fn.name} className="border-b border-gray-50">
+                <tr key={fn.name} className="border-b border-[#1E2D4D]/3">
                   <td className="py-2.5">
                     <code className="text-xs font-mono font-semibold text-[#1E2D4D]">{fn.name}</code>
                     <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{fn.description}</p>
@@ -1810,12 +1810,12 @@ function PlatformTab() {
               key={tier.id}
               className={`rounded-xl p-4 sm:p-5 border-2 ${
                 tier.highlighted
-                  ? 'border-[#d4af37] shadow-sm relative'
+                  ? 'border-[#A08C5A] shadow-sm relative'
                   : 'border-[#1E2D4D]/10'
               }`}
             >
               {tier.highlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#d4af37' }}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#A08C5A' }}>
                   <Star className="h-3 w-3" /> MOST POPULAR
                 </div>
               )}
@@ -1836,7 +1836,7 @@ function PlatformTab() {
                 className={`w-full mt-5 py-2.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
                   tier.highlighted
                     ? 'text-white hover:opacity-90'
-                    : 'border border-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-gray-50'
+                    : 'border border-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]'
                 }`}
                 style={tier.highlighted ? { backgroundColor: '#1E2D4D' } : undefined}
               >
@@ -1847,16 +1847,16 @@ function PlatformTab() {
         </div>
 
         {/* Enterprise Bundles */}
-        <div className="mt-5 pt-4 border-t border-gray-100">
+        <div className="mt-5 pt-4 border-t border-[#1E2D4D]/5">
           <h4 className="text-xs font-semibold text-[#1E2D4D] mb-3">Enterprise Bundles</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {enterpriseBundles.map((bundle, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-[#FAF7F0]">
+              <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/5 bg-[#FAF7F0]">
                 <div>
-                  <p className="text-xs font-semibold text-gray-800">{bundle.name}</p>
+                  <p className="text-xs font-semibold text-[#1E2D4D]/90">{bundle.name}</p>
                   <p className="text-xs text-[#1E2D4D]/50">{bundle.description}</p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#d4af37' }}>Save {bundle.saving}</span>
+                <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#A08C5A' }}>Save {bundle.saving}</span>
               </div>
             ))}
           </div>

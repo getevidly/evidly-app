@@ -127,22 +127,22 @@ export function EmployeeDetail() {
 
         {isAdmin && (
           <div className="flex items-center gap-2 relative">
-            <button onClick={() => setShowEditModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>
+            <button onClick={() => setShowEditModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>
               <Pencil className="w-4 h-4" /> Edit
             </button>
             <div className="relative">
-              <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="p-1.5 rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6' }}>
+              <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="p-1.5 rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6' }}>
                 <MoreHorizontal className="w-4 h-4" style={{ color: '#6B7F96' }} />
               </button>
               {showMoreMenu && (
-                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-lg z-20" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}>
+                <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border shadow-lg z-20" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}>
                   {employee.status === 'active' && (
-                    <button onClick={handleDeactivate} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50" style={{ color: '#d97706' }}>
+                    <button onClick={handleDeactivate} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-[#FAF7F0]" style={{ color: '#d97706' }}>
                       <UserX className="w-4 h-4" /> Deactivate
                     </button>
                   )}
                   {employee.status === 'pending' && (
-                    <button onClick={() => { handleResendInvite(); setShowMoreMenu(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50" style={{ color: '#1E2D4D' }}>
+                    <button onClick={() => { handleResendInvite(); setShowMoreMenu(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-[#FAF7F0]" style={{ color: '#1E2D4D' }}>
                       <Send className="w-4 h-4" /> Resend Invite
                     </button>
                   )}

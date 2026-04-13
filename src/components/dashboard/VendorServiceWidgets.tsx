@@ -69,7 +69,7 @@ export function AnnualVendorSpendWidget({
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       {/* Header */}
@@ -120,7 +120,7 @@ export function AnnualVendorSpendWidget({
         <button
           type="button"
           onClick={() => navigate('/vendors')}
-          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
           style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
         >
           View All Vendors <ArrowRight size={12} className="inline ml-0.5" />
@@ -185,7 +185,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       {/* Header */}
@@ -230,7 +230,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                 key={s.id}
                 type="button"
                 onClick={() => navigate('/vendors')}
-                className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
                 style={{
                   borderBottom: i < servicesDue.length - 1 ? '1px solid #F0F0F0' : 'none',
                 }}
@@ -244,7 +244,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                     return <IconComp size={14} style={{ color: iconColor, flexShrink: 0 }} />;
                   })()}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">
+                    <p className="text-sm font-medium text-[#1E2D4D]/90 truncate">
                       {s.service_type}
                     </p>
                     <p className="text-xs text-[#1E2D4D]/50 truncate">
@@ -271,7 +271,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
             <button
               type="button"
               onClick={() => navigate('/vendors?tab=requests&action=new')}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50"
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
               style={{ color: NAVY, borderRight: '1px solid #F0F0F0' }}
             >
               <Send size={11} /> Request Service
@@ -279,7 +279,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
             <button
               type="button"
               onClick={() => navigate('/vendors')}
-              className="flex-1 px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+              className="flex-1 px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
               style={{ color: NAVY }}
             >
               View Full Schedule <ArrowRight size={12} className="inline ml-0.5" />

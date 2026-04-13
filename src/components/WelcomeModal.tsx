@@ -43,10 +43,10 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
     >
-      <div data-testid="welcome-modal" className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div data-testid="welcome-modal" className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
         <button
           onClick={handleGetStarted}
-          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors z-10"
+          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors z-10"
           aria-label="Close"
         >
           <X className="h-5 w-5" />
@@ -56,9 +56,9 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
         <div className="text-center pt-8 pb-4 px-6 sm:px-10">
           <div className="w-16 h-[74px] mx-auto mb-4">
             <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-              <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+              <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
               <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-              <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <h2 className="text-2xl sm:text-[28px] font-bold text-[#1E2D4D] leading-tight">
@@ -72,7 +72,7 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
         {/* Body */}
         <div className="px-6 sm:px-10 pb-6 text-sm leading-relaxed text-[#1E2D4D]/80">
           <p className="mb-4">
-            I'm {FOUNDER.name}, the founder of EvidLY. I built this platform because I've spent 3 years
+            I'm {FOUNDER.name}, the founder of EvidLY. I built EvidLY because I've spent 3 years
             servicing over 90 commercial kitchens and saw the same problem everywhere: compliance runs on
             paper, spreadsheets, and hope.
           </p>

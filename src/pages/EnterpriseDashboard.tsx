@@ -56,7 +56,7 @@ function formatTime(d: string) {
 }
 function scoreColor(s: number) {
   if (s >= 90) return '#22c55e';
-  if (s >= 80) return '#d4af37';
+  if (s >= 80) return '#A08C5A';
   if (s >= 70) return '#f59e0b';
   return '#ef4444';
 }
@@ -68,19 +68,19 @@ function statusBadge(status: string) {
     suspended: 'bg-red-50 text-red-700 border-red-200',
     passed: 'bg-green-50 text-green-700 border-green-200',
     failed: 'bg-red-50 text-red-700 border-red-200',
-    untested: 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
+    untested: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
     enterprise: 'bg-blue-50 text-blue-700 border-blue-200',
     enterprise_plus: 'bg-purple-50 text-purple-700 border-purple-200',
   };
   const label = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-gray-100 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>
       {label}
     </span>
   );
 }
 function ssoStatusBadge(st: 'active' | 'pending' | 'disabled') {
-  const m = { active: 'bg-green-50 text-green-700', pending: 'bg-amber-50 text-amber-700', disabled: 'bg-gray-100 text-[#1E2D4D]/50' };
+  const m = { active: 'bg-green-50 text-green-700', pending: 'bg-amber-50 text-amber-700', disabled: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50' };
   return <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${m[st]}`}>{st.charAt(0).toUpperCase() + st.slice(1)}</span>;
 }
 
@@ -156,7 +156,7 @@ function countCriticalItems(node: EnterpriseHierarchyNode): number {
 
 // Regulatory overlay markers for trend chart
 const REGULATORY_MARKERS = [
-  { month: 'Jul 25', label: 'AB 660 (CA)', color: '#d4af37' },
+  { month: 'Jul 25', label: 'AB 660 (CA)', color: '#A08C5A' },
   { month: 'Nov 25', label: 'FDA Update', color: '#6b21a8' },
 ];
 
@@ -266,7 +266,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                 <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1E2D4D' }} />
                 <span className="text-xs text-[#1E2D4D]/50">{s.label}</span>
               </div>
-              <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-gray-900'}`}>{s.value}</p>
+              <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-[#1E2D4D]'}`}>{s.value}</p>
             </div>
           ))}
         </div>
@@ -294,11 +294,11 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                   const critItems = countCriticalItems(div);
                   const trend = nodeTrend(div.id);
                   return (
-                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => showToast(`Drill into ${div.name}`)}>
+                    <tr key={div.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0] cursor-pointer" onClick={() => showToast(`Drill into ${div.name}`)}>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS.division }} />
-                          <span className="font-medium text-gray-900">{div.name}</span>
+                          <span className="font-medium text-[#1E2D4D]">{div.name}</span>
                         </div>
                       </td>
                       <td className="px-3 py-2.5 text-center text-[#1E2D4D]/70">{div.locationCount.toLocaleString()}</td>
@@ -320,7 +320,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                   );
                 })}
                 <tr className="bg-[#FAF7F0] font-semibold">
-                  <td className="px-3 py-2.5 text-gray-900">Corporate Total</td>
+                  <td className="px-3 py-2.5 text-[#1E2D4D]">Corporate Total</td>
                   <td className="px-3 py-2.5 text-center text-[#1E2D4D]/80">{enterpriseHierarchy.locationCount.toLocaleString()}</td>
                   <td className="px-3 py-2.5 text-center">
                     <span className="font-bold" style={{ color: scoreColor(enterpriseHierarchy.complianceScore) }}>{enterpriseHierarchy.complianceScore}%</span>
@@ -344,7 +344,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
           </div>
           <div className="space-y-2 max-h-[340px] overflow-y-auto">
             {alerts.filter((a: any) => !a.acknowledged).map((a: any) => (
-              <div key={a.id} className={`p-3 rounded-lg border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
+              <div key={a.id} className={`p-3 rounded-xl border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
                 <div className="flex items-start gap-2">
                   <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${a.severity === 'critical' ? 'text-red-500' : a.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
                   <div className="flex-1 min-w-0">
@@ -384,7 +384,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                 return (
                   <div key={marker.label} className="absolute" style={{ left: x - 1, top: 0, height: 100 }}>
                     <div className="w-0.5 h-full opacity-40" style={{ backgroundColor: marker.color }} />
-                    <span className="absolute text-[8px] font-medium whitespace-nowrap" style={{ top: -14, left: -10, color: marker.color }}>{marker.label}</span>
+                    <span className="absolute text-[11px] font-medium whitespace-nowrap" style={{ top: -14, left: -10, color: marker.color }}>{marker.label}</span>
                   </div>
                 );
               })}
@@ -393,7 +393,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
               {[
                 { label: 'Current', value: latestTrend.foodSafety, color: '#1E2D4D' },
                 { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
-                { label: 'Facility Safety', value: latestTrend.facilitySafety, color: '#d4af37' },
+                { label: 'Facility Safety', value: latestTrend.facilitySafety, color: '#A08C5A' },
               ].map(m => (
                 <div key={m.label} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
@@ -403,9 +403,9 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-[#1E2D4D]/5">
             {trendData.filter((_, i) => i % 3 === 0 || i === trendData.length - 1).map(d => (
-              <span key={d.month} className="text-[9px] text-[#1E2D4D]/30">{d.month}</span>
+              <span key={d.month} className="text-[11px] text-[#1E2D4D]/30">{d.month}</span>
             ))}
           </div>
         </div>
@@ -436,7 +436,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Recent Activity</h3>
             <div className="space-y-1.5">
               {auditLog.slice(0, 4).map((e: any) => (
-                <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50">
+                <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-[#FAF7F0]">
                   <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: e.action.includes('provision') || e.action.includes('created') ? '#22c55e' : e.action.includes('deactivated') ? '#ef4444' : '#1E2D4D' }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-[#1E2D4D]/80 truncate">{e.action.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
@@ -461,7 +461,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Export Inspection Log', icon: Download },
             { label: 'View All Alerts', icon: AlertTriangle },
           ].map(a => (
-            <button key={a.label} onClick={() => showToast(`${a.label}`)} className="flex items-center gap-2 p-3 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors cursor-pointer text-left">
+            <button key={a.label} onClick={() => showToast(`${a.label}`)} className="flex items-center gap-2 p-3 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors cursor-pointer text-left">
               <a.icon className="h-4 w-4" style={{ color: '#1E2D4D' }} />
               <span className="text-xs font-medium text-[#1E2D4D]/80">{a.label}</span>
             </button>
@@ -490,7 +490,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
           {/* Header */}
           <button
             onClick={() => setExpanded(expanded === t.id ? null : t.id)}
-            className="w-full flex items-center gap-4 p-4 sm:p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full flex items-center gap-4 p-4 sm:p-5 text-left hover:bg-[#FAF7F0] transition-colors cursor-pointer"
           >
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-bold flex-shrink-0" style={{ backgroundColor: t.branding.primaryColor }}>
               {t.logoPlaceholder}
@@ -517,7 +517,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
 
           {/* Expanded Details */}
           {expanded === t.id && (
-            <div className="border-t border-gray-100 px-4 sm:px-5 pb-4 sm:pb-5">
+            <div className="border-t border-[#1E2D4D]/5 px-4 sm:px-5 pb-4 sm:pb-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 {/* Branding */}
                 <div className="p-3 rounded-lg bg-[#FAF7F0]">
@@ -555,7 +555,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
                   <p className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Features</p>
                   <div className="flex flex-wrap gap-1">
                     {Object.entries(t.features).map(([k, v]) => (
-                      <span key={k} className={`px-1.5 py-0.5 text-xs rounded-full ${v ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/30'}`}>
+                      <span key={k} className={`px-1.5 py-0.5 text-xs rounded-full ${v ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/30'}`}>
                         {k.replace(/([A-Z])/g, ' $1').trim()}
                       </span>
                     ))}
@@ -572,7 +572,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
                         {h.label}
                       </span>
-                      {i < t.hierarchy.length - 1 && <ChevronRight className="h-3 w-3 text-gray-300" />}
+                      {i < t.hierarchy.length - 1 && <ChevronRight className="h-3 w-3 text-[#1E2D4D]/30" />}
                     </span>
                   ))}
                 </div>
@@ -581,7 +581,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
               {/* Actions */}
               <div className="flex items-center gap-2 mt-4 flex-wrap">
                 {['Edit Config', 'View Users', 'Test SSO', 'Export Data'].map(label => (
-                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName}`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName}`)} className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
                     {label}
                   </button>
                 ))}
@@ -633,7 +633,7 @@ const COMMON_ISSUES: Record<string, { icon: typeof Thermometer; label: string; p
 };
 
 const LEVEL_COLORS: Record<string, string> = {
-  corporate: '#6b21a8', division: '#1E2D4D', region: '#0e7490', district: '#d4af37', location: '#22c55e',
+  corporate: '#6b21a8', division: '#1E2D4D', region: '#0e7490', district: '#A08C5A', location: '#22c55e',
 };
 
 function TrendBadge({ value }: { value: number }) {
@@ -652,7 +652,7 @@ function HierarchyNode({ node, depth = 0, selectedId, onSelect }: { node: Enterp
     <div>
       <button
         onClick={() => { onSelect(node); if (hasChildren) setOpen(!open); }}
-        className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg text-left transition-colors cursor-pointer ${isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'}`}
+        className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg text-left transition-colors cursor-pointer ${isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-[#FAF7F0]'}`}
         style={{ marginLeft: depth * 20 }}
       >
         {hasChildren ? (
@@ -663,7 +663,7 @@ function HierarchyNode({ node, depth = 0, selectedId, onSelect }: { node: Enterp
         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: LEVEL_COLORS[node.level] || '#6b7280' }} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-900 truncate">{node.name}</span>
+            <span className="text-xs font-medium text-[#1E2D4D] truncate">{node.name}</span>
             <span className="text-xs text-[#1E2D4D]/30">{node.code}</span>
           </div>
         </div>
@@ -714,9 +714,9 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => { setSelectedTenant(t.id); setSelectedNode(null); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-[#FAF7F0]'}`}
             >
-              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
               </div>
               {t.displayName.split(' ')[0]}
@@ -725,7 +725,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
         <button
           onClick={() => setShowConfig(!showConfig)}
-          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${showConfig ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-[#1E2D4D]/10 bg-white text-[#1E2D4D]/70 hover:bg-gray-50'}`}
+          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${showConfig ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-[#1E2D4D]/10 bg-white text-[#1E2D4D]/70 hover:bg-[#FAF7F0]'}`}
         >
           <Settings className="h-3.5 w-3.5" />
           Hierarchy Config
@@ -748,12 +748,12 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                 <span key={h.key} className="flex items-center gap-1">
                   <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl border border-[#1E2D4D]/10 bg-white">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS[h.key] || '#6b7280' }} />
-                    <span className="text-xs font-medium text-gray-900">{h.label}</span>
+                    <span className="text-xs font-medium text-[#1E2D4D]">{h.label}</span>
                     {h.key === 'location' && (
                       <MapPin className="h-3 w-3 text-green-500" />
                     )}
                   </span>
-                  {i < tenant.hierarchy.length - 1 && <ChevronRight className="h-3 w-3 text-gray-300" />}
+                  {i < tenant.hierarchy.length - 1 && <ChevronRight className="h-3 w-3 text-[#1E2D4D]/30" />}
                 </span>
               ))}
             </div>
@@ -799,8 +799,8 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button onClick={() => showToast('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>Save Config</button>
-            <button onClick={() => showToast('Add Level')} className="px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">+ Add Level</button>
-            <button onClick={() => showToast('Reset to Default')} className="px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">Reset</button>
+            <button onClick={() => showToast('Add Level')} className="px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">+ Add Level</button>
+            <button onClick={() => showToast('Reset to Default')} className="px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">Reset</button>
           </div>
         </div>
       )}
@@ -814,7 +814,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
               {Object.entries(LEVEL_COLORS).filter(([k]) => tenant.hierarchy.some(h => h.key === k)).map(([k, c]) => (
                 <span key={k} className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
-                  <span className="text-[9px] text-[#1E2D4D]/30">{tenant.hierarchy.find(h => h.key === k)?.label}</span>
+                  <span className="text-[11px] text-[#1E2D4D]/30">{tenant.hierarchy.find(h => h.key === k)?.label}</span>
                 </span>
               ))}
             </div>
@@ -881,7 +881,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                 {/* Best / Worst children */}
                 {selectedNode.children && selectedNode.children.length > 1 && sortedChildren.best && sortedChildren.worst && (
                   <div className="grid grid-cols-2 gap-2 mb-4">
-                    <button onClick={() => setSelectedNode(sortedChildren.best!)} className="p-2.5 rounded-lg border border-green-200 bg-green-50/50 text-left cursor-pointer hover:bg-green-50 transition-colors">
+                    <button onClick={() => setSelectedNode(sortedChildren.best!)} className="p-2.5 rounded-xl border border-green-200 bg-green-50/50 text-left cursor-pointer hover:bg-green-50 transition-colors">
                       <p className="text-xs font-semibold text-green-700 mb-1">Best Performing</p>
                       <p className="text-xs font-bold text-[#1E2D4D]">{sortedChildren.best.name}</p>
                       <div className="flex items-center gap-1 mt-0.5">
@@ -889,7 +889,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                         <TrendBadge value={nodeTrend(sortedChildren.best.id)} />
                       </div>
                     </button>
-                    <button onClick={() => setSelectedNode(sortedChildren.worst!)} className="p-2.5 rounded-lg border border-red-200 bg-red-50/50 text-left cursor-pointer hover:bg-red-50 transition-colors">
+                    <button onClick={() => setSelectedNode(sortedChildren.worst!)} className="p-2.5 rounded-xl border border-red-200 bg-red-50/50 text-left cursor-pointer hover:bg-red-50 transition-colors">
                       <p className="text-xs font-semibold text-red-700 mb-1">Needs Attention</p>
                       <p className="text-xs font-bold text-[#1E2D4D]">{sortedChildren.worst.name}</p>
                       <div className="flex items-center gap-1 mt-0.5">
@@ -906,7 +906,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                     <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Sub-units ({selectedNode.children.length})</h4>
                     <div className="space-y-1.5">
                       {[...selectedNode.children].sort((a, b) => b.complianceScore - a.complianceScore).map(c => (
-                        <button key={c.id} onClick={() => setSelectedNode(c)} className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer text-left">
+                        <button key={c.id} onClick={() => setSelectedNode(c)} className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors cursor-pointer text-left">
                           <span className="text-xs text-[#1E2D4D]/80">{c.name}</span>
                           <div className="flex items-center gap-2">
                             <TrendBadge value={nodeTrend(c.id)} />
@@ -935,7 +935,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
               </>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Network className="h-8 w-8 text-gray-300 mb-3" />
+                <Network className="h-8 w-8 text-[#1E2D4D]/30 mb-3" />
                 <p className="text-sm text-[#1E2D4D]/50">Select a node to view details</p>
                 <p className="text-xs text-[#1E2D4D]/30 mt-1">Click any item in the hierarchy tree</p>
               </div>
@@ -964,9 +964,9 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => { setSelectedTenant(t.id); setSsoType(t.ssoConfig.providerType === 'oidc' ? 'oidc' : 'saml'); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-[#FAF7F0]'}`}
             >
-              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
               </div>
               {t.displayName.split(' ')[0]}
@@ -991,27 +991,27 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Metadata URL</label>
-                <input type="text" readOnly value={tenant.ssoConfig.metadataUrl || ''} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.metadataUrl || ''} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Entity ID</label>
-                <input type="text" readOnly value={tenant.ssoConfig.entityId} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.entityId} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">ACS URL (Assertion Consumer Service)</label>
-                <input type="text" readOnly value={tenant.ssoConfig.acsUrl} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.acsUrl} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">X.509 Certificate</label>
-                <textarea readOnly rows={3} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0] font-mono" value={tenant.ssoConfig.enabled ? '-----BEGIN CERTIFICATE-----\nMIIDpzCCAo+gAwIBAgIGAXxxxxxxxxxxxxxx...\n-----END CERTIFICATE-----' : ''} />
+                <textarea readOnly rows={3} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0] font-mono" value={tenant.ssoConfig.enabled ? '-----BEGIN CERTIFICATE-----\nMIIDpzCCAo+gAwIBAgIGAXxxxxxxxxxxxxxx...\n-----END CERTIFICATE-----' : ''} />
               </div>
 
               {/* Attribute Mapping */}
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Attribute Mapping</label>
-                <div className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden">
+                <div className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
                   <table className="w-full text-xs">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#FAF7F0]">
                       <tr>
                         <th className="text-left px-3 py-1.5 text-[#1E2D4D]/70 font-medium">EvidLY Field</th>
                         <th className="text-left px-3 py-1.5 text-[#1E2D4D]/70 font-medium">IdP Attribute</th>
@@ -1019,7 +1019,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
                     </thead>
                     <tbody>
                       {Object.entries(tenant.ssoConfig.attributeMapping).map(([k, v]) => (
-                        <tr key={k} className="border-t border-gray-100">
+                        <tr key={k} className="border-t border-[#1E2D4D]/5">
                           <td className="px-3 py-1.5 text-[#1E2D4D]/80">{k}</td>
                           <td className="px-3 py-1.5 text-[#1E2D4D]/50 font-mono">{v}</td>
                         </tr>
@@ -1033,19 +1033,19 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Discovery URL</label>
-                <input type="text" readOnly value={tenant.ssoConfig.metadataUrl || ''} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.metadataUrl || ''} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Client ID</label>
-                <input type="text" readOnly value={tenant.ssoConfig.entityId} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.entityId} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Redirect URI</label>
-                <input type="text" readOnly value={tenant.ssoConfig.acsUrl} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="text" readOnly value={tenant.ssoConfig.acsUrl} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Client Secret</label>
-                <input type="password" readOnly value="●●●●●●●●●●●●●●●●" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+                <input type="password" readOnly value="●●●●●●●●●●●●●●●●" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
               </div>
             </div>
           )}
@@ -1054,7 +1054,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             <button onClick={() => showToast('SSO test initiated — connection passed!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
               Test Connection
             </button>
-            <button onClick={() => showToast('SSO configuration saved')} className="px-4 py-2 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+            <button onClick={() => showToast('SSO configuration saved')} className="px-4 py-2 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
               Save Config
             </button>
           </div>
@@ -1071,7 +1071,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
               )}
               <div>
-                <p className="text-xs font-medium text-gray-900">
+                <p className="text-xs font-medium text-[#1E2D4D]">
                   {tenant.ssoConfig.enabled ? `${tenant.ssoConfig.providerType.toUpperCase()} via ${tenant.ssoConfig.providerName}` : 'Not configured'}
                 </p>
                 <p className="text-xs text-[#1E2D4D]/50">
@@ -1088,8 +1088,8 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">SCIM Endpoint</label>
                 <div className="flex items-center gap-2">
-                  <input type="text" readOnly value={tenant.scimEndpoint} className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0] font-mono" />
-                  <button onClick={() => { navigator.clipboard.writeText(tenant.scimEndpoint); showToast('Copied!'); }} className="p-2 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer">
+                  <input type="text" readOnly value={tenant.scimEndpoint} className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0] font-mono" />
+                  <button onClick={() => { navigator.clipboard.writeText(tenant.scimEndpoint); showToast('Copied!'); }} className="p-2 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] cursor-pointer">
                     <Copy className="h-3.5 w-3.5 text-[#1E2D4D]/50" />
                   </button>
                 </div>
@@ -1097,8 +1097,8 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
               <div>
                 <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Bearer Token</label>
                 <div className="flex items-center gap-2">
-                  <input type="password" readOnly value="●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●" className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0] font-mono" />
-                  <button onClick={() => showToast('Token regenerated — copy the new token before closing')} className="p-2 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer">
+                  <input type="password" readOnly value="●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●" className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0] font-mono" />
+                  <button onClick={() => showToast('Token regenerated — copy the new token before closing')} className="p-2 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] cursor-pointer">
                     <RefreshCw className="h-3.5 w-3.5 text-[#1E2D4D]/50" />
                   </button>
                 </div>
@@ -1156,17 +1156,17 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
             placeholder="Search users..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-lg"
+            className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-xl"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => showToast('Provision User')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
             <UserPlus className="h-3.5 w-3.5" /> Provision
           </button>
-          <button onClick={() => showToast('Export Users')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+          <button onClick={() => showToast('Export Users')} className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
-          <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+          <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
             <RefreshCw className="h-3.5 w-3.5" /> Sync
           </button>
         </div>
@@ -1190,8 +1190,8 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
             </thead>
             <tbody>
               {filtered.map(u => (
-                <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-2.5 font-medium text-gray-900">{u.name}</td>
+                <tr key={u.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                  <td className="px-4 py-2.5 font-medium text-[#1E2D4D]">{u.name}</td>
                   <td className="px-4 py-2.5 text-[#1E2D4D]/50 font-mono hidden sm:table-cell">{u.email}</td>
                   <td className="px-4 py-2.5">
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{
@@ -1254,9 +1254,9 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => handleTenantChange(t.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-[#FAF7F0]'}`}
             >
-              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
               </div>
               {t.displayName.split(' ')[0]}
@@ -1290,7 +1290,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
                     type="text"
                     value={colors[f.key]}
                     onChange={e => setColors({ ...colors, [f.key]: e.target.value })}
-                    className="flex-1 px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded-lg font-mono"
+                    className="flex-1 px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded-xl font-mono"
                   />
                 </div>
               </div>
@@ -1300,11 +1300,11 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
           <div className="mt-4 space-y-3">
             <div>
               <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Platform Name</label>
-              <input type="text" value={platformName} onChange={e => setPlatformName(e.target.value)} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg" />
+              <input type="text" value={platformName} onChange={e => setPlatformName(e.target.value)} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl" />
             </div>
             <div>
               <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Custom Domain</label>
-              <input type="text" readOnly value={tenant.domain} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg bg-[#FAF7F0]" />
+              <input type="text" readOnly value={tenant.domain} className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]" />
             </div>
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={showPowered} onChange={e => setShowPowered(e.target.checked)} className="rounded border-[#1E2D4D]/15 cursor-pointer" id="powered-by" />
@@ -1312,7 +1312,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
             <div>
               <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Logo Upload</label>
-              <div className="border-2 border-dashed border-[#1E2D4D]/10 rounded-lg p-4 text-center">
+              <div className="border-2 border-dashed border-[#1E2D4D]/10 rounded-xl p-4 text-center">
                 <Upload className="h-5 w-5 text-[#1E2D4D]/30 mx-auto mb-1" />
                 <p className="text-xs text-[#1E2D4D]/50">Drag logo here or click to upload</p>
                 <p className="text-xs text-[#1E2D4D]/30">SVG, PNG, or JPG — max 2MB</p>
@@ -1349,7 +1349,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
                   ))}
                 </div>
                 {showPowered && (
-                  <p className="text-[8px] mt-auto pt-6" style={{ color: colors.sidebarText + '66' }}>Powered by EvidLY</p>
+                  <p className="text-[11px] mt-auto pt-6" style={{ color: colors.sidebarText + '66' }}>Powered by EvidLY</p>
                 )}
               </div>
 
@@ -1388,7 +1388,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
               </div>
             </div>
             {showPowered && (
-              <p className="text-[9px] mt-4" style={{ color: colors.sidebarText + '55' }}>Powered by EvidLY</p>
+              <p className="text-[11px] mt-4" style={{ color: colors.sidebarText + '55' }}>Powered by EvidLY</p>
             )}
           </div>
         </div>
@@ -1422,7 +1422,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <h3 className="text-sm font-semibold text-[#1E2D4D]">Report Templates ({enterpriseReportTemplates.length})</h3>
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50'}`}>
+          <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]'}`}>
             {showBuilder ? 'Close Builder' : 'Custom Report Builder'}
           </button>
           <button onClick={() => showToast('New Template')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>
@@ -1440,7 +1440,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
               <p className="text-xs font-medium text-[#1E2D4D]/70 mb-2">Available Sections (click to add)</p>
               <div className="flex flex-wrap gap-1.5">
                 {availableSections.filter(s => !builderSections.includes(s)).map(s => (
-                  <button key={s} onClick={() => setBuilderSections([...builderSections, s])} className="px-2.5 py-1 text-xs rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer">
+                  <button key={s} onClick={() => setBuilderSections([...builderSections, s])} className="px-2.5 py-1 text-xs rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer">
                     + {s}
                   </button>
                 ))}
@@ -1448,18 +1448,18 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
               <div className="mt-4 space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Report Name</label>
-                  <input type="text" placeholder="Q1 2026 Custom Report" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg" />
+                  <input type="text" placeholder="Q1 2026 Custom Report" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Tenant</label>
-                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-lg">
+                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-xl">
                       {enterpriseTenants.map(t => <option key={t.id}>{t.displayName}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Export Format</label>
-                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-lg">
+                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-xl">
                       <option>PDF</option><option>Excel</option><option>CSV</option><option>PowerPoint</option>
                     </select>
                   </div>
@@ -1467,25 +1467,25 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Schedule</label>
-                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-lg">
+                    <select className="w-full px-3 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-xl">
                       <option>One-time</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Email Distribution</label>
-                    <input type="text" placeholder="team@company.com" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg" />
+                    <input type="text" placeholder="team@company.com" className="w-full px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl" />
                   </div>
                 </div>
               </div>
             </div>
             <div>
               <p className="text-xs font-medium text-[#1E2D4D]/70 mb-2">Report Sections (drag to reorder)</p>
-              <div className="space-y-1.5 min-h-[120px] p-3 rounded-lg border-2 border-dashed border-[#1E2D4D]/10 bg-[#FAF7F0]">
+              <div className="space-y-1.5 min-h-[120px] p-3 rounded-xl border-2 border-dashed border-[#1E2D4D]/10 bg-[#FAF7F0]">
                 {builderSections.map((s, i) => (
                   <div key={s} className="flex items-center gap-2 p-2 rounded-xl bg-white border border-[#1E2D4D]/10">
                     <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold text-[#1E2D4D]/30 bg-[#FAF7F0]">{i + 1}</span>
                     <span className="text-xs text-[#1E2D4D]/80 flex-1">{s}</span>
-                    <button onClick={() => setBuilderSections(builderSections.filter((_, j) => j !== i))} className="text-gray-300 hover:text-red-400 cursor-pointer">
+                    <button onClick={() => setBuilderSections(builderSections.filter((_, j) => j !== i))} className="text-[#1E2D4D]/30 hover:text-red-400 cursor-pointer">
                       <XCircle className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -1498,7 +1498,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                 <button onClick={() => showToast('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
                   Generate Report
                 </button>
-                <button onClick={() => showToast('Template saved!')} className="px-4 py-2 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                <button onClick={() => showToast('Template saved!')} className="px-4 py-2 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
                   Save as Template
                 </button>
               </div>
@@ -1516,7 +1516,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
               <button
                 key={t.id}
                 onClick={() => setSelectedTemplate(t)}
-                className={`w-full text-left bg-white rounded-xl border p-4 transition-colors cursor-pointer ${selectedTemplate?.id === t.id ? 'border-blue-300 bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:bg-gray-50'}`}
+                className={`w-full text-left bg-white rounded-xl border p-4 transition-colors cursor-pointer ${selectedTemplate?.id === t.id ? 'border-blue-300 bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:bg-[#FAF7F0]'}`}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: tenantObj?.branding.primaryColor + '15' }}>
@@ -1525,10 +1525,10 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-semibold text-[#1E2D4D]">{t.name}</span>
-                      {t.isDefault && <span className="px-1.5 py-0.5 text-xs rounded-full bg-gray-100 text-[#1E2D4D]/50">Default</span>}
+                      {t.isDefault && <span className="px-1.5 py-0.5 text-xs rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50">Default</span>}
                     </div>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${typeColors[t.templateType] || 'bg-gray-100 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${typeColors[t.templateType] || 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>
                         {t.templateType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                       </span>
                       <span className="text-xs text-[#1E2D4D]/30">{t.tenantName}</span>
@@ -1536,7 +1536,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {t.exportFormats.map(fmt => (
-                      <span key={fmt} className="px-1.5 py-0.5 text-xs rounded bg-gray-100 text-[#1E2D4D]/50 font-medium">{fmt}</span>
+                      <span key={fmt} className="px-1.5 py-0.5 text-xs rounded bg-[#1E2D4D]/5 text-[#1E2D4D]/50 font-medium">{fmt}</span>
                     ))}
                   </div>
                 </div>
@@ -1581,7 +1581,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                     Formats: {selectedTemplate.exportFormats.join(', ')}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/70">
-                    {selectedTemplate.isDefault ? <CheckCircle className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-gray-300" />}
+                    {selectedTemplate.isDefault ? <CheckCircle className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-[#1E2D4D]/30" />}
                     Default template: {selectedTemplate.isDefault ? 'Yes' : 'No'}
                   </div>
                 </div>
@@ -1591,17 +1591,17 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                 <button onClick={() => showToast(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
                   Generate Report
                 </button>
-                <button onClick={() => showToast('Edit Template')} className="px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                <button onClick={() => showToast('Edit Template')} className="px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
                   Edit
                 </button>
-                <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
                   Duplicate
                 </button>
               </div>
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <FileText className="h-8 w-8 text-gray-300 mb-3" />
+              <FileText className="h-8 w-8 text-[#1E2D4D]/30 mb-3" />
               <p className="text-sm text-[#1E2D4D]/50">Select a template to preview</p>
               <p className="text-xs text-[#1E2D4D]/30 mt-1">Click any template card on the left</p>
             </div>
@@ -1705,7 +1705,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
                         )}
                       </div>
                     </div>
-                    <button onClick={() => showToast(`Configure ${intg.providerName}`)} className="p-1.5 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer flex-shrink-0">
+                    <button onClick={() => showToast(`Configure ${intg.providerName}`)} className="p-1.5 rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] cursor-pointer flex-shrink-0">
                       <Settings className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
                     </button>
                   </div>
@@ -1733,7 +1733,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
     completed: 'bg-green-50 text-green-700 border-green-200',
     running: 'bg-blue-50 text-blue-700 border-blue-200',
     failed: 'bg-red-50 text-red-700 border-red-200',
-    pending: 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
+    pending: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
   };
 
   return (
@@ -1747,7 +1747,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Assign Vendors', icon: Users },
             { label: 'Provision Users', icon: UserPlus },
           ].map(a => (
-            <button key={a.label} onClick={() => showToast(`${a.label}`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+            <button key={a.label} onClick={() => showToast(`${a.label}`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] cursor-pointer min-h-[44px]">
               <a.icon className="h-3.5 w-3.5" />
               {a.label}
             </button>
@@ -1812,7 +1812,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {op.status === 'running' && (
-                    <button onClick={() => showToast('Operation paused')} className="px-2.5 py-1 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/50 hover:bg-gray-50 cursor-pointer">
+                    <button onClick={() => showToast('Operation paused')} className="px-2.5 py-1 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/50 hover:bg-[#FAF7F0] cursor-pointer">
                       Pause
                     </button>
                   )}
@@ -1821,7 +1821,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
                       Start
                     </button>
                   )}
-                  <button onClick={() => showToast('Operation details')} className="px-2.5 py-1 rounded-lg border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/50 hover:bg-gray-50 cursor-pointer">
+                  <button onClick={() => showToast('Operation details')} className="px-2.5 py-1 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/50 hover:bg-[#FAF7F0] cursor-pointer">
                     Details
                   </button>
                 </div>
@@ -1859,9 +1859,9 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => setSelectedTenant(t.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-[#1E2D4D]/10 bg-white hover:bg-[#FAF7F0]'}`}
             >
-              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
               </div>
               {t.displayName.split(' ')[0]}
@@ -2014,14 +2014,14 @@ export function EnterpriseDashboard() {
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-lg font-bold text-[#1E2D4D]">Evid</span>
-                <span className="text-lg font-bold" style={{ color: '#d4af37' }}>LY</span>
+                <span className="text-lg font-bold" style={{ color: '#A08C5A' }}>LY</span>
                 <span className="text-xs font-medium text-[#1E2D4D]/30 ml-1">Enterprise Admin</span>
               </div>
             </div>
           </div>
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[#1E2D4D]/70 hover:bg-gray-100 cursor-pointer transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 cursor-pointer transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Exit Admin
@@ -2039,8 +2039,8 @@ export function EnterpriseDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? 'text-gray-900'
-                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                    ? 'text-[#1E2D4D]'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
                 style={activeTab === tab.id ? { borderBottomColor: '#1E2D4D' } : {}}
               >

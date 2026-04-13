@@ -31,7 +31,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" data-demo-allow onClick={onClose}>
       <div className="absolute inset-0 bg-black/50" />
       <div
-        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden"
+        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden modal-content-enter"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -71,7 +71,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 px-4 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              className="flex-1 py-2.5 px-4 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
             >
               Continue Demo
             </button>

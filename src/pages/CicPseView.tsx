@@ -11,7 +11,7 @@ import { RoleGuard } from '../components/auth/RoleGuard';
 import type { PSESafeguard } from '../data/workforceRiskDemoData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const MUTED_GOLD = '#A08C5A';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
@@ -250,7 +250,7 @@ export function CicPseView() {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 22 }}>{p.icon}</span>
+                  <span className="text-[22px]">{p.icon}</span>
                   <span style={{ fontSize: 15, fontWeight: 700, color: p.color }}>{p.label}</span>
                 </div>
                 <p style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, margin: 0, maxWidth: 560 }}>

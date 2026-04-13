@@ -390,7 +390,7 @@ function isOverdue(incident: Incident): boolean {
 }
 
 // TODO: Compliance score integration — wire into src/lib/complianceScoring.ts
-// Incident resolution time feeds into the Operational Safety pillar.
+// Incident resolution time feeds into the Operational safety category.
 // Scoring thresholds (per incident):
 //   - Resolved under 2 hours:  100 pts (full credit)
 //   - Resolved 2–12 hours:      80 pts
@@ -1047,27 +1047,27 @@ export function IncidentLog() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('common.type')}</span>
-                    <span className="font-medium text-gray-900">{typeLabels[INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label || ''] || INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label}</span>
+                    <span className="font-medium text-[#1E2D4D]">{typeLabels[INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label || ''] || INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label}</span>
                   </div>
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('common.location')}</span>
-                    <span className="font-medium text-gray-900 flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{inc.location}</span>
+                    <span className="font-medium text-[#1E2D4D] flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{inc.location}</span>
                   </div>
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('common.assignedTo')}</span>
-                    <span className="font-medium text-gray-900 flex items-center gap-1"><User className="h-3.5 w-3.5" />{inc.assignedTo}</span>
+                    <span className="font-medium text-[#1E2D4D] flex items-center gap-1"><User className="h-3.5 w-3.5" />{inc.assignedTo}</span>
                   </div>
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('incidents.reported')}</span>
-                    <span className="font-medium text-gray-900">{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
+                    <span className="font-medium text-[#1E2D4D]">{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
                   </div>
                 </div>
                 <div>
                   <span className="text-[#1E2D4D]/50 text-sm block mb-1">{t('common.description')}</span>
-                  <p className="text-gray-800">{inc.description}</p>
+                  <p className="text-[#1E2D4D]/90">{inc.description}</p>
                 </div>
                 {inc.sourceLabel && (
-                  <div className="flex items-center gap-2 text-sm bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-sm bg-blue-50 border border-blue-200 rounded-xl p-3">
                     <FileText className="h-4 w-4 text-blue-600" />
                     <span className="text-blue-800">{t('incidents.linked')} {inc.sourceLabel}</span>
                   </div>
@@ -1102,7 +1102,7 @@ export function IncidentLog() {
                 )}
                 {/* Linked Corrective Action */}
                 {inc.linkedCorrectiveActionId && (
-                  <div className="flex items-center gap-2 text-sm bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-sm bg-amber-50 border border-amber-200 rounded-xl p-3">
                     <ClipboardList className="h-4 w-4 text-amber-600" />
                     <span className="text-amber-800">
                       Linked Corrective Action: <button onClick={() => navigate('/corrective-actions')} className="font-semibold underline hover:text-amber-900">{inc.linkedCorrectiveActionId}</button>
@@ -1130,7 +1130,7 @@ export function IncidentLog() {
                 {inc.correctiveAction && (
                   <div>
                     <span className="text-[#1E2D4D]/50 text-sm block mb-1">{t('common.correctiveAction')}</span>
-                    <p className="text-gray-800">{inc.correctiveAction}</p>
+                    <p className="text-[#1E2D4D]/90">{inc.correctiveAction}</p>
                     {inc.actionChips && inc.actionChips.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {inc.actionChips.map(chip => (
@@ -1143,7 +1143,7 @@ export function IncidentLog() {
                   </div>
                 )}
                 {inc.resolutionSummary && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-3">
                     <span className="text-green-800 text-sm font-semibold block mb-1">{t('incidents.resolution')}</span>
                     <p className="text-green-900 text-sm">{inc.resolutionSummary}</p>
                     {inc.rootCause && (
@@ -1153,12 +1153,12 @@ export function IncidentLog() {
                 )}
                 {resTime && (
                   <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/70">
-                    <Clock className="h-4 w-4 text-[#d4af37]" />
+                    <Clock className="h-4 w-4 text-[#A08C5A]" />
                     {t('incidents.resolvedIn')} <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                   </div>
                 )}
                 {inc.verifiedBy && (
-                  <div className="flex items-center gap-2 text-sm bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-sm bg-green-50 border border-green-200 rounded-xl p-3">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span className="text-green-800">
                       {t('incidents.verifiedBy')} <span className="font-semibold">{inc.verifiedBy}</span> {t('incidents.on')} {format(new Date(inc.verifiedAt!), 'MMM d, yyyy h:mm a')}
@@ -1185,7 +1185,7 @@ export function IncidentLog() {
                           )}
                         </div>
                         <div className="ml-2">
-                          <p className="text-sm font-medium text-gray-900">{entry.action}</p>
+                          <p className="text-sm font-medium text-[#1E2D4D]">{entry.action}</p>
                           <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1">
                             <span className="flex items-center gap-1"><User className="h-3 w-3" />{entry.user}</span>
                             <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(entry.timestamp), 'MMM d, h:mm a')}</span>
@@ -1212,12 +1212,12 @@ export function IncidentLog() {
                 )}
                 <div className="space-y-3 mb-4">
                   {inc.comments.map(c => (
-                    <div key={c.id} className="border border-gray-100 rounded-lg p-3">
+                    <div key={c.id} className="border border-[#1E2D4D]/5 rounded-xl p-3">
                       <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 mb-1">
                         <span className="font-semibold text-[#1E2D4D]/80">{c.user}</span>
                         <span>{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}</span>
                       </div>
-                      <p className="text-sm text-gray-800">{c.text}</p>
+                      <p className="text-sm text-[#1E2D4D]/90">{c.text}</p>
                     </div>
                   ))}
                 </div>
@@ -1226,7 +1226,7 @@ export function IncidentLog() {
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddComment()}
-                    className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     placeholder={t('incidents.addComment')}
                   />
                   <button
@@ -1269,24 +1269,24 @@ export function IncidentLog() {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('incidents.incidentId')}</span>
-                    <span className="font-mono font-medium text-gray-900">{inc.id}</span>
+                    <span className="font-mono font-medium text-[#1E2D4D]">{inc.id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('common.reportedBy')}</span>
-                    <span className="font-medium text-gray-900">{inc.reportedBy}</span>
+                    <span className="font-medium text-[#1E2D4D]">{inc.reportedBy}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('incidents.created')}</span>
-                    <span className="font-medium text-gray-900">{format(new Date(inc.createdAt), 'MMM d, h:mm a')}</span>
+                    <span className="font-medium text-[#1E2D4D]">{format(new Date(inc.createdAt), 'MMM d, h:mm a')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('common.lastUpdated')}</span>
-                    <span className="font-medium text-gray-900">{format(new Date(inc.updatedAt), 'MMM d, h:mm a')}</span>
+                    <span className="font-medium text-[#1E2D4D]">{format(new Date(inc.updatedAt), 'MMM d, h:mm a')}</span>
                   </div>
                   {inc.rootCause && (
                     <div className="flex justify-between">
                       <span className="text-[#1E2D4D]/50">{t('incidents.rootCause')}</span>
-                      <span className="font-medium text-gray-900 capitalize">{rootCauseLabels[inc.rootCause.charAt(0).toUpperCase() + inc.rootCause.slice(1)] || inc.rootCause}</span>
+                      <span className="font-medium text-[#1E2D4D] capitalize">{rootCauseLabels[inc.rootCause.charAt(0).toUpperCase() + inc.rootCause.slice(1)] || inc.rootCause}</span>
                     </div>
                   )}
                   {resTime && (
@@ -1315,7 +1315,7 @@ export function IncidentLog() {
               {/* Export */}
               <button
                 onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))} // demo
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
               >
                 <Download className="h-4 w-4" />
                 {t('incidents.exportToPdf')}
@@ -1327,7 +1327,7 @@ export function IncidentLog() {
         {/* Take Action Modal */}
         {showActionForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
               <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.takeCorrectiveAction')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1367,7 +1367,7 @@ export function IncidentLog() {
                     value={actionText}
                     onChange={e => { setActionText(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('actionText'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     placeholder="Describe the corrective action taken..."
                   />
                   {aiFields.has('actionText') && <AIGeneratedIndicator />}
@@ -1377,7 +1377,7 @@ export function IncidentLog() {
                   <select
                     value={estimatedCompletion}
                     onChange={e => setEstimatedCompletion(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="">Select estimate...</option>
                     <option value="30 minutes">{t('incidents.time30min')}</option>
@@ -1398,7 +1398,7 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion(''); }}
-                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
                   >
                     {t('common.cancel')}
                   </button>
@@ -1418,7 +1418,7 @@ export function IncidentLog() {
         {/* Resolve Modal */}
         {showResolveForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
               <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.resolveIncident')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1437,7 +1437,7 @@ export function IncidentLog() {
                     value={resolutionSummary}
                     onChange={e => { setResolutionSummary(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('resolutionSummary'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     placeholder="Summarize how the incident was resolved..."
                   />
                   {aiFields.has('resolutionSummary') && <AIGeneratedIndicator />}
@@ -1447,7 +1447,7 @@ export function IncidentLog() {
                   <select
                     value={rootCause}
                     onChange={e => setRootCause(e.target.value as RootCause)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     {ROOT_CAUSES.map(rc => (
                       <option key={rc.value} value={rc.value}>{rootCauseLabels[rc.label] || rc.label}</option>
@@ -1468,7 +1468,7 @@ export function IncidentLog() {
                       type="checkbox"
                       checked={managerPhotoOverride}
                       onChange={(e) => setManagerPhotoOverride(e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-[#1E2D4D]/15 text-[#d4af37] focus:ring-[#d4af37]"
+                      className="h-3.5 w-3.5 rounded border-[#1E2D4D]/15 text-[#A08C5A] focus:ring-[#A08C5A]"
                     />
                     {t('incidents.managerOverride')}
                   </label>
@@ -1476,7 +1476,7 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); setManagerPhotoOverride(false); }}
-                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
                   >
                     {t('common.cancel')}
                   </button>
@@ -1507,13 +1507,13 @@ export function IncidentLog() {
   // ── Create Incident Modal ──────────────────────────────────────
   const CreateModal = showCreateForm ? (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <h3 className="text-xl font-bold text-[#1E2D4D]">{t('incidents.reportNewIncident')}</h3>
           <button
             onClick={handleAiDraft}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-            style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #d4af37' }}
+            style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
           >
             <Sparkles className="h-4 w-4" />
             AI Draft
@@ -1521,7 +1521,7 @@ export function IncidentLog() {
         </div>
         {aiDraftApplied && (
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg mb-4 text-sm" style={{ backgroundColor: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
-            <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#d4af37' }} />
+            <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
             <span>AI-generated draft — review and edit before saving</span>
           </div>
         )}
@@ -1531,7 +1531,7 @@ export function IncidentLog() {
             <select
               value={newType}
               onChange={e => setNewType(e.target.value as IncidentType)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               {INCIDENT_TYPES.map(tp => (
                 <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
@@ -1563,7 +1563,7 @@ export function IncidentLog() {
             <select
               value={newLocation}
               onChange={e => setNewLocation(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               {locationOptions.map(l => (
                 <option key={l} value={l}>{l}</option>
@@ -1577,7 +1577,7 @@ export function IncidentLog() {
             <GhostInput
               value={newTitle}
               onChange={e => setNewTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder={t('incidents.titlePlaceholder')}
               fieldLabel="Incident Title"
               formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
@@ -1600,7 +1600,7 @@ export function IncidentLog() {
               value={newDescription}
               onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
               rows={3}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder={t('incidents.descriptionPlaceholder')}
             />
             {aiFields.has('newDescription') && <AIGeneratedIndicator />}
@@ -1611,7 +1611,7 @@ export function IncidentLog() {
             label={t('incidents.photoOfIncident')}
           />
           {/* Regulatory report flag */}
-          <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-xl cursor-pointer hover:bg-[#FAF7F0]">
             <input
               type="checkbox"
               checked={newRegulatoryRequired}
@@ -1626,7 +1626,7 @@ export function IncidentLog() {
           <div className="flex gap-3">
             <button
               onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }}
-              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               {t('common.cancel')}
             </button>
@@ -1656,7 +1656,7 @@ export function IncidentLog() {
           <div className="flex gap-2">
             <button
               onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export of all incidents generated.'))} // demo
-              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               <Download className="h-4 w-4" />
               {t('common.export')}
@@ -1680,12 +1680,12 @@ export function IncidentLog() {
             </div>
             <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-600 text-center">{openIncidents}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-[#d4af37]" />
+              <Clock className="h-4 w-4 text-[#A08C5A]" />
               <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.avgResolution')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#d4af37] text-center">{avgResolutionHours}h</div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{avgResolutionHours}h</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -1707,35 +1707,35 @@ export function IncidentLog() {
         <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-[#1E2D4D]/30" />
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allStatus')}</option>
               {Object.entries(STATUS_CONFIG).map(([key, val]) => (
                 <option key={key} value={key}>{statusLabels[val.label] || val.label}</option>
               ))}
             </select>
-            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allSeverity')}</option>
               {SEVERITIES.map(s => <option key={s.value} value={s.value}>{severityLabels[s.label] || s.label}</option>)}
             </select>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allTypes')}</option>
               {INCIDENT_TYPES.map(tp => <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>)}
             </select>
-            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('common.allLocations')}</option>
               {locationOptions.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
-            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allAssignees')}</option>
               {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
-            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allTime')}</option>
               <option value="24h">{t('incidents.last24Hours')}</option>
               <option value="7d">{t('incidents.last7Days')}</option>
               <option value="30d">{t('incidents.last30Days')}</option>
             </select>
-            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="newest">{t('incidents.newestFirst')}</option>
               <option value="oldest">{t('incidents.oldestFirst')}</option>
               <option value="severity">{t('incidents.bySeverity')}</option>
@@ -1788,7 +1788,7 @@ export function IncidentLog() {
                         {inc.photos.length > 0 && (
                           <span className="flex items-center gap-0.5 text-[#1E2D4D]/30">
                             <Camera className="h-3 w-3" />
-                            <span style={{ fontSize: '10px' }}>{inc.photos.length}</span>
+                            <span className="text-[11px]">{inc.photos.length}</span>
                           </span>
                         )}
                       </div>
@@ -1804,7 +1804,7 @@ export function IncidentLog() {
                     {resTime && (
                       <span className="text-xs text-[#1E2D4D]/50 whitespace-nowrap">{t('incidents.resolvedIn')} {resTime}</span>
                     )}
-                    <ChevronRight className="h-5 w-5 text-gray-300" />
+                    <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30" />
                   </div>
                 </div>
               </div>

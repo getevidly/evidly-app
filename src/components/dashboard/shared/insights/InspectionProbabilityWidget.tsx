@@ -40,7 +40,7 @@ export function InspectionProbabilityWidget({ locations }: Props) {
           <div key={loc.name} className="px-4 py-3">
             <div className="flex items-center justify-between mb-1.5">
               <div>
-                <p className="text-sm font-semibold text-gray-800">{loc.name}</p>
+                <p className="text-sm font-semibold text-[#1E2D4D]/90">{loc.name}</p>
                 <p className="text-xs text-[#1E2D4D]/50">{loc.jurisdictionName}</p>
               </div>
               <span

@@ -80,7 +80,7 @@ export function MigrationStatusCard() {
     <div className="bg-white rounded-xl border border-emerald-200 shadow-sm p-4 relative" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <button
         onClick={handleDismiss}
-        className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 text-[#1E2D4D]/30"
+        className="absolute top-3 right-3 p-1 rounded-full hover:bg-[#1E2D4D]/5 text-[#1E2D4D]/30"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />

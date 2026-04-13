@@ -29,7 +29,7 @@ export function JurisdictionBenchmarkWidget({ benchmarks }: Props) {
             <div key={b.locationName} className="px-4 py-3">
               <div className="flex items-center justify-between mb-1">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">{b.locationName}</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]/90">{b.locationName}</p>
                   <p className="text-xs text-[#1E2D4D]/50">{b.jurisdictionName}</p>
                 </div>
                 <span

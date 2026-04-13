@@ -106,10 +106,10 @@ export function InviteVendorModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
+      <div className="fixed inset-0 bg-black/50 z-50 modal-backdrop-enter" onClick={handleClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-md max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-md max-h-[90vh] overflow-y-auto modal-content-enter"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -124,7 +124,7 @@ export function InviteVendorModal({
                   <p className="text-sm text-[#1E2D4D]/50">Send a branded invite to join EvidLY</p>
                 </div>
               </div>
-              <button onClick={handleClose} className="text-[#1E2D4D]/30 hover:text-gray-600" aria-label="Close">
+              <button onClick={handleClose} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" aria-label="Close">
                 <XCircle className="h-5 w-5" />
               </button>
             </div>
@@ -140,7 +140,7 @@ export function InviteVendorModal({
                 value={form.email}
                 onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                 placeholder="vendor@example.com"
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
@@ -152,7 +152,7 @@ export function InviteVendorModal({
                 value={form.vendorName}
                 onChange={(e) => setForm(prev => ({ ...prev, vendorName: e.target.value }))}
                 placeholder="e.g., Acme Hood Cleaning"
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
@@ -163,7 +163,7 @@ export function InviteVendorModal({
                 type="text"
                 value="Vendor"
                 readOnly
-                className="w-full px-3 py-2 border border-[#1E2D4D]/10 rounded-lg text-sm bg-[#FAF7F0] text-[#1E2D4D]/50 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm bg-[#FAF7F0] text-[#1E2D4D]/50 cursor-not-allowed"
               />
               <p className="text-xs text-[#1E2D4D]/30 mt-1">Vendor role is pre-configured for service providers</p>
             </div>
@@ -210,7 +210,7 @@ export function InviteVendorModal({
           <div className="p-4 sm:p-6 border-t border-[#1E2D4D]/10 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
             <button
               onClick={handleClose}
-              className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 text-sm font-medium"
+              className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-[#FAF7F0] text-sm font-medium"
             >
               Cancel
             </button>

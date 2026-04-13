@@ -109,7 +109,7 @@ export function ImproveScore() {
           { label: 'Improve My Score' },
         ]} />
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate('/insurance-risk')} className="p-2 rounded-lg hover:bg-gray-100">
+          <button onClick={() => navigate('/insurance-risk')} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
             <ArrowLeft className="h-5 w-5 text-[#1E2D4D]/50" />
           </button>
           <div>
@@ -118,7 +118,7 @@ export function ImproveScore() {
           </div>
         </div>
         <div className="text-center py-16">
-          <TrendingUp className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <TrendingUp className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
           <p className="text-[#1E2D4D]/50 font-medium">No recommendations available yet</p>
           <p className="text-[#1E2D4D]/30 text-sm mt-1">Complete assessments to see improvement recommendations.</p>
         </div>
@@ -173,7 +173,7 @@ export function ImproveScore() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(`/insurance-risk?location=${locationParam}`)} className="p-2 rounded-lg hover:bg-gray-100">
+          <button onClick={() => navigate(`/insurance-risk?location=${locationParam}`)} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
             <ArrowLeft className="h-5 w-5 text-[#1E2D4D]/50" />
           </button>
           <div>
@@ -220,7 +220,7 @@ export function ImproveScore() {
 
           {/* Arrow */}
           <div className="flex items-center gap-2">
-            <ArrowRight className="h-6 w-6 text-gray-300" />
+            <ArrowRight className="h-6 w-6 text-[#1E2D4D]/30" />
           </div>
 
           {/* Projected Score */}
@@ -250,7 +250,7 @@ export function ImproveScore() {
                 <div className="text-xs text-[#1E2D4D]/30">Actions to Address</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-lg font-bold" style={{ color: '#d4af37' }}>{completedActions.size}</div>
+                <div className="text-lg font-bold" style={{ color: '#A08C5A' }}>{completedActions.size}</div>
                 <div className="text-xs text-[#1E2D4D]/30">Addressed This Session</div>
               </div>
             </div>
@@ -267,7 +267,7 @@ export function ImproveScore() {
             <div
               key={group.name}
               onClick={() => setCategoryFilter(categoryFilter === group.name ? 'all' : group.name)}
-              className="bg-white rounded-xl border p-4 cursor-pointer transition-colors hover:bg-gray-50"
+              className="bg-white rounded-xl border p-4 cursor-pointer transition-colors hover:bg-[#FAF7F0]"
               style={{ borderColor: categoryFilter === group.name ? color : '#e5e7eb' }}
             >
               <div className="flex items-center gap-2 mb-2">
@@ -306,7 +306,7 @@ export function ImproveScore() {
           );
         })}
         {categoryFilter !== 'all' && (
-          <button onClick={() => setCategoryFilter('all')} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-[#1E2D4D]/70 flex items-center gap-1">
+          <button onClick={() => setCategoryFilter('all')} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1E2D4D]/5 text-[#1E2D4D]/70 flex items-center gap-1">
             Clear category filter
           </button>
         )}
@@ -366,7 +366,7 @@ export function ImproveScore() {
                           </span>
                         )}
                         {item.reference && (
-                          <span className="text-gray-300">Ref: {item.reference}</span>
+                          <span className="text-[#1E2D4D]/30">Ref: {item.reference}</span>
                         )}
                       </div>
                     </div>
@@ -393,7 +393,7 @@ export function ImproveScore() {
                       )}
                       <button
                         onClick={() => navigate(item.actionLink)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-gray-200 flex items-center gap-1.5 transition-colors min-h-[44px]"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-[#1E2D4D]/10 flex items-center gap-1.5 transition-colors min-h-[44px]"
                       >
                         Go to {item.actionLink.replace('/', '').replace('-', ' ')} <ArrowRight className="h-3 w-3" />
                       </button>
@@ -410,7 +410,7 @@ export function ImproveScore() {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
-            <Zap className="h-5 w-5" style={{ color: '#d4af37' }} />
+            <Zap className="h-5 w-5" style={{ color: '#A08C5A' }} />
             <div>
               <p className="text-sm font-semibold text-[#1E2D4D]">
                 {completedActions.size > 0

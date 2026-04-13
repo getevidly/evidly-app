@@ -52,7 +52,7 @@ function TierBadge({ tier }: { tier: MarketplaceTier }) {
       label: 'Verified',
     },
     certified: {
-      bg: 'bg-gray-100 text-[#1E2D4D]/80 border border-[#1E2D4D]/10',
+      bg: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 border border-[#1E2D4D]/10',
       icon: <EvidlyIcon size={12} />,
       label: 'Certified',
     },
@@ -85,8 +85,8 @@ function StarRating({ rating, count }: { rating: number; count?: number }) {
         <Star
           key={i}
           className="h-3.5 w-3.5"
-          fill={i <= Math.round(rating) ? '#d4af37' : 'none'}
-          stroke={i <= Math.round(rating) ? '#d4af37' : 'currentColor'}
+          fill={i <= Math.round(rating) ? '#A08C5A' : 'none'}
+          stroke={i <= Math.round(rating) ? '#A08C5A' : 'currentColor'}
           strokeWidth={i <= Math.round(rating) ? undefined : 1.5}
           style={i > Math.round(rating) ? { color: '#d1d5db' } : undefined}
         />
@@ -124,7 +124,7 @@ const categoryBgColors: Record<string, string> = {
 const tierBorderColor: Record<MarketplaceTier, string> = {
   verified: '#22c55e',
   certified: '#3D5068',
-  preferred: '#d4af37',
+  preferred: '#A08C5A',
 };
 
 /* ------------------------------------------------------------------ */
@@ -333,9 +333,9 @@ function ProductionMarketplace() {
                 key={sec.id}
                 onClick={() => setActiveSection(sec.id)}
                 className={`flex items-center gap-2 px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
-                  activeSection === sec.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                  activeSection === sec.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
-                style={activeSection === sec.id ? { borderColor: '#d4af37', color: '#1E2D4D' } : undefined}
+                style={activeSection === sec.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
               >
                 <Icon className="h-4 w-4" />
                 {sec.label}
@@ -355,7 +355,7 @@ function ProductionMarketplace() {
                 placeholder="Search vendors..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white rounded-lg pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-[#1E2D4D]/30 border border-[#1E2D4D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                className="w-full bg-white rounded-xl pl-10 pr-4 py-3 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 border border-[#1E2D4D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
               />
             </div>
 
@@ -403,7 +403,7 @@ function ProductionMarketplace() {
               </div>
             ) : (
               <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-                <Building2 className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                <Building2 className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
                 <p className="text-[#1E2D4D]/70 font-medium">No approved vendors yet</p>
                 <p className="text-sm text-[#1E2D4D]/50 mt-1">
                   Invite vendors to get started with the marketplace.
@@ -440,7 +440,7 @@ function ProductionMarketplace() {
                     value={inviteForm.companyName}
                     onChange={e => setInviteForm(prev => ({ ...prev, companyName: e.target.value }))}
                     placeholder="e.g., Hood Cleaning Vendor"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ function ProductionMarketplace() {
                     value={inviteForm.contactName}
                     onChange={e => setInviteForm(prev => ({ ...prev, contactName: e.target.value }))}
                     placeholder="Primary contact"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div>
@@ -460,7 +460,7 @@ function ProductionMarketplace() {
                     value={inviteForm.email}
                     onChange={e => setInviteForm(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="vendor@example.com"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -471,7 +471,7 @@ function ProductionMarketplace() {
                       value={inviteForm.phone}
                       onChange={e => setInviteForm(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="(555) 123-4567"
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                     />
                   </div>
                   <div>
@@ -481,7 +481,7 @@ function ProductionMarketplace() {
                       value={inviteForm.website}
                       onChange={e => setInviteForm(prev => ({ ...prev, website: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                     />
                   </div>
                 </div>
@@ -490,7 +490,7 @@ function ProductionMarketplace() {
                   <select
                     value={inviteForm.serviceCategory}
                     onChange={e => setInviteForm(prev => ({ ...prev, serviceCategory: e.target.value }))}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   >
                     <option value="">Select category...</option>
                     <option value="Facility Safety">Facility Safety</option>
@@ -506,7 +506,7 @@ function ProductionMarketplace() {
                     onChange={e => setInviteForm(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Brief description of services offered..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
               </div>
@@ -514,7 +514,7 @@ function ProductionMarketplace() {
               <div className="flex items-center justify-end gap-3 mt-6">
                 <button
                   onClick={() => setActiveSection('browse')}
-                  className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50 min-h-[44px]"
+                  className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0] min-h-[44px]"
                 >
                   Cancel
                 </button>
@@ -746,7 +746,7 @@ export function VendorMarketplace() {
               placeholder="Search vendors, services, or categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-lg pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-[#1E2D4D]/30 focus-visible:outline-none focus-visible:ring-2 focus:ring-white/40"
+              className="w-full bg-white rounded-xl pl-10 pr-4 py-3 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 focus-visible:outline-none focus-visible:ring-2 focus:ring-white/40"
             />
           </div>
 
@@ -789,7 +789,7 @@ export function VendorMarketplace() {
                   onClick={() => navigate(`/marketplace/${vendor.slug}`)}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-sm text-gray-900">
+                    <span className="font-medium text-sm text-[#1E2D4D]">
                       {vendor.companyName}
                     </span>
                     <TierBadge tier={vendor.tier} />
@@ -814,7 +814,7 @@ export function VendorMarketplace() {
           {marketplaceCategories.map((cat) => {
             const isActive = selectedCategory === cat.name;
             const IconComponent = iconMap[cat.icon] || EvidlyIcon;
-            const bgColor = categoryBgColors[cat.icon] || 'bg-gray-100 text-[#1E2D4D]/70';
+            const bgColor = categoryBgColors[cat.icon] || 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
 
             return (
               <div
@@ -830,7 +830,7 @@ export function VendorMarketplace() {
                 }}
                 className={`bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition ${
                   isActive
-                    ? 'border-2 border-[#d4af37] shadow-sm'
+                    ? 'border-2 border-[#A08C5A] shadow-sm'
                     : 'border border-[#1E2D4D]/10'
                 }`}
               >
@@ -1026,7 +1026,7 @@ export function VendorMarketplace() {
           /*  Empty State                                              */
           /* -------------------------------------------------------- */
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-            <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+            <Search className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
             <p className="text-[#1E2D4D]/70 font-medium">
               No vendors match your search criteria.
             </p>
@@ -1043,7 +1043,7 @@ export function VendorMarketplace() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Building2 className="h-5 w-5 text-[#d4af37]" />
+                <Building2 className="h-5 w-5 text-[#A08C5A]" />
                 <h3 className="text-lg font-bold text-white">Are you a service provider?</h3>
               </div>
               <p className="text-sm text-white/80 max-w-lg">
@@ -1052,7 +1052,7 @@ export function VendorMarketplace() {
             </div>
             <button
               onClick={() => navigate('/vendor/register')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#d4af37] text-white rounded-lg text-sm font-semibold hover:bg-[#b8962f] transition-colors whitespace-nowrap"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#A08C5A] text-white rounded-lg text-sm font-semibold hover:bg-[#b8962f] transition-colors whitespace-nowrap"
             >
               Claim Your Listing <ArrowRight className="h-4 w-4" />
             </button>

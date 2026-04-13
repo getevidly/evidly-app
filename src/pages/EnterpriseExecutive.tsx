@@ -24,7 +24,7 @@ import {
 
 function scoreColor(s: number) {
   if (s >= 90) return '#22c55e';
-  if (s >= 80) return '#d4af37';
+  if (s >= 80) return '#A08C5A';
   if (s >= 70) return '#f59e0b';
   return '#ef4444';
 }
@@ -229,14 +229,14 @@ export function EnterpriseExecutive() {
 
         {/* ── B. Drill-Down Breadcrumb ──────────────────────── */}
         {drillDownNodeId && breadcrumb.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs bg-white rounded-xl px-4 py-2 border border-gray-100 flex-wrap">
-            <button onClick={() => setDrillDownNodeId(null)} className="text-[#1E2D4D]/30 hover:text-gray-700 font-medium cursor-pointer">Corporate</button>
+          <div className="flex items-center gap-1.5 text-xs bg-white rounded-xl px-4 py-2 border border-[#1E2D4D]/5 flex-wrap">
+            <button onClick={() => setDrillDownNodeId(null)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/80 font-medium cursor-pointer">Corporate</button>
             {breadcrumb.slice(1).map((node, i) => (
               <span key={node.id} className="flex items-center gap-1.5">
-                <ChevronRight className="h-3 w-3 text-gray-300" />
+                <ChevronRight className="h-3 w-3 text-[#1E2D4D]/30" />
                 <button
                   onClick={() => i < breadcrumb.length - 2 ? setDrillDownNodeId(node.id) : undefined}
-                  className={`font-medium cursor-pointer ${i === breadcrumb.length - 2 ? 'text-gray-900' : 'text-[#1E2D4D]/50 hover:text-gray-700'}`}
+                  className={`font-medium cursor-pointer ${i === breadcrumb.length - 2 ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'}`}
                 >
                   {node.name}
                 </button>
@@ -271,11 +271,11 @@ export function EnterpriseExecutive() {
                   <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1E2D4D' }} />
                   <span className="text-xs text-[#1E2D4D]/50">{s.label}</span>
                 </div>
-                <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-gray-900'}`}>{s.value}</p>
+                <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-[#1E2D4D]'}`}>{s.value}</p>
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-4 sm:gap-6 mt-4 pt-3 border-t border-gray-100 flex-wrap">
+          <div className="flex items-center gap-4 sm:gap-6 mt-4 pt-3 border-t border-[#1E2D4D]/5 flex-wrap">
             <div className="flex items-center gap-2">
               <ScoreCircle score={foodSafetyScore} size={52} />
               <div>
@@ -312,7 +312,7 @@ export function EnterpriseExecutive() {
             </div>
             <div className="space-y-2 max-h-[420px] overflow-y-auto">
               {alerts.filter(a => !a.acknowledged).map(a => (
-                <div key={a.id} className={`p-3 rounded-lg border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
+                <div key={a.id} className={`p-3 rounded-xl border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${a.severity === 'critical' ? 'text-red-500' : a.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
                     <div className="flex-1 min-w-0">
@@ -345,7 +345,7 @@ export function EnterpriseExecutive() {
               {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — EvidLY Demo Org'}
             </h3>
             {drillDownNodeId && (
-              <button onClick={() => setDrillDownNodeId(null)} className="text-xs text-[#1E2D4D]/50 hover:text-gray-700 cursor-pointer">
+              <button onClick={() => setDrillDownNodeId(null)} className="text-xs text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 cursor-pointer">
                 View All Business Units
               </button>
             )}
@@ -364,11 +364,11 @@ export function EnterpriseExecutive() {
               </thead>
               <tbody>
                 {scorecardRows.map(row => (
-                  <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => handleDrill(row.id)}>
+                  <tr key={row.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0] cursor-pointer" onClick={() => handleDrill(row.id)}>
                     <td className="px-3 py-2.5">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: scoreColor(row.avgScore) }} />
-                        <span className="font-medium text-gray-900">{row.name}</span>
+                        <span className="font-medium text-[#1E2D4D]">{row.name}</span>
                       </div>
                     </td>
                     <td className="px-3 py-2.5 text-center text-[#1E2D4D]/70">{row.locationCount.toLocaleString()}</td>
@@ -394,7 +394,7 @@ export function EnterpriseExecutive() {
                 ))}
                 {/* Corporate total footer */}
                 <tr className="bg-[#FAF7F0] font-semibold">
-                  <td className="px-3 py-2.5 text-gray-900">{drillDownNodeId ? activeNode.name + ' Total' : 'Corporate Total'}</td>
+                  <td className="px-3 py-2.5 text-[#1E2D4D]">{drillDownNodeId ? activeNode.name + ' Total' : 'Corporate Total'}</td>
                   <td className="px-3 py-2.5 text-center text-[#1E2D4D]/80">{totalLocations.toLocaleString()}</td>
                   <td className="px-3 py-2.5 text-center">
                     <span className="font-bold" style={{ color: scoreColor(foodSafetyScore) }}>{foodSafetyScore}%</span>
@@ -467,7 +467,7 @@ export function EnterpriseExecutive() {
           </ResponsiveContainer>
 
           {/* BU Toggle checkboxes */}
-          <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-gray-100">
+          <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-[#1E2D4D]/5">
             <span className="text-xs text-[#1E2D4D]/30 font-medium">Compare:</span>
             {Object.entries(BU_LINE_LABELS).filter(([k]) => k !== 'compositeScore').map(([key, label]) => (
               <label key={key} className="flex items-center gap-1.5 cursor-pointer">
@@ -498,17 +498,17 @@ export function EnterpriseExecutive() {
           )}
 
           {/* Predicted scores table */}
-          <div className="mt-4 pt-3 border-t border-gray-100">
+          <div className="mt-4 pt-3 border-t border-[#1E2D4D]/5">
             <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Next Quarter Predictions</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
               {predictedScores.map(p => (
-                <div key={p.businessUnit} className="rounded-lg border border-gray-100 p-2 bg-[#FAF7F0]">
+                <div key={p.businessUnit} className="rounded-xl border border-[#1E2D4D]/5 p-2 bg-[#FAF7F0]">
                   <p className="text-xs text-[#1E2D4D]/50 truncate">{p.businessUnit}</p>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs font-bold" style={{ color: scoreColor(p.predictedNextQuarter) }}>
                       {p.predictedNextQuarter}%
                     </span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${p.confidence === 'high' ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}`}>
+                    <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${p.confidence === 'high' ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}`}>
                       {p.confidence}
                     </span>
                   </div>
@@ -522,12 +522,12 @@ export function EnterpriseExecutive() {
 
       {/* ── G. Powered By Footer ──────────────────────────── */}
       {tenant.showPoweredBy && (
-        <footer className="text-center py-4 border-t border-gray-100 bg-white mt-6">
+        <footer className="text-center py-4 border-t border-[#1E2D4D]/5 bg-white mt-6">
           <p className="text-xs text-[#1E2D4D]/30">
             {tenant.poweredByText.replace('EvidLY', '').trim()}{' '}
-            <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span>
+            <span style={{ color: '#A08C5A', fontWeight: 600 }}>EvidLY</span>
           </p>
-          <p className="text-xs text-gray-300 mt-0.5">
+          <p className="text-xs text-[#1E2D4D]/30 mt-0.5">
             compliance.cleaningprosplus.com — EvidLY Demo Org
           </p>
         </footer>

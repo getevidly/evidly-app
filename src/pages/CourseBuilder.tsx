@@ -217,7 +217,7 @@ export function CourseBuilder() {
               <div>
                 <label style={labelStyle}>Color Theme</label>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  {['#15803d', '#1E2D4D', '#dc2626', '#7c3aed', '#d4af37', '#0369a1'].map(c => (
+                  {['#15803d', '#1E2D4D', '#dc2626', '#7c3aed', '#A08C5A', '#0369a1'].map(c => (
                     <button key={c} onClick={() => setThumbnailColor(c)}
                       style={{ width: 36, height: 36, borderRadius: 8, background: c, border: thumbnailColor === c ? '3px solid #111827' : '2px solid #e5e7eb', cursor: 'pointer' }} />
                   ))}
@@ -414,7 +414,7 @@ export function CourseBuilder() {
                   <Plus size={16} /> Add Question
                 </button>
                 <button onClick={() => toast.info('AI Generate Questions (Demo)')}
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Brain size={16} /> AI Generate Questions
                 </button>
               </div>

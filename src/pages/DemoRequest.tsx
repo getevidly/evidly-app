@@ -4,7 +4,7 @@ import { Building2, MapPin, Users, ArrowRight, AlertTriangle, Shield } from 'luc
 import { isBlockedDomain, KITCHEN_TYPES, OPERATION_VOLUMES, US_STATES } from '../data/demoGeneratorData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 interface FormData {
   name: string;
@@ -89,7 +89,7 @@ export function DemoRequest() {
     }, 500);
   };
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
   const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   return (
@@ -122,7 +122,7 @@ export function DemoRequest() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#1E2D4D]/10">
           {/* Contact Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Your Information</h2>
@@ -147,7 +147,7 @@ export function DemoRequest() {
           </div>
 
           {/* Company Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <Building2 className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Company Details</h2>
@@ -180,7 +180,7 @@ export function DemoRequest() {
           </div>
 
           {/* Location Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Kitchen Location</h2>

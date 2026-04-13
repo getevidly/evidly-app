@@ -76,7 +76,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
         )}
         {counts.high > 0 && (
           <>
-            {counts.critical > 0 && <span className="text-gray-300">|</span>}
+            {counts.critical > 0 && <span className="text-[#1E2D4D]/30">|</span>}
             <span className="flex items-center gap-1 text-sm font-semibold" style={{ color: '#d97706' }}>
               {counts.high} High
             </span>
@@ -84,7 +84,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
         )}
         {counts.medium > 0 && (
           <>
-            {(counts.critical > 0 || counts.high > 0) && <span className="text-gray-300">|</span>}
+            {(counts.critical > 0 || counts.high > 0) && <span className="text-[#1E2D4D]/30">|</span>}
             <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#2563eb' }}>
               {counts.medium} Medium
             </span>

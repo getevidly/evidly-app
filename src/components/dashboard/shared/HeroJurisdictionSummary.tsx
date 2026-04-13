@@ -41,7 +41,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
   if (locations.length === 0) {
     return (
       <div className="mt-2 rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-        <p className="text-sm text-slate-300">No locations configured.</p>
+        <p className="text-sm text-[#1E2D4D]/30">No locations configured.</p>
       </div>
     );
   }
@@ -135,7 +135,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                   <span className="text-xs text-white font-medium">{loc.name}</span>
                   <div className="flex items-center gap-1.5">
                     {fireConfig?.federal_overlay && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 flex items-center gap-0.5">
+                      <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 flex items-center gap-0.5">
                         <Shield size={9} />
                         {fireConfig.federal_overlay.agency}
                       </span>
@@ -150,7 +150,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                     <span className="text-xs text-slate-200 truncate">{fireConfig.fire_ahj_name}</span>
                     {fireConfig.ahj_split_notes && (
                       <span title={fireConfig.ahj_split_notes}>
-                        <Info size={10} className="text-slate-400 shrink-0" />
+                        <Info size={10} className="text-[#1E2D4D]/40 shrink-0" />
                       </span>
                     )}
                   </div>

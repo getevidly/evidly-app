@@ -120,7 +120,7 @@ export default function JurisdictionIntelligence() {
         <select
           value={filterCounty}
           onChange={e => setFilterCounty(e.target.value)}
-          className="border border-[#1E2D4D]/10 rounded-lg px-3 py-2 text-sm"
+          className="border border-[#1E2D4D]/10 rounded-xl px-3 py-2 text-sm"
         >
           <option value="">All Counties</option>
           {counties.map(c => <option key={c} value={c}>{c}</option>)}
@@ -165,7 +165,7 @@ export default function JurisdictionIntelligence() {
                         className="text-xs px-2 py-0.5 rounded-full font-medium">
                         {item.pillar.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-[#1E2D4D]/70 rounded-full">
+                      <span className="text-xs px-2 py-0.5 bg-[#1E2D4D]/5 text-[#1E2D4D]/70 rounded-full">
                         {item.update_type.replace(/_/g, ' ')}
                       </span>
                       {item.published && (

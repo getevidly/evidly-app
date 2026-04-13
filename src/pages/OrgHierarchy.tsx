@@ -125,7 +125,7 @@ function StatusBadge({ status }: { status: string }) {
     'Unsatisfactory':  'bg-red-50 text-red-700 border-red-300',
   };
   return (
-    <span className={`text-xs px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-gray-100 text-[#1E2D4D]/70 border-[#1E2D4D]/15'}`}>
+    <span className={`text-xs px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/15'}`}>
       {status}
     </span>
   );
@@ -159,7 +159,7 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
         className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg text-left transition-colors cursor-pointer ${
           isSelected
             ? 'bg-[#EEF1F7] border-l-2 border-yellow-600'
-            : 'hover:bg-gray-100'
+            : 'hover:bg-[#1E2D4D]/5'
         }`}
         style={{ marginLeft: depth * 20 }}
       >
@@ -172,7 +172,7 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
         )}
 
         <div className="flex-1 min-w-0 flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-900 truncate">{node.name}</span>
+          <span className="text-sm font-medium text-[#1E2D4D] truncate">{node.name}</span>
           <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0">{node.code}</span>
         </div>
 
@@ -239,7 +239,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Food Safety */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-semibold text-[#1E2D4D]">🍽 Food Safety</span>
         </div>
@@ -264,7 +264,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Facility Safety */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Facility Safety</span>
         </div>
@@ -282,7 +282,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Open Items */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
           <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
@@ -321,13 +321,13 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Location list */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Locations</h3>
         <div className="space-y-2">
           {locations.map(loc => (
             <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0]">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-sm text-gray-900 truncate">{loc.name}</span>
+                <span className="text-sm text-[#1E2D4D] truncate">{loc.name}</span>
                 <span className="text-xs text-[#1E2D4D]/30">{loc.code}</span>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -343,7 +343,7 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Summary */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <p className="text-sm text-[#1E2D4D]/80">
           <span className={foodSafeCount === locations.length ? 'text-green-600' : 'text-amber-600'}>
             {foodSafeCount} of {locations.length}
@@ -357,7 +357,7 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Open Items */}
-      <div className="rounded-lg border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
           <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
@@ -487,14 +487,14 @@ export function OrgHierarchy() {
           </button>
           <button
             onClick={() => navigate('/import?type=locations')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1E2D4D] text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D] text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors cursor-pointer"
           >
             <Upload className="h-4 w-4" />
             Import
           </button>
           <button
             onClick={() => toast.info('Hierarchy configuration')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors cursor-pointer"
           >
             <Settings className="h-4 w-4" />
             Hierarchy Config
@@ -505,7 +505,7 @@ export function OrgHierarchy() {
       {/* Empty state for live mode */}
       {!isDemoMode ? (
         <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-          <MapPin className="h-12 w-12 text-gray-300 mb-4" />
+          <MapPin className="h-12 w-12 text-[#1E2D4D]/30 mb-4" />
           <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No locations added yet</h3>
           <p className="text-sm text-[#1E2D4D]/50 max-w-md mb-4">Add your first location to get started.</p>
           <button

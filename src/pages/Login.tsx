@@ -204,7 +204,7 @@ export function Login() {
           </div>
 
           {/* Mobile trust bar (hidden on desktop) */}
-          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-gray-100">
+          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-[#1E2D4D]/5">
             {TRUST_ITEMS.map((item) => (
               <div key={item.value} className="text-center">
                 <p className="text-base font-bold text-[#1E2D4D]">{item.value}</p>
@@ -244,7 +244,7 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
               />
             </div>
 
@@ -261,7 +261,7 @@ export function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
                 <button
                   type="button"
@@ -270,9 +270,9 @@ export function Login() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>
@@ -312,7 +312,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -357,7 +357,7 @@ export function Login() {
                 href="https://evidly.com?ref=powered-by"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
               >
                 <EvidlyIcon size={14} />
                 <span>Powered by <span className="font-semibold text-[#1E2D4D]/50">EvidLY</span></span>

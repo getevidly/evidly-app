@@ -581,7 +581,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: '1px solid #e5e7eb' }}
     >
       {/* Header */}
@@ -613,7 +613,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
                   ? <AlertTriangle size={14} className="text-red-500 shrink-0" />
                   : <CheckCircle size={14} className="text-green-500 shrink-0" />
                 }
-                <span className={`text-sm ${isDev ? 'font-semibold text-red-700' : 'text-gray-800'}`}>
+                <span className={`text-sm ${isDev ? 'font-semibold text-red-700' : 'text-[#1E2D4D]/90'}`}>
                   {ccp.name}
                 </span>
               </div>
@@ -1394,9 +1394,9 @@ export function Checklists() {
                 onChange={(e) =>
                   handleItemResponse(item.id, e.target.checked ? 'checked' : 'unchecked', e.target.checked, '')
                 }
-                className="h-7 w-7 text-[#d4af37] focus:ring-[#d4af37] border-[#1E2D4D]/15 rounded"
+                className="h-7 w-7 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
               />
-              <span className="text-lg text-gray-900">
+              <span className="text-lg text-[#1E2D4D]">
                 {checklistItemMap[item.title] || item.title}
                 {renderAuthBadges(item)}
               </span>
@@ -1417,7 +1417,7 @@ export function Checklists() {
       case 'yes_no':
         return (
           <div>
-            <p className="text-lg text-gray-900 mb-1">
+            <p className="text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
@@ -1432,7 +1432,7 @@ export function Checklists() {
                 className={`flex-1 px-6 py-4 rounded-lg font-medium transition-all ${
                   response?.response_value === 'yes'
                     ? 'bg-green-500 text-white'
-                    : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 {t('common.yes')}
@@ -1443,7 +1443,7 @@ export function Checklists() {
                 className={`flex-1 px-6 py-4 rounded-lg font-medium transition-all ${
                   response?.response_value === 'no'
                     ? 'bg-red-500 text-white'
-                    : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 {t('common.no')}
@@ -1467,7 +1467,7 @@ export function Checklists() {
                     setAiFields(prev => { const s = new Set(prev); s.delete(`corrective_${item.id}`); return s; });
                   }}
                   rows={2}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="Describe the corrective action..."
                 />
                 {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
@@ -1487,7 +1487,7 @@ export function Checklists() {
       case 'temperature':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-1">
+            <label className="block text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
@@ -1500,7 +1500,7 @@ export function Checklists() {
               step="0.1"
               value={response?.response_value || ''}
               onChange={(e) => handleItemResponse(item.id, e.target.value, null, '')}
-              className="w-full px-4 py-3 text-2xl font-bold tracking-tight border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-3 text-2xl font-bold tracking-tight border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder="00.0°F"
             />
             {/* Pass/Fail feedback for temperature items */}
@@ -1537,7 +1537,7 @@ export function Checklists() {
                     setAiFields(prev => { const s = new Set(prev); s.delete(`ccp_corrective_${item.id}`); return s; });
                   }}
                   rows={2}
-                  className="w-full px-3 py-2 border border-red-300 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-red-400 text-sm"
+                  className="w-full px-3 py-2 border border-red-300 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-red-400 text-sm"
                   placeholder="Describe corrective action taken..."
                 />
                 {aiFields.has(`ccp_corrective_${item.id}`) && <AIGeneratedIndicator />}
@@ -1557,7 +1557,7 @@ export function Checklists() {
       case 'text_input':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-1">
+            <label className="block text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
@@ -1569,7 +1569,7 @@ export function Checklists() {
               type="text"
               value={response?.response_value || ''}
               onChange={(e) => handleItemResponse(item.id, e.target.value, null, '')}
-              className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder="Enter your response..."
             />
             <div className="mt-2">
@@ -1584,7 +1584,7 @@ export function Checklists() {
       case 'photo':
         return (
           <div>
-            <p className="text-lg text-gray-900 mb-1">
+            <p className="text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
@@ -1671,8 +1671,8 @@ export function Checklists() {
             onClick={() => setActiveView('today')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'today'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('checklists.todaysChecklists')}
@@ -1681,8 +1681,8 @@ export function Checklists() {
             onClick={() => setActiveView('templates')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'templates'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('checklists.templates')}
@@ -1691,8 +1691,8 @@ export function Checklists() {
             onClick={() => setActiveView('history')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             History
@@ -1709,7 +1709,7 @@ export function Checklists() {
                   <h3 className="text-sm font-bold text-[#1E2D4D] flex items-center gap-1.5">
                     <EvidlyIcon size={14} /> HACCP Logs Auto-Populated
                   </h3>
-                  <button onClick={() => setCcpMappingResults([])} className="text-[#1E2D4D]/30 hover:text-gray-600"><X size={16} /></button>
+                  <button onClick={() => setCcpMappingResults([])} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"><X size={16} /></button>
                 </div>
                 <div className="space-y-1">
                   {ccpMappingResults.map((r, i) => (
@@ -1746,7 +1746,7 @@ export function Checklists() {
                 const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
                 const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
                 const statusLabel = cl.status === 'complete' ? t('common.completed') : cl.status === 'in_progress' ? t('common.inProgress') : t('common.notStarted');
-                const statusBg = cl.status === 'complete' ? 'bg-emerald-50 text-emerald-700' : cl.status === 'in_progress' ? 'bg-amber-50 text-amber-700' : 'bg-gray-100 text-[#1E2D4D]/70';
+                const statusBg = cl.status === 'complete' ? 'bg-emerald-50 text-emerald-700' : cl.status === 'in_progress' ? 'bg-amber-50 text-amber-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
                 const barColor = cl.status === 'complete' ? '#22c55e' : cl.status === 'in_progress' ? '#eab308' : '#d1d5db';
                 const iconBg = cl.status === 'complete' ? 'bg-green-100' : cl.status === 'in_progress' ? 'bg-yellow-100' : 'bg-[#1E2D4D]/5';
                 const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-[#1E2D4D]/30';
@@ -1754,7 +1754,7 @@ export function Checklists() {
                 return (
                   <div
                     key={cl.id}
-                    className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
+                    className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 cursor-pointer transition-all hover:shadow-md hover:border-[#1E2D4D]/15"
                     onClick={() => {
                       // Find a matching template from user templates or demo items map
                       const match = templates.find(t => t.name === cl.name);
@@ -1810,7 +1810,7 @@ export function Checklists() {
                       <div className="flex items-center gap-2">
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
                         {cl.status === 'complete' && (
-                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-[#1E2D4D]/70">
+                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
                             <Camera className="h-3 w-3" />
                             {cl.completed > 3 ? 3 : 2} {t('common.photos')}
                           </span>
@@ -1894,14 +1894,14 @@ export function Checklists() {
                                   {def.authority_source && (() => {
                                     const auth = AUTHORITY_LABELS[def.authority_source!];
                                     return auth ? (
-                                      <span className="text-[9px] font-semibold px-1 py-0.5 rounded ml-1.5 inline-block"
+                                      <span className="text-[11px] font-semibold px-1 py-0.5 rounded ml-1.5 inline-block"
                                         style={{ color: auth.color, backgroundColor: auth.bg }}>
                                         {auth.label}{def.authority_section ? ` ${def.authority_section}` : ''}
                                       </span>
                                     ) : null;
                                   })()}
                                   {def.haccp_ccp && (
-                                    <span className="text-[9px] font-semibold px-1 py-0.5 rounded bg-amber-100 text-amber-800 ml-1 inline-block">
+                                    <span className="text-[11px] font-semibold px-1 py-0.5 rounded bg-amber-100 text-amber-800 ml-1 inline-block">
                                       {def.haccp_ccp}
                                     </span>
                                   )}
@@ -1967,7 +1967,7 @@ export function Checklists() {
                 <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Your Templates</h3>
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden overflow-x-auto">
                   <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#FAF7F0]">
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Name</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.type')}</th>
@@ -1978,8 +1978,8 @@ export function Checklists() {
                     </thead>
                     <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                       {templates.map((template) => (
-                        <tr key={template.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{templateNameMap[template.name] || template.name}</td>
+                        <tr key={template.id} className="hover:bg-[#FAF7F0]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">{templateNameMap[template.name] || template.name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 capitalize hidden sm:table-cell">{template.checklist_type.replace('_', ' ')}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{template.items_count}</td>
                           <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
@@ -1992,7 +1992,7 @@ export function Checklists() {
                               <button onClick={() => handleStartChecklist(template)} className="text-[#1E2D4D] hover:text-[#141E33]" title="Start checklist">
                                 <Play className="h-4 w-4" />
                               </button>
-                              <button onClick={() => handleEditTemplate(template)} className="text-[#1E2D4D]/50 hover:text-gray-700" title="Edit template">
+                              <button onClick={() => handleEditTemplate(template)} className="text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80" title="Edit template">
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900" title="Delete template">
@@ -2049,7 +2049,7 @@ export function Checklists() {
                   <select
                     value={historyRange}
                     onChange={(e) => setHistoryRange(e.target.value)}
-                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]"
+                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]"
                   >
                     <option value="today">Today</option>
                     <option value="7days">{t('checklists.last7Days')}</option>
@@ -2063,11 +2063,11 @@ export function Checklists() {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">From</label>
-                      <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]" />
+                      <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">To</label>
-                      <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]" />
+                      <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]" />
                     </div>
                   </>
                 )}
@@ -2078,7 +2078,7 @@ export function Checklists() {
 
             <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden overflow-x-auto">
               <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                <thead className="bg-gray-50">
+                <thead className="bg-[#FAF7F0]">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">{t('common.date')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">{t('checklists.checklist')}</th>
@@ -2096,12 +2096,12 @@ export function Checklists() {
                       : 'bg-emerald-50 text-emerald-700';
                     const statusLabel = entry.status === 'missed' ? t('checklists.missed') : entry.status === 'incomplete' ? t('checklists.incomplete') : t('common.completed');
                     return (
-                    <tr key={entry.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <tr key={entry.id} className="hover:bg-[#FAF7F0]">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                         {format(new Date(entry.date), 'MMM d, yyyy')}
                         <span className="text-[#1E2D4D]/30 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">
                         {templateNameMap[entry.name] || entry.name}
                         {entry.detail && <span className="block text-xs text-[#1E2D4D]/50">{entry.detail}</span>}
                       </td>
@@ -2124,7 +2124,7 @@ export function Checklists() {
                               style={{ width: `${entry.score}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-900">{entry.score}%</span>
+                          <span className="text-sm font-medium text-[#1E2D4D]">{entry.score}%</span>
                         </div>
                         )}
                       </td>
@@ -2155,7 +2155,7 @@ export function Checklists() {
       {/* Create Template Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
             <h3 className="text-2xl font-bold tracking-tight mb-6">{t('checklists.createTemplate')}</h3>
 
             <form onSubmit={handleCreateTemplate} className="space-y-6">
@@ -2166,7 +2166,7 @@ export function Checklists() {
                   value={templateName}
                   onChange={(e) => setTemplateName(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   placeholder="e.g., Morning Opening Checklist"
                 />
               </div>
@@ -2178,7 +2178,7 @@ export function Checklists() {
                     value={templateType}
                     onChange={(e) => setTemplateType(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     <option value="">Select type...</option>
                     {CHECKLIST_TYPES.map((type) => (
@@ -2195,7 +2195,7 @@ export function Checklists() {
                     value={templateFrequency}
                     onChange={(e) => setTemplateFrequency(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     {FREQUENCIES.map((freq) => (
                       <option key={freq.value} value={freq.value}>
@@ -2211,7 +2211,7 @@ export function Checklists() {
                 <div className="space-y-2 mb-3">
                   {items.map((item, index) => (
                     <div key={index} className="flex items-center space-x-2 p-3 bg-[#FAF7F0] rounded-lg">
-                      <span className="text-sm text-gray-900 flex-1">{item.title}</span>
+                      <span className="text-sm text-[#1E2D4D] flex-1">{item.title}</span>
                       <span className="text-xs text-[#1E2D4D]/50 capitalize">{item.type.replace('_', ' ')}</span>
                       <button
                         type="button"
@@ -2229,13 +2229,13 @@ export function Checklists() {
                     type="text"
                     value={newItemTitle}
                     onChange={(e) => setNewItemTitle(e.target.value)}
-                    className="flex-1 min-w-0 px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="flex-1 min-w-0 px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                     placeholder={t('checklists.itemTitle')}
                   />
                   <select
                     value={newItemType}
                     onChange={(e) => setNewItemType(e.target.value)}
-                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     {ITEM_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -2246,7 +2246,7 @@ export function Checklists() {
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-4 py-2 bg-gray-200 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-300 transition-colors min-h-[44px]"
+                    className="px-4 py-2 bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/15 transition-colors min-h-[44px]"
                   >
                     <Plus className="h-5 w-5" />
                   </button>
@@ -2257,7 +2257,7 @@ export function Checklists() {
                 <button
                   type="button"
                   onClick={() => setShowTemplateModal(false)}
-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white min-h-[44px]"
                 >
                   Cancel
                 </button>
@@ -2277,7 +2277,7 @@ export function Checklists() {
       {/* Complete Checklist Modal */}
       {showCompleteModal && selectedTemplate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
             <div className="mb-6">
               <h3 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
@@ -2287,7 +2287,7 @@ export function Checklists() {
                 </div>
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                   <div
-                    className="bg-[#d4af37] h-3 rounded-full transition-all duration-300"
+                    className="bg-[#A08C5A] h-3 rounded-full transition-all duration-300"
                     style={{ width: `${currentProgress}%` }}
                   />
                 </div>
@@ -2296,7 +2296,7 @@ export function Checklists() {
 
             <div className="space-y-6">
               {templateItems.map((item, index) => (
-                <div key={item.id} className="p-4 border border-[#1E2D4D]/10 rounded-lg">
+                <div key={item.id} className="p-4 border border-[#1E2D4D]/10 rounded-xl">
                   <div className="flex items-start space-x-3 mb-3">
                     <div className="flex-shrink-0 w-8 h-8 bg-[#1E2D4D] text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}
@@ -2311,7 +2311,7 @@ export function Checklists() {
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(false)}
-                className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white min-h-[44px]"
               >
                 Cancel
               </button>

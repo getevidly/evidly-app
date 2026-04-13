@@ -24,7 +24,7 @@ export function StaffStanding({ totalTasks, completedTasks, overdueTasks }: Staf
   return (
     <>
       <style>{KEYFRAMES}</style>
-      <div className="bg-white rounded-lg px-4 py-5" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl px-4 py-5" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-5">
           {/* Progress ring */}
           <div className="relative shrink-0" style={{ width: 96, height: 96 }}>

@@ -16,7 +16,7 @@ export default function DemoBookingBanner() {
       <div className="bg-white rounded-xl shadow-xl border border-[#1E2D4D]/10 p-4 relative">
         <button
           onClick={dismiss}
-          className="absolute top-3 right-3 p-2.5 -m-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
+          className="absolute top-3 right-3 p-2.5 -m-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors bg-transparent border-none cursor-pointer"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />
@@ -32,7 +32,7 @@ export default function DemoBookingBanner() {
           <CalendlyButton text="Book Walkthrough" variant="gold" />
           <button
             onClick={dismiss}
-            className="px-3 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-gray-700 transition-colors bg-transparent border-none cursor-pointer"
+            className="px-3 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors bg-transparent border-none cursor-pointer"
           >
             Maybe Later
           </button>

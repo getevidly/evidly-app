@@ -291,7 +291,7 @@ export default function AdminUsers() {
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>User Management</h1>
           <p style={{ fontSize: 13, color: TEXT_MUTED, marginTop: 2 }}>
-            Manage user accounts, roles, and access across the platform
+            Manage user accounts, roles, and access across EvidLY
           </p>
         </div>
         <button

@@ -32,7 +32,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: CARD_BORDER }}>
         <h3 className="text-sm font-bold" style={{ color: NAVY }}>Job Details</h3>
-        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
           <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
         </button>
       </div>
@@ -111,7 +111,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
       <div className="mt-auto px-4 py-4 border-t space-y-2" style={{ borderColor: CARD_BORDER }}>
         <button
           onClick={onReschedule}
-          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <span className="flex items-center gap-2">
@@ -137,7 +137,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
 
         <button
           onClick={() => alert('View full job details (demo)')}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-[#FAF7F0] transition-colors"
           style={{ color: TEXT_TERTIARY }}
         >
           Open Full Details

@@ -44,8 +44,8 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
             {rows.map((row, i) => {
               const delta = row.yours - row.verticalAvg;
               return (
-                <tr key={row.category} className={i < rows.length - 1 ? 'border-b border-gray-50' : ''}>
-                  <td className="py-3 pr-4 text-sm text-gray-900">{row.category}</td>
+                <tr key={row.category} className={i < rows.length - 1 ? 'border-b border-[#1E2D4D]/3' : ''}>
+                  <td className="py-3 pr-4 text-sm text-[#1E2D4D]">{row.category}</td>
                   <td className="py-3 px-3 text-center">
                     <span className="text-sm font-bold" style={{
                       color: row.yours >= 90 ? '#22c55e' : row.yours >= 75 ? '#eab308' : row.yours >= 60 ? '#f59e0b' : '#ef4444'

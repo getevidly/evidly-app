@@ -698,7 +698,7 @@ export function SelfAudit() {
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 onClick={() => startAudit('primary')}
-                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors text-left"
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors text-left"
               >
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start CalCode Track
@@ -708,7 +708,7 @@ export function SelfAudit() {
               </button>
               <button
                 onClick={() => startAudit('federal')}
-                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors text-left"
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors text-left"
               >
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start FDA Food Code Track
@@ -721,7 +721,7 @@ export function SelfAudit() {
               <div className="flex gap-3">
                 <button
                   onClick={resumeAudit}
-                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#A08C5A] hover:bg-[#eef4f8] transition-colors"
                 >
                   <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                   Resume Inspection
@@ -740,7 +740,7 @@ export function SelfAudit() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => startAudit('primary')}
-              className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
+              className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
             >
               <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
               Start Inspection
@@ -749,7 +749,7 @@ export function SelfAudit() {
               <>
                 <button
                   onClick={resumeAudit}
-                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#A08C5A] hover:bg-[#eef4f8] transition-colors"
                 >
                   <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                   Resume Inspection
@@ -811,7 +811,7 @@ export function SelfAudit() {
           <div className="h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${sectionPct}%`, backgroundColor: '#d4af37' }}
+              style={{ width: `${sectionPct}%`, backgroundColor: '#A08C5A' }}
             />
           </div>
         </div>
@@ -862,13 +862,13 @@ export function SelfAudit() {
                   : item.status === 'fail'
                   ? 'border-red-300 bg-red-50/30'
                   : item.status === 'na'
-                  ? 'border-[#1E2D4D]/15 bg-gray-50/30'
+                  ? 'border-[#1E2D4D]/15 bg-[#FAF7F0]/30'
                   : 'border-[#b8d4e8]'
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{item.text}</p>
+                  <p className="text-sm font-medium text-[#1E2D4D]">{item.text}</p>
                   <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{item.citation || sec.citation}</p>
                   {/* Jurisdiction Variance indicator */}
                   {item.itemDefId && (() => {
@@ -905,8 +905,8 @@ export function SelfAudit() {
                     onClick={() => setItemStatus(currentSection, ii, 'na')}
                     className={`flex items-center justify-center gap-1.5 rounded-lg font-semibold text-xs transition-colors ${
                       item.status === 'na'
-                        ? 'bg-gray-600 text-white'
-                        : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-gray-100 border border-[#1E2D4D]/10'
+                        ? 'bg-[#1E2D4D]/40 text-white'
+                        : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 border border-[#1E2D4D]/10'
                     }`}
                     style={{ minWidth: 44, minHeight: 44 }}
                   >
@@ -934,7 +934,7 @@ export function SelfAudit() {
                       onChange={(e) => { setItemNotes(currentSection, ii, e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`notes-${item.id}`); return n; }); }}
                       placeholder="Describe the issue..."
                       rows={2}
-                      className="w-full text-sm border border-[#1E2D4D]/15 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
+                      className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
                     />
                     {aiFields.has(`notes-${item.id}`) && <AIGeneratedIndicator />}
                   </div>
@@ -996,7 +996,7 @@ export function SelfAudit() {
           ) : (
             <button
               onClick={finishAudit}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
               style={{ minHeight: 44 }}
             >
               Finish Inspection
@@ -1142,7 +1142,7 @@ export function SelfAudit() {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{f.text}</p>
+                            <p className="text-sm font-medium text-[#1E2D4D]">{f.text}</p>
                             <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{f.sectionName}</p>
                           </div>
                           {severityBadge(f.severity)}
@@ -1160,7 +1160,7 @@ export function SelfAudit() {
         {failedItems.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">
-              <AlertTriangle className="h-4 w-4 inline mr-1.5 -mt-0.5 text-[#d4af37]" />
+              <AlertTriangle className="h-4 w-4 inline mr-1.5 -mt-0.5 text-[#A08C5A]" />
               Corrective Action Plan
             </h3>
             <div className="space-y-3">
@@ -1168,7 +1168,7 @@ export function SelfAudit() {
                 <div key={f.id} className="flex gap-3">
                   <span className="text-xs font-bold text-[#1E2D4D]/30 mt-0.5 shrink-0">{idx + 1}.</span>
                   <div>
-                    <p className="text-sm text-gray-800">{correctiveAction(f, f.sectionName)}</p>
+                    <p className="text-sm text-[#1E2D4D]/90">{correctiveAction(f, f.sectionName)}</p>
                   </div>
                 </div>
               ))}
@@ -1239,7 +1239,7 @@ export function SelfAudit() {
           )}
           <button
             onClick={resetAudit}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
             style={{ minHeight: 44 }}
           >
             <RotateCcw className="h-4 w-4" />
@@ -1278,7 +1278,7 @@ export function SelfAudit() {
 
       {!loadingHistory && pastSessions.length === 0 && (
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center">
-          <ClipboardList className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+          <ClipboardList className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
           <p className="text-sm text-[#1E2D4D]/50">No completed inspections yet.</p>
           <p className="text-xs text-[#1E2D4D]/30 mt-1">Complete a self-inspection to see it here.</p>
         </div>
@@ -1350,7 +1350,7 @@ export function SelfAudit() {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{f.item}</p>
+                          <p className="text-sm font-medium text-[#1E2D4D]">{f.item}</p>
                           <p className="text-xs text-[#1E2D4D]/50">{f.section}</p>
                         </div>
                         {severityBadge(f.severity)}

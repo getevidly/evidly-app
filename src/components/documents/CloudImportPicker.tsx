@@ -350,7 +350,7 @@ export function CloudImportPicker({ onFilesImported, disabled }: CloudImportPick
               type="button"
               disabled={disabled || importing !== null}
               onClick={() => handleProviderClick(provider.id)}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-xl border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 borderColor: '#d1d5db',
                 color: '#374151',

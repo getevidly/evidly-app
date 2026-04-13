@@ -197,7 +197,7 @@ export function CorrectiveActionDetail() {
           <ArrowLeft size={16} /> Back to Corrective Actions
         </button>
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <AlertTriangle className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
           <p className="text-sm font-medium text-[#1E2D4D]/80">Corrective action not found</p>
           <p className="text-xs text-[#1E2D4D]/50 mt-1">The requested corrective action does not exist.</p>
         </div>
@@ -322,7 +322,7 @@ export function CorrectiveActionDetail() {
                 </span>
                 {/* Date */}
                 {dateForStep && (
-                  <span className="text-[9px] text-[#1E2D4D]/30">{formatDate(dateForStep)}</span>
+                  <span className="text-[11px] text-[#1E2D4D]/30">{formatDate(dateForStep)}</span>
                 )}
               </div>
             );
@@ -352,12 +352,12 @@ export function CorrectiveActionDetail() {
         </div>
         {/* Reassign dropdown — only for management roles and non-terminal statuses */}
         {item.status !== 'verified' && canAdvance && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3 border-t border-[#1E2D4D]/5">
             <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Reassign to</label>
             <select
               value=""
               onChange={e => { if (e.target.value) handleReassign(e.target.value); }}
-              className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-1.5 text-[#1E2D4D]/80 w-full sm:w-auto"
+              className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-1.5 text-[#1E2D4D]/80 w-full sm:w-auto"
             >
               <option value="">Select team member...</option>
               {DEMO_TEAM_MEMBERS.filter(m => m.name !== item.assignee).map(m => (
@@ -414,7 +414,7 @@ export function CorrectiveActionDetail() {
             <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Resolution Note</h3>
           </div>
           {item.resolution_note ? (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3">
               <p className="text-sm text-green-800">{item.resolution_note}</p>
               {item.resolved_by && item.resolvedAt && (
                 <p className="text-xs text-green-600 mt-2">Resolved by {item.resolved_by} on {formatDate(item.resolvedAt)}</p>
@@ -428,7 +428,7 @@ export function CorrectiveActionDetail() {
                 onChange={e => setResolutionNote(e.target.value)}
                 rows={3}
                 placeholder="Describe resolution actions taken..."
-                className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Resolution Note"
@@ -451,7 +451,7 @@ export function CorrectiveActionDetail() {
             <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Verification</h3>
           </div>
           {item.verification_note ? (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={14} className="text-green-600" />
                 <span className="text-sm font-medium text-green-800">Verified by {item.verified_by}</span>
@@ -469,7 +469,7 @@ export function CorrectiveActionDetail() {
                 onChange={e => setVerificationNote(e.target.value)}
                 rows={3}
                 placeholder="Describe verification findings..."
-                className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Verification Note"
@@ -518,7 +518,7 @@ export function CorrectiveActionDetail() {
             fieldLabel="Add a note"
             formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
             entityType="corrective_action"
-            className="flex-1 text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+            className="flex-1 text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
           />
           <button
             onClick={handleAddNote}
@@ -547,7 +547,7 @@ export function CorrectiveActionDetail() {
               <button
                 key={idx}
                 onClick={() => toast.info('File download not available in demo mode')}
-                className="flex items-center gap-2 w-full text-left p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 w-full text-left p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors"
               >
                 <FileText size={14} className="text-[#1E2D4D]/30 shrink-0" />
                 <span className="text-sm text-[#1E2D4D]/80 flex-1">{att.name}</span>
@@ -582,7 +582,7 @@ export function CorrectiveActionDetail() {
                     : entry.action;
 
               return (
-                <div key={idx} className="flex items-start gap-3 py-2 border-b border-gray-50 last:border-0">
+                <div key={idx} className="flex items-start gap-3 py-2 border-b border-[#1E2D4D]/3 last:border-0">
                   <div className="w-5 h-5 rounded-full bg-[#1E2D4D]/5 flex items-center justify-center shrink-0 mt-0.5">
                     {entry.action === 'status_changed' && <ArrowRight size={10} className="text-[#1E2D4D]/50" />}
                     {entry.action === 'reassigned' && <User size={10} className="text-[#1E2D4D]/50" />}

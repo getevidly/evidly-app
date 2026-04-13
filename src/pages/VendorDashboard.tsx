@@ -63,7 +63,7 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={sz} fill={i <= Math.round(rating) ? '#d4af37' : 'none'} stroke={i <= Math.round(rating) ? '#d4af37' : '#d1d5db'} />
+        <Star key={i} className={sz} fill={i <= Math.round(rating) ? '#A08C5A' : 'none'} stroke={i <= Math.round(rating) ? '#A08C5A' : '#d1d5db'} />
       ))}
       <span className={`ml-1 font-semibold ${size === 'lg' ? 'text-lg' : 'text-sm'} text-[#1E2D4D]/80`}>{rating.toFixed(1)}</span>
     </div>
@@ -72,7 +72,7 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
 
 function UrgencyBadge({ urgency }: { urgency: VendorLead['urgency'] }) {
   const map = {
-    low: 'bg-gray-100 text-[#1E2D4D]/70',
+    low: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70',
     normal: 'bg-blue-50 text-blue-700',
     high: 'bg-amber-50 text-amber-700',
     emergency: 'bg-red-50 text-red-700',
@@ -88,7 +88,7 @@ function StatusBadge({ status }: { status: string }) {
     scheduled: 'bg-cyan-50 text-cyan-700 border-cyan-200',
     in_progress: 'bg-amber-50 text-amber-700 border-amber-200',
     completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    declined: 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
+    declined: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
     confirmed: 'bg-green-50 text-green-700 border-green-200',
     pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     verified: 'bg-green-50 text-green-700 border-green-200',
@@ -96,11 +96,11 @@ function StatusBadge({ status }: { status: string }) {
     expired: 'bg-red-50 text-red-700 border-red-200',
   };
   const label = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  return <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-gray-100 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>{label}</span>;
+  return <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>{label}</span>;
 }
 
 function ProgressBar({ value, color }: { value: number; color?: string }) {
-  const c = color || (value >= 95 ? '#22c55e' : value >= 80 ? '#d4af37' : '#f59e0b');
+  const c = color || (value >= 95 ? '#22c55e' : value >= 80 ? '#A08C5A' : '#f59e0b');
   return (
     <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
       <div className="h-2 rounded-full transition-all" style={{ width: `${Math.min(value, 100)}%`, backgroundColor: c }} />
@@ -239,8 +239,8 @@ export function VendorDashboard() {
           <div className="space-y-2 text-xs text-[#1E2D4D]/70 mb-4">
             <div className="flex items-center gap-2"><CheckCircle className="h-3.5 w-3.5 text-green-500" /> Basic marketplace listing</div>
             <div className="flex items-center gap-2"><CheckCircle className="h-3.5 w-3.5 text-green-500" /> Credential verification</div>
-            <div className="flex items-center gap-2"><XCircle className="h-3.5 w-3.5 text-gray-300" /> Analytics dashboard</div>
-            <div className="flex items-center gap-2"><XCircle className="h-3.5 w-3.5 text-gray-300" /> Priority placement</div>
+            <div className="flex items-center gap-2"><XCircle className="h-3.5 w-3.5 text-[#1E2D4D]/30" /> Analytics dashboard</div>
+            <div className="flex items-center gap-2"><XCircle className="h-3.5 w-3.5 text-[#1E2D4D]/30" /> Priority placement</div>
           </div>
           <button
             onClick={() => setShowSubscriptionModal(true)}
@@ -260,7 +260,7 @@ export function VendorDashboard() {
               { label: 'Upload Credential', count: expiringCredentials.length, action: () => setActiveTab('documents'), icon: Upload, color: 'text-amber-600' },
               { label: 'Respond to Reviews', count: vendorReviews.filter(r => !r.vendorResponse).length, action: () => setActiveTab('reviews'), icon: Star, color: 'text-yellow-600' },
             ].map(a => (
-              <button key={a.label} onClick={a.action} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors text-left">
+              <button key={a.label} onClick={a.action} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#FAF7F0] transition-colors text-left">
                 <div className="flex items-center gap-3">
                   <a.icon className={`h-4 w-4 ${a.color}`} />
                   <span className="text-sm text-[#1E2D4D]/80">{a.label}</span>
@@ -280,7 +280,7 @@ export function VendorDashboard() {
       {/* Recent Leads + Upcoming Services */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
-          <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+          <div className="px-5 py-3 border-b border-[#1E2D4D]/5 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Recent Leads</h3>
             <button onClick={() => setActiveTab('leads')} className="text-xs text-[#1E2D4D] font-medium hover:underline">View All</button>
           </div>
@@ -288,7 +288,7 @@ export function VendorDashboard() {
             {vendorLeads.slice(0, 4).map(lead => (
               <div key={lead.id} className="px-5 py-3 flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">{lead.operatorOrg}</div>
+                  <div className="text-sm font-medium text-[#1E2D4D]">{lead.operatorOrg}</div>
                   <div className="text-xs text-[#1E2D4D]/50">{lead.serviceType} &middot; {timeAgo(lead.receivedAt)}</div>
                 </div>
                 <StatusBadge status={lead.status} />
@@ -298,7 +298,7 @@ export function VendorDashboard() {
         </div>
 
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
-          <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+          <div className="px-5 py-3 border-b border-[#1E2D4D]/5 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Upcoming Services</h3>
             <button onClick={() => setActiveTab('services')} className="text-xs text-[#1E2D4D] font-medium hover:underline">View All</button>
           </div>
@@ -306,7 +306,7 @@ export function VendorDashboard() {
             {vendorScheduledServices.slice(0, 4).map(svc => (
               <div key={svc.id} className="px-5 py-3 flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">{svc.clientOrg}</div>
+                  <div className="text-sm font-medium text-[#1E2D4D]">{svc.clientOrg}</div>
                   <div className="text-xs text-[#1E2D4D]/50">{svc.serviceType} &middot; {formatDate(svc.scheduledDate)} at {svc.scheduledTime}</div>
                 </div>
                 <StatusBadge status={svc.status} />
@@ -341,7 +341,7 @@ export function VendorDashboard() {
               className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                 leadFilter === f
                   ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
-                  : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-gray-300'
+                  : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
               }`}
             >
               {f === 'all' ? 'All' : f.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} ({filterCounts[f]})
@@ -383,7 +383,7 @@ export function VendorDashboard() {
                     <button onClick={() => toast.info(`Quote for ${lead.operatorOrg} (Demo)`)} className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340]">
                       <Send className="h-3.5 w-3.5 inline mr-1.5" />Send Quote
                     </button>
-                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50">
+                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-[#FAF7F0]">
                       Decline
                     </button>
                   </>
@@ -397,7 +397,7 @@ export function VendorDashboard() {
                   </button>
                 )}
                 {lead.status === 'completed' && (
-                  <button onClick={() => toast.info('Completion report available in production')} className="px-4 py-2 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50">
+                  <button onClick={() => toast.info('Completion report available in production')} className="px-4 py-2 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-[#FAF7F0]">
                     View Completion Report
                   </button>
                 )}
@@ -426,7 +426,7 @@ export function VendorDashboard() {
                   <div className="text-sm text-[#1E2D4D]/70">{svc.serviceType}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-gray-900">{formatDate(svc.scheduledDate)}</div>
+                  <div className="text-sm font-medium text-[#1E2D4D]">{formatDate(svc.scheduledDate)}</div>
                   <div className="text-xs text-[#1E2D4D]/50">{svc.scheduledTime}</div>
                 </div>
               </div>
@@ -440,13 +440,13 @@ export function VendorDashboard() {
                 <button onClick={() => toast.success(`Service started for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
                   <CheckCircle className="h-3.5 w-3.5" /> Mark Started
                 </button>
-                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Camera className="h-3.5 w-3.5" /> Upload Photos
                 </button>
-                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Upload className="h-3.5 w-3.5" /> Upload Report
                 </button>
-                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1">
                   <ClipboardCheck className="h-3.5 w-3.5" /> Mark Completed
                 </button>
               </div>
@@ -462,7 +462,7 @@ export function VendorDashboard() {
           {vendorLeads.filter(l => l.status === 'completed').map(lead => (
             <div key={lead.id} className="px-5 py-4 flex items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-gray-900">{lead.operatorOrg}</div>
+                <div className="text-sm font-medium text-[#1E2D4D]">{lead.operatorOrg}</div>
                 <div className="text-xs text-[#1E2D4D]/50">{lead.serviceType} &middot; {lead.scheduledDate && formatDate(lead.scheduledDate)}</div>
               </div>
               <div className="flex items-center gap-3">
@@ -496,7 +496,7 @@ export function VendorDashboard() {
         <button onClick={() => toast.info('Upload new credential (demo)')} className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] flex items-center gap-1.5">
           <Upload className="h-4 w-4" /> Upload Credential
         </button>
-        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5">
           <Send className="h-4 w-4" /> Share with Operators
         </button>
       </div>
@@ -512,7 +512,7 @@ export function VendorDashboard() {
                 ) : (
                   <Clock className="h-5 w-5 text-[#1E2D4D]/30 flex-shrink-0" />
                 )}
-                <span className="text-sm font-medium text-gray-900">{cred.name}</span>
+                <span className="text-sm font-medium text-[#1E2D4D]">{cred.name}</span>
               </div>
               <StatusBadge status={cred.status} />
             </div>
@@ -558,9 +558,9 @@ export function VendorDashboard() {
                 return (
                   <div key={star} className="flex items-center gap-2 text-sm">
                     <span className="w-3 text-[#1E2D4D]/70">{star}</span>
-                    <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                    <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
                     <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
+                      <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
                     </div>
                     <span className="w-5 text-xs text-[#1E2D4D]/50 text-right">{count}</span>
                   </div>
@@ -577,13 +577,13 @@ export function VendorDashboard() {
               <div className="flex items-start justify-between flex-wrap gap-2 mb-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">{review.reviewerName}</span>
+                    <span className="font-medium text-[#1E2D4D]">{review.reviewerName}</span>
                     <span className="text-xs text-[#1E2D4D]/50">{review.reviewerOrg}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <StarRating rating={review.rating} />
                     <span className="text-xs text-[#1E2D4D]/30">&middot;</span>
-                    <span className="px-2 py-0.5 bg-gray-100 text-[#1E2D4D]/70 text-xs rounded-full">{review.serviceType}</span>
+                    <span className="px-2 py-0.5 bg-[#1E2D4D]/5 text-[#1E2D4D]/70 text-xs rounded-full">{review.serviceType}</span>
                   </div>
                 </div>
                 <span className="text-xs text-[#1E2D4D]/30">{formatDate(review.date)}</span>
@@ -610,10 +610,10 @@ export function VendorDashboard() {
         <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Tips to Improve Your Rating</h3>
           <ul className="space-y-2 text-sm text-[#1E2D4D]/80">
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Upload service documentation within 24 hours of completing a job</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Include before/after photos — they show quality and build trust</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Ask satisfied clients to leave a review on your EvidLY profile</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Upload service documentation within 24 hours of completing a job</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Include before/after photos — they show quality and build trust</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Ask satisfied clients to leave a review on your EvidLY profile</li>
           </ul>
         </div>
       </div>
@@ -633,11 +633,11 @@ export function VendorDashboard() {
         {vendorCurrentSubscription.plan === 'free' && (
           <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
-              <Lock className="h-5 w-5 text-[#d4af37]" />
+              <Lock className="h-5 w-5 text-[#A08C5A]" />
               <span className="font-semibold">Premium Analytics</span>
             </div>
             <p className="text-white/80 text-sm mb-3">Upgrade to Standard ($49/mo) to unlock full analytics including revenue tracking, conversion funnels, and category benchmarks.</p>
-            <button onClick={() => setShowSubscriptionModal(true)} className="px-4 py-2 bg-[#d4af37] text-[#1E2D4D] text-sm font-semibold rounded-lg hover:bg-[#c9a227]">
+            <button onClick={() => setShowSubscriptionModal(true)} className="px-4 py-2 bg-[#A08C5A] text-[#1E2D4D] text-sm font-semibold rounded-lg hover:bg-[#A08C5A]">
               Upgrade Now
             </button>
           </div>
@@ -670,7 +670,7 @@ export function VendorDashboard() {
                   style={{ height: `${(d.profileViews / maxViews) * 100}%`, backgroundColor: '#1E2D4D', minHeight: '4px' }}
                   title={`${d.month}: ${d.profileViews} views`}
                 />
-                <span className="text-[9px] text-[#1E2D4D]/30 mt-1.5 truncate w-full text-center">{d.month.split(' ')[0]}</span>
+                <span className="text-[11px] text-[#1E2D4D]/30 mt-1.5 truncate w-full text-center">{d.month.split(' ')[0]}</span>
               </div>
             ))}
           </div>
@@ -678,7 +678,7 @@ export function VendorDashboard() {
 
         {/* Monthly Data Table */}
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          <div className="px-5 py-3 border-b border-gray-100">
+          <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Monthly Breakdown</h3>
           </div>
           <div className="overflow-x-auto">
@@ -696,14 +696,14 @@ export function VendorDashboard() {
               </thead>
               <tbody className="divide-y divide-[#1E2D4D]/5">
                 {[...vendorAnalyticsData].reverse().map(d => (
-                  <tr key={d.month} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 font-medium text-gray-900">{d.month}</td>
+                  <tr key={d.month} className="hover:bg-[#FAF7F0]">
+                    <td className="px-4 py-2 font-medium text-[#1E2D4D]">{d.month}</td>
                     <td className="px-4 py-2 text-right text-[#1E2D4D]/70">{d.profileViews}</td>
                     <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quoteRequests}</td>
                     <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quotesSent}</td>
                     <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quotesAccepted}</td>
                     <td className="px-4 py-2 text-right text-[#1E2D4D]/70">{d.servicesCompleted}</td>
-                    <td className="px-4 py-2 text-right font-medium text-gray-900">${d.revenue.toLocaleString()}</td>
+                    <td className="px-4 py-2 text-right font-medium text-[#1E2D4D]">${d.revenue.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -727,7 +727,7 @@ export function VendorDashboard() {
                   <span className="text-[#1E2D4D]/50">You: <span className="font-medium text-[#1E2D4D]">{c.you}</span> &middot; Avg: {c.avg}</span>
                 </div>
                 <div className="relative h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                  <div className="absolute h-full rounded-full bg-gray-400/40" style={{ width: `${c.pctAvg}%` }} />
+                  <div className="absolute h-full rounded-full bg-[#1E2D4D]/20/40" style={{ width: `${c.pctAvg}%` }} />
                   <div className="absolute h-full rounded-full bg-[#1E2D4D]" style={{ width: `${c.pctYou}%` }} />
                 </div>
               </div>
@@ -760,7 +760,7 @@ export function VendorDashboard() {
         {/* Invitation Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { label: 'Total Sent', value: stats.total, color: 'text-gray-900', bg: 'bg-[#FAF7F0]' },
+            { label: 'Total Sent', value: stats.total, color: 'text-[#1E2D4D]', bg: 'bg-[#FAF7F0]' },
             { label: 'Delivered', value: stats.delivered, color: 'text-blue-700', bg: 'bg-blue-50' },
             { label: 'Opened', value: stats.opened, color: 'text-purple-700', bg: 'bg-purple-50' },
             { label: 'Signed Up', value: stats.signedUp, color: 'text-green-700', bg: 'bg-green-50' },
@@ -783,13 +783,13 @@ export function VendorDashboard() {
           </button>
           <button
             onClick={() => setShowBulkImport(true)}
-            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5"
           >
             <Upload className="h-4 w-4" /> Bulk Import
           </button>
           <button
             onClick={() => setShowShareLink(true)}
-            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5"
           >
             <Link2 className="h-4 w-4" /> Share Invite Link
           </button>
@@ -800,7 +800,7 @@ export function VendorDashboard() {
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Active Clients ({activeClients.length})</h3>
           {activeClients.length === 0 ? (
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-              <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <Users className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
               <p className="text-sm text-[#1E2D4D]/50 mb-4">No active clients yet. Invite your first client to get started.</p>
               <button
                 onClick={() => setShowInviteModal(true)}
@@ -854,7 +854,7 @@ export function VendorDashboard() {
               {pendingInvitations.map(inv => (
                 <div key={inv.id} className="px-5 py-4 flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-gray-900 truncate">{inv.business_name}</div>
+                    <div className="text-sm font-medium text-[#1E2D4D] truncate">{inv.business_name}</div>
                     <div className="text-xs text-[#1E2D4D]/50">{inv.contact_name} &middot; {inv.email}</div>
                     <div className="text-xs text-[#1E2D4D]/30 mt-0.5">
                       Sent {formatDate(inv.sent_at)}
@@ -866,7 +866,7 @@ export function VendorDashboard() {
                     {inv.status !== 'bounced' && (
                       <button
                         onClick={() => handleResend(inv.id)}
-                        className="px-3 py-1.5 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1"
+                        className="px-3 py-1.5 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1"
                       >
                         <RefreshCw className="h-3 w-3" /> Resend
                       </button>
@@ -908,11 +908,11 @@ export function VendorDashboard() {
   const renderSubscriptionModal = () => {
     if (!showSubscriptionModal) return null;
     return (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowSubscriptionModal(false)}>
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter" onClick={() => setShowSubscriptionModal(false)}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 modal-content-enter" onClick={e => e.stopPropagation()}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
             <h2 className="text-xl font-bold text-[#1E2D4D]">Choose Your Plan</h2>
-            <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+            <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-[#1E2D4D]/5 rounded-full">
               <XCircle className="h-5 w-5 text-[#1E2D4D]/30" />
             </button>
           </div>
@@ -920,9 +920,9 @@ export function VendorDashboard() {
             {vendorSubscriptionPlans.map(plan => {
               const isCurrent = vendorCurrentSubscription.plan === plan.id.replace('plan-', '');
               return (
-                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-[#1E2D4D]/10'}`}>
+                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#A08C5A] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-[#1E2D4D]/10'}`}>
                   {plan.highlighted && (
-                    <div className="text-xs font-bold text-[#d4af37] uppercase mb-2">Most Popular</div>
+                    <div className="text-xs font-bold text-[#1E2D4D] uppercase mb-2">Most Popular</div>
                   )}
                   <h3 className="font-bold text-[#1E2D4D]">{plan.name}</h3>
                   <div className="mt-2 mb-4">
@@ -954,7 +954,7 @@ export function VendorDashboard() {
                     }}
                     className={`w-full py-2 text-sm font-medium rounded-lg transition-colors ${
                       isCurrent
-                        ? 'bg-gray-100 text-[#1E2D4D]/50 cursor-default'
+                        ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 cursor-default'
                         : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
                     }`}
                   >
@@ -989,23 +989,23 @@ export function VendorDashboard() {
             <div className="flex items-center">
               <div className="w-10 h-12">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
                   <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <span className="ml-3 text-xl sm:text-2xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#d4af37]">LY</span>
+                <span className="text-[#A08C5A]">LY</span>
                 <span className="ml-2 text-sm text-[#1E2D4D]/70 hidden sm:inline">Vendor Marketplace</span>
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-[#1E2D4D]/50 hover:text-gray-700">
+              <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <button onClick={handleSignOut} className="px-4 py-2 text-sm text-[#1E2D4D]/80 hover:text-gray-900 flex items-center gap-1.5">
+              <button onClick={handleSignOut} className="px-4 py-2 text-sm text-[#1E2D4D]/80 hover:text-[#1E2D4D] flex items-center gap-1.5">
                 <LogOut className="h-4 w-4" /> Sign Out
               </button>
             </div>
@@ -1024,7 +1024,7 @@ export function VendorDashboard() {
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 hover:border-[#1E2D4D]/15'
                 }`}
               >
                 <tab.icon className="h-4 w-4" />

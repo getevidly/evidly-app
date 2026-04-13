@@ -317,7 +317,7 @@ export default function OwnerOperatorDashboard() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         {todaysTasks.length === 0 && !isDemoMode ? (
           <div
-            className="bg-white rounded-lg"
+            className="bg-white rounded-xl"
             style={{ border: '1px solid #e5e7eb', padding: '16px 20px', textAlign: 'center' }}
           >
             <p style={{ fontSize: 13, fontWeight: 500, color: '#0B1628', margin: '0 0 4px' }}>
@@ -589,9 +589,9 @@ function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, con
       {/* Confirm Modal */}
       {confirmRole && selectedRoleDef && selectedStaff && (
         <>
-          <div className="fixed inset-0 z-[60] bg-black/50" onClick={() => setConfirmRole(null)} />
+          <div className="fixed inset-0 z-[60] bg-black/50 modal-backdrop-enter" onClick={() => setConfirmRole(null)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm modal-content-enter" onClick={(e) => e.stopPropagation()}>
               <div className="px-5 pt-5 pb-3 border-b" style={{ borderColor: '#e5e7eb' }}>
                 <h3 className="text-sm font-bold" style={{ color: '#0B1628' }}>Start Staff Preview</h3>
                 <p className="text-xs mt-0.5" style={{ color: '#6B7F96' }}>This session will be logged</p>

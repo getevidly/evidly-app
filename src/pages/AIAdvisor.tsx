@@ -490,15 +490,15 @@ export function AIAdvisor() {
         <div style={{ background: 'linear-gradient(135deg, #1E2D4D, #2A3F6B)', borderRadius: '12px', padding: '20px 24px', color: '#fff', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Brain style={{ width: '28px', height: '28px', color: '#d4af37' }} />
+              <Brain style={{ width: '28px', height: '28px', color: '#A08C5A' }} />
               <div>
                 <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>AI Compliance Advisor</h2>
                 <p style={{ fontSize: '13px', opacity: 0.7, margin: '2px 0 0' }}>Real-time compliance guidance powered by AI</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)' }}>
-              <Sparkles style={{ width: '14px', height: '14px', color: '#d4af37' }} />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#d4af37' }}>Powered by EvidLY AI</span>
+              <Sparkles style={{ width: '14px', height: '14px', color: '#A08C5A' }} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#A08C5A' }}>Powered by EvidLY AI</span>
             </div>
           </div>
 
@@ -687,7 +687,7 @@ export function AIAdvisor() {
                         onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; e.currentTarget.style.background = '#f0f7fb'; }}
                         onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; }}
                       >
-                        <span style={{ color: '#d4af37', marginRight: '6px' }}>✦</span>
+                        <span style={{ color: '#A08C5A', marginRight: '6px' }}>✦</span>
                         {card}
                       </button>
                     ))}
@@ -739,7 +739,7 @@ export function AIAdvisor() {
                         onClick={() => guardAction('create', 'Action Center', () => handleCreateActions(msg.content))}
                         style={{
                           marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                          padding: '6px 14px', borderRadius: '8px', border: '1px solid #d4af37',
+                          padding: '6px 14px', borderRadius: '8px', border: '1px solid #A08C5A',
                           background: '#fffbeb', fontSize: '12px', fontWeight: 600, color: '#92400e',
                           cursor: 'pointer', ...F,
                         }}
@@ -837,12 +837,12 @@ export function AIAdvisor() {
                       style={{
                         padding: '5px 12px', borderRadius: '16px', fontSize: '11px', fontWeight: 500,
                         cursor: 'pointer', ...F,
-                        border: '1px solid #d4af37',
+                        border: '1px solid #A08C5A',
                         background: '#fffbeb',
                         color: '#92400e',
                       }}
                       onMouseOver={(e) => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.borderColor = '#b8941e'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#d4af37'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#A08C5A'; }}
                     >
                       <span style={{ marginRight: '4px' }}>&#10022;</span>
                       {prompt}
@@ -999,7 +999,7 @@ export function AIAdvisor() {
                   {[
                     { label: 'Asked', value: inspectionScore.asked, color: '#1E2D4D' },
                     { label: 'Passed', value: inspectionScore.passed, color: '#22c55e' },
-                    { label: 'Needs Improvement', value: inspectionScore.needsImprovement, color: '#d4af37' },
+                    { label: 'Needs Improvement', value: inspectionScore.needsImprovement, color: '#A08C5A' },
                     { label: 'Failed', value: inspectionScore.failed, color: '#dc2626' },
                   ].map((row) => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>

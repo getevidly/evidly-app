@@ -138,8 +138,8 @@ export function FileUpload({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? 'border-[#d4af37] bg-[#d4af37]/5'
-            : 'border-[#1E2D4D]/15 hover:border-gray-400'
+            ? 'border-[#A08C5A] bg-[#A08C5A]/5'
+            : 'border-[#1E2D4D]/15 hover:border-[#1E2D4D]/20'
         }`}
       >
         <div className="flex flex-col items-center space-y-4">
@@ -148,7 +148,7 @@ export function FileUpload({
           </div>
 
           <div>
-            <p className="text-lg font-medium text-gray-900">
+            <p className="text-lg font-medium text-[#1E2D4D]">
               Drag files here or choose an option below
             </p>
             <p className="text-sm text-[#1E2D4D]/50 mt-1">
@@ -160,7 +160,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleCameraClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
             >
               <Camera className="w-5 h-5" />
               <span className="hidden sm:inline">Camera</span>
@@ -169,7 +169,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleComputerClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
             >
               <Upload className="w-5 h-5" />
               <span className="hidden sm:inline">Computer</span>
@@ -178,7 +178,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Google Drive integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.01 1.485L21.77 17.5H2.23L12.01 1.485zM3.625 18.25h16.74L12 21.515l-8.375-3.265z"/>
@@ -189,7 +189,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Dropbox integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 1.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5zm-12 13.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5z"/>
@@ -254,7 +254,7 @@ export function FileUpload({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-[#1E2D4D] truncate">
                     {uploadedFile.file.name}
                   </p>
                   <p className="text-xs text-[#1E2D4D]/50">
@@ -265,9 +265,9 @@ export function FileUpload({
                 <button
                   type="button"
                   onClick={() => removeFile(index)}
-                  className="flex-shrink-0 p-1 hover:bg-gray-100 rounded transition-colors"
+                  className="flex-shrink-0 p-1 hover:bg-[#1E2D4D]/5 rounded transition-colors"
                 >
-                  <X className="w-5 h-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                  <X className="w-5 h-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                 </button>
               </div>
             ))}

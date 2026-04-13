@@ -482,7 +482,7 @@ export function K2CInviteModal({
               background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px',
               padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px',
             }}>
-              <span style={{ fontSize: '24px' }}>🍽️</span>
+              <span className="text-2xl">🍽️</span>
               <div>
                 <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#92400e' }}>
                   Your referral impact

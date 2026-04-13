@@ -82,7 +82,7 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
                 {doc.version > 1 && (
                   <button
                     onClick={() => setShowVersionHistory(!showVersionHistory)}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-bold transition-colors hover:bg-gray-100"
+                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-bold transition-colors hover:bg-[#1E2D4D]/5"
                     style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}
                   >
                     v{doc.version}

@@ -14,7 +14,7 @@ export function TaskCard({ task, isCompleted, onToggle }: TaskCardProps) {
       className={`w-full flex items-center gap-3 rounded-2xl px-4 py-4 min-h-[72px] text-left active:scale-[0.98] transition-all cursor-pointer border ${
         isCompleted
           ? 'bg-green-50 border-green-200 opacity-70'
-          : 'bg-white border-gray-100'
+          : 'bg-white border-[#1E2D4D]/5'
       }`}
       style={isCompleted ? undefined : { boxShadow: '0 1px 3px rgba(30,45,77,0.06), 0 1px 2px rgba(30,45,77,0.04)' }}
     >
@@ -57,7 +57,7 @@ export function TaskCard({ task, isCompleted, onToggle }: TaskCardProps) {
       </div>
 
       {/* Chevron */}
-      <div className="flex-shrink-0 text-gray-300">
+      <div className="flex-shrink-0 text-[#1E2D4D]/30">
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>

@@ -43,7 +43,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>Reschedule Job</h2>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>
@@ -70,7 +70,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
               value={date}
               onChange={e => setDate(e.target.value)}
               required
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -87,7 +87,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
                 value={startTime}
                 onChange={e => setStartTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
             </div>
@@ -100,7 +100,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
                 value={endTime}
                 onChange={e => setEndTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
             </div>
@@ -115,7 +115,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
             <select
               value={techId}
               onChange={e => setTechId(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <option value="">Unassigned</option>
@@ -130,7 +130,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50"
+              className="px-4 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Cancel

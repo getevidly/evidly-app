@@ -112,8 +112,8 @@ export function AuthCallback() {
           </>
         ) : (
           <>
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-            <p className="mt-4 text-lg font-medium text-gray-900">Signing you in...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
+            <p className="mt-4 text-lg font-medium text-[#1E2D4D]">Signing you in...</p>
             <p className="mt-1 text-sm text-[#1E2D4D]/50">Please wait</p>
           </>
         )}

@@ -11,7 +11,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Shield, Calendar, FileText, BarChart3 } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 // Demo provider lookup — in production this would be an API call
 const DEMO_PROVIDERS: Record<string, { name: string; services: string[]; serviceArea: string }> = {
@@ -59,7 +59,7 @@ export function VendorInviteLanding() {
           </div>
           <button
             onClick={() => navigate('/login')}
-            className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4D]/15 hover:bg-gray-50 transition-colors"
+            className="text-sm font-medium px-4 py-2 rounded-xl border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] transition-colors"
             style={{ color: NAVY }}
           >
             Sign In
@@ -142,7 +142,7 @@ export function VendorInviteLanding() {
           </p>
           <button
             onClick={() => navigate(`/signup?invite=${code}`)}
-            className="px-8 py-3 text-white font-semibold rounded-lg shadow transition-colors"
+            className="px-8 py-3 text-white font-semibold rounded-xl shadow transition-colors"
             style={{ backgroundColor: NAVY }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = NAVY)}

@@ -67,7 +67,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={onClose} />
 
-        <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full modal-content-enter">
           {sent ? (
             <div className="p-8 text-center">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
@@ -94,7 +94,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-[#1E2D4D]/30 hover:text-gray-500 transition-colors"
+                    className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/60 transition-colors"
                     aria-label="Close"
                   >
                     <X className="h-6 w-6" />
@@ -114,7 +114,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="text"
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     placeholder="Enter recipient name"
                   />
                 </div>
@@ -127,7 +127,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="email"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     placeholder="recipient@example.com"
                     required
                   />
@@ -140,7 +140,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   <select
                     value={recipientType}
                     onChange={(e) => setRecipientType(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="health-inspector">Health Inspector</option>
                     <option value="insurance">Insurance Company</option>
@@ -157,9 +157,9 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                       Documents to Share
                     </label>
-                    <div className="border border-[#1E2D4D]/15 rounded-lg p-3 max-h-48 overflow-y-auto space-y-2">
+                    <div className="border border-[#1E2D4D]/15 rounded-xl p-3 max-h-48 overflow-y-auto space-y-2">
                       {availableDocuments.map((doc) => (
-                        <label key={doc} className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                        <label key={doc} className="flex items-center space-x-3 cursor-pointer hover:bg-[#FAF7F0] p-2 rounded">
                           <input
                             type="checkbox"
                             checked={selectedDocs.includes(doc)}
@@ -214,7 +214,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('message'); return n; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                     placeholder="Add a personal message..."
                   />
                   {aiFields.has('message') && <AIGeneratedIndicator />}
@@ -225,7 +225,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                 <button
                   onClick={onClose}
                   disabled={sending}
-                  className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>

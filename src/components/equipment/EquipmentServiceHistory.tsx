@@ -98,12 +98,12 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium" style={{ color: MUTED }}>From</label>
           <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-            className="px-2 py-1.5 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+            className="px-2 py-1.5 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
         </div>
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium" style={{ color: MUTED }}>To</label>
           <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-            className="px-2 py-1.5 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+            className="px-2 py-1.5 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
         </div>
         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{filtered.length} record{filtered.length !== 1 ? 's' : ''}</span>
       </div>

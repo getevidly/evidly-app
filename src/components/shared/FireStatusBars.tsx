@@ -82,7 +82,7 @@ export function FireStatusBars({
         return (
           <div
             key={item.key || item.label}
-            className={`relative text-center p-2 rounded-lg bg-[#FAF7F0] transition-all${clickable ? ' cursor-pointer hover:bg-gray-100 hover:shadow-sm' : ''}`}
+            className={`relative text-center p-2 rounded-lg bg-[#FAF7F0] transition-all${clickable ? ' cursor-pointer hover:bg-[#1E2D4D]/5 hover:shadow-sm' : ''}`}
             onClick={() => onCardClick?.(item.key || item.label)}
             title={clickable ? `Click to view ${item.label} details` : undefined}
           >
@@ -93,7 +93,7 @@ export function FireStatusBars({
             <p className="text-xs font-medium text-[#1E2D4D]/80">{item.label}</p>
             <p className="text-xs text-[#1E2D4D]/30">{label}</p>
             {clickable && (
-              <ChevronRight size={10} className="absolute bottom-1.5 right-1.5 text-gray-300" />
+              <ChevronRight size={10} className="absolute bottom-1.5 right-1.5 text-[#1E2D4D]/30" />
             )}
           </div>
         );

@@ -310,7 +310,7 @@ export default function TrialHealth() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mb-3" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A] mb-3" />
         <p className="text-sm" style={{ color: TEXT_SEC }}>Loading...</p>
       </div>
     );

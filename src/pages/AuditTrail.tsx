@@ -359,7 +359,7 @@ const SectionHeader = memo(function SectionHeader({ id, icon: Icon, title, count
   return (
     <button
       onClick={() => onToggle(id)}
-      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-[#FAF7F0] hover:bg-gray-100 transition-colors"
+      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-[#FAF7F0] hover:bg-[#1E2D4D]/5 transition-colors"
     >
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4" style={{ color: '#1E2D4D' }} />
@@ -702,7 +702,7 @@ export function AuditTrail() {
           {!generated && (
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               <History className="h-4 w-4" />
               Report History ({history.length})
@@ -722,7 +722,7 @@ export function AuditTrail() {
             ) : (
               <div className="space-y-3">
                 {history.map(h => (
-                  <div key={h.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                  <div key={h.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm font-semibold" style={{ color: '#1E2D4D' }}>{h.reportNumber}</span>
@@ -745,7 +745,7 @@ export function AuditTrail() {
                             navigator.clipboard.writeText(`${window.location.origin}/audit-trail/shared/${h.shareToken}`);
                             toast.success('Link copied');
                           }}
-                          className="p-2 rounded-lg hover:bg-gray-100 text-[#1E2D4D]/50"
+                          className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 text-[#1E2D4D]/50"
                           title="Copy share link"
                         >
                           <Copy className="h-4 w-4" />
@@ -778,7 +778,7 @@ export function AuditTrail() {
                 <select
                   value={dateRange}
                   onChange={e => setDateRange(e.target.value as DateRange)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="7">Last 7 days</option>
                   <option value="30">Last 30 days</option>
@@ -797,7 +797,7 @@ export function AuditTrail() {
                 <select
                   value={locationFilter}
                   onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="all">All Locations</option>
                   {(isDemoMode ? LOCATIONS : []).map(l => <option key={l} value={l}>{l}</option>)}
@@ -815,7 +815,7 @@ export function AuditTrail() {
                     <button
                       key={m.id}
                       onClick={() => toggleModule(m.id)}
-                      className={`flex items-start gap-3 px-3 py-2.5 rounded-lg border text-left transition-colors ${
+                      className={`flex items-start gap-3 px-3 py-2.5 rounded-xl border text-left transition-colors ${
                         m.enabled ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10 bg-[#FAF7F0]'
                       }`}
                     >
@@ -868,10 +868,10 @@ export function AuditTrail() {
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
-                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
+                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                   <Share2 className="h-4 w-4" /> Share (72h)
                 </button>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
+                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                   <Printer className="h-4 w-4" /> Print
                 </button>
               </div>
@@ -930,9 +930,9 @@ export function AuditTrail() {
                 </div>
 
                 {/* Hash badge */}
-                <div className="mt-4 px-3 py-2 rounded-lg bg-white/10 border border-white/20">
+                <div className="mt-4 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
                   <div className="flex items-center gap-2">
-                    <Hash className="h-4 w-4 text-[#d4af37]" />
+                    <Hash className="h-4 w-4 text-[#A08C5A]" />
                     <span className="text-xs text-blue-200 uppercase tracking-wide">SHA-256 Integrity Hash</span>
                   </div>
                   <p className="font-mono text-xs mt-1 break-all text-blue-100">{reportHash || 'Computing...'}</p>
@@ -1003,7 +1003,7 @@ export function AuditTrail() {
                 {reportData.complianceScores.length > 0 && (
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {reportData.complianceScores.map((cs: any) => (
-                      <div key={cs.location} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100">
+                      <div key={cs.location} className="flex items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/5">
                         <div className="flex gap-2">
                           <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: getScoreColor(cs.foodSafety) }}>
                             {cs.foodSafety}
@@ -1375,7 +1375,7 @@ export function AuditTrail() {
                     </div>
 
                     {/* Certification statement */}
-                    <div className="mt-6 p-4 rounded-lg border-2 border-[#1E2D4D] bg-[#eef4f8]">
+                    <div className="mt-6 p-4 rounded-xl border-2 border-[#1E2D4D] bg-[#eef4f8]">
                       <div className="flex items-start gap-3">
                         <EvidlyIcon size={24} className="flex-shrink-0 mt-0.5" />
                         <div>
@@ -1389,11 +1389,11 @@ export function AuditTrail() {
                           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide">Certifying Officer</p>
-                              <p className="text-sm font-medium text-gray-900">Sarah Chen, Operations Manager</p>
+                              <p className="text-sm font-medium text-[#1E2D4D]">Sarah Chen, Operations Manager</p>
                             </div>
                             <div>
                               <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide">Date & Time</p>
-                              <p className="text-sm font-medium text-gray-900">{generatedAt}</p>
+                              <p className="text-sm font-medium text-[#1E2D4D]">{generatedAt}</p>
                             </div>
                           </div>
                           <div className="mt-3 p-2 rounded bg-white border border-[#1E2D4D]/10">

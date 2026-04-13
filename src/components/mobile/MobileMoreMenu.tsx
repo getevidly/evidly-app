@@ -71,7 +71,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
         {/* Dashboard link */}
         <button
           onClick={() => handleNav('/dashboard')}
-          className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-gray-100 active:bg-[#FAF7F0] transition-colors cursor-pointer"
+          className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-[#1E2D4D]/5 active:bg-[#FAF7F0] transition-colors cursor-pointer"
         >
           <span className="text-lg w-7 text-center">🏠</span>
           <span className="flex-1 text-left text-[14px] font-semibold text-[#1E2D4D]">Dashboard</span>
@@ -83,7 +83,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
           <button
             key={item.id}
             onClick={() => handleNav(item.path)}
-            className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-gray-100 active:bg-[#FAF7F0] transition-colors cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-[#1E2D4D]/5 active:bg-[#FAF7F0] transition-colors cursor-pointer"
           >
             <span className="text-lg w-7 text-center">{item.icon}</span>
             <span className="flex-1 text-left text-[14px] font-semibold text-[#1E2D4D]">{item.label}</span>
@@ -110,12 +110,12 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
               <button
                 key={item.id + '-' + item.path}
                 onClick={() => handleNav(item.path)}
-                className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-gray-100 active:bg-[#FAF7F0] transition-colors cursor-pointer"
+                className="w-full flex items-center gap-3 px-4 min-h-[56px] bg-white border-b border-[#1E2D4D]/5 active:bg-[#FAF7F0] transition-colors cursor-pointer"
               >
                 <span className="text-lg w-7 text-center">{item.icon}</span>
                 <span className="flex-1 text-left text-[14px] text-[#1E2D4D]">{item.label}</span>
                 {item.badge && (
-                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded bg-[#A08C5A]/15 text-[#A08C5A]">
+                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded bg-[#A08C5A]/15 text-[#1E2D4D]">
                     {item.badge}
                   </span>
                 )}

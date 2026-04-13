@@ -14,7 +14,7 @@ const CATEGORY_CONFIGS = [
   { key: 'haccpMonitoring' as const, label: 'HACCP Monitoring', color: '#8b5cf6', unit: '%' },
   { key: 'incidentResolution' as const, label: 'Incident Resolution', color: '#f59e0b', unit: 'h', invertDirection: true },
   { key: 'documentCurrency' as const, label: 'Document Currency', color: '#06b6d4', unit: '%' },
-  { key: 'facilitySafetyOps' as const, label: 'Facility Safety Ops', color: '#d4af37', unit: '%' },
+  { key: 'facilitySafetyOps' as const, label: 'Facility Safety Ops', color: '#A08C5A', unit: '%' },
 ] as const;
 
 export function ComplianceTrends() {
@@ -66,7 +66,7 @@ export function ComplianceTrends() {
       {/* Empty state — no data for the selected period */}
       {!loading && chartData.length === 0 && (
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-          <TrendingUp className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <TrendingUp className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
           <p className="text-sm font-medium text-[#1E2D4D]/80">No compliance data for this period</p>
           <p className="text-xs text-[#1E2D4D]/50 mt-1">
             Score snapshots will appear here as compliance data is recorded.
@@ -80,7 +80,7 @@ export function ComplianceTrends() {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <TrendSummaryCard label="Food Safety" analysis={orgTrend.foodSafety} color="#22c55e" />
-            <TrendSummaryCard label="Facility Safety" analysis={orgTrend.facilitySafety} color="#d4af37" />
+            <TrendSummaryCard label="Facility Safety" analysis={orgTrend.facilitySafety} color="#A08C5A" />
           </div>
 
           {/* Overall Trend Chart */}

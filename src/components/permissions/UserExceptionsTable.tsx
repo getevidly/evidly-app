@@ -116,7 +116,7 @@ export function UserExceptionsTable({
             placeholder="Search by user or permission..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-1"
+            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-1"
             style={{
               borderColor: 'var(--border)',
               color: '#1E2D4D',
@@ -168,7 +168,7 @@ export function UserExceptionsTable({
               {filtered.map(group => (
                 <tr
                   key={group.userId}
-                  className="border-t hover:bg-gray-50 transition-colors"
+                  className="border-t hover:bg-[#FAF7F0] transition-colors"
                   style={{ borderColor: 'var(--border-subtle, #E8EDF5)' }}
                 >
                   <td className="px-6 py-4">
@@ -212,7 +212,7 @@ export function UserExceptionsTable({
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => onEditUser(group.userId)}
-                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors hover:bg-gray-50"
+                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-colors hover:bg-[#FAF7F0]"
                         style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -220,7 +220,7 @@ export function UserExceptionsTable({
                       </button>
                       <button
                         onClick={() => onResetUser(group.userId)}
-                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors hover:bg-red-50"
+                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-colors hover:bg-red-50"
                         style={{ borderColor: 'var(--border)', color: '#dc2626' }}
                       >
                         <RotateCcw className="w-3.5 h-3.5" />

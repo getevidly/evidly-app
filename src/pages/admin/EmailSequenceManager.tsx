@@ -306,7 +306,7 @@ export default function EmailSequenceManager() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
         <p className="mt-3 text-sm" style={{ color: TEXT_SEC }}>Loading...</p>
       </div>
     );
@@ -342,7 +342,7 @@ export default function EmailSequenceManager() {
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}>
             <tab.icon className="h-4 w-4" />
             {tab.label}
@@ -491,10 +491,10 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
             </thead>
             <tbody>
               {sequences.map(seq => (
-                <tr key={seq.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={seq.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                   <td className="px-3 py-3 text-center font-bold" style={{ color: NAVY }}>{seq.step}</td>
                   <td className="px-3 py-3 text-center text-[#1E2D4D]/70">Day {seq.day}</td>
-                  <td className="px-3 py-3 text-gray-900 font-medium">{seq.subject}</td>
+                  <td className="px-3 py-3 text-[#1E2D4D] font-medium">{seq.subject}</td>
                   <td className="px-3 py-3 text-center">
                     <button
                       onClick={() => handleToggleStatus(seq)}
@@ -611,7 +611,7 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
           <select
             value={selectedStepId}
             onChange={e => setSelectedStepId(e.target.value)}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
             {sequences.map(s => (
               <option key={s.id} value={s.id}>Step {s.step} (Day {s.day}): {s.subject}</option>
             ))}
@@ -621,7 +621,7 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
         <div>
           <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Subject</label>
           <input type="text" value={editSubject} onChange={e => setEditSubject(e.target.value)}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
         </div>
 
         <div>
@@ -630,7 +630,7 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
             value={editBody}
             onChange={e => setEditBody(e.target.value)}
             rows={15}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             style={{ fontFamily: "'Fira Code', 'Courier New', monospace", fontSize: 13 }}
           />
         </div>
@@ -713,7 +713,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                 <span className="text-xs font-bold uppercase tracking-wide" style={{ color: NAVY }}>
                   {STAGE_LABELS[stage]}
                 </span>
-                <span className="text-xs bg-gray-100 text-[#1E2D4D]/50 px-1.5 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-[#1E2D4D]/5 text-[#1E2D4D]/50 px-1.5 py-0.5 rounded-full font-bold">
                   {stageVendors.length}
                 </span>
               </div>
@@ -723,7 +723,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   const isExpanded = expandedNotes === vendor.id;
                   return (
                     <div key={vendor.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 transition-shadow">
-                      <div className="font-semibold text-sm text-gray-900 mb-1">{vendor.name}</div>
+                      <div className="font-semibold text-sm text-[#1E2D4D] mb-1">{vendor.name}</div>
                       <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2"
                         style={{ background: typeStyle.bg, color: typeStyle.color }}>
                         {typeStyle.label}
@@ -820,7 +820,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" style={{ color: TEXT_SEC }} />
           <select value={dateFilter} onChange={e => setDateFilter(e.target.value as any)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="all">All time</option>
@@ -831,12 +831,12 @@ function NotificationsTab({ notifications, isDemoMode }: {
           <Search className="h-4 w-4" style={{ color: TEXT_SEC }} />
           <input type="text" placeholder="Search vendor..." value={vendorSearch}
             onChange={e => setVendorSearch(e.target.value)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm w-48" />
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm w-48" />
         </div>
 
         <div>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
             <option value="all">All statuses</option>
             <option value="delivered">Delivered</option>
             <option value="opened">Opened</option>
@@ -863,8 +863,8 @@ function NotificationsTab({ notifications, isDemoMode }: {
               {filtered.map(n => {
                 const statusStyle = DELIVERY_STATUS_COLORS[n.deliveryStatus] || { bg: '#F3F4F6', color: '#6B7280', label: n.deliveryStatus };
                 return (
-                  <tr key={n.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-900">{n.vendorName}</td>
+                  <tr key={n.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                    <td className="px-4 py-3 font-medium text-[#1E2D4D]">{n.vendorName}</td>
                     <td className="px-4 py-3 text-[#1E2D4D]/70">{n.documentType}</td>
                     <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDateTime(n.sentAt)}</td>
                     <td className="px-4 py-3 text-center">
@@ -927,7 +927,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
               {referrals.map(r => {
                 const typeStyle = REFERRAL_TYPE_COLORS[r.type] || { bg: '#F3F4F6', color: '#6B7280', label: r.type };
                 return (
-                  <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={r.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                     <td className="px-4 py-3">
                       <code className="text-sm font-mono font-bold px-2 py-0.5 rounded" style={{ background: '#F3F4F6', color: NAVY }}>
                         {r.code}
@@ -939,7 +939,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
                         {typeStyle.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-900 font-medium">{r.createdBy}</td>
+                    <td className="px-4 py-3 text-[#1E2D4D] font-medium">{r.createdBy}</td>
                     <td className="px-4 py-3 text-right font-medium" style={{ color: NAVY }}>{r.uses}</td>
                     <td className="px-4 py-3 text-right font-bold" style={{ color: '#166534' }}>
                       ${r.revenue.toLocaleString()}

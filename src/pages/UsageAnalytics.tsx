@@ -51,7 +51,7 @@ const MODULES: ModuleInfo[] = [
   { id: 'vendors', name: 'Vendor Services', icon: '🚚', color: '#7c3aed' },
   { id: 'compliance', name: 'Compliance Score', icon: '🛡️', color: '#16a34a' },
   { id: 'action-center', name: 'Action Center', icon: '🎯', color: '#0891b2' },
-  { id: 'qr-passport', name: 'QR Passport', icon: '📱', color: '#d4af37' },
+  { id: 'qr-passport', name: 'QR Passport', icon: '📱', color: '#A08C5A' },
   { id: 'calendar', name: 'Calendar', icon: '📅', color: '#8b5cf6' },
   { id: 'reports', name: 'Reporting', icon: '📊', color: '#1E2D4D' },
   { id: 'analysis', name: 'Predictive Alerts', icon: '📈', color: '#059669' },
@@ -376,7 +376,7 @@ export function UsageAnalytics() {
     if (sessions === 0) return { bg: '#f3f4f6', text: '#9ca3af' };
     if (sessions > p75) return { bg: '#dcfce7', text: '#16a34a' };
     if (sessions > p25) return { bg: '#dbeafe', text: '#1E2D4D' };
-    return { bg: '#fef3c7', text: '#d4af37' };
+    return { bg: '#fef3c7', text: '#A08C5A' };
   }
 
   // Email report
@@ -394,7 +394,7 @@ export function UsageAnalytics() {
 <body style="margin:0;padding:0;font-family:'DM Sans',Helvetica,Arial,sans-serif;background:#faf8f3">
 <div style="max-width:600px;margin:24px auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
 <div style="background:#1E2D4D;padding:32px 24px;text-align:center">
-<div style="font-size:28px;font-weight:800;color:white"><span style="color:#d4af37">Evid</span>LY</div>
+<div style="font-size:28px;font-weight:800;color:white"><span style="color:#A08C5A">Evid</span>LY</div>
 <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:4px">Usage Analytics Report</div>
 </div>
 <div style="padding:24px">
@@ -483,7 +483,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             onClick={() => setShowEmailModal(true)}
             style={{
               padding: '10px 20px', borderRadius: '8px', border: 'none',
-              backgroundColor: '#d4af37', color: 'white', fontWeight: 700,
+              backgroundColor: '#A08C5A', color: 'white', fontWeight: 700,
               fontSize: '13px', cursor: 'pointer', ...F,
               display: 'flex', alignItems: 'center', gap: '8px',
             }}
@@ -538,7 +538,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
                 backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap',
                 color: activeTab === tab.id ? '#1E2D4D' : '#6b7280',
-                borderBottom: activeTab === tab.id ? '2px solid #d4af37' : '2px solid transparent',
+                borderBottom: activeTab === tab.id ? '2px solid #A08C5A' : '2px solid transparent',
                 marginBottom: '-2px',
               }}
             >
@@ -678,7 +678,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   COMING SOON
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '24px' }}>{mod.icon}</span>
+                  <span className="text-2xl">{mod.icon}</span>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>{mod.name}</div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
@@ -702,7 +702,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             <div key={mod.id} style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', ...F }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '24px' }}>{mod.icon}</span>
+                  <span className="text-2xl">{mod.icon}</span>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>{mod.name}</div>
                     {hasShifts && (
@@ -848,7 +848,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
           {[
             { label: 'Heavy', bg: '#dcfce7', color: '#16a34a' },
             { label: 'Active', bg: '#dbeafe', color: '#1E2D4D' },
-            { label: 'Light', bg: '#fef3c7', color: '#d4af37' },
+            { label: 'Light', bg: '#fef3c7', color: '#A08C5A' },
             { label: 'Not Adopted', bg: '#f3f4f6', color: '#9ca3af' },
             { label: 'Coming Soon', bg: '#f3f4f6', color: '#d1d5db' },
           ].map(item => (
@@ -1005,7 +1005,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                     onClick={() => setEmailSchedule(opt.id)}
                     style={{
                       flex: 1, padding: '8px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                      border: emailSchedule === opt.id ? '2px solid #d4af37' : '2px solid #e5e7eb',
+                      border: emailSchedule === opt.id ? '2px solid #A08C5A' : '2px solid #e5e7eb',
                       backgroundColor: emailSchedule === opt.id ? '#fef3c7' : 'white',
                       color: emailSchedule === opt.id ? '#92400e' : '#6b7280',
                       cursor: 'pointer', ...F,

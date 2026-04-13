@@ -14,15 +14,15 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
   const isAbove = delta >= 0;
   const pillarColors: Record<string, string> = {
     Operational: '#1E2D4D',
-    Equipment: '#d4af37',
+    Equipment: '#A08C5A',
     Documentation: '#6366f1',
   };
 
   return (
-    <div className="py-3 border-b border-gray-50 last:border-0">
+    <div className="py-3 border-b border-[#1E2D4D]/3 last:border-0">
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-900">{label}</span>
+          <span className="text-sm font-medium text-[#1E2D4D]">{label}</span>
           <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{
             backgroundColor: pillarColors[pillar] + '15',
             color: pillarColors[pillar],

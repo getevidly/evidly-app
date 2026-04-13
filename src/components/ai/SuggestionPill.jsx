@@ -24,7 +24,7 @@ export function SuggestionPill({
           className="inline-flex items-center gap-1 text-xs py-1 min-h-[44px] md:min-h-0"
           style={{ color: '#A08C5A' }}
         >
-          <span style={{ fontSize: '11px' }}>&#10024;</span>
+          <span className="text-[11px]">&#10024;</span>
           AI suggest
         </button>
       )}
@@ -58,7 +58,7 @@ export function SuggestionPill({
             <button
               type="button"
               onClick={dismiss}
-              className="px-2 py-1 text-[#1E2D4D]/30 hover:text-gray-600 rounded min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0"
+              className="px-2 py-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 rounded min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0"
             >
               &times;
             </button>

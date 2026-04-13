@@ -124,7 +124,7 @@ function MonthDayCell({ dayKey, dayNumber, jobs, overflow, isCurrentMonth, isTod
           <JobBlock key={job.id} job={job} compact onClick={onJobClick} />
         ))}
         {overflow > 0 && !isExpanded && (
-          <button onClick={onToggleExpand} className="w-full text-xs font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: '#1E2D4D' }}>
+          <button onClick={onToggleExpand} className="w-full text-xs font-semibold py-0.5 rounded hover:bg-[#1E2D4D]/5" style={{ color: '#1E2D4D' }}>
             +{overflow} more
           </button>
         )}

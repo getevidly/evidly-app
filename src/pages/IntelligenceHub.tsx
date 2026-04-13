@@ -461,14 +461,14 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
         <CategoryIcon className="h-4 w-4 mt-0.5 shrink-0" style={{ color: ic.text }} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: ic.bg, color: ic.text }}>
+            <span className="px-1.5 py-0.5 rounded text-[11px] font-bold uppercase" style={{ backgroundColor: ic.bg, color: ic.text }}>
               {insight.impact_level}
             </span>
             {!insight.read && (
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-blue-50 text-blue-700">NEW</span>
+              <span className="px-1.5 py-0.5 rounded text-[11px] font-bold uppercase bg-blue-50 text-blue-700">NEW</span>
             )}
             {pillarLabels.map(p => (
-              <span key={p} className="px-1.5 py-0.5 rounded text-[9px] font-semibold" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
+              <span key={p} className="px-1.5 py-0.5 rounded text-[11px] font-semibold" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
                 {p}
               </span>
             ))}
@@ -477,7 +477,7 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
           <p className="text-xs mt-1 line-clamp-1" style={{ color: TEXT_TERTIARY }}>{insight.headline}</p>
           <div className="flex items-center gap-2 mt-1.5">
             {(insight.affected_counties || []).slice(0, 3).map(c => (
-              <span key={c} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
+              <span key={c} className="px-1.5 py-0.5 rounded text-[11px]" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                 {c.charAt(0).toUpperCase() + c.slice(1)}
               </span>
             ))}
@@ -539,7 +539,7 @@ function InsightDetailView({
               <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: '#92400e' }}>
                 What This Means for Your Business
               </h3>
-              <span className="ml-auto px-2 py-0.5 rounded text-[9px] font-bold" style={{
+              <span className="ml-auto px-2 py-0.5 rounded text-[11px] font-bold" style={{
                 backgroundColor: biz.relevance_score >= 0.8 ? '#fef2f2' : biz.relevance_score >= 0.6 ? '#fffbeb' : '#f0fdf4',
                 color: biz.relevance_score >= 0.8 ? '#991b1b' : biz.relevance_score >= 0.6 ? '#92400e' : '#166534',
               }}>
@@ -703,7 +703,7 @@ function InsightDetailView({
       {['enforcement_surge', 'enforcement_action', 'inspector_pattern', 'regulatory_change', 'regulatory_advisory'].includes(insight.category) && (
         <button
           onClick={() => navigate('/jurisdiction')}
-          className="flex items-center gap-2 w-full rounded-lg px-4 py-3 mb-4 text-xs font-medium transition-colors hover:opacity-80"
+          className="flex items-center gap-2 w-full rounded-xl px-4 py-3 mb-4 text-xs font-medium transition-colors hover:opacity-80"
           style={{ backgroundColor: '#eef4f8', color: '#1E2D4D', border: '1px solid #b8d4e8' }}
         >
           <Scale className="h-3.5 w-3.5" />
@@ -971,7 +971,7 @@ function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
                   <p className="text-xs font-medium" style={{ color: BODY_TEXT }}>{r.product} — {r.brand}</p>
                   <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Resolved {r.resolved_date}</p>
                 </div>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold" style={{ backgroundColor: '#f0fdf4', color: '#166534' }}>
+                <span className="px-1.5 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: '#f0fdf4', color: '#166534' }}>
                   Resolved
                 </span>
               </div>
@@ -1015,7 +1015,7 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
                     <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: PANEL_BG }}>
                       <div className="h-full rounded-full" style={{ width: `${item.probability * 100}%`, backgroundColor: item.probability >= 0.7 ? '#16a34a' : item.probability >= 0.4 ? '#d97706' : TEXT_TERTIARY }} />
                     </div>
-                    <span className="text-[9px] font-semibold" style={{ color: MUTED }}>{Math.round(item.probability * 100)}%</span>
+                    <span className="text-[11px] font-semibold" style={{ color: MUTED }}>{Math.round(item.probability * 100)}%</span>
                   </div>
                 </button>
               ))}
@@ -1047,7 +1047,7 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
                   {(item.auto_checklist_items || []).map((ci, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>
                       <span className="w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5" style={{ borderColor: CARD_BORDER }}>
-                        <span className="text-[9px]" style={{ color: TEXT_TERTIARY }}>{idx + 1}</span>
+                        <span className="text-[11px]" style={{ color: TEXT_TERTIARY }}>{idx + 1}</span>
                       </span>
                       {ci}
                     </li>

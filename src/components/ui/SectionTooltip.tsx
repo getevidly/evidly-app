@@ -39,7 +39,7 @@ export function SectionTooltip({ content }: SectionTooltipProps) {
       >
         <Info
           size={11}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
+          className="text-[#1E2D4D]/40 hover:text-[#1E2D4D]/70 transition-colors"
         />
       </span>
       {visible && (

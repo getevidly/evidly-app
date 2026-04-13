@@ -21,15 +21,15 @@ export function CarrierPartnership() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">Insurance Carrier Partnership Portal</h1>
           <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Direct API access to verified kitchen risk profiles for evidence-based underwriting conversations.
           </p>
-          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
-            <Lock className="h-4 w-4" style={{ color: '#d4af37' }} />
-            <span className="text-sm font-semibold" style={{ color: '#d4af37' }}>Coming Soon</span>
+          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #A08C5A' }}>
+            <Lock className="h-4 w-4" style={{ color: '#A08C5A' }} />
+            <span className="text-sm font-semibold" style={{ color: '#A08C5A' }}>Coming Soon</span>
           </div>
         </div>
 
@@ -91,7 +91,7 @@ export function CarrierPartnership() {
                 <span className={`px-2 py-0.5 text-xs font-bold rounded ${ep.method === 'POST' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
                   {ep.method}
                 </span>
-                <code className="text-xs text-gray-800 flex-1">{ep.path}</code>
+                <code className="text-xs text-[#1E2D4D]/90 flex-1">{ep.path}</code>
                 <span className="text-xs text-[#1E2D4D]/30 font-sans">{ep.desc}</span>
               </div>
             ))}
@@ -121,7 +121,7 @@ export function CarrierPartnership() {
         <div className="mt-12 pt-6 border-t border-[#1E2D4D]/10 text-center">
           <p className="text-xs text-[#1E2D4D]/30 leading-relaxed max-w-lg mx-auto">
             EvidLY provides compliance documentation tools for food service operators.
-            Risk scores reflect compliance activities tracked through the platform.
+            Risk scores reflect compliance activities tracked through EvidLY.
             Insurance premium decisions are made solely by carriers based on their own underwriting criteria.
             EvidLY does not act as an insurance broker, agent, or advisor.
           </p>

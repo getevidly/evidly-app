@@ -76,13 +76,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           <div className="flex flex-wrap justify-center gap-1.5">
             <button
               onClick={() => toast.success('Badge image downloaded')}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
             >
               <Download className="h-3 w-3" /> Download
             </button>
             <button
               onClick={() => toast.success('Certificate PDF generated')}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
             >
               <Printer className="h-3 w-3" /> Certificate
             </button>
@@ -91,13 +91,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
                 const post = generateSocialPost(tier, locationName, percentile);
                 navigator.clipboard.writeText(post).then(() => toast.success('Share text copied to clipboard'));
               }}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
             >
               <Share2 className="h-3 w-3" /> Share
             </button>
             <button
               onClick={() => setShowQR(!showQR)}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
             >
               <QrCode className="h-3 w-3" /> QR
             </button>

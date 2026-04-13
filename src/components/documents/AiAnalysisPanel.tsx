@@ -48,13 +48,13 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
   const isNeedsReview = analysis.compliance_status === 'needs_review';
 
   return (
-    <div className="border-t border-gray-100">
+    <div className="border-t border-[#1E2D4D]/5">
       {/* Toggle button */}
       <button
         onClick={onToggle}
-        className="w-full flex items-center gap-2 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-2.5 text-left hover:bg-[#FAF7F0] transition-colors"
       >
-        <Sparkles size={14} style={{ color: '#d4af37' }} />
+        <Sparkles size={14} style={{ color: '#A08C5A' }} />
         <span className="text-xs font-medium" style={{ color: '#1E2D4D' }}>
           AI Analysis
         </span>
@@ -195,7 +195,7 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
           )}
 
           {/* Confidence + timestamp */}
-          <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-1 border-t border-[#1E2D4D]/5">
             <div className="flex items-center gap-2">
               <span className="text-xs text-[#1E2D4D]/50">Confidence:</span>
               <span className="text-xs font-semibold" style={{ color: confidenceColor }}>

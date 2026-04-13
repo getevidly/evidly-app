@@ -31,9 +31,9 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
+        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
         onClick={e => e.stopPropagation()}
         style={{ fontFamily: 'Inter, sans-serif' }}
       >

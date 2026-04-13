@@ -128,7 +128,7 @@ export default function SalesPipeline() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
       </div>
     );
   }
@@ -155,11 +155,11 @@ export default function SalesPipeline() {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setViewMode('kanban')}
-            className={`p-2 rounded-lg border ${viewMode === 'kanban' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
+            className={`p-2 rounded-xl border ${viewMode === 'kanban' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
             <LayoutGrid className="h-4 w-4" style={{ color: viewMode === 'kanban' ? NAVY : '#9ca3af' }} />
           </button>
           <button onClick={() => setViewMode('table')}
-            className={`p-2 rounded-lg border ${viewMode === 'table' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
+            className={`p-2 rounded-xl border ${viewMode === 'table' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
             <Table2 className="h-4 w-4" style={{ color: viewMode === 'table' ? NAVY : '#9ca3af' }} />
           </button>
         </div>
@@ -236,13 +236,13 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
               {deals.map(deal => (
                 <div key={deal.id} onClick={() => onSelect(deal)}
                   className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 cursor-pointer hover:shadow-md transition-shadow">
-                  <div className="font-semibold text-sm text-gray-900 mb-1">{deal.org_name}</div>
+                  <div className="font-semibold text-sm text-[#1E2D4D] mb-1">{deal.org_name}</div>
                   <div className="text-xs text-[#1E2D4D]/50">{deal.contact_name || '—'}{deal.contact_title ? ` · ${deal.contact_title}` : ''}</div>
                   <div className="flex items-center gap-2 mt-2 text-xs text-[#1E2D4D]/30">
                     {deal.location_count && <span>{deal.location_count} loc</span>}
                     {deal.industry && <span>· {deal.industry}</span>}
                   </div>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#1E2D4D]/5">
                     <span className="text-xs font-bold" style={{ color: DARK }}>{formatCents(deal.estimated_mrr_cents || 0)}/mo</span>
                     <span className="text-xs text-[#1E2D4D]/30">{deal.probability_pct || 0}%</span>
                   </div>
@@ -252,7 +252,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                       <>
                         {columns.indexOf(stage) < columns.length - 2 && (
                           <button onClick={e => { e.stopPropagation(); onStageChange(deal.id, columns[columns.indexOf(stage) + 1]); }}
-                            className="text-xs px-2 py-0.5 border border-[#1E2D4D]/10 rounded hover:bg-gray-50 flex items-center gap-0.5">
+                            className="text-xs px-2 py-0.5 border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-0.5">
                             <ChevronRight className="h-3 w-3" /> Next
                           </button>
                         )}
@@ -297,12 +297,12 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
           </thead>
           <tbody>
             {pipeline.map(deal => (
-              <tr key={deal.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-3 py-2 font-medium text-gray-900">{deal.org_name}</td>
+              <tr key={deal.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                <td className="px-3 py-2 font-medium text-[#1E2D4D]">{deal.org_name}</td>
                 <td className="px-3 py-2 text-[#1E2D4D]/70 text-xs">{deal.contact_name || '—'}</td>
                 <td className="px-3 py-2 text-xs text-[#1E2D4D]/50 capitalize">{deal.segment?.replace(/_/g, ' ') || '—'}</td>
                 <td className="px-3 py-2 text-center text-[#1E2D4D]/50">{deal.location_count || '—'}</td>
-                <td className="px-3 py-2 text-right font-medium text-gray-900">{formatCents(deal.estimated_mrr_cents || 0)}</td>
+                <td className="px-3 py-2 text-right font-medium text-[#1E2D4D]">{formatCents(deal.estimated_mrr_cents || 0)}</td>
                 <td className="px-3 py-2">
                   <select value={deal.stage} onChange={e => onStageChange(deal.id, e.target.value)}
                     className="text-xs border border-[#1E2D4D]/10 rounded px-2 py-1 bg-white">
@@ -313,8 +313,8 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
                 <td className="px-3 py-2 text-xs text-[#1E2D4D]/50">{formatDate(deal.expected_close_date)}</td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex items-center gap-1 justify-end">
-                    <button onClick={() => onCloseDate(deal.id)} className="p-1 hover:bg-gray-100 rounded" title="Set close date"><Calendar className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
-                    <button onClick={() => onNotes(deal.id)} className="p-1 hover:bg-gray-100 rounded" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
+                    <button onClick={() => onCloseDate(deal.id)} className="p-1 hover:bg-[#1E2D4D]/5 rounded" title="Set close date"><Calendar className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
+                    <button onClick={() => onNotes(deal.id)} className="p-1 hover:bg-[#1E2D4D]/5 rounded" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
                   </div>
                 </td>
               </tr>
@@ -352,10 +352,10 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50">
-      <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6">
+      <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6 modal-content-enter">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-[#1E2D4D]">{deal.org_name}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
+          <button onClick={onClose} className="p-1 hover:bg-[#1E2D4D]/5 rounded" aria-label="Close"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
         </div>
 
         <div className="space-y-3 text-sm">
@@ -375,18 +375,18 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
         <div className="mt-4 pt-4 border-t border-[#1E2D4D]/10">
           <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Update Stage</label>
           <select value={deal.stage} onChange={e => { onStageChange(deal.id, e.target.value); onClose(); }}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
             {PIPELINE_STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
           </select>
         </div>
 
         <div className="flex gap-2 mt-4">
           <button onClick={() => { onNotes(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 font-medium">Add Notes</button>
+            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] font-medium">Add Notes</button>
           <button onClick={() => { onCloseDate(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 font-medium">Set Close Date</button>
+            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] font-medium">Set Close Date</button>
           <button onClick={handleLostReason}
-            className="px-3 py-2 text-xs border border-red-200 rounded-lg hover:bg-red-50 text-red-600 font-medium">Mark Lost</button>
+            className="px-3 py-2 text-xs border border-red-200 rounded-xl hover:bg-red-50 text-red-600 font-medium">Mark Lost</button>
         </div>
       </div>
     </div>
@@ -397,7 +397,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
       <span className="text-[#1E2D4D]/50">{label}</span>
-      <span className="font-medium text-gray-900 text-right max-w-[60%] break-words">{value}</span>
+      <span className="font-medium text-[#1E2D4D] text-right max-w-[60%] break-words">{value}</span>
     </div>
   );
 }

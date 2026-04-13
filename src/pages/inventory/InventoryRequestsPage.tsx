@@ -223,7 +223,7 @@ function RequestCard({ request }: { request: InventoryRequest }) {
           </button>
           <button
             onClick={() => alert('Request denied (not yet implemented)')}
-            className="px-4 py-1.5 text-xs font-medium rounded-lg border transition-colors hover:bg-gray-50"
+            className="px-4 py-1.5 text-xs font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
             style={{ borderColor: CARD_BORDER, color: '#DC2626' }}
           >
             Deny

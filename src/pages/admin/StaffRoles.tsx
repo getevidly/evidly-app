@@ -553,7 +553,7 @@ export default function StaffRoles() {
                   >
                     {/* Card header */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ fontSize: 24 }}>{roleIcon}</span>
+                      <span className="text-2xl">{roleIcon}</span>
                       <div>
                         <div style={{ fontSize: 15, fontWeight: 700, color: NAVY }}>
                           {ROLE_DISPLAY[rd.role_name] || rd.role_name}

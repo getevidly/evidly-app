@@ -55,7 +55,7 @@ export function PermissionCategoryCard({
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-3">
           <span className="text-lg">{category.icon}</span>

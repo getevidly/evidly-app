@@ -103,7 +103,7 @@ export function VendorPartnerDashboard() {
     return (
       <div className="text-center py-12">
         <div className="w-12 h-12 rounded-full bg-[#FAF7F0] flex items-center justify-center mx-auto mb-3">
-          <Icon className="w-6 h-6 text-gray-300" />
+          <Icon className="w-6 h-6 text-[#1E2D4D]/30" />
         </div>
         <p className="text-sm font-medium text-[#1E2D4D]/50">{title}</p>
         <p className="text-xs text-[#1E2D4D]/30 mt-1">{subtitle}</p>
@@ -122,7 +122,7 @@ export function VendorPartnerDashboard() {
             <span className="text-xs text-[#1E2D4D]/30">· Partner Dashboard</span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-300">{profile?.full_name || 'Partner'}</span>
+            <span className="text-xs text-[#1E2D4D]/30">{profile?.full_name || 'Partner'}</span>
             <button
               onClick={() => signOut ? signOut() : navigate('/login')}
               className="text-[#1E2D4D]/30 hover:text-white transition-colors"
@@ -146,7 +146,7 @@ export function VendorPartnerDashboard() {
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
                   isActive
                     ? 'border-[#A08C5A] text-[#1E2D4D]'
-                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -288,7 +288,7 @@ export function VendorPartnerDashboard() {
                               </button>
                               <button
                                 onClick={() => updateLeadStatus(lead.id, 'lost')}
-                                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50"
+                                className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
                               >
                                 Lost
                               </button>
@@ -304,14 +304,14 @@ export function VendorPartnerDashboard() {
                               </button>
                               <button
                                 onClick={() => updateLeadStatus(lead.id, 'lost')}
-                                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50"
+                                className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
                               >
                                 Lost
                               </button>
                             </>
                           )}
                           {lead.operator_phone && (
-                            <a href={`tel:${lead.operator_phone}`} className="p-1.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50">
+                            <a href={`tel:${lead.operator_phone}`} className="p-1.5 border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0]">
                               <Phone className="w-3 h-3 text-[#1E2D4D]/50" />
                             </a>
                           )}
@@ -343,7 +343,7 @@ export function VendorPartnerDashboard() {
                         <div key={i}>
                           <div className="flex items-center justify-between text-xs mb-1">
                             <span className="text-[#1E2D4D]/80">{item.label}</span>
-                            <span className="font-medium text-gray-900">{Math.round(item.score * item.pts / 100)} / {item.pts} pts</span>
+                            <span className="font-medium text-[#1E2D4D]">{Math.round(item.score * item.pts / 100)} / {item.pts} pts</span>
                           </div>
                           <div className="h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
                             <div

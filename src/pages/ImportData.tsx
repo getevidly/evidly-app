@@ -351,8 +351,8 @@ export function ImportData() {
                   isCompleted
                     ? 'bg-green-500 text-white'
                     : isCurrent
-                    ? 'bg-[#d4af37] text-white'
-                    : 'bg-gray-200 text-[#1E2D4D]/50'
+                    ? 'bg-[#A08C5A] text-white'
+                    : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/50'
                 }`}
               >
                 {isCompleted ? <Check className="w-4 h-4" /> : stepNum}
@@ -398,9 +398,9 @@ export function ImportData() {
               <button
                 key={s.dataType}
                 onClick={() => selectDataType(s.dataType)}
-                className={`text-left p-5 rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-[#d4af37] ${
+                className={`text-left p-5 rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-[#A08C5A] ${
                   dataType === s.dataType
-                    ? 'border-[#d4af37] ring-2 ring-[#d4af37]/30'
+                    ? 'border-[#A08C5A] ring-2 ring-[#A08C5A]/30'
                     : 'border-[#1E2D4D]/10'
                 }`}
               >
@@ -448,7 +448,7 @@ export function ImportData() {
 
       {/* Required columns info */}
       {schema && (
-        <div className="mb-6 p-4 bg-[#eef4f8] rounded-lg border border-[#b8d4e8]">
+        <div className="mb-6 p-4 bg-[#eef4f8] rounded-xl border border-[#b8d4e8]">
           <p className="text-sm font-medium text-[#1E2D4D] mb-2">
             Required columns:
           </p>
@@ -478,13 +478,13 @@ export function ImportData() {
         onClick={() => fileInputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
           dragOver
-            ? 'border-[#d4af37] bg-[#d4af37]/5'
-            : 'border-[#1E2D4D]/15 hover:border-gray-400 bg-white'
+            ? 'border-[#A08C5A] bg-[#A08C5A]/5'
+            : 'border-[#1E2D4D]/15 hover:border-[#1E2D4D]/20 bg-white'
         }`}
       >
         <FileUp
           className={`w-12 h-12 mx-auto mb-4 ${
-            dragOver ? 'text-[#d4af37]' : 'text-[#1E2D4D]/30'
+            dragOver ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'
           }`}
         />
         <p className="text-base font-medium text-[#1E2D4D]/80 mb-1">
@@ -541,7 +541,7 @@ export function ImportData() {
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden mb-4">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 sticky top-0 z-10">
+              <thead className="bg-[#FAF7F0] sticky top-0 z-10">
                 <tr>
                   <th className="px-3 py-2.5 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider border-b border-[#1E2D4D]/10 w-16">
                     Row
@@ -597,7 +597,7 @@ export function ImportData() {
                             title={value}
                           >
                             {value || (
-                              <span className="text-gray-300">--</span>
+                              <span className="text-[#1E2D4D]/30">--</span>
                             )}
                           </td>
                         );
@@ -616,7 +616,7 @@ export function ImportData() {
           .map((r) => (
             <div
               key={r.row}
-              className="mb-2 px-4 py-2 rounded-xl border border-gray-100 bg-white text-xs"
+              className="mb-2 px-4 py-2 rounded-xl border border-[#1E2D4D]/5 bg-white text-xs"
             >
               <span className="font-medium text-[#1E2D4D]/70">Row {r.row}:</span>
               {r.errors.map((err, i) => (
@@ -647,7 +647,7 @@ export function ImportData() {
           <div className="flex items-center gap-3">
             <button
               onClick={goBack}
-              className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
             >
               Back
             </button>
@@ -681,14 +681,14 @@ export function ImportData() {
       {importing && (
         <div className="mt-6">
           <div className="flex items-center gap-3 mb-3">
-            <Loader2 className="w-5 h-5 text-[#d4af37] animate-spin" />
+            <Loader2 className="w-5 h-5 text-[#A08C5A] animate-spin" />
             <span className="text-sm text-[#1E2D4D]/70">
               Processing records... {importProgress}%
             </span>
           </div>
           <div className="w-full h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#d4af37] rounded-full transition-all duration-500 ease-out"
+              className="h-full bg-[#A08C5A] rounded-full transition-all duration-500 ease-out"
               style={{ width: `${importProgress}%` }}
             />
           </div>
@@ -732,7 +732,7 @@ export function ImportData() {
                   setImportResult(null);
                   setImportProgress(0);
                 }}
-                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] transition-colors"
               >
                 Import More Data
               </button>

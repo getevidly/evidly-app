@@ -39,7 +39,7 @@ export default function BeforeAfter() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[var(--color-gray-50)] rounded-[20px] p-5 sm:p-8 border-2 border-[var(--color-gray-200)]">
+          <div className="bg-[#FAF7F0] rounded-[20px] p-5 sm:p-8 border-2 border-[#1E2D4D]/10">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                 <X className="w-6 h-6 text-red-600" strokeWidth={2.5} />

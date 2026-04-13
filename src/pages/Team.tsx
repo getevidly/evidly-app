@@ -373,7 +373,7 @@ export function Team() {
 
   const getRoleBadge = (role: string) => {
     const badges = {
-      admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1E2D4D]' },
+      admin: { label: 'Owner', color: 'bg-[#A08C5A] text-[#1E2D4D]' },
       manager: { label: 'Manager', color: 'bg-[#eef4f8] text-[#1E2D4D]' },
       staff: { label: 'Staff', color: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70' },
     };
@@ -425,12 +425,12 @@ export function Team() {
               })).length}
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Award className="h-4 w-4 text-[#d4af37]" />
+              <Award className="h-4 w-4 text-[#A08C5A]" />
               <span className="text-sm text-[#1E2D4D]/50 font-medium">Total Certs</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#d4af37] text-center">
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">
               {filteredMembers.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
             </div>
           </div>
@@ -454,13 +454,13 @@ export function Team() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search members..."
-                className="pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                className="pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               />
             </div>
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Roles</option>
               <option value="admin">Owner</option>
@@ -471,7 +471,7 @@ export function Team() {
               <select
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               >
                 <option value="all">All Locations</option>
                 {memberLocations.map(loc => (
@@ -490,7 +490,7 @@ export function Team() {
                 </button>
                 <button
                   onClick={() => guardAction('bulk-invite', 'team management', () => setShowBulkInviteModal(true))}
-                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#FAF7F0] transition-colors duration-150"
                 >
                   <Users className="h-5 w-5" />
                   <span>Invite Multiple</span>
@@ -501,7 +501,7 @@ export function Team() {
         </div>
 
         {invitations.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6">
             <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-blue-600" />
               Invitations
@@ -510,7 +510,7 @@ export function Team() {
               {invitations.map((invitation) => {
                 const isExpired = invitation.status === 'expired' || new Date(invitation.expires_at) < new Date();
                 const statusBadge = isExpired
-                  ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-[#1E2D4D]/70">Expired</span>
+                  ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#1E2D4D]/5 text-[#1E2D4D]/70">Expired</span>
                   : <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>;
                 return (
                 <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-xl">
@@ -541,7 +541,7 @@ export function Team() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-[#1E2D4D]">
                           {invitation.full_name || invitation.email || invitation.phone}
                         </p>
                         {statusBadge}
@@ -562,7 +562,7 @@ export function Team() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => resendInvitation(invitation)}
-                      className="p-2 text-[#1E2D4D]/70 hover:bg-gray-50 rounded transition-colors"
+                      className="p-2 text-[#1E2D4D]/70 hover:bg-[#FAF7F0] rounded transition-colors"
                       title="Resend invitation"
                     >
                       <RotateCw className="w-4 h-4" />
@@ -602,19 +602,19 @@ export function Team() {
                   const isExpired = end < now;
                   const isPending = start > now;
                   const statusLabel = isActive ? 'Active' : isExpired ? 'Expired' : 'Pending';
-                  const statusColor = isActive ? 'bg-emerald-50 text-emerald-700' : isExpired ? 'bg-gray-100 text-[#1E2D4D]/70' : 'bg-amber-100 text-amber-800';
+                  const statusColor = isActive ? 'bg-emerald-50 text-emerald-700' : isExpired ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70' : 'bg-amber-100 text-amber-800';
                   const formatDate = (d: string) => {
                     const dt = new Date(d);
                     return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   };
                   return (
-                    <div key={assignment.id} className="flex flex-wrap items-center justify-between gap-2 p-4 border border-[#1E2D4D]/10 rounded-lg">
+                    <div key={assignment.id} className="flex flex-wrap items-center justify-between gap-2 p-4 border border-[#1E2D4D]/10 rounded-xl">
                       <div className="flex items-center gap-3 flex-1">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold" style={{ backgroundColor: '#1E2D4D' }}>
                           {assignment.userName.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">{assignment.userName}</div>
+                          <div className="font-medium text-[#1E2D4D]">{assignment.userName}</div>
                           <div className="text-sm text-[#1E2D4D]/50">
                             Temporary access to <span className="font-medium">{assignment.locationName}</span> ({formatDate(assignment.startDate)} – {formatDate(assignment.endDate)})
                           </div>
@@ -637,7 +637,7 @@ export function Team() {
               </div>
             )}
 
-            <div className="border border-dashed border-[#1E2D4D]/15 rounded-lg p-4">
+            <div className="border border-dashed border-[#1E2D4D]/15 rounded-xl p-4">
               <h4 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Grant Temporary Access</h4>
               <div className="flex flex-wrap items-end gap-3">
                 <div className="flex-1 min-w-0 sm:min-w-[150px]">
@@ -648,7 +648,7 @@ export function Team() {
                       const member = filteredMembers.find(m => m.id === e.target.value);
                       setTempForm(f => ({ ...f, userId: e.target.value, userName: member?.full_name || '' }));
                     }}
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="">Select member...</option>
                     {filteredMembers.map(m => (
@@ -664,7 +664,7 @@ export function Team() {
                       const loc = accessibleLocations.find(l => l.locationId === e.target.value);
                       setTempForm(f => ({ ...f, locationId: e.target.value, locationName: loc?.locationName || '' }));
                     }}
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocations.map(loc => (
@@ -678,7 +678,7 @@ export function Team() {
                     type="date"
                     value={tempForm.startDate}
                     onChange={(e) => setTempForm(f => ({ ...f, startDate: e.target.value }))}
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                 </div>
                 <div className="min-w-0 sm:min-w-[130px]">
@@ -687,7 +687,7 @@ export function Team() {
                     type="date"
                     value={tempForm.endDate}
                     onChange={(e) => setTempForm(f => ({ ...f, endDate: e.target.value }))}
-                    className="w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                 </div>
                 <button
@@ -721,7 +721,7 @@ export function Team() {
         <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-              <thead className="bg-gray-50">
+              <thead className="bg-[#FAF7F0]">
                 <tr>
                   <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Name</th>
                   <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden sm:table-cell">Role</th>
@@ -743,14 +743,14 @@ export function Team() {
                   const trainingPct = member.training_total ? Math.round((member.training_completed || 0) / member.training_total * 100) : null;
 
                   return (
-                    <tr key={member.id} className="hover:bg-gray-50">
+                    <tr key={member.id} className="hover:bg-[#FAF7F0]">
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full bg-[#1E2D4D] flex items-center justify-center text-white font-medium flex-shrink-0">
                             {member.full_name.charAt(0)}
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{member.full_name}</div>
+                            <div className="text-sm font-medium text-[#1E2D4D]">{member.full_name}</div>
                             <div className="text-xs text-[#1E2D4D]/50">{member.email}</div>
                           </div>
                         </div>
@@ -792,7 +792,7 @@ export function Team() {
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${trainingPct}%`,
-                                  backgroundColor: trainingPct === 100 ? '#16a34a' : trainingPct >= 75 ? '#d4af37' : '#ef4444',
+                                  backgroundColor: trainingPct === 100 ? '#16a34a' : trainingPct >= 75 ? '#A08C5A' : '#ef4444',
                                 }}
                               />
                             </div>
@@ -815,7 +815,7 @@ export function Team() {
                           <button
                             onClick={() => setOpenActionMenu(openActionMenu === member.id ? null : member.id)}
                             onBlur={() => setTimeout(() => setOpenActionMenu(null), 150)}
-                            className="p-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                            className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                           >
                             <MoreVertical className="h-5 w-5 text-[#1E2D4D]/50" />
                           </button>
@@ -824,7 +824,7 @@ export function Team() {
                               <button
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => { setOpenActionMenu(null); viewMemberDetails(member); }}
-                                className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-gray-50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] flex items-center gap-2"
                               >
                                 <Users className="h-4 w-4 text-[#1E2D4D]/30" />
                                 View Details
@@ -840,7 +840,7 @@ export function Team() {
                                     }
                                     guardAction('edit', 'team management', () => { setResetMember(member); setShowResetModal(true); });
                                   }}
-                                  className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-gray-50 flex items-center gap-2"
+                                  className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] flex items-center gap-2"
                                 >
                                   <KeyRound className="h-4 w-4 text-[#1E2D4D]/30" />
                                   Reset Password
@@ -872,7 +872,7 @@ export function Team() {
                                       '',
                                     );
                                   }}
-                                  className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-gray-50 flex items-center gap-2"
+                                  className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] flex items-center gap-2"
                                 >
                                   <ShieldAlert className="h-4 w-4 text-[#1E2D4D]/30" />
                                   Emulate User
@@ -901,7 +901,7 @@ export function Team() {
       {/* Member Details Modal */}
       {showDetailsModal && selectedMember && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
             <div className="flex justify-between items-start mb-6 flex-wrap gap-2">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1E2D4D] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
@@ -922,7 +922,7 @@ export function Team() {
               </div>
               <button
                 onClick={() => setShowDetailsModal(false)}
-                className="text-[#1E2D4D]/30 hover:text-gray-600"
+                className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -999,7 +999,7 @@ export function Team() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                  <Award className="h-5 w-5 text-[#d4af37]" />
+                  <Award className="h-5 w-5 text-[#A08C5A]" />
                   Certifications
                 </h4>
               </div>
@@ -1013,10 +1013,10 @@ export function Team() {
                     const isExpired = daysUntilExpiry !== null && daysUntilExpiry < 0;
 
                     return (
-                      <div key={cert.id} className="p-3 border border-[#1E2D4D]/10 rounded-lg">
+                      <div key={cert.id} className="p-3 border border-[#1E2D4D]/10 rounded-xl">
                         <div className="flex flex-wrap justify-between items-start gap-2">
                           <div>
-                            <p className="font-medium text-gray-900">{cert.certification_name}</p>
+                            <p className="font-medium text-[#1E2D4D]">{cert.certification_name}</p>
                             <div className="flex flex-wrap gap-2 sm:gap-4 mt-1">
                               {cert.issue_date && (
                                 <p className="text-sm text-[#1E2D4D]/70">
@@ -1103,7 +1103,7 @@ export function Team() {
       {/* Reset Password Confirmation Modal */}
       {showResetModal && resetMember && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-md">
+          <div className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-md modal-content-enter">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <KeyRound className="h-5 w-5 text-amber-600" />
@@ -1114,7 +1114,7 @@ export function Team() {
               Send a password reset email to:
             </p>
             <div className="bg-[#FAF7F0] rounded-lg p-3 mb-4">
-              <p className="font-medium text-gray-900">{resetMember.full_name}</p>
+              <p className="font-medium text-[#1E2D4D]">{resetMember.full_name}</p>
               <p className="text-sm text-[#1E2D4D]/50">{resetMember.email}</p>
             </div>
             <p className="text-xs text-[#1E2D4D]/50 mb-6">
@@ -1124,7 +1124,7 @@ export function Team() {
               <button
                 onClick={() => { setShowResetModal(false); setResetMember(null); }}
                 disabled={resetLoading}
-                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-[#1E2D4D]/10 rounded-lg transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -1164,7 +1164,7 @@ export function Team() {
       {/* Emulation Not Available in Demo Mode Modal */}
       {showEmulationDemoModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-5 w-full max-w-md">
+          <div className="bg-white rounded-xl p-5 w-full max-w-md modal-content-enter">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <ShieldAlert className="h-5 w-5 text-amber-600" />

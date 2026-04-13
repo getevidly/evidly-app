@@ -334,7 +334,7 @@ export default function CommandCenter() {
             ) : sources.map(s => (
               <div key={s.id} style={{ padding: '7px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}
                 title={s.last_crawl_error || undefined}>
-                <span style={{ fontSize: 13 }}>{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
+                <span className="text-[13px]">{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
                 <span style={{ flex: 1, color: NAVY, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {s.name}
                 </span>

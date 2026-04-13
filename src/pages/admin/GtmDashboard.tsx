@@ -165,12 +165,12 @@ export default function GtmDashboard() {
 
       {/* Channel performance table */}
       <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden mb-8">
-        <div className="px-5 py-3 border-b border-gray-100">
+        <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">Channel Performance</h2>
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+            <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
               <th className="text-left px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Channel</th>
               <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Leads</th>
               <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Demos</th>
@@ -179,7 +179,7 @@ export default function GtmDashboard() {
           </thead>
           <tbody>
             {channels.map(row => (
-              <tr key={row.channel} className="border-b border-gray-50 last:border-0">
+              <tr key={row.channel} className="border-b border-[#1E2D4D]/3 last:border-0">
                 <td className="px-5 py-3 font-medium" style={{ color: NAVY }}>{row.channel}</td>
                 <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.leads}</td>
                 <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.demos}</td>

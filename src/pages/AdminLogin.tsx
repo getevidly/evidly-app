@@ -79,7 +79,7 @@ export function AdminLogin() {
             <div style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#A08C5A', fontWeight: 600, marginTop: '4px' }}>
               LEAD WITH CONFIDENCE
             </div>
-            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}>
+            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}>
               Admin Access
             </span>
           </div>
@@ -134,9 +134,9 @@ export function AdminLogin() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>

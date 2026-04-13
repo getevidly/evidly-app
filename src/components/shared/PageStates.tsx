@@ -47,7 +47,7 @@ export function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
+          className="bg-[#1E2D4D] text-white rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
         >
           Try again
         </button>
@@ -85,7 +85,7 @@ export function PageEmptyState({
       {action && (
         <button
           onClick={action.onClick}
-          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
+          className="bg-[#1E2D4D] text-white rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
         >
           {action.label}
         </button>

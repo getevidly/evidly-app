@@ -33,7 +33,7 @@ export function ConfirmRoleChangeModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
       <div
         className="w-full max-w-md rounded-xl shadow-xl border"
         style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
@@ -48,7 +48,7 @@ export function ConfirmRoleChangeModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -63,7 +63,7 @@ export function ConfirmRoleChangeModal({
           </p>
 
           <div
-            className="px-4 py-3 rounded-lg border"
+            className="px-4 py-3 rounded-xl border"
             style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)', borderColor: 'var(--border)' }}
           >
             <p className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>
@@ -90,7 +90,7 @@ export function ConfirmRoleChangeModal({
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: 'var(--border)' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
             style={{ borderColor: 'var(--border)', color: '#3D5068' }}
           >
             Cancel

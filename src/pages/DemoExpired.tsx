@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Clock, ArrowRight, MessageCircle } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 /**
  * Full-screen upgrade prompt shown when an authenticated demo has expired.
@@ -74,7 +74,7 @@ export default function DemoExpired() {
             href="https://calendly.com/founders-getevidly/60min"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-3 rounded-xl font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors"
+            className="px-8 py-3 rounded-xl font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0] flex items-center justify-center gap-2 transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
             Talk to Us

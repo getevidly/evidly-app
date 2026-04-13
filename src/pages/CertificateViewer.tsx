@@ -16,7 +16,7 @@ const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; color: string; 
   food_safety_handler: { label: 'Food Handler', color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'CFPM', color: '#1E2D4D', bg: '#e0f2fe' },
   facility_safety: { label: 'Facility Safety', color: '#dc2626', bg: '#fee2e2' },
-  compliance_ops: { label: 'Compliance', color: '#d4af37', bg: '#fef3c7' },
+  compliance_ops: { label: 'Compliance', color: '#A08C5A', bg: '#fef3c7' },
   custom: { label: 'Custom', color: '#7c3aed', bg: '#ede9fe' },
 };
 
@@ -39,13 +39,13 @@ function CertificateCard({ cert, onView }: { cert: TrainingCertificate; onView: 
       onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
       onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
       {/* Gold Top Stripe */}
-      <div style={{ height: 4, background: '#d4af37' }} />
+      <div style={{ height: 4, background: '#A08C5A' }} />
       <div style={{ padding: 16 }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 44, height: 44, borderRadius: 22, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Award size={22} color="#d4af37" />
+              <Award size={22} color="#A08C5A" />
             </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{cert.employeeName}</div>
@@ -115,8 +115,8 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
         onClick={e => e.stopPropagation()}>
         {/* Certificate Render */}
         <div style={{ padding: '24px 16px', textAlign: 'center', background: 'linear-gradient(180deg, #fffbeb 0%, #fff 40%)' }}>
-          <div style={{ border: '3px solid #d4af37', borderRadius: 12, padding: '20px 16px', background: '#fff' }}>
-            <Award size={48} color="#d4af37" style={{ marginBottom: 12 }} />
+          <div style={{ border: '3px solid #A08C5A', borderRadius: 12, padding: '20px 16px', background: '#fff' }}>
+            <Award size={48} color="#A08C5A" style={{ marginBottom: 12 }} />
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', margin: '0 0 4px' }}>Certificate of Completion</h2>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 24px' }}>EvidLY Training & Certification Platform</p>
 

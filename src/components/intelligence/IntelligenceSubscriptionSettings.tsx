@@ -72,7 +72,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
         <div className="space-y-3">
           <div>
             <span className="text-sm font-bold" style={{ color: BODY_TEXT }}>{DEMO_CLIENT_PROFILE.organization_name}</span>
-            <span className="ml-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
+            <span className="ml-2 px-2 py-0.5 rounded text-[11px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
               {DEMO_CLIENT_PROFILE.segment.replace(/_/g, ' ')}
             </span>
           </div>

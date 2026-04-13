@@ -26,7 +26,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
         className="max-w-lg w-full rounded-xl p-8 text-center"
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
-        <AlertTriangle size={48} style={{ color: '#d4af37' }} className="mx-auto mb-4" />
+        <AlertTriangle size={48} style={{ color: '#A08C5A' }} className="mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2" style={{ color: '#1E2D4D' }}>
           {t('errors.somethingWentWrong')}
         </h2>
@@ -37,7 +37,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
           <button
             onClick={onRetry}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-colors cursor-pointer"
-            style={{ backgroundColor: '#d4af37' }}
+            style={{ backgroundColor: '#A08C5A' }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
@@ -59,7 +59,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
           <div className="text-left mt-4">
             <button
               onClick={() => setShowDetails((prev) => !prev)}
-              className="inline-flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-gray-700 cursor-pointer bg-transparent border-none p-0"
+              className="inline-flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 cursor-pointer bg-transparent border-none p-0"
             >
               {showDetails ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               {t('errors.showDetails')}
@@ -85,15 +85,15 @@ function SectionFallback({ onRetry }: { onRetry: () => void }) {
 
   return (
     <div
-      className="rounded-lg p-4 flex items-center gap-3"
+      className="rounded-xl p-4 flex items-center gap-3"
       style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
     >
-      <AlertTriangle size={20} style={{ color: '#d4af37' }} className="flex-shrink-0" />
+      <AlertTriangle size={20} style={{ color: '#A08C5A' }} className="flex-shrink-0" />
       <span className="text-sm text-[#1E2D4D]/70 flex-1">{t('errors.somethingWentWrong')}</span>
       <button
         onClick={onRetry}
         className="text-sm font-medium bg-transparent border-none cursor-pointer p-0"
-        style={{ color: '#d4af37' }}
+        style={{ color: '#A08C5A' }}
       >
         {t('errors.tryAgain')}
       </button>
@@ -106,13 +106,13 @@ function WidgetFallback({ onRetry }: { onRetry: () => void }) {
 
   return (
     <span className="inline-flex items-center gap-1.5 text-sm text-[#1E2D4D]/50">
-      <AlertTriangle size={14} style={{ color: '#d4af37' }} />
+      <AlertTriangle size={14} style={{ color: '#A08C5A' }} />
       <span>{t('errors.somethingWentWrong')}</span>
-      <span className="text-gray-300">·</span>
+      <span className="text-[#1E2D4D]/30">·</span>
       <button
         onClick={onRetry}
         className="font-medium bg-transparent border-none cursor-pointer p-0"
-        style={{ color: '#d4af37' }}
+        style={{ color: '#A08C5A' }}
       >
         {t('errors.tryAgain')}
       </button>

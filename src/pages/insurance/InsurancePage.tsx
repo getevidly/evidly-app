@@ -79,7 +79,7 @@ export function InsurancePage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+            <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
               <div className="h-3 w-20 bg-[#1E2D4D]/8 rounded mb-2 mx-auto" />
               <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
             </div>
@@ -216,7 +216,7 @@ function PolicyList({
                 {isExpiringSoon && (
                   <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">Expiring Soon</span>
                 )}
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
                   {p.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
@@ -235,7 +235,7 @@ function PolicyList({
 
 function StatCard({ icon: Icon, label, value, color }: { icon: typeof Shield; label: string; value: string | number; color: string }) {
   return (
-    <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+    <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
       <div className="w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: `${color}12` }}>
         <Icon className="w-4.5 h-4.5" style={{ color }} />
       </div>

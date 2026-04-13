@@ -73,7 +73,7 @@ export function TeamAvailabilityPage() {
         </div>
         <button
           onClick={handleExport}
-          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50"
+          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <Download className="w-4 h-4" /> Export CSV
@@ -82,13 +82,13 @@ export function TeamAvailabilityPage() {
 
       {/* Week selector */}
       <div className="flex items-center justify-between">
-        <button onClick={() => setWeekOffset(o => o - 1)} className="p-2 rounded-lg hover:bg-gray-100">
+        <button onClick={() => setWeekOffset(o => o - 1)} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
           <ChevronLeft className="w-5 h-5" style={{ color: NAVY }} />
         </button>
         <span className="text-sm font-semibold" style={{ color: NAVY }}>
           {formatDate(adjustedDates[0])} — {formatDate(adjustedDates[6])}
         </span>
-        <button onClick={() => setWeekOffset(o => o + 1)} className="p-2 rounded-lg hover:bg-gray-100">
+        <button onClick={() => setWeekOffset(o => o + 1)} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
           <ChevronRight className="w-5 h-5" style={{ color: NAVY }} />
         </button>
       </div>
@@ -99,7 +99,7 @@ export function TeamAvailabilityPage() {
         <select
           value={filter}
           onChange={e => setFilter(e.target.value as 'all' | 'submitted')}
-          className="text-sm border rounded-lg px-3 py-1.5"
+          className="text-sm border rounded-xl px-3 py-1.5"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <option value="all">Show All</option>

@@ -46,7 +46,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
 
   // ── Shared input styles ────────────────────────────────────
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30';
+    'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30';
   const inputStyle = { background: CARD_BG, borderColor: CARD_BORDER, color: NAVY };
   const labelStyle = { color: NAVY };
 
@@ -68,7 +68,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
           <h2 className="text-lg font-bold" style={{ color: NAVY }}>Report Equipment Incident</h2>
           <button
             onClick={onClose}
-            className="p-2.5 -m-1 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2.5 -m-1 rounded-md hover:bg-[#1E2D4D]/5 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
@@ -88,7 +88,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
                   key={t.value}
                   type="button"
                   onClick={() => setIncidentType(t.value)}
-                  className="px-3 py-2 text-sm rounded-lg border font-medium transition-colors"
+                  className="px-3 py-2 text-sm rounded-xl border font-medium transition-colors"
                   style={{
                     borderColor: incidentType === t.value ? '#1E2D4D' : CARD_BORDER,
                     background: incidentType === t.value ? '#1E2D4D0D' : CARD_BG,
@@ -203,7 +203,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Cancel

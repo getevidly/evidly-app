@@ -62,7 +62,7 @@ export function QRScanLandingPage() {
         <div className="p-6 text-center" style={{ background: NAVY }}>
           <p className="text-xs font-semibold tracking-wider mb-1" style={{ color: GOLD }}>HOODOPS</p>
           <h1 className="text-lg font-bold text-white">{equipment.name}</h1>
-          <p className="text-sm text-gray-300 mt-1">{equipment.locationName}</p>
+          <p className="text-sm text-[#1E2D4D]/30 mt-1">{equipment.locationName}</p>
         </div>
 
         {/* Details */}
@@ -142,7 +142,7 @@ export function QRScanLandingPage() {
                 onChange={e => setIssueDescription(e.target.value)}
                 rows={3}
                 placeholder="What's wrong with this equipment?"
-                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: BORDER, color: NAVY }}
               />
               <div className="flex gap-2">

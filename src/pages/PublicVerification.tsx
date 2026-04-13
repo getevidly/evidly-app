@@ -44,12 +44,12 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
 const BADGE_CONFIG = {
   verified: { label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
   excellence: { label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
-  elite: { label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
+  elite: { label: 'EvidLY Elite', icon: Crown, color: '#A08C5A', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
   platinum: { label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months' },
 };
 
 function PercentileBar({ label, value }: { label: string; value: number }) {
-  const color = value >= 80 ? '#22c55e' : value >= 50 ? '#d4af37' : '#ef4444';
+  const color = value >= 80 ? '#22c55e' : value >= 50 ? '#A08C5A' : '#ef4444';
   return (
     <div className="flex items-center gap-3">
       <div className="w-40 text-sm text-[#1E2D4D]/70">{label}</div>
@@ -92,10 +92,10 @@ export default function PublicVerification() {
             <EvidlyIcon size={32} />
             <span className="text-xl font-bold">
               <span className="text-white">Evid</span>
-              <span style={{ color: '#d4af37' }}>LY</span>
+              <span style={{ color: '#A08C5A' }}>LY</span>
             </span>
           </div>
-          <span className="text-xs text-gray-300">Lead with Confidence</span>
+          <span className="text-xs text-[#1E2D4D]/30">Lead with Confidence</span>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default function PublicVerification() {
           </div>
 
           {/* Business info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="text-center">
               <h2 className="text-xl font-bold text-[#1E2D4D]">{data.businessName}</h2>
               <p className="text-sm text-[#1E2D4D]/50">{data.city}, {data.state}</p>
@@ -121,7 +121,7 @@ export default function PublicVerification() {
           </div>
 
           {/* Stats */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-xs text-[#1E2D4D]/50 mb-1">Overall Percentile Rank</div>
@@ -129,7 +129,7 @@ export default function PublicVerification() {
               </div>
               <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-xs text-[#1E2D4D]/50 mb-1">Qualifying Period</div>
-                <div className="text-sm font-semibold text-gray-800 mt-1">{data.qualifyingPeriod}</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]/90 mt-1">{data.qualifyingPeriod}</div>
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export default function PublicVerification() {
             <p className="text-xs text-[#1E2D4D]/50 mb-1">Verification code: {code}</p>
             <p className="text-xs text-[#1E2D4D]/30">Member since {data.verifiedSince}</p>
 
-            <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+            <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
               <Award className="h-6 w-6 mx-auto mb-2" style={{ color: '#1E2D4D' }} />
               <p className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>Want this for your kitchen?</p>
               <p className="text-xs text-[#1E2D4D]/70 mb-3">Join 2,340+ commercial kitchens benchmarking with EvidLY</p>

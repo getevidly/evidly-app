@@ -365,7 +365,7 @@ export function WeeklyDigest() {
             ) : (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#d4af37' }} />
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#A08C5A' }} />
                   <span style={{ fontSize: '14px', fontWeight: 700, color: '#92400e' }}>Setup Required</span>
                 </div>
                 <div style={{ fontSize: '12px', color: '#6b7280' }}>

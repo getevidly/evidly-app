@@ -59,7 +59,7 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
             {jobs.length} job{jobs.length !== 1 ? 's' : ''} pending assignment
           </p>
         </div>
-        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
           <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
         </button>
       </div>
@@ -73,13 +73,13 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
             placeholder="Search jobs..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border"
+            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>
         <button
           onClick={nextSort}
-          className="flex items-center gap-1.5 text-xs font-semibold hover:bg-gray-50 px-2 py-1 rounded"
+          className="flex items-center gap-1.5 text-xs font-semibold hover:bg-[#FAF7F0] px-2 py-1 rounded"
           style={{ color: TEXT_TERTIARY }}
         >
           <ArrowUpDown className="w-3 h-3" />
@@ -147,7 +147,7 @@ function DraggableUnassignedJob({ job, onClick }: { job: ScheduledJob; onClick?:
             </p>
           )}
           {priorityColor && (
-            <span className="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded"
+            <span className="inline-block mt-1 text-[11px] font-bold px-1.5 py-0.5 rounded"
               style={{ background: `${priorityColor}15`, color: priorityColor }}>
               {job.priority.toUpperCase()}
             </span>

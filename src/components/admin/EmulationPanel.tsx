@@ -237,7 +237,7 @@ export function EmulationPanel() {
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setSelectedOrg(null); }}
           placeholder="Search by org name..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm"
           style={{ borderColor: '#D1D9E6', ...F }}
         />
       </div>
@@ -350,9 +350,9 @@ export function EmulationPanel() {
       {/* ── Confirm Modal ── */}
       {confirmUser && (
         <>
-          <div className="fixed inset-0 z-[60] bg-black/50" onClick={() => setConfirmUser(null)} />
+          <div className="fixed inset-0 z-[60] bg-black/50 modal-backdrop-enter" onClick={() => setConfirmUser(null)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" style={{ ...F }} onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md modal-content-enter" style={{ ...F }} onClick={(e) => e.stopPropagation()}>
               <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#e5e7eb' }}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#fef2f2' }}>

@@ -170,8 +170,8 @@ export default function AIChatWidget() {
                 <div
                   className={`max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#eef4f8] text-gray-800'
-                      : 'bg-gray-100 text-[#1E2D4D]/80'
+                      ? 'bg-[#eef4f8] text-[#1E2D4D]/90'
+                      : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80'
                   }`}
                 >
                   {msg.content}
@@ -253,13 +253,13 @@ export default function AIChatWidget() {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about compliance..."
-                  className="flex-1 px-3 py-2 border border-[#1E2D4D]/10 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
+                  className="flex-1 px-3 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
                   className="px-3 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50 transition-colors"
-                  style={{ backgroundColor: '#d4af37' }}
+                  style={{ backgroundColor: '#A08C5A' }}
                 >
                   <Send className="w-4 h-4" />
                 </button>

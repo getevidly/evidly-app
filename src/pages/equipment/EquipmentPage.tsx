@@ -92,7 +92,7 @@ export function EquipmentPage() {
 
   // Skeletons
   const StatSkeleton = () => (
-    <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+    <div className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
       <div className="h-3 w-20 bg-[#1E2D4D]/8 rounded mb-2" />
       <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded" />
     </div>
@@ -109,7 +109,7 @@ export function EquipmentPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowBulkQR(true)}
-            className="px-3 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+            className="px-3 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             Print QR Codes
@@ -147,7 +147,7 @@ export function EquipmentPage() {
             onChange={e => setLocalSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
             placeholder="Search equipment..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>
@@ -155,7 +155,7 @@ export function EquipmentPage() {
         <select
           value={typeFilter}
           onChange={e => setParam('type', e.target.value)}
-          className="px-3 py-2 text-sm rounded-lg border"
+          className="px-3 py-2 text-sm rounded-xl border"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <option value="">All Types</option>
@@ -171,7 +171,7 @@ export function EquipmentPage() {
         <select
           value={conditionFilter}
           onChange={e => setParam('condition', e.target.value)}
-          className="px-3 py-2 text-sm rounded-lg border"
+          className="px-3 py-2 text-sm rounded-xl border"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           {CONDITION_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -180,14 +180,14 @@ export function EquipmentPage() {
         <select
           value={statusFilter}
           onChange={e => setParam('status', e.target.value)}
-          className="px-3 py-2 text-sm rounded-lg border"
+          className="px-3 py-2 text-sm rounded-xl border"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
 
         {/* View toggle */}
-        <div className="flex rounded-lg border overflow-hidden ml-auto" style={{ borderColor: CARD_BORDER }}>
+        <div className="flex rounded-xl border overflow-hidden ml-auto" style={{ borderColor: CARD_BORDER }}>
           <button
             onClick={() => setParam('view', 'grid')}
             className="px-3 py-2 transition-colors"
@@ -253,7 +253,7 @@ export function EquipmentPage() {
 
 function StatCard({ icon: Icon, label, value, color }: { icon: typeof Wrench; label: string; value: number; color: string }) {
   return (
-    <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+    <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
       <div className="w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: `${color}12` }}>
         <Icon className="w-4.5 h-4.5" style={{ color }} />
       </div>

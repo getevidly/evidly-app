@@ -34,7 +34,7 @@ function TaskRow({ task, navigate }: { task: TaskItem; navigate: (path: string) 
     <button
       type="button"
       onClick={() => navigate(task.route)}
-      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
       style={{ borderBottom: '1px solid #F0F0F0' }}
     >
       {task.status === 'done' ? (
@@ -64,7 +64,7 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: 
     <button
       type="button"
       onClick={() => navigate(item.route)}
-      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
       style={{ borderBottom: '1px solid #F0F0F0' }}
     >
       <CalendarDays size={16} style={{ color }} className="shrink-0" />
@@ -99,7 +99,7 @@ export function DashboardToday() {
       {/* Date header — centered */}
       <div className="text-center mb-4">
         <span className="font-semibold" style={{ color: '#1E2D4D' }}>Today</span>
-        <span className="mx-2 text-gray-300">&middot;</span>
+        <span className="mx-2 text-[#1E2D4D]/30">&middot;</span>
         <span className="text-[#1E2D4D]/50">{todayStr}</span>
       </div>
 
@@ -259,7 +259,7 @@ export function DashboardToday() {
             key={link.route}
             type="button"
             onClick={() => navigate(link.route, { state: { fromTab: 'today' } })}
-            className="group bg-white rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-gray-300 transition-all duration-200"
+            className="group bg-white rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-[#1E2D4D]/15 transition-all duration-200"
             style={{ border: '1px solid #e5e7eb' }}
           >
             <div className="p-2 rounded-lg" style={{ backgroundColor: link.iconBg, color: link.iconColor }}>
@@ -268,7 +268,7 @@ export function DashboardToday() {
             <span className="text-sm font-medium" style={{ color: BODY_TEXT }}>{link.label}</span>
             <ChevronRight
               size={14}
-              className="ml-auto text-gray-300 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200"
+              className="ml-auto text-[#1E2D4D]/30 group-hover:text-[#1E2D4D]/70 group-hover:translate-x-1 transition-all duration-200"
             />
           </button>
         ))}

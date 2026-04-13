@@ -41,7 +41,7 @@ export function EmailConfirmed() {
         <div className="flex justify-center mb-4">
           <span className="text-3xl font-bold tracking-tight">
             <span className="text-[#1E2D4D]">Evid</span>
-            <span className="text-[#d4af37]">LY</span>
+            <span className="text-[#A08C5A]">LY</span>
           </span>
         </div>
 

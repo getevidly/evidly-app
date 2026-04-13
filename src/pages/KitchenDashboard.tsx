@@ -42,7 +42,7 @@ export function KitchenDashboard() {
   return (
     <>
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 sm:p-6 text-white">
           <h1 className="text-2xl font-bold tracking-tight mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <p className="text-blue-100 text-sm mt-1">Shift: 6:00 AM - 2:00 PM</p>
@@ -70,7 +70,7 @@ export function KitchenDashboard() {
               <div
                 key={task.id}
                 onClick={() => navigate(task.link)}
-                className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
                   task.completed
                     ? 'bg-[#FAF7F0] border-[#1E2D4D]/10'
                     : task.overdue
@@ -87,7 +87,7 @@ export function KitchenDashboard() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className={`font-medium ${task.completed ? 'text-[#1E2D4D]/50 line-through' : task.overdue ? 'text-red-900' : 'text-gray-900'}`}>
+                    <div className={`font-medium ${task.completed ? 'text-[#1E2D4D]/50 line-through' : task.overdue ? 'text-red-900' : 'text-[#1E2D4D]'}`}>
                       {task.time} — {task.label}
                     </div>
                     {task.overdue && !task.completed && (
@@ -104,7 +104,7 @@ export function KitchenDashboard() {
         </div>
 
         {overdueItems.length > 0 && (
-          <div className="bg-red-50 border-l-4 border-red-600 rounded-lg p-4 sm:p-6">
+          <div className="bg-red-50 border-l-4 border-red-600 rounded-xl p-4 sm:p-6">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
@@ -113,7 +113,7 @@ export function KitchenDashboard() {
                   {overdueItems.map((item) => (
                     <div key={item.id} className="flex items-center justify-between bg-white rounded-xl p-3">
                       <div>
-                        <div className="font-medium text-gray-900">{item.label}</div>
+                        <div className="font-medium text-[#1E2D4D]">{item.label}</div>
                         <div className="text-sm text-[#1E2D4D]/70">Scheduled: {item.time} • {item.minutesLate || 120} minutes late</div>
                       </div>
                       <button
@@ -159,7 +159,7 @@ export function KitchenDashboard() {
           </button>
         </div>
 
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 sm:p-6">
+        <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-xl p-4 sm:p-6">
           <h3 className="text-lg font-bold text-yellow-900 mb-3 flex items-center">
             <Clock className="h-5 w-5 mr-2" />
             Reminders

@@ -175,8 +175,8 @@ function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' 
   const label = pillar === 'food_safety' ? 'Food Safety' : 'Facility Safety';
   return (
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden animate-pulse">
-      <div className="px-4 sm:px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-        <Icon className="w-5 h-5 text-gray-300" />
+      <div className="px-4 sm:px-5 py-4 border-b border-[#1E2D4D]/5 flex items-center gap-3">
+        <Icon className="w-5 h-5 text-[#1E2D4D]/30" />
         <h2 className="text-lg font-bold text-[#1E2D4D]/30">{label}</h2>
       </div>
       <div className="p-4 sm:p-5 space-y-4">
@@ -203,7 +203,7 @@ interface AhjCardProps {
 function AhjCard({ label, grade, summary, authority, status, lastInspectionDate, isFederal }: AhjCardProps) {
   const statusColors = STATUS_COLORS[status] || STATUS_COLORS.at_risk;
   return (
-    <div className={`rounded-lg p-4 border ${statusColors.bg} ${statusColors.border}`}>
+    <div className={`rounded-xl p-4 border ${statusColors.bg} ${statusColors.border}`}>
       <div className="flex items-start gap-3">
         <div
           className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -353,7 +353,7 @@ function PillarPanel({
               )}
             </div>
           ) : (
-            <div className="rounded-lg p-4 border border-[#1E2D4D]/10 bg-[#FAF7F0]">
+            <div className="rounded-xl p-4 border border-[#1E2D4D]/10 bg-[#FAF7F0]">
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-[#1E2D4D]/30 flex-shrink-0 mt-0.5" />
                 <div>
@@ -443,15 +443,15 @@ function PillarPanel({
             <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
               Tracked Items
             </div>
-            <div className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden divide-y divide-[#1E2D4D]/5">
+            <div className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden divide-y divide-[#1E2D4D]/5">
               {impactItems.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 px-3 sm:px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-3 sm:px-4 py-2.5 hover:bg-[#FAF7F0] transition-colors"
                 >
                   <StatusIcon status={item.status} />
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-gray-800">{item.label}</span>
+                    <span className="text-sm text-[#1E2D4D]/90">{item.label}</span>
                   </div>
                   <span className={`text-xs font-medium ${
                     item.status === 'current' ? 'text-green-600'
@@ -489,7 +489,7 @@ export function ComplianceOverview() {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+          <ClipboardCheck className="mx-auto h-12 w-12 text-[#1E2D4D]/30 mb-4" />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No compliance data yet</h2>
           <p className="text-sm text-[#1E2D4D]/50 mb-6">
             Add locations and complete checklists to see your compliance overview.
@@ -682,7 +682,7 @@ export function ComplianceOverview() {
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
                 ? 'bg-white shadow-sm'
-                : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
             style={loc.urlId === locationParam ? { color: NAVY } : undefined}
           >
@@ -754,7 +754,7 @@ function CorrectiveActionsSummary({ locationId, navigate }: { locationId: string
   return (
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-800">Open Corrective Actions</h3>
+        <h3 className="text-sm font-semibold text-[#1E2D4D]/90">Open Corrective Actions</h3>
       </div>
       <p className="text-xs text-[#1E2D4D]/30">No open corrective actions for this location.</p>
     </div>

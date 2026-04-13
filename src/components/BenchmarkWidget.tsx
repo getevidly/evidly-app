@@ -48,7 +48,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
         <div className="relative h-3 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
           {/* Industry average marker */}
           <div
-            className="absolute top-0 h-full w-0.5 bg-gray-400 z-10"
+            className="absolute top-0 h-full w-0.5 bg-[#1E2D4D]/20 z-10"
             style={{ left: `${comparison.industryAvg}%` }}
           />
           {/* Your score bar */}
@@ -70,7 +70,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>{percentile.percentile}th</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>{percentile.percentile}th</span>
             <span className="text-sm font-medium text-[#1E2D4D]/50">percentile</span>
           </div>
           <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Top {100 - percentile.percentile}% of peers</p>
@@ -119,7 +119,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
       </div>
 
       {/* Trend + Actions */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-[#1E2D4D]/5">
         <div className="flex items-center gap-1.5 text-sm">
           {qChange >= 0 ? (
             <TrendingUp className="h-4 w-4 text-green-500" />
@@ -141,7 +141,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           </button>
           <button
             onClick={() => toast.info("Share from the full Benchmarks page")}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors hover:bg-gray-50"
+            className="px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
             style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
           >
             Share Ranking

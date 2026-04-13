@@ -35,15 +35,15 @@ export function IoTSensorLanding() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">IoT Sensor Hub</h1>
           <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Your sensors. Our intelligence. Zero manual logging.
           </p>
-          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
-            <Lock className="h-4 w-4" style={{ color: '#d4af37' }} />
-            <span className="text-sm font-semibold" style={{ color: '#d4af37' }}>Coming Soon</span>
+          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #A08C5A' }}>
+            <Lock className="h-4 w-4" style={{ color: '#A08C5A' }} />
+            <span className="text-sm font-semibold" style={{ color: '#A08C5A' }}>Coming Soon</span>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ export function IoTSensorLanding() {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: '#eef4f8' }}>
                   <item.icon className="h-6 w-6" style={{ color: '#1E2D4D' }} />
                 </div>
-                <div className="w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1E2D4D', color: 'white', fontSize: '12px', fontWeight: 700 }}>{item.step}</div>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1E2D4D', color: 'white', fontWeight: 700 }}>{item.step}</div>
                 <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{item.title}</h3>
                 <p className="text-xs text-[#1E2D4D]/50">{item.desc}</p>
               </div>
@@ -122,7 +122,7 @@ export function IoTSensorLanding() {
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Webhook API Preview</h2>
           <p className="text-sm text-[#1E2D4D]/70 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
-          <div className="rounded-xl bg-gray-900 p-5 overflow-x-auto">
+          <div className="rounded-xl bg-[#1E2D4D]/90 p-5 overflow-x-auto">
             <pre className="text-xs text-green-400 font-mono whitespace-pre">
 {`POST https://api.evidly.com/v1/iot/webhook/ingest
 X-API-Key: sk_live_your_api_key
@@ -165,8 +165,8 @@ Content-Type: application/json
 
         {/* Footer */}
         <div className="text-center text-sm text-[#1E2D4D]/30">
-          <a href="/" className="hover:text-gray-600 transition-colors">
-            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#d4af37' }}>LY</span>
+          <a href="/" className="hover:text-[#1E2D4D]/70 transition-colors">
+            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#A08C5A' }}>LY</span>
           </a>
         </div>
       </div>

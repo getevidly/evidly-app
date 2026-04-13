@@ -85,7 +85,7 @@ export function RegulatoryAlerts() {
       case 'County': return 'bg-emerald-50 text-emerald-700 border-green-200';
       case 'NFPA': return 'bg-red-50 text-red-700 border-red-200';
       case 'OSHA': return 'bg-orange-100 text-orange-700 border-orange-200';
-      default: return 'bg-gray-100 text-[#1E2D4D]/80 border-[#1E2D4D]/10';
+      default: return 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 border-[#1E2D4D]/10';
     }
   };
 
@@ -150,7 +150,7 @@ export function RegulatoryAlerts() {
       case 'state': return 'bg-amber-100 text-amber-700';
       case 'county': return 'bg-emerald-50 text-emerald-700';
       case 'industry': return 'bg-red-50 text-red-700';
-      default: return 'bg-gray-100 text-[#1E2D4D]/70';
+      default: return 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
     }
   };
 
@@ -172,7 +172,7 @@ export function RegulatoryAlerts() {
         </div>
       )}
       {!isDemoMode && error && !loading && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-700 mb-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700 mb-4">
           Unable to connect to regulatory monitoring service. Showing cached data if available.
         </div>
       )}
@@ -187,7 +187,7 @@ export function RegulatoryAlerts() {
             <select
               value={sourceFilter}
               onChange={e => setSourceFilter(e.target.value)}
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Sources</option>
               <option value="FDA">FDA</option>
@@ -200,7 +200,7 @@ export function RegulatoryAlerts() {
             <select
               value={impactFilter}
               onChange={e => setImpactFilter(e.target.value)}
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Impact Levels</option>
               <option value="action_required">Action Required</option>
@@ -211,7 +211,7 @@ export function RegulatoryAlerts() {
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Status</option>
               <option value="new">New</option>
@@ -222,7 +222,7 @@ export function RegulatoryAlerts() {
             <select
               value={dateFilter}
               onChange={e => setDateFilter(e.target.value)}
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Time</option>
               <option value="7">Last 7 Days</option>
@@ -234,7 +234,7 @@ export function RegulatoryAlerts() {
 
         {/* Alert Banner */}
         {actionRequiredCount > 0 && !dismissedBanner && (
-          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-lg p-4 mt-4 flex items-center justify-between flex-wrap gap-2">
+          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-xl p-4 mt-4 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">{actionRequiredCount} regulatory change{actionRequiredCount !== 1 ? 's' : ''} require{actionRequiredCount === 1 ? 's' : ''} your action</span>
@@ -245,7 +245,7 @@ export function RegulatoryAlerts() {
                   setImpactFilter('action_required');
                   setStatusFilter('new');
                 }}
-                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 text-sm min-h-[44px]"
+                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-[#FAF7F0] text-sm min-h-[44px]"
               >
                 Review Now
               </button>
@@ -261,8 +261,8 @@ export function RegulatoryAlerts() {
           {/* Left: Alert Feed */}
           <div className="flex-1 space-y-4">
             {filteredAlerts.length === 0 && (
-              <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5 text-center">
-                <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/5 p-4 sm:p-5 text-center">
+                <Filter className="w-8 h-8 text-[#1E2D4D]/30 mx-auto mb-3" />
                 <p className="text-sm text-[#1E2D4D]/50">
                   {sourceAlerts.length === 0
                     ? 'No regulatory alerts at this time. We’ll notify you when updates affect your jurisdictions.'
@@ -276,7 +276,7 @@ export function RegulatoryAlerts() {
               const isExpanded = expandedId === alert.id;
 
               return (
-                <div key={alert.id} className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6 space-y-4">
+                <div key={alert.id} className="bg-white rounded-xl border border-[#1E2D4D]/5 p-4 sm:p-6 space-y-4">
                   {/* Top row: badges */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getSourceBadgeClasses(alert.source)}`}>
@@ -303,7 +303,7 @@ export function RegulatoryAlerts() {
 
                   {/* AI Summary */}
                   {/* TODO: Wire to /api/regulatory-alert-summary edge function for AI summaries */}
-                  <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8]">
+                  <div className="bg-[#eef4f8] rounded-xl p-4 border border-[#b8d4e8]">
                     <div className="flex items-center gap-1.5">
                       <EvidlyIcon size={16} />
                       <span className="text-sm font-semibold text-[#1E2D4D]">AI Summary</span>
@@ -327,7 +327,7 @@ export function RegulatoryAlerts() {
                   {alert.affectedAreas.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {alert.affectedAreas.map(area => (
-                        <span key={area} className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-[#1E2D4D]/80">
+                        <span key={area} className="px-2.5 py-1 text-xs font-medium rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/80">
                           {area}
                         </span>
                       ))}
@@ -362,7 +362,7 @@ export function RegulatoryAlerts() {
                             {!action.completed && action.actionType === 'upload' && (
                               <button
                                 onClick={() => guardAction('upload', 'Regulatory Alerts', () => toast.info('File Upload'))}
-                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
+                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8]"
                               >
                                 <Upload className="w-3 h-3" />
                                 Upload
@@ -371,7 +371,7 @@ export function RegulatoryAlerts() {
                             {!action.completed && action.actionType === 'link' && action.linkTo && (
                               <button
                                 onClick={() => navigate(action.linkTo!)}
-                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
+                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8]"
                               >
                                 Schedule
                               </button>
@@ -383,7 +383,7 @@ export function RegulatoryAlerts() {
                   )}
 
                   {/* Button row */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-gray-100 flex-wrap">
+                  <div className="flex items-center gap-3 pt-3 border-t border-[#1E2D4D]/5 flex-wrap">
                     {status === 'new' && (
                       <button
                         onClick={() => {
@@ -401,14 +401,14 @@ export function RegulatoryAlerts() {
                     {/* TODO: Wire to Resend for team share emails */}
                     <button
                       onClick={() => guardAction('notify', 'Regulatory Alerts', () => toast.success('Team notification sent'))}
-                      className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 min-h-[44px]"
+                      className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5 min-h-[44px]"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       Share with Team
                     </button>
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : alert.id)}
-                      className="px-4 py-2 text-[#1E2D4D]/50 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 ml-auto"
+                      className="px-4 py-2 text-[#1E2D4D]/50 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5 ml-auto"
                     >
                       {isExpanded ? (
                         <>
@@ -427,7 +427,7 @@ export function RegulatoryAlerts() {
                   {/* Expanded section */}
                   {isExpanded && (
                     <div className="mt-3">
-                      <div className="bg-[#FAF7F0] rounded-lg p-4 text-sm text-[#1E2D4D]/70 font-mono">
+                      <div className="bg-[#FAF7F0] rounded-xl p-4 text-sm text-[#1E2D4D]/70 font-mono">
                         {alert.fullRegulatoryText}
                       </div>
                       <a
@@ -449,7 +449,7 @@ export function RegulatoryAlerts() {
           {/* Right Sidebar */}
           <div className="w-full lg:w-[280px] flex-shrink-0">
             {/* Your Jurisdictions */}
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#1E2D4D]" />
                 <h3 className="font-semibold text-[#1E2D4D]">Your Jurisdictions</h3>
@@ -460,9 +460,9 @@ export function RegulatoryAlerts() {
                   <p className="text-xs text-[#1E2D4D]/30 py-2">Add a location to see your jurisdictions.</p>
                 ) : (
                   jurisdictions.map((j, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0">
                       <span className="text-sm text-[#1E2D4D]/80">{j.name}, {j.state}</span>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-[#1E2D4D]/70">{j.type}</span>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">{j.type}</span>
                     </div>
                   ))
                 )}
@@ -470,7 +470,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Monitoring Sources */}
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5 mt-4">
               <div className="flex items-center gap-2">
                 <EvidlyIcon size={16} />
                 <h3 className="font-semibold text-[#1E2D4D]">Monitoring Sources</h3>
@@ -493,7 +493,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Compliance Calendar mini card */}
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5 mt-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#1E2D4D]" />
                 <h3 className="font-semibold text-[#1E2D4D]">Upcoming Effective Dates</h3>
@@ -503,7 +503,7 @@ export function RegulatoryAlerts() {
                   <p className="text-xs text-[#1E2D4D]/30">No upcoming effective dates.</p>
                 )}
                 {upcomingDates.map((alert) => (
-                  <div key={alert.id} className="text-sm py-2 border-b border-gray-50 last:border-0">
+                  <div key={alert.id} className="text-sm py-2 border-b border-[#1E2D4D]/3 last:border-0">
                     <p className="text-xs font-semibold text-[#1E2D4D]">{formatDate(alert.effectiveDate)}</p>
                     <p className="text-xs text-[#1E2D4D]/70 mt-0.5">
                       {alert.title.length > 50 ? alert.title.slice(0, 50) + '...' : alert.title}
@@ -516,7 +516,7 @@ export function RegulatoryAlerts() {
             {/* Alert Preferences link */}
             <button
               onClick={() => navigate('/settings')}
-              className="mt-4 w-full text-center px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2"
+              className="mt-4 w-full text-center px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#FAF7F0] flex items-center justify-center gap-2"
             >
               <Bell className="w-4 h-4" />
               Alert Preferences

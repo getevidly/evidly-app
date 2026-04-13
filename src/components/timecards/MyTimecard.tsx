@@ -116,7 +116,7 @@ export function MyTimecard({ shifts, employeeId, employeeName, onClockIn, onCloc
                 return (
                   <tr
                     key={date}
-                    className={`border-t ${shift ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                    className={`border-t ${shift ? 'cursor-pointer hover:bg-[#FAF7F0]' : ''}`}
                     style={{
                       borderColor: '#E8EDF5',
                       backgroundColor: isToday ? '#eff6ff' : undefined,

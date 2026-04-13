@@ -82,7 +82,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
     <div className="border border-[#1E2D4D]/10 rounded-xl bg-white overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-3">
           {icon}
@@ -91,7 +91,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
         </div>
         {isOpen ? <ChevronUp className="w-5 h-5 text-[#1E2D4D]/30" /> : <ChevronDown className="w-5 h-5 text-[#1E2D4D]/30" />}
       </button>
-      {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-gray-100">{children}</div>}
+      {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-[#1E2D4D]/5">{children}</div>}
     </div>
   );
 }
@@ -134,7 +134,7 @@ export function ScoringBreakdown() {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+          <ClipboardCheck className="mx-auto h-12 w-12 text-[#1E2D4D]/30 mb-4" />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No food safety data yet</h2>
           <p className="text-sm text-[#1E2D4D]/50 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
           <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
@@ -198,7 +198,7 @@ export function ScoringBreakdown() {
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
                 ? 'bg-white text-[#1E2D4D] shadow-sm'
-                : 'text-[#1E2D4D]/50 hover:text-gray-700'
+                : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {loc.name}
@@ -227,7 +227,7 @@ export function ScoringBreakdown() {
         >
           <div className="mt-4 space-y-4">
             {/* Grade Display */}
-            <div className={`rounded-lg p-4 border ${foodStatus.bg} ${foodStatus.border}`}>
+            <div className={`rounded-xl p-4 border ${foodStatus.bg} ${foodStatus.border}`}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -280,7 +280,7 @@ export function ScoringBreakdown() {
         >
           <div className="mt-4 space-y-4">
             {/* Grade Display */}
-            <div className={`rounded-lg p-4 border ${fireStatus.bg} ${fireStatus.border}`}>
+            <div className={`rounded-xl p-4 border ${fireStatus.bg} ${fireStatus.border}`}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -340,7 +340,7 @@ export function ScoringBreakdown() {
               return (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 px-4 sm:px-5 py-3.5 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 sm:px-5 py-3.5 hover:bg-[#FAF7F0] transition-colors"
                 >
                   {isWarning ? (
                     <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
@@ -348,7 +348,7 @@ export function ScoringBreakdown() {
                     <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-gray-800 font-medium">{metric.label}</span>
+                    <span className="text-sm text-[#1E2D4D]/90 font-medium">{metric.label}</span>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <span className={`text-sm font-semibold ${isWarning ? 'text-amber-600' : 'text-[#1E2D4D]/80'}`}>

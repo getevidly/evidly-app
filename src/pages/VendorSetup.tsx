@@ -34,7 +34,7 @@ import {
 // ── Brand ──────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 // ── Service type display names ─────────────────────────────
 const SERVICE_OPTIONS = [
@@ -217,7 +217,7 @@ export function VendorSetup() {
   };
 
   // ── Render helpers ───────────────────────────────────────
-  const inputClass = 'w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent';
+  const inputClass = 'w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent';
   const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   const renderStep1 = () => (
@@ -236,8 +236,8 @@ export function VendorSetup() {
           {SERVICE_OPTIONS.map(svc => (
             <label
               key={svc.id}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10 hover:border-gray-300'
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-colors ${
+                selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
               }`}
             >
               <input
@@ -377,7 +377,7 @@ export function VendorSetup() {
             <button
               type="button"
               onClick={() => simulateUpload(doc.id)}
-              className="w-full border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-6 flex flex-col items-center gap-2 hover:border-[#1E2D4D] hover:bg-blue-50/30 transition-colors"
+              className="w-full border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-[#1E2D4D] hover:bg-blue-50/30 transition-colors"
             >
               <Upload size={24} className="text-[#1E2D4D]/30" />
               <span className="text-sm text-[#1E2D4D]/50">Click to upload PDF or image</span>
@@ -431,7 +431,7 @@ export function VendorSetup() {
           <div key={sd.serviceId} className="flex items-center justify-between gap-3">
             <span className="text-sm text-[#1E2D4D]/80 flex-1">{sd.serviceName}</span>
             <select
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               value={sd.frequency}
               onChange={e => {
                 const u = [...serviceDefaults];
@@ -454,7 +454,7 @@ export function VendorSetup() {
       <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
         <label className="text-sm font-semibold text-[#1E2D4D]">Preferred Service Window</label>
         <select
-          className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+          className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
           value={preferredWindow}
           onChange={e => setPreferredWindow(e.target.value)}
         >
@@ -530,7 +530,7 @@ export function VendorSetup() {
             <div>
               <label className={labelClass}>Role</label>
               <select
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 value={member.role}
                 onChange={e => {
                   const u = [...teamMembers];
@@ -597,7 +597,7 @@ export function VendorSetup() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                       isComplete ? 'bg-green-500 text-white'
-                        : isActive ? 'text-white' : 'bg-gray-200 text-[#1E2D4D]/50'
+                        : isActive ? 'text-white' : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/50'
                     }`}
                     style={isActive ? { backgroundColor: NAVY } : undefined}
                   >
@@ -629,7 +629,7 @@ export function VendorSetup() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
               >
                 <ChevronLeft size={16} /> Back
               </button>
@@ -640,7 +640,7 @@ export function VendorSetup() {
               <button
                 type="button"
                 onClick={handleSkip}
-                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-gray-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
               >
                 {currentStep === 5 ? 'Skip & Finish' : 'Skip'}
               </button>

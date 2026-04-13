@@ -18,7 +18,7 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
   return (
     <div className="text-center p-6 bg-white rounded-xl border border-[#1E2D4D]/10">
       <QRCodeSVG value={qrUrl} size={size} level="M" />
-      <p className="mt-3 text-sm font-medium text-gray-900">{equipmentName}</p>
+      <p className="mt-3 text-sm font-medium text-[#1E2D4D]">{equipmentName}</p>
       {locationName && <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{locationName}</p>}
       <p className="text-xs text-[#1E2D4D]/30 mt-1">Scan to log temperature</p>
       <button
@@ -49,7 +49,7 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
             printWindow.document.close();
           }
         }}
-        className="mt-3 px-4 py-2 text-sm font-medium text-[#1E2D4D] border border-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] transition-colors"
+        className="mt-3 px-4 py-2 text-sm font-medium text-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-[#eef4f8] transition-colors"
       >
         Print QR Label
       </button>

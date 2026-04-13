@@ -145,7 +145,7 @@ export default function UserEmulation() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Emulation</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
-            View the platform as any user — read-only, fully audited
+            View EvidLY as any user — read-only, fully audited
           </p>
         </div>
         {isEmulating && emulatedUser && (

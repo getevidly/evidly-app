@@ -55,12 +55,12 @@ export default function Passport() {
             <EvidlyIcon size={40} />
             <div>
               <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">Compliance Passport</h1>
-              <p className="text-sm text-gray-300">Live Compliance Status</p>
+              <p className="text-sm text-[#1E2D4D]/30">Live Compliance Status</p>
             </div>
           </div>
         </header>
         <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-          <ShieldCheck className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <ShieldCheck className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
           <p className="text-[#1E2D4D]/50 font-medium">Your compliance passport is not yet available.</p>
           <p className="text-[#1E2D4D]/30 text-sm mt-1">Complete your location setup to generate a compliance passport.</p>
         </div>
@@ -205,7 +205,7 @@ export default function Passport() {
             <EvidlyIcon size={40} />
             <div>
               <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">EvidLY Compliance Passport</h1>
-              <p className="text-sm text-gray-300">Live Compliance Status</p>
+              <p className="text-sm text-[#1E2D4D]/30">Live Compliance Status</p>
             </div>
           </div>
           <button
@@ -349,7 +349,7 @@ export default function Passport() {
               {recentActivity.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-start gap-4 p-4 rounded-lg ${
+                  className={`flex items-start gap-4 p-4 rounded-xl ${
                     item.status === 'success'
                       ? 'bg-green-50 border border-green-200'
                       : 'bg-yellow-50 border border-yellow-200'
@@ -361,7 +361,7 @@ export default function Passport() {
                     }`}
                     strokeWidth={2}
                   />
-                  <span className="text-gray-800 font-medium">{item.text}</span>
+                  <span className="text-[#1E2D4D]/90 font-medium">{item.text}</span>
                 </div>
               ))}
             </div>

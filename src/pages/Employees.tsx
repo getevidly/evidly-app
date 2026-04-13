@@ -144,15 +144,15 @@ export function Employees() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
-        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value as EmployeeRole | 'all')} className="text-sm border rounded-lg px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value as EmployeeRole | 'all')} className="text-sm border rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
           {ROLE_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as EmployeeStatus | 'all')} className="text-sm border rounded-lg px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as EmployeeStatus | 'all')} className="text-sm border rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
           {STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
         <div className="relative flex-1 min-w-[200px] max-w-[320px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#6B7F96' }} />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..." className="w-full pl-9 pr-3 py-1.5 text-sm border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..." className="w-full pl-9 pr-3 py-1.5 text-sm border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
         </div>
       </div>
 

@@ -182,7 +182,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
             placeholder="Search RFPs by title, entity, keywords…"
             value={filters.search}
             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2"
             style={{
               borderColor: CARD_BORDER,
               color: TEXT_PRIMARY,
@@ -214,7 +214,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="text-xs px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+            className="text-xs px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
             style={{ color: TEXT_TERTIARY }}
           >
             Clear all
@@ -278,7 +278,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
           <div className="col-span-2 md:col-span-1">
             <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>State</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-lg border focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               value={filters.state[0] ?? ''}
               onChange={e => setFilters(f => ({ ...f, state: e.target.value ? [e.target.value] : [] }))}
@@ -306,7 +306,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
           <div>
             <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>NAICS Code</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-lg border focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               value={filters.naics_code}
               onChange={e => setFilters(f => ({ ...f, naics_code: e.target.value }))}
@@ -324,14 +324,14 @@ function FilterBar({ filters, setFilters, resetFilters }: {
             <div className="flex gap-2">
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-lg border focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
                 style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
                 value={filters.date_from ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_from: e.target.value || null }))}
               />
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-lg border focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
                 style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
                 value={filters.date_to ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_to: e.target.value || null }))}
@@ -533,14 +533,14 @@ function RfpCard({ item, onSelect, onAction }: {
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('watching'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
           style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}
         >
           <Eye size={12} /> Watch
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('declined'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
           style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
         >
           <XCircle size={12} /> Skip
@@ -596,7 +596,7 @@ function RfpTableView({ items, onSelect, onAction }: {
             return (
               <tr
                 key={item.id}
-                className="border-t cursor-pointer hover:bg-gray-50 transition-colors"
+                className="border-t cursor-pointer hover:bg-[#FAF7F0] transition-colors"
                 style={{ borderColor: CARD_BORDER }}
                 onClick={() => onSelect(item.id)}
               >
@@ -867,7 +867,7 @@ function DetailPanel({ item, onClose, onAction }: {
               value={notes}
               onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Add notes about this RFP…"
-              className="w-full text-sm p-3 rounded-lg border mb-1 resize-none"
+              className="w-full text-sm p-3 rounded-xl border mb-1 resize-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               rows={3}
             />
@@ -1123,7 +1123,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
           placeholder="Search sources…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus:outline-none"
           style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY, background: CARD_BG }}
         />
       </div>
@@ -1380,7 +1380,7 @@ export default function RfpIntelligence() {
                 {filteredListings.length} RFP{filteredListings.length !== 1 ? 's' : ''}
                 {filters.search || filters.relevance_tier.length > 0 ? ' (filtered)' : ''}
               </span>
-              <div className="flex items-center gap-1 border rounded-lg p-0.5" style={{ borderColor: CARD_BORDER }}>
+              <div className="flex items-center gap-1 border rounded-xl p-0.5" style={{ borderColor: CARD_BORDER }}>
                 <button
                   onClick={() => setViewMode('cards')}
                   className="p-1.5 rounded transition-colors"

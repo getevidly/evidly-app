@@ -248,7 +248,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     >
       <div className="p-4 border-b border-[#1E2D4D]/10 flex items-center justify-between">
         <h3 className="font-semibold text-[#1E2D4D]">Notifications</h3>
-        <button onClick={onClose} className="p-2.5 -m-1 hover:bg-gray-100 rounded transition-colors" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded transition-colors" aria-label="Close">
           <X className="w-4 h-4 text-[#1E2D4D]/50" />
         </button>
       </div>
@@ -256,7 +256,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
       <div className="max-h-96 overflow-y-auto">
         {notifications.length === 0 ? (
           <div className="p-8 text-center">
-            <CheckCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <CheckCircle className="w-12 h-12 text-[#1E2D4D]/30 mx-auto mb-3" />
             <p className="text-sm text-[#1E2D4D]/50">No new notifications</p>
           </div>
         ) : (
@@ -265,7 +265,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
               <div
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`p-4 hover:bg-gray-50 transition-colors ${
+                className={`p-4 hover:bg-[#FAF7F0] transition-colors ${
                   notification.link ? 'cursor-pointer' : ''
                 } ${!notification.read ? 'bg-blue-50' : ''} animate-fade-in`}
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -273,7 +273,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0 mt-0.5">{getIcon(notification.icon, notification.message)}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">{notification.message}</p>
+                    <p className="text-sm text-[#1E2D4D]">{notification.message}</p>
                     <p className="text-xs text-[#1E2D4D]/50 mt-1">
                       {formatDistanceToNow(notification.time, { addSuffix: true })}
                     </p>
@@ -292,7 +292,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
         <div className="p-3 border-t border-[#1E2D4D]/10 space-y-2">
           <button
             onClick={handleMarkAllAsRead}
-            className="w-full text-center text-sm font-medium text-[#1E2D4D]/70 hover:text-gray-900 transition-colors"
+            className="w-full text-center text-sm font-medium text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
           >
             Mark All as Read
           </button>

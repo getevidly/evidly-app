@@ -37,7 +37,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
       </div>
 
       {/* Aging matrix */}
-      <div className="rounded-lg p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+      <div className="rounded-xl p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
         <h4 className="text-xs font-bold uppercase mb-3" style={{ color: TEXT_TERTIARY }}>Aging Matrix</h4>
         <div className="overflow-x-auto">
           <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>

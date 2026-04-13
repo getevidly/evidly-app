@@ -54,7 +54,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
           <span className="inline-block px-2.5 py-1 bg-blue-50 text-[#1E2D4D] text-xs font-medium rounded-full mb-3">{selectedArticle.category}</span>
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">{selectedArticle.title}</h2>
           <p className="text-[#1E2D4D]/70 leading-relaxed">{selectedArticle.summary}</p>
-          <div className="mt-6 p-4 bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10">
+          <div className="mt-6 p-4 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10">
             <p className="text-sm text-[#1E2D4D]/50">Full article content will be loaded from the knowledge base. In the meantime, try the AI Advisor for instant answers.</p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
             className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap transition-colors ${
               selectedCategory === cat
                 ? 'bg-[#1E2D4D] text-white'
-                : 'bg-gray-100 text-[#1E2D4D]/70 hover:bg-gray-200'
+                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
             }`}
           >
             {cat}
@@ -139,12 +139,12 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
                 <p className="text-xs text-[#1E2D4D]/50 mt-1">{article.summary}</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 flex-shrink-0" />
+            <ChevronRight className="w-5 h-5 text-[#1E2D4D]/30 flex-shrink-0" />
           </div>
         ))}
         {filteredArticles.length === 0 && (
           <div className="text-center py-8 text-[#1E2D4D]/50">
-            <HelpCircle className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+            <HelpCircle className="w-10 h-10 mx-auto mb-3 text-[#1E2D4D]/30" />
             <p className="text-sm">No articles found. Try the AI Advisor for instant answers.</p>
           </div>
         )}

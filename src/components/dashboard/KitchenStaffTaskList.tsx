@@ -115,7 +115,7 @@ const STRINGS = {
 
 function getProgressColor(pct: number): string {
   if (pct >= 80) return '#16a34a';
-  if (pct >= 40) return '#d4af37';
+  if (pct >= 40) return '#A08C5A';
   return '#9ca3af';
 }
 
@@ -291,9 +291,9 @@ export default function KitchenStaffTaskList() {
                     style={{ minHeight: 72 }}
                   >
                     <div className="flex items-start gap-3">
-                      <Circle size={32} className="text-gray-300 shrink-0 mt-0.5" strokeWidth={1.5} />
+                      <Circle size={32} className="text-[#1E2D4D]/30 shrink-0 mt-0.5" strokeWidth={1.5} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-gray-900 font-medium" style={{ fontSize: 16, lineHeight: '1.4' }}>
+                        <p className="text-[#1E2D4D] font-medium" style={{ fontSize: 16, lineHeight: '1.4' }}>
                           {getTaskDescription(task)}
                         </p>
                       </div>
@@ -369,7 +369,7 @@ export default function KitchenStaffTaskList() {
                     key={task.id}
                     type="button"
                     onClick={() => task.type === 'temp_log' ? navigate('/temp-logs') : toast.info('Task already completed')}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-100 transition-colors"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-[#1E2D4D]/5 transition-colors"
                     style={{ backgroundColor: '#f9fafb' }}
                   >
                     <CheckCircle2 size={20} className="text-green-400 shrink-0" />
@@ -435,7 +435,7 @@ export default function KitchenStaffTaskList() {
             >
               EN
             </button>
-            <span className="text-gray-300">|</span>
+            <span className="text-[#1E2D4D]/30">|</span>
             <button
               type="button"
               onClick={() => setLocale('es' as Locale)}

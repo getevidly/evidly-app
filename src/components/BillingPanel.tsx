@@ -84,10 +84,10 @@ export function BillingPanel() {
       </div>
 
       {/* Current plan banner */}
-      <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-lg p-5 text-white">
+      <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-5 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-200">Current Plan</p>
+            <p className="text-sm text-[#1E2D4D]/20">Current Plan</p>
             <h4 className="text-lg font-semibold tracking-tight mt-0.5">
               {currentPlan === 'free'
                 ? 'Free Trial'
@@ -113,7 +113,7 @@ export function BillingPanel() {
 
       {/* Trial Status Banner */}
       {demoTrialActive && (
-        <div className="rounded-lg border-2 border-[#16a34a] bg-[#f0fdf4] p-5">
+        <div className="rounded-xl border-2 border-[#16a34a] bg-[#f0fdf4] p-5">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-[#16a34a] flex items-center justify-center flex-shrink-0">
               <Gift className="h-5 w-5 text-white" />
@@ -140,7 +140,7 @@ export function BillingPanel() {
       )}
 
       {/* 45-Day Guarantee Info */}
-      <div className="rounded-lg p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+      <div className="rounded-xl p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
         <div className="flex items-center gap-3">
           <EvidlyIcon size={20} className="flex-shrink-0" />
           <div>
@@ -163,16 +163,16 @@ export function BillingPanel() {
           return (
             <div
               key={plan.id}
-              className={`relative rounded-lg border-2 p-5 transition-all ${
+              className={`relative rounded-xl border-2 p-5 transition-all ${
                 isCurrent
                   ? 'border-[#1E2D4D] bg-[#eef4f8]'
-                  : 'border-[#1E2D4D]/10 bg-white hover:border-gray-300'
+                  : 'border-[#1E2D4D]/10 bg-white hover:border-[#1E2D4D]/15'
               }`}
             >
               {/* Most Popular badge */}
               {isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#d4af37] text-white shadow-sm">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#A08C5A] text-white shadow-sm">
                     <Crown className="h-3 w-3" />
                     Most Popular
                   </span>
@@ -202,7 +202,7 @@ export function BillingPanel() {
                   disabled={isCurrent || isLoading}
                   className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${
                     isCurrent
-                      ? 'bg-gray-100 text-[#1E2D4D]/50 cursor-default'
+                      ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50 cursor-default'
                       : isEnterprise
                         ? 'border-2 border-[#1E2D4D] text-[#1E2D4D] hover:bg-[#1E2D4D] hover:text-white'
                         : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
@@ -219,7 +219,7 @@ export function BillingPanel() {
 
       {/* Manage billing link for active subscribers */}
       {currentPlan !== 'free' && (
-        <div className="border border-[#1E2D4D]/10 rounded-lg p-4 flex items-center justify-between">
+        <div className="border border-[#1E2D4D]/10 rounded-xl p-4 flex items-center justify-between">
           <div>
             <h4 className="text-sm font-semibold text-[#1E2D4D]">Need to update payment method or cancel?</h4>
             <p className="text-xs text-[#1E2D4D]/50 mt-0.5">

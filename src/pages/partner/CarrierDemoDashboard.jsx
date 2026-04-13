@@ -123,7 +123,7 @@ export default function CarrierDemoDashboard() {
                 </thead>
                 <tbody>
                   {cicProfiles.map((profile, i) => (
-                    <tr key={profile.location_id || i} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={profile.location_id || i} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                       <td className="py-2 px-3">
                         <p className="font-medium text-[#1E2D4D]">{profile.location_name}</p>
                         <p className="text-xs text-[#1E2D4D]/30">{profile.county}</p>
@@ -155,7 +155,7 @@ export default function CarrierDemoDashboard() {
                 <p className="text-xs text-[#1E2D4D]/50 mt-1">Fully Verified (Vendor)</p>
               </div>
               <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold tracking-tight text-[#A08C5A]">{pseSummary.partial || 0}</p>
+                <p className="text-3xl font-bold tracking-tight text-[#1E2D4D]">{pseSummary.partial || 0}</p>
                 <p className="text-xs text-[#1E2D4D]/50 mt-1">Partial / Self-Reported</p>
               </div>
             </div>
@@ -233,7 +233,7 @@ export default function CarrierDemoDashboard() {
                 <span className="font-mono">{apiFeed.frequency || 'daily'}</span>
               </div>
             </div>
-            <div className="bg-black/30 rounded-lg p-4 overflow-x-auto">
+            <div className="bg-black/30 rounded-xl p-4 overflow-x-auto">
               <pre className="text-xs text-green-400 font-mono whitespace-pre">
 {JSON.stringify({
   location_id: cicProfiles[0]?.location_id || 'loc-001',

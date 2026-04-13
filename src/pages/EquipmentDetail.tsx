@@ -14,7 +14,7 @@ import { EmptyState } from '../components/shared/EmptyState';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Types (matching Equipment.tsx) ────────────────────────────────
@@ -81,11 +81,11 @@ export function EquipmentDetail() {
   if (!equipment) {
     return (
       <div style={F} className="max-w-4xl mx-auto py-8 px-4">
-        <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4">
+        <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
           <ArrowLeft size={16} /> Back to Equipment
         </button>
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center text-[#1E2D4D]/30">
-          <Package size={40} className="mx-auto mb-3 text-gray-300" />
+          <Package size={40} className="mx-auto mb-3 text-[#1E2D4D]/30" />
           <p className="font-medium">Equipment not found</p>
           <p className="text-sm mt-1">This item may have been removed or the ID is invalid.</p>
         </div>
@@ -110,7 +110,7 @@ export function EquipmentDetail() {
   return (
     <div style={F} className="max-w-4xl mx-auto">
       {/* Back link */}
-      <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4">
+      <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
         <ArrowLeft size={16} /> Back to Equipment
       </button>
 
@@ -151,7 +151,7 @@ export function EquipmentDetail() {
               className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
             >
               {tab.label}
@@ -179,17 +179,17 @@ export function EquipmentDetail() {
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">Warranty</h3>
                 <div className="space-y-2.5 text-sm">
-                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Provider</span><span className="text-gray-900 font-medium">{equipment.warrantyProvider}</span></div>
-                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Terms</span><span className="text-gray-900">{equipment.warrantyTerms}</span></div>
+                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Provider</span><span className="text-[#1E2D4D] font-medium">{equipment.warrantyProvider}</span></div>
+                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Terms</span><span className="text-[#1E2D4D]">{equipment.warrantyTerms}</span></div>
                   <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Expires</span><span style={{ color: w.color, fontWeight: 600 }}>{format(new Date(equipment.warrantyExpiry), 'MMM d, yyyy')}</span></div>
-                  {equipment.warrantyContact && <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Contact</span><span className="text-gray-900 text-xs">{equipment.warrantyContact}</span></div>}
+                  {equipment.warrantyContact && <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Contact</span><span className="text-[#1E2D4D] text-xs">{equipment.warrantyContact}</span></div>}
                 </div>
               </div>
             </div>
 
             {/* QR Code for Temperature Logging */}
             {getPillar(equipment) === 'food_safety' && (
-              <div className="mt-6 border-t border-gray-100 pt-6">
+              <div className="mt-6 border-t border-[#1E2D4D]/5 pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <QrCode size={16} style={{ color: NAVY }} />
@@ -197,7 +197,7 @@ export function EquipmentDetail() {
                   </div>
                   <button
                     onClick={() => guardAction('print', 'Equipment', () => toast.info('Printing QR labels for all equipment'))}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
                     style={{ color: NAVY, borderColor: '#b8d4e8' }}
                   >
                     <Printer size={12} />
@@ -224,20 +224,20 @@ export function EquipmentDetail() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-[#1E2D4D]">Service History</h3>
-                <div className="text-xs text-[#1E2D4D]/50">Total cost: <strong className="text-gray-900">${totalServiceCost.toLocaleString()}</strong></div>
+                <div className="text-xs text-[#1E2D4D]/50">Total cost: <strong className="text-[#1E2D4D]">${totalServiceCost.toLocaleString()}</strong></div>
               </div>
               {equipment.serviceHistory.length === 0 ? (
                 <EmptyState type="service_records" />
               ) : (
                 <div className="space-y-3">
                   {equipment.serviceHistory.map((sr, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
                       <div className="w-8 h-8 rounded-full bg-[#1E2D4D]/5 flex items-center justify-center flex-shrink-0">
                         <Wrench size={14} className="text-[#1E2D4D]/50" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-900">{sr.type}</span>
+                          <span className="text-sm font-medium text-[#1E2D4D]">{sr.type}</span>
                           <span className="text-xs text-[#1E2D4D]/50">{format(new Date(sr.date), 'MMM d, yyyy')}</span>
                         </div>
                         <div className="text-xs text-[#1E2D4D]/50 mt-0.5">{sr.vendor} · {sr.cost > 0 ? `$${sr.cost.toLocaleString()}` : 'No charge'}</div>
@@ -264,9 +264,9 @@ export function EquipmentDetail() {
               {equipment.schedule.map((s, i) => {
                 const mi = maintenanceInfo(s.nextDue);
                 return (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/5">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{s.task}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D]">{s.task}</div>
                       <div className="text-xs text-[#1E2D4D]/50">Every {s.interval} · Last: {format(new Date(s.lastDone), 'MMM d, yyyy')}</div>
                     </div>
                     <span style={badge(mi.label, mi.color, mi.bg)}>{mi.label}</span>

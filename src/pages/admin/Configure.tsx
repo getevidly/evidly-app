@@ -298,7 +298,7 @@ function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfi
 function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[]; search: string; onAdd: () => void; onSelect: (v: Vendor) => void }) {
   const q = search.toLowerCase();
   const filtered = vendors.filter(v => !q || v.company_name.toLowerCase().includes(q) || (v.service_type || '').toLowerCase().includes(q));
-  if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to the platform below." actionLabel="+ Add Vendor" onAction={onAdd} />;
+  if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to EvidLY below." actionLabel="+ Add Vendor" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
       <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>

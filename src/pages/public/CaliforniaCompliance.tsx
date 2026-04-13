@@ -100,9 +100,9 @@ export function CaliforniaCompliance() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-[#1E2D4D]/50 mb-6 flex items-center gap-1">
-            <Link to="/" className="hover:text-gray-700">Home</Link>
+            <Link to="/" className="hover:text-[#1E2D4D]/80">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-gray-900 font-medium">California</span>
+            <span className="text-[#1E2D4D] font-medium">California</span>
           </nav>
 
           {/* Page header */}
@@ -133,7 +133,7 @@ export function CaliforniaCompliance() {
               <Loader2 className="w-8 h-8 animate-spin text-[#1E2D4D]/30" />
             </div>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-800">
               <p className="font-medium">Unable to load jurisdiction data</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
@@ -157,7 +157,7 @@ export function CaliforniaCompliance() {
                           <Link
                             key={j.id}
                             to={`/compliance/california/${toSlug(j.county)}`}
-                            className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 hover:border-gray-300 transition-all group"
+                            className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 hover:border-[#1E2D4D]/15 transition-all group"
                           >
                             <div className="flex items-start justify-between mb-2">
                               <h3 className="font-semibold text-[#1E2D4D] group-hover:text-[#1E2D4D] transition-colors">
@@ -211,7 +211,7 @@ export function CaliforniaCompliance() {
               <Link
                 to="/demo"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm text-white"
-                style={{ backgroundColor: '#d4af37' }}
+                style={{ backgroundColor: '#A08C5A' }}
               >
                 Try Free Demo
               </Link>
@@ -229,9 +229,9 @@ export function CaliforniaCompliance() {
           <footer className="mt-12 pt-8 border-t border-[#1E2D4D]/10 text-center text-sm text-[#1E2D4D]/50 pb-8">
             <p>Data sourced from California Department of Public Health and county enforcement agencies.</p>
             <div className="flex justify-center gap-4 mt-3">
-              <Link to="/terms" className="hover:text-gray-700">Terms</Link>
-              <Link to="/privacy" className="hover:text-gray-700">Privacy</Link>
-              <Link to="/" className="hover:text-gray-700">EvidLY.com</Link>
+              <Link to="/terms" className="hover:text-[#1E2D4D]/80">Terms</Link>
+              <Link to="/privacy" className="hover:text-[#1E2D4D]/80">Privacy</Link>
+              <Link to="/" className="hover:text-[#1E2D4D]/80">EvidLY.com</Link>
             </div>
           </footer>
         </div>

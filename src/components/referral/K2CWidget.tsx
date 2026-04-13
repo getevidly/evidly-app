@@ -85,7 +85,7 @@ export function K2CWidget({
           onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
           onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
         >
-          <span style={{ fontSize: '18px' }}>🍽️</span>
+          <span className="text-lg">🍽️</span>
           Kitchen to Community
         </a>
       </div>

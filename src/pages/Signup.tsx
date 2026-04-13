@@ -83,7 +83,7 @@ function FounderBanner() {
   if (!timeLeft) return null;
 
   return (
-    <div className="bg-gradient-to-r from-[#A08C5A] to-[#d4af37] text-white text-center py-2.5 px-4 text-sm font-medium">
+    <div className="bg-gradient-to-r from-[#A08C5A] to-[#A08C5A] text-white text-center py-2.5 px-4 text-sm font-medium">
       Founder pricing locked until July 4, 2026 — <span className="font-bold">{timeLeft} remaining</span>
     </div>
   );
@@ -136,7 +136,7 @@ export function Signup() {
 
   const getPasswordStrength = () => {
     const metCount = Object.values(passwordRequirements).filter(Boolean).length;
-    if (metCount === 0) return { label: '', width: '0%', color: 'bg-gray-300' };
+    if (metCount === 0) return { label: '', width: '0%', color: 'bg-[#1E2D4D]/15' };
     if (metCount <= 2) return { label: 'Weak', width: '25%', color: 'bg-red-500' };
     if (metCount === 3) return { label: 'Fair', width: '50%', color: 'bg-yellow-500' };
     if (metCount === 4) return { label: 'Good', width: '75%', color: 'bg-blue-500' };
@@ -274,7 +274,7 @@ export function Signup() {
         <div className="max-w-lg w-full">
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
             <div className="mb-6">
-              <p className="text-center text-sm font-semibold text-[#A08C5A] mb-1">Lead with Confidence</p>
+              <p className="text-center text-sm font-semibold text-[#1E2D4D] mb-1">Lead with Confidence</p>
               <h2 className="text-center text-2xl font-bold tracking-tight text-[#1E2D4D]">Create your account</h2>
             </div>
 
@@ -298,7 +298,7 @@ export function Signup() {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
@@ -314,7 +314,7 @@ export function Signup() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
@@ -330,7 +330,7 @@ export function Signup() {
                   value={phone}
                   onChange={handlePhoneChange}
                   placeholder="(555) 555-5555"
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
@@ -345,7 +345,7 @@ export function Signup() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
@@ -359,7 +359,7 @@ export function Signup() {
                   name="jurisdiction"
                   value={jurisdiction}
                   onChange={(e) => setJurisdiction(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 >
                   <option value="">Select county...</option>
                   <optgroup label="California Counties">
@@ -397,7 +397,7 @@ export function Signup() {
                     setIndustrySubtype('');
                     setSb1383Qualified(code === 'K12_EDUCATION');
                   }}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 >
                   <option value="">Select industry...</option>
                   {Object.entries(INDUSTRY_TYPES).map(([key, industry]) => (
@@ -417,7 +417,7 @@ export function Signup() {
                     required
                     value={industrySubtype}
                     onChange={(e) => setIndustrySubtype(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   >
                     <option value="">Select type...</option>
                     {selectedIndustry.subtypes.map((subtype) => (
@@ -481,7 +481,7 @@ export function Signup() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   />
                   <button
                     type="button"
@@ -548,7 +548,7 @@ export function Signup() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   />
                   <button
                     type="button"
@@ -617,7 +617,7 @@ export function Signup() {
               <button
                 type="submit"
                 disabled={loading || !allRequirementsMet || !passwordsMatch || !industryType || !industrySubtype || !termsAccepted}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Creating account...' : 'Sign up'}
               </button>

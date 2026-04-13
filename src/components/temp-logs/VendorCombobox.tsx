@@ -112,9 +112,9 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
           setIsOpen(!isOpen);
           if (!isOpen) setTimeout(() => inputRef.current?.focus(), 50);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 border border-[#1E2D4D]/15 rounded-lg bg-white text-left focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] hover:border-gray-400 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 border border-[#1E2D4D]/15 rounded-xl bg-white text-left focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] hover:border-[#1E2D4D]/20 transition-colors"
       >
-        <span className={value ? 'text-gray-900' : 'text-[#1E2D4D]/30'}>
+        <span className={value ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}>
           {value || 'Select vendor...'}
         </span>
         <ChevronDown className={`h-4 w-4 text-[#1E2D4D]/30 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -128,7 +128,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
           style={{ maxHeight: '340px' }}
         >
           {/* Search input */}
-          <div className="sticky top-0 bg-white border-b border-gray-100 p-2">
+          <div className="sticky top-0 bg-white border-b border-[#1E2D4D]/5 p-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
               <input
@@ -137,7 +137,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search vendors..."
-                className="w-full pl-9 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                className="w-full pl-9 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                 onKeyDown={e => {
                   if (e.key === 'Escape') { setIsOpen(false); setSearch(''); }
                 }}
@@ -146,7 +146,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-[#1E2D4D]/30 hover:text-gray-600"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -159,7 +159,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Custom vendors section */}
             {filteredCustom.length > 0 && (
               <div>
-                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-gray-100">
+                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-[#1E2D4D]/5">
                   Recent / Custom
                 </div>
                 {filteredCustom.map(v => (
@@ -181,7 +181,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Seed vendors by category */}
             {filteredSeedByCategory.map(group => (
               <div key={group.category}>
-                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-gray-100">
+                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-[#1E2D4D]/5">
                   {group.label}
                 </div>
                 {group.vendors.map(name => (
@@ -217,7 +217,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                   value={newVendorName}
                   onChange={e => setNewVendorName(e.target.value)}
                   placeholder="Enter vendor name..."
-                  className="flex-1 px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
+                  className="flex-1 px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   autoFocus
                   onKeyDown={e => {
                     if (e.key === 'Enter') { e.preventDefault(); handleAddCustom(); }
@@ -235,7 +235,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                 <button
                   type="button"
                   onClick={() => { setShowAddForm(false); setNewVendorName(''); }}
-                  className="p-2 text-[#1E2D4D]/30 hover:text-gray-600"
+                  className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
                 >
                   <X className="h-4 w-4" />
                 </button>

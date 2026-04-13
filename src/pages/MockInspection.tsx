@@ -55,7 +55,7 @@ interface QuestionAnswer {
 // ---------------------------------------------------------------------------
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 /** Estimate likely outcome based on severity counts (NOT a score). */
 function estimateOutcome(critical: number, major: number): { label: string; color: string; bg: string } {
@@ -289,7 +289,7 @@ export default function MockInspection() {
           { label: 'Mock Inspection' },
         ]} />
         <div className="px-4 sm:px-6 py-12 max-w-2xl mx-auto text-center">
-          <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+          <Target className="h-16 w-16 mx-auto mb-4 text-[#1E2D4D]/30" />
           <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: NAVY }}>Mock Inspection</h1>
           <p className="text-[#1E2D4D]/50 mb-6">
             Practice with an AI-simulated inspector using your jurisdiction's criteria.
@@ -388,7 +388,7 @@ export default function MockInspection() {
               return (
                 <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
                   <div>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-[#1E2D4D]">
                       {format(new Date(session.date), 'MMM d, yyyy')}
                     </span>
                     <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: diffInfo.bgColor, color: diffInfo.color }}>
@@ -466,7 +466,7 @@ export default function MockInspection() {
               <MessageSquare className="h-4 w-4 text-[#1E2D4D]/70" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900 mb-1">{q.text}</p>
+              <p className="text-sm font-medium text-[#1E2D4D] mb-1">{q.text}</p>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs text-[#1E2D4D]/50">{q.citation}</span>
                 <span
@@ -543,7 +543,7 @@ export default function MockInspection() {
                 onChange={e => setNotes(currentIdx, e.target.value)}
                 placeholder="Document the issue..."
                 rows={2}
-                className="w-full text-sm border border-[#1E2D4D]/15 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Question Notes"
@@ -628,7 +628,7 @@ export default function MockInspection() {
           </div>
 
           {/* Estimated outcome */}
-          <div className="flex items-center gap-3 p-3 rounded-lg border border-[#1E2D4D]/10">
+          <div className="flex items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/10">
             <Shield className="h-5 w-5" style={{ color: outcome.color }} />
             <div>
               <p className="text-xs font-medium text-[#1E2D4D]/50">Estimated outcome</p>
@@ -662,7 +662,7 @@ export default function MockInspection() {
                   <div key={q.id} className={`border-l-4 ${sevColors[q.severity]} bg-[#FAF7F0] rounded-r-lg p-3`}>
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{q.violationType}</p>
+                        <p className="text-sm font-medium text-[#1E2D4D]">{q.violationType}</p>
                         <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{q.citation}</p>
                       </div>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${

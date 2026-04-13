@@ -11,7 +11,7 @@ import { useDemo } from '../contexts/DemoContext';
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#141E33';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Demo equipment lookup ─────────────────────────────────────────
@@ -74,7 +74,7 @@ interface FormState {
   cost: string;
 }
 
-const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] bg-white';
+const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white';
 const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
 export function ServiceRecordEntry() {
@@ -160,7 +160,7 @@ export function ServiceRecordEntry() {
       {/* Back link */}
       <button
         onClick={() => navigate(equipmentId ? `/equipment/${equipmentId}` : '/equipment')}
-        className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4"
+        className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4"
       >
         <ArrowLeft size={16} /> Back to {equipment?.name || 'Equipment'}
       </button>
@@ -340,14 +340,14 @@ export function ServiceRecordEntry() {
           {/* Document upload placeholder */}
           <div>
             <label className={labelClass}>Document Upload</label>
-            <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-6 text-center">
-              <FileText size={24} className="mx-auto mb-2 text-gray-300" />
+            <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-6 text-center">
+              <FileText size={24} className="mx-auto mb-2 text-[#1E2D4D]/30" />
               <p className="text-sm text-[#1E2D4D]/50">Drag & drop certificate, invoice, or photo</p>
               <p className="text-xs text-[#1E2D4D]/30 mt-1">PDF, JPG, PNG up to 25MB</p>
               <button
                 type="button"
                 onClick={() => guardAction('upload', 'Service Records', () => toast.info('Document upload available in full version'))}
-                className="mt-3 text-xs font-medium px-3 py-1.5 rounded border border-[#1E2D4D]/15 text-[#1E2D4D]/70 hover:bg-gray-50"
+                className="mt-3 text-xs font-medium px-3 py-1.5 rounded border border-[#1E2D4D]/15 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
               >
                 Browse Files
               </button>
@@ -360,7 +360,7 @@ export function ServiceRecordEntry() {
           <button
             type="button"
             onClick={() => navigate(equipmentId ? `/equipment/${equipmentId}` : '/equipment')}
-            className="px-4 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-100"
+            className="px-4 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5"
           >
             Cancel
           </button>

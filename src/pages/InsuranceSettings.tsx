@@ -117,7 +117,7 @@ export function InsuranceSettings() {
           </div>
           <button
             onClick={handleToggle}
-            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${sharingEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${sharingEnabled ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`}
           >
             <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${sharingEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
           </button>
@@ -182,19 +182,19 @@ export function InsuranceSettings() {
         {/* Carrier List — Coming Soon State */}
         <div className="space-y-3 mb-4">
           {DEMO_CARRIERS.map(carrier => (
-            <div key={carrier.name} className="flex items-center justify-between p-4 rounded-lg bg-[#FAF7F0] border border-gray-100">
+            <div key={carrier.name} className="flex items-center justify-between p-4 rounded-xl bg-[#FAF7F0] border border-[#1E2D4D]/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-[#1E2D4D]/8 flex items-center justify-center">
                   <span className="text-xs font-bold text-[#1E2D4D]/50">{carrier.logo}</span>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-900">{carrier.name}</span>
+                  <span className="text-sm font-medium text-[#1E2D4D]">{carrier.name}</span>
                   <span className="ml-2 text-xs font-bold text-[#1E2D4D]/30 bg-[#1E2D4D]/5 px-2 py-0.5 rounded-full uppercase">Coming Soon</span>
                 </div>
               </div>
               <button
                 onClick={() => toast.info(`${carrier.name} integration coming soon`)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/15 text-[#1E2D4D]/50 hover:bg-gray-100 transition-colors min-h-[44px]"
+                className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/15 text-[#1E2D4D]/50 hover:bg-[#1E2D4D]/5 transition-colors min-h-[44px]"
               >
                 Connect
               </button>
@@ -203,8 +203,8 @@ export function InsuranceSettings() {
         </div>
 
         {/* Empty state message */}
-        <div className="text-center py-6 border-t border-gray-100">
-          <Lock className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+        <div className="text-center py-6 border-t border-[#1E2D4D]/5">
+          <Lock className="h-8 w-8 text-[#1E2D4D]/30 mx-auto mb-2" />
           <p className="text-sm text-[#1E2D4D]/50">No carriers connected yet</p>
           <p className="text-xs text-[#1E2D4D]/30 mt-1">
             Carrier partnership integrations are coming soon. When available, you'll authorize each carrier individually
@@ -227,27 +227,27 @@ export function InsuranceSettings() {
 
         <FeatureGate flagKey="ai-predictive-insights">
           <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
+            <div className="p-4 rounded-xl bg-[#FAF7F0] border border-[#1E2D4D]/10">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-[#1E2D4D]/80 uppercase tracking-wider">Your API Key</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowApiKey(!showApiKey)}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    className="p-1 rounded hover:bg-[#1E2D4D]/10 transition-colors"
                     title={showApiKey ? 'Hide' : 'Show'}
                   >
                     {showApiKey ? <EyeOff className="h-3.5 w-3.5 text-[#1E2D4D]/50" /> : <Eye className="h-3.5 w-3.5 text-[#1E2D4D]/50" />}
                   </button>
                   <button
                     onClick={() => { navigator.clipboard.writeText(demoApiKey); toast.success('API key copied to clipboard'); }}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    className="p-1 rounded hover:bg-[#1E2D4D]/10 transition-colors"
                     title="Copy"
                   >
                     <Copy className="h-3.5 w-3.5 text-[#1E2D4D]/50" />
                   </button>
                 </div>
               </div>
-              <code className="text-sm text-gray-800 font-mono">
+              <code className="text-sm text-[#1E2D4D]/90 font-mono">
                 {showApiKey ? demoApiKey : '••••••••••••••••••••••••••••••••••••'}
               </code>
             </div>
@@ -259,7 +259,7 @@ export function InsuranceSettings() {
               </div>
               <button
                 onClick={() => guardAction('settings', 'insurance settings', () => toast.success('API key regenerated'))}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
               >
                 <RefreshCw className="h-3 w-3" /> Regenerate Key
               </button>
@@ -293,7 +293,7 @@ export function InsuranceSettings() {
               <span className={`px-2 py-0.5 text-xs font-bold rounded ${ep.method === 'POST' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
                 {ep.method}
               </span>
-              <code className="text-xs text-gray-800 font-mono flex-1 min-w-0 break-all">{ep.path}</code>
+              <code className="text-xs text-[#1E2D4D]/90 font-mono flex-1 min-w-0 break-all">{ep.path}</code>
               <span className="text-xs text-[#1E2D4D]/30 hidden sm:inline">{ep.desc}</span>
             </div>
           ))}
@@ -325,7 +325,7 @@ export function InsuranceSettings() {
       <div className="flex justify-between items-center flex-wrap gap-2 mb-6">
         <button
           onClick={() => navigate('/settings')}
-          className="text-sm text-[#1E2D4D]/50 hover:text-gray-700 transition-colors"
+          className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
         >
           ← Back to Settings
         </button>
@@ -340,8 +340,8 @@ export function InsuranceSettings() {
 
       {/* Consent Confirmation Modal */}
       {showConsentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-lg w-[95vw] sm:w-full p-4 sm:p-6" style={F}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-backdrop-enter">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-lg w-[95vw] sm:w-full p-4 sm:p-6 modal-content-enter" style={F}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                 <EvidlyIcon size={20} />
@@ -353,7 +353,7 @@ export function InsuranceSettings() {
               By enabling data sharing, you consent to share anonymized risk score data with insurance carriers you specifically authorize.
             </p>
 
-            <div className="p-4 rounded-lg bg-[#FAF7F0] mb-4">
+            <div className="p-4 rounded-xl bg-[#FAF7F0] mb-4">
               <p className="text-xs font-semibold text-[#1E2D4D] mb-2">What will be shared:</p>
               <ul className="space-y-1">
                 {SHARED_DATA.slice(0, 4).map((item, i) => (
@@ -365,7 +365,7 @@ export function InsuranceSettings() {
               </ul>
             </div>
 
-            <div className="p-4 rounded-lg border border-red-100 bg-red-50 mb-4">
+            <div className="p-4 rounded-xl border border-red-100 bg-red-50 mb-4">
               <p className="text-xs font-semibold text-[#1E2D4D] mb-2">What is NEVER shared:</p>
               <ul className="space-y-1">
                 {NEVER_SHARED.slice(0, 3).map((item, i) => (
@@ -384,7 +384,7 @@ export function InsuranceSettings() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowConsentModal(false)}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors min-h-[44px]"
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
               >
                 Cancel
               </button>

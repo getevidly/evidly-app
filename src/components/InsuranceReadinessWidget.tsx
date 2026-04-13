@@ -84,7 +84,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
 
       {/* Action hint */}
       {riskData.actionItems.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div className="mt-4 pt-3 border-t border-[#1E2D4D]/5 flex items-center justify-between">
           <span className="text-xs text-[#1E2D4D]/30">{riskData.actionItems.length} improvement actions available</span>
           <button
             onClick={() => navigate(locationId === 'all' ? '/insurance-risk' : `/insurance-risk?location=${locationId}`)}

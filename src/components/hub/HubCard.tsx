@@ -24,7 +24,7 @@ export function HubCard({ item }: HubCardProps) {
         borderColor: 'var(--border, #D1D9E6)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#d4af37';
+        e.currentTarget.style.borderColor = '#A08C5A';
         e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
       }}
       onMouseLeave={e => {

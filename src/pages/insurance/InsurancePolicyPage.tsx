@@ -64,7 +64,7 @@ export function InsurancePolicyPage() {
             </h1>
             <p className="text-sm" style={{ color: TEXT_TERTIARY }}>{p.insuranceCompany} — {p.policyNumber}</p>
           </div>
-          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
+          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
             {p.isActive ? 'Active' : 'Inactive'}
           </span>
         </div>

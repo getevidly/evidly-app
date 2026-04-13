@@ -17,7 +17,7 @@ export function NotificationFilters({ filter, onFilterChange, notifications }: N
   const allCount = notifications.length;
 
   return (
-    <div className="flex border-b border-gray-100 px-2 overflow-x-auto" style={{ backgroundColor: '#faf8f3' }}>
+    <div className="flex border-b border-[#1E2D4D]/5 px-2 overflow-x-auto" style={{ backgroundColor: '#faf8f3' }}>
       <button
         onClick={() => onFilterChange('all')}
         className="px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap"

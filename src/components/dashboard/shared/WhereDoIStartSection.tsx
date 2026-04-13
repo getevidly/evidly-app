@@ -81,7 +81,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
           return (
             <div
               key={item.id}
-              className="flex items-center gap-3 rounded-lg px-4 py-3 cursor-pointer transition-all hover:shadow-sm"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer transition-all hover:shadow-sm"
               style={{
                 backgroundColor: config.bg,
                 border: `1px solid ${config.border}`,
