@@ -62,9 +62,11 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
       { label: 'Demo Pipeline', path: '/admin/demo-pipeline', salesOnly: true },
       { label: 'Demo Tours', path: '/admin/demo-tours', salesOnly: true },
+      { label: 'Demo Dashboard', path: '/admin/demo/dashboard', salesOnly: true },
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
+      { label: 'Vendor Connect', path: '/admin/vendor-connect', salesOnly: true },
       { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'K2C', path: '/admin/k2c' },
       { label: 'ScoreTable', path: '/admin/scoretable', salesOnly: true },
@@ -76,12 +78,14 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Support Tickets', path: '/admin/support' },
       { label: 'Remote Connect', path: '/admin/remote-connect' },
+      { label: 'System Messages', path: '/admin/messages' },
     ],
   },
   {
     title: 'Users',
     items: [
       { label: 'User Management', path: '/admin/users' },
+      { label: 'User Provisioning', path: '/admin/provisioning' },
       { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Role Preview', path: '/admin/role-preview' },

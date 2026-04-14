@@ -189,6 +189,7 @@ const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
 const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
 const AdminOrgs = lazy(() => import('./pages/admin/AdminOrgs'));
+const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const PredictiveAnalysis = lazy(() => import('./pages/PredictiveAnalysis'));
@@ -822,7 +823,8 @@ function AppRoutes() {
           <Route path="/admin/security" element={<AdminSecurity />} />
           <Route path="/admin/audit-log" element={<AdminAuditLog />} />
           <Route path="/admin/orgs" element={<AdminOrgs />} />
-          <Route path="/admin/user-provisioning" element={<Navigate to="/admin/users" replace />} />
+          <Route path="/admin/provisioning" element={<UserProvisioning />} />
+          <Route path="/admin/user-provisioning" element={<Navigate to="/admin/provisioning" replace />} />
           <Route path="/admin/support" element={<SupportTickets />} />
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />
           <Route path="/admin/staff" element={<StaffRoles />} />
