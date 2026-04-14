@@ -184,6 +184,7 @@ const ViolationOutreach = lazy(() => import('./pages/admin/ViolationOutreach'));
 const EmailSequenceManager = lazy(() => import('./pages/admin/EmailSequenceManager'));
 const TrialHealth = lazy(() => import('./pages/admin/TrialHealth'));
 const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
+const FeatureBaselineTracker = lazy(() => import('./pages/admin/FeatureBaselineTracker'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
@@ -788,6 +789,7 @@ function AppRoutes() {
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/feature-flags" element={<FeatureFlags />} />
+          <Route path="/admin/feature-baseline" element={<FeatureBaselineTracker />} />
           <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           </Route>

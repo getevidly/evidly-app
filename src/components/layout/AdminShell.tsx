@@ -114,6 +114,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Database Backup', path: '/admin/backup' },
       { label: 'Maintenance Mode', path: '/admin/maintenance' },
       { label: 'Event Log', path: '/admin/event-log' },
+      { label: 'Feature Baseline', path: '/admin/feature-baseline' },
     ],
   },
 ];
