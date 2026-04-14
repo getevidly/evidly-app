@@ -15,11 +15,10 @@ import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { useDemo } from '../../contexts/DemoContext';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E5E0D8';
+// Color constants removed — now using Tailwind equivalents:
+// NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold
+// TEXT_SEC=#6B7F96 → text-[#6B7F96], TEXT_MUTED=#9CA3AF → text-gray-400
+// BORDER=#E5E0D8 → border-[#E5E0D8]
 
 type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
 
@@ -231,14 +230,14 @@ const CATEGORY_META: Record<string, { label: string; icon: string }> = {
 };
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-    <div style={{ fontSize: 36, marginBottom: 12 }}>{icon}</div>
-    <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>{title}</div>
-    <div style={{ fontSize: 12, color: TEXT_SEC, maxWidth: 400, margin: '0 auto', lineHeight: 1.6 }}>{subtitle}</div>
+  <div className="text-center py-12 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+    <div className="text-4xl mb-3">{icon}</div>
+    <div className="text-sm font-bold text-navy mb-1.5">{title}</div>
+    <div className="text-xs text-[#6B7F96] max-w-[400px] mx-auto leading-relaxed">{subtitle}</div>
   </div>
 );
 
@@ -753,75 +752,59 @@ export default function EvidLYIntelligence() {
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB',
-    borderRadius: 6, color: NAVY, fontSize: 12,
-  };
-
-  const thStyle: React.CSSProperties = {
-    textAlign: 'left', padding: '10px 14px', color: TEXT_SEC,
-    fontWeight: 600, fontSize: 11, textTransform: 'uppercase',
-  };
-
-  const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
+  const inputCls = 'py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs';
+  const thCls = 'text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase';
+  const tdCls = 'py-2.5 px-3.5 text-xs';
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+      <div className="flex items-start justify-between">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-            <span style={{ fontSize: 26, fontWeight: 900, fontFamily: 'Syne, sans-serif', color: NAVY }}>
+          <div className="flex items-center gap-2.5 mb-1.5">
+            <span className="text-[26px] font-black font-[Syne,sans-serif] text-navy">
               EvidLY Intelligence
             </span>
-            <span style={{
-              fontSize: 10, fontWeight: 900, padding: '3px 10px', borderRadius: 10,
-              background: 'linear-gradient(135deg, #A08C5A, #C4AA72)', color: '#fff', letterSpacing: '1px',
-            }}>
+            <span className="text-[10px] font-black py-[3px] px-2.5 rounded-[10px] bg-gradient-to-br from-gold to-gold-light text-white tracking-[1px]">
               ⚡ MOAT
             </span>
           </div>
-          <div style={{ fontSize: 13, color: TEXT_MUTED }}>
+          <div className="text-[13px] text-gray-400">
             {totalSources} sources crawled · Every signal correlated to clients, jurisdictions, and industries
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="flex gap-2 items-center">
           {crawlFeedback && (
-            <span style={{ fontSize: 11, fontWeight: 600, color: crawlFeedback.type === 'success' ? '#059669' : '#DC2626' }}>
+            <span className={`text-[11px] font-semibold ${crawlFeedback.type === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
               {crawlFeedback.msg}
             </span>
           )}
           <button onClick={runIntelligence} disabled={crawlRunning}
-            style={{ padding: '8px 16px', background: crawlRunning ? '#9CA3AF' : NAVY, border: 'none', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 700, cursor: crawlRunning ? 'wait' : 'pointer', opacity: crawlRunning ? 0.7 : 1 }}>
+            className={`py-2 px-4 border-none rounded-lg text-white text-xs font-bold ${crawlRunning ? 'bg-gray-400 cursor-wait opacity-70' : 'bg-navy cursor-pointer'}`}>
             {crawlRunning ? '⟳ Crawling...' : '⟳ Run Now'}
           </button>
           <button onClick={() => setActiveTab('sources')}
-            style={{ padding: '8px 16px', background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 8, color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            className="py-2 px-4 bg-white border border-[#E5E0D8] rounded-lg text-navy text-xs font-semibold cursor-pointer">
             Manage Sources
           </button>
         </div>
       </div>
 
       {/* KPI Bar */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch',
-      }}>
+      <div className="grid grid-cols-6 gap-3 items-stretch">
         {[
-          { label: 'Total Signals', value: signals.length, color: NAVY },
-          { label: 'Pending Review', value: pendingReview, color: '#C2410C' },
-          { label: 'Critical', value: criticalSignals, color: '#991B1B' },
-          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? '#166534' : '#991B1B' },
-          { label: 'Sources', value: totalSources, color: NAVY },
-          { label: 'Correlations', value: correlations.length, color: '#166534' },
+          { label: 'Total Signals', value: signals.length, color: 'text-navy' },
+          { label: 'Pending Review', value: pendingReview, color: 'text-[#C2410C]' },
+          { label: 'Critical', value: criticalSignals, color: 'text-[#991B1B]' },
+          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? 'text-[#166534]' : 'text-[#991B1B]' },
+          { label: 'Sources', value: totalSources, color: 'text-navy' },
+          { label: 'Correlations', value: correlations.length, color: 'text-[#166534]' },
         ].map(k => (
-          <div key={k.label} style={{
-            background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
-            textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+          <div key={k.label} className="bg-white border border-gray-200 rounded-lg py-4 px-5 text-center flex flex-col items-center justify-center">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
               {k.label}
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>
+            <div className={`text-[28px] font-extrabold leading-none ${k.color}`}>
               {loading ? '—' : k.value}
             </div>
           </div>
@@ -829,7 +812,7 @@ export default function EvidLYIntelligence() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}`, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="flex border-b-2 border-[#E5E0D8] overflow-x-auto scrollbar-none">
         {([
           { key: 'overview' as Tab, label: 'Overview', count: null },
           { key: 'signals' as Tab, label: 'Signals', count: signals.length },
@@ -841,23 +824,11 @@ export default function EvidLYIntelligence() {
         ]).map(t => {
           const isActive = activeTab === t.key;
           return (
-            <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
-              padding: '10px 16px', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none',
-              color: isActive ? GOLD : TEXT_MUTED,
-              borderBottom: `2px solid ${isActive ? GOLD : 'transparent'}`,
-              marginBottom: -2, fontWeight: isActive ? 600 : 400, transition: 'all 0.12s',
-              display: 'flex', alignItems: 'center', gap: 6,
-              flexShrink: 0, whiteSpace: 'nowrap',
-            }}>
+            <button key={t.key} onClick={() => setActiveTab(t.key)}
+              className={`py-2.5 px-4 text-[13px] cursor-pointer bg-transparent border-none -mb-[2px] transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap ${isActive ? 'text-gold font-semibold border-b-2 border-gold' : 'text-gray-400 font-normal border-b-2 border-transparent'}`}>
               {t.label}
               {t.count != null && t.count > 0 && (
-                <span style={{
-                  fontSize: 10, fontWeight: 700,
-                  background: isActive ? '#F5F0E8' : '#F3F4F6',
-                  color: isActive ? NAVY : '#6B7280',
-                  padding: '1px 6px', borderRadius: 10,
-                  fontFamily: 'monospace',
-                }}>
+                <span className={`text-[10px] font-bold py-[1px] px-1.5 rounded-[10px] font-mono ${isActive ? 'bg-[#F5F0E8] text-navy' : 'bg-gray-100 text-gray-500'}`}>
                   {t.count}
                 </span>
               )}
@@ -870,28 +841,24 @@ export default function EvidLYIntelligence() {
       {activeTab === 'overview' && (
         <>
         {/* KPI Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 20 }}>
+        <div className="grid grid-cols-5 gap-3 items-stretch mb-5">
           {([
-            { label: 'Total Sources', value: totalSources, color: NAVY },
-            { label: 'Active Sources', value: activeSources, color: '#166534' },
-            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? '#991B1B' : NAVY },
-            { label: 'Total Signals', value: totalSignals, color: NAVY },
-            { label: 'Pending Signals', value: pendingSignals, color: '#C2410C' },
-            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? '#166534' : '#991B1B' },
-            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? '#991B1B' : NAVY },
-            { label: 'Correlations', value: totalCorrelations, color: '#166534' },
-            { label: 'Regulatory', value: regulatoryCount, color: NAVY },
-            { label: 'RFP Listings', value: rfpCount, color: NAVY },
+            { label: 'Total Sources', value: totalSources, color: 'text-navy' },
+            { label: 'Active Sources', value: activeSources, color: 'text-[#166534]' },
+            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? 'text-[#991B1B]' : 'text-navy' },
+            { label: 'Total Signals', value: totalSignals, color: 'text-navy' },
+            { label: 'Pending Signals', value: pendingSignals, color: 'text-[#C2410C]' },
+            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? 'text-[#166534]' : 'text-[#991B1B]' },
+            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? 'text-[#991B1B]' : 'text-navy' },
+            { label: 'Correlations', value: totalCorrelations, color: 'text-[#166534]' },
+            { label: 'Regulatory', value: regulatoryCount, color: 'text-navy' },
+            { label: 'RFP Listings', value: rfpCount, color: 'text-navy' },
           ] as const).map(card => (
-            <div key={card.label} style={{
-              background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8,
-              padding: '16px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+            <div key={card.label} className="bg-white border border-gray-200 rounded-lg py-4 px-5 text-center flex flex-col items-center justify-center">
+              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                 {card.label}
               </div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: card.color, lineHeight: 1 }}>
+              <div className={`text-[28px] font-extrabold leading-none ${card.color}`}>
                 {card.value}
               </div>
             </div>
@@ -899,21 +866,17 @@ export default function EvidLYIntelligence() {
         </div>
 
         {pendingSignals > 0 && (
-          <div style={{
-            padding: '10px 16px', marginBottom: 20, borderRadius: 8,
-            background: '#FFFBEB', border: '1px solid #F59E0B',
-            fontSize: 13, fontWeight: 500, color: '#92400E',
-          }}>
+          <div className="py-2.5 px-4 mb-5 rounded-lg bg-amber-50 border border-amber-400 text-[13px] font-medium text-amber-800">
             {pendingSignals} signal{pendingSignals !== 1 ? 's' : ''} pending review — users see empty Business Intelligence.
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <div className="grid grid-cols-2 gap-5">
           {/* Source health by category */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Source Health by Category</div>
+          <div className="bg-white border border-[#E5E0D8] rounded-[10px] p-5">
+            <div className="text-[13px] font-bold text-navy mb-4">Source Health by Category</div>
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="flex flex-col gap-2">
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={28} />)}
               </div>
             ) : Object.entries(CATEGORY_META).map(([key, meta]) => {
@@ -922,17 +885,14 @@ export default function EvidLYIntelligence() {
               const live = catSources.filter(s => s.status === 'live').length;
               const broken = catSources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
               return (
-                <div key={key} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '8px 0', borderBottom: '1px solid #F0EDE8',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div key={key} className="flex items-center justify-between py-2 border-b border-[#F0EDE8]">
+                  <div className="flex items-center gap-2">
                     <span className="text-sm">{meta.icon}</span>
-                    <span style={{ fontSize: 12, color: '#4A5568' }}>{meta.label}</span>
+                    <span className="text-xs text-[#4A5568]">{meta.label}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
-                    <span style={{ color: live > 0 ? '#059669' : '#94A3B8', fontWeight: 600 }}>{live} live</span>
-                    {broken > 0 && <span style={{ color: '#DC2626', fontWeight: 600 }}>⚠ {broken} broken</span>}
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <span className={`font-semibold ${live > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>{live} live</span>
+                    {broken > 0 && <span className="text-red-600 font-semibold">⚠ {broken} broken</span>}
                   </div>
                 </div>
               );
@@ -940,43 +900,36 @@ export default function EvidLYIntelligence() {
           </div>
 
           {/* Recent signals */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 16 }}>
+          <div className="bg-white border border-[#E5E0D8] rounded-[10px] p-5">
+            <div className="text-[13px] font-bold text-navy mb-4">
               Recent Signals
               {criticalSignals > 0 && (
-                <span style={{ marginLeft: 8, fontSize: 10, background: '#FEF2F2', color: '#DC2626',
-                  padding: '2px 7px', borderRadius: 10, fontWeight: 700 }}>
+                <span className="ml-2 text-[10px] bg-red-50 text-red-600 py-[2px] px-[7px] rounded-[10px] font-bold">
                   {criticalSignals} CRITICAL
                 </span>
               )}
             </div>
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="flex flex-col gap-2">
                 {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} h={36} />)}
               </div>
             ) : signals.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '32px 0', color: TEXT_MUTED, fontSize: 12 }}>
+              <div className="text-center py-8 text-gray-400 text-xs">
                 No signals yet — run intelligence crawler to populate
               </div>
             ) : signals.slice(0, 8).map(sig => {
               const uc = URGENCY_COLORS[sig.ai_urgency || ''] || URGENCY_COLORS.low;
               return (
-                <div key={sig.id} style={{
-                  padding: '9px 0', borderBottom: '1px solid #F0EDE8',
-                  display: 'flex', alignItems: 'flex-start', gap: 10,
-                }}>
-                  <span style={{
-                    fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 10, whiteSpace: 'nowrap', marginTop: 2,
-                    background: uc.bg, color: uc.text,
-                  }}>
+                <div key={sig.id} className="py-[9px] border-b border-[#F0EDE8] flex items-start gap-2.5">
+                  <span className="text-[9px] font-extrabold py-[2px] px-[7px] rounded-[10px] whitespace-nowrap mt-0.5"
+                    style={{ background: uc.bg, color: uc.text }}>
                     {(sig.ai_urgency || 'new').toUpperCase()}
                   </span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, color: NAVY, fontWeight: 500,
-                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-navy font-medium overflow-hidden text-ellipsis whitespace-nowrap">
                       {sig.title}
                     </div>
-                    <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                    <div className="text-[10px] text-gray-400 mt-0.5">
                       {sig.signal_type?.replace(/_/g, ' ')} · {sig.source_key} · {new Date(sig.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -993,12 +946,12 @@ export default function EvidLYIntelligence() {
       {activeTab === 'signals' && (
         <>
           {/* Filter bar */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div className="flex gap-2.5 flex-wrap">
             <input placeholder="Search signals..." value={sigFilter.search}
               onChange={e => setSigFilter(f => ({ ...f, search: e.target.value }))}
-              style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
+              className={`${inputCls} flex-1 min-w-[200px]`} />
             <select value={sigFilter.urgency} onChange={e => setSigFilter(f => ({ ...f, urgency: e.target.value }))}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${inputCls} cursor-pointer`}>
               <option value="">All Urgency</option>
               <option value="critical">Critical</option>
               <option value="high">High</option>
@@ -1007,7 +960,7 @@ export default function EvidLYIntelligence() {
               <option value="informational">Informational</option>
             </select>
             <select value={sigFilter.type} onChange={e => setSigFilter(f => ({ ...f, type: e.target.value }))}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${inputCls} cursor-pointer`}>
               <option value="">All Types</option>
               <option value="regulatory_change">Regulatory Change</option>
               <option value="recall">Recall</option>
@@ -1019,7 +972,7 @@ export default function EvidLYIntelligence() {
               <option value="competitor_activity">Competitor Activity</option>
             </select>
             <select value={sigFilter.status} onChange={e => setSigFilter(f => ({ ...f, status: e.target.value }))}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${inputCls} cursor-pointer`}>
               <option value="">All Statuses</option>
               <option value="new">New</option>
               <option value="analyzing">Analyzing</option>
@@ -1029,7 +982,7 @@ export default function EvidLYIntelligence() {
               <option value="dismissed">Dismissed</option>
             </select>
             <select value={sigFilter.tier} onChange={e => setSigFilter(f => ({ ...f, tier: e.target.value }))}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${inputCls} cursor-pointer`}>
               <option value="">All Tiers</option>
               <option value="auto">Auto-Publish</option>
               <option value="notify">Notify Admin</option>
@@ -1038,23 +991,19 @@ export default function EvidLYIntelligence() {
           </div>
 
           {/* CIC Pillar filter pills */}
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pillar:</span>
+          <div className="flex gap-1.5 items-center mt-2">
+            <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide">Pillar:</span>
             <button onClick={() => setSigFilter(f => ({ ...f, pillar: '' }))}
-              style={{
-                padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                background: !sigFilter.pillar ? GOLD : '#fff', color: !sigFilter.pillar ? '#fff' : TEXT_MUTED,
-                border: `1px solid ${!sigFilter.pillar ? GOLD : BORDER}`,
-              }}>
+              className={`py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border ${!sigFilter.pillar ? 'bg-gold text-white border-gold' : 'bg-white text-gray-400 border-[#E5E0D8]'}`}>
               All Pillars
             </button>
             {CIC_PILLARS.map(p => (
               <button key={p.id} onClick={() => setSigFilter(f => ({ ...f, pillar: p.id }))}
+                className="py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border"
                 style={{
-                  padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
                   background: sigFilter.pillar === p.id ? p.color : '#fff',
-                  color: sigFilter.pillar === p.id ? '#fff' : TEXT_MUTED,
-                  border: `1px solid ${sigFilter.pillar === p.id ? p.color : BORDER}`,
+                  color: sigFilter.pillar === p.id ? '#fff' : '#9CA3AF',
+                  borderColor: sigFilter.pillar === p.id ? p.color : '#E5E0D8',
                 }}>
                 {p.shortLabel}
               </button>
@@ -1062,7 +1011,7 @@ export default function EvidLYIntelligence() {
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={80} />)}
             </div>
           ) : filteredSignals.length === 0 ? (
@@ -1074,22 +1023,21 @@ export default function EvidLYIntelligence() {
           ) : filteredSignals.map(sig => {
             const uc = URGENCY_COLORS[sig.ai_urgency || ''] || URGENCY_COLORS.low;
             return (
-              <div key={sig.id} style={{
-                background: '#fff', border: `1px solid ${sig.ai_urgency === 'critical' ? '#FECACA' : BORDER}`,
-                borderRadius: 10, padding: '16px 18px', marginBottom: 10,
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+              <div key={sig.id} className={`bg-white border rounded-[10px] py-4 px-[18px] mb-2.5 ${sig.ai_urgency === 'critical' ? 'border-red-200' : 'border-[#E5E0D8]'}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {sig.ai_urgency && (
-                        <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 10, background: uc.bg, color: uc.text }}>
+                        <span className="text-[9px] font-extrabold py-[2px] px-2 rounded-[10px]"
+                          style={{ background: uc.bg, color: uc.text }}>
                           {sig.ai_urgency.toUpperCase()}
                         </span>
                       )}
                       {sig.routing_tier && (() => {
                         const rc = routingTierColor(sig.routing_tier);
                         return (
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: rc.bg, color: rc.text, border: `1px solid ${rc.text}30` }}
+                          <span className="text-[9px] font-bold py-[2px] px-[7px] rounded-[10px]"
+                            style={{ background: rc.bg, color: rc.text, border: `1px solid ${rc.text}30` }}
                             title={sig.routing_reason || ''}>
                             {routingTierLabel(sig.routing_tier)}
                             {sig.auto_published && ' (auto)'}
@@ -1098,7 +1046,7 @@ export default function EvidLYIntelligence() {
                       })()}
                       {/* PSE badge */}
                       {isPseSignalType(sig.signal_type) && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' }}>
+                        <span className="text-[9px] font-bold py-[2px] px-2 rounded-[10px] bg-amber-50 text-amber-600 border border-amber-200">
                           PSE-Relevant
                         </span>
                       )}
@@ -1107,50 +1055,51 @@ export default function EvidLYIntelligence() {
                         const pillar = sig.cic_pillar ? CIC_PILLARS.find(p => p.id === sig.cic_pillar) : getPillarForSignalType(sig.signal_type);
                         if (!pillar) return null;
                         return (
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pillar.bgColor, color: pillar.color }}>
+                          <span className="text-[9px] font-bold py-[2px] px-2 rounded-[10px]"
+                            style={{ background: pillar.bgColor, color: pillar.color }}>
                             {pillar.shortLabel}
                           </span>
                         );
                       })()}
-                      <span style={{ fontSize: 10, color: TEXT_SEC, background: '#F9FAFB', border: `1px solid ${BORDER}`, padding: '1px 7px', borderRadius: 10 }}>
+                      <span className="text-[10px] text-[#6B7F96] bg-gray-50 border border-[#E5E0D8] py-[1px] px-[7px] rounded-[10px]">
                         {sig.signal_type?.replace(/_/g, ' ')}
                       </span>
-                      <span style={{ fontSize: 10, color: GOLD }}>{sig.source_key}</span>
-                      {sig.scope && <span style={{ fontSize: 10, color: TEXT_MUTED }}>{sig.scope}</span>}
+                      <span className="text-[10px] text-gold">{sig.source_key}</span>
+                      {sig.scope && <span className="text-[10px] text-gray-400">{sig.scope}</span>}
                       {sig.signal_scope && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: NAVY, color: '#fff' }}>
+                        <span className="text-[9px] font-bold py-[2px] px-[7px] rounded-lg bg-navy text-white">
                           {SCOPE_LABELS[sig.signal_scope] || sig.signal_scope}
                         </span>
                       )}
                       {sig.target_industries && !sig.target_all_industries && sig.target_industries.length > 0 && (
                         sig.target_industries.slice(0, 2).map(ind => (
-                          <span key={ind} style={{ fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 8, border: `1px solid ${GOLD}`, color: GOLD }}>
+                          <span key={ind} className="text-[9px] font-semibold py-[1px] px-1.5 rounded-lg border border-gold text-gold">
                             {INDUSTRY_LABELS[ind] || ind}
                           </span>
                         ))
                       )}
                       {sig.target_counties && sig.target_counties.length > 0 && (
-                        <span style={{ fontSize: 9, color: TEXT_SEC }}>{sig.target_counties.length} {sig.target_counties.length === 1 ? 'county' : 'counties'}</span>
+                        <span className="text-[9px] text-[#6B7F96]">{sig.target_counties.length} {sig.target_counties.length === 1 ? 'county' : 'counties'}</span>
                       )}
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 6 }}>{sig.title}</div>
+                    <div className="text-[13px] font-semibold text-navy mb-1.5">{sig.title}</div>
                     {sig.ai_summary && (
-                      <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>{sig.ai_summary}</div>
+                      <div className="text-xs text-[#6B7F96] leading-relaxed mb-2">{sig.ai_summary}</div>
                     )}
                     {sig.ai_client_impact && (
-                      <div style={{ fontSize: 11, color: '#1D4ED8', background: '#EFF6FF', padding: '6px 10px', borderRadius: 6, marginBottom: 6 }}>
+                      <div className="text-[11px] text-blue-700 bg-blue-50 py-1.5 px-2.5 rounded-md mb-1.5">
                         <strong>Client impact:</strong> {sig.ai_client_impact}
                       </div>
                     )}
                     {sig.ai_platform_impact && (
-                      <div style={{ fontSize: 11, color: '#065F46', background: '#ECFDF5', padding: '6px 10px', borderRadius: 6 }}>
+                      <div className="text-[11px] text-emerald-800 bg-emerald-50 py-1.5 px-2.5 rounded-md">
                         <strong>Platform impact:</strong> {sig.ai_platform_impact}
                       </div>
                     )}
                     {/* Risk Dimensions */}
                     {(sig.risk_revenue && sig.risk_revenue !== 'none') || (sig.risk_liability && sig.risk_liability !== 'none') ||
                      (sig.risk_cost && sig.risk_cost !== 'none') || (sig.risk_operational && sig.risk_operational !== 'none') ? (
-                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                      <div className="flex gap-1.5 mt-2 flex-wrap">
                         {([
                           { key: 'Revenue', dim: 'revenue' as const, val: sig.risk_revenue },
                           { key: 'Liability', dim: 'liability' as const, val: sig.risk_liability },
@@ -1160,10 +1109,8 @@ export default function EvidLYIntelligence() {
                           const rc = RISK_DIM_COLORS[d.val!] || RISK_DIM_COLORS.low;
                           return (
                             <RiskLevelTooltip key={d.key} dimension={d.dim} level={d.val}>
-                              <span style={{
-                                fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
-                                background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20`,
-                              }}>
+                              <span className="text-[9px] font-bold py-[2px] px-[7px] rounded-lg"
+                                style={{ background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20` }}>
                                 {d.key}: {rc.label}
                               </span>
                             </RiskLevelTooltip>
@@ -1174,27 +1121,24 @@ export default function EvidLYIntelligence() {
                     {/* Opportunity Dimensions */}
                     {(sig.opp_revenue && sig.opp_revenue !== 'none') || (sig.opp_liability && sig.opp_liability !== 'none') ||
                      (sig.opp_cost && sig.opp_cost !== 'none') || (sig.opp_operational && sig.opp_operational !== 'none') ? (
-                      <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                      <div className="flex gap-1.5 mt-1 flex-wrap">
                         {[
                           { key: 'Revenue', val: sig.opp_revenue },
                           { key: 'Liability', val: sig.opp_liability },
                           { key: 'Cost', val: sig.opp_cost },
                           { key: 'Operational', val: sig.opp_operational },
                         ].filter(d => d.val && d.val !== 'none').map(d => (
-                          <span key={d.key} style={{
-                            fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
-                            background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0',
-                          }}>
+                          <span key={d.key} className="text-[9px] font-bold py-[2px] px-[7px] rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-300">
                             {d.key}: {(d.val || '').toUpperCase().slice(0, 4)}
                           </span>
                         ))}
                       </div>
                     ) : null}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 100 }}>
+                  <div className="flex flex-col gap-1.5 min-w-[100px]">
                     <select value={sig.status}
                       onChange={e => updateSignalStatus(sig.id, e.target.value)}
-                      style={{ ...inputStyle, fontSize: 11, cursor: 'pointer' }}>
+                      className={`${inputCls} text-[11px] cursor-pointer`}>
                       <option value="new">New</option>
                       <option value="analyzing">Analyzing</option>
                       <option value="analyzed">Analyzed</option>
@@ -1203,36 +1147,30 @@ export default function EvidLYIntelligence() {
                       <option value="dismissed">Dismiss</option>
                     </select>
                     <button onClick={() => openPublishModal(sig)}
-                      style={{
-                        fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
-                        background: GOLD, color: '#fff', border: 'none', width: '100%',
-                      }}>
+                      className="text-[10px] font-bold py-1 px-2.5 rounded-md cursor-pointer bg-gold text-white border-none w-full">
                       Publish Advisory
                     </button>
                     {sig.ai_impact_score != null && (
-                      <div style={{ textAlign: 'center', fontSize: 10, color: TEXT_MUTED }}>
-                        Impact: <strong style={{
-                          color: sig.ai_impact_score > 75 ? '#DC2626' : sig.ai_impact_score > 50 ? '#D97706' : '#059669'
-                        }}>{sig.ai_impact_score}/100</strong>
+                      <div className="text-center text-[10px] text-gray-400">
+                        Impact: <strong className={sig.ai_impact_score > 75 ? 'text-red-600' : sig.ai_impact_score > 50 ? 'text-amber-600' : 'text-emerald-600'}>{sig.ai_impact_score}/100</strong>
                       </div>
                     )}
                     {sig.severity_score != null && (
-                      <div style={{ textAlign: 'center', fontSize: 10, color: TEXT_MUTED }}>
+                      <div className="text-center text-[10px] text-gray-400">
                         Severity: <strong>{sig.severity_score}</strong> · Conf: <strong>{sig.confidence_score ?? 0}%</strong>
                       </div>
                     )}
                     {sig.auto_publish_at && sig.status !== 'published' && (
-                      <div style={{ textAlign: 'center', fontSize: 9, color: '#D97706', marginTop: 2 }}>
+                      <div className="text-center text-[9px] text-amber-600 mt-0.5">
                         Auto-pub: {new Date(sig.auto_publish_at).toLocaleString()}
                       </div>
                     )}
                     {/* Risk dimension quick-tag */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, marginTop: 4 }}>
+                    <div className="grid grid-cols-2 gap-[3px] mt-1">
                       {(['revenue','liability','cost','operational'] as const).map(dim => (
                         <select key={dim} value={(sig as any)[`risk_${dim}`] || 'none'}
                           onChange={e => updateSignalRisk(sig.id, dim, e.target.value)}
-                          style={{ fontSize: 9, padding: '2px 3px', border: `1px solid ${BORDER}`, borderRadius: 4,
-                            background: '#FAFAFA', color: TEXT_SEC, cursor: 'pointer' }}>
+                          className="text-[9px] py-[2px] px-[3px] border border-[#E5E0D8] rounded bg-[#FAFAFA] text-[#6B7F96] cursor-pointer">
                           <option value="none">{dim.slice(0,3).toUpperCase()}</option>
                           <option value="critical">Crit</option>
                           <option value="high">High</option>
@@ -1252,14 +1190,14 @@ export default function EvidLYIntelligence() {
       {/* ────────── TAB: SOURCES ────────── */}
       {activeTab === 'sources' && (
         <>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div className="flex gap-2.5 flex-wrap items-center">
             <select value={srcCatFilter} onChange={e => setSrcCatFilter(e.target.value)}
-              style={{ ...inputStyle, minWidth: 180, cursor: 'pointer' }}>
+              className={`${inputCls} min-w-[180px] cursor-pointer`}>
               <option value="">All Categories</option>
               {Object.entries(CATEGORY_META).map(([key, meta]) => <option key={key} value={key}>{meta.label}</option>)}
             </select>
             <select value={srcStatusFilter} onChange={e => setSrcStatusFilter(e.target.value)}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${inputCls} cursor-pointer`}>
               <option value="">All Statuses</option>
               <option value="live">Live</option>
               <option value="degraded">Degraded</option>
@@ -1269,22 +1207,22 @@ export default function EvidLYIntelligence() {
               <option value="disabled">Disabled</option>
               <option value="error">Error</option>
             </select>
-            <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 'auto' }}>
+            <span className="text-[11px] text-gray-400 ml-auto">
               Showing {filteredSources.length} of {totalSources} sources
             </span>
           </div>
 
-          <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+          <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
             {loading ? (
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
               </div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <table className="w-full border-collapse text-[13px]">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <tr className="border-b border-[#E5E0D8]">
                     {['Source', 'Category', 'Method', 'Frequency', 'Status', 'Last Crawled', 'Signals (30d)'].map(h => (
-                      <th key={h} style={thStyle}>{h}</th>
+                      <th key={h} className={thCls}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -1292,30 +1230,29 @@ export default function EvidLYIntelligence() {
                   {filteredSources.map(s => {
                     const sc = STATUS_COLORS[s.status] || STATUS_COLORS.pending;
                     return (
-                      <tr key={s.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={tdStyle}>
-                          <div style={{ fontSize: 12, fontWeight: 500, color: NAVY }}>{s.name}</div>
+                      <tr key={s.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                        <td className={tdCls}>
+                          <div className="text-xs font-medium text-navy">{s.name}</div>
                           {s.url && (
                             <a href={s.url} target="_blank" rel="noreferrer"
-                              style={{ fontSize: 10, color: GOLD, textDecoration: 'none' }}>
+                              className="text-[10px] text-gold no-underline">
                               {s.url?.replace('https://', '').substring(0, 40)}{(s.url?.length || 0) > 48 ? '...' : ''}
                             </a>
                           )}
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{s.category?.replace(/_/g, ' ')}</td>
-                        <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>{s.crawl_method}</td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{s.crawl_frequency}</td>
-                        <td style={tdStyle}>
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sc.bg, color: sc.text }}>
+                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{s.category?.replace(/_/g, ' ')}</td>
+                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] text-[#6B7F96]`}>{s.crawl_method}</td>
+                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{s.crawl_frequency}</td>
+                        <td className={tdCls}>
+                          <span className="text-[10px] font-bold py-[2px] px-2 rounded-[10px]"
+                            style={{ background: sc.bg, color: sc.text }}>
                             {s.status}
                           </span>
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
+                        <td className={`${tdCls} text-[11px] text-gray-400 font-['DM_Mono',monospace]`}>
                           {s.last_crawled_at ? new Date(s.last_crawled_at).toLocaleString() : '—'}
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 12, fontFamily: "'DM Mono', monospace", color: s.signal_count_30d > 0 ? NAVY : TEXT_MUTED }}>
+                        <td className={`${tdCls} text-xs font-['DM_Mono',monospace] ${s.signal_count_30d > 0 ? 'text-navy' : 'text-gray-400'}`}>
                           {s.signal_count_30d || 0}
                         </td>
                       </tr>
@@ -1332,57 +1269,41 @@ export default function EvidLYIntelligence() {
 
       {/* ────────── TAB: CORRELATIONS ────────── */}
       {activeTab === 'correlations' && (
-        <div style={{ padding: '24px 0' }}>
+        <div className="py-6">
 
           {/* Header row */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <div style={{ fontSize: 13, color: '#6B7280' }}>
+              <div className="text-[13px] text-gray-500">
                 Signals grouped by risk dimension. A signal appears in every dimension where it has an assigned risk level.
               </div>
               {correlations.length === 0 && (
-                <div style={{
-                  marginTop: 8,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  background: '#FEF3C7',
-                  border: '1px solid #FDE68A',
-                  borderRadius: 6,
-                  padding: '4px 10px',
-                  fontSize: 11,
-                  color: '#92400E',
-                  fontWeight: 600,
-                }}>
+                <div className="mt-2 inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-md py-1 px-2.5 text-[11px] text-amber-800 font-semibold">
                   ⚠ Showing reference architecture — no live correlations yet. Assign risk levels in Signal Approval Queue to populate with real data.
                 </div>
               )}
             </div>
-            <div style={{ fontSize: 12, color: '#9CA3AF', flexShrink: 0 }}>
+            <div className="text-xs text-gray-400 shrink-0">
               {(isDemoMode ? SAMPLE_CORRELATIONS : []).length} correlations · {CORR_PILLARS.length} pillars
             </div>
           </div>
 
           {/* Pillar filter pills */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div className="flex gap-2 mb-5 flex-wrap">
             {['All', ...CORR_PILLARS].map(p => (
               <button
                 key={p}
                 onClick={() => setCorrPillarFilter(p)}
+                className="py-[5px] px-3.5 rounded-full border text-xs cursor-pointer"
                 style={{
-                  padding: '5px 14px',
-                  borderRadius: 999,
-                  border: '1px solid',
                   borderColor: corrPillarFilter === p
-                    ? (p === 'All' ? GOLD : CORR_PILLAR_COLORS[p])
+                    ? (p === 'All' ? '#A08C5A' : CORR_PILLAR_COLORS[p])
                     : '#E5E7EB',
                   background: corrPillarFilter === p
-                    ? (p === 'All' ? GOLD : CORR_PILLAR_COLORS[p])
+                    ? (p === 'All' ? '#A08C5A' : CORR_PILLAR_COLORS[p])
                     : '#fff',
                   color: corrPillarFilter === p ? '#fff' : '#374151',
-                  fontSize: 12,
                   fontWeight: corrPillarFilter === p ? 700 : 400,
-                  cursor: 'pointer',
                 }}
               >
                 {p}
@@ -1391,55 +1312,29 @@ export default function EvidLYIntelligence() {
           </div>
 
           {/* Report Format selector */}
-          <div style={{
-            background: '#fff',
-            border: `1px solid ${BORDER}`,
-            borderRadius: 8,
-            padding: '16px 20px',
-            marginBottom: 24,
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 12 }}>
+          <div className="bg-white border border-[#E5E0D8] rounded-lg py-4 px-5 mb-6">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">
               Export Report Format
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <div className="flex gap-2 flex-wrap">
               {REPORT_FORMATS.map(fmt => (
                 <button
                   key={fmt}
                   onClick={() => setCorrReportFormat(fmt)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: 6,
-                    border: '1px solid',
-                    borderColor: corrReportFormat === fmt ? NAVY : '#E5E7EB',
-                    background: corrReportFormat === fmt ? NAVY : '#F9FAFB',
-                    color: corrReportFormat === fmt ? '#fff' : '#374151',
-                    fontSize: 12,
-                    fontWeight: corrReportFormat === fmt ? 700 : 400,
-                    cursor: 'pointer',
-                  }}
+                  className={`py-2 px-4 rounded-md border text-xs cursor-pointer ${corrReportFormat === fmt ? 'border-navy bg-navy text-white font-bold' : 'border-gray-200 bg-gray-50 text-gray-700 font-normal'}`}
                 >
                   {fmt}
                 </button>
               ))}
             </div>
-            <div style={{ marginTop: 10, fontSize: 11, color: '#9CA3AF' }}>
+            <div className="mt-2.5 text-[11px] text-gray-400">
               {corrReportFormat === 'Executive Summary' && 'One-page narrative summary for C-suite. Key risks, dollar exposure, and 3 priority recommendations.'}
               {corrReportFormat === 'Formal Document' && 'Full structured report with methodology, pillar analysis, and regulatory citations. Suitable for board or legal review.'}
               {corrReportFormat === 'PDF/Print Ready' && 'Print-optimized layout with EvidLY letterhead, table of contents, and signature block. Exports as PDF.'}
               {corrReportFormat === 'Risk Register' && 'Tabular format: Risk ID, Pillar, Description, Dollar Impact, Owner, Due Date, Status. Imports into risk management tools.'}
             </div>
             <button
-              style={{
-                marginTop: 12,
-                padding: '8px 20px',
-                background: GOLD,
-                color: '#fff',
-                border: 'none',
-                borderRadius: 6,
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
+              className="mt-3 py-2 px-5 bg-gold text-white border-none rounded-md text-xs font-bold cursor-pointer"
               onClick={() => alert(`Export as ${corrReportFormat} — wire to export function when ready`)}
             >
               Export {corrReportFormat}
@@ -1448,12 +1343,9 @@ export default function EvidLYIntelligence() {
 
           {/* Empty state for production (no sample data) */}
           {!isDemoMode && correlations.length === 0 && (
-            <div style={{
-              background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 10,
-              padding: '32px 24px', textAlign: 'center', marginBottom: 20,
-            }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: NAVY, marginBottom: 6 }}>No correlation data available</div>
-              <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+            <div className="bg-gray-50 border border-gray-200 rounded-[10px] py-8 px-6 text-center mb-5">
+              <div className="text-sm font-semibold text-navy mb-1.5">No correlation data available</div>
+              <div className="text-xs text-[#6B7F96] leading-relaxed">
                 Correlations appear as intelligence signals are published and analyzed.
               </div>
             </div>
@@ -1465,69 +1357,57 @@ export default function EvidLYIntelligence() {
             if (items.length === 0) return null;
             const color = CORR_PILLAR_COLORS[pillar];
             return (
-              <div key={pillar} style={{ marginBottom: 28 }}>
+              <div key={pillar} className="mb-7">
                 {/* Pillar header */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  marginBottom: 12,
-                  paddingBottom: 8,
-                  borderBottom: `2px solid ${color}22`,
-                }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 15, fontWeight: 800, color: NAVY }}>{pillar}</span>
-                  <span style={{ fontSize: 12, color: '#9CA3AF' }}>{items.length} signal{items.length !== 1 ? 's' : ''}</span>
+                <div className="flex items-center gap-2.5 mb-3 pb-2"
+                  style={{ borderBottom: `2px solid ${color}22` }}>
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
+                  <span className="text-[15px] font-extrabold text-navy">{pillar}</span>
+                  <span className="text-xs text-gray-400">{items.length} signal{items.length !== 1 ? 's' : ''}</span>
                 </div>
 
                 {/* Correlation cards */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="flex flex-col gap-2.5">
                   {items.map(corr => (
                     <div
                       key={corr.id}
-                      style={{
-                        background: '#fff',
-                        border: `1px solid ${BORDER}`,
-                        borderLeft: `3px solid ${color}`,
-                        borderRadius: 8,
-                        padding: '14px 16px',
-                        cursor: 'pointer',
-                      }}
+                      className="bg-white border border-[#E5E0D8] rounded-lg py-3.5 px-4 cursor-pointer"
+                      style={{ borderLeft: `3px solid ${color}` }}
                       onClick={() => setCorrExpanded(corrExpanded === corr.id ? null : corr.id)}
                     >
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="text-[13px] font-bold text-navy mb-1">
                             {corr.title}
                           </div>
-                          <div style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.5 }}>
+                          <div className="text-xs text-gray-500 leading-normal">
                             {corr.description}
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 800, color: GOLD }}>{corr.impactRange}</div>
-                          <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>impact range</div>
+                        <div className="text-right shrink-0">
+                          <div className="text-[13px] font-extrabold text-gold">{corr.impactRange}</div>
+                          <div className="text-[10px] text-gray-400 mt-0.5">impact range</div>
                         </div>
                       </div>
 
                       {corrExpanded === corr.id && (
-                        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #F3F4F6' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 12 }}>
-                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
-                              <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{corr.signalCount}</div>
-                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Signals</div>
+                        <div className="mt-3.5 pt-3.5 border-t border-gray-100">
+                          <div className="grid grid-cols-3 gap-3 mb-3">
+                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
+                              <div className="text-xl font-extrabold text-navy">{corr.signalCount}</div>
+                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Signals</div>
                             </div>
-                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
-                              <div style={{ fontSize: 20, fontWeight: 800, color }}>{corr.confidence}%</div>
-                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Confidence</div>
+                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
+                              <div className="text-xl font-extrabold" style={{ color }}>{corr.confidence}%</div>
+                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Confidence</div>
                             </div>
-                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
-                              <div style={{ fontSize: 11, fontWeight: 700, color: '#166534' }}>ACTIVE</div>
-                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Status</div>
+                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
+                              <div className="text-[11px] font-bold text-green-800">ACTIVE</div>
+                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Status</div>
                             </div>
                           </div>
-                          <div style={{ fontSize: 11, color: '#6B7280' }}>
-                            <span style={{ fontWeight: 700, color: '#374151' }}>Sources: </span>
+                          <div className="text-[11px] text-gray-500">
+                            <span className="font-bold text-gray-700">Sources: </span>
                             {corr.sources.join(' · ')}
                           </div>
                         </div>
@@ -1632,26 +1512,23 @@ export default function EvidLYIntelligence() {
 
         return (
           <>
-            <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 12 }}>
+            <div className="text-xs text-[#6B7F96] leading-relaxed mb-3">
               All 62 California jurisdictions with correlated intelligence signals, risk dimensions, and methodology changes.
             </div>
 
             {/* KPI bar */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 16 }}>
+            <div className="grid grid-cols-4 gap-3 items-stretch mb-4">
               {[
-                { label: 'Total Jurisdictions', value: allJurisdictions.length || 62, color: NAVY },
-                { label: 'Active', value: activeCount, color: '#166534' },
-                { label: 'Quiet', value: quietCount, color: NAVY },
-                { label: 'Methodology Changes', value: methCount, color: GOLD },
+                { label: 'Total Jurisdictions', value: allJurisdictions.length || 62, color: 'text-navy' },
+                { label: 'Active', value: activeCount, color: 'text-[#166534]' },
+                { label: 'Quiet', value: quietCount, color: 'text-navy' },
+                { label: 'Methodology Changes', value: methCount, color: 'text-gold' },
               ].map(k => (
-                <div key={k.label} style={{
-                  background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
-                  textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+                <div key={k.label} className="bg-white border border-gray-200 rounded-lg py-4 px-5 text-center flex flex-col items-center justify-center">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
                     {k.label}
                   </div>
-                  <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>
+                  <div className={`text-[28px] font-extrabold leading-none ${k.color}`}>
                     {loading ? '—' : k.value}
                   </div>
                 </div>
@@ -1659,82 +1536,76 @@ export default function EvidLYIntelligence() {
             </div>
 
             {/* Filter bar */}
-            <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <div className="flex gap-2.5 mb-4 flex-wrap items-center">
               <input placeholder="Search jurisdictions..." value={jurSearch}
                 onChange={e => setJurSearch(e.target.value)}
-                style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
+                className={`${inputCls} flex-1 min-w-[200px]`} />
               <select value={jurFilter} onChange={e => setJurFilter(e.target.value as any)}
-                style={{ ...inputStyle, cursor: 'pointer' }}>
+                className={`${inputCls} cursor-pointer`}>
                 <option value="">All</option>
                 <option value="active">Active</option>
                 <option value="quiet">Quiet</option>
                 <option value="methodology">Has Methodology Change</option>
               </select>
               <select value={jurSort} onChange={e => setJurSort(e.target.value as any)}
-                style={{ ...inputStyle, cursor: 'pointer' }}>
+                className={`${inputCls} cursor-pointer`}>
                 <option value="signals">Signal Count (desc)</option>
                 <option value="name">Name (A-Z)</option>
                 <option value="recent">Most Recent Signal</option>
               </select>
-              <span style={{ fontSize: 11, color: TEXT_MUTED }}>
+              <span className="text-[11px] text-gray-400">
                 {filtered.length} of {jurRows.length}
               </span>
             </div>
 
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div className="flex flex-col gap-2.5">
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={44} />)}
               </div>
             ) : (
-              <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+                <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <tr className="border-b border-[#E5E0D8]">
                       {['Jurisdiction', 'Region', 'Signals', 'Risk Dimensions', 'Last Signal', 'Methodology', 'Status'].map(h => (
-                        <th key={h} style={thStyle}>{h}</th>
+                        <th key={h} className={thCls}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.map(j => (
-                      <tr key={j.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
+                      <tr key={j.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                        <td className={`${tdCls} font-medium text-navy`}>
                           {j.county}
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{j.region}</td>
-                        <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontWeight: 600, color: j.signalCount > 0 ? NAVY : TEXT_MUTED }}>
+                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{j.region}</td>
+                        <td className={`${tdCls} font-['DM_Mono',monospace] font-semibold ${j.signalCount > 0 ? 'text-navy' : 'text-gray-400'}`}>
                           {j.signalCount}
                         </td>
-                        <td style={tdStyle}>
-                          <div style={{ display: 'flex', gap: 4 }}>
-                            {j.dims.rev && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#C2410C', display: 'inline-block' }} title="Revenue" />}
-                            {j.dims.liab && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#991B1B', display: 'inline-block' }} title="Liability" />}
-                            {j.dims.cost && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E2D4D', display: 'inline-block' }} title="Cost" />}
-                            {j.dims.ops && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#166534', display: 'inline-block' }} title="Operational" />}
-                            {j.dims.wkf && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6B21A8', display: 'inline-block' }} title="Workforce" />}
+                        <td className={tdCls}>
+                          <div className="flex gap-1">
+                            {j.dims.rev && <span className="w-2 h-2 rounded-full bg-[#C2410C] inline-block" title="Revenue" />}
+                            {j.dims.liab && <span className="w-2 h-2 rounded-full bg-[#991B1B] inline-block" title="Liability" />}
+                            {j.dims.cost && <span className="w-2 h-2 rounded-full bg-navy inline-block" title="Cost" />}
+                            {j.dims.ops && <span className="w-2 h-2 rounded-full bg-[#166534] inline-block" title="Operational" />}
+                            {j.dims.wkf && <span className="w-2 h-2 rounded-full bg-[#6B21A8] inline-block" title="Workforce" />}
                             {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && !j.dims.wkf && (
-                              <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'—'}</span>
+                              <span className="text-[10px] text-gray-400">{'—'}</span>
                             )}
                           </div>
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: j.lastSignal ? TEXT_SEC : TEXT_MUTED }}>
+                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] ${j.lastSignal ? 'text-[#6B7F96]' : 'text-gray-400'}`}>
                           {j.lastSignal ? new Date(j.lastSignal).toLocaleDateString() : 'No signals'}
                         </td>
-                        <td style={tdStyle}>
+                        <td className={tdCls}>
                           {j.methodology.length > 0 ? (
-                            <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: '#F5F3FF', color: '#5B21B6' }}>
+                            <span className="text-[9px] font-bold py-[2px] px-[7px] rounded-lg bg-purple-50 text-purple-800">
                               {j.methodology.length} change{j.methodology.length !== 1 ? 's' : ''}
                             </span>
-                          ) : <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'—'}</span>}
+                          ) : <span className="text-[10px] text-gray-400">{'—'}</span>}
                         </td>
-                        <td style={tdStyle}>
-                          <span style={{
-                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                            background: j.isActive ? '#ECFDF5' : '#F9FAFB',
-                            color: j.isActive ? '#059669' : TEXT_MUTED,
-                          }}>
+                        <td className={tdCls}>
+                          <span className={`text-[9px] font-bold py-[2px] px-2 rounded-[10px] ${j.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
                             {j.isActive ? 'Active' : 'Quiet'}
                           </span>
                         </td>
@@ -1751,13 +1622,13 @@ export default function EvidLYIntelligence() {
       {/* ────────── TAB: REGULATORY UPDATES ────────── */}
       {activeTab === 'regulatory_updates' && (
         <>
-          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+          <div className="text-xs text-[#6B7F96] leading-relaxed mb-2">
             Regulatory code changes monitored across federal, state, county, and industry standards.
             Published changes are delivered to all affected client intelligence feeds.
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
             </div>
           ) : regulatoryChanges.length === 0 ? (
@@ -1767,7 +1638,7 @@ export default function EvidLYIntelligence() {
               subtitle="Changes appear here when the AI monitoring system detects updates to FDA Food Code, NFPA standards, CalCode, or other tracked regulatory sources."
             />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="flex flex-col gap-2.5">
               {regulatoryChanges.map(rc => {
                 const impactColor = rc.impact_level === 'critical'
                   ? { bg: '#FEF2F2', text: '#DC2626' }
@@ -1775,53 +1646,44 @@ export default function EvidLYIntelligence() {
                     ? { bg: '#FFFBEB', text: '#D97706' }
                     : { bg: '#F9FAFB', text: '#6B7280' };
                 return (
-                  <div key={rc.id} style={{
-                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
-                    borderLeft: `4px solid ${impactColor.text}`,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                      <div style={{ flex: 1 }}>
+                  <div key={rc.id} className="bg-white border border-[#E5E0D8] rounded-[10px] py-4 px-[18px]"
+                    style={{ borderLeft: `4px solid ${impactColor.text}` }}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
                         {/* Badges */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-                          <span style={{
-                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                            background: impactColor.bg, color: impactColor.text,
-                          }}>
+                        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                          <span className="text-[9px] font-bold py-[2px] px-2 rounded-[10px]"
+                            style={{ background: impactColor.bg, color: impactColor.text }}>
                             {rc.impact_level.toUpperCase()}
                           </span>
-                          <span style={{
-                            fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
-                            background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                          }}>
+                          <span className="text-[9px] font-semibold py-[2px] px-2 rounded-[10px] bg-gray-50 text-[#6B7F96] border border-[#E5E0D8]">
                             {(rc.change_type || '').replace(/_/g, ' ')}
                           </span>
                           {rc.affected_pillars && rc.affected_pillars.length > 0 && rc.affected_pillars.map(p => {
                             const pc = PILLAR_COLORS[p] || PILLAR_COLORS.both;
                             return (
-                              <span key={p} style={{
-                                fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                                background: pc.bg, color: pc.text,
-                              }}>
+                              <span key={p} className="text-[9px] font-bold py-[2px] px-2 rounded-[10px]"
+                                style={{ background: pc.bg, color: pc.text }}>
                                 {(p || '').replace(/_/g, ' ').toUpperCase()}
                               </span>
                             );
                           })}
                           {rc.ai_generated && (
-                            <span style={{ fontSize: 9, color: TEXT_MUTED }}>AI-generated</span>
+                            <span className="text-[9px] text-gray-400">AI-generated</span>
                           )}
                         </div>
                         {/* Title + summary */}
-                        <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{rc.title}</div>
-                        <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 6 }}>{rc.summary}</div>
+                        <div className="text-[13px] font-semibold text-navy mb-1">{rc.title}</div>
+                        <div className="text-xs text-[#6B7F96] leading-relaxed mb-1.5">{rc.summary}</div>
                         {rc.impact_description && rc.impact_description !== rc.summary && (
-                          <div style={{ fontSize: 11, color: '#1D4ED8', background: '#EFF6FF', padding: '6px 10px', borderRadius: 6, marginBottom: 6 }}>
+                          <div className="text-[11px] text-blue-700 bg-blue-50 py-1.5 px-2.5 rounded-md mb-1.5">
                             <strong>Impact:</strong> {rc.impact_description}
                           </div>
                         )}
                         {/* Meta row */}
-                        <div style={{ display: 'flex', gap: 12, fontSize: 10, color: TEXT_MUTED, flexWrap: 'wrap' }}>
+                        <div className="flex gap-3 text-[10px] text-gray-400 flex-wrap">
                           {rc.effective_date && (
-                            <span>Effective: <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{rc.effective_date}</span></span>
+                            <span>Effective: <span className="font-['DM_Mono',monospace] font-semibold">{rc.effective_date}</span></span>
                           )}
                           {rc.affected_states && rc.affected_states.length > 0 && (
                             <span>States: {rc.affected_states.join(', ')}</span>
@@ -1830,14 +1692,14 @@ export default function EvidLYIntelligence() {
                         </div>
                       </div>
                       {/* Actions */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 100 }}>
+                      <div className="flex flex-col gap-1.5 min-w-[100px]">
                         {rc.reviewed_by ? (
-                          <span style={{ fontSize: 10, color: '#059669', fontWeight: 600 }}>Reviewed</span>
+                          <span className="text-[10px] text-emerald-600 font-semibold">Reviewed</span>
                         ) : (
-                          <span style={{ fontSize: 10, color: TEXT_MUTED }}>Unreviewed</span>
+                          <span className="text-[10px] text-gray-400">Unreviewed</span>
                         )}
                         {rc.published ? (
-                          <span style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>Published</span>
+                          <span className="text-[10px] text-gold font-semibold">Published</span>
                         ) : (
                           <button onClick={async () => {
                             await deliverToClients('regulatory_update', rc.id, rc.title);
@@ -1845,32 +1707,26 @@ export default function EvidLYIntelligence() {
                               r.id === rc.id ? { ...r, published: true, published_at: new Date().toISOString() } : r
                             ));
                           }}
-                            style={{
-                              fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
-                              background: GOLD, color: '#fff', border: 'none', width: '100%',
-                            }}>
+                            className="text-[10px] font-bold py-1 px-2.5 rounded-md cursor-pointer bg-gold text-white border-none w-full">
                             Publish
                           </button>
                         )}
                         {rc.source_url && (
                           <a href={rc.source_url} target="_blank" rel="noreferrer"
-                            style={{ fontSize: 10, color: GOLD, textDecoration: 'none', textAlign: 'center' }}>
+                            className="text-[10px] text-gold no-underline text-center">
                             Source
                           </a>
                         )}
                         <button
                           onClick={() => setExpandedRegVerification(expandedRegVerification === rc.id ? null : rc.id)}
-                          style={{
-                            padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                            background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                          }}>
+                          className="py-1 px-2.5 rounded-md text-[10px] font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]">
                           {expandedRegVerification === rc.id ? 'Hide Gates' : 'Verify'}
                         </button>
                       </div>
                     </div>
                     {/* Verification Panel */}
                     {expandedRegVerification === rc.id && (
-                      <div style={{ marginTop: 12 }}>
+                      <div className="mt-3">
                         <VerificationPanel
                           contentTable="regulatory_changes"
                           contentId={rc.id}
@@ -1950,47 +1806,43 @@ export default function EvidLYIntelligence() {
         return (
           <>
             {/* Section 1: Model Status Bar */}
-            <div style={{
-              background: NAVY, borderRadius: 12, padding: '18px 24px',
-              display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap',
-              color: '#fff',
-            }}>
+            <div className="bg-navy rounded-xl py-[18px] px-6 flex items-center gap-7 flex-wrap text-white">
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Model Version</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: GOLD }}>{predLastRun?.model_version || 'rules-v1'}</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Model Version</div>
+                <div className="text-[15px] font-extrabold text-gold">{predLastRun?.model_version || 'rules-v1'}</div>
               </div>
-              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div className="w-px h-8 bg-white/15" />
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Method</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>Rules-based</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Method</div>
+                <div className="text-[13px] font-semibold">Rules-based</div>
               </div>
-              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div className="w-px h-8 bg-white/15" />
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Phase</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>Phase 1 of 3</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Phase</div>
+                <div className="text-[13px] font-semibold">Phase 1 of 3</div>
               </div>
-              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div className="w-px h-8 bg-white/15" />
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Next Phase</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>MindsDB (10{'\u2013'}25 customers)</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Next Phase</div>
+                <div className="text-[13px] font-semibold">MindsDB (10{'\u2013'}25 customers)</div>
               </div>
-              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div className="w-px h-8 bg-white/15" />
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Last Run</div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{predLastRun ? relativeTime(predLastRun.predicted_at) : '\u2014'}</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Last Run</div>
+                <div className="text-[13px] font-semibold">{predLastRun ? relativeTime(predLastRun.predicted_at) : '\u2014'}</div>
               </div>
-              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div className="w-px h-8 bg-white/15" />
               <div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Total Predictions</div>
-                <div style={{ fontSize: 15, fontWeight: 800, fontFamily: "'DM Mono', monospace" }}>{predTotalCount}</div>
+                <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wide mb-1">Total Predictions</div>
+                <div className="text-[15px] font-extrabold font-['DM_Mono',monospace]">{predTotalCount}</div>
               </div>
             </div>
 
             {/* Section 2: Location Risk Score Table */}
-            <div style={{ marginTop: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Location Risk Scores</h3>
+            <div className="mt-5">
+              <h3 className="text-[15px] font-bold text-navy mb-3">Location Risk Scores</h3>
               {predLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="flex flex-col gap-2.5">
                   {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={36} />)}
                 </div>
               ) : sortedPredictions.length === 0 ? (
@@ -2000,22 +1852,22 @@ export default function EvidLYIntelligence() {
                   subtitle="Trigger the generate-alerts edge function to run the first prediction. Predictions will appear here with risk scores per location."
                 />
               ) : (
-                <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 900 }}>
+                <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-auto">
+                  <table className="w-full border-collapse text-xs min-w-[900px]">
                     <thead>
-                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                        <th style={thStyle}>Location</th>
-                        <th style={thStyle}>Organization</th>
-                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('risk_level')}>
+                      <tr className="border-b border-[#E5E0D8]">
+                        <th className={thCls}>Location</th>
+                        <th className={thCls}>Organization</th>
+                        <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('risk_level')}>
                           Risk Level{sortArrow('risk_level')}
                         </th>
-                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('failure_probability')}>
+                        <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('failure_probability')}>
                           Failure Prob.{sortArrow('failure_probability')}
                         </th>
-                        <th style={thStyle}>Trajectory</th>
-                        <th style={thStyle}>Top Risk Pillars</th>
-                        <th style={thStyle}>Service Urgency</th>
-                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('predicted_at')}>
+                        <th className={thCls}>Trajectory</th>
+                        <th className={thCls}>Top Risk Pillars</th>
+                        <th className={thCls}>Service Urgency</th>
+                        <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('predicted_at')}>
                           Predicted At{sortArrow('predicted_at')}
                         </th>
                       </tr>
@@ -2025,74 +1877,63 @@ export default function EvidLYIntelligence() {
                         const badge = RISK_BADGE[p.risk_level] || RISK_BADGE.unknown;
                         const pct = Math.round(p.failure_probability * 100);
                         return (
-                          <tr key={p.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                            <td style={{ ...tdStyle, fontWeight: 600, color: NAVY }}>
+                          <tr key={p.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                            <td className={`${tdCls} font-semibold text-navy`}>
                               {p.locations?.name || p.location_id.slice(0, 8)}
                             </td>
-                            <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                            <td className={`${tdCls} text-[#6B7F96]`}>
                               {p.organizations?.name || '\u2014'}
                             </td>
-                            <td style={tdStyle}>
-                              <span style={{
-                                display: 'inline-block', padding: '2px 8px', borderRadius: 6,
-                                background: badge.bg, color: badge.text, fontSize: 11, fontWeight: 700,
-                                textTransform: 'uppercase',
-                              }}>
+                            <td className={tdCls}>
+                              <span className="inline-block py-[2px] px-2 rounded-md text-[11px] font-bold uppercase"
+                                style={{ background: badge.bg, color: badge.text }}>
                                 {p.risk_level}
                               </span>
                             </td>
-                            <td style={tdStyle}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{ position: 'relative', width: 60, height: 6, background: '#E5E7EB', borderRadius: 3, overflow: 'hidden' }}>
-                                  <div style={{
-                                    position: 'absolute', left: 0, top: 0, height: '100%', borderRadius: 3,
-                                    width: `${pct}%`,
-                                    background: pct >= 70 ? '#DC2626' : pct >= 50 ? '#C2410C' : pct >= 25 ? '#D97706' : '#16A34A',
-                                  }} />
+                            <td className={tdCls}>
+                              <div className="flex items-center gap-2">
+                                <div className="relative w-[60px] h-1.5 bg-gray-200 rounded-sm overflow-hidden">
+                                  <div className="absolute left-0 top-0 h-full rounded-sm"
+                                    style={{
+                                      width: `${pct}%`,
+                                      background: pct >= 70 ? '#DC2626' : pct >= 50 ? '#C2410C' : pct >= 25 ? '#D97706' : '#16A34A',
+                                    }} />
                                 </div>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600, color: NAVY, fontSize: 12 }}>
+                                <span className="font-['DM_Mono',monospace] font-semibold text-navy text-xs">
                                   {pct}%
                                 </span>
                               </div>
                             </td>
-                            <td style={tdStyle}>
-                              <span style={{
-                                color: p.score_trajectory === 'improving' ? '#16A34A'
-                                  : p.score_trajectory === 'declining' ? '#DC2626' : '#6B7280',
-                                fontWeight: 600,
-                              }}>
+                            <td className={tdCls}>
+                              <span className={`font-semibold ${p.score_trajectory === 'improving' ? 'text-green-600' : p.score_trajectory === 'declining' ? 'text-red-600' : 'text-gray-500'}`}>
                                 {p.score_trajectory === 'improving' ? '\u2191' : p.score_trajectory === 'declining' ? '\u2193' : '\u2192'}{' '}
                                 {p.score_trajectory}
                               </span>
                             </td>
-                            <td style={tdStyle}>
-                              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                            <td className={tdCls}>
+                              <div className="flex gap-1 flex-wrap">
                                 {(p.top_risk_pillars || []).map((code, i) => {
                                   const pb = PILLAR_BADGE[code];
                                   return pb ? (
-                                    <span key={i} style={{
-                                      display: 'inline-block', padding: '1px 6px', borderRadius: 4,
-                                      background: pb.bg, color: pb.text, fontSize: 10, fontWeight: 700,
-                                    }}>
+                                    <span key={i} className="inline-block py-px px-1.5 rounded text-[10px] font-bold"
+                                      style={{ background: pb.bg, color: pb.text }}>
                                       {pb.label}
                                     </span>
                                   ) : (
-                                    <span key={i} style={{ fontSize: 10, color: TEXT_MUTED }}>{code}</span>
+                                    <span key={i} className="text-[10px] text-gray-400">{code}</span>
                                   );
                                 })}
                                 {(!p.top_risk_pillars || p.top_risk_pillars.length === 0) && (
-                                  <span style={{ fontSize: 11, color: TEXT_MUTED }}>{'\u2014'}</span>
+                                  <span className="text-[11px] text-gray-400">{'\u2014'}</span>
                                 )}
                               </div>
                             </td>
-                            <td style={tdStyle}>
-                              <span style={{ color: URGENCY_TEXT[p.service_urgency || 'none'] || '#9CA3AF', fontWeight: 600, fontSize: 12 }}>
+                            <td className={tdCls}>
+                              <span className="font-semibold text-xs" style={{ color: URGENCY_TEXT[p.service_urgency || 'none'] || '#9CA3AF' }}>
                                 {p.service_urgency || 'none'}
                               </span>
                             </td>
-                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
+                            <td className={`${tdCls} text-[11px] text-gray-400 font-['DM_Mono',monospace]`}>
                               {relativeTime(p.predicted_at)}
                             </td>
                           </tr>
@@ -2105,13 +1946,13 @@ export default function EvidLYIntelligence() {
             </div>
 
             {/* Section 3: Prediction Accuracy Log */}
-            <div style={{ marginTop: 28 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 4 }}>Prediction Accuracy Log</h3>
-              <p style={{ fontSize: 11, color: TEXT_SEC, marginBottom: 12, lineHeight: 1.6 }}>
+            <div className="mt-7">
+              <h3 className="text-[15px] font-bold text-navy mb-1">Prediction Accuracy Log</h3>
+              <p className="text-[11px] text-[#6B7F96] mb-3 leading-relaxed">
                 Accuracy tracking begins when actual inspection results are received. Rows with no outcome represent predictions awaiting validation.
               </p>
               {predLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="flex flex-col gap-2.5">
                   {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
                 </div>
               ) : accuracyLog.length === 0 ? (
@@ -2121,12 +1962,12 @@ export default function EvidLYIntelligence() {
                   subtitle="Records appear here after actual inspection outcomes are recorded against prior predictions."
                 />
               ) : (
-                <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 800 }}>
+                <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-auto">
+                  <table className="w-full border-collapse text-xs min-w-[800px]">
                     <thead>
-                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                      <tr className="border-b border-[#E5E0D8]">
                         {['Location', 'Predicted Risk', 'Actual Outcome', 'Correct', 'Prob. Error', 'Model', 'Logged At'].map(h => (
-                          <th key={h} style={thStyle}>{h}</th>
+                          <th key={h} className={thCls}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -2134,47 +1975,39 @@ export default function EvidLYIntelligence() {
                       {accuracyLog.map(row => {
                         const rBadge = RISK_BADGE[row.predicted_risk_level || 'unknown'] || RISK_BADGE.unknown;
                         return (
-                          <tr key={row.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                            <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
+                          <tr key={row.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                            <td className={`${tdCls} font-medium text-navy`}>
                               {row.locations?.name || row.location_id.slice(0, 8)}
                             </td>
-                            <td style={tdStyle}>
+                            <td className={tdCls}>
                               {row.predicted_risk_level ? (
-                                <span style={{
-                                  display: 'inline-block', padding: '2px 8px', borderRadius: 6,
-                                  background: rBadge.bg, color: rBadge.text, fontSize: 11, fontWeight: 700,
-                                  textTransform: 'uppercase',
-                                }}>
+                                <span className="inline-block py-[2px] px-2 rounded-md text-[11px] font-bold uppercase"
+                                  style={{ background: rBadge.bg, color: rBadge.text }}>
                                   {row.predicted_risk_level}
                                 </span>
-                              ) : <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>}
+                              ) : <span className="text-gray-400">{'\u2014'}</span>}
                             </td>
-                            <td style={tdStyle}>
+                            <td className={tdCls}>
                               {row.actual_outcome ? (
-                                <span style={{
-                                  fontWeight: 600,
-                                  color: row.actual_outcome === 'pass' ? '#16A34A' : row.actual_outcome === 'fail' ? '#DC2626' : '#D97706',
-                                }}>
+                                <span className={`font-semibold ${row.actual_outcome === 'pass' ? 'text-green-600' : row.actual_outcome === 'fail' ? 'text-red-600' : 'text-amber-600'}`}>
                                   {row.actual_outcome}
                                 </span>
-                              ) : <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>}
+                              ) : <span className="text-gray-400">{'\u2014'}</span>}
                             </td>
-                            <td style={tdStyle}>
+                            <td className={tdCls}>
                               {row.prediction_correct === true ? (
-                                <span style={{ color: '#16A34A', fontWeight: 700 }}>{'\u2713'}</span>
+                                <span className="text-green-600 font-bold">{'\u2713'}</span>
                               ) : row.prediction_correct === false ? (
-                                <span style={{ color: '#DC2626', fontWeight: 700 }}>{'\u2717'}</span>
+                                <span className="text-red-600 font-bold">{'\u2717'}</span>
                               ) : (
-                                <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>
+                                <span className="text-gray-400">{'\u2014'}</span>
                               )}
                             </td>
-                            <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>
+                            <td className={`${tdCls} font-['DM_Mono',monospace] text-[#6B7F96]`}>
                               {row.probability_error != null ? `${Math.round(row.probability_error * 100)}%` : '\u2014'}
                             </td>
-                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>{row.model_version}</td>
-                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
+                            <td className={`${tdCls} text-[11px] text-gray-400`}>{row.model_version}</td>
+                            <td className={`${tdCls} text-[11px] text-gray-400 font-['DM_Mono',monospace]`}>
                               {relativeTime(row.logged_at)}
                             </td>
                           </tr>
@@ -2187,54 +2020,36 @@ export default function EvidLYIntelligence() {
             </div>
 
             {/* Section 4: Model Upgrade Roadmap */}
-            <div style={{ marginTop: 28 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Model Upgrade Roadmap</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            <div className="mt-7">
+              <h3 className="text-[15px] font-bold text-navy mb-3">Model Upgrade Roadmap</h3>
+              <div className="grid grid-cols-3 gap-3.5">
                 {/* Phase 1 — Active */}
-                <div style={{
-                  background: '#fff', borderRadius: 12, padding: '20px 22px',
-                  border: '2px solid #16A34A',
-                }}>
-                  <div style={{
-                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
-                    color: '#16A34A', marginBottom: 8,
-                  }}>
+                <div className="bg-white rounded-xl py-5 px-[22px] border-2 border-green-600">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-green-600 mb-2">
                     Phase 1 {'\u00B7'} Active
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Rules-Based Scoring</div>
-                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                  <div className="text-sm font-bold text-navy mb-2">Rules-Based Scoring</div>
+                  <div className="text-xs text-[#6B7F96] leading-relaxed">
                     Deterministic rules using checklist rate, temp log compliance, hood cleaning recency, and open corrective actions. Model version: rules-v1.
                   </div>
                 </div>
                 {/* Phase 2 — Upcoming */}
-                <div style={{
-                  background: '#fff', borderRadius: 12, padding: '20px 22px',
-                  border: `1px solid ${BORDER}`,
-                }}>
-                  <div style={{
-                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
-                    color: TEXT_MUTED, marginBottom: 8,
-                  }}>
+                <div className="bg-white rounded-xl py-5 px-[22px] border border-[#E5E0D8]">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
                     Phase 2 {'\u00B7'} 10{'\u2013'}25 Customers
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>MindsDB ML Forecasting</div>
-                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                  <div className="text-sm font-bold text-navy mb-2">MindsDB ML Forecasting</div>
+                  <div className="text-xs text-[#6B7F96] leading-relaxed">
                     LightGBM model trained on customer compliance data via MindsDB connected to Supabase Postgres. Replaces rules with probability forecasting.
                   </div>
                 </div>
                 {/* Phase 3 — Future */}
-                <div style={{
-                  background: '#fff', borderRadius: 12, padding: '20px 22px',
-                  border: `1px solid ${BORDER}`,
-                }}>
-                  <div style={{
-                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
-                    color: TEXT_MUTED, marginBottom: 8,
-                  }}>
+                <div className="bg-white rounded-xl py-5 px-[22px] border border-[#E5E0D8]">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
                     Phase 3 {'\u00B7'} 50+ Customers
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Custom Python Microservice</div>
-                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                  <div className="text-sm font-bold text-navy mb-2">Custom Python Microservice</div>
+                  <div className="text-xs text-[#6B7F96] leading-relaxed">
                     XGBoost classifier + Facebook Prophet time-series deployed as Edge Function. Full model training on real California compliance + inspection data.
                   </div>
                 </div>
@@ -2246,8 +2061,8 @@ export default function EvidLYIntelligence() {
 
       {/* ────────── PUBLISH ADVISORY MODAL (4-Dimension Risk Form) ────────── */}
       {publishModal.open && (() => {
-        const riskSelectStyle: React.CSSProperties = { ...inputStyle, width: '100%', cursor: 'pointer', fontSize: 11 };
-        const noteInputStyle: React.CSSProperties = { ...inputStyle, width: '100%', fontSize: 11 };
+        const riskSelectCls = `${inputCls} w-full cursor-pointer text-[11px]`;
+        const noteInputCls = `${inputCls} w-full text-[11px]`;
         const DIMS = [
           { key: 'revenueRisk' as const, noteKey: 'revenueNote' as const, icon: '💰', label: 'Revenue Risk', desc: 'Threat to score, grade, permit, revenue' },
           { key: 'liabilityRisk' as const, noteKey: 'liabilityNote' as const, icon: '⚖️', label: 'Liability Risk', desc: 'Legal/regulatory exposure, fines' },
@@ -2255,58 +2070,52 @@ export default function EvidLYIntelligence() {
           { key: 'operationalRisk' as const, noteKey: 'operationalNote' as const, icon: '⚙️', label: 'Operational Risk', desc: 'Process/procedure changes required' },
         ];
         return (
-          <div style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'auto', padding: 20,
-          }}
+          <div className="fixed inset-0 bg-black/40 z-[1000] flex items-center justify-center overflow-auto p-5"
             onClick={() => setPublishModal({ open: false, signal: null })}
           >
             <div
-              style={{
-                background: '#fff', borderRadius: 14, padding: 28, width: '100%', maxWidth: 600,
-                boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '90vh', overflow: 'auto',
-              }}
+              className="bg-white rounded-[14px] p-7 w-full max-w-[600px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-h-[90vh] overflow-auto"
               onClick={e => e.stopPropagation()}
             >
-              <div style={{ fontSize: 16, fontWeight: 800, color: NAVY, marginBottom: 4 }}>Publish Intelligence Signal</div>
-              <div style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 16 }}>
+              <div className="text-base font-extrabold text-navy mb-1">Publish Intelligence Signal</div>
+              <div className="text-xs text-gray-400 mb-4">
                 Tag risk dimensions and publish to affected client intelligence feeds.
               </div>
 
               {/* Signal info */}
-              <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '10px 14px', marginBottom: 16, border: `1px solid ${BORDER}` }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: NAVY }}>{publishModal.signal?.title}</div>
-                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+              <div className="bg-gray-50 rounded-lg py-2.5 px-3.5 mb-4 border border-[#E5E0D8]">
+                <div className="text-xs font-semibold text-navy">{publishModal.signal?.title}</div>
+                <div className="text-[10px] text-gray-400 mt-0.5">
                   Source: {publishModal.signal?.source_key} · {publishModal.signal?.signal_type?.replace(/_/g, ' ')}
                   {publishModal.signal?.affected_jurisdictions?.length ? ` · Counties: ${publishModal.signal.affected_jurisdictions.join(', ')}` : ''}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="flex flex-col gap-3.5">
                 {/* Title + Summary */}
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title (shown to clients)</label>
+                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Title (shown to clients)</label>
                   <input value={pubForm.title} onChange={e => setPubForm(f => ({ ...f, title: e.target.value }))}
-                    style={{ ...inputStyle, width: '100%' }} />
+                    className={`${inputCls} w-full`} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
+                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Summary</label>
                   <textarea value={pubForm.summary} onChange={e => setPubForm(f => ({ ...f, summary: e.target.value }))}
-                    rows={3} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+                    rows={3} className={`${inputCls} w-full resize-y`} />
                 </div>
 
                 {/* Risk Dimension Tagging — 4 rows */}
-                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 }}>Risk Dimension Tagging</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="border-t border-[#E5E0D8] pt-3.5">
+                  <div className="text-xs font-bold text-navy mb-2.5">Risk Dimension Tagging</div>
+                  <div className="flex flex-col gap-2.5">
                     {DIMS.map(dim => (
-                      <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
+                      <div key={dim.key} className="grid grid-cols-[140px_100px_1fr] gap-2 items-center">
                         <div>
                           <span className="text-xs">{dim.icon}</span>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: NAVY, marginLeft: 4 }}>{dim.label}</span>
+                          <span className="text-[11px] font-semibold text-navy ml-1">{dim.label}</span>
                         </div>
                         <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}
-                          style={riskSelectStyle}>
+                          className={riskSelectCls}>
                           <option value="none">None</option>
                           <option value="critical">Critical</option>
                           <option value="high">High</option>
@@ -2314,40 +2123,40 @@ export default function EvidLYIntelligence() {
                           <option value="low">Low</option>
                         </select>
                         <input value={pubForm[dim.noteKey]} onChange={e => setPubForm(f => ({ ...f, [dim.noteKey]: e.target.value }))}
-                          placeholder={dim.desc} style={noteInputStyle} />
+                          placeholder={dim.desc} className={noteInputCls} />
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Targeting Section */}
-                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 }}>Signal Targeting</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div className="border-t border-[#E5E0D8] pt-3.5">
+                  <div className="text-xs font-bold text-navy mb-2.5">Signal Targeting</div>
+                  <div className="flex flex-col gap-2.5">
+                    <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Scope</label>
+                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Scope</label>
                         <select value={pubForm.signalScope} onChange={e => setPubForm(f => ({ ...f, signalScope: e.target.value }))}
-                          style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                          className={`${inputCls} w-full cursor-pointer`}>
                           {Object.entries(SCOPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Counties (comma-separated)</label>
+                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Counties (comma-separated)</label>
                         <input value={pubForm.targetCounties} onChange={e => setPubForm(f => ({ ...f, targetCounties: e.target.value }))}
-                          placeholder="e.g. Fresno, Madera, Merced" style={{ ...inputStyle, width: '100%' }} />
+                          placeholder="e.g. Fresno, Madera, Merced" className={`${inputCls} w-full`} />
                       </div>
                     </div>
                     <div>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, color: TEXT_SEC, cursor: 'pointer' }}>
+                      <label className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6B7F96] cursor-pointer">
                         <input type="checkbox" checked={pubForm.allIndustries}
                           onChange={e => setPubForm(f => ({ ...f, allIndustries: e.target.checked }))} />
                         All Industries
                       </label>
                       {!pubForm.allIndustries && (
-                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                        <div className="flex gap-2 flex-wrap mt-2">
                           {Object.entries(INDUSTRY_LABELS).map(([k, v]) => (
-                            <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: TEXT_SEC, cursor: 'pointer' }}>
+                            <label key={k} className="flex items-center gap-1 text-[11px] text-[#6B7F96] cursor-pointer">
                               <input type="checkbox" checked={pubForm.targetIndustries.includes(k)}
                                 onChange={e => setPubForm(f => ({
                                   ...f,
@@ -2365,22 +2174,22 @@ export default function EvidLYIntelligence() {
                 </div>
 
                 {/* Opportunity Dimensions — 4 rows (green-tinted) */}
-                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#065F46', marginBottom: 10 }}>Opportunity Dimensions (upside of acting early)</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="border-t border-[#E5E0D8] pt-3.5">
+                  <div className="text-xs font-bold text-emerald-800 mb-2.5">Opportunity Dimensions (upside of acting early)</div>
+                  <div className="flex flex-col gap-2.5">
                     {[
                       { key: 'oppRevenue' as const, noteKey: 'oppRevenueNote' as const, icon: '⬆', label: 'Revenue Opp', desc: 'Score improvement, competitive advantage' },
                       { key: 'oppLiability' as const, noteKey: 'oppLiabilityNote' as const, icon: '🛡', label: 'Liability Opp', desc: 'Legal safe harbor, compliance edge' },
                       { key: 'oppCost' as const, noteKey: 'oppCostNote' as const, icon: '💵', label: 'Cost Opp', desc: 'Insurance discount, grant eligibility' },
                       { key: 'oppOperational' as const, noteKey: 'oppOperationalNote' as const, icon: '🚀', label: 'Operational Opp', desc: 'Efficiency gain, digital workflow' },
                     ].map(dim => (
-                      <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
+                      <div key={dim.key} className="grid grid-cols-[140px_100px_1fr] gap-2 items-center">
                         <div>
                           <span className="text-xs">{dim.icon}</span>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: '#065F46', marginLeft: 4 }}>{dim.label}</span>
+                          <span className="text-[11px] font-semibold text-emerald-800 ml-1">{dim.label}</span>
                         </div>
                         <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}
-                          style={{ ...inputStyle, width: '100%', cursor: 'pointer', fontSize: 11, borderColor: '#A7F3D0' }}>
+                          className={`${inputCls} w-full cursor-pointer text-[11px] border-emerald-200`}>
                           <option value="none">None</option>
                           <option value="critical">Critical</option>
                           <option value="high">High</option>
@@ -2388,7 +2197,7 @@ export default function EvidLYIntelligence() {
                           <option value="low">Low</option>
                         </select>
                         <input value={pubForm[dim.noteKey]} onChange={e => setPubForm(f => ({ ...f, [dim.noteKey]: e.target.value }))}
-                          placeholder={dim.desc} style={{ ...inputStyle, width: '100%', fontSize: 11, borderColor: '#A7F3D0' }} />
+                          placeholder={dim.desc} className={`${inputCls} w-full text-[11px] border-emerald-200`} />
                       </div>
                     ))}
                   </div>
@@ -2396,67 +2205,61 @@ export default function EvidLYIntelligence() {
 
                 {/* Impact Preview */}
                 {impactPreview && (
-                  <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 8, padding: '10px 14px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1E2D4D', marginBottom: 4 }}>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg py-2.5 px-3.5">
+                    <div className="text-[11px] font-bold text-navy mb-1">
                       Impact Preview: {impactPreview.total_orgs} org{impactPreview.total_orgs !== 1 ? 's' : ''}, {impactPreview.total_locations} location{impactPreview.total_locations !== 1 ? 's' : ''}
                     </div>
                     {impactPreview.orgs.length > 0 && (
-                      <div style={{ fontSize: 10, color: '#3B82F6', lineHeight: 1.6 }}>
+                      <div className="text-[10px] text-blue-500 leading-relaxed">
                         {impactPreview.orgs.map(o => o.name).join(' · ')}
                       </div>
                     )}
-                    <div style={{ fontSize: 9, color: '#6B7280', marginTop: 4 }}>
+                    <div className="text-[9px] text-gray-500 mt-1">
                       Confidence: {impactPreview.confidence}%
                     </div>
                   </div>
                 )}
 
                 {/* Recommended Action + Deadline */}
-                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+                <div className="border-t border-[#E5E0D8] pt-3.5">
                   <div>
-                    <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+                    <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
                       Recommended Action (shown to client)
                     </label>
                     <textarea value={pubForm.recommendedAction}
                       onChange={e => setPubForm(f => ({ ...f, recommendedAction: e.target.value }))}
                       rows={2} placeholder="What should the client do?"
-                      style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+                      className={`${inputCls} w-full resize-y`} />
                   </div>
-                  <div style={{ marginTop: 10 }}>
-                    <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+                  <div className="mt-2.5">
+                    <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
                       Action Deadline
                     </label>
                     <input type="date" value={pubForm.actionDeadline}
                       onChange={e => setPubForm(f => ({ ...f, actionDeadline: e.target.value }))}
-                      style={{ ...inputStyle, width: 180 }} />
+                      className={`${inputCls} w-[180px]`} />
                   </div>
                 </div>
 
                 {/* Priority preview */}
                 {(() => {
                   const p = computePriority(pubForm);
-                  const pColor = p === 'critical' ? '#DC2626' : p === 'high' ? '#D97706' : p === 'normal' ? '#2563EB' : '#6B7280';
+                  const pColor = p === 'critical' ? 'text-red-600' : p === 'high' ? 'text-amber-600' : p === 'normal' ? 'text-blue-600' : 'text-gray-500';
                   return (
-                    <div style={{ fontSize: 11, color: TEXT_SEC }}>
-                      Computed priority: <span style={{ fontWeight: 700, color: pColor }}>{p.toUpperCase()}</span>
+                    <div className="text-[11px] text-[#6B7F96]">
+                      Computed priority: <span className={`font-bold ${pColor}`}>{p.toUpperCase()}</span>
                     </div>
                   );
                 })()}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20, borderTop: `1px solid ${BORDER}`, paddingTop: 16 }}>
+              <div className="flex justify-end gap-2.5 mt-5 border-t border-[#E5E0D8] pt-4">
                 <button onClick={() => setPublishModal({ open: false, signal: null })}
-                  style={{
-                    padding: '8px 18px', background: '#fff', border: `1px solid ${BORDER}`,
-                    borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                  }}>
+                  className="py-2 px-[18px] bg-white border border-[#E5E0D8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
                   Cancel
                 </button>
                 <button onClick={submitAdvisory}
-                  style={{
-                    padding: '8px 18px', background: GOLD, border: 'none',
-                    borderRadius: 8, color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                  }}>
+                  className="py-2 px-[18px] bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
                   Publish to Clients
                 </button>
               </div>

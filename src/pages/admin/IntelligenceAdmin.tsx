@@ -17,11 +17,8 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E5E0D8';
+// Tailwind equivalents: NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold,
+// TEXT_SEC=#6B7F96 → text-[#6B7F96], TEXT_MUTED=#9CA3AF → text-[#9CA3AF], BORDER=#E5E0D8 → border-[#E5E0D8]
 
 interface QueueSignal {
   id: string;
@@ -100,25 +97,20 @@ function derivePipelineStep(sig: QueueSignal, hasGamePlan: boolean): number {
 
 function PipelineStepBar({ currentStep }: { currentStep: number }) {
   return (
-    <div style={{ display: 'flex', gap: 2, marginBottom: 10 }}>
+    <div className="flex gap-0.5 mb-2.5">
       {PIPELINE_STEPS.map((step, i) => {
         const isComplete = i < currentStep;
         const isCurrent = i === currentStep;
         return (
-          <div key={step.key} style={{ flex: 1, textAlign: 'center' }}>
-            <div style={{
-              height: 4, borderRadius: 2,
-              background: isComplete ? '#059669' : isCurrent ? GOLD : '#E5E7EB',
-              transition: 'background 0.3s',
-              marginBottom: 3,
-            }} />
-            <div style={{
-              fontSize: 8, fontWeight: 700,
-              color: isComplete ? '#059669' : isCurrent ? GOLD : TEXT_MUTED,
-              whiteSpace: 'nowrap',
-            }}>
+          <div key={step.key} className="flex-1 text-center">
+            <div className={`h-1 rounded-sm transition-colors duration-300 mb-[3px] ${
+              isComplete ? 'bg-[#059669]' : isCurrent ? 'bg-gold' : 'bg-gray-200'
+            }`} />
+            <div className={`text-[8px] font-bold whitespace-nowrap ${
+              isComplete ? 'text-[#059669]' : isCurrent ? 'text-gold' : 'text-[#9CA3AF]'
+            }`}>
               {step.label}
-              {step.auto && <span style={{ fontSize: 7, color: TEXT_MUTED }}> (AI)</span>}
+              {step.auto && <span className="text-[7px] text-[#9CA3AF]"> (AI)</span>}
             </div>
           </div>
         );
@@ -1004,33 +996,33 @@ export default function IntelligenceAdmin() {
   const isRejectedTab = filter === 'rejected';
   const isPublishedTab = filter === 'published';
 
-  const pillStyle = (active: boolean, color: string = NAVY): React.CSSProperties => ({
-    padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-    background: active ? color : '#fff',
-    color: active ? '#fff' : TEXT_SEC,
-    border: `1px solid ${active ? color : BORDER}`,
-  });
+  const pillCls = (active: boolean, color: string = 'navy') => {
+    const colorMap: Record<string, string> = { navy: 'bg-navy border-navy', gold: 'bg-gold border-gold' };
+    return `py-[5px] px-3.5 rounded-full text-[11px] font-semibold cursor-pointer border ${
+      active ? `${colorMap[color] || `bg-[${color}] border-[${color}]`} text-white` : 'bg-white text-[#6B7F96] border-[#E5E0D8]'
+    }`;
+  };
 
-  const smallPillStyle = (active: boolean, color: string = GOLD): React.CSSProperties => ({
-    padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-    background: active ? color : '#fff',
-    color: active ? '#fff' : TEXT_MUTED,
-    border: `1px solid ${active ? color : BORDER}`,
-  });
+  const smallPillCls = (active: boolean, color: string = 'gold') => {
+    const colorMap: Record<string, string> = { gold: 'bg-gold border-gold' };
+    return `py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border ${
+      active ? `${colorMap[color] || `bg-[${color}] border-[${color}]`} text-white` : 'bg-white text-[#9CA3AF] border-[#E5E0D8]'
+    }`;
+  };
 
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="mb-6 flex justify-between items-start">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, margin: '0 0 4px' }}>
+          <h1 className="text-[22px] font-extrabold text-navy mb-1">
             Signal Approval Queue
           </h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, margin: 0 }}>
+          <p className="text-[13px] text-[#6B7F96] m-0">
             Review and publish intelligence signals to client feeds. Sorted by severity.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="flex gap-2">
           <button
             onClick={async () => {
               try {
@@ -1050,19 +1042,13 @@ export default function IntelligenceAdmin() {
                 loadQueue();
               } catch (err: any) { toast.error(`Failed: ${err.message}`); }
             }}
-            style={{
-              padding: '8px 18px', borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              background: '#DC2626', color: '#fff', border: 'none', flexShrink: 0,
-            }}
+            className="py-2 px-[18px] rounded-md text-[13px] font-bold cursor-pointer bg-[#DC2626] text-white border-none shrink-0"
           >
             Fire Demo Signal
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            style={{
-              padding: '8px 18px', borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              background: GOLD, color: '#fff', border: 'none', flexShrink: 0,
-            }}
+            className="py-2 px-[18px] rounded-md text-[13px] font-bold cursor-pointer bg-gold text-white border-none shrink-0"
           >
             + New Signal
           </button>
@@ -1070,24 +1056,24 @@ export default function IntelligenceAdmin() {
       </div>
 
       {/* Stats row — SIGNAL-VALIDATION-01 enhanced KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
+      <div className="grid grid-cols-4 gap-3 mb-5">
         {[
-          { label: 'In Queue', value: String(activeSignals.length), color: NAVY },
-          { label: 'Published (7d)', value: String(weeklyPublished), color: '#059669' },
-          { label: 'Rejected (7d)', value: String(weeklyRejected), color: '#DC2626' },
-          { label: 'Avg Review Time', value: avgReviewHours != null ? `${avgReviewHours}h` : '—', color: GOLD },
+          { label: 'In Queue', value: String(activeSignals.length), colorCls: 'text-navy' },
+          { label: 'Published (7d)', value: String(weeklyPublished), colorCls: 'text-[#059669]' },
+          { label: 'Rejected (7d)', value: String(weeklyRejected), colorCls: 'text-[#DC2626]' },
+          { label: 'Avg Review Time', value: avgReviewHours != null ? `${avgReviewHours}h` : '—', colorCls: 'text-gold' },
         ].map(s => (
-          <div key={s.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>
+          <div key={s.label} className="bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-4">
+            <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.04em] mb-1">
               {s.label}
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
+            <div className={`text-[22px] font-extrabold ${s.colorCls}`}>{s.value}</div>
           </div>
         ))}
       </div>
 
       {/* Tab pills */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+      <div className="flex gap-2 mb-2 flex-wrap">
         {([
           { key: 'all' as TabFilter, label: `All (${activeSignals.length})` },
           { key: 'hold' as TabFilter, label: `Hold (${holdCount})` },
@@ -1097,28 +1083,27 @@ export default function IntelligenceAdmin() {
           { key: 'ai-costs' as TabFilter, label: '$ AI Costs' },
         ]).map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)}
-            style={f.key === 'published' && failedDeliveryCount > 0
-              ? { ...pillStyle(filter === f.key), ...(filter !== f.key ? { borderColor: '#DC2626', color: '#DC2626' } : {}) }
-              : pillStyle(filter === f.key)
-            }>
+            className={`${pillCls(filter === f.key)}${
+              f.key === 'published' && failedDeliveryCount > 0 && filter !== f.key ? ' !border-[#DC2626] !text-[#DC2626]' : ''
+            }`}>
             {f.label}
           </button>
         ))}
       </div>
 
       {/* CIC Pillar filters */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
-        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pillar:</span>
-        <button onClick={() => setPillarFilter('')} style={smallPillStyle(pillarFilter === '')}>
+      <div className="flex gap-1.5 mb-2 items-center">
+        <span className="text-[10px] text-[#9CA3AF] font-semibold uppercase tracking-[0.04em]">Pillar:</span>
+        <button onClick={() => setPillarFilter('')} className={smallPillCls(pillarFilter === '')}>
           All Pillars
         </button>
         {CIC_PILLARS.map(p => (
           <button key={p.id} onClick={() => setPillarFilter(p.id)}
+            className="py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border"
             style={{
-              padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
               background: pillarFilter === p.id ? p.color : '#fff',
-              color: pillarFilter === p.id ? '#fff' : TEXT_MUTED,
-              border: `1px solid ${pillarFilter === p.id ? p.color : BORDER}`,
+              color: pillarFilter === p.id ? '#fff' : '#9CA3AF',
+              borderColor: pillarFilter === p.id ? p.color : '#E5E0D8',
             }}>
             {p.shortLabel}
           </button>
@@ -1126,8 +1111,8 @@ export default function IntelligenceAdmin() {
       </div>
 
       {/* Risk dimension filters */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
-        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Risk:</span>
+      <div className="flex gap-1.5 mb-2 items-center">
+        <span className="text-[10px] text-[#9CA3AF] font-semibold uppercase tracking-[0.04em]">Risk:</span>
         {([
           { key: '' as const, label: 'All' },
           { key: 'revenue' as const, label: 'Revenue' },
@@ -1136,27 +1121,27 @@ export default function IntelligenceAdmin() {
           { key: 'operational' as const, label: 'Operational' },
           { key: 'workforce' as const, label: 'Workforce' },
         ]).map(f => (
-          <button key={f.key} onClick={() => setDimFilter(f.key)} style={smallPillStyle(dimFilter === f.key)}>
+          <button key={f.key} onClick={() => setDimFilter(f.key)} className={smallPillCls(dimFilter === f.key)}>
             {f.label}
           </button>
         ))}
       </div>
 
       {/* Category filter */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
-        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Type:</span>
+      <div className="flex gap-1.5 mb-2 items-center">
+        <span className="text-[10px] text-[#9CA3AF] font-semibold uppercase tracking-[0.04em]">Type:</span>
         {CATEGORY_OPTIONS.map(f => (
-          <button key={f.key} onClick={() => setCategoryFilter(f.key)} style={smallPillStyle(categoryFilter === f.key)}>
+          <button key={f.key} onClick={() => setCategoryFilter(f.key)} className={smallPillCls(categoryFilter === f.key)}>
             {f.label}
           </button>
         ))}
       </div>
 
       {/* Date filter */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, alignItems: 'center' }}>
-        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date:</span>
+      <div className="flex gap-1.5 mb-4 items-center">
+        <span className="text-[10px] text-[#9CA3AF] font-semibold uppercase tracking-[0.04em]">Date:</span>
         {DATE_OPTIONS.map(f => (
-          <button key={f.key} onClick={() => setDateFilter(f.key)} style={smallPillStyle(dateFilter === f.key)}>
+          <button key={f.key} onClick={() => setDateFilter(f.key)} className={smallPillCls(dateFilter === f.key)}>
             {f.label}
           </button>
         ))}
@@ -1164,56 +1149,56 @@ export default function IntelligenceAdmin() {
 
       {/* AUDIT-FIX-08 / A-3: AI Costs Tab */}
       {filter === 'ai-costs' ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="flex flex-col gap-4">
           {/* KPI row */}
           {aiCostsLoading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            <div className="grid grid-cols-4 gap-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} style={{ height: 80, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div key={i} className="h-20 bg-gray-200 rounded-[10px] animate-pulse" />
               ))}
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            <div className="grid grid-cols-4 gap-3">
               {/* Today's Spend */}
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Today&apos;s Spend</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>${aiTodaySpend.toFixed(4)}</div>
-                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-4">
+                <div className="text-[11px] font-semibold text-[#6B7F96] mb-1">Today&apos;s Spend</div>
+                <div className="text-[22px] font-extrabold text-navy">${aiTodaySpend.toFixed(4)}</div>
+                <div className="text-[10px] text-[#9CA3AF] mt-0.5">
                   Budget: ${aiBudget.daily.toFixed(2)}/day
                 </div>
               </div>
               {/* Month Spend */}
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Month Spend</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>${aiMonthSpend.toFixed(4)}</div>
-                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-4">
+                <div className="text-[11px] font-semibold text-[#6B7F96] mb-1">Month Spend</div>
+                <div className="text-[22px] font-extrabold text-navy">${aiMonthSpend.toFixed(4)}</div>
+                <div className="text-[10px] text-[#9CA3AF] mt-0.5">
                   {aiMonthCount} classifications
                 </div>
               </div>
               {/* Monthly Budget */}
               {(() => {
                 const pct = aiBudget.monthly > 0 ? (aiMonthSpend / aiBudget.monthly) * 100 : 0;
-                const barColor = pct >= 90 ? '#DC2626' : pct >= 70 ? '#D97706' : '#059669';
+                const barColor = pct >= 90 ? 'bg-[#DC2626]' : pct >= 70 ? 'bg-[#D97706]' : 'bg-[#059669]';
                 return (
-                  <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Monthly Budget</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>{pct.toFixed(1)}%</div>
-                    <div style={{ height: 4, background: '#E5E7EB', borderRadius: 2, marginTop: 6 }}>
-                      <div style={{ height: 4, borderRadius: 2, background: barColor, width: `${Math.min(pct, 100)}%`, transition: 'width 0.3s' }} />
+                  <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-4">
+                    <div className="text-[11px] font-semibold text-[#6B7F96] mb-1">Monthly Budget</div>
+                    <div className="text-[22px] font-extrabold text-navy">{pct.toFixed(1)}%</div>
+                    <div className="h-1 bg-gray-200 rounded-sm mt-1.5">
+                      <div className={`h-1 rounded-sm ${barColor} transition-all duration-300`} style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
-                    <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                    <div className="text-[10px] text-[#9CA3AF] mt-0.5">
                       ${aiMonthSpend.toFixed(2)} / ${aiBudget.monthly.toFixed(2)}
                     </div>
                   </div>
                 );
               })()}
               {/* Avg Cost / Signal */}
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Avg Cost / Signal</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-4">
+                <div className="text-[11px] font-semibold text-[#6B7F96] mb-1">Avg Cost / Signal</div>
+                <div className="text-[22px] font-extrabold text-navy">
                   ${aiMonthCount > 0 ? (aiMonthSpend / aiMonthCount).toFixed(5) : '0.00000'}
                 </div>
-                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                <div className="text-[10px] text-[#9CA3AF] mt-0.5">
                   Claude Haiku 4.5
                 </div>
               </div>
@@ -1221,92 +1206,89 @@ export default function IntelligenceAdmin() {
           )}
 
           {/* 30-day bar chart */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Daily Spend (30 days)</div>
+          <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-[18px] px-5">
+            <div className="text-[13px] font-bold text-navy mb-3">Daily Spend (30 days)</div>
             {aiDailySpend.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 24, fontSize: 12, color: TEXT_MUTED }}>No classification data yet</div>
+              <div className="text-center p-6 text-xs text-[#9CA3AF]">No classification data yet</div>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={aiDailySpend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: TEXT_MUTED }} tickFormatter={(v: string) => v.slice(5)} />
-                  <YAxis tick={{ fontSize: 10, fill: TEXT_MUTED }} tickFormatter={(v: number) => `$${v.toFixed(3)}`} width={60} />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9CA3AF' }} tickFormatter={(v: string) => v.slice(5)} />
+                  <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} tickFormatter={(v: number) => `$${v.toFixed(3)}`} width={60} />
                   <Tooltip formatter={(v: number) => [`$${v.toFixed(5)}`, 'Spend']} labelFormatter={(l: string) => `Date: ${l}`} />
-                  <Bar dataKey="spend" fill={GOLD} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="spend" fill="#A08C5A" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
 
           {/* Budget configuration */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Budget Configuration</div>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-[18px] px-5">
+            <div className="text-[13px] font-bold text-navy mb-3">Budget Configuration</div>
+            <div className="flex gap-4 items-end flex-wrap">
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Daily Budget ($)</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Daily Budget ($)</label>
                 <input type="number" step="0.50" min="0" value={editBudget.daily}
                   onChange={e => setEditBudget(p => ({ ...p, daily: e.target.value }))}
-                  style={{ width: 100, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+                  className="w-[100px] py-1.5 px-2.5 rounded-md border border-[#E5E0D8] text-[13px]" />
               </div>
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Monthly Budget ($)</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Monthly Budget ($)</label>
                 <input type="number" step="1" min="0" value={editBudget.monthly}
                   onChange={e => setEditBudget(p => ({ ...p, monthly: e.target.value }))}
-                  style={{ width: 100, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+                  className="w-[100px] py-1.5 px-2.5 rounded-md border border-[#E5E0D8] text-[13px]" />
               </div>
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Alert Threshold (%)</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Alert Threshold (%)</label>
                 <input type="number" step="5" min="0" max="100" value={editBudget.threshold}
                   onChange={e => setEditBudget(p => ({ ...p, threshold: e.target.value }))}
-                  style={{ width: 80, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+                  className="w-20 py-1.5 px-2.5 rounded-md border border-[#E5E0D8] text-[13px]" />
               </div>
               <button onClick={saveBudgetConfig} disabled={savingBudget}
-                style={{ padding: '7px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: GOLD, color: '#fff', opacity: savingBudget ? 0.6 : 1 }}>
+                className={`py-[7px] px-5 rounded-md text-xs font-bold cursor-pointer border-none bg-gold text-white ${savingBudget ? 'opacity-60' : ''}`}>
                 {savingBudget ? 'Saving...' : 'Save'}
               </button>
             </div>
             {/* Rate limit note */}
-            <div style={{ marginTop: 12, padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, fontSize: 11, color: TEXT_SEC, lineHeight: 1.5 }}>
+            <div className="mt-3 py-2 px-3 bg-[#F9FAFB] rounded-md text-[11px] text-[#6B7F96] leading-normal">
               <strong>Model:</strong> Claude Haiku 4.5 &middot; <strong>Pricing:</strong> $1.00/M input tokens, $5.00/M output tokens &middot; <strong>Limit:</strong> 10 signals/request &middot; 15s timeout/signal
             </div>
           </div>
 
           {/* Classification log table */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Classification Log</div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-[18px] px-5">
+            <div className="flex justify-between items-center mb-3">
+              <div className="text-[13px] font-bold text-navy">Classification Log</div>
+              <div className="flex gap-2 items-center">
                 {/* Time filter pills */}
                 {(['today', 'week', 'month', 'all'] as const).map(tf => (
                   <button key={tf} onClick={() => setAiCostTimeFilter(tf)}
-                    style={{
-                      padding: '3px 10px', borderRadius: 12, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                      border: `1px solid ${aiCostTimeFilter === tf ? GOLD : BORDER}`,
-                      background: aiCostTimeFilter === tf ? GOLD : 'transparent',
-                      color: aiCostTimeFilter === tf ? '#fff' : TEXT_SEC,
-                    }}>
+                    className={`py-[3px] px-2.5 rounded-xl text-[10px] font-semibold cursor-pointer border ${
+                      aiCostTimeFilter === tf ? 'border-gold bg-gold text-white' : 'border-[#E5E0D8] bg-transparent text-[#6B7F96]'
+                    }`}>
                     {tf.charAt(0).toUpperCase() + tf.slice(1)}
                   </button>
                 ))}
                 <button onClick={exportClassifCsv}
-                  style={{ padding: '3px 12px', borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: 'pointer', border: `1px solid ${BORDER}`, background: '#F9FAFB', color: NAVY }}>
+                  className="py-[3px] px-3 rounded-md text-[10px] font-bold cursor-pointer border border-[#E5E0D8] bg-[#F9FAFB] text-navy">
                   Export CSV
                 </button>
               </div>
             </div>
 
             {/* Table */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Timestamp</th>
-                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Signal</th>
-                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Model</th>
-                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Input</th>
-                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Output</th>
-                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Cost</th>
-                    <th style={{ textAlign: 'center', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Status</th>
+                  <tr className="border-b border-[#E5E0D8]">
+                    <th className="text-left py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Timestamp</th>
+                    <th className="text-left py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Signal</th>
+                    <th className="text-left py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Model</th>
+                    <th className="text-right py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Input</th>
+                    <th className="text-right py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Output</th>
+                    <th className="text-right py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Cost</th>
+                    <th className="text-center py-1.5 px-2 font-bold text-[#6B7F96] text-[10px]">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1321,7 +1303,7 @@ export default function IntelligenceAdmin() {
                     });
                     if (filteredLog.length === 0) {
                       return (
-                        <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: TEXT_MUTED }}>No classifications yet — costs will appear here once signals are classified.</td></tr>
+                        <tr><td colSpan={7} className="text-center p-5 text-[#9CA3AF]">No classifications yet — costs will appear here once signals are classified.</td></tr>
                       );
                     }
                     const totalCost = filteredLog.reduce((s, e) => s + (e.total_cost_usd || 0), 0);
@@ -1330,45 +1312,43 @@ export default function IntelligenceAdmin() {
                     return (
                       <>
                         {filteredLog.map(entry => (
-                          <tr key={entry.id} style={{ borderBottom: `1px solid #F3F4F6` }}>
-                            <td style={{ padding: '6px 8px', color: TEXT_MUTED, whiteSpace: 'nowrap', fontSize: 11 }}>
+                          <tr key={entry.id} className="border-b border-gray-100">
+                            <td className="py-1.5 px-2 text-[#9CA3AF] whitespace-nowrap text-[11px]">
                               {new Date(entry.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                             </td>
-                            <td style={{ padding: '6px 8px', color: NAVY, fontWeight: 500, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <td className="py-1.5 px-2 text-navy font-medium max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {entry.signal_title || '—'}
                             </td>
-                            <td style={{ padding: '6px 8px', color: TEXT_MUTED, fontSize: 10, fontFamily: 'monospace' }}>
+                            <td className="py-1.5 px-2 text-[#9CA3AF] text-[10px] font-mono">
                               {entry.model.replace('claude-', '').replace('-20251001', '')}
                             </td>
-                            <td style={{ padding: '6px 8px', textAlign: 'right', color: TEXT_SEC, fontFamily: 'monospace' }}>
+                            <td className="py-1.5 px-2 text-right text-[#6B7F96] font-mono">
                               {entry.input_tokens?.toLocaleString() || '—'}
                             </td>
-                            <td style={{ padding: '6px 8px', textAlign: 'right', color: TEXT_SEC, fontFamily: 'monospace' }}>
+                            <td className="py-1.5 px-2 text-right text-[#6B7F96] font-mono">
                               {entry.output_tokens?.toLocaleString() || '—'}
                             </td>
-                            <td style={{ padding: '6px 8px', textAlign: 'right', color: NAVY, fontWeight: 600, fontFamily: 'monospace' }}>
+                            <td className="py-1.5 px-2 text-right text-navy font-semibold font-mono">
                               {entry.total_cost_usd != null ? `$${entry.total_cost_usd.toFixed(5)}` : '—'}
                             </td>
-                            <td style={{ padding: '6px 8px', textAlign: 'center' }}>
-                              <span style={{
-                                fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                                background: entry.success ? '#ECFDF5' : '#FEF2F2',
-                                color: entry.success ? '#059669' : '#DC2626',
-                              }}>
+                            <td className="py-1.5 px-2 text-center">
+                              <span className={`text-[9px] font-bold py-0.5 px-2 rounded-[10px] ${
+                                entry.success ? 'bg-[#ECFDF5] text-[#059669]' : 'bg-[#FEF2F2] text-[#DC2626]'
+                              }`}>
                                 {entry.success ? 'OK' : 'FAIL'}
                               </span>
                             </td>
                           </tr>
                         ))}
                         {/* Totals row */}
-                        <tr style={{ borderTop: `2px solid ${BORDER}`, fontWeight: 700 }}>
-                          <td style={{ padding: '8px 8px', color: NAVY, fontSize: 11 }}>TOTAL ({filteredLog.length})</td>
-                          <td style={{ padding: '8px 8px' }}></td>
-                          <td style={{ padding: '8px 8px' }}></td>
-                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>{totalIn.toLocaleString()}</td>
-                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>{totalOut.toLocaleString()}</td>
-                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>${totalCost.toFixed(5)}</td>
-                          <td style={{ padding: '8px 8px' }}></td>
+                        <tr className="border-t-2 border-[#E5E0D8] font-bold">
+                          <td className="p-2 text-navy text-[11px]">TOTAL ({filteredLog.length})</td>
+                          <td className="p-2"></td>
+                          <td className="p-2"></td>
+                          <td className="p-2 text-right text-navy font-mono text-[11px]">{totalIn.toLocaleString()}</td>
+                          <td className="p-2 text-right text-navy font-mono text-[11px]">{totalOut.toLocaleString()}</td>
+                          <td className="p-2 text-right text-navy font-mono text-[11px]">${totalCost.toFixed(5)}</td>
+                          <td className="p-2"></td>
                         </tr>
                       </>
                     );
@@ -1384,57 +1364,53 @@ export default function IntelligenceAdmin() {
       {isPublishedTab ? (
         <div>
           {publishedSignals.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>No published signals</div>
-              <div style={{ fontSize: 12, color: TEXT_SEC }}>Published signals will appear here with their delivery status.</div>
+            <div className="text-center py-12 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+              <div className="text-sm font-bold text-navy mb-1.5">No published signals</div>
+              <div className="text-xs text-[#6B7F96]">Published signals will appear here with their delivery status.</div>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="flex flex-col gap-2">
               {publishedSignals.map(sig => {
                 const ds = sig.delivery_status || 'pending';
-                const dsColor = ds === 'delivered' ? '#059669' : ds === 'failed' ? '#DC2626' : '#D97706';
+                const dsColorCls = ds === 'delivered' ? 'text-[#059669]' : ds === 'failed' ? 'text-[#DC2626]' : 'text-[#D97706]';
                 const dsLabel = ds === 'delivered' ? 'Delivered' : ds === 'failed' ? 'Failed' : ds === 'partial' ? 'Partial' : 'Pending';
                 const dsIcon = ds === 'delivered' ? '\u2713' : ds === 'failed' ? '\u2717' : '\u27F3';
                 const isFailed = ds === 'failed' || ds === 'pending';
 
                 return (
-                  <div key={sig.id} style={{
-                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10,
-                    padding: '14px 18px',
-                    borderLeft: ds === 'failed' ? '4px solid #DC2626'
-                      : ds === 'delivered' ? '4px solid #059669'
-                      : `4px solid #D97706`,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                      <div style={{ flex: 1 }}>
+                  <div key={sig.id} className={`bg-white border border-[#E5E0D8] rounded-[10px] py-3.5 px-[18px] ${
+                    ds === 'failed' ? 'border-l-4 border-l-[#DC2626]'
+                      : ds === 'delivered' ? 'border-l-4 border-l-[#059669]'
+                      : 'border-l-4 border-l-[#D97706]'
+                  }`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
                         {/* Badges */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-                          <span style={{
-                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                            background: ds === 'delivered' ? '#ECFDF5' : ds === 'failed' ? '#FEF2F2' : '#FFFBEB',
-                            color: dsColor,
-                          }}>
+                        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                          <span className={`text-[9px] font-bold py-0.5 px-2 rounded-[10px] ${
+                            ds === 'delivered' ? 'bg-[#ECFDF5]' : ds === 'failed' ? 'bg-[#FEF2F2]' : 'bg-[#FFFBEB]'
+                          } ${dsColorCls}`}>
                             {dsIcon} {dsLabel.toUpperCase()}
                           </span>
-                          <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                          <span className="text-[9px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#F9FAFB] text-[#6B7F96] border border-[#E5E0D8]">
                             {sig.signal_type?.replace(/_/g, ' ')}
                           </span>
                           {sig.delivery_attempt_count != null && sig.delivery_attempt_count > 1 && (
-                            <span style={{ fontSize: 9, fontWeight: 600, color: TEXT_MUTED }}>
+                            <span className="text-[9px] font-semibold text-[#9CA3AF]">
                               Attempt #{sig.delivery_attempt_count}
                             </span>
                           )}
                         </div>
                         {/* Title */}
-                        <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4 }}>{sig.title}</div>
+                        <div className="text-sm font-bold text-navy mb-1">{sig.title}</div>
                         {/* Summary */}
                         {sig.content_summary && (
-                          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
+                          <div className="text-xs text-[#6B7F96] leading-normal mb-1.5">
                             {sig.content_summary.slice(0, 150)}{sig.content_summary.length > 150 ? '...' : ''}
                           </div>
                         )}
                         {/* Delivery details */}
-                        <div style={{ fontSize: 11, color: TEXT_MUTED }}>
+                        <div className="text-[11px] text-[#9CA3AF]">
                           Published: {sig.published_at ? new Date(sig.published_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—'}
                           {sig.delivered_at && (
                             <> · Delivered: {new Date(sig.delivered_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</>
@@ -1442,7 +1418,7 @@ export default function IntelligenceAdmin() {
                         </div>
                         {/* Error message for failed */}
                         {sig.delivery_error && (
-                          <div style={{ fontSize: 11, color: '#DC2626', marginTop: 4, padding: '4px 8px', background: '#FEF2F2', borderRadius: 4 }}>
+                          <div className="text-[11px] text-[#DC2626] mt-1 py-1 px-2 bg-[#FEF2F2] rounded">
                             Error: {sig.delivery_error}
                           </div>
                         )}
@@ -1453,13 +1429,9 @@ export default function IntelligenceAdmin() {
                         <button
                           onClick={() => redeliverSignal(sig.id)}
                           disabled={redelivering === sig.id}
-                          style={{
-                            padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                            background: redelivering === sig.id ? '#E5E7EB' : '#D97706',
-                            color: redelivering === sig.id ? TEXT_MUTED : '#fff',
-                            border: 'none', flexShrink: 0,
-                            opacity: redelivering === sig.id ? 0.6 : 1,
-                          }}
+                          className={`py-1.5 px-4 rounded-md text-xs font-bold cursor-pointer border-none shrink-0 ${
+                            redelivering === sig.id ? 'bg-gray-200 text-[#9CA3AF] opacity-60' : 'bg-[#D97706] text-white'
+                          }`}
                         >
                           {redelivering === sig.id ? 'Delivering...' : 'Re-deliver'}
                         </button>
@@ -1475,17 +1447,17 @@ export default function IntelligenceAdmin() {
 
       {/* Signal cards */}
       {isPublishedTab || filter === 'ai-costs' ? null : loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} style={{ height: 80, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} className="h-20 bg-gray-200 rounded-[10px] animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
+        <div className="text-center py-12 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+          <div className="text-sm font-bold text-navy mb-1.5">
             {isRejectedTab ? 'No rejected signals' : 'Queue is clear'}
           </div>
-          <div style={{ fontSize: 12, color: TEXT_SEC, maxWidth: 400, margin: '0 auto', lineHeight: 1.6 }}>
+          <div className="text-xs text-[#6B7F96] max-w-[400px] mx-auto leading-relaxed">
             {isRejectedTab
               ? 'Rejected signals will appear here. Use the Restore button to return them to the review queue.'
               : 'No signals pending review. New signals will appear here when the intelligence crawler detects changes.'
@@ -1493,7 +1465,7 @@ export default function IntelligenceAdmin() {
           </div>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {filtered.map(sig => {
             const uc = URGENCY_COLORS[sig.ai_urgency || 'low'] || URGENCY_COLORS.low;
             const rc = sig.routing_tier ? routingTierColor(sig.routing_tier) : null;
@@ -1502,28 +1474,19 @@ export default function IntelligenceAdmin() {
 
             if (isRestored) {
               return (
-                <div key={sig.id} style={{
-                  background: '#ECFDF5', border: '1px solid #059669', borderRadius: 10, padding: '16px 18px',
-                  textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#059669',
-                }}>
+                <div key={sig.id} className="bg-[#ECFDF5] border border-[#059669] rounded-[10px] py-4 px-[18px] text-center text-[13px] font-semibold text-[#059669]">
                   Restored — signal returned to review queue
                 </div>
               );
             }
 
             return (
-              <div key={sig.id} style={{
-                background: isRejected ? '#FAFAF8' : '#fff',
-                border: `1px solid ${BORDER}`,
-                borderRadius: 10,
-                padding: '16px 18px',
-                borderLeft: isRejected ? `4px solid ${TEXT_MUTED}`
-                  : sig.routing_tier === 'hold' ? '4px solid #DC2626'
-                  : sig.routing_tier === 'notify' ? '4px solid #D97706'
-                  : `4px solid ${BORDER}`,
-                opacity: isRejected ? 0.85 : 1,
-                cursor: 'pointer',
-              }}
+              <div key={sig.id} className={`border border-[#E5E0D8] rounded-[10px] py-4 px-[18px] cursor-pointer ${
+                isRejected ? 'bg-[#FAFAF8] opacity-[0.85] border-l-4 border-l-[#9CA3AF]'
+                  : sig.routing_tier === 'hold' ? 'bg-white border-l-4 border-l-[#DC2626]'
+                  : sig.routing_tier === 'notify' ? 'bg-white border-l-4 border-l-[#D97706]'
+                  : 'bg-white border-l-4 border-l-[#E5E0D8]'
+              }`}
                 onClick={() => {
                   if (expandedSignalId === sig.id) { setExpandedSignalId(null); }
                   else {
@@ -1544,23 +1507,23 @@ export default function IntelligenceAdmin() {
                 {!isRejected && (
                   <PipelineStepBar currentStep={derivePipelineStep(sig, !!(gamePlans[sig.id]?.length))} />
                 )}
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                  <div style={{ flex: 1 }}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
                     {/* Badges */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                    <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
                       {sig.routing_tier && rc && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: rc.bg, color: rc.text }}>
+                        <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px]" style={{ background: rc.bg, color: rc.text }}>
                           {routingTierLabel(sig.routing_tier)}
                         </span>
                       )}
                       {sig.ai_urgency && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: uc.bg, color: uc.text }}>
+                        <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px]" style={{ background: uc.bg, color: uc.text }}>
                           {sig.ai_urgency.toUpperCase()}
                         </span>
                       )}
                       {/* PSE badge */}
                       {isPseSignalType(sig.signal_type) && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' }}>
+                        <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px] bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A]">
                           PSE-Relevant
                         </span>
                       )}
@@ -1569,44 +1532,44 @@ export default function IntelligenceAdmin() {
                         const pillar = sig.cic_pillar ? CIC_PILLARS.find(p => p.id === sig.cic_pillar) : getPillarForSignalType(sig.signal_type);
                         if (!pillar) return null;
                         return (
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pillar.bgColor, color: pillar.color }}>
+                          <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px]" style={{ background: pillar.bgColor, color: pillar.color }}>
                             {pillar.shortLabel}
                           </span>
                         );
                       })()}
-                      <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                      <span className="text-[9px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#F9FAFB] text-[#6B7F96] border border-[#E5E0D8]">
                         {sig.signal_type?.replace(/_/g, ' ')}
                       </span>
                       {sig.severity_score != null && (
-                        <span style={{ fontSize: 9, fontWeight: 600, color: TEXT_MUTED }}>
+                        <span className="text-[9px] font-semibold text-[#9CA3AF]">
                           Severity: {sig.severity_score}
                         </span>
                       )}
                       {sig.confidence_score != null && (
-                        <span style={{ fontSize: 9, fontWeight: 600, color: TEXT_MUTED }}>
+                        <span className="text-[9px] font-semibold text-[#9CA3AF]">
                           Confidence: {sig.confidence_score}%
                         </span>
                       )}
                       {isRejected && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_MUTED }}>
+                        <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px] bg-gray-100 text-[#9CA3AF]">
                           REJECTED
                         </span>
                       )}
                       {/* SIGNAL-VALIDATION-01: Edit count badge */}
                       {sig.edit_count != null && sig.edit_count > 0 && (
-                        <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                        <span className="text-[9px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
                           {sig.edit_count} edit{sig.edit_count > 1 ? 's' : ''}
                         </span>
                       )}
                       {/* SIGNAL-VALIDATION-01: Preview sent */}
                       {sig.preview_sent && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#F0FDF4', color: '#059669' }}>
+                        <span className="text-[9px] font-bold py-0.5 px-2 rounded-[10px] bg-[#F0FDF4] text-[#059669]">
                           PREVIEW SENT
                         </span>
                       )}
                       {/* SIGNAL-VALIDATION-01: Subset target */}
                       {sig.target_org_ids && sig.target_org_ids.length > 0 && (
-                        <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#FFF7ED', color: '#C2410C' }}>
+                        <span className="text-[9px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#FFF7ED] text-[#C2410C]">
                           {sig.target_org_ids.length} org target{sig.target_org_ids.length > 1 ? 's' : ''}
                         </span>
                       )}
@@ -1617,10 +1580,10 @@ export default function IntelligenceAdmin() {
                       <input
                         value={editForm.title}
                         onChange={e => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                        style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4, width: '100%', padding: '4px 8px', border: `1px solid ${GOLD}`, borderRadius: 4, outline: 'none' }}
+                        className="text-sm font-bold text-navy mb-1 w-full py-1 px-2 border border-gold rounded outline-none"
                       />
                     ) : (
-                      <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4 }}>
+                      <div className="text-sm font-bold text-navy mb-1">
                         {sig.title}
                       </div>
                     )}
@@ -1631,32 +1594,32 @@ export default function IntelligenceAdmin() {
                         value={editForm.summary}
                         onChange={e => setEditForm(prev => ({ ...prev, summary: e.target.value }))}
                         rows={3}
-                        style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6, width: '100%', padding: '4px 8px', border: `1px solid ${GOLD}`, borderRadius: 4, resize: 'vertical', outline: 'none' }}
+                        className="text-xs text-[#6B7F96] leading-normal mb-1.5 w-full py-1 px-2 border border-gold rounded resize-y outline-none"
                       />
                     ) : (sig.ai_summary || sig.content_summary) ? (
-                      <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
+                      <div className="text-xs text-[#6B7F96] leading-normal mb-1.5">
                         {(sig.ai_summary || sig.content_summary || '').slice(0, 200)}
                         {(sig.ai_summary || sig.content_summary || '').length > 200 ? '...' : ''}
                       </div>
                     ) : null}
 
                     {/* Source & Verification */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 6 }}>
-                      <div style={{ fontSize: 11, color: TEXT_MUTED }}>
-                        <span style={{ fontWeight: 600 }}>Source: </span>
+                    <div className="flex flex-col gap-0.5 mb-1.5">
+                      <div className="text-[11px] text-[#9CA3AF]">
+                        <span className="font-semibold">Source: </span>
                         {sig.source_name || sig.source_key || 'Unknown'}
                         {sig.source_url && (
                           <>
                             {' — '}
                             <a href={sig.source_url} target="_blank" rel="noopener noreferrer"
-                              style={{ color: TEXT_SEC, textDecoration: 'underline' }}>
+                              className="text-[#6B7F96] underline">
                               {(() => { try { return new URL(sig.source_url).hostname.replace(/^www\./, ''); } catch { return sig.source_url; } })()}
                             </a>
                           </>
                         )}
                       </div>
-                      <div style={{ fontSize: 11, color: TEXT_MUTED }}>
-                        <span style={{ fontWeight: 600 }}>Verified: </span>
+                      <div className="text-[11px] text-[#9CA3AF]">
+                        <span className="font-semibold">Verified: </span>
                         {(() => {
                           if (!verificationAvailable) return <span>Verification unavailable</span>;
                           const vs = verificationStatuses[sig.id];
@@ -1674,45 +1637,45 @@ export default function IntelligenceAdmin() {
 
                     {/* Dismissed info — replaces risk dimensions for dismissed signals */}
                     {isRejected ? (
-                      <div style={{ marginTop: 4, marginBottom: 8, padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid #E5E7EB` }}>
-                        <div style={{ fontSize: 12, color: NAVY, fontWeight: 600 }}>
+                      <div className="mt-1 mb-2 py-2 px-3 bg-[#F9FAFB] rounded-md border border-[#E5E7EB]">
+                        <div className="text-xs text-navy font-semibold">
                           Dismissed: {sig.dismissed_at ? new Date(sig.dismissed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                           {' — '}
-                          <span style={{ fontWeight: 400, color: TEXT_SEC }}>{sig.dismissed_reason || 'No reason provided'}</span>
+                          <span className="font-normal text-[#6B7F96]">{sig.dismissed_reason || 'No reason provided'}</span>
                         </div>
                         {sig.dismissed_by && (
-                          <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                          <div className="text-[10px] text-[#9CA3AF] mt-0.5">
                             Dismissed by: {sig.dismissed_by}
                           </div>
                         )}
                       </div>
                     ) : (
                       /* Risk dimension selectors — only for active signals */
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
+                      <div className="flex flex-col gap-[5px] mb-2 mt-1">
                         {(['revenue', 'liability', 'cost', 'operational', 'workforce'] as const).map(dim => {
                           const current = getRiskLevel(sig, dim);
                           const dimSaved = savedDim[`${sig.id}_${dim}`];
                           const isAiSuggested = aiSuggested[sig.id]?.[dim];
                           return (
-                            <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span style={{ fontSize: 10, fontWeight: 700, color: DIM_COLORS[dim], width: 72, textTransform: 'capitalize' }}>
+                            <div key={dim} className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold w-[72px] capitalize" style={{ color: DIM_COLORS[dim] }}>
                                 {dim}
                               </span>
                               {isAiSuggested && (
-                                <span style={{ fontSize: 8, fontWeight: 700, color: GOLD, background: '#FFF8E1', padding: '1px 5px', borderRadius: 6, flexShrink: 0 }}>
+                                <span className="text-[8px] font-bold text-gold bg-[#FFF8E1] py-px px-[5px] rounded-md shrink-0">
                                   AI
                                 </span>
                               )}
-                              <div style={{ display: 'flex', gap: 3 }}>
+                              <div className="flex gap-[3px]">
                                 {LEVELS.map(level => {
                                   const isActive = current === level;
                                   const levelColor = level === 'none' ? '#9CA3AF' : (RISK_COLORS[level] || '#6B7280');
                                   const btn = (
                                     <button onClick={() => setRiskLevel(sig, dim, level)}
+                                      className="py-0.5 px-2 rounded-[10px] text-[9px] font-semibold cursor-pointer"
                                       style={{
-                                        padding: '2px 8px', borderRadius: 10, fontSize: 9, fontWeight: 600, cursor: 'pointer',
                                         background: isActive ? levelColor : 'transparent',
-                                        color: isActive ? '#fff' : TEXT_MUTED,
+                                        color: isActive ? '#fff' : '#9CA3AF',
                                         border: `1px solid ${isActive ? levelColor : '#E5E7EB'}`,
                                       }}>
                                       {LEVEL_LABELS[level]}
@@ -1724,7 +1687,7 @@ export default function IntelligenceAdmin() {
                                 })}
                               </div>
                               {dimSaved && (
-                                <span style={{ fontSize: 10, color: '#059669', fontWeight: 600, flexShrink: 0, transition: 'opacity 0.3s' }}>
+                                <span className="text-[10px] text-[#059669] font-semibold shrink-0 transition-opacity duration-300">
                                   Saved
                                 </span>
                               )}
@@ -1736,13 +1699,13 @@ export default function IntelligenceAdmin() {
 
                     {/* All-none warning */}
                     {!isRejected && isAllNone(sig) && (
-                      <div style={{ fontSize: 10, color: '#D97706', background: '#FFFBEB', padding: '4px 10px', borderRadius: 6, marginBottom: 6 }}>
+                      <div className="text-[10px] text-[#D97706] bg-[#FFFBEB] py-1 px-2.5 rounded-md mb-1.5">
                         No risk dimensions assigned — this signal will not appear under any dimension in the Intelligence Center.
                       </div>
                     )}
 
                     {/* Meta */}
-                    <div style={{ fontSize: 10, color: TEXT_MUTED }}>
+                    <div className="text-[10px] text-[#9CA3AF]">
                       {sig.source_key && <span>{sig.source_key} · </span>}
                       {sig.counties_affected && sig.counties_affected.length > 0 && <span>{sig.counties_affected.join(', ')} · </span>}
                       {sig.target_counties && sig.target_counties.length > 0 && !sig.counties_affected?.length && <span>{sig.target_counties.join(', ')} · </span>}
@@ -1752,10 +1715,10 @@ export default function IntelligenceAdmin() {
                   </div>
 
                   {/* SIGNAL-VALIDATION-01: 6 Action Buttons */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                  <div className="flex flex-col gap-[5px] shrink-0" onClick={e => e.stopPropagation()}>
                     {isRejected ? (
                       <button onClick={() => restoreSignal(sig)}
-                        style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', background: '#059669', color: '#fff', border: 'none' }}>
+                        className="py-[5px] px-3.5 rounded-md text-[11px] font-bold cursor-pointer bg-[#059669] text-white border-none">
                         Restore
                       </button>
                     ) : (
@@ -1766,56 +1729,56 @@ export default function IntelligenceAdmin() {
                           const blocked = vs?.publish_blocked ?? true;
                           return (
                             <button onClick={() => publishSignal(sig)} disabled={publishing === sig.id || blocked}
-                              style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
-                                background: blocked ? '#E5E7EB' : '#059669', color: blocked ? TEXT_MUTED : '#fff', border: 'none',
-                                opacity: publishing === sig.id ? 0.5 : 1 }}>
+                              className={`py-[5px] px-3.5 rounded-md text-[11px] font-bold border-none ${
+                                blocked ? 'cursor-not-allowed bg-[#E5E7EB] text-[#9CA3AF]' : 'cursor-pointer bg-[#059669] text-white'
+                              } ${publishing === sig.id ? 'opacity-50' : ''}`}>
                               {publishing === sig.id ? 'Publishing...' : blocked ? `${vs?.gates_passed || 0}/${vs?.gates_required || '?'} gates` : 'Approve & Publish'}
                             </button>
                           );
                         })()}
                         {/* 2. Approve for Subset */}
                         <button onClick={() => setSubsetModal({ signalId: sig.id })}
-                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#FFF7ED', color: '#C2410C', border: '1px solid #FDBA74' }}>
+                          className="py-[5px] px-3.5 rounded-md text-[11px] font-semibold cursor-pointer bg-[#FFF7ED] text-[#C2410C] border border-[#FDBA74]">
                           Approve Subset
                         </button>
                         {/* 3. Edit & Approve */}
                         <button onClick={() => { setExpandedSignalId(sig.id); setReviewTab('content');
                           setEditFormExtended({ title: sig.title || '', summary: sig.ai_summary || sig.content_summary || '', detail_markdown: sig.detail_markdown || '', recommended_action: sig.recommended_action || '' });
                         }}
-                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                          className="py-[5px] px-3.5 rounded-md text-[11px] font-semibold cursor-pointer bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
                           Edit & Approve
                         </button>
                         {/* 4. Send Preview */}
                         <button onClick={() => sendPreview(sig.id)} disabled={sendingPreview === sig.id || sig.preview_sent}
-                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: sig.preview_sent ? 'not-allowed' : 'pointer',
-                            background: 'transparent', color: sig.preview_sent ? '#059669' : TEXT_SEC, border: `1px solid ${sig.preview_sent ? '#059669' : BORDER}`,
-                            opacity: sendingPreview === sig.id ? 0.5 : 1 }}>
+                          className={`py-[5px] px-3.5 rounded-md text-[11px] font-semibold bg-transparent border ${
+                            sig.preview_sent ? 'cursor-not-allowed text-[#059669] border-[#059669]' : 'cursor-pointer text-[#6B7F96] border-[#E5E0D8]'
+                          } ${sendingPreview === sig.id ? 'opacity-50' : ''}`}>
                           {sig.preview_sent ? 'Preview Sent' : sendingPreview === sig.id ? 'Sending...' : 'Send Preview'}
                         </button>
                         {/* 5. Reject */}
                         <button onClick={() => openRejectModal(sig)}
-                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
+                          className="py-[5px] px-3.5 rounded-md text-[11px] font-semibold cursor-pointer bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]">
                           Reject
                         </button>
                         {/* 6. Hold */}
                         <button onClick={() => holdSignal(sig.id)} disabled={sig.routing_tier === 'hold'}
-                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: sig.routing_tier === 'hold' ? 'not-allowed' : 'pointer',
-                            background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
-                            opacity: sig.routing_tier === 'hold' ? 0.5 : 1 }}>
+                          className={`py-[5px] px-3.5 rounded-md text-[11px] font-semibold bg-transparent text-[#9CA3AF] border border-[#E5E0D8] ${
+                            sig.routing_tier === 'hold' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                          }`}>
                           {sig.routing_tier === 'hold' ? 'On Hold' : 'Hold'}
                         </button>
                         {/* Verification gates */}
                         <button onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
-                          style={{ padding: '3px 10px', borderRadius: 6, fontSize: 9, fontWeight: 600, cursor: 'pointer', background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                          className="py-[3px] px-2.5 rounded-md text-[9px] font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]">
                           {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
                         </button>
                         {/* E2E-FIX-01: Manual classify button for unclassified signals */}
                         {isAllNone(sig) && (
                           <button onClick={(e) => { e.stopPropagation(); classifySingle(sig); }}
                             disabled={classifyingId === sig.id}
-                            style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: classifyingId === sig.id ? 'not-allowed' : 'pointer',
-                              background: 'transparent', color: GOLD, border: `1px solid ${GOLD}`,
-                              opacity: classifyingId === sig.id ? 0.5 : 1 }}>
+                            className={`py-[5px] px-3.5 rounded-md text-[11px] font-semibold bg-transparent text-gold border border-gold ${
+                              classifyingId === sig.id ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                            }`}>
                             {classifyingId === sig.id ? 'Classifying...' : '\u2726 Classify'}
                           </button>
                         )}
@@ -1823,7 +1786,7 @@ export default function IntelligenceAdmin() {
                     )}
                     {sig.source_url && (
                       <a href={sig.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                        style={{ fontSize: 10, color: TEXT_SEC, textAlign: 'center', textDecoration: 'underline' }}>
+                        className="text-[10px] text-[#6B7F96] text-center underline">
                         Source
                       </a>
                     )}
@@ -1832,7 +1795,7 @@ export default function IntelligenceAdmin() {
 
                 {/* Verification Panel (expanded) */}
                 {!isRejected && expandedVerification === sig.id && (
-                  <div style={{ marginTop: 12 }} onClick={e => e.stopPropagation()}>
+                  <div className="mt-3" onClick={e => e.stopPropagation()}>
                     <VerificationPanel
                       contentTable="intelligence_signals"
                       contentId={sig.id}
@@ -1845,17 +1808,14 @@ export default function IntelligenceAdmin() {
 
                 {/* SIGNAL-VALIDATION-01: Review Panel with 4 Tabs */}
                 {expandedSignalId === sig.id && !isRejected && (
-                  <div style={{ marginTop: 16, borderTop: `1px solid ${BORDER}`, paddingTop: 16 }} onClick={e => e.stopPropagation()}>
+                  <div className="mt-4 border-t border-[#E5E0D8] pt-4" onClick={e => e.stopPropagation()}>
                     {/* Tab pills */}
-                    <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                    <div className="flex gap-1.5 mb-3">
                       {(['content', 'source', 'preview', 'gameplan'] as const).map(t => (
                         <button key={t} onClick={() => setReviewTab(t)}
-                          style={{
-                            padding: '4px 12px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                            background: reviewTab === t ? GOLD : '#fff',
-                            color: reviewTab === t ? '#fff' : TEXT_MUTED,
-                            border: `1px solid ${reviewTab === t ? GOLD : BORDER}`,
-                          }}>
+                          className={`py-1 px-3 rounded-[14px] text-[10px] font-semibold cursor-pointer border ${
+                            reviewTab === t ? 'bg-gold text-white border-gold' : 'bg-white text-[#9CA3AF] border-[#E5E0D8]'
+                          }`}>
                           {{ content: 'Signal Content', source: 'Source & AI', preview: 'Operator Preview', gameplan: 'Game Plan' }[t]}
                         </button>
                       ))}
@@ -1863,39 +1823,39 @@ export default function IntelligenceAdmin() {
 
                     {/* Tab 1: Signal Content */}
                     {reviewTab === 'content' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div className="flex flex-col gap-2.5">
                         <div>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Title</label>
+                          <label className="text-[10px] font-semibold text-[#6B7F96] block mb-[3px]">Title</label>
                           <input value={editFormExtended.title} onChange={e => setEditFormExtended(p => ({ ...p, title: e.target.value }))}
-                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, outline: 'none' }} />
+                            className="w-full py-1.5 px-2.5 text-xs border border-[#E5E0D8] rounded-md text-navy outline-none" />
                         </div>
                         <div>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Summary</label>
+                          <label className="text-[10px] font-semibold text-[#6B7F96] block mb-[3px]">Summary</label>
                           <textarea value={editFormExtended.summary} onChange={e => setEditFormExtended(p => ({ ...p, summary: e.target.value }))} rows={3}
-                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                            className="w-full py-1.5 px-2.5 text-xs border border-[#E5E0D8] rounded-md text-navy resize-y outline-none" />
                         </div>
                         <div>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Detail (Markdown)</label>
+                          <label className="text-[10px] font-semibold text-[#6B7F96] block mb-[3px]">Detail (Markdown)</label>
                           <textarea value={editFormExtended.detail_markdown} onChange={e => setEditFormExtended(p => ({ ...p, detail_markdown: e.target.value }))} rows={4}
-                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none', fontFamily: 'monospace' }} />
+                            className="w-full py-1.5 px-2.5 text-xs border border-[#E5E0D8] rounded-md text-navy resize-y outline-none font-mono" />
                         </div>
                         <div>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Recommended Action</label>
+                          <label className="text-[10px] font-semibold text-[#6B7F96] block mb-[3px]">Recommended Action</label>
                           <textarea value={editFormExtended.recommended_action} onChange={e => setEditFormExtended(p => ({ ...p, recommended_action: e.target.value }))} rows={2}
-                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                            className="w-full py-1.5 px-2.5 text-xs border border-[#E5E0D8] rounded-md text-navy resize-y outline-none" />
                         </div>
                         <div>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Arthur&apos;s Notes</label>
+                          <label className="text-[10px] font-semibold text-[#6B7F96] block mb-[3px]">Arthur&apos;s Notes</label>
                           <textarea value={arthurNotes[sig.id] || ''} onChange={e => setArthurNotes(prev => ({ ...prev, [sig.id]: e.target.value }))} rows={2}
                             placeholder="Internal notes about this signal..."
-                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                            className="w-full py-1.5 px-2.5 text-xs border border-[#E5E0D8] rounded-md text-navy resize-y outline-none" />
                           <button onClick={() => saveArthurNotes(sig.id)} disabled={savingNotes === sig.id}
-                            style={{ marginTop: 4, padding: '4px 14px', borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: 'pointer', background: GOLD, color: '#fff', border: 'none', opacity: savingNotes === sig.id ? 0.5 : 1 }}>
+                            className={`mt-1 py-1 px-3.5 rounded-md text-[10px] font-bold cursor-pointer bg-gold text-white border-none ${savingNotes === sig.id ? 'opacity-50' : ''}`}>
                             {savingNotes === sig.id ? 'Saving...' : 'Save Notes'}
                           </button>
                         </div>
                         {/* Save & Publish from content tab */}
-                        <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                        <div className="flex gap-2 mt-1">
                           <button onClick={async () => {
                             const updates: Record<string, any> = {};
                             if (editFormExtended.title.trim()) updates.title = editFormExtended.title.trim();
@@ -1911,7 +1871,7 @@ export default function IntelligenceAdmin() {
                             publishSignal({ ...sig, ...updates });
                             setExpandedSignalId(null);
                           }}
-                            style={{ padding: '6px 18px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', background: '#059669', color: '#fff', border: 'none' }}>
+                            className="py-1.5 px-[18px] rounded-md text-[11px] font-bold cursor-pointer bg-[#059669] text-white border-none">
                             Save & Publish
                           </button>
                           <button onClick={async () => {
@@ -1928,7 +1888,7 @@ export default function IntelligenceAdmin() {
                               toast.success('Signal saved');
                             }
                           }}
-                            style={{ padding: '6px 18px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                            className="py-1.5 px-[18px] rounded-md text-[11px] font-semibold cursor-pointer bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
                             Save Only
                           </button>
                         </div>
@@ -1937,34 +1897,34 @@ export default function IntelligenceAdmin() {
 
                     {/* Tab 2: Source & AI Analysis */}
                     {reviewTab === 'source' && (
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 12 }}>
+                      <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <div style={{ fontWeight: 700, color: NAVY, marginBottom: 8 }}>Source</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Name:</strong> {sig.source_name || '—'}</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Key:</strong> {sig.source_key || '—'}</div>
+                          <div className="font-bold text-navy mb-2">Source</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Name:</strong> {sig.source_name || '—'}</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Key:</strong> {sig.source_key || '—'}</div>
                           {sig.source_url && (
-                            <div style={{ marginBottom: 4 }}>
-                              <strong style={{ color: TEXT_SEC }}>URL:</strong>{' '}
-                              <a href={sig.source_url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB', textDecoration: 'underline' }}>
+                            <div className="mb-1">
+                              <strong className="text-[#6B7F96]">URL:</strong>{' '}
+                              <a href={sig.source_url} target="_blank" rel="noopener noreferrer" className="text-[#2563EB] underline">
                                 {(() => { try { return new URL(sig.source_url).hostname; } catch { return sig.source_url; } })()}
                               </a>
                             </div>
                           )}
                           {sig.original_url && sig.original_url !== sig.source_url && (
-                            <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Original:</strong>{' '}
-                              <a href={sig.original_url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB' }}>{sig.original_url}</a>
+                            <div className="text-[#6B7F96] mb-1"><strong>Original:</strong>{' '}
+                              <a href={sig.original_url} target="_blank" rel="noopener noreferrer" className="text-[#2563EB]">{sig.original_url}</a>
                             </div>
                           )}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 700, color: NAVY, marginBottom: 8 }}>AI Analysis</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Urgency:</strong> {sig.ai_urgency || '—'}</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Confidence:</strong> {sig.confidence_score != null ? `${sig.confidence_score}%` : '—'}</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Severity:</strong> {sig.severity_score || '—'}</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Routing:</strong> {sig.routing_tier || '—'}{sig.routing_reason ? ` — ${sig.routing_reason}` : ''}</div>
-                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Scope:</strong> {sig.scope || '—'}</div>
+                          <div className="font-bold text-navy mb-2">AI Analysis</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Urgency:</strong> {sig.ai_urgency || '—'}</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Confidence:</strong> {sig.confidence_score != null ? `${sig.confidence_score}%` : '—'}</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Severity:</strong> {sig.severity_score || '—'}</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Routing:</strong> {sig.routing_tier || '—'}{sig.routing_reason ? ` — ${sig.routing_reason}` : ''}</div>
+                          <div className="text-[#6B7F96] mb-1"><strong>Scope:</strong> {sig.scope || '—'}</div>
                           {sig.ai_summary && (
-                            <div style={{ marginTop: 8, padding: '8px 10px', background: '#F9FAFB', borderRadius: 6, fontSize: 11, color: TEXT_SEC, lineHeight: 1.5 }}>
+                            <div className="mt-2 py-2 px-2.5 bg-[#F9FAFB] rounded-md text-[11px] text-[#6B7F96] leading-normal">
                               <strong>AI Summary:</strong> {sig.ai_summary}
                             </div>
                           )}
@@ -1974,27 +1934,27 @@ export default function IntelligenceAdmin() {
 
                     {/* Tab 3: Operator Preview */}
                     {reviewTab === 'preview' && (
-                      <div style={{ position: 'relative', maxWidth: 480 }}>
-                        <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 9, fontWeight: 800, color: '#D97706', background: '#FFFBEB', padding: '2px 8px', borderRadius: 6, zIndex: 1, border: '1px solid #FDE68A' }}>
+                      <div className="relative max-w-[480px]">
+                        <div className="absolute top-2 right-2 text-[9px] font-extrabold text-[#D97706] bg-[#FFFBEB] py-0.5 px-2 rounded-md z-[1] border border-[#FDE68A]">
                           PREVIEW
                         </div>
-                        <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px' }}>
-                          <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: `${URGENCY_COLORS[sig.ai_urgency || 'low']?.bg || '#F9FAFB'}`, color: URGENCY_COLORS[sig.ai_urgency || 'low']?.text || '#6B7280', textTransform: 'uppercase' }}>
+                        <div className="bg-white border border-[#E5E0D8] rounded-[10px] py-4 px-[18px]">
+                          <div className="flex gap-1.5 mb-2 flex-wrap">
+                            <span className="text-[10px] font-bold py-0.5 px-2 rounded-[10px] uppercase" style={{ background: URGENCY_COLORS[sig.ai_urgency || 'low']?.bg || '#F9FAFB', color: URGENCY_COLORS[sig.ai_urgency || 'low']?.text || '#6B7280' }}>
                               {sig.ai_urgency || 'low'}
                             </span>
-                            <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_MUTED }}>
+                            <span className="text-[10px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#F3F4F6] text-[#9CA3AF]">
                               {sig.signal_type?.replace(/_/g, ' ') || 'intelligence'}
                             </span>
                           </div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 6 }}>{editFormExtended.title || sig.title}</div>
-                          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>{editFormExtended.summary || sig.content_summary || sig.ai_summary || ''}</div>
+                          <div className="text-[15px] font-bold text-navy mb-1.5">{editFormExtended.title || sig.title}</div>
+                          <div className="text-xs text-[#6B7F96] leading-relaxed mb-2">{editFormExtended.summary || sig.content_summary || sig.ai_summary || ''}</div>
                           {(editFormExtended.recommended_action || sig.recommended_action) && (
-                            <div style={{ fontSize: 11, color: NAVY, background: '#F0FDF4', padding: '8px 10px', borderRadius: 6, marginBottom: 8 }}>
+                            <div className="text-[11px] text-navy bg-[#F0FDF4] py-2 px-2.5 rounded-md mb-2">
                               <strong>Action:</strong> {editFormExtended.recommended_action || sig.recommended_action}
                             </div>
                           )}
-                          <div style={{ fontSize: 10, color: TEXT_MUTED }}>{new Date(sig.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                          <div className="text-[10px] text-[#9CA3AF]">{new Date(sig.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                         </div>
                       </div>
                     )}
@@ -2003,34 +1963,36 @@ export default function IntelligenceAdmin() {
                     {reviewTab === 'gameplan' && (
                       <div>
                         {gamePlanLoading === sig.id ? (
-                          <div style={{ padding: 20, textAlign: 'center', fontSize: 12, color: TEXT_MUTED }}>Loading game plans...</div>
+                          <div className="p-5 text-center text-xs text-[#9CA3AF]">Loading game plans...</div>
                         ) : !gamePlans[sig.id] || gamePlans[sig.id].length === 0 ? (
-                          <div style={{ padding: '20px 16px', textAlign: 'center', background: '#FAFAF8', border: `1.5px dashed ${BORDER}`, borderRadius: 8 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>No game plan linked</div>
-                            <div style={{ fontSize: 11, color: TEXT_SEC }}>Game plans are auto-generated during AI triage or can be created manually.</div>
+                          <div className="py-5 px-4 text-center bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-lg">
+                            <div className="text-[13px] font-semibold text-navy mb-1">No game plan linked</div>
+                            <div className="text-[11px] text-[#6B7F96]">Game plans are auto-generated during AI triage or can be created manually.</div>
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          <div className="flex flex-col gap-2.5">
                             {gamePlans[sig.id].map(gp => (
-                              <div key={gp.id} style={{ border: `1px solid ${BORDER}`, borderRadius: 8, padding: '12px 14px' }}>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>{gp.title}</div>
-                                {gp.description && <div style={{ fontSize: 11, color: TEXT_SEC, marginBottom: 8 }}>{gp.description}</div>}
-                                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: gp.priority === 'critical' ? '#FEF2F2' : gp.priority === 'high' ? '#FFFBEB' : '#F9FAFB', color: gp.priority === 'critical' ? '#DC2626' : gp.priority === 'high' ? '#D97706' : TEXT_MUTED }}>
+                              <div key={gp.id} className="border border-[#E5E0D8] rounded-lg py-3 px-3.5">
+                                <div className="text-[13px] font-bold text-navy mb-1">{gp.title}</div>
+                                {gp.description && <div className="text-[11px] text-[#6B7F96] mb-2">{gp.description}</div>}
+                                <div className="flex gap-1.5 mb-2">
+                                  <span className={`text-[9px] font-semibold py-0.5 px-2 rounded-[10px] ${
+                                    gp.priority === 'critical' ? 'bg-[#FEF2F2] text-[#DC2626]' : gp.priority === 'high' ? 'bg-[#FFFBEB] text-[#D97706]' : 'bg-[#F9FAFB] text-[#9CA3AF]'
+                                  }`}>
                                     {gp.priority}
                                   </span>
-                                  <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_SEC }}>
+                                  <span className="text-[9px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#F3F4F6] text-[#6B7F96]">
                                     {gp.status}
                                   </span>
                                 </div>
                                 {/* Tasks */}
                                 {Array.isArray(gp.tasks) && gp.tasks.length > 0 && (
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  <div className="flex flex-col gap-1">
                                     {gp.tasks.map((task: any, ti: number) => {
                                       const taskId = task.id || String(ti);
                                       const taskStatus = gp.task_status?.[taskId] || 'pending';
                                       return (
-                                        <div key={taskId} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
+                                        <div key={taskId} className="flex items-center gap-1.5 text-[11px]">
                                           <button onClick={async () => {
                                             const newStatus = taskStatus === 'completed' ? 'pending' : 'completed';
                                             const updatedTaskStatus = { ...gp.task_status, [taskId]: newStatus };
@@ -2040,10 +2002,12 @@ export default function IntelligenceAdmin() {
                                               [sig.id]: prev[sig.id].map(p => p.id === gp.id ? { ...p, task_status: updatedTaskStatus } : p),
                                             }));
                                           }}
-                                            style={{ width: 16, height: 16, borderRadius: 3, border: `1px solid ${taskStatus === 'completed' ? '#059669' : BORDER}`, background: taskStatus === 'completed' ? '#059669' : '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, flexShrink: 0 }}>
+                                            className={`w-4 h-4 rounded-[3px] cursor-pointer flex items-center justify-center text-white text-[10px] shrink-0 border ${
+                                              taskStatus === 'completed' ? 'border-[#059669] bg-[#059669]' : 'border-[#E5E0D8] bg-white'
+                                            }`}>
                                             {taskStatus === 'completed' ? '\u2713' : ''}
                                           </button>
-                                          <span style={{ color: taskStatus === 'completed' ? TEXT_MUTED : NAVY, textDecoration: taskStatus === 'completed' ? 'line-through' : 'none' }}>
+                                          <span className={taskStatus === 'completed' ? 'text-[#9CA3AF] line-through' : 'text-navy'}>
                                             {task.title || task}
                                           </span>
                                         </div>
@@ -2052,9 +2016,9 @@ export default function IntelligenceAdmin() {
                                   </div>
                                 )}
                                 {/* Add task */}
-                                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                                <div className="flex gap-1.5 mt-2">
                                   <input value={newTaskText} onChange={e => setNewTaskText(e.target.value)} placeholder="Add a task..."
-                                    style={{ flex: 1, padding: '4px 8px', fontSize: 11, border: `1px solid ${BORDER}`, borderRadius: 4, outline: 'none' }} />
+                                    className="flex-1 py-1 px-2 text-[11px] border border-[#E5E0D8] rounded outline-none" />
                                   <button onClick={async () => {
                                     if (!newTaskText.trim()) return;
                                     const newTask = { id: crypto.randomUUID(), title: newTaskText.trim() };
@@ -2066,7 +2030,7 @@ export default function IntelligenceAdmin() {
                                     }));
                                     setNewTaskText('');
                                   }}
-                                    style={{ padding: '4px 10px', borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: 'pointer', background: GOLD, color: '#fff', border: 'none' }}>
+                                    className="py-1 px-2.5 rounded text-[10px] font-bold cursor-pointer bg-gold text-white border-none">
                                     Add
                                   </button>
                                 </div>
@@ -2086,36 +2050,27 @@ export default function IntelligenceAdmin() {
 
       {/* SIGNAL-VALIDATION-01: Reject reason modal */}
       {rejectModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-        }}
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
           onClick={() => setRejectModal(null)}
         >
           <div
-            style={{
-              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 420, width: '100%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            }}
+            className="bg-white rounded-xl py-6 px-7 max-w-[420px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
             onClick={e => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+            <h3 className="text-base font-bold text-navy m-0 mb-1">
               Reject Signal
             </h3>
-            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+            <p className="text-xs text-[#6B7F96] m-0 mb-4">
               Select a reason for rejecting this signal. It can be restored later.
             </p>
 
-            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+            <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
               Reason *
             </label>
             <select
               value={rejectReason}
               onChange={e => setRejectReason(e.target.value)}
-              style={{
-                width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`,
-                borderRadius: 6, background: '#F9FAFB', color: NAVY, cursor: 'pointer', marginBottom: 12,
-              }}
+              className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md bg-[#F9FAFB] text-navy cursor-pointer mb-3"
             >
               <option value="">Select a reason...</option>
               {REJECT_REASONS.map(r => (
@@ -2123,7 +2078,7 @@ export default function IntelligenceAdmin() {
               ))}
             </select>
 
-            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+            <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
               Note {rejectReason === 'Other' ? '*' : '(optional)'}
             </label>
             <textarea
@@ -2131,34 +2086,27 @@ export default function IntelligenceAdmin() {
               onChange={e => setRejectNote(e.target.value.slice(0, 280))}
               placeholder={rejectReason === 'Other' ? 'Required — describe the reason...' : 'Optional note...'}
               rows={3}
-              style={{
-                width: '100%', padding: '8px 12px', fontSize: 12, border: `1px solid ${BORDER}`,
-                borderRadius: 6, background: '#F9FAFB', color: NAVY, resize: 'vertical',
-              }}
+              className="w-full py-2 px-3 text-xs border border-[#E5E0D8] rounded-md bg-[#F9FAFB] text-navy resize-y"
             />
-            <div style={{ fontSize: 10, color: TEXT_MUTED, textAlign: 'right', marginTop: 2, marginBottom: 16 }}>
+            <div className="text-[10px] text-[#9CA3AF] text-right mt-0.5 mb-4">
               {rejectNote.length}/280
             </div>
 
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div className="flex gap-2.5 justify-end">
               <button
                 onClick={() => setRejectModal(null)}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                }}
+                className="py-2 px-5 rounded-md text-xs font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmReject}
                 disabled={!rejectReason || (rejectReason === 'Other' && rejectNote.length < 1)}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                  background: !rejectReason || (rejectReason === 'Other' && rejectNote.length < 1) ? '#E5E7EB' : '#DC2626',
-                  color: !rejectReason || (rejectReason === 'Other' && rejectNote.length < 1) ? TEXT_MUTED : '#fff',
-                  border: 'none',
-                }}
+                className={`py-2 px-5 rounded-md text-xs font-bold cursor-pointer border-none ${
+                  !rejectReason || (rejectReason === 'Other' && rejectNote.length < 1)
+                    ? 'bg-[#E5E7EB] text-[#9CA3AF]'
+                    : 'bg-[#DC2626] text-white'
+                }`}
               >
                 Reject Signal
               </button>
@@ -2169,27 +2117,21 @@ export default function IntelligenceAdmin() {
 
       {/* SIGNAL-VALIDATION-01: Subset targeting modal */}
       {subsetModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-        }}
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
           onClick={() => setSubsetModal(null)}
         >
           <div
-            style={{
-              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 480, width: '100%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            }}
+            className="bg-white rounded-xl py-6 px-7 max-w-[480px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
             onClick={e => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+            <h3 className="text-base font-bold text-navy m-0 mb-1">
               Approve for Subset
             </h3>
-            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+            <p className="text-xs text-[#6B7F96] m-0 mb-4">
               Enter organization IDs to target this signal to specific operators.
             </p>
 
-            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+            <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
               Organization IDs (comma-separated UUIDs)
             </label>
             <textarea
@@ -2197,22 +2139,16 @@ export default function IntelligenceAdmin() {
               onChange={e => setSubsetOrgIds(e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
               rows={3}
               placeholder="org-uuid-1, org-uuid-2, ..."
-              style={{
-                width: '100%', padding: '8px 12px', fontSize: 12, border: `1px solid ${BORDER}`,
-                borderRadius: 6, background: '#F9FAFB', color: NAVY, resize: 'vertical', fontFamily: 'monospace',
-              }}
+              className="w-full py-2 px-3 text-xs border border-[#E5E0D8] rounded-md bg-[#F9FAFB] text-navy resize-y font-mono"
             />
-            <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 4, marginBottom: 16 }}>
+            <div className="text-[10px] text-[#9CA3AF] mt-1 mb-4">
               {subsetOrgIds.length} organization{subsetOrgIds.length !== 1 ? 's' : ''} targeted
             </div>
 
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div className="flex gap-2.5 justify-end">
               <button
                 onClick={() => setSubsetModal(null)}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                }}
+                className="py-2 px-5 rounded-md text-xs font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]"
               >
                 Cancel
               </button>
@@ -2222,13 +2158,9 @@ export default function IntelligenceAdmin() {
                   if (sig) publishForSubset(sig, subsetOrgIds);
                 }}
                 disabled={subsetOrgIds.length === 0 || publishing === subsetModal.signalId}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: subsetOrgIds.length === 0 ? 'not-allowed' : 'pointer',
-                  background: subsetOrgIds.length === 0 ? '#E5E7EB' : '#C2410C',
-                  color: subsetOrgIds.length === 0 ? TEXT_MUTED : '#fff',
-                  border: 'none',
-                  opacity: publishing === subsetModal.signalId ? 0.5 : 1,
-                }}
+                className={`py-2 px-5 rounded-md text-xs font-bold border-none ${
+                  subsetOrgIds.length === 0 ? 'cursor-not-allowed bg-[#E5E7EB] text-[#9CA3AF]' : 'cursor-pointer bg-[#C2410C] text-white'
+                } ${publishing === subsetModal.signalId ? 'opacity-50' : ''}`}
               >
                 {publishing === subsetModal.signalId ? 'Publishing...' : `Publish to ${subsetOrgIds.length} Org${subsetOrgIds.length !== 1 ? 's' : ''}`}
               </button>
@@ -2239,70 +2171,64 @@ export default function IntelligenceAdmin() {
 
       {/* AUDIT-FIX-06 / P-2: Create Signal Modal */}
       {showCreateModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-        }}
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
           onClick={() => setShowCreateModal(false)}
         >
           <div
-            style={{
-              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '80vh', overflowY: 'auto',
-            }}
+            className="bg-white rounded-xl py-6 px-7 max-w-[520px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-h-[80vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+            <h3 className="text-base font-bold text-navy m-0 mb-1">
               Create Signal
             </h3>
-            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+            <p className="text-xs text-[#6B7F96] m-0 mb-4">
               Manually create a new intelligence signal for review and publishing.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {/* Title */}
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title *</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Title *</label>
                 <input
                   value={createForm.title}
                   onChange={e => setCreateForm(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Signal title..."
-                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, outline: 'none' }}
+                  className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy outline-none"
                 />
               </div>
 
               {/* Summary */}
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Summary</label>
                 <textarea
                   value={createForm.summary}
                   onChange={e => setCreateForm(prev => ({ ...prev, summary: e.target.value }))}
                   placeholder="Brief summary..."
                   rows={3}
-                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }}
+                  className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy resize-y outline-none"
                 />
               </div>
 
               {/* Detail */}
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Detail / Body</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Detail / Body</label>
                 <textarea
                   value={createForm.detail_markdown}
                   onChange={e => setCreateForm(prev => ({ ...prev, detail_markdown: e.target.value }))}
                   placeholder="Full detail (markdown supported)..."
                   rows={4}
-                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }}
+                  className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy resize-y outline-none"
                 />
               </div>
 
               {/* Signal Type + Category row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Signal Type</label>
+                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Signal Type</label>
                   <select
                     value={createForm.signal_type}
                     onChange={e => setCreateForm(prev => ({ ...prev, signal_type: e.target.value }))}
-                    style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                    className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy cursor-pointer"
                   >
                     <option value="intelligence">Intelligence</option>
                     <option value="game_plan">Game Plan</option>
@@ -2312,11 +2238,11 @@ export default function IntelligenceAdmin() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Category</label>
+                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Category</label>
                   <select
                     value={createForm.category}
                     onChange={e => setCreateForm(prev => ({ ...prev, category: e.target.value }))}
-                    style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                    className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy cursor-pointer"
                   >
                     <option value="food_safety">Food Safety</option>
                     <option value="recall">Recall</option>
@@ -2331,11 +2257,11 @@ export default function IntelligenceAdmin() {
 
               {/* Priority */}
               <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Priority</label>
+                <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Priority</label>
                 <select
                   value={createForm.priority}
                   onChange={e => setCreateForm(prev => ({ ...prev, priority: e.target.value }))}
-                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                  className="w-full py-2 px-3 text-[13px] border border-[#E5E0D8] rounded-md text-navy cursor-pointer"
                 >
                   <option value="critical">Critical</option>
                   <option value="high">High</option>
@@ -2346,25 +2272,19 @@ export default function IntelligenceAdmin() {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
+            <div className="flex gap-2.5 justify-end mt-5">
               <button
                 onClick={() => setShowCreateModal(false)}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                }}
+                className="py-2 px-5 rounded-md text-xs font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]"
               >
                 Cancel
               </button>
               <button
                 onClick={createSignal}
                 disabled={creating || !createForm.title.trim()}
-                style={{
-                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                  background: creating || !createForm.title.trim() ? '#E5E7EB' : GOLD,
-                  color: creating || !createForm.title.trim() ? TEXT_MUTED : '#fff',
-                  border: 'none',
-                }}
+                className={`py-2 px-5 rounded-md text-xs font-bold cursor-pointer border-none ${
+                  creating || !createForm.title.trim() ? 'bg-[#E5E7EB] text-[#9CA3AF]' : 'bg-gold text-white'
+                }`}
               >
                 {creating ? 'Creating...' : 'Create Signal'}
               </button>
@@ -2375,19 +2295,11 @@ export default function IntelligenceAdmin() {
 
       {/* Undo toast */}
       {lastRejected && (
-        <div style={{
-          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
-          background: NAVY, color: '#fff', padding: '12px 24px', borderRadius: 10,
-          fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 16,
-          boxShadow: '0 8px 30px rgba(0,0,0,0.2)', zIndex: 1001,
-        }}>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-navy text-white py-3 px-6 rounded-[10px] text-[13px] font-semibold flex items-center gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.2)] z-[1001]">
           <span>Signal rejected.</span>
           <button
             onClick={undoReject}
-            style={{
-              background: 'transparent', border: `1px solid rgba(255,255,255,0.4)`, color: '#fff',
-              padding: '4px 14px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-            }}
+            className="bg-transparent border border-white/40 text-white py-1 px-3.5 rounded-md text-xs font-bold cursor-pointer"
           >
             Undo
           </button>
