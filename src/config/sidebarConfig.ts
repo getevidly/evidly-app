@@ -315,22 +315,7 @@ const I: Record<string, NavItem> = {
     id: 'insurance-risk', label: 'Insurance Risk', path: '/insurance-risk', icon: '🛡️',
     roles: [], description: 'PSE insurance risk scoring, protective safeguard compliance, carrier-ready documentation, and premium reduction tracking.',
   },
-  insurance: {
-    id: 'insurance', label: 'Insurance', path: '/insurance', icon: '🛡️',
-    roles: [], description: 'Company and vehicle insurance policies, coverage details, and roadside assistance.',
-  },
-
-  // ── Fleet ──
-  fleet: {
-    id: 'fleet', label: 'Fleet', path: '/fleet', icon: '🚛',
-    roles: [], description: 'Vehicle inventory, maintenance schedules, registrations, and incidents.',
-  },
-
-  // ── Emergency ──
-  emergencyInfo: {
-    id: 'emergency-info', label: 'Emergency Info', path: '/emergency', icon: '📞',
-    roles: [], description: 'Quick access to roadside assistance, insurance, and company contacts.',
-  },
+  // ── insurance, fleet, emergencyInfo removed — HoodOps concepts, not EvidLY ──
 
   // ── Voice ──
   voiceHelp: {
@@ -338,69 +323,10 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Reference guide for hands-free voice commands.',
   },
 
-  // ── Bonuses & Performance ──
-  bonuses: {
-    id: 'bonuses', label: 'Bonus Management', path: '/bonuses', icon: '💰',
-    roles: [], description: 'Quarterly bonus calculations, performance multipliers, and payout summaries.',
-  },
-  performanceMetrics: {
-    id: 'performance-metrics', label: 'Performance Metrics', path: '/performance', icon: '🎯',
-    roles: [], description: 'QA rates, on-time arrival, photo compliance, and all bonus multiplier metrics.',
-  },
-  myPerformance: {
-    id: 'my-performance', label: 'My Performance', path: '/performance/me', icon: '📊',
-    roles: [], description: 'Your personal performance metrics and bonus progress.',
-  },
-  callbacks: {
-    id: 'callbacks', label: 'Callbacks', path: '/quality/callbacks', icon: '🔄',
-    roles: [], description: 'Track job callbacks — return visits that disqualify quarterly bonuses.',
-  },
-
-  // ── Inventory ──
-  inventory: {
-    id: 'inventory', label: 'Inventory', path: '/inventory', icon: '📦',
-    roles: [], description: 'Chemicals, parts, PPE, and supplies — stock levels, usage, and reorder tracking.',
-  },
-  inventoryRequests: {
-    id: 'inventory-requests', label: 'Inventory Requests', path: '/inventory/requests', icon: '📋',
-    roles: [], description: 'Submit and approve inventory replenishment requests.',
-  },
-
-  // ── Equipment Incidents ──
-  equipmentIncidents: {
-    id: 'equipment-incidents', label: 'Equipment Incidents', path: '/equipment/incidents', icon: '⚠️',
-    roles: [], description: 'Report and track equipment damage, loss, theft, and malfunctions.',
-  },
-
-  // ── Safety Incidents ──
-  safetyIncidents: {
-    id: 'safety-incidents', label: 'Safety Incidents', path: '/safety/incidents', icon: '🛡️',
-    roles: [], description: 'Report injuries, near misses, property damage, and vehicle accidents.',
-  },
-
-  // ── Availability ──
-  myAvailability: {
-    id: 'my-availability', label: 'My Availability', path: '/availability', icon: '📅',
-    roles: [], description: 'Submit your weekly availability for scheduling.',
-  },
-  teamAvailability: {
-    id: 'team-availability', label: 'Team Availability', path: '/availability/team', icon: '👥',
-    roles: [], description: 'View and manage team availability submissions.',
-  },
-  availabilityApprovals: {
-    id: 'availability-approvals', label: 'Availability Approvals', path: '/availability/approvals', icon: '✅',
-    roles: [], description: 'Review and approve late availability submissions.',
-  },
-
-  // ── Clock & Attendance ──
-  clockReminders: {
-    id: 'clock-reminders', label: 'Clock & Attendance', path: '/settings/clock-reminders', icon: '⏰',
-    roles: [], description: 'Configure clock-in/out reminders, auto clock-out, and geofence settings.',
-  },
-  timecardAlterations: {
-    id: 'timecard-alterations', label: 'Timecard Alterations', path: '/timecards/alterations', icon: '📝',
-    roles: [], description: 'Audit trail of all timecard modifications and manual overrides.',
-  },
+  // ── bonuses, performanceMetrics, myPerformance, callbacks, inventory,
+  //    inventoryRequests, equipmentIncidents, safetyIncidents, myAvailability,
+  //    teamAvailability, availabilityApprovals, clockReminders, timecardAlterations
+  //    removed — HoodOps concepts, not EvidLY ──
 
   // ── Food Safety (Chef) ──
   haccp: {
@@ -429,14 +355,7 @@ const I: Record<string, NavItem> = {
     id: 'training-catalog', label: 'Training Catalog', path: '/dashboard/training-catalog', icon: '📚',
     roles: [], description: 'Library of all required and recommended training courses with certification requirements and renewal schedules.',
   },
-  timecards: {
-    id: 'timecards', label: 'Timecards', path: '/timecards', icon: '⏱️',
-    roles: [], description: 'Clock in/out, shift tracking, timecard approval, and pay period management.',
-  },
-  employees: {
-    id: 'employees', label: 'Employees', path: '/employees', icon: '👷',
-    roles: [], description: 'Employee directory, certifications, performance tracking, and invite management.',
-  },
+  // ── timecards, employees removed — HoodOps concepts, not EvidLY ──
 
   // ── Permissions ──
   rolesPermissions: {
@@ -588,17 +507,9 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
         '/tools',
       ),
-      section('operations', 'Operations', '📦',
-        'Operations', 'Inventory, equipment incidents, and quality tracking.',
-        [I.inventory, I.inventoryRequests, I.equipmentIncidents, I.callbacks],
-      ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting and investigation.',
-        [I.safetyIncidents],
-      ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.emergencyInfo, I.demoLauncher, I.partnerDemos, I.adminTestimonials],
+        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.demoLauncher, I.partnerDemos, I.adminTestimonials],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
@@ -625,7 +536,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Equipment diagnosis and voice commands.',
-        [I.selfDiagnosis, I.voiceHelp, I.emergencyInfo],
+        [I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
       section('help', 'Help', '❓',
@@ -664,13 +575,10 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting.',
-        [I.safetyIncidents],
-      ),
+      // safety section removed — safetyIncidents was HoodOps
       section('administration', 'Administration', '⚙️',
         'Administration', 'Team management and training records.',
-        [I.team, I.timecards, I.employees, I.trainingRecords, I.myPerformance, I.myAvailability, I.emergencyInfo],
+        [I.team, I.trainingRecords],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -714,17 +622,9 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
-      section('operations', 'Operations', '📦',
-        'Operations', 'Inventory and equipment incident tracking.',
-        [I.inventory, I.equipmentIncidents],
-      ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting.',
-        [I.safetyIncidents],
-      ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings, team management, and training records.',
-        [I.settings, I.team, I.timecards, I.employees, I.trainingRecords, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.settings, I.team, I.trainingRecords],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -768,13 +668,10 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [],
         '/tools',
       ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting and investigation.',
-        [I.safetyIncidents],
-      ),
+      // safety section removed — safetyIncidents was HoodOps
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings and training records.',
-        [I.settings, I.timecards, I.employees, I.trainingRecords, I.emergencyInfo],
+        [I.settings, I.trainingRecords],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -822,17 +719,9 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.iotDashboard, I.inspectionForecast, I.vendorPerformance, I.operationsIntelligence],
         '/insights',
       ),
-      section('operations', 'Operations', '📦',
-        'Operations', 'Inventory and equipment incident tracking.',
-        [I.inventory, I.equipmentIncidents],
-      ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting.',
-        [I.safetyIncidents],
-      ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, account settings, team management, and vendors.',
-        [I.equipment, I.fleet, I.insurance, I.iotSensors, I.connectSensors, I.importData, I.settings, I.team, I.vendors, I.vendorDocReview, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.equipment, I.iotSensors, I.connectSensors, I.importData, I.settings, I.team, I.vendors, I.vendorDocReview],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -876,17 +765,9 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
-      section('operations', 'Operations', '📦',
-        'Operations', 'Inventory, equipment incidents, and quality tracking.',
-        [I.inventory, I.inventoryRequests, I.equipmentIncidents, I.callbacks],
-      ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reporting and investigation.',
-        [I.safetyIncidents],
-      ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -930,13 +811,10 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [],
         '/tools',
       ),
-      section('safety', 'Safety', '🛡️',
-        'Safety', 'Safety incident reports and investigations.',
-        [I.safetyIncidents],
-      ),
+      // safety section removed — safetyIncidents was HoodOps
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings, integrations, role permissions, and training records.',
-        [I.fleet, I.insurance, I.performanceMetrics, I.integrations, I.settings, I.rolesPermissions, I.timecards, I.employees, I.trainingRecords, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.integrations, I.settings, I.rolesPermissions, I.trainingRecords],
         '/admin',
       ),
       section('help', 'Help', '❓',

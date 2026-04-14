@@ -85,6 +85,10 @@ export default function OwnerOperatorDashboard() {
   const [showInspectionBadge, setShowInspectionBadge] = useState(false);
   const [showTestimonialPrompt, setShowTestimonialPrompt] = useState(false);
   const { pendingMilestone, dismissMilestone } = useMilestoneCheck();
+  const { user, profile } = useAuth();
+  const { userRole } = useRole();
+  const { isEmulating, startEmulation, stopEmulation } = useEmulation();
+  const [emulationConfirmRole, setEmulationConfirmRole] = useState<string | null>(null);
 
   // Standing card data: demo uses demoStandingCard, production would assemble from real data
   const standingCardData: StandingCardData = isDemoMode
@@ -109,10 +113,6 @@ export default function OwnerOperatorDashboard() {
   };
 
   const [activeTab, setActiveTab] = useState<'overview' | 'insights'>('overview');
-  const { user, profile } = useAuth();
-  const { userRole } = useRole();
-  const { isEmulating, startEmulation, stopEmulation } = useEmulation();
-  const [emulationConfirmRole, setEmulationConfirmRole] = useState<string | null>(null);
 
   // Standing data from hook — replaces all hardcoded data
   const {
