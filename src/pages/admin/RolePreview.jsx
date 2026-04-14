@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
+// ── APPROVED EXCEPTION: This is an admin-only role preview tool. ──────────────
+// PD data below is intentional sample data for the preview, gated by the
+// "Sample Data ON/OFF" toggle and accessible only to platform_admin.
+// See CLAUDE.md guided-tour exception.
+
 // ── PRODUCTION COLOR TOKENS ───────────────────────────────────────────────────
 const NAVY="#1E2D4D",GOLD="#A08C5A",BODY="#1E2D4D",MUTED="#6B7F96",SB="#07111F",SBT="#94a3b8",PBG="#F4F6FA";
 const STEEL="linear-gradient(135deg,#1E2D4D 0%,#152340 60%,#243560 100%)";
@@ -692,44 +697,44 @@ export default function RolePreview(){
   const isStaff=role==="kitchen_staff";
   const changeRole=r=>{setRole(r);setDPage("dashboard");setMPage("dashboard");};
 
-  return <div style={{background:"#E2E8F0",minHeight:"100vh",...FF}}>
-    <div style={{background:NAVY,padding:"9px 15px"}}>
-      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
-        <a href="/admin" style={{fontSize:11,color:"rgba(255,255,255,0.45)",textDecoration:"none",fontWeight:500,...FF}}>Admin Console</a>
-        <span style={{fontSize:11,color:"rgba(255,255,255,0.25)"}}>›</span>
-        <span style={{fontSize:11,color:"rgba(255,255,255,0.7)",...FF}}>Role Preview</span>
+  return <div className="bg-[#E2E8F0] min-h-screen" style={{...FF}}>
+    <div className="bg-navy px-4 py-2.5">
+      <div className="flex items-center gap-1.5 mb-2">
+        <a href="/admin" className="text-[11px] text-white/45 no-underline font-medium">Admin Console</a>
+        <span className="text-[11px] text-white/25">›</span>
+        <span className="text-[11px] text-white/70">Role Preview</span>
       </div>
-      <div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap",marginBottom:8}}>
-        <span style={{fontSize:9,fontWeight:800,color:GOLD,textTransform:"uppercase",letterSpacing:"0.12em",marginRight:4,...FF}}>ROLE</span>
-        {ROLES.map(r=><button key={r.id} onClick={()=>changeRole(r.id)} style={{padding:"5px 11px",borderRadius:999,border:"1px solid",borderColor:role===r.id?GOLD:"rgba(255,255,255,0.15)",background:role===r.id?GOLD:"transparent",color:role===r.id?"#1E2D4D":"#94A3B8",fontSize:11,fontWeight:role===r.id?700:400,cursor:"pointer",whiteSpace:"nowrap",...FF}}>{r.lbl}</button>)}
-        <div style={{width:1,height:18,background:"rgba(255,255,255,0.12)",margin:"0 3px"}}/>
-        <button onClick={()=>setSample(s=>!s)} style={{padding:"5px 12px",borderRadius:999,border:"1px solid",borderColor:sample?"#34D399":"rgba(255,255,255,0.15)",background:sample?"rgba(52,211,153,0.1)":"transparent",color:sample?"#34D399":"#94A3B8",fontSize:11,fontWeight:sample?700:400,cursor:"pointer",display:"flex",alignItems:"center",gap:5,...FF}}>
+      <div className="flex items-center gap-[5px] flex-wrap mb-2">
+        <span className="text-[9px] font-extrabold text-gold uppercase tracking-[0.12em] mr-1">ROLE</span>
+        {ROLES.map(r=><button key={r.id} onClick={()=>changeRole(r.id)} className={`px-3 py-[5px] rounded-full border text-[11px] cursor-pointer whitespace-nowrap transition-colors ${role===r.id?'border-gold bg-gold text-navy font-bold':'border-white/15 bg-transparent text-[#94A3B8]'}`}>{r.lbl}</button>)}
+        <div className="w-px h-[18px] bg-white/[0.12] mx-[3px]"/>
+        <button onClick={()=>setSample(s=>!s)} className={`px-3 py-[5px] rounded-full border text-[11px] cursor-pointer flex items-center gap-[5px] transition-colors ${sample?'border-emerald-400 bg-emerald-400/10 text-emerald-400 font-bold':'border-white/15 bg-transparent text-[#94A3B8]'}`}>
           <span>{sample?"●":"○"}</span>{sample?"Sample Data ON":"Sample Data OFF"}
         </button>
-        {!isStaff&&<button onClick={()=>setCol(s=>!s)} style={{padding:"5px 10px",borderRadius:999,border:"1px solid rgba(255,255,255,0.12)",background:"transparent",color:"#94A3B8",fontSize:11,cursor:"pointer",...FF}}>{col?"Expand ↔":"Collapse ↔"}</button>}
-        <div style={{display:"flex",alignItems:"center",gap:12,marginLeft:8}}>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <span style={{fontSize:9,color:"rgba(255,255,255,0.45)",fontWeight:700,textTransform:"uppercase",...FF}}>🖥 {dWidth}px</span>
-            <input type="range" min={600} max={1400} step={20} value={dWidth} onChange={e=>setDWidth(Number(e.target.value))} style={{width:80,accentColor:GOLD,cursor:"pointer"}}/>
+        {!isStaff&&<button onClick={()=>setCol(s=>!s)} className="px-2.5 py-[5px] rounded-full border border-white/[0.12] bg-transparent text-[#94A3B8] text-[11px] cursor-pointer">{col?"Expand ↔":"Collapse ↔"}</button>}
+        <div className="flex items-center gap-3 ml-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] text-white/45 font-bold uppercase">🖥 {dWidth}px</span>
+            <input type="range" min={600} max={1400} step={20} value={dWidth} onChange={e=>setDWidth(Number(e.target.value))} className="w-20 cursor-pointer" style={{accentColor:GOLD}}/>
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <span style={{fontSize:9,color:"rgba(255,255,255,0.45)",fontWeight:700,textTransform:"uppercase",...FF}}>📱 {mWidth}px</span>
-            <input type="range" min={320} max={480} step={10} value={mWidth} onChange={e=>setMWidth(Number(e.target.value))} style={{width:60,accentColor:GOLD,cursor:"pointer"}}/>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] text-white/45 font-bold uppercase">📱 {mWidth}px</span>
+            <input type="range" min={320} max={480} step={10} value={mWidth} onChange={e=>setMWidth(Number(e.target.value))} className="w-[60px] cursor-pointer" style={{accentColor:GOLD}}/>
           </div>
         </div>
       </div>
-      <div style={{background:"#FEF3C7",border:"1px solid #FDE68A",borderRadius:6,padding:"5px 11px",fontSize:11,color:"#92400E",...FF}}>
+      <div className="bg-amber-50 border border-amber-200 rounded-md px-3 py-[5px] text-[11px] text-amber-800">
         <strong>ROLE PREVIEW MODE</strong> ▸ Viewing as <strong>{cr?.lbl}</strong> — {cr?.desc}.
-        {sample?<span style={{marginLeft:8,color:"#166534",fontWeight:700}}>● Sample data ON — every page is fully populated.</span>:<span style={{marginLeft:8}}>Toggle Sample Data ON to see the system fully populated.</span>}
+        {sample?<span className="ml-2 text-emerald-700 font-bold">● Sample data ON — every page is fully populated.</span>:<span className="ml-2">Toggle Sample Data ON to see the system fully populated.</span>}
       </div>
     </div>
-    <div style={{display:"flex",gap:12,padding:12,alignItems:"flex-start",overflowX:"auto"}}>
-      <div style={{width:dWidth,flexShrink:0}}>
-        <div style={{fontSize:10,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:7,...FF}}>🖥 Desktop</div>
+    <div className="flex gap-3 p-3 items-start overflow-x-auto">
+      <div style={{width:dWidth}} className="flex-shrink-0">
+        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-[7px]">🖥 Desktop</div>
         <Panel role={role} page={dPage} onNav={setDPage} sample={sample} collapsed={col} mobile={false}/>
       </div>
-      <div style={{flexShrink:0,width:mWidth}}>
-        <div style={{fontSize:10,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:7,...FF}}>📱 Mobile</div>
+      <div className="flex-shrink-0" style={{width:mWidth}}>
+        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-[7px]">📱 Mobile</div>
         <Panel role={role} page={mPage} onNav={setMPage} sample={sample} collapsed={col} mobile={true} width={mWidth}/>
       </div>
     </div>

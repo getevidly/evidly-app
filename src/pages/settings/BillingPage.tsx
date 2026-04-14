@@ -1,36 +1,28 @@
 import { useState } from 'react';
-import { CreditCard, Download, AlertTriangle, Users, Briefcase, HardDrive, FileText, Loader2 } from 'lucide-react';
+import { CreditCard, Download, AlertTriangle, Users, Building2, HardDrive, FileText } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
 import { useBillingInfo, useInvoices, type PlanTier } from '../../hooks/api/useSettings';
-import {
-  CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY, NAVY, FONT,
-} from '../../components/dashboard/shared/constants';
+import Button from '../../components/ui/Button';
 
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-  marginBottom: 20,
-};
-
-const PLAN_FEATURES: Record<PlanTier, { name: string; price: number; features: string[] }> = {
-  starter: {
-    name: 'Starter',
-    price: 49,
-    features: ['Up to 5 employees', 'Basic reporting', 'Email support', '1 GB storage'],
+const PLAN_INFO: Record<PlanTier, { name: string; price: string; perLocation: string; features: string[] }> = {
+  founder: {
+    name: 'Founder',
+    price: '$99/mo',
+    perLocation: '+ $49/mo per additional location (up to 9)',
+    features: ['All compliance features', 'Unlimited staff', 'AI insights', 'Price locked for life'],
   },
-  professional: {
-    name: 'Professional',
-    price: 149,
-    features: ['Up to 25 employees', 'Advanced reporting', 'Priority support', '10 GB storage', 'Integrations'],
+  standard: {
+    name: 'Standard',
+    price: '$299/mo',
+    perLocation: '+ $149/mo per additional location (up to 9)',
+    features: ['All compliance features', 'Unlimited staff', 'AI insights', 'Priority support'],
   },
   enterprise: {
     name: 'Enterprise',
-    price: 399,
-    features: ['Unlimited employees', 'Custom reporting', 'Dedicated support', 'Unlimited storage', 'All integrations', 'API access'],
+    price: 'Custom',
+    perLocation: '10+ locations',
+    features: ['All compliance features', 'Custom integrations', 'Dedicated support', 'API access', 'SSO / SAML'],
   },
 };
 
@@ -40,7 +32,6 @@ export function BillingPage() {
   const { data: invoices, isLoading: invoicesLoading } = useInvoices();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
-  // Owner-only guard
   if (userRole !== 'owner_operator' && userRole !== 'platform_admin') {
     return <Navigate to="/settings/company" replace />;
   }
@@ -49,213 +40,140 @@ export function BillingPage() {
 
   if (isLoading) {
     return (
-      <div style={{ ...FONT }}>
+      <div className="space-y-5">
         {[1, 2, 3].map(i => (
-          <div key={i} style={{ ...cardStyle, height: 140 }}>
-            <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 180, marginBottom: 16 }} />
-            <div style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '50%' }} />
+          <div key={i} className="bg-white border border-navy/10 rounded-xl p-6 animate-pulse">
+            <div className="bg-navy/5 rounded-lg h-5 w-44 mb-4" />
+            <div className="bg-navy/5 rounded-lg h-3.5 w-1/2" />
           </div>
         ))}
       </div>
     );
   }
 
-  const plan = billing ? PLAN_FEATURES[billing.planTier] : null;
+  const plan = billing ? PLAN_INFO[billing.planTier] : null;
 
   return (
-    <div style={{ ...FONT }}>
+    <div className="space-y-5">
       {/* Current Plan */}
-      <div style={cardStyle}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>
-          <CreditCard size={18} color={NAVY} /> Current Plan
+      <div className="bg-white border border-navy/10 rounded-xl p-6">
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy mb-4">
+          <CreditCard className="h-[18px] w-[18px] text-navy" /> Current Plan
         </h2>
         {plan && billing ? (
           <div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
-              <span style={{ fontSize: 24, fontWeight: 800, color: BODY_TEXT }}>{plan.name}</span>
-              <span style={{ fontSize: 16, color: MUTED }}>${plan.price}/month</span>
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="text-2xl font-extrabold text-navy">{plan.name}</span>
+              <span className="text-base text-navy/50">{plan.price}</span>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 6 }}>
+            <p className="text-xs text-navy/40 mb-4">{plan.perLocation}</p>
+            <ul className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-1.5 mb-4">
               {plan.features.map(f => (
-                <li key={f} style={{ fontSize: 13, color: MUTED, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> {f}
+                <li key={f} className="text-[13px] text-navy/60 flex items-center gap-1.5">
+                  <span className="text-emerald-600 font-bold">✓</span> {f}
                 </li>
               ))}
             </ul>
-            <button
-              onClick={() => alert('Plan change coming soon')}
-              style={{
-                padding: '8px 18px',
-                borderRadius: 8,
-                border: `1px solid ${CARD_BORDER}`,
-                background: '#fff',
-                color: NAVY,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Change Plan
-            </button>
+            <Button variant="secondary" size="sm">Change Plan</Button>
           </div>
         ) : (
-          <div style={{
-            background: PANEL_BG,
-            border: `1px dashed ${CARD_BORDER}`,
-            borderRadius: 10,
-            padding: '32px 20px',
-            textAlign: 'center',
-          }}>
-            <CreditCard size={32} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
-            <p style={{ color: MUTED, fontSize: 14, margin: '0 0 12px' }}>
-              No billing information available.
-            </p>
-            <button
-              onClick={() => alert('Contact support to set up billing')}
-              style={{
-                padding: '8px 18px',
-                borderRadius: 8,
-                border: 'none',
-                background: NAVY,
-                color: '#fff',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Set Up Billing
-            </button>
+          <div className="bg-navy/[0.03] border border-dashed border-navy/15 rounded-xl py-8 px-5 text-center">
+            <CreditCard className="h-8 w-8 text-navy/20 mx-auto mb-2" />
+            <p className="text-sm text-navy/50 mb-3">No billing information available.</p>
+            <Button variant="primary" size="sm">Set Up Billing</Button>
           </div>
         )}
       </div>
 
       {/* Usage */}
-      <div style={cardStyle}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>Usage</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+      <div className="bg-white border border-navy/10 rounded-xl p-6">
+        <h2 className="text-base font-bold text-navy mb-4">Usage</h2>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3.5">
           {[
-            { icon: Users, label: 'Active Employees', current: billing?.usage.employees.current ?? 0, limit: billing?.usage.employees.limit ?? 0 },
-            { icon: Briefcase, label: 'Jobs This Month', current: billing?.usage.jobs.current ?? 0, limit: billing?.usage.jobs.limit ?? 0 },
+            { icon: Users, label: 'Active Staff', current: billing?.usage.employees.current ?? 0, limit: billing?.usage.employees.limit ?? 0 },
+            { icon: Building2, label: 'Locations', current: billing?.usage.jobs.current ?? 0, limit: billing?.usage.jobs.limit ?? 0 },
             { icon: HardDrive, label: 'Storage Used', current: billing?.usage.storageGb.current ?? 0, limit: billing?.usage.storageGb.limit ?? 0, suffix: 'GB' },
           ].map(item => (
-            <div
-              key={item.label}
-              style={{
-                background: PANEL_BG,
-                borderRadius: 10,
-                padding: 16,
-                textAlign: 'center',
-              }}
-            >
-              <item.icon size={20} style={{ color: NAVY, marginBottom: 6 }} />
-              <div style={{ fontSize: 20, fontWeight: 800, color: BODY_TEXT }}>
+            <div key={item.label} className="bg-navy/[0.03] rounded-xl p-4 text-center">
+              <item.icon className="h-5 w-5 text-navy mx-auto mb-1.5" />
+              <div className="text-xl font-extrabold text-navy">
                 {item.current}{item.suffix ? ` ${item.suffix}` : ''}
               </div>
-              <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
+              <div className="text-xs text-navy/40 mt-0.5">
                 {item.limit > 0 ? `of ${item.limit}${item.suffix ? ` ${item.suffix}` : ''} included` : item.label}
               </div>
-              <div style={{ fontSize: 12, color: TEXT_TERTIARY, marginTop: 2 }}>{item.label}</div>
+              <div className="text-xs text-navy/30 mt-0.5">{item.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Payment Method */}
-      <div style={cardStyle}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>Payment Method</h2>
+      <div className="bg-white border border-navy/10 rounded-xl p-6">
+        <h2 className="text-base font-bold text-navy mb-4">Payment Method</h2>
         {billing?.paymentMethod ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <CreditCard size={24} color={MUTED} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CreditCard className="h-6 w-6 text-navy/40" />
               <div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: BODY_TEXT }}>
+                <span className="text-sm font-semibold text-navy">
                   •••• •••• •••• {billing.paymentMethod.last4}
                 </span>
-                <div style={{ fontSize: 12, color: MUTED }}>
+                <div className="text-xs text-navy/40">
                   Expires {billing.paymentMethod.expiresAt}
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => alert('Update payment method coming soon')}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 6,
-                border: `1px solid ${CARD_BORDER}`,
-                background: '#fff',
-                color: BODY_TEXT,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Update
-            </button>
+            <Button variant="secondary" size="sm">Update</Button>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <p style={{ color: MUTED, fontSize: 13, margin: '0 0 10px' }}>No payment method on file.</p>
-            <button
-              onClick={() => alert('Add payment method coming soon')}
-              style={{
-                padding: '8px 18px',
-                borderRadius: 8,
-                border: 'none',
-                background: NAVY,
-                color: '#fff',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Add Payment Method
-            </button>
+          <div className="text-center py-5">
+            <p className="text-[13px] text-navy/50 mb-2.5">No payment method on file.</p>
+            <Button variant="primary" size="sm">Add Payment Method</Button>
           </div>
         )}
       </div>
 
       {/* Billing History */}
-      <div style={cardStyle}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>
-          <FileText size={18} color={NAVY} /> Billing History
+      <div className="bg-white border border-navy/10 rounded-xl p-6">
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy mb-4">
+          <FileText className="h-[18px] w-[18px] text-navy" /> Billing History
         </h2>
         {invoices && invoices.length > 0 ? (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: PANEL_BG, borderBottom: `2px solid ${CARD_BORDER}` }}>
-                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT }}>Date</th>
-                  <th style={{ textAlign: 'right', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT }}>Amount</th>
-                  <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT }}>Status</th>
-                  <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT }}>Invoice</th>
+          <div className="overflow-x-auto rounded-xl border border-navy/10">
+            <table className="w-full text-[13px]">
+              <thead className="bg-cream border-b border-navy/10">
+                <tr>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-navy/40">Date</th>
+                  <th className="text-right px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-navy/40">Amount</th>
+                  <th className="text-center px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-navy/40">Status</th>
+                  <th className="text-center px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-navy/40">Invoice</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-navy/5">
                 {invoices.map(inv => (
-                  <tr key={inv.id} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: BODY_TEXT }}>{inv.date}</td>
-                    <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 600, color: BODY_TEXT }}>
+                  <tr key={inv.id} className="hover:bg-cream transition-colors">
+                    <td className="px-4 py-3 text-navy">{inv.date}</td>
+                    <td className="px-4 py-3 text-right font-semibold text-navy">
                       ${inv.amount.toFixed(2)}
                     </td>
-                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
-                      <span style={{
-                        padding: '2px 10px',
-                        borderRadius: 8,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        background: inv.status === 'paid' ? '#dcfce7' : inv.status === 'pending' ? '#fef9c3' : '#fef2f2',
-                        color: inv.status === 'paid' ? '#15803d' : inv.status === 'pending' ? '#a16207' : '#dc2626',
-                      }}>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                        inv.status === 'paid'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : inv.status === 'pending'
+                            ? 'bg-amber-50 text-amber-700'
+                            : 'bg-red-50 text-red-700'
+                      }`}>
                         {inv.status.charAt(0).toUpperCase() + inv.status.slice(1)}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                    <td className="px-4 py-3 text-center">
                       <button
-                        onClick={() => alert('Download invoice PDF')}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
+                        className="p-1 text-navy/40 hover:text-navy transition-colors"
                         title="Download PDF"
                       >
-                        <Download size={16} color={NAVY} />
+                        <Download className="h-4 w-4" />
                       </button>
                     </td>
                   </tr>
@@ -264,62 +182,47 @@ export function BillingPage() {
             </table>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <FileText size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
-            <p style={{ color: MUTED, fontSize: 13, margin: 0 }}>No invoices yet.</p>
+          <div className="text-center py-6">
+            <FileText className="h-7 w-7 text-navy/20 mx-auto mb-2" />
+            <p className="text-[13px] text-navy/50">No invoices yet.</p>
           </div>
         )}
       </div>
 
       {/* Cancel Subscription */}
-      <div style={{ marginTop: 32, paddingTop: 20, borderTop: `1px solid ${CARD_BORDER}` }}>
+      <div className="mt-8 pt-5 border-t border-navy/10">
         {showCancelConfirm ? (
-          <div style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: 10,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 12,
-          }}>
-            <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5 flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#991b1b', margin: '0 0 8px' }}>
+              <p className="text-sm font-semibold text-red-900 mb-2">
                 Are you sure you want to cancel your subscription?
               </p>
-              <p style={{ fontSize: 13, color: '#991b1b', margin: '0 0 12px' }}>
+              <p className="text-[13px] text-red-800 mb-3">
                 You will lose access to all features at the end of your current billing period.
               </p>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  onClick={() => { alert('Subscription cancelled (demo)'); setShowCancelConfirm(false); }}
-                  style={{ padding: '6px 14px', borderRadius: 6, border: 'none', background: '#dc2626', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => { setShowCancelConfirm(false); }}
                 >
                   Yes, Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setShowCancelConfirm(false)}
-                  style={{ padding: '6px 14px', borderRadius: 6, border: `1px solid ${CARD_BORDER}`, background: '#fff', color: BODY_TEXT, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
                 >
                   Keep Subscription
-                </button>
+                </Button>
               </div>
             </div>
           </div>
         ) : (
           <button
             onClick={() => setShowCancelConfirm(true)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#dc2626',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-              padding: 0,
-              textDecoration: 'underline',
-            }}
+            className="text-[13px] font-semibold text-red-600 hover:text-red-700 underline transition-colors"
           >
             Cancel Subscription
           </button>

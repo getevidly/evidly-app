@@ -2,37 +2,7 @@ import { useState } from 'react';
 import { Wrench, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useServiceTypes, useDeleteServiceType, type ServiceType } from '../../hooks/api/useSettings';
 import { ServiceTypeFormModal } from '../../components/settings/ServiceTypeFormModal';
-import {
-  CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY, NAVY, FONT,
-} from '../../components/dashboard/shared/constants';
-import { SERVICE_TYPES, SERVICE_TYPE_CODES } from '../../constants/serviceTypes';
-
-// Seed demo data from SERVICE_TYPES constants
-const DEMO_SERVICE_TYPES: ServiceType[] = SERVICE_TYPE_CODES.map(code => {
-  const st = SERVICE_TYPES[code];
-  return {
-    id: `demo-st-${code}`,
-    name: st.name,
-    code: st.code,
-    description: st.description,
-    icon: st.icon,
-    color: st.color,
-    durationMinutes: code === 'KEC' ? 180 : code === 'FS' ? 60 : 45,
-    basePrice: st.basePrice,
-    complianceCodes: st.complianceCodes,
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00Z',
-    updatedAt: '2026-01-01T00:00:00Z',
-  };
-});
-
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-};
+import Button from '../../components/ui/Button';
 
 export function ServiceTypesPage() {
   const { data: serverTypes, isLoading } = useServiceTypes();
@@ -42,9 +12,7 @@ export function ServiceTypesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editType, setEditType] = useState<ServiceType | null>(null);
 
-  // Merge server + local; seed demo types when empty
-  const baseTypes = (serverTypes && serverTypes.length > 0) ? serverTypes : DEMO_SERVICE_TYPES;
-  const allTypes = [...baseTypes, ...localTypes];
+  const allTypes = [...(serverTypes || []), ...localTypes];
 
   const handleAdd = () => {
     setEditType(null);
@@ -85,120 +53,71 @@ export function ServiceTypesPage() {
 
   if (isLoading) {
     return (
-      <div style={{ ...FONT }}>
-        <div style={{ ...cardStyle, height: 200 }}>
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 200, marginBottom: 16 }} />
-          {[1, 2, 3].map(i => (
-            <div key={i} style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '70%', marginBottom: 10 }} />
-          ))}
-        </div>
+      <div className="bg-white border border-navy/10 rounded-xl p-6 animate-pulse">
+        <div className="bg-navy/5 rounded-lg h-5 w-48 mb-4" />
+        {[1, 2, 3].map(i => (
+          <div key={i} className="bg-navy/5 rounded-lg h-3.5 w-[70%] mb-2.5" />
+        ))}
       </div>
     );
   }
 
   return (
-    <div style={{ ...FONT }}>
+    <div>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
-          <Wrench size={18} color={NAVY} /> Service Types
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy">
+          <Wrench className="h-[18px] w-[18px] text-navy" /> Service Types
         </h2>
-        <button
-          onClick={handleAdd}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '8px 16px',
-            borderRadius: 8,
-            border: 'none',
-            background: NAVY,
-            color: '#fff',
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
-          <Plus size={16} /> Add Service Type
-        </button>
+        <Button variant="primary" size="sm" onClick={handleAdd}>
+          <Plus className="h-4 w-4" /> Add Service Type
+        </Button>
       </div>
 
       {allTypes.length === 0 ? (
         /* Empty state */
-        <div style={{
-          background: PANEL_BG,
-          border: `1px dashed ${CARD_BORDER}`,
-          borderRadius: 12,
-          padding: '48px 24px',
-          textAlign: 'center',
-        }}>
-          <Wrench size={40} style={{ color: TEXT_TERTIARY, margin: '0 auto 12px' }} />
-          <h3 style={{ color: BODY_TEXT, fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
-            No service types yet
+        <div className="bg-navy/[0.03] border border-dashed border-navy/15 rounded-xl py-12 px-6 text-center">
+          <Wrench className="h-10 w-10 text-gold mx-auto mb-3" strokeWidth={1.5} />
+          <h3 className="text-base font-semibold text-navy mb-1">
+            No service types configured
           </h3>
-          <p style={{ color: MUTED, fontSize: 14, margin: '0 0 16px' }}>
+          <p className="text-sm text-navy/50 mb-4 max-w-md mx-auto">
             Add your first service type to get started.
           </p>
-          <button
-            onClick={handleAdd}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: 'none',
-              background: NAVY,
-              color: '#fff',
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            <Plus size={14} /> Add Service Type
-          </button>
+          <Button variant="primary" size="sm" onClick={handleAdd}>
+            <Plus className="h-3.5 w-3.5" /> Add Service Type
+          </Button>
         </div>
       ) : (
         /* Service type list */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {allTypes.map(st => (
             <div
               key={st.id}
-              style={{
-                ...cardStyle,
-                padding: 16,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
-                opacity: st.isActive ? 1 : 0.6,
-              }}
+              className={`bg-white border border-navy/10 rounded-xl p-4 flex items-center gap-3.5 ${
+                st.isActive ? '' : 'opacity-60'
+              }`}
             >
               {/* Color dot */}
-              <div style={{
-                width: 36,
-                height: 36,
-                borderRadius: 8,
-                background: st.color,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <Wrench size={18} color="#fff" />
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ background: st.color }}
+              >
+                <Wrench className="h-[18px] w-[18px] text-white" />
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: BODY_TEXT }}>{st.name}</span>
-                  <span style={{ fontSize: 11, color: TEXT_TERTIARY, fontFamily: 'monospace' }}>{st.code}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-navy">{st.name}</span>
+                  <span className="text-[11px] text-navy/30 font-mono">{st.code}</span>
                   {!st.isActive && (
-                    <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 10, background: '#f3f4f6', color: '#6b7280', fontWeight: 600 }}>
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-navy/5 text-navy/40 font-semibold">
                       Inactive
                     </span>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: 16, fontSize: 12, color: MUTED, marginTop: 2 }}>
+                <div className="flex gap-4 text-xs text-navy/50 mt-0.5">
                   <span>{st.durationMinutes} min</span>
                   <span>${st.basePrice.toFixed(2)}</span>
                   {st.complianceCodes.length > 0 && <span>{st.complianceCodes.join(', ')}</span>}
@@ -206,30 +125,30 @@ export function ServiceTypesPage() {
               </div>
 
               {/* Active toggle */}
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', flexShrink: 0 }}>
+              <label className="flex items-center gap-1.5 cursor-pointer flex-shrink-0">
                 <input
                   type="checkbox"
                   checked={st.isActive}
                   onChange={() => handleToggleActive(st)}
-                  style={{ width: 16, height: 16, accentColor: NAVY, cursor: 'pointer' }}
+                  className="w-4 h-4 accent-navy cursor-pointer"
                 />
-                <span style={{ fontSize: 12, color: MUTED }}>Active</span>
+                <span className="text-xs text-navy/50">Active</span>
               </label>
 
               {/* Actions */}
               <button
                 onClick={() => handleEdit(st)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}
+                className="p-1.5 text-navy/30 hover:text-navy transition-colors"
                 title="Edit"
               >
-                <Pencil size={16} color={MUTED} />
+                <Pencil className="h-4 w-4" />
               </button>
               <button
                 onClick={() => handleDelete(st)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}
+                className="p-1.5 text-red-400 hover:text-red-600 transition-colors"
                 title="Delete"
               >
-                <Trash2 size={16} color="#dc2626" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </div>
           ))}

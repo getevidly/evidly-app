@@ -80,7 +80,7 @@ export interface NotificationPreferences {
   events: NotificationEvent[];
 }
 
-export type PlanTier = 'starter' | 'professional' | 'enterprise';
+export type PlanTier = 'founder' | 'standard' | 'enterprise';
 
 export interface BillingInfo {
   planTier: PlanTier;
