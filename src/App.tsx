@@ -261,31 +261,7 @@ const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.T
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
 const VendorInviteLanding = lazy(() => import('./pages/VendorInviteLanding').then(m => ({ default: m.VendorInviteLanding })));
-const Timecards = lazy(() => import('./pages/Timecards').then(m => ({ default: m.Timecards })));
-const EmployeesPage = lazy(() => import('./pages/Employees').then(m => ({ default: m.Employees })));
-const EmployeeDetailPage = lazy(() => import('./pages/EmployeeDetail').then(m => ({ default: m.EmployeeDetail })));
 const SchedulePage = lazy(() => import('./pages/schedule/SchedulePage').then(m => ({ default: m.SchedulePage })));
-const VehiclesPage = lazy(() => import('./pages/fleet/VehiclesPage').then(m => ({ default: m.VehiclesPage })));
-const VehicleDetailPage = lazy(() => import('./pages/fleet/VehicleDetailPage').then(m => ({ default: m.VehicleDetailPage })));
-const InsurancePage = lazy(() => import('./pages/insurance/InsurancePage').then(m => ({ default: m.InsurancePage })));
-const InsurancePolicyPage = lazy(() => import('./pages/insurance/InsurancePolicyPage').then(m => ({ default: m.InsurancePolicyPage })));
-const EmergencyInfoPage = lazy(() => import('./pages/EmergencyInfoPage').then(m => ({ default: m.EmergencyInfoPage })));
-const AvailabilitySubmissionPage = lazy(() => import('./pages/availability/AvailabilitySubmissionPage').then(m => ({ default: m.AvailabilitySubmissionPage })));
-const TeamAvailabilityPage = lazy(() => import('./pages/availability/TeamAvailabilityPage').then(m => ({ default: m.TeamAvailabilityPage })));
-const AvailabilityApprovalsPage = lazy(() => import('./pages/availability/AvailabilityApprovalsPage').then(m => ({ default: m.AvailabilityApprovalsPage })));
-const BonusDashboardPage = lazy(() => import('./pages/bonuses/BonusDashboardPage').then(m => ({ default: m.BonusDashboardPage })));
-const PerformanceMetricsPage = lazy(() => import('./pages/performance/PerformanceMetricsPage').then(m => ({ default: m.PerformanceMetricsPage })));
-const MyPerformancePage = lazy(() => import('./pages/performance/MyPerformancePage').then(m => ({ default: m.MyPerformancePage })));
-const CallbacksPage = lazy(() => import('./pages/quality/CallbacksPage').then(m => ({ default: m.CallbacksPage })));
-const InventoryPage = lazy(() => import('./pages/inventory/InventoryPage').then(m => ({ default: m.InventoryPage })));
-const InventoryItemPage = lazy(() => import('./pages/inventory/InventoryItemPage').then(m => ({ default: m.InventoryItemPage })));
-const InventoryRequestsPage = lazy(() => import('./pages/inventory/InventoryRequestsPage').then(m => ({ default: m.InventoryRequestsPage })));
-const EquipmentIncidentsPage = lazy(() => import('./pages/equipment/EquipmentIncidentsPage').then(m => ({ default: m.EquipmentIncidentsPage })));
-const IncidentReportsPage = lazy(() => import('./pages/safety/IncidentReportsPage').then(m => ({ default: m.IncidentReportsPage })));
-const ReportIncidentPage = lazy(() => import('./pages/safety/ReportIncidentPage').then(m => ({ default: m.ReportIncidentPage })));
-const IncidentDetailPage = lazy(() => import('./pages/safety/IncidentDetailPage').then(m => ({ default: m.IncidentDetailPage })));
-const ClockRemindersPage = lazy(() => import('./pages/settings/ClockRemindersPage').then(m => ({ default: m.ClockRemindersPage })));
-const TimecardAlterationsPage = lazy(() => import('./pages/timecards/TimecardAlterationsPage').then(m => ({ default: m.TimecardAlterationsPage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -677,27 +653,6 @@ function AppRoutes() {
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/fleet" element={<VehiclesPage />} />
-          <Route path="/fleet/:id" element={<VehicleDetailPage />} />
-          <Route path="/insurance" element={<InsurancePage />} />
-          <Route path="/insurance/:id" element={<InsurancePolicyPage />} />
-          <Route path="/emergency" element={<EmergencyInfoPage />} />
-          <Route path="/availability" element={<AvailabilitySubmissionPage />} />
-          <Route path="/availability/team" element={<TeamAvailabilityPage />} />
-          <Route path="/availability/approvals" element={<AvailabilityApprovalsPage />} />
-          <Route path="/bonuses" element={<BonusDashboardPage />} />
-          <Route path="/performance" element={<PerformanceMetricsPage />} />
-          <Route path="/performance/me" element={<MyPerformancePage />} />
-          <Route path="/quality/callbacks" element={<CallbacksPage />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/inventory/requests" element={<InventoryRequestsPage />} />
-          <Route path="/inventory/:id" element={<InventoryItemPage />} />
-          <Route path="/equipment/incidents" element={<EquipmentIncidentsPage />} />
-          <Route path="/safety/incidents" element={<IncidentReportsPage />} />
-          <Route path="/safety/incidents/new" element={<ReportIncidentPage />} />
-          <Route path="/safety/incidents/:id" element={<IncidentDetailPage />} />
-          <Route path="/settings/clock-reminders" element={<ClockRemindersPage />} />
-          <Route path="/timecards/alterations" element={<TimecardAlterationsPage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
@@ -760,9 +715,6 @@ function AppRoutes() {
           <Route path="/inspector-mode" element={<InspectorMode />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
-          <Route path="/timecards" element={<Timecards />} />
-          <Route path="/employees" element={<EmployeesPage />} />
-          <Route path="/employees/:id" element={<EmployeeDetailPage />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/mock-inspection" element={<MockInspection />} />
