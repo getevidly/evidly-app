@@ -54,30 +54,19 @@ import {
 
 // ── Constants ────────────────────────────────────────────────
 
-const MIDNIGHT_NAVY = '#0B1628';
-const BRAND_BLUE = '#1E2D4D';
-const BRAND_BLUE_HOVER = '#2A3F6B';
-const BRAND_GOLD = '#A08C5A';
-const PAGE_BG = '#F4F6FA';
-const CARD_BG = '#FFFFFF';
-const CARD_BORDER = '#D1D9E6';
-const TEXT_PRIMARY = '#0B1628';
-const TEXT_SECONDARY = '#3D5068';
-const TEXT_TERTIARY = '#6B7F96';
-
 const HEALTH_STYLES: Record<HealthStatus, { bg: string; text: string; dot: string; label: string }> = {
-  healthy:   { bg: '#f0fdf4', text: '#16a34a', dot: '#22c55e', label: 'Healthy' },
-  degraded:  { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b', label: 'Degraded' },
-  failed:    { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Failed' },
-  inactive:  { bg: '#f1f5f9', text: '#64748b', dot: '#94a3b8', label: 'Inactive' },
-  on_demand: { bg: '#eff6ff', text: '#2563eb', dot: '#3b82f6', label: 'On-Demand' },
+  healthy:   { bg: 'bg-[#f0fdf4]', text: 'text-[#16a34a]', dot: 'bg-[#22c55e]', label: 'Healthy' },
+  degraded:  { bg: 'bg-[#fffbeb]', text: 'text-[#d97706]', dot: 'bg-[#f59e0b]', label: 'Degraded' },
+  failed:    { bg: 'bg-[#fef2f2]', text: 'text-[#dc2626]', dot: 'bg-[#ef4444]', label: 'Failed' },
+  inactive:  { bg: 'bg-[#f1f5f9]', text: 'text-[#64748b]', dot: 'bg-[#94a3b8]', label: 'Inactive' },
+  on_demand: { bg: 'bg-[#eff6ff]', text: 'text-[#2563eb]', dot: 'bg-[#3b82f6]', label: 'On-Demand' },
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
-  success: { bg: '#f0fdf4', text: '#16a34a' },
-  error:   { bg: '#fef2f2', text: '#dc2626' },
-  timeout: { bg: '#fffbeb', text: '#d97706' },
-  running: { bg: '#eff6ff', text: '#2563eb' },
+  success: { bg: 'bg-[#f0fdf4]', text: 'text-[#16a34a]' },
+  error:   { bg: 'bg-[#fef2f2]', text: 'text-[#dc2626]' },
+  timeout: { bg: 'bg-[#fffbeb]', text: 'text-[#d97706]' },
+  running: { bg: 'bg-[#eff6ff]', text: 'text-[#2563eb]' },
 };
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -132,38 +121,29 @@ function HealthSummaryBar({
   summary: { total_deployed: number; healthy: number; degraded: number; failed: number; inactive: number };
 }) {
   const cards = [
-    { label: 'Deployed', value: summary.total_deployed, icon: Server, color: BRAND_BLUE },
-    { label: 'Healthy', value: summary.healthy, icon: CheckCircle2, color: '#16a34a' },
-    { label: 'Degraded', value: summary.degraded, icon: AlertTriangle, color: '#d97706' },
-    { label: 'Failed', value: summary.failed, icon: XCircle, color: '#dc2626' },
-    { label: 'Inactive / On-Demand', value: summary.inactive, icon: Clock, color: '#64748b' },
+    { label: 'Deployed', value: summary.total_deployed, icon: Server, color: '#1E2D4D', colorClass: 'text-navy' },
+    { label: 'Healthy', value: summary.healthy, icon: CheckCircle2, color: '#16a34a', colorClass: 'text-[#16a34a]' },
+    { label: 'Degraded', value: summary.degraded, icon: AlertTriangle, color: '#d97706', colorClass: 'text-[#d97706]' },
+    { label: 'Failed', value: summary.failed, icon: XCircle, color: '#dc2626', colorClass: 'text-[#dc2626]' },
+    { label: 'Inactive / On-Demand', value: summary.inactive, icon: Clock, color: '#64748b', colorClass: 'text-[#64748b]' },
   ];
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 24 }}>
+    <div className="grid grid-cols-5 gap-3 mb-6">
       {cards.map(c => (
         <div
           key={c.label}
-          style={{
-            background: CARD_BG,
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 10,
-            padding: '16px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-          }}
+          className="bg-white border border-[#D1D9E6] rounded-[10px] px-5 py-4 flex items-center gap-3"
         >
-          <div style={{
-            width: 40, height: 40, borderRadius: 10,
-            background: `${c.color}14`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
+          <div
+            className="w-10 h-10 rounded-[10px] flex items-center justify-center"
+            style={{ background: `${c.color}14` }}
+          >
             <c.icon size={20} color={c.color} />
           </div>
           <div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: TEXT_PRIMARY, lineHeight: 1 }}>{c.value}</div>
-            <div style={{ fontSize: 11, color: TEXT_TERTIARY, marginTop: 2 }}>{c.label}</div>
+            <div className="text-2xl font-bold text-[#0B1628] leading-none">{c.value}</div>
+            <div className="text-[11px] text-[#6B7F96] mt-0.5">{c.label}</div>
           </div>
         </div>
       ))}
@@ -176,16 +156,8 @@ function HealthSummaryBar({
 function HealthBadge({ health }: { health: HealthStatus }) {
   const s = HEALTH_STYLES[health];
   return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '2px 10px', borderRadius: 12,
-      background: s.bg, color: s.text,
-      fontSize: 11, fontWeight: 600,
-    }}>
-      <span style={{
-        width: 7, height: 7, borderRadius: '50%',
-        background: s.dot, flexShrink: 0,
-      }} />
+    <span className={`inline-flex items-center gap-[5px] px-[10px] py-[2px] rounded-xl text-[11px] font-semibold ${s.bg} ${s.text}`}>
+      <span className={`w-[7px] h-[7px] rounded-full shrink-0 ${s.dot}`} />
       {s.label}
     </span>
   );
@@ -196,12 +168,7 @@ function HealthBadge({ health }: { health: HealthStatus }) {
 function StatusBadge({ status }: { status: string }) {
   const s = STATUS_STYLES[status] || STATUS_STYLES.running;
   return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center',
-      padding: '2px 8px', borderRadius: 12,
-      background: s.bg, color: s.text,
-      fontSize: 11, fontWeight: 600, textTransform: 'capitalize',
-    }}>
+    <span className={`inline-flex items-center px-2 py-[2px] rounded-xl text-[11px] font-semibold capitalize ${s.bg} ${s.text}`}>
       {status}
     </span>
   );
@@ -211,11 +178,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function CategoryBadge({ category }: { category: FunctionCategory }) {
   return (
-    <span style={{
-      padding: '2px 8px', borderRadius: 6,
-      background: '#eff6ff', color: BRAND_BLUE,
-      fontSize: 10, fontWeight: 600,
-    }}>
+    <span className="px-2 py-[2px] rounded-md bg-[#eff6ff] text-navy text-[10px] font-semibold">
       {CATEGORY_LABELS[category]}
     </span>
   );
@@ -235,36 +198,23 @@ function RegistryTable({
   onInvoke: (name: string) => void;
 }) {
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, overflow: 'hidden', marginBottom: 24,
-    }}>
-      <div style={{
-        padding: '16px 20px', borderBottom: `1px solid ${CARD_BORDER}`,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Server size={16} color={BRAND_BLUE} />
-          <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRIMARY }}>Function Registry</span>
-          <span style={{
-            fontSize: 11, color: TEXT_TERTIARY, background: '#EEF1F7',
-            padding: '1px 8px', borderRadius: 10,
-          }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] overflow-hidden mb-6">
+      <div className="px-5 py-4 border-b border-[#D1D9E6] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Server size={16} className="text-navy" />
+          <span className="text-sm font-bold text-[#0B1628]">Function Registry</span>
+          <span className="text-[11px] text-[#6B7F96] bg-[#EEF1F7] px-2 py-[1px] rounded-[10px]">
             {rows.length} functions
           </span>
         </div>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-xs">
           <thead>
-            <tr style={{ background: '#F8FAFC' }}>
+            <tr className="bg-[#F8FAFC]">
               {['Function', 'Category', 'Health', 'Schedule', 'Last Run', 'Avg / P95', '24h Calls', 'Errors', 'Actions'].map(h => (
-                <th key={h} style={{
-                  padding: '10px 14px', textAlign: 'left', color: TEXT_TERTIARY,
-                  fontWeight: 600, fontSize: 10, textTransform: 'uppercase',
-                  letterSpacing: '0.5px', borderBottom: `1px solid ${CARD_BORDER}`,
-                }}>
+                <th key={h} className="px-[14px] py-[10px] text-left text-[#6B7F96] font-semibold text-[10px] uppercase tracking-[0.5px] border-b border-[#D1D9E6]">
                   {h}
                 </th>
               ))}
@@ -277,65 +227,51 @@ function RegistryTable({
                 <tr
                   key={row.function_name}
                   onClick={() => onSelect(isSelected ? null : row.function_name)}
-                  style={{
-                    cursor: 'pointer',
-                    background: isSelected ? '#f0f7ff' : 'transparent',
-                    borderBottom: `1px solid ${CARD_BORDER}`,
-                    transition: 'background 0.1s',
-                  }}
-                  onMouseEnter={e => { if (!isSelected) (e.currentTarget.style.background = '#fafbfc'); }}
-                  onMouseLeave={e => { if (!isSelected) (e.currentTarget.style.background = 'transparent'); }}
+                  className={`cursor-pointer border-b border-[#D1D9E6] transition-[background] duration-100 ${
+                    isSelected ? 'bg-[#f0f7ff]' : 'hover:bg-[#fafbfc]'
+                  }`}
                 >
-                  <td style={{ padding: '10px 14px' }}>
-                    <div style={{ fontWeight: 600, color: TEXT_PRIMARY, fontFamily: 'monospace', fontSize: 12 }}>
+                  <td className="px-[14px] py-[10px]">
+                    <div className="font-semibold text-[#0B1628] font-mono text-xs">
                       {row.function_name}
                     </div>
                     {row.description && (
-                      <div style={{ fontSize: 10, color: TEXT_TERTIARY, marginTop: 2, maxWidth: 280 }}>
+                      <div className="text-[10px] text-[#6B7F96] mt-0.5 max-w-[280px]">
                         {row.description.length > 60 ? row.description.slice(0, 60) + '...' : row.description}
                       </div>
                     )}
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
+                  <td className="px-[14px] py-[10px]">
                     <CategoryBadge category={row.category} />
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
+                  <td className="px-[14px] py-[10px]">
                     <HealthBadge health={row.health} />
                   </td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 11 }}>
+                  <td className="px-[14px] py-[10px] text-[#3D5068] text-[11px]">
                     {formatSchedule(row.cron_schedule)}
                   </td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 11 }}>
+                  <td className="px-[14px] py-[10px] text-[#3D5068] text-[11px]">
                     {formatRelativeTime(row.last_invoked)}
                   </td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 11, fontFamily: 'monospace' }}>
+                  <td className="px-[14px] py-[10px] text-[#3D5068] text-[11px] font-mono">
                     {formatDuration(row.avg_duration_ms)} / {formatDuration(row.p95_duration_ms)}
                   </td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 12, fontWeight: 600 }}>
+                  <td className="px-[14px] py-[10px] text-[#3D5068] text-xs font-semibold">
                     {row.invocations_24h}
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
+                  <td className="px-[14px] py-[10px]">
                     {row.errors_24h > 0 ? (
-                      <span style={{ color: '#dc2626', fontWeight: 600, fontSize: 12 }}>
+                      <span className="text-[#dc2626] font-semibold text-xs">
                         {row.errors_24h} ({row.error_rate_24h}%)
                       </span>
                     ) : (
-                      <span style={{ color: TEXT_TERTIARY, fontSize: 12 }}>0</span>
+                      <span className="text-[#6B7F96] text-xs">0</span>
                     )}
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
+                  <td className="px-[14px] py-[10px]">
                     <button
                       onClick={(e) => { e.stopPropagation(); onInvoke(row.function_name); }}
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 4,
-                        padding: '4px 10px', borderRadius: 6,
-                        background: BRAND_BLUE, color: '#fff',
-                        border: 'none', cursor: 'pointer',
-                        fontSize: 11, fontWeight: 600,
-                        transition: 'background 0.1s',
-                      }}
-                      onMouseEnter={e => { (e.currentTarget.style.background = BRAND_BLUE_HOVER); }}
-                      onMouseLeave={e => { (e.currentTarget.style.background = BRAND_BLUE); }}
+                      className="inline-flex items-center gap-1 px-[10px] py-1 rounded-md bg-navy text-white border-none cursor-pointer text-[11px] font-semibold transition-[background] duration-100 hover:bg-navy-light"
                     >
                       <Play size={11} />
                       Invoke
@@ -346,7 +282,7 @@ function RegistryTable({
             })}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} style={{ padding: 40, textAlign: 'center', color: TEXT_TERTIARY }}>
+                <td colSpan={9} className="p-10 text-center text-[#6B7F96]">
                   No functions match the current filters
                 </td>
               </tr>
@@ -378,115 +314,83 @@ function InvocationTimeline({
   }, [invocations, selectedFunction]);
 
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, overflow: 'hidden', marginBottom: 24,
-    }}>
-      <div style={{
-        padding: '16px 20px', borderBottom: `1px solid ${CARD_BORDER}`,
-        display: 'flex', alignItems: 'center', gap: 8,
-      }}>
-        <Activity size={16} color={BRAND_BLUE} />
-        <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRIMARY }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] overflow-hidden mb-6">
+      <div className="px-5 py-4 border-b border-[#D1D9E6] flex items-center gap-2">
+        <Activity size={16} className="text-navy" />
+        <span className="text-sm font-bold text-[#0B1628]">
           Invocation Timeline
         </span>
         {selectedFunction && (
-          <span style={{
-            fontSize: 11, color: BRAND_BLUE, background: '#eff6ff',
-            padding: '2px 8px', borderRadius: 10, fontFamily: 'monospace',
-          }}>
+          <span className="text-[11px] text-navy bg-[#eff6ff] px-2 py-[2px] rounded-[10px] font-mono">
             {selectedFunction}
           </span>
         )}
-        <span style={{
-          fontSize: 11, color: TEXT_TERTIARY, background: '#EEF1F7',
-          padding: '1px 8px', borderRadius: 10,
-        }}>
+        <span className="text-[11px] text-[#6B7F96] bg-[#EEF1F7] px-2 py-[1px] rounded-[10px]">
           {filtered.length} shown
         </span>
       </div>
 
-      <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+      <div className="max-h-[400px] overflow-y-auto">
         {filtered.map(inv => {
           const isExpanded = expanded === inv.id;
           return (
-            <div key={inv.id} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
+            <div key={inv.id} className="border-b border-[#D1D9E6]">
               <div
                 onClick={() => setExpanded(isExpanded ? null : inv.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '10px 20px', cursor: 'pointer',
-                  transition: 'background 0.1s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#fafbfc'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                className="flex items-center gap-3 px-5 py-[10px] cursor-pointer transition-[background] duration-100 hover:bg-[#fafbfc]"
               >
-                <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 600, color: TEXT_PRIMARY, minWidth: 200 }}>
+                <span className="font-mono text-xs font-semibold text-[#0B1628] min-w-[200px]">
                   {inv.function_name}
                 </span>
                 <StatusBadge status={inv.status} />
-                <span style={{ fontSize: 11, color: TEXT_TERTIARY, minWidth: 80, fontFamily: 'monospace' }}>
+                <span className="text-[11px] text-[#6B7F96] min-w-[80px] font-mono">
                   {formatDuration(inv.duration_ms)}
                 </span>
-                <span style={{
-                  fontSize: 10, color: TEXT_TERTIARY, padding: '1px 6px',
-                  background: '#EEF1F7', borderRadius: 4,
-                }}>
+                <span className="text-[10px] text-[#6B7F96] px-1.5 py-[1px] bg-[#EEF1F7] rounded">
                   {inv.trigger_source}
                 </span>
-                <span style={{ fontSize: 11, color: TEXT_TERTIARY, marginLeft: 'auto' }}>
+                <span className="text-[11px] text-[#6B7F96] ml-auto">
                   {formatRelativeTime(inv.invoked_at)}
                 </span>
-                {isExpanded ? <ChevronUp size={14} color={TEXT_TERTIARY} /> : <ChevronDown size={14} color={TEXT_TERTIARY} />}
+                {isExpanded ? <ChevronUp size={14} className="text-[#6B7F96]" /> : <ChevronDown size={14} className="text-[#6B7F96]" />}
               </div>
 
               {isExpanded && (
-                <div style={{ padding: '0 20px 14px', background: '#F8FAFC' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 11 }}>
+                <div className="px-5 pb-[14px] bg-[#F8FAFC]">
+                  <div className="grid grid-cols-2 gap-3 text-[11px]">
                     <div>
-                      <div style={{ color: TEXT_TERTIARY, marginBottom: 4, fontWeight: 600 }}>Invoked At</div>
-                      <div style={{ color: TEXT_SECONDARY }}>{formatDateTime(inv.invoked_at)}</div>
+                      <div className="text-[#6B7F96] mb-1 font-semibold">Invoked At</div>
+                      <div className="text-[#3D5068]">{formatDateTime(inv.invoked_at)}</div>
                     </div>
                     <div>
-                      <div style={{ color: TEXT_TERTIARY, marginBottom: 4, fontWeight: 600 }}>Completed At</div>
-                      <div style={{ color: TEXT_SECONDARY }}>{formatDateTime(inv.completed_at)}</div>
+                      <div className="text-[#6B7F96] mb-1 font-semibold">Completed At</div>
+                      <div className="text-[#3D5068]">{formatDateTime(inv.completed_at)}</div>
                     </div>
                     {inv.triggered_by && (
                       <div>
-                        <div style={{ color: TEXT_TERTIARY, marginBottom: 4, fontWeight: 600 }}>Triggered By</div>
-                        <div style={{ color: TEXT_SECONDARY }}>{inv.triggered_by}</div>
+                        <div className="text-[#6B7F96] mb-1 font-semibold">Triggered By</div>
+                        <div className="text-[#3D5068]">{inv.triggered_by}</div>
                       </div>
                     )}
                     {Object.keys(inv.metadata).length > 0 && (
                       <div>
-                        <div style={{ color: TEXT_TERTIARY, marginBottom: 4, fontWeight: 600 }}>Metadata</div>
-                        <pre style={{
-                          color: TEXT_SECONDARY, fontFamily: 'monospace', fontSize: 10,
-                          background: '#FFFFFF', padding: 8, borderRadius: 6, margin: 0,
-                          border: `1px solid ${CARD_BORDER}`,
-                        }}>
+                        <div className="text-[#6B7F96] mb-1 font-semibold">Metadata</div>
+                        <pre className="text-[#3D5068] font-mono text-[10px] bg-white p-2 rounded-md m-0 border border-[#D1D9E6]">
                           {JSON.stringify(inv.metadata, null, 2)}
                         </pre>
                       </div>
                     )}
                   </div>
                   {inv.error_message && (
-                    <div style={{ marginTop: 10 }}>
-                      <div style={{ color: '#dc2626', fontWeight: 600, fontSize: 11, marginBottom: 4 }}>
+                    <div className="mt-[10px]">
+                      <div className="text-[#dc2626] font-semibold text-[11px] mb-1">
                         Error: {inv.error_type}
                       </div>
-                      <div style={{
-                        color: '#dc2626', fontSize: 11, background: '#fef2f2',
-                        padding: 8, borderRadius: 6, border: '1px solid #fecaca',
-                      }}>
+                      <div className="text-[#dc2626] text-[11px] bg-[#fef2f2] p-2 rounded-md border border-[#fecaca]">
                         {inv.error_message}
                       </div>
                       {inv.error_stack && (
-                        <pre style={{
-                          color: TEXT_SECONDARY, fontSize: 10, fontFamily: 'monospace',
-                          background: '#FFFFFF', padding: 8, borderRadius: 6, marginTop: 6,
-                          border: `1px solid ${CARD_BORDER}`, whiteSpace: 'pre-wrap',
-                        }}>
+                        <pre className="text-[#3D5068] text-[10px] font-mono bg-white p-2 rounded-md mt-1.5 border border-[#D1D9E6] whitespace-pre-wrap m-0">
                           {inv.error_stack}
                         </pre>
                       )}
@@ -498,7 +402,7 @@ function InvocationTimeline({
           );
         })}
         {filtered.length === 0 && (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_TERTIARY }}>
+          <div className="p-10 text-center text-[#6B7F96]">
             No invocations to display
           </div>
         )}
@@ -513,63 +417,45 @@ function ErrorLog({ errors }: { errors: EdgeFunctionInvocation[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, overflow: 'hidden', marginBottom: 24,
-    }}>
-      <div style={{
-        padding: '16px 20px', borderBottom: `1px solid ${CARD_BORDER}`,
-        display: 'flex', alignItems: 'center', gap: 8,
-      }}>
-        <AlertTriangle size={16} color="#dc2626" />
-        <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRIMARY }}>Error Log</span>
-        <span style={{
-          fontSize: 11, color: '#dc2626', background: '#fef2f2',
-          padding: '1px 8px', borderRadius: 10, fontWeight: 600,
-        }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] overflow-hidden mb-6">
+      <div className="px-5 py-4 border-b border-[#D1D9E6] flex items-center gap-2">
+        <AlertTriangle size={16} className="text-[#dc2626]" />
+        <span className="text-sm font-bold text-[#0B1628]">Error Log</span>
+        <span className="text-[11px] text-[#dc2626] bg-[#fef2f2] px-2 py-[1px] rounded-[10px] font-semibold">
           {errors.length} errors
         </span>
       </div>
 
-      <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+      <div className="max-h-[300px] overflow-y-auto">
         {errors.map(err => {
           const isExpanded = expanded === err.id;
           return (
-            <div key={err.id} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
+            <div key={err.id} className="border-b border-[#D1D9E6]">
               <div
                 onClick={() => setExpanded(isExpanded ? null : err.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '10px 20px', cursor: 'pointer',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                className="flex items-center gap-3 px-5 py-[10px] cursor-pointer hover:bg-[#fef2f2]"
               >
-                <XCircle size={14} color="#dc2626" />
-                <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 600, color: TEXT_PRIMARY }}>
+                <XCircle size={14} className="text-[#dc2626]" />
+                <span className="font-mono text-xs font-semibold text-[#0B1628]">
                   {err.function_name}
                 </span>
                 <StatusBadge status={err.status} />
-                <span style={{ fontSize: 11, color: '#dc2626', flex: 1 }}>
+                <span className="text-[11px] text-[#dc2626] flex-1">
                   {err.error_type}: {err.error_message?.slice(0, 60)}
                 </span>
-                <span style={{ fontSize: 11, color: TEXT_TERTIARY }}>
+                <span className="text-[11px] text-[#6B7F96]">
                   {formatRelativeTime(err.invoked_at)}
                 </span>
-                {isExpanded ? <ChevronUp size={14} color={TEXT_TERTIARY} /> : <ChevronDown size={14} color={TEXT_TERTIARY} />}
+                {isExpanded ? <ChevronUp size={14} className="text-[#6B7F96]" /> : <ChevronDown size={14} className="text-[#6B7F96]" />}
               </div>
 
               {isExpanded && (
-                <div style={{ padding: '0 20px 14px', background: '#fffbf5' }}>
-                  <div style={{ fontSize: 11, color: '#dc2626', marginBottom: 6 }}>
+                <div className="px-5 pb-[14px] bg-[#fffbf5]">
+                  <div className="text-[11px] text-[#dc2626] mb-1.5">
                     <strong>Error:</strong> {err.error_message}
                   </div>
                   {err.error_stack && (
-                    <pre style={{
-                      fontSize: 10, fontFamily: 'monospace', color: TEXT_SECONDARY,
-                      background: '#FFFFFF', padding: 8, borderRadius: 6,
-                      border: `1px solid ${CARD_BORDER}`, whiteSpace: 'pre-wrap', margin: 0,
-                    }}>
+                    <pre className="text-[10px] font-mono text-[#3D5068] bg-white p-2 rounded-md border border-[#D1D9E6] whitespace-pre-wrap m-0">
                       {err.error_stack}
                     </pre>
                   )}
@@ -579,7 +465,7 @@ function ErrorLog({ errors }: { errors: EdgeFunctionInvocation[] }) {
           );
         })}
         {errors.length === 0 && (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_TERTIARY }}>
+          <div className="p-10 text-center text-[#6B7F96]">
             No errors in the selected time range
           </div>
         )}
@@ -598,34 +484,21 @@ function CronScheduleTable({
   onToggle: (jobId: number, active: boolean) => void;
 }) {
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, overflow: 'hidden', marginBottom: 24,
-    }}>
-      <div style={{
-        padding: '16px 20px', borderBottom: `1px solid ${CARD_BORDER}`,
-        display: 'flex', alignItems: 'center', gap: 8,
-      }}>
-        <Timer size={16} color={BRAND_BLUE} />
-        <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRIMARY }}>pg_cron Schedule</span>
-        <span style={{
-          fontSize: 11, color: TEXT_TERTIARY, background: '#EEF1F7',
-          padding: '1px 8px', borderRadius: 10,
-        }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] overflow-hidden mb-6">
+      <div className="px-5 py-4 border-b border-[#D1D9E6] flex items-center gap-2">
+        <Timer size={16} className="text-navy" />
+        <span className="text-sm font-bold text-[#0B1628]">pg_cron Schedule</span>
+        <span className="text-[11px] text-[#6B7F96] bg-[#EEF1F7] px-2 py-[1px] rounded-[10px]">
           {jobs.length} jobs
         </span>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-xs">
           <thead>
-            <tr style={{ background: '#F8FAFC' }}>
+            <tr className="bg-[#F8FAFC]">
               {['Active', 'Job Name', 'Schedule', 'Function', 'Last Run', 'Next Run'].map(h => (
-                <th key={h} style={{
-                  padding: '10px 14px', textAlign: 'left', color: TEXT_TERTIARY,
-                  fontWeight: 600, fontSize: 10, textTransform: 'uppercase',
-                  letterSpacing: '0.5px', borderBottom: `1px solid ${CARD_BORDER}`,
-                }}>
+                <th key={h} className="px-[14px] py-[10px] text-left text-[#6B7F96] font-semibold text-[10px] uppercase tracking-[0.5px] border-b border-[#D1D9E6]">
                   {h}
                 </th>
               ))}
@@ -633,40 +506,38 @@ function CronScheduleTable({
           </thead>
           <tbody>
             {jobs.map(job => (
-              <tr key={job.jobid} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-                <td style={{ padding: '10px 14px' }}>
+              <tr key={job.jobid} className="border-b border-[#D1D9E6]">
+                <td className="px-[14px] py-[10px]">
                   <button
                     onClick={() => onToggle(job.jobid, !job.active)}
-                    style={{
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: job.active ? '#16a34a' : '#94a3b8',
-                      display: 'flex', alignItems: 'center',
-                    }}
+                    className={`bg-transparent border-none cursor-pointer flex items-center ${
+                      job.active ? 'text-[#16a34a]' : 'text-[#94a3b8]'
+                    }`}
                   >
                     {job.active ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
                   </button>
                 </td>
-                <td style={{ padding: '10px 14px', fontFamily: 'monospace', fontWeight: 600, color: TEXT_PRIMARY }}>
+                <td className="px-[14px] py-[10px] font-mono font-semibold text-[#0B1628]">
                   {job.jobname}
                 </td>
-                <td style={{ padding: '10px 14px', fontFamily: 'monospace', color: TEXT_SECONDARY, fontSize: 11 }}>
+                <td className="px-[14px] py-[10px] font-mono text-[#3D5068] text-[11px]">
                   <div>{job.schedule}</div>
-                  <div style={{ fontSize: 10, color: TEXT_TERTIARY }}>{formatSchedule(job.schedule)}</div>
+                  <div className="text-[10px] text-[#6B7F96]">{formatSchedule(job.schedule)}</div>
                 </td>
-                <td style={{ padding: '10px 14px', fontFamily: 'monospace', color: BRAND_BLUE, fontSize: 11 }}>
+                <td className="px-[14px] py-[10px] font-mono text-navy text-[11px]">
                   {job.function_name || '—'}
                 </td>
-                <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 11 }}>
+                <td className="px-[14px] py-[10px] text-[#3D5068] text-[11px]">
                   {formatRelativeTime(job.last_run)}
                 </td>
-                <td style={{ padding: '10px 14px', color: TEXT_SECONDARY, fontSize: 11 }}>
+                <td className="px-[14px] py-[10px] text-[#3D5068] text-[11px]">
                   {job.next_run ? formatDateTime(job.next_run) : '—'}
                 </td>
               </tr>
             ))}
             {jobs.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ padding: 40, textAlign: 'center', color: TEXT_TERTIARY }}>
+                <td colSpan={6} className="p-10 text-center text-[#6B7F96]">
                   Cron job data is only available in demo mode or via direct database access
                 </td>
               </tr>
@@ -706,83 +577,53 @@ function ManualInvokeDrawer({
   };
 
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, padding: 20, marginBottom: 24,
-    }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 16,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Terminal size={16} color={BRAND_BLUE} />
-          <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRIMARY }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] p-5 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Terminal size={16} className="text-navy" />
+          <span className="text-sm font-bold text-[#0B1628]">
             Manual Invoke
           </span>
-          <span style={{
-            fontFamily: 'monospace', fontSize: 12, color: BRAND_BLUE,
-            background: '#eff6ff', padding: '2px 8px', borderRadius: 6,
-          }}>
+          <span className="font-mono text-xs text-navy bg-[#eff6ff] px-2 py-[2px] rounded-md">
             {functionName}
           </span>
         </div>
         <button
           onClick={onClose}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: TEXT_TERTIARY, padding: 4,
-          }}
+          className="bg-transparent border-none cursor-pointer text-[#6B7F96] p-1"
           aria-label="Close"
         >
           <X size={16} />
         </button>
       </div>
 
-      <div style={{ marginBottom: 12 }}>
-        <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_TERTIARY, display: 'block', marginBottom: 6 }}>
+      <div className="mb-3">
+        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1.5">
           Request Payload (JSON)
         </label>
         <textarea
           value={payloadText}
           onChange={e => { setPayloadText(e.target.value); setParseError(null); }}
-          style={{
-            width: '100%', minHeight: 120, padding: 12,
-            fontFamily: 'monospace', fontSize: 12,
-            border: `1px solid ${parseError ? '#fecaca' : CARD_BORDER}`,
-            borderRadius: 8, background: '#F8FAFC',
-            color: TEXT_PRIMARY, resize: 'vertical',
-            outline: 'none',
-          }}
+          className={`w-full min-h-[120px] p-3 font-mono text-xs rounded-lg bg-[#F8FAFC] text-[#0B1628] resize-y outline-none border ${
+            parseError ? 'border-[#fecaca]' : 'border-[#D1D9E6]'
+          }`}
         />
         {parseError && (
-          <div style={{ fontSize: 11, color: '#dc2626', marginTop: 4 }}>{parseError}</div>
+          <div className="text-[11px] text-[#dc2626] mt-1">{parseError}</div>
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="flex gap-2">
         <button
           onClick={handleInvoke}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8,
-            background: BRAND_BLUE, color: '#fff',
-            border: 'none', cursor: 'pointer',
-            fontSize: 12, fontWeight: 600,
-          }}
-          onMouseEnter={e => { (e.currentTarget.style.background = BRAND_BLUE_HOVER); }}
-          onMouseLeave={e => { (e.currentTarget.style.background = BRAND_BLUE); }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-navy text-white border-none cursor-pointer text-xs font-semibold hover:bg-navy-light"
         >
           <Zap size={14} />
           Invoke Function
         </button>
         <button
           onClick={onClose}
-          style={{
-            padding: '8px 16px', borderRadius: 8,
-            background: '#EEF1F7', color: TEXT_SECONDARY,
-            border: 'none', cursor: 'pointer',
-            fontSize: 12, fontWeight: 600,
-          }}
+          className="px-4 py-2 rounded-lg bg-[#EEF1F7] text-[#3D5068] border-none cursor-pointer text-xs font-semibold"
         >
           Cancel
         </button>
@@ -835,26 +676,18 @@ function FilterBar({
   const hasFilters = filters.search || filters.category || filters.health;
 
   return (
-    <div style={{
-      background: CARD_BG, border: `1px solid ${CARD_BORDER}`,
-      borderRadius: 10, padding: '12px 20px', marginBottom: 16,
-      display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
-    }}>
+    <div className="bg-white border border-[#D1D9E6] rounded-[10px] px-5 py-3 mb-4 flex items-center gap-3 flex-wrap">
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 2, background: '#EEF1F7', borderRadius: 8, padding: 2 }}>
+      <div className="flex gap-0.5 bg-[#EEF1F7] rounded-lg p-0.5">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              padding: '6px 14px', borderRadius: 6,
-              background: activeTab === tab.id ? CARD_BG : 'transparent',
-              color: activeTab === tab.id ? TEXT_PRIMARY : TEXT_TERTIARY,
-              border: 'none', cursor: 'pointer',
-              fontSize: 12, fontWeight: activeTab === tab.id ? 600 : 400,
-              boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-            }}
+            className={`inline-flex items-center gap-[5px] px-[14px] py-1.5 rounded-md border-none cursor-pointer text-xs ${
+              activeTab === tab.id
+                ? 'bg-white text-[#0B1628] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+                : 'bg-transparent text-[#6B7F96] font-normal'
+            }`}
           >
             {tab.icon}
             {tab.label}
@@ -862,22 +695,17 @@ function FilterBar({
         ))}
       </div>
 
-      <div style={{ width: 1, height: 28, background: CARD_BORDER }} />
+      <div className="w-px h-7 bg-[#D1D9E6]" />
 
       {/* Search */}
-      <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
-        <Search size={14} color={TEXT_TERTIARY} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+      <div className="relative flex-1 min-w-[200px]">
+        <Search size={14} className="text-[#6B7F96] absolute left-[10px] top-1/2 -translate-y-1/2" />
         <input
           type="text"
           placeholder="Search functions..."
           value={filters.search}
           onChange={e => onFilterChange({ search: e.target.value })}
-          style={{
-            width: '100%', padding: '7px 10px 7px 30px',
-            border: `1px solid ${CARD_BORDER}`, borderRadius: 6,
-            fontSize: 12, color: TEXT_PRIMARY, background: '#F8FAFC',
-            outline: 'none',
-          }}
+          className="w-full py-[7px] pl-[30px] pr-[10px] border border-[#D1D9E6] rounded-md text-xs text-[#0B1628] bg-[#F8FAFC] outline-none"
         />
       </div>
 
@@ -885,11 +713,7 @@ function FilterBar({
       <select
         value={filters.category}
         onChange={e => onFilterChange({ category: e.target.value as FunctionCategory | '' })}
-        style={{
-          padding: '7px 10px', border: `1px solid ${CARD_BORDER}`,
-          borderRadius: 6, fontSize: 12, color: TEXT_SECONDARY,
-          background: '#F8FAFC', outline: 'none', cursor: 'pointer',
-        }}
+        className="py-[7px] px-[10px] border border-[#D1D9E6] rounded-md text-xs text-[#3D5068] bg-[#F8FAFC] outline-none cursor-pointer"
       >
         {categories.map(c => (
           <option key={c.value} value={c.value}>{c.label}</option>
@@ -900,11 +724,7 @@ function FilterBar({
       <select
         value={filters.health}
         onChange={e => onFilterChange({ health: e.target.value as HealthStatus | '' })}
-        style={{
-          padding: '7px 10px', border: `1px solid ${CARD_BORDER}`,
-          borderRadius: 6, fontSize: 12, color: TEXT_SECONDARY,
-          background: '#F8FAFC', outline: 'none', cursor: 'pointer',
-        }}
+        className="py-[7px] px-[10px] border border-[#D1D9E6] rounded-md text-xs text-[#3D5068] bg-[#F8FAFC] outline-none cursor-pointer"
       >
         {healthOptions.map(h => (
           <option key={h.value} value={h.value}>{h.label}</option>
@@ -915,13 +735,7 @@ function FilterBar({
       {hasFilters && (
         <button
           onClick={onReset}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            padding: '6px 12px', borderRadius: 6,
-            background: '#fef2f2', color: '#dc2626',
-            border: 'none', cursor: 'pointer',
-            fontSize: 11, fontWeight: 600,
-          }}
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-[#fef2f2] text-[#dc2626] border-none cursor-pointer text-[11px] font-semibold"
         >
           <X size={12} />
           Reset
@@ -976,43 +790,29 @@ export default function EdgeFunctions() {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <div style={{
-          width: 32, height: 32, border: `3px solid ${CARD_BORDER}`,
-          borderTopColor: BRAND_GOLD, borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite', margin: '0 auto',
-        }} />
-        <p style={{ color: TEXT_TERTIARY, marginTop: 12, fontSize: 13 }}>Loading edge function data...</p>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div className="p-10 text-center">
+        <div className="w-8 h-8 border-[3px] border-[#D1D9E6] border-t-gold rounded-full animate-spin mx-auto" />
+        <p className="text-[#6B7F96] mt-3 text-[13px]">Loading edge function data...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 0 40px' }}>
+    <div className="max-w-[1400px] mx-auto pb-10">
       <AdminBreadcrumb crumbs={[{ label: 'Edge Functions' }]} />
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 24,
-      }}>
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: TEXT_PRIMARY, margin: 0 }}>
+          <h1 className="text-[22px] font-bold text-[#0B1628] m-0">
             Edge Function Health Monitor
           </h1>
-          <p style={{ fontSize: 13, color: TEXT_TERTIARY, margin: '4px 0 0' }}>
+          <p className="text-[13px] text-[#6B7F96] mt-1 mb-0">
             Monitor, invoke, and manage all {summary.total_deployed} EvidLY Supabase Edge Functions
           </p>
         </div>
         <button
           onClick={refresh}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8,
-            background: CARD_BG, color: TEXT_SECONDARY,
-            border: `1px solid ${CARD_BORDER}`, cursor: 'pointer',
-            fontSize: 12, fontWeight: 600,
-          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#3D5068] border border-[#D1D9E6] cursor-pointer text-xs font-semibold"
         >
           <RefreshCw size={14} />
           Refresh

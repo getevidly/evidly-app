@@ -9,11 +9,6 @@ import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox'
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const BORDER = '#E2D9C8';
-
 type SessionType = 'screen_share' | 'co_browse' | 'guided_walkthrough' | 'diagnostic';
 type SessionStatus = 'pending' | 'active' | 'ended' | 'expired';
 
@@ -71,14 +66,14 @@ function formatDuration(seconds: number | null): string {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="rounded-md animate-pulse bg-gray-200" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -107,18 +102,6 @@ export default function RemoteConnect() {
   const [showModal, setShowModal] = useState(false);
   const [createdUrl, setCreatedUrl] = useState('');
   const [copied, setCopied] = useState(false);
-
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%',
-  };
-
-  const thStyle: React.CSSProperties = {
-    textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase',
-  };
-
-  const tdStyle: React.CSSProperties = {
-    padding: '10px 14px', fontSize: 12,
-  };
 
   // ── Data Loading ──
 
@@ -250,16 +233,16 @@ export default function RemoteConnect() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Remote Connect' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Remote Connect</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Remote Connect</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1">
           Initiate and manage remote support sessions with customers.
         </p>
       </div>
 
       {/* ───────── Section 1: Initiate New Session ───────── */}
-      <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Initiate New Session</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+      <div className="bg-white border border-[#E2D9C8] rounded-xl p-6">
+        <h3 className="text-sm font-bold text-navy mb-4">Initiate New Session</h3>
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
             <OrgCombobox
               label="Customer Org"
@@ -271,30 +254,30 @@ export default function RemoteConnect() {
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Customer Email *</label>
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Customer Email *</label>
             <input
               value={customerEmail}
               onChange={e => setCustomerEmail(e.target.value)}
-              style={inputStyle}
+              className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px]"
               placeholder="customer@example.com"
               type="email"
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Customer Phone</label>
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Customer Phone</label>
             <input
               value={customerPhone}
               onChange={e => setCustomerPhone(e.target.value)}
-              style={inputStyle}
+              className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px]"
               placeholder="(555) 000-0000"
               type="tel"
             />
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Linked Ticket (optional)</label>
-            <select value={linkedTicket} onChange={e => setLinkedTicket(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Linked Ticket (optional)</label>
+            <select value={linkedTicket} onChange={e => setLinkedTicket(e.target.value)} className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] cursor-pointer">
               <option value="">No linked ticket</option>
               {tickets.map(t => (
                 <option key={t.id} value={t.id}>#{t.ticket_number} — {t.subject}</option>
@@ -302,17 +285,17 @@ export default function RemoteConnect() {
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 8 }}>Session Type</label>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <label className="text-[11px] text-[#6B7F96] block mb-2">Session Type</label>
+            <div className="flex gap-3 flex-wrap">
               {(Object.entries(SESSION_TYPE_LABELS) as [SessionType, string][]).map(([key, label]) => (
-                <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: NAVY, cursor: 'pointer' }}>
+                <label key={key} className="flex items-center gap-[5px] text-xs text-navy cursor-pointer">
                   <input
                     type="radio"
                     name="sessionType"
                     value={key}
                     checked={sessionType === key}
                     onChange={() => setSessionType(key)}
-                    style={{ accentColor: GOLD }}
+                    className="accent-gold"
                   />
                   {label}
                 </label>
@@ -320,23 +303,20 @@ export default function RemoteConnect() {
             </div>
           </div>
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Notes</label>
+        <div className="mb-4">
+          <label className="text-[11px] text-[#6B7F96] block mb-1">Notes</label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] resize-y"
             placeholder="Session context, customer issue description, etc."
           />
         </div>
         <button
           onClick={handleCreate}
           disabled={creating || !customerEmail}
-          style={{
-            padding: '8px 24px', background: creating || !customerEmail ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 6,
-            color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: creating || !customerEmail ? 'default' : 'pointer',
-          }}
+          className={`py-2 px-6 border-none rounded-md text-[13px] font-bold text-white ${creating || !customerEmail ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'}`}
         >
           {creating ? 'Creating...' : 'Create Session & Send Link'}
         </button>
@@ -344,23 +324,23 @@ export default function RemoteConnect() {
 
       {/* ───────── Section 2: Active Sessions ───────── */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, margin: 0 }}>Active Sessions</h3>
-          <span style={{ fontSize: 10, color: TEXT_SEC, fontStyle: 'italic' }}>Auto-refreshes every 15s</span>
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-sm font-bold text-navy m-0">Active Sessions</h3>
+          <span className="text-[10px] text-[#6B7F96] italic">Auto-refreshes every 15s</span>
         </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {loading ? (
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : activeSessions.length === 0 ? (
-            <EmptyState icon="📡" title="No active sessions" subtitle="Active and pending support sessions will appear here." />
+            <EmptyState icon="&#128225;" title="No active sessions" subtitle="Active and pending support sessions will appear here." />
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Org', 'Customer Email', 'Type', 'Status', 'Created', 'Actions'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -370,44 +350,33 @@ export default function RemoteConnect() {
                   return (
                     <tr
                       key={s.id}
-                      style={{ borderBottom: `1px solid ${BORDER}` }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                      className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors"
                     >
-                      <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
+                      <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {s.organizations?.name || '—'}
                       </td>
-                      <td style={{ ...tdStyle, color: TEXT_SEC }}>{s.customer_email}</td>
-                      <td style={{ ...tdStyle, color: NAVY }}>
+                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">{s.customer_email}</td>
+                      <td className="px-3.5 py-2.5 text-xs text-navy">
                         {SESSION_TYPE_LABELS[s.session_type] || s.session_type}
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{
-                          padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-                          background: statusStyle.bg, color: statusStyle.color,
-                        }}>
+                      <td className="px-3.5 py-2.5 text-xs">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ background: statusStyle.bg, color: statusStyle.color }}>
                           {s.status}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
                         {new Date(s.created_at).toLocaleString()}
                       </td>
-                      <td style={{ ...tdStyle, display: 'flex', gap: 6 }}>
+                      <td className="px-3.5 py-2.5 text-xs flex gap-1.5">
                         <button
                           onClick={() => window.open(s.connection_url, '_blank', 'noopener')}
-                          style={{
-                            padding: '4px 10px', background: '#F0FFF4', border: '1px solid #BBF7D0', borderRadius: 4,
-                            color: '#059669', fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                          }}
+                          className="px-2.5 py-1 bg-[#F0FFF4] border border-[#BBF7D0] rounded text-[#059669] text-[11px] font-semibold cursor-pointer"
                         >
                           Join Room
                         </button>
                         <button
                           onClick={() => handleEndSession(s)}
-                          style={{
-                            padding: '4px 10px', background: '#FEF2F2', border: 'none', borderRadius: 4,
-                            color: '#DC2626', fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                          }}
+                          className="px-2.5 py-1 bg-[#FEF2F2] border-none rounded text-[#DC2626] text-[11px] font-semibold cursor-pointer"
                         >
                           End Session
                         </button>
@@ -423,20 +392,20 @@ export default function RemoteConnect() {
 
       {/* ───────── Section 3: Session History ───────── */}
       <div>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Session History</h3>
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <h3 className="text-sm font-bold text-navy mb-3">Session History</h3>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {loading ? (
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : historySessions.length === 0 ? (
-            <EmptyState icon="📋" title="No session history" subtitle="Completed support sessions will appear here." />
+            <EmptyState icon="&#128203;" title="No session history" subtitle="Completed support sessions will appear here." />
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Org', 'Type', 'Status', 'Staff', 'Duration', 'Ticket #', 'Created'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -446,34 +415,29 @@ export default function RemoteConnect() {
                   return (
                     <tr
                       key={s.id}
-                      style={{ borderBottom: `1px solid ${BORDER}` }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                      className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors"
                     >
-                      <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
+                      <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {s.organizations?.name || '—'}
                       </td>
-                      <td style={{ ...tdStyle, color: NAVY }}>
+                      <td className="px-3.5 py-2.5 text-xs text-navy">
                         {SESSION_TYPE_LABELS[s.session_type] || s.session_type}
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{
-                          padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-                          background: statusStyle.bg, color: statusStyle.color,
-                        }}>
+                      <td className="px-3.5 py-2.5 text-xs">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ background: statusStyle.bg, color: statusStyle.color }}>
                           {s.status}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
                         {s.staff_user_id ? s.staff_user_id.slice(0, 8) + '...' : '—'}
                       </td>
-                      <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
+                      <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {formatDuration(s.duration_seconds)}
                       </td>
-                      <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
                         {s.ticket_number ? `#${s.ticket_number}` : '—'}
                       </td>
-                      <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
                         {new Date(s.created_at).toLocaleString()}
                       </td>
                     </tr>
@@ -488,69 +452,47 @@ export default function RemoteConnect() {
       {/* ───────── Confirmation Modal ───────── */}
       {showModal && (
         <div
-          style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', zIndex: 9999,
-          }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
           onClick={() => setShowModal(false)}
         >
           <div
-            style={{
-              background: '#FFFFFF', borderRadius: 16, padding: 32, maxWidth: 480, width: '90%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            }}
+            className="bg-white rounded-2xl p-8 max-w-[480px] w-[90%] shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
             onClick={e => e.stopPropagation()}
           >
-            <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F0FFF4', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+            <div className="text-center mb-5">
+              <div className="w-12 h-12 rounded-full bg-[#F0FFF4] inline-flex items-center justify-center mb-3">
                 <span className="text-2xl">&#x2713;</span>
               </div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>Session Created</h3>
-              <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 6 }}>
+              <h3 className="text-lg font-bold text-navy m-0">Session Created</h3>
+              <p className="text-[13px] text-[#6B7F96] mt-1.5">
                 The support session has been created. Share the connection link with the customer.
               </p>
             </div>
 
-            <div style={{
-              background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 8, padding: 12, marginBottom: 16,
-              display: 'flex', alignItems: 'center', gap: 8,
-            }}>
+            <div className="bg-[#F9FAFB] border border-[#D1D5DB] rounded-lg p-3 mb-4 flex items-center gap-2">
               <input
                 readOnly
                 value={createdUrl}
-                style={{
-                  flex: 1, border: 'none', background: 'transparent', fontSize: 12, color: NAVY,
-                  outline: 'none', fontFamily: 'monospace',
-                }}
+                className="flex-1 border-none bg-transparent text-xs text-navy outline-none font-mono"
               />
               <button
                 onClick={handleCopyUrl}
-                style={{
-                  padding: '6px 14px', background: copied ? '#059669' : NAVY, border: 'none', borderRadius: 6,
-                  color: '#FFFFFF', fontSize: 11, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
-                  transition: 'background 0.2s',
-                }}
+                className={`px-3.5 py-1.5 border-none rounded-md text-[11px] font-bold text-white cursor-pointer whitespace-nowrap transition-colors ${copied ? 'bg-[#059669]' : 'bg-navy'}`}
               >
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
 
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div className="flex gap-2.5">
               <button
                 onClick={() => window.open(createdUrl, '_blank', 'noopener')}
-                style={{
-                  flex: 1, padding: '10px 16px', background: GOLD, border: 'none', borderRadius: 8,
-                  color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                }}
+                className="flex-1 py-2.5 px-4 bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer"
               >
                 Open Room
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                style={{
-                  flex: 1, padding: '10px 16px', background: '#F3F4F6', border: `1px solid ${BORDER}`, borderRadius: 8,
-                  color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                }}
+                className="flex-1 py-2.5 px-4 bg-[#F3F4F6] border border-[#E2D9C8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer"
               >
                 Close
               </button>

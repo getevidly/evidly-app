@@ -31,37 +31,13 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '8px 12px',
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 8,
-  fontSize: 14,
-  color: BODY_TEXT,
-  background: '#fff',
-  outline: 'none',
-};
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 13,
-  fontWeight: 600,
-  color: BODY_TEXT,
-  marginBottom: 4,
-};
-
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-  marginBottom: 20,
-};
+const inputClasses = 'w-full px-3 py-2 border border-[#D1D9E6] rounded-lg text-sm text-[#0B1628] bg-white outline-none';
+const labelClasses = 'block text-[13px] font-semibold text-[#0B1628] mb-1';
+const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 function SectionTitle({ icon: Icon, title }: { icon: any; title: string }) {
   return (
-    <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>
+    <h2 className="flex items-center gap-2 text-base font-bold text-[#0B1628] mb-4 mt-0">
       <Icon size={18} color={NAVY} /> {title}
     </h2>
   );
@@ -141,10 +117,10 @@ export function CompanyProfilePage() {
     return (
       <div style={{ ...FONT }}>
         {[1, 2, 3].map(i => (
-          <div key={i} style={{ ...cardStyle, height: 180 }}>
-            <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 200, marginBottom: 16 }} />
-            <div style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '60%', marginBottom: 10 }} />
-            <div style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '40%' }} />
+          <div key={i} className={`${cardClasses} h-[180px]`}>
+            <div className="bg-[#EEF1F7] rounded-lg h-5 w-[200px] mb-4" />
+            <div className="bg-[#EEF1F7] rounded-lg h-3.5 w-3/5 mb-2.5" />
+            <div className="bg-[#EEF1F7] rounded-lg h-3.5 w-2/5" />
           </div>
         ))}
       </div>
@@ -154,31 +130,31 @@ export function CompanyProfilePage() {
   return (
     <div style={{ ...FONT }}>
       {/* Company Information */}
-      <div style={cardStyle}>
+      <div className={cardClasses}>
         <SectionTitle icon={Building2} title="Company Information" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4">
           <div>
-            <label style={labelStyle}>Company Name</label>
+            <label className={labelClasses}>Company Name</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.companyName}
               onChange={e => handleChange('companyName', e.target.value)}
               placeholder="HoodOps"
             />
           </div>
           <div>
-            <label style={labelStyle}>Phone</label>
+            <label className={labelClasses}>Phone</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.phone}
               onChange={e => handleChange('phone', e.target.value)}
               placeholder="(555) 123-4567"
             />
           </div>
           <div>
-            <label style={labelStyle}>Email</label>
+            <label className={labelClasses}>Email</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               type="email"
               value={form.email}
               onChange={e => handleChange('email', e.target.value)}
@@ -186,9 +162,9 @@ export function CompanyProfilePage() {
             />
           </div>
           <div>
-            <label style={labelStyle}>Website</label>
+            <label className={labelClasses}>Website</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.website}
               onChange={e => handleChange('website', e.target.value)}
               placeholder="https://hoodops.com"
@@ -196,30 +172,30 @@ export function CompanyProfilePage() {
           </div>
         </div>
 
-        <div style={{ marginTop: 16 }}>
-          <label style={labelStyle}>Street Address</label>
+        <div className="mt-4">
+          <label className={labelClasses}>Street Address</label>
           <input
-            style={inputStyle}
+            className={inputClasses}
             value={form.street}
             onChange={e => handleChange('street', e.target.value)}
             placeholder="123 Main St"
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16, marginTop: 12 }}>
+        <div className="grid grid-cols-[2fr_1fr_1fr] gap-4 mt-3">
           <div>
-            <label style={labelStyle}>City</label>
+            <label className={labelClasses}>City</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.city}
               onChange={e => handleChange('city', e.target.value)}
               placeholder="Fresno"
             />
           </div>
           <div>
-            <label style={labelStyle}>State</label>
+            <label className={labelClasses}>State</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.state}
               onChange={e => handleChange('state', e.target.value)}
               placeholder="CA"
@@ -227,9 +203,9 @@ export function CompanyProfilePage() {
             />
           </div>
           <div>
-            <label style={labelStyle}>ZIP</label>
+            <label className={labelClasses}>ZIP</label>
             <input
-              style={inputStyle}
+              className={inputClasses}
               value={form.zip}
               onChange={e => handleChange('zip', e.target.value)}
               placeholder="93721"
@@ -239,13 +215,13 @@ export function CompanyProfilePage() {
       </div>
 
       {/* Business Settings */}
-      <div style={cardStyle}>
+      <div className={cardClasses}>
         <SectionTitle icon={Globe} title="Business Settings" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4">
           <div>
-            <label style={labelStyle}>Timezone</label>
+            <label className={labelClasses}>Timezone</label>
             <select
-              style={inputStyle}
+              className={inputClasses}
               value={form.timezone}
               onChange={e => handleChange('timezone', e.target.value)}
             >
@@ -255,9 +231,9 @@ export function CompanyProfilePage() {
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Date Format</label>
+            <label className={labelClasses}>Date Format</label>
             <select
-              style={inputStyle}
+              className={inputClasses}
               value={form.dateFormat}
               onChange={e => handleChange('dateFormat', e.target.value)}
             >
@@ -267,9 +243,9 @@ export function CompanyProfilePage() {
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Currency</label>
+            <label className={labelClasses}>Currency</label>
             <select
-              style={inputStyle}
+              className={inputClasses}
               value={form.currency}
               onChange={e => handleChange('currency', e.target.value)}
             >
@@ -279,9 +255,9 @@ export function CompanyProfilePage() {
             </select>
           </div>
           <div>
-            <label style={labelStyle}>Fiscal Year Start</label>
+            <label className={labelClasses}>Fiscal Year Start</label>
             <select
-              style={inputStyle}
+              className={inputClasses}
               value={form.fiscalYearStart}
               onChange={e => handleChange('fiscalYearStart', Number(e.target.value))}
             >
@@ -294,42 +270,35 @@ export function CompanyProfilePage() {
       </div>
 
       {/* Branding */}
-      <div style={cardStyle}>
+      <div className={cardClasses}>
         <SectionTitle icon={Palette} title="Branding" />
 
         {/* Logo upload */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={labelStyle}>Company Logo</label>
+        <div className="mb-5">
+          <label className={labelClasses}>Company Logo</label>
           <div
-            style={{
-              border: `2px dashed ${CARD_BORDER}`,
-              borderRadius: 10,
-              padding: '32px 20px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: PANEL_BG,
-            }}
+            className="border-2 border-dashed border-[#D1D9E6] rounded-[10px] py-8 px-5 text-center cursor-pointer bg-[#EEF1F7]"
             onClick={() => alert('Logo upload coming soon')}
           >
-            <Upload size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
-            <p style={{ color: MUTED, fontSize: 13, margin: 0 }}>
+            <Upload size={28} className="text-[#6B7F96] mx-auto mb-2" />
+            <p className="text-[#3D5068] text-[13px] m-0">
               Click to upload logo (PNG, SVG, max 2MB)
             </p>
           </div>
         </div>
 
         {/* Primary color */}
-        <div style={{ marginBottom: 16 }}>
-          <label style={labelStyle}>Primary Color</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="mb-4">
+          <label className={labelClasses}>Primary Color</label>
+          <div className="flex items-center gap-3">
             <input
               type="color"
               value={form.primaryColor}
               onChange={e => handleChange('primaryColor', e.target.value)}
-              style={{ width: 40, height: 40, border: `1px solid ${CARD_BORDER}`, borderRadius: 8, cursor: 'pointer', padding: 2 }}
+              className="w-10 h-10 border border-[#D1D9E6] rounded-lg cursor-pointer p-0.5"
             />
             <input
-              style={{ ...inputStyle, width: 140 }}
+              className={`${inputClasses} !w-[140px]`}
               value={form.primaryColor}
               onChange={e => handleChange('primaryColor', e.target.value)}
               placeholder="#1E2D4D"
@@ -338,20 +307,20 @@ export function CompanyProfilePage() {
         </div>
 
         {/* Certificate text */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label style={labelStyle}>Certificate Header Text</label>
+            <label className={labelClasses}>Certificate Header Text</label>
             <textarea
-              style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+              className={`${inputClasses} min-h-[80px] resize-y`}
               value={form.certHeaderText}
               onChange={e => handleChange('certHeaderText', e.target.value)}
               placeholder="Certificate of Compliance"
             />
           </div>
           <div>
-            <label style={labelStyle}>Certificate Footer Text</label>
+            <label className={labelClasses}>Certificate Footer Text</label>
             <textarea
-              style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+              className={`${inputClasses} min-h-[80px] resize-y`}
               value={form.certFooterText}
               onChange={e => handleChange('certFooterText', e.target.value)}
               placeholder="This document certifies that..."
@@ -361,24 +330,11 @@ export function CompanyProfilePage() {
       </div>
 
       {/* Save button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div className="flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 24px',
-            borderRadius: 8,
-            border: 'none',
-            background: NAVY,
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: saving ? 'not-allowed' : 'pointer',
-            opacity: saving ? 0.7 : 1,
-          }}
+          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Changes'}

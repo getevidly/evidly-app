@@ -15,11 +15,6 @@ import {
   TrendingUp, Clock, Users, Mail, AlertTriangle, Send, Calendar,
 } from 'lucide-react';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const BORDER = '#E2D9C8';
-
 /* ── Demo data ───────────────────────────────────────────── */
 
 interface CohortRow {
@@ -310,8 +305,8 @@ export default function TrialHealth() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A] mb-3" />
-        <p className="text-sm" style={{ color: TEXT_SEC }}>Loading...</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold mb-3" />
+        <p className="text-sm text-[#6B7F96]">Loading...</p>
       </div>
     );
   }
@@ -321,12 +316,12 @@ export default function TrialHealth() {
   const maxFunnel = funnel.length > 0 ? funnel[0].count : 1;
 
   return (
-    <div className="p-8 max-w-5xl" style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
+    <div className="p-8 max-w-5xl font-[DM_Sans,Inter,sans-serif]">
       <AdminBreadcrumb crumbs={[{ label: 'Admin', path: '/admin' }, { label: 'Trial Health' }]} />
 
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: NAVY, margin: 0, fontFamily: 'Outfit, sans-serif' }}>Trial Health</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>
+      <div className="mb-6">
+        <h1 className="text-[22px] font-bold text-navy m-0 font-[Outfit,sans-serif]">Trial Health</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1 mb-0 font-[Inter,sans-serif]">
           Cohort retention, email engagement, and expiring trial management.
         </p>
       </div>
@@ -340,63 +335,63 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section A: Cohort Timeline ─────────────────────── */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-navy/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <Users className="w-5 h-5" style={{ color: NAVY }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Cohort Timeline</h2>
+          <Users className="w-5 h-5 text-navy" />
+          <h2 className="text-base font-bold text-navy m-0">Cohort Timeline</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm" style={{ minWidth: 640 }}>
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Week</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Signups</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Day 7 Active</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Day 14 Active</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Converted</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Churned</th>
+              <tr className="border-b border-[#E2D9C8]">
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Week</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Signups</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Day 7 Active</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Day 14 Active</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Converted</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Churned</th>
               </tr>
             </thead>
             <tbody>
               {cohorts.map((row) => (
-                <tr key={row.week} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                  <td className="px-3 py-2.5 font-medium" style={{ color: NAVY }}>{row.week}</td>
-                  <td className="px-3 py-2.5 text-center" style={{ color: NAVY, fontWeight: 600 }}>{row.signups}</td>
+                <tr key={row.week} className="border-b border-[#F3F4F6]">
+                  <td className="px-3 py-2.5 font-medium text-navy">{row.week}</td>
+                  <td className="px-3 py-2.5 text-center text-navy font-semibold">{row.signups}</td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: retentionBg(row.day7, row.signups) }}>
                     {row.day7 !== null ? (
                       <div>
-                        <span style={{ fontWeight: 600, color: NAVY }}>{row.day7}</span>
-                        <span className="block text-xs" style={{ color: TEXT_SEC }}>({pct(row.day7, row.signups)})</span>
+                        <span className="font-semibold text-navy">{row.day7}</span>
+                        <span className="block text-xs text-[#6B7F96]">({pct(row.day7, row.signups)})</span>
                       </div>
                     ) : (
-                      <span style={{ color: '#9CA3AF' }}>&mdash;</span>
+                      <span className="text-[#9CA3AF]">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: retentionBg(row.day14, row.signups) }}>
                     {row.day14 !== null ? (
                       <div>
-                        <span style={{ fontWeight: 600, color: NAVY }}>{row.day14}</span>
-                        <span className="block text-xs" style={{ color: TEXT_SEC }}>({pct(row.day14, row.signups)})</span>
+                        <span className="font-semibold text-navy">{row.day14}</span>
+                        <span className="block text-xs text-[#6B7F96]">({pct(row.day14, row.signups)})</span>
                       </div>
                     ) : (
-                      <span style={{ color: '#9CA3AF' }}>&mdash;</span>
+                      <span className="text-[#9CA3AF]">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: row.converted !== null ? '#D1FAE5' : 'transparent' }}>
                     {row.converted !== null ? (
                       <div>
-                        <span style={{ fontWeight: 600, color: '#065F46' }}>{row.converted}</span>
-                        <span className="block text-xs" style={{ color: '#047857' }}>({pct(row.converted, row.signups)})</span>
+                        <span className="font-semibold text-[#065F46]">{row.converted}</span>
+                        <span className="block text-xs text-[#047857]">({pct(row.converted, row.signups)})</span>
                       </div>
                     ) : (
-                      <span style={{ color: '#9CA3AF' }}>&mdash;</span>
+                      <span className="text-[#9CA3AF]">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: row.churned !== null ? '#F3F4F6' : 'transparent' }}>
                     {row.churned !== null ? (
-                      <span style={{ fontWeight: 600, color: '#6B7280' }}>{row.churned}</span>
+                      <span className="font-semibold text-[#6B7280]">{row.churned}</span>
                     ) : (
-                      <span style={{ color: '#9CA3AF' }}>&mdash;</span>
+                      <span className="text-[#9CA3AF]">&mdash;</span>
                     )}
                   </td>
                 </tr>
@@ -407,10 +402,10 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section B: Email Funnel ────────────────────────── */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-navy/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <Mail className="w-5 h-5" style={{ color: NAVY }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Email Funnel</h2>
+          <Mail className="w-5 h-5 text-navy" />
+          <h2 className="text-base font-bold text-navy m-0">Email Funnel</h2>
         </div>
         <div className="space-y-1">
           {funnel.map((step, i) => {
@@ -424,14 +419,14 @@ export default function TrialHealth() {
                 {/* Drop-off annotation */}
                 {dropPct !== null && (
                   <div className="flex items-center gap-2 py-1 pl-2">
-                    <span className="text-xs" style={{ color: TEXT_SEC }}>
+                    <span className="text-xs text-[#6B7F96]">
                       &darr; {dropPct}% drop
                     </span>
                   </div>
                 )}
                 {/* Bar */}
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium w-24 shrink-0" style={{ color: NAVY }}>{step.label}</span>
+                  <span className="text-sm font-medium w-24 shrink-0 text-navy">{step.label}</span>
                   <div className="flex-1 relative">
                     <div
                       className="rounded-md h-9 flex items-center justify-end px-3 transition-all"
@@ -443,7 +438,7 @@ export default function TrialHealth() {
                       <span className="text-xs font-bold text-white">{step.count.toLocaleString()}</span>
                     </div>
                   </div>
-                  <span className="text-xs font-medium w-12 text-right shrink-0" style={{ color: TEXT_SEC }}>
+                  <span className="text-xs font-medium w-12 text-right shrink-0 text-[#6B7F96]">
                     {ratePct !== null ? `${ratePct}%` : ''}
                   </span>
                 </div>
@@ -454,34 +449,34 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section C: Expiring Trials ─────────────────────── */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-navy/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-5 h-5" style={{ color: NAVY }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Expiring Trials &mdash; Next 7 Days</h2>
+          <AlertTriangle className="w-5 h-5 text-navy" />
+          <h2 className="text-base font-bold text-navy m-0">Expiring Trials &mdash; Next 7 Days</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm" style={{ minWidth: 800 }}>
+          <table className="w-full text-sm min-w-[800px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Org Name</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Owner Email</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Trial Start</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Days Left</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Last Login</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Emails Sent</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_SEC }}>Action</th>
+              <tr className="border-b border-[#E2D9C8]">
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Org Name</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Owner Email</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Trial Start</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Days Left</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Last Login</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Emails Sent</th>
+                <th className="text-right px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Action</th>
               </tr>
             </thead>
             <tbody>
               {expiring.map((trial) => {
                 const badge = daysLeftBadge(trial.daysLeft);
                 return (
-                  <tr key={trial.email} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                    <td className="px-3 py-2.5 font-semibold" style={{ color: NAVY }}>{trial.org}</td>
-                    <td className="px-3 py-2.5" style={{ color: TEXT_SEC }}>{trial.email}</td>
-                    <td className="px-3 py-2.5" style={{ color: TEXT_SEC }}>
+                  <tr key={trial.email} className="border-b border-[#F3F4F6]">
+                    <td className="px-3 py-2.5 font-semibold text-navy">{trial.org}</td>
+                    <td className="px-3 py-2.5 text-[#6B7F96]">{trial.email}</td>
+                    <td className="px-3 py-2.5 text-[#6B7F96]">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" style={{ color: TEXT_SEC }} />
+                        <Calendar className="w-3.5 h-3.5 text-[#6B7F96]" />
                         {formatDate(trial.trialStart)}
                       </div>
                     </td>
@@ -493,27 +488,25 @@ export default function TrialHealth() {
                         {trial.daysLeft}d
                       </span>
                     </td>
-                    <td className="px-3 py-2.5" style={{ color: TEXT_SEC }}>
+                    <td className="px-3 py-2.5 text-[#6B7F96]">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" style={{ color: TEXT_SEC }} />
+                        <Clock className="w-3.5 h-3.5 text-[#6B7F96]" />
                         {trial.lastLogin}
                       </div>
                     </td>
-                    <td className="px-3 py-2.5 text-center" style={{ color: TEXT_SEC }}>{trial.emailsSent}</td>
+                    <td className="px-3 py-2.5 text-center text-[#6B7F96]">{trial.emailsSent}</td>
                     <td className="px-3 py-2.5 text-right">
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={() => handleSendReminder(trial)}
-                          className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1"
-                          style={{ backgroundColor: NAVY }}
+                          className="px-3 py-1.5 rounded-md text-xs font-medium text-white bg-navy flex items-center gap-1"
                         >
                           <Send className="w-3 h-3" />
                           Send Reminder
                         </button>
                         <button
                           onClick={() => handleExtend(trial)}
-                          className="px-3 py-1.5 rounded-md text-xs font-medium border flex items-center gap-1"
-                          style={{ color: NAVY, borderColor: BORDER }}
+                          className="px-3 py-1.5 rounded-md text-xs font-medium text-navy border border-[#E2D9C8] flex items-center gap-1"
                         >
                           <TrendingUp className="w-3 h-3" />
                           Extend 7d
@@ -525,7 +518,7 @@ export default function TrialHealth() {
               })}
               {expiring.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center" style={{ color: TEXT_SEC }}>
+                  <td colSpan={7} className="px-4 py-8 text-center text-[#6B7F96]">
                     No trials expiring in the next 7 days.
                   </td>
                 </tr>

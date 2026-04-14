@@ -14,13 +14,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { FeatureGate } from '../../components/feature-flags/FeatureGate';
 import { KpiTile } from '../../components/admin/KpiTile';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
-// ── Types ──────────────────────────────────────────────────────────
+// -- Types --
 
 interface Prospect {
   id: string;
@@ -59,7 +53,7 @@ interface Touch {
   created_at: string;
 }
 
-// ── Constants ──────────────────────────────────────────────────────
+// -- Constants --
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
   new:              { label: 'New',              bg: '#EFF6FF', color: '#2563EB' },
@@ -92,23 +86,13 @@ const STATUS_FILTER = [
   'contacted', 'interested', 'converted', 'not_interested', 'do_not_contact',
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────
+// -- Helpers --
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
-const selectStyle: React.CSSProperties = {
-  padding: '6px 10px', background: '#F9FAFB', border: '1px solid #D1D5DB',
-  borderRadius: 6, color: NAVY, fontSize: 12, cursor: 'pointer',
-};
-
-const btnStyle = (bg: string, color: string): React.CSSProperties => ({
-  padding: '4px 10px', background: bg, color, border: 'none',
-  borderRadius: 5, fontSize: 10, fontWeight: 700, cursor: 'pointer',
-});
-
-// ── Component ──────────────────────────────────────────────────────
+// -- Component --
 
 export default function ViolationOutreach() {
   useDemoGuard();
@@ -152,7 +136,7 @@ export default function ViolationOutreach() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // ── Derived data ──
+  // -- Derived data --
 
   const today = new Date().toISOString().split('T')[0];
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -179,7 +163,7 @@ export default function ViolationOutreach() {
     p.next_followup_at && p.next_followup_at <= new Date().toISOString()
   );
 
-  // ── Actions ──
+  // -- Actions --
 
   const generateOutreach = async (prospectId: string, touchType: string) => {
     setGenerating(`${prospectId}-${touchType}`);
@@ -218,13 +202,13 @@ export default function ViolationOutreach() {
     navigator.clipboard?.writeText(text).catch(() => {});
   };
 
-  // ── Render ──
+  // -- Render --
 
   if (error) {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -234,19 +218,19 @@ export default function ViolationOutreach() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Violation Outreach' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Violation Outreach</h1>
-        <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Violation Outreach</h1>
+        <p className="mt-1 text-sm text-gray-400">
           Identify prospects from health inspection violations and generate personalized outreach.
         </p>
       </div>
 
-      {/* ── KPIs ── */}
+      {/* -- KPIs -- */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+        <div className="grid grid-cols-5 gap-3">
           {Array.from({ length: 5 }).map((_, i) => <div key={i}><Skeleton h={80} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+        <div className="grid grid-cols-5 gap-3">
           <KpiTile label="New Today" value={newToday} valueColor="navy" />
           <KpiTile label="Queued" value={queued} valueColor="warning" />
           <KpiTile label="Letters This Week" value={lettersSentWeek} valueColor="gold" />
@@ -255,72 +239,75 @@ export default function ViolationOutreach() {
         </div>
       )}
 
-      {/* ── Tabs ── */}
-      <div style={{ display: 'flex', gap: 2, background: '#F3F4F6', borderRadius: 8, padding: 3, width: 'fit-content' }}>
+      {/* -- Tabs -- */}
+      <div className="flex gap-0.5 bg-gray-100 rounded-lg p-[3px] w-fit">
         {([
           { key: 'prospects' as const, label: `Prospect Queue (${filtered.length})` },
           { key: 'followups' as const, label: `Follow-ups Due (${followups.length})` },
         ]).map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            style={{
-              padding: '6px 16px', borderRadius: 6, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              background: tab === t.key ? '#FFFFFF' : 'transparent', color: tab === t.key ? NAVY : TEXT_MUTED,
-              boxShadow: tab === t.key ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-            }}>
+            className={`px-4 py-1.5 rounded-md border-none text-xs font-semibold cursor-pointer ${
+              tab === t.key
+                ? 'bg-white text-navy shadow-sm'
+                : 'bg-transparent text-gray-400 shadow-none'
+            }`}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* ── Filters (prospects tab only) ── */}
+      {/* -- Filters (prospects tab only) -- */}
       {tab === 'prospects' && (
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          <select value={countyFilter} onChange={e => setCountyFilter(e.target.value)} style={selectStyle}>
+        <div className="flex gap-2.5 flex-wrap items-center">
+          <select value={countyFilter} onChange={e => setCountyFilter(e.target.value)}
+            className="px-2.5 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
             {COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectStyle}>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+            className="px-2.5 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
             {STATUS_FILTER.map(s => (
               <option key={s} value={s}>{s === 'All Statuses' ? s : (STATUS_LABELS[s]?.label ?? s)}</option>
             ))}
           </select>
-          <select value={offeringFilter} onChange={e => setOfferingFilter(e.target.value)} style={selectStyle}>
+          <select value={offeringFilter} onChange={e => setOfferingFilter(e.target.value)}
+            className="px-2.5 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
             <option value="all">All Offerings</option>
             <option value="evidly">EvidLY</option>
             <option value="cpp_hood_cleaning">CPP Hood Cleaning</option>
             <option value="filta_fryer">Filta Fryer</option>
           </select>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 11, color: TEXT_SEC }}>Min Relevance:</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] text-[#6B7F96]">Min Relevance:</span>
             <input type="range" min={0} max={100} value={minRelevance}
               onChange={e => setMinRelevance(Number(e.target.value))}
-              style={{ width: 80 }} />
-            <span style={{ fontSize: 11, color: NAVY, fontWeight: 600 }}>{minRelevance}</span>
+              className="w-20" />
+            <span className="text-[11px] text-navy font-semibold">{minRelevance}</span>
           </div>
         </div>
       )}
 
-      {/* ── Prospect Queue Table ── */}
+      {/* -- Prospect Queue Table -- */}
       {tab === 'prospects' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {loading ? (
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-              <div style={{ fontSize: 40, marginBottom: 16 }}>{'🔍'}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>No prospects found</div>
-              <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>
+            <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+              <div className="text-[40px] mb-4">{'🔍'}</div>
+              <div className="text-base font-bold text-navy mb-2">No prospects found</div>
+              <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">
                 Run the violation crawl to populate prospects, or adjust your filters.
               </div>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1000 }}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-xs min-w-[1000px]">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <tr className="border-b border-[#E2D9C8]">
                     {['Business', 'City / County', 'Violations', 'Crit', 'Relevance', 'Offerings', 'Status', 'Last Touch', 'Next Follow-up', 'Actions'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                      <th key={h} className="text-left px-3 py-2.5 text-[#6B7F96] font-semibold text-[10px] uppercase whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -328,79 +315,85 @@ export default function ViolationOutreach() {
                   {filtered.map(p => {
                     const sl = STATUS_LABELS[p.outreach_status] ?? STATUS_LABELS.new;
                     return (
-                      <tr key={p.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={{ padding: '10px 12px', color: NAVY, fontWeight: 600, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <tr key={p.id} className="border-b border-[#E2D9C8] hover:bg-gray-50">
+                        <td className="px-3 py-2.5 text-navy font-semibold max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
                           {p.business_name}
                         </td>
-                        <td style={{ padding: '10px 12px', color: TEXT_SEC, whiteSpace: 'nowrap' }}>
+                        <td className="px-3 py-2.5 text-[#6B7F96] whitespace-nowrap">
                           {p.city ?? '—'}{p.county ? `, ${p.county}` : ''}
                         </td>
-                        <td style={{ padding: '10px 12px', color: NAVY, fontWeight: 600, textAlign: 'center' }}>{p.violation_count}</td>
-                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                          <span style={{ color: p.critical_violation_count > 0 ? '#DC2626' : TEXT_SEC, fontWeight: p.critical_violation_count > 0 ? 700 : 400 }}>
+                        <td className="px-3 py-2.5 text-navy font-semibold text-center">{p.violation_count}</td>
+                        <td className="px-3 py-2.5 text-center">
+                          <span className={`${p.critical_violation_count > 0 ? 'text-[#DC2626] font-bold' : 'text-[#6B7F96] font-normal'}`}>
                             {p.critical_violation_count}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                          <span style={{
-                            display: 'inline-block', minWidth: 32, padding: '2px 6px', borderRadius: 4,
-                            fontSize: 10, fontWeight: 700, textAlign: 'center',
-                            background: (p.relevance_score ?? 0) >= 70 ? '#DCFCE7' : (p.relevance_score ?? 0) >= 40 ? '#FFFBEB' : '#F3F4F6',
-                            color: (p.relevance_score ?? 0) >= 70 ? '#166534' : (p.relevance_score ?? 0) >= 40 ? '#92400E' : '#6B7280',
-                          }}>
+                        <td className="px-3 py-2.5 text-center">
+                          <span className={`inline-block min-w-[32px] px-1.5 py-0.5 rounded text-[10px] font-bold text-center ${
+                            (p.relevance_score ?? 0) >= 70
+                              ? 'bg-[#DCFCE7] text-[#166534]'
+                              : (p.relevance_score ?? 0) >= 40
+                                ? 'bg-[#FFFBEB] text-[#92400E]'
+                                : 'bg-gray-100 text-gray-500'
+                          }`}>
                             {p.relevance_score ?? 0}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px' }}>
-                          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        <td className="px-3 py-2.5">
+                          <div className="flex gap-1 flex-wrap">
                             {(p.relevant_offerings ?? []).map(o => (
-                              <span key={o} style={{ fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 3, background: '#F0F4FF', color: '#3B82F6' }}>
+                              <span key={o} className="text-[9px] font-semibold px-1.5 py-[1px] rounded-sm bg-[#F0F4FF] text-[#3B82F6]">
                                 {OFFERING_LABELS[o] ?? o}
                               </span>
                             ))}
                           </div>
                         </td>
-                        <td style={{ padding: '10px 12px' }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sl.bg, color: sl.color }}>
+                        <td className="px-3 py-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-[10px]" style={{ background: sl.bg, color: sl.color }}>
                             {sl.label}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px', color: TEXT_SEC, fontSize: 11, whiteSpace: 'nowrap' }}>
+                        <td className="px-3 py-2.5 text-[#6B7F96] text-[11px] whitespace-nowrap">
                           {p.last_outreach_at ? new Date(p.last_outreach_at).toLocaleDateString() : '—'}
                         </td>
-                        <td style={{ padding: '10px 12px', color: TEXT_SEC, fontSize: 11, whiteSpace: 'nowrap' }}>
+                        <td className="px-3 py-2.5 text-[#6B7F96] text-[11px] whitespace-nowrap">
                           {p.next_followup_at ? new Date(p.next_followup_at).toLocaleDateString() : '—'}
                         </td>
-                        <td style={{ padding: '10px 12px' }}>
-                          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        <td className="px-3 py-2.5">
+                          <div className="flex gap-1 flex-wrap">
                             <button
                               onClick={() => generateOutreach(p.id, 'letter')}
                               disabled={generating === `${p.id}-letter`}
-                              style={btnStyle(generating === `${p.id}-letter` ? '#E5E7EB' : NAVY, '#fff')}>
+                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
+                                generating === `${p.id}-letter` ? 'bg-gray-200' : 'bg-navy'
+                              }`}>
                               {generating === `${p.id}-letter` ? '...' : 'Letter'}
                             </button>
                             <button
                               onClick={() => generateOutreach(p.id, 'call')}
                               disabled={generating === `${p.id}-call`}
-                              style={btnStyle(generating === `${p.id}-call` ? '#E5E7EB' : GOLD, '#fff')}>
+                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
+                                generating === `${p.id}-call` ? 'bg-gray-200' : 'bg-gold'
+                              }`}>
                               {generating === `${p.id}-call` ? '...' : 'Call'}
                             </button>
                             <button
                               onClick={() => generateOutreach(p.id, 'email')}
                               disabled={generating === `${p.id}-email`}
-                              style={btnStyle(generating === `${p.id}-email` ? '#E5E7EB' : '#059669', '#fff')}>
+                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
+                                generating === `${p.id}-email` ? 'bg-gray-200' : 'bg-[#059669]'
+                              }`}>
                               {generating === `${p.id}-email` ? '...' : 'Email'}
                             </button>
-                            <button onClick={() => viewTouchHistory(p)} style={btnStyle('transparent', GOLD)} title="View touch history">
+                            <button onClick={() => viewTouchHistory(p)}
+                              className="px-2.5 py-1 bg-transparent border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-gold" title="View touch history">
                               {'📋'}
                             </button>
                             {!['do_not_contact', 'converted'].includes(p.outreach_status) && (
                               <select
                                 value=""
                                 onChange={e => { if (e.target.value) updateStatus(p.id, e.target.value); }}
-                                style={{ ...selectStyle, padding: '2px 4px', fontSize: 10, width: 28 }}
+                                className="px-1 py-0.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-[10px] w-7 cursor-pointer"
                                 title="Change status"
                               >
                                 <option value="">{'⋯'}</option>
@@ -423,21 +416,21 @@ export default function ViolationOutreach() {
         </div>
       )}
 
-      {/* ── Follow-ups Due ── */}
+      {/* -- Follow-ups Due -- */}
       {tab === 'followups' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {followups.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-              <div style={{ fontSize: 40, marginBottom: 16 }}>{'✅'}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>All caught up</div>
-              <div style={{ fontSize: 13, color: TEXT_SEC }}>No follow-ups are due right now.</div>
+            <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+              <div className="text-[40px] mb-4">{'✅'}</div>
+              <div className="text-base font-bold text-navy mb-2">All caught up</div>
+              <div className="text-[13px] text-[#6B7F96]">No follow-ups are due right now.</div>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <table className="w-full border-collapse text-xs">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Business', 'City / County', 'Follow-up Due', 'Outreach Count', 'Last Touch', 'Status', 'Actions'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                    <th key={h} className="text-left px-3 py-2.5 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -445,28 +438,29 @@ export default function ViolationOutreach() {
                 {followups.map(p => {
                   const sl = STATUS_LABELS[p.outreach_status] ?? STATUS_LABELS.new;
                   return (
-                    <tr key={p.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                      <td style={{ padding: '10px 12px', color: NAVY, fontWeight: 600 }}>{p.business_name}</td>
-                      <td style={{ padding: '10px 12px', color: TEXT_SEC }}>{p.city ?? '—'}{p.county ? `, ${p.county}` : ''}</td>
-                      <td style={{ padding: '10px 12px', color: '#DC2626', fontWeight: 600, fontSize: 11 }}>
+                    <tr key={p.id} className="border-b border-[#E2D9C8] hover:bg-gray-50">
+                      <td className="px-3 py-2.5 text-navy font-semibold">{p.business_name}</td>
+                      <td className="px-3 py-2.5 text-[#6B7F96]">{p.city ?? '—'}{p.county ? `, ${p.county}` : ''}</td>
+                      <td className="px-3 py-2.5 text-[#DC2626] font-semibold text-[11px]">
                         {p.next_followup_at ? new Date(p.next_followup_at).toLocaleDateString() : '—'}
                       </td>
-                      <td style={{ padding: '10px 12px', color: NAVY, textAlign: 'center' }}>{p.outreach_count}</td>
-                      <td style={{ padding: '10px 12px', color: TEXT_SEC, fontSize: 11 }}>
+                      <td className="px-3 py-2.5 text-navy text-center">{p.outreach_count}</td>
+                      <td className="px-3 py-2.5 text-[#6B7F96] text-[11px]">
                         {p.last_outreach_at ? new Date(p.last_outreach_at).toLocaleDateString() : '—'}
                       </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sl.bg, color: sl.color }}>
+                      <td className="px-3 py-2.5">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[10px]" style={{ background: sl.bg, color: sl.color }}>
                           {sl.label}
                         </span>
                       </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <div style={{ display: 'flex', gap: 4 }}>
-                          <button onClick={() => generateOutreach(p.id, 'call')} style={btnStyle(GOLD, '#fff')}>Call Script</button>
-                          <button onClick={() => generateOutreach(p.id, 'email')} style={btnStyle('#059669', '#fff')}>Email</button>
-                          <button onClick={() => viewTouchHistory(p)} style={btnStyle('transparent', GOLD)}>{'📋'}</button>
+                      <td className="px-3 py-2.5">
+                        <div className="flex gap-1">
+                          <button onClick={() => generateOutreach(p.id, 'call')}
+                            className="px-2.5 py-1 bg-gold text-white border-none rounded-[5px] text-[10px] font-bold cursor-pointer">Call Script</button>
+                          <button onClick={() => generateOutreach(p.id, 'email')}
+                            className="px-2.5 py-1 bg-[#059669] text-white border-none rounded-[5px] text-[10px] font-bold cursor-pointer">Email</button>
+                          <button onClick={() => viewTouchHistory(p)}
+                            className="px-2.5 py-1 bg-transparent text-gold border-none rounded-[5px] text-[10px] font-bold cursor-pointer">{'📋'}</button>
                         </div>
                       </td>
                     </tr>
@@ -478,51 +472,37 @@ export default function ViolationOutreach() {
         </div>
       )}
 
-      {/* ── Outreach Content Modal ── */}
+      {/* -- Outreach Content Modal -- */}
       {modalContent && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-        }} onClick={() => setModalContent(null)}>
-          <div style={{
-            background: '#fff', borderRadius: 16, maxWidth: 640, width: '100%',
-            maxHeight: '80vh', overflow: 'hidden', display: 'flex', flexDirection: 'column',
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{
-              padding: '16px 24px', borderBottom: `1px solid ${BORDER}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            }}>
+        <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-6"
+          onClick={() => setModalContent(null)}>
+          <div className="bg-white rounded-2xl max-w-[640px] w-full max-h-[80vh] overflow-hidden flex flex-col"
+            onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-[#E2D9C8] flex items-center justify-between">
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: NAVY }}>{modalContent.title}</div>
-                <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 2 }}>AI-generated outreach content</div>
+                <div className="text-[15px] font-bold text-navy">{modalContent.title}</div>
+                <div className="text-[11px] text-gray-400 mt-0.5">AI-generated outreach content</div>
               </div>
-              <button onClick={() => setModalContent(null)} style={{ background: 'none', border: 'none', fontSize: 20, color: TEXT_MUTED, cursor: 'pointer' }}>
+              <button onClick={() => setModalContent(null)} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">
                 {'✕'}
               </button>
             </div>
-            <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
-              <pre style={{
-                whiteSpace: 'pre-wrap', wordWrap: 'break-word', fontFamily: "'DM Sans', sans-serif",
-                fontSize: 13, lineHeight: 1.7, color: '#1F2937', margin: 0,
-              }}>
+            <div className="p-6 overflow-y-auto flex-1">
+              <pre className="whitespace-pre-wrap break-words font-['DM_Sans',sans-serif] text-[13px] leading-relaxed text-gray-800 m-0">
                 {modalContent.body}
               </pre>
             </div>
-            <div style={{
-              padding: '12px 24px', borderTop: `1px solid ${BORDER}`,
-              display: 'flex', gap: 8, justifyContent: 'flex-end',
-            }}>
+            <div className="px-6 py-3 border-t border-[#E2D9C8] flex gap-2 justify-end">
               <button onClick={() => copyToClipboard(modalContent.body)}
-                style={{ ...btnStyle('#F3F4F6', NAVY), padding: '6px 14px', fontSize: 11 }}>
+                className="px-[14px] py-1.5 bg-gray-100 text-navy border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
                 Copy
               </button>
               <button onClick={() => window.print()}
-                style={{ ...btnStyle('#F3F4F6', NAVY), padding: '6px 14px', fontSize: 11 }}>
+                className="px-[14px] py-1.5 bg-gray-100 text-navy border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
                 Print
               </button>
               <button onClick={() => setModalContent(null)}
-                style={{ ...btnStyle(NAVY, '#fff'), padding: '6px 14px', fontSize: 11 }}>
+                className="px-[14px] py-1.5 bg-navy text-white border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
                 Done
               </button>
             </div>
@@ -530,49 +510,41 @@ export default function ViolationOutreach() {
         </div>
       )}
 
-      {/* ── Touch History Modal ── */}
+      {/* -- Touch History Modal -- */}
       {touchHistory && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-        }} onClick={() => setTouchHistory(null)}>
-          <div style={{
-            background: '#fff', borderRadius: 16, maxWidth: 560, width: '100%',
-            maxHeight: '70vh', overflow: 'hidden', display: 'flex', flexDirection: 'column',
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{
-              padding: '16px 24px', borderBottom: `1px solid ${BORDER}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            }}>
+        <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-6"
+          onClick={() => setTouchHistory(null)}>
+          <div className="bg-white rounded-2xl max-w-[560px] w-full max-h-[70vh] overflow-hidden flex flex-col"
+            onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-[#E2D9C8] flex items-center justify-between">
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: NAVY }}>Touch History</div>
-                <div style={{ fontSize: 12, color: TEXT_SEC, marginTop: 2 }}>{touchHistory.prospectName}</div>
+                <div className="text-[15px] font-bold text-navy">Touch History</div>
+                <div className="text-xs text-[#6B7F96] mt-0.5">{touchHistory.prospectName}</div>
               </div>
-              <button onClick={() => setTouchHistory(null)} style={{ background: 'none', border: 'none', fontSize: 20, color: TEXT_MUTED, cursor: 'pointer' }}>
+              <button onClick={() => setTouchHistory(null)} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">
                 {'✕'}
               </button>
             </div>
-            <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
+            <div className="p-6 overflow-y-auto flex-1">
               {touchHistory.items.length === 0 ? (
-                <p style={{ color: TEXT_MUTED, fontSize: 13, textAlign: 'center', padding: 20 }}>No outreach touches yet.</p>
+                <p className="text-gray-400 text-[13px] text-center p-5">No outreach touches yet.</p>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="flex flex-col gap-3">
                   {touchHistory.items.map(t => (
-                    <div key={t.id} style={{ padding: 12, background: '#F9FAFB', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: NAVY, textTransform: 'capitalize' }}>{t.touch_type}</span>
-                        <span style={{ fontSize: 11, color: TEXT_SEC }}>{new Date(t.created_at).toLocaleDateString()}</span>
+                    <div key={t.id} className="p-3 bg-gray-50 rounded-lg border border-[#E2D9C8]">
+                      <div className="flex justify-between mb-1.5">
+                        <span className="text-xs font-bold text-navy capitalize">{t.touch_type}</span>
+                        <span className="text-[11px] text-[#6B7F96]">{new Date(t.created_at).toLocaleDateString()}</span>
                       </div>
                       {t.outcome && (
-                        <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 3, background: '#EFF6FF', color: '#2563EB', fontWeight: 600 }}>
+                        <span className="text-[10px] px-1.5 py-[1px] rounded-sm bg-[#EFF6FF] text-[#2563EB] font-semibold">
                           {t.outcome}
                         </span>
                       )}
                       {t.body && (
-                        <details style={{ marginTop: 8 }}>
-                          <summary style={{ fontSize: 11, color: GOLD, cursor: 'pointer', fontWeight: 600 }}>View content</summary>
-                          <pre style={{ whiteSpace: 'pre-wrap', fontSize: 11, color: '#374151', marginTop: 6, lineHeight: 1.6 }}>{t.body}</pre>
+                        <details className="mt-2">
+                          <summary className="text-[11px] text-gold cursor-pointer font-semibold">View content</summary>
+                          <pre className="whitespace-pre-wrap text-[11px] text-[#374151] mt-1.5 leading-relaxed">{t.body}</pre>
                         </details>
                       )}
                     </div>
@@ -580,8 +552,9 @@ export default function ViolationOutreach() {
                 </div>
               )}
             </div>
-            <div style={{ padding: '12px 24px', borderTop: `1px solid ${BORDER}`, display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setTouchHistory(null)} style={{ ...btnStyle(NAVY, '#fff'), padding: '6px 14px', fontSize: 11 }}>Close</button>
+            <div className="px-6 py-3 border-t border-[#E2D9C8] flex justify-end">
+              <button onClick={() => setTouchHistory(null)}
+                className="px-[14px] py-1.5 bg-navy text-white border-none rounded-[5px] text-[11px] font-bold cursor-pointer">Close</button>
             </div>
           </div>
         </div>

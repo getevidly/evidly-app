@@ -6,42 +6,18 @@ import {
   CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, NAVY, FONT, PAGE_BG, TEXT_TERTIARY,
 } from '../../components/dashboard/shared/constants';
 
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-  marginBottom: 20,
-};
+const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
       onClick={() => onChange(!checked)}
-      style={{
-        width: 44,
-        height: 24,
-        borderRadius: 12,
-        border: 'none',
-        background: checked ? NAVY : '#d1d5db',
-        position: 'relative',
-        cursor: 'pointer',
-        transition: 'background 0.2s',
-        flexShrink: 0,
-      }}
+      className={`w-[44px] h-6 rounded-xl border-none relative cursor-pointer shrink-0 transition-colors duration-200 ${checked ? 'bg-[#163a5f]' : 'bg-gray-300'}`}
     >
-      <div style={{
-        width: 18,
-        height: 18,
-        borderRadius: '50%',
-        background: '#fff',
-        position: 'absolute',
-        top: 3,
-        left: checked ? 23 : 3,
-        transition: 'left 0.2s',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-      }} />
+      <div
+        className="w-[18px] h-[18px] rounded-full bg-white absolute top-[3px] shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-[left] duration-200"
+        style={{ left: checked ? 23 : 3 }}
+      />
     </button>
   );
 }
@@ -88,56 +64,44 @@ export function ClockRemindersPage() {
 
   if (isLoading) {
     return (
-      <div style={{ ...FONT, background: PAGE_BG, minHeight: '100vh', padding: 24 }}>
-        <div style={{ ...cardStyle, height: 120 }}>
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 200, marginBottom: 16 }} />
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '50%' }} />
+      <div className="bg-[#F4F6FA] min-h-screen p-6" style={{ ...FONT }}>
+        <div className={`${cardClasses} h-[120px]`}>
+          <div className="bg-[#EEF1F7] rounded-lg h-5 w-[200px] mb-4" />
+          <div className="bg-[#EEF1F7] rounded-lg h-3.5 w-1/2" />
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ ...FONT, background: PAGE_BG, minHeight: '100vh', padding: 24 }}>
+    <div className="bg-[#F4F6FA] min-h-screen p-6" style={{ ...FONT }}>
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-6">
         <button
           onClick={() => navigate('/settings')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            background: 'transparent',
-            border: 'none',
-            color: MUTED,
-            fontSize: 13,
-            fontWeight: 500,
-            cursor: 'pointer',
-            padding: 0,
-            marginBottom: 12,
-          }}
+          className="flex items-center gap-1.5 bg-transparent border-none text-[#3D5068] text-[13px] font-medium cursor-pointer p-0 mb-3"
         >
           <ArrowLeft size={16} />
           Back to Settings
         </button>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: NAVY, margin: 0 }}>
+        <h1 className="text-2xl font-bold text-[#163a5f] m-0">
           Clock & Attendance Settings
         </h1>
-        <p style={{ fontSize: 14, color: MUTED, margin: '6px 0 0' }}>
+        <p className="text-sm text-[#3D5068] mt-1.5 mb-0">
           Configure clock in/out reminders and automatic clock-out settings for your team
         </p>
       </div>
 
       {/* Clock-In Reminders */}
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className={cardClasses}>
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2.5">
             <Bell size={20} color={NAVY} />
             <div>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
+              <h2 className="text-base font-bold text-[#0B1628] m-0">
                 Clock-In Reminders
               </h2>
-              <p style={{ fontSize: 13, color: MUTED, margin: '4px 0 0' }}>
+              <p className="text-[13px] text-[#3D5068] mt-1 mb-0">
                 Send reminder notifications before scheduled job start time
               </p>
             </div>
@@ -146,11 +110,11 @@ export function ClockRemindersPage() {
         </div>
 
         {clockInEnabled && (
-          <div style={{ paddingLeft: 30 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: BODY_TEXT, marginBottom: 8 }}>
+          <div className="pl-[30px]">
+            <label className="block text-[13px] font-semibold text-[#0B1628] mb-2">
               Minutes before job start
             </label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="flex items-center gap-4">
               <input
                 type="range"
                 min="5"
@@ -158,11 +122,7 @@ export function ClockRemindersPage() {
                 step="5"
                 value={clockInMinutes}
                 onChange={(e) => setClockInMinutes(Number(e.target.value))}
-                style={{
-                  flex: 1,
-                  accentColor: NAVY,
-                  cursor: 'pointer',
-                }}
+                className="flex-1 cursor-pointer accent-[#163a5f]"
               />
               <input
                 type="number"
@@ -170,20 +130,11 @@ export function ClockRemindersPage() {
                 max="60"
                 value={clockInMinutes}
                 onChange={(e) => setClockInMinutes(Number(e.target.value))}
-                style={{
-                  width: 80,
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  border: `1px solid ${CARD_BORDER}`,
-                  fontSize: 14,
-                  textAlign: 'center',
-                  fontWeight: 600,
-                  color: BODY_TEXT,
-                }}
+                className="w-20 px-3 py-2 rounded-lg border border-[#D1D9E6] text-sm text-center font-semibold text-[#0B1628]"
               />
-              <span style={{ fontSize: 13, color: MUTED, minWidth: 60 }}>minutes</span>
+              <span className="text-[13px] text-[#3D5068] min-w-[60px]">minutes</span>
             </div>
-            <p style={{ fontSize: 12, color: TEXT_TERTIARY, margin: '8px 0 0', paddingLeft: 0 }}>
+            <p className="text-xs text-[#6B7F96] mt-2 mb-0">
               Employees will receive a notification {clockInMinutes} minutes before their scheduled job starts
             </p>
           </div>
@@ -191,15 +142,15 @@ export function ClockRemindersPage() {
       </div>
 
       {/* Clock-Out Reminders */}
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className={cardClasses}>
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2.5">
             <Clock size={20} color={NAVY} />
             <div>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
+              <h2 className="text-base font-bold text-[#0B1628] m-0">
                 Clock-Out Reminders
               </h2>
-              <p style={{ fontSize: 13, color: MUTED, margin: '4px 0 0' }}>
+              <p className="text-[13px] text-[#3D5068] mt-1 mb-0">
                 Send reminder notifications after scheduled job end time
               </p>
             </div>
@@ -208,11 +159,11 @@ export function ClockRemindersPage() {
         </div>
 
         {clockOutEnabled && (
-          <div style={{ paddingLeft: 30 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: BODY_TEXT, marginBottom: 8 }}>
+          <div className="pl-[30px]">
+            <label className="block text-[13px] font-semibold text-[#0B1628] mb-2">
               Minutes after job end
             </label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="flex items-center gap-4">
               <input
                 type="range"
                 min="5"
@@ -220,11 +171,7 @@ export function ClockRemindersPage() {
                 step="5"
                 value={clockOutMinutes}
                 onChange={(e) => setClockOutMinutes(Number(e.target.value))}
-                style={{
-                  flex: 1,
-                  accentColor: NAVY,
-                  cursor: 'pointer',
-                }}
+                className="flex-1 cursor-pointer accent-[#163a5f]"
               />
               <input
                 type="number"
@@ -232,20 +179,11 @@ export function ClockRemindersPage() {
                 max="60"
                 value={clockOutMinutes}
                 onChange={(e) => setClockOutMinutes(Number(e.target.value))}
-                style={{
-                  width: 80,
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  border: `1px solid ${CARD_BORDER}`,
-                  fontSize: 14,
-                  textAlign: 'center',
-                  fontWeight: 600,
-                  color: BODY_TEXT,
-                }}
+                className="w-20 px-3 py-2 rounded-lg border border-[#D1D9E6] text-sm text-center font-semibold text-[#0B1628]"
               />
-              <span style={{ fontSize: 13, color: MUTED, minWidth: 60 }}>minutes</span>
+              <span className="text-[13px] text-[#3D5068] min-w-[60px]">minutes</span>
             </div>
-            <p style={{ fontSize: 12, color: TEXT_TERTIARY, margin: '8px 0 0', paddingLeft: 0 }}>
+            <p className="text-xs text-[#6B7F96] mt-2 mb-0">
               Employees will receive a notification {clockOutMinutes} minutes after their scheduled job ends
             </p>
           </div>
@@ -253,15 +191,15 @@ export function ClockRemindersPage() {
       </div>
 
       {/* Auto Clock-Out */}
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className={cardClasses}>
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2.5">
             <Shield size={20} color={NAVY} />
             <div>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
+              <h2 className="text-base font-bold text-[#0B1628] m-0">
                 Auto Clock-Out
               </h2>
-              <p style={{ fontSize: 13, color: MUTED, margin: '4px 0 0' }}>
+              <p className="text-[13px] text-[#3D5068] mt-1 mb-0">
                 Automatically clock out employees when they leave the job site
               </p>
             </div>
@@ -270,13 +208,13 @@ export function ClockRemindersPage() {
         </div>
 
         {autoClockoutEnabled && (
-          <div style={{ paddingLeft: 30, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="pl-[30px] flex flex-col gap-5">
             {/* Auto clock-out delay */}
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: BODY_TEXT, marginBottom: 8 }}>
+              <label className="block text-[13px] font-semibold text-[#0B1628] mb-2">
                 Auto clock-out delay
               </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min="5"
@@ -284,11 +222,7 @@ export function ClockRemindersPage() {
                   step="5"
                   value={autoClockoutMinutes}
                   onChange={(e) => setAutoClockoutMinutes(Number(e.target.value))}
-                  style={{
-                    flex: 1,
-                    accentColor: NAVY,
-                    cursor: 'pointer',
-                  }}
+                  className="flex-1 cursor-pointer accent-[#163a5f]"
                 />
                 <input
                   type="number"
@@ -296,30 +230,21 @@ export function ClockRemindersPage() {
                   max="60"
                   value={autoClockoutMinutes}
                   onChange={(e) => setAutoClockoutMinutes(Number(e.target.value))}
-                  style={{
-                    width: 80,
-                    padding: '8px 12px',
-                    borderRadius: 8,
-                    border: `1px solid ${CARD_BORDER}`,
-                    fontSize: 14,
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    color: BODY_TEXT,
-                  }}
+                  className="w-20 px-3 py-2 rounded-lg border border-[#D1D9E6] text-sm text-center font-semibold text-[#0B1628]"
                 />
-                <span style={{ fontSize: 13, color: MUTED, minWidth: 60 }}>minutes</span>
+                <span className="text-[13px] text-[#3D5068] min-w-[60px]">minutes</span>
               </div>
-              <p style={{ fontSize: 12, color: TEXT_TERTIARY, margin: '8px 0 0' }}>
+              <p className="text-xs text-[#6B7F96] mt-2 mb-0">
                 Employee will be auto-clocked out {autoClockoutMinutes} minutes after leaving the geofence
               </p>
             </div>
 
             {/* Geofence radius */}
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: BODY_TEXT, marginBottom: 8 }}>
+              <label className="block text-[13px] font-semibold text-[#0B1628] mb-2">
                 Geofence radius
               </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min="50"
@@ -327,11 +252,7 @@ export function ClockRemindersPage() {
                   step="50"
                   value={geofenceRadius}
                   onChange={(e) => setGeofenceRadius(Number(e.target.value))}
-                  style={{
-                    flex: 1,
-                    accentColor: NAVY,
-                    cursor: 'pointer',
-                  }}
+                  className="flex-1 cursor-pointer accent-[#163a5f]"
                 />
                 <input
                   type="number"
@@ -340,20 +261,11 @@ export function ClockRemindersPage() {
                   step="50"
                   value={geofenceRadius}
                   onChange={(e) => setGeofenceRadius(Number(e.target.value))}
-                  style={{
-                    width: 80,
-                    padding: '8px 12px',
-                    borderRadius: 8,
-                    border: `1px solid ${CARD_BORDER}`,
-                    fontSize: 14,
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    color: BODY_TEXT,
-                  }}
+                  className="w-20 px-3 py-2 rounded-lg border border-[#D1D9E6] text-sm text-center font-semibold text-[#0B1628]"
                 />
-                <span style={{ fontSize: 13, color: MUTED, minWidth: 60 }}>meters</span>
+                <span className="text-[13px] text-[#3D5068] min-w-[60px]">meters</span>
               </div>
-              <p style={{ fontSize: 12, color: TEXT_TERTIARY, margin: '8px 0 0' }}>
+              <p className="text-xs text-[#6B7F96] mt-2 mb-0">
                 The auto clock-out will trigger when an employee moves {geofenceRadius}m away from the job site
               </p>
             </div>
@@ -362,58 +274,39 @@ export function ClockRemindersPage() {
       </div>
 
       {/* Geofence Settings Info */}
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-          <MapPin size={20} color={NAVY} style={{ marginTop: 2 }} />
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 12px' }}>
+      <div className={cardClasses}>
+        <div className="flex items-start gap-2.5">
+          <MapPin size={20} color={NAVY} className="mt-0.5" />
+          <div className="flex-1">
+            <h2 className="text-base font-bold text-[#0B1628] mb-3 mt-0">
               Geofence Settings
             </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 16 }}>
+            <div className="flex items-center gap-6 mb-4">
               {/* Visual circle representation */}
-              <div style={{ textAlign: 'center', flexShrink: 0 }}>
-                <div style={{
-                  width: 120,
-                  height: 120,
-                  borderRadius: '50%',
-                  border: `3px dashed ${NAVY}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  background: `linear-gradient(135deg, ${NAVY}08 0%, ${NAVY}15 100%)`,
-                  margin: '0 auto 8px',
-                }}>
-                  <div style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    background: NAVY,
-                    boxShadow: '0 0 0 4px rgba(22, 58, 95, 0.2)',
-                  }} />
+              <div className="text-center shrink-0">
+                <div
+                  className="w-[120px] h-[120px] rounded-full border-[3px] border-dashed border-[#163a5f] flex items-center justify-center relative mx-auto mb-2"
+                  style={{ background: `linear-gradient(135deg, ${NAVY}08 0%, ${NAVY}15 100%)` }}
+                >
+                  <div className="w-3 h-3 rounded-full bg-[#163a5f] shadow-[0_0_0_4px_rgba(22,58,95,0.2)]" />
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: NAVY }}>
+                <div className="text-lg font-bold text-[#163a5f]">
                   {geofenceRadius}m
                 </div>
-                <div style={{ fontSize: 11, color: TEXT_TERTIARY }}>
+                <div className="text-[11px] text-[#6B7F96]">
                   radius
                 </div>
               </div>
 
               {/* Explanation */}
-              <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13, color: BODY_TEXT, lineHeight: 1.6, margin: '0 0 12px' }}>
+              <div className="flex-1">
+                <p className="text-[13px] text-[#0B1628] leading-relaxed mb-3 mt-0">
                   <strong>How it works:</strong> When auto clock-out is enabled, the system monitors employee location in real-time.
                   If an employee moves beyond the geofence radius from the job site and remains outside for the configured delay period,
                   they will be automatically clocked out.
                 </p>
-                <div style={{
-                  background: PANEL_BG,
-                  borderRadius: 8,
-                  padding: 12,
-                  border: `1px solid ${CARD_BORDER}`,
-                }}>
-                  <p style={{ fontSize: 12, color: MUTED, margin: 0, lineHeight: 1.5 }}>
+                <div className="bg-[#EEF1F7] rounded-lg p-3 border border-[#D1D9E6]">
+                  <p className="text-xs text-[#3D5068] m-0 leading-normal">
                     <strong>Privacy Note:</strong> Location tracking only occurs during active clock-in sessions.
                     No location data is collected when employees are clocked out. All location data is encrypted and
                     used solely for attendance accuracy.
@@ -426,25 +319,11 @@ export function ClockRemindersPage() {
       </div>
 
       {/* Save Button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div className="flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '12px 28px',
-            borderRadius: 8,
-            border: 'none',
-            background: NAVY,
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: saving ? 'not-allowed' : 'pointer',
-            opacity: saving ? 0.7 : 1,
-            boxShadow: '0 2px 4px rgba(22, 58, 95, 0.15)',
-          }}
+          className={`flex items-center gap-2 py-3 px-7 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold shadow-[0_2px_4px_rgba(22,58,95,0.15)] ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Settings'}

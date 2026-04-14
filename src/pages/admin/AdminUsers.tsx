@@ -17,15 +17,6 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-const GREEN = '#10B981';
-const RED = '#DC2626';
-const AMBER = '#F59E0B';
-
 const ROLES = [
   'platform_admin', 'owner_operator', 'executive', 'compliance_officer',
   'facilities', 'chef', 'kitchen_manager', 'kitchen_staff',
@@ -59,17 +50,6 @@ interface UserRow {
   created_at: string;
   organization_id: string | null;
 }
-
-
-const inputStyle: React.CSSProperties = {
-  padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
-  borderRadius: 6, outline: 'none', color: NAVY, background: '#fff',
-};
-
-const btnStyle = (bg: string, fg: string): React.CSSProperties => ({
-  padding: '6px 14px', fontSize: 12, fontWeight: 600, border: 'none',
-  borderRadius: 6, cursor: 'pointer', background: bg, color: fg,
-});
 
 export default function AdminUsers() {
   useDemoGuard();
@@ -256,9 +236,9 @@ export default function AdminUsers() {
 
   // ── Helpers ──
   const getStatus = (u: UserRow) => {
-    if (u.is_suspended) return { label: 'Suspended', color: RED, bg: '#FEF2F2' };
-    if (u.locked_until && new Date(u.locked_until) > new Date()) return { label: 'Locked', color: AMBER, bg: '#FFFBEB' };
-    return { label: 'Active', color: GREEN, bg: '#ECFDF5' };
+    if (u.is_suspended) return { label: 'Suspended', twText: 'text-red-600', twBg: 'bg-red-50' };
+    if (u.locked_until && new Date(u.locked_until) > new Date()) return { label: 'Locked', twText: 'text-amber-500', twBg: 'bg-amber-50' };
+    return { label: 'Active', twText: 'text-emerald-500', twBg: 'bg-emerald-50' };
   };
 
   const relativeTime = (iso: string | null) => {
@@ -277,7 +257,7 @@ export default function AdminUsers() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load users</p>
-        <button onClick={loadUsers} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={loadUsers} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -287,16 +267,16 @@ export default function AdminUsers() {
       <AdminBreadcrumb crumbs={[{ label: 'User Management' }]} />
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="flex justify-between items-start">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>User Management</h1>
-          <p style={{ fontSize: 13, color: TEXT_MUTED, marginTop: 2 }}>
+          <h1 className="text-[22px] font-extrabold text-navy">User Management</h1>
+          <p className="text-[13px] text-gray-400 mt-0.5">
             Manage user accounts, roles, and access across EvidLY
           </p>
         </div>
         <button
           onClick={() => setShowInvite(true)}
-          style={btnStyle(GOLD, '#fff')}
+          className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white"
         >
           + Invite User
         </button>
@@ -306,20 +286,20 @@ export default function AdminUsers() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="Total Users" value={totalUsers} />
         <KpiTile label="Active" value={activeUsers} />
-        <KpiTile label="Suspended" value={suspendedUsers} valueColor={suspendedUsers > 0 ? RED : undefined} />
-        <KpiTile label="Locked" value={lockedUsers} valueColor={lockedUsers > 0 ? AMBER : undefined} />
+        <KpiTile label="Suspended" value={suspendedUsers} valueColor={suspendedUsers > 0 ? '#DC2626' : undefined} />
+        <KpiTile label="Locked" value={lockedUsers} valueColor={lockedUsers > 0 ? '#F59E0B' : undefined} />
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div className="flex gap-2.5 flex-wrap">
         <input
-          style={{ ...inputStyle, width: 240 }}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-60"
           placeholder="Search by name or email..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         <select
-          style={inputStyle}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
         >
@@ -327,7 +307,7 @@ export default function AdminUsers() {
           {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r] || r}</option>)}
         </select>
         <select
-          style={inputStyle}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
         >
@@ -336,59 +316,45 @@ export default function AdminUsers() {
       </div>
 
       {/* Users table */}
-      <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
+      <div className="bg-white border border-[#E2D9C8] rounded-[10px] overflow-hidden">
         {/* Header row */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-          padding: '10px 16px', borderBottom: `1px solid ${BORDER}`,
-          fontSize: 11, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase',
-        }}>
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-2.5 border-b border-[#E2D9C8] text-[11px] font-bold text-gray-400 uppercase">
           <span>User</span>
           <span>Role</span>
           <span>Status</span>
           <span>Last Login</span>
-          <span style={{ textAlign: 'right' }}>Actions</span>
+          <span className="text-right">Actions</span>
         </div>
 
         {loading ? (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>Loading users...</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">Loading users...</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No users match filters</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">No users match filters</div>
         ) : (
           filtered.map(u => {
             const status = getStatus(u);
             return (
-              <div key={u.id} style={{
-                display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-                padding: '12px 16px', borderBottom: `1px solid ${BORDER}`,
-                alignItems: 'center', fontSize: 13,
-              }}>
+              <div key={u.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-3 border-b border-[#E2D9C8] items-center text-[13px]">
                 {/* User */}
                 <div>
-                  <div style={{ fontWeight: 600, color: NAVY }}>{u.full_name}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED }}>{u.email || 'No email'}</div>
+                  <div className="font-semibold text-navy">{u.full_name}</div>
+                  <div className="text-[11px] text-gray-400">{u.email || 'No email'}</div>
                 </div>
 
                 {/* Role */}
                 <div>
-                  <span style={{
-                    display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                    fontSize: 11, fontWeight: 600, background: '#F0F4F8', color: NAVY,
-                  }}>
+                  <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F0F4F8] text-navy">
                     {ROLE_LABELS[u.role] || u.role}
                   </span>
                 </div>
 
                 {/* Status */}
                 <div>
-                  <span style={{
-                    display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                    fontSize: 11, fontWeight: 600, background: status.bg, color: status.color,
-                  }}>
+                  <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${status.twBg} ${status.twText}`}>
                     {status.label}
                   </span>
                   {u.failed_login_count > 0 && !u.is_suspended && (
-                    <div style={{ fontSize: 10, color: AMBER, marginTop: 2 }}>
+                    <div className="text-[10px] text-amber-500 mt-0.5">
                       {u.failed_login_count} failed login{u.failed_login_count !== 1 ? 's' : ''}
                     </div>
                   )}
@@ -396,46 +362,38 @@ export default function AdminUsers() {
 
                 {/* Last Login */}
                 <div>
-                  <div style={{ color: TEXT_SEC, fontSize: 12 }}>{relativeTime(u.last_login_at)}</div>
+                  <div className="text-[#6B7F96] text-xs">{relativeTime(u.last_login_at)}</div>
                   {u.last_login_ip && (
-                    <div style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: 'monospace' }}>{u.last_login_ip}</div>
+                    <div className="text-[10px] text-gray-400 font-mono">{u.last_login_ip}</div>
                   )}
                 </div>
 
                 {/* Actions */}
-                <div style={{ textAlign: 'right', display: 'flex', gap: 4, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                <div className="text-right flex gap-1 justify-end flex-wrap">
                   {u.is_suspended ? (
-                    <button onClick={() => openAction(u, 'unsuspend')} style={btnStyle('#ECFDF5', GREEN)}>Unsuspend</button>
+                    <button onClick={() => openAction(u, 'unsuspend')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-emerald-50 text-emerald-500">Unsuspend</button>
                   ) : (
-                    <button onClick={() => openAction(u, 'suspend')} style={btnStyle('#FEF2F2', RED)}>Suspend</button>
+                    <button onClick={() => openAction(u, 'suspend')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-red-50 text-red-600">Suspend</button>
                   )}
-                  <button onClick={() => openAction(u, 'change_role')} style={btnStyle('#F0F4F8', NAVY)}>Role</button>
+                  <button onClick={() => openAction(u, 'change_role')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-navy">Role</button>
                   {u.locked_until && new Date(u.locked_until) > new Date() && (
-                    <button onClick={() => openAction(u, 'unlock')} style={btnStyle('#FFFBEB', AMBER)}>Unlock</button>
+                    <button onClick={() => openAction(u, 'unlock')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-amber-50 text-amber-500">Unlock</button>
                   )}
-                  <div style={{ position: 'relative' }}>
-                    <button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} style={{ ...btnStyle('#F0F4F8', TEXT_SEC), padding: '6px 8px' }}>
+                  <div className="relative">
+                    <button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} className="px-2 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">
                       ···
                     </button>
                     {moreMenuId === u.id && (
-                      <div style={{
-                        position: 'absolute', right: 0, top: '100%', marginTop: 4, zIndex: 50,
-                        background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 8,
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)', minWidth: 180, overflow: 'hidden',
-                      }}>
+                      <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-[#E2D9C8] rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[180px] overflow-hidden">
                         <button
                           onClick={() => { setMoreMenuId(null); openAction(u, 'reset_password'); }}
-                          style={{ display: 'block', width: '100%', padding: '10px 14px', fontSize: 12, fontWeight: 600, color: NAVY, background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#F0F4F8')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                          className="block w-full px-3.5 py-2.5 text-xs font-semibold text-navy bg-transparent border-none text-left cursor-pointer hover:bg-[#F0F4F8]"
                         >
                           Reset Password
                         </button>
                         <button
                           onClick={() => { setMoreMenuId(null); openAction(u, 'revoke_sessions'); }}
-                          style={{ display: 'block', width: '100%', padding: '10px 14px', fontSize: 12, fontWeight: 600, color: RED, background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                          className="block w-full px-3.5 py-2.5 text-xs font-semibold text-red-600 bg-transparent border-none text-left cursor-pointer hover:bg-red-50"
                         >
                           Revoke Sessions
                         </button>
@@ -451,16 +409,9 @@ export default function AdminUsers() {
 
       {/* Action confirmation modal */}
       {actionUser && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 100,
-          background: 'rgba(0,0,0,0.4)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{
-            background: '#fff', borderRadius: 12, padding: 28, width: 420,
-            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-          }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 12 }}>
+        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-7 w-[420px] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <h3 className="text-base font-bold text-navy mb-3">
               {actionType === 'suspend' && `Suspend ${actionUser.full_name}?`}
               {actionType === 'unsuspend' && `Unsuspend ${actionUser.full_name}?`}
               {actionType === 'change_role' && `Change role for ${actionUser.full_name}`}
@@ -470,78 +421,77 @@ export default function AdminUsers() {
             </h3>
 
             {actionType === 'suspend' && (
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+              <div className="mb-4">
+                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">
                   Reason for suspension
                 </label>
                 <textarea
-                  style={{ ...inputStyle, width: '100%', minHeight: 60, resize: 'vertical' }}
+                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full min-h-[60px] resize-y"
                   placeholder="Enter reason..."
                   value={actionReason}
                   onChange={e => setActionReason(e.target.value)}
                 />
-                <p style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>
+                <p className="text-[11px] text-gray-400 mt-1">
                   The user will be unable to log in. This action is logged to the audit trail.
                 </p>
               </div>
             )}
 
             {actionType === 'change_role' && (
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+              <div className="mb-4">
+                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">
                   New role
                 </label>
                 <select
-                  style={{ ...inputStyle, width: '100%' }}
+                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
                   value={actionRole}
                   onChange={e => setActionRole(e.target.value)}
                 >
                   {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r] || r}</option>)}
                 </select>
-                <p style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>
+                <p className="text-[11px] text-gray-400 mt-1">
                   Current role: {ROLE_LABELS[actionUser.role] || actionUser.role}
                 </p>
               </div>
             )}
 
             {actionType === 'unsuspend' && (
-              <p style={{ fontSize: 13, color: TEXT_SEC, marginBottom: 16 }}>
+              <p className="text-[13px] text-[#6B7F96] mb-4">
                 This will restore access for {actionUser.full_name}. They will be able to log in again.
               </p>
             )}
 
             {actionType === 'unlock' && (
-              <p style={{ fontSize: 13, color: TEXT_SEC, marginBottom: 16 }}>
+              <p className="text-[13px] text-[#6B7F96] mb-4">
                 This will reset the failed login counter and remove the account lockout.
               </p>
             )}
 
             {actionType === 'reset_password' && (
-              <p style={{ fontSize: 13, color: TEXT_SEC, marginBottom: 16 }}>
+              <p className="text-[13px] text-[#6B7F96] mb-4">
                 A password reset email will be sent to {actionUser.email}. This action is logged.
               </p>
             )}
 
             {actionType === 'revoke_sessions' && (
-              <p style={{ fontSize: 13, color: TEXT_SEC, marginBottom: 16 }}>
+              <p className="text-[13px] text-[#6B7F96] mb-4">
                 All active sessions will be immediately revoked. The user will need to log in again.
               </p>
             )}
 
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <div className="flex gap-2 justify-end">
               <button
                 onClick={closeAction}
-                style={btnStyle('#F0F4F8', TEXT_SEC)}
+                className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]"
               >
                 Cancel
               </button>
               <button
                 onClick={executeAction}
                 disabled={actionLoading}
-                style={btnStyle(
-                  actionType === 'suspend' ? RED : NAVY,
-                  '#fff'
-                )}
+                className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer text-white ${
+                  actionType === 'suspend' ? 'bg-red-600' : 'bg-navy'
+                }`}
               >
                 {actionLoading ? 'Processing...' : 'Confirm'}
               </button>
@@ -552,30 +502,23 @@ export default function AdminUsers() {
 
       {/* Invite modal */}
       {showInvite && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 100,
-          background: 'rgba(0,0,0,0.4)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{
-            background: '#fff', borderRadius: 12, padding: 28, width: 400,
-            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-          }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Invite New User</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-7 w-[400px] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <h3 className="text-base font-bold text-navy mb-4">Invite New User</h3>
+            <div className="flex flex-col gap-3">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Email</label>
+                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">Email</label>
                 <input
-                  style={{ ...inputStyle, width: '100%' }}
+                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
                   placeholder="user@example.com"
                   value={inviteEmail}
                   onChange={e => setInviteEmail(e.target.value)}
                 />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Role</label>
+                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">Role</label>
                 <select
-                  style={{ ...inputStyle, width: '100%' }}
+                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
                   value={inviteRole}
                   onChange={e => setInviteRole(e.target.value)}
                 >
@@ -583,9 +526,9 @@ export default function AdminUsers() {
                 </select>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
-              <button onClick={() => setShowInvite(false)} style={btnStyle('#F0F4F8', TEXT_SEC)}>Cancel</button>
-              <button onClick={sendInvite} disabled={actionLoading || !inviteEmail} style={btnStyle(GOLD, '#fff')}>
+            <div className="flex gap-2 justify-end mt-5">
+              <button onClick={() => setShowInvite(false)} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">Cancel</button>
+              <button onClick={sendInvite} disabled={actionLoading || !inviteEmail} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white">
                 {actionLoading ? 'Sending...' : 'Send Invite'}
               </button>
             </div>

@@ -8,12 +8,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 interface SubscriptionRow {
   id: string;
   organization_id: string;
@@ -37,14 +31,14 @@ interface InvoiceRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-[#E5E7EB] rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -83,18 +77,14 @@ export default function AdminBilling() {
 
   const statusBadge = (status: string, type: 'sub' | 'inv' = 'sub') => {
     const isGood = type === 'sub' ? status === 'active' : status === 'paid';
-    return {
-      padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700 as const,
-      background: isGood ? '#F0FFF4' : '#FEF2F2',
-      color: isGood ? '#059669' : '#DC2626',
-    };
+    return `inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isGood ? 'bg-[#F0FFF4] text-[#059669]' : 'bg-[#FEF2F2] text-[#DC2626]'}`;
   };
 
   if (error) {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -102,15 +92,15 @@ export default function AdminBilling() {
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Billing' }]} />
-      <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Billing</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-navy">Billing</h1>
 
       {/* KPIs */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch' }}>
+        <div className="grid grid-cols-6 gap-3 items-stretch">
           {Array.from({ length: 6 }).map((_, i) => <div key={i}><Skeleton h={80} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch' }}>
+        <div className="grid grid-cols-6 gap-3 items-stretch">
           <KpiTile label="MRR" value={`$${mrr.toLocaleString()}`} valueColor="gold" />
           <KpiTile label="ARR" value={`$${arr.toLocaleString()}`} valueColor="gold" />
           <KpiTile label="Active" value={activeSubs} valueColor="navy" />
@@ -121,44 +111,42 @@ export default function AdminBilling() {
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 2, background: '#F3F4F6', borderRadius: 8, padding: 3, width: 'fit-content' }}>
+      <div className="flex gap-0.5 bg-[#F3F4F6] rounded-lg p-[3px] w-fit">
         {(['subscriptions', 'invoices', 'projections'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            style={{ padding: '6px 16px', borderRadius: 6, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              background: tab === t ? '#FFFFFF' : 'transparent', color: tab === t ? NAVY : TEXT_MUTED,
-              boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none' }}>
+            className={`px-4 py-1.5 rounded-md border-none text-xs font-semibold cursor-pointer ${tab === t ? 'bg-white text-navy shadow-sm' : 'bg-transparent text-[#9CA3AF]'}`}>
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
 
       {tab === 'subscriptions' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {loading ? (
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : subs.length === 0 ? (
-            <EmptyState icon="💳" title="No subscriptions yet" subtitle="MRR will appear here when the first customer subscribes." />
+            <EmptyState icon="&#128179;" title="No subscriptions yet" subtitle="MRR will appear here when the first customer subscribes." />
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Organization', 'Plan', 'Locations', 'MRR', 'Status', 'Billing', 'Since'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {subs.map(s => (
-                  <tr key={s.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{s.organizations?.name || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{s.plan}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{s.locations_count}</td>
-                    <td style={{ padding: '10px 14px', color: GOLD, fontWeight: 600 }}>${(s.mrr_cents / 100).toFixed(0)}</td>
-                    <td style={{ padding: '10px 14px' }}><span style={statusBadge(s.status)}>{s.status}</span></td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{s.billing_cycle || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(s.created_at).toLocaleDateString()}</td>
+                  <tr key={s.id} className="border-b border-[#E2D9C8]">
+                    <td className="px-3.5 py-2.5 text-navy font-semibold">{s.organizations?.name || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96]">{s.plan}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96]">{s.locations_count}</td>
+                    <td className="px-3.5 py-2.5 text-gold font-semibold">${(s.mrr_cents / 100).toFixed(0)}</td>
+                    <td className="px-3.5 py-2.5"><span className={statusBadge(s.status)}>{s.status}</span></td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{s.billing_cycle || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(s.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -168,26 +156,26 @@ export default function AdminBilling() {
       )}
 
       {tab === 'invoices' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {invoices.length === 0 ? (
-            <EmptyState icon="🧾" title="No invoices yet" subtitle="Invoices will appear here as billing cycles complete." />
+            <EmptyState icon="&#129534;" title="No invoices yet" subtitle="Invoices will appear here as billing cycles complete." />
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Organization', 'Date', 'Amount', 'Status', 'Plan'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {invoices.map(inv => (
-                  <tr key={inv.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{inv.organizations?.name || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(inv.invoice_date).toLocaleDateString()}</td>
-                    <td style={{ padding: '10px 14px', color: GOLD, fontWeight: 600 }}>${(inv.amount_cents / 100).toFixed(2)}</td>
-                    <td style={{ padding: '10px 14px' }}><span style={statusBadge(inv.status, 'inv')}>{inv.status}</span></td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{inv.plan}</td>
+                  <tr key={inv.id} className="border-b border-[#E2D9C8]">
+                    <td className="px-3.5 py-2.5 text-navy font-semibold">{inv.organizations?.name || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(inv.invoice_date).toLocaleDateString()}</td>
+                    <td className="px-3.5 py-2.5 text-gold font-semibold">${(inv.amount_cents / 100).toFixed(2)}</td>
+                    <td className="px-3.5 py-2.5"><span className={statusBadge(inv.status, 'inv')}>{inv.status}</span></td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96]">{inv.plan}</td>
                   </tr>
                 ))}
               </tbody>
@@ -197,35 +185,35 @@ export default function AdminBilling() {
       )}
 
       {tab === 'projections' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, padding: 24 }}>
-          <h3 style={{ color: NAVY, fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Revenue Projections</h3>
-          <p style={{ color: TEXT_SEC, fontSize: 12, marginBottom: 20 }}>Forward-looking estimates based on pricing model</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] p-6">
+          <h3 className="text-navy text-base font-bold mb-1">Revenue Projections</h3>
+          <p className="text-[#6B7F96] text-xs mb-5">Forward-looking estimates based on pricing model</p>
+          <div className="grid grid-cols-3 gap-4">
             {[
               { tier: 'At 100 Accounts', conservative: '$15,000', moderate: '$22,500', strong: '$30,000' },
               { tier: 'At 500 Accounts', conservative: '$75,000', moderate: '$112,500', strong: '$150,000' },
               { tier: 'At 1,000 Accounts', conservative: '$150,000', moderate: '$225,000', strong: '$300,000' },
             ].map(row => (
-              <div key={row.tier} style={{ background: '#F9FAFB', borderRadius: 8, padding: 16, border: `1px solid ${BORDER}` }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>{row.tier}</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                    <span style={{ color: TEXT_SEC }}>Conservative</span>
-                    <span style={{ color: NAVY }}>{row.conservative}/mo</span>
+              <div key={row.tier} className="bg-[#F9FAFB] rounded-lg p-4 border border-[#E2D9C8]">
+                <div className="text-[13px] font-bold text-navy mb-3">{row.tier}</div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#6B7F96]">Conservative</span>
+                    <span className="text-navy">{row.conservative}/mo</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                    <span style={{ color: TEXT_SEC }}>Moderate</span>
-                    <span style={{ color: GOLD }}>{row.moderate}/mo</span>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#6B7F96]">Moderate</span>
+                    <span className="text-gold">{row.moderate}/mo</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                    <span style={{ color: TEXT_SEC }}>Strong</span>
-                    <span style={{ color: '#059669' }}>{row.strong}/mo</span>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#6B7F96]">Strong</span>
+                    <span className="text-[#059669]">{row.strong}/mo</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <p style={{ color: TEXT_MUTED, fontSize: 11, marginTop: 16, fontStyle: 'italic' }}>
+          <p className="text-[#9CA3AF] text-[11px] mt-4 italic">
             Projections based on $150-300/location/month pricing. Current MRR: ${mrr.toLocaleString()}
           </p>
         </div>

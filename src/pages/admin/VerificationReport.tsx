@@ -10,12 +10,6 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E5E0D8';
-
 interface StatusRow {
   id: string;
   content_table: string;
@@ -72,7 +66,7 @@ const TABLE_LABELS: Record<string, string> = {
 };
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 export default function VerificationReport() {
@@ -215,10 +209,6 @@ export default function VerificationReport() {
   });
   const sourceHealthRows = Array.from(allSourceUrls.values()).sort((a, b) => b.usageCount - a.usageCount);
 
-  const inputStyle: React.CSSProperties = {
-    padding: '6px 12px', background: '#F9FAFB', border: `1px solid #D1D5DB`, borderRadius: 6, color: NAVY, fontSize: 12,
-  };
-
   const sectionTabs: { key: Section; label: string }[] = [
     { key: 'coverage', label: 'Coverage' },
     { key: 'content', label: 'Content' },
@@ -230,18 +220,18 @@ export default function VerificationReport() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Verification Report' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Verification Report</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Verification Report</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1">
           Platform-wide verification coverage, audit trail, and source health.
         </p>
       </div>
 
       {/* Tables-not-initialized guard */}
       {!tablesExist && (
-        <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12 }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>{'🔒'}</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Verification system tables not yet initialized</div>
-          <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+        <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl">
+          <div className="text-[40px] mb-4">{'🔒'}</div>
+          <div className="text-base font-bold text-navy mb-2">Verification system tables not yet initialized</div>
+          <div className="text-[13px] text-[#6B7F96] max-w-[480px] mx-auto leading-relaxed">
             Run the verification schema migration (<code>20260507100000_platform_verification_architecture.sql</code>) to enable this feature.
           </div>
         </div>
@@ -249,81 +239,77 @@ export default function VerificationReport() {
 
       {tablesExist && <>
       {/* Section tabs */}
-      <div style={{ display: 'flex', gap: 6, borderBottom: `1px solid ${BORDER}`, paddingBottom: 0 }}>
+      <div className="flex gap-1.5 border-b border-[#E5E0D8] pb-0">
         {sectionTabs.map(t => (
           <button key={t.key} onClick={() => setActiveSection(t.key)}
-            style={{
-              padding: '8px 18px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              background: 'transparent', border: 'none',
-              color: activeSection === t.key ? NAVY : TEXT_MUTED,
-              borderBottom: activeSection === t.key ? `2px solid ${GOLD}` : '2px solid transparent',
-            }}>
+            className={`px-[18px] py-2 text-xs font-semibold cursor-pointer bg-transparent border-none ${
+              activeSection === t.key
+                ? 'text-navy border-b-2 border-gold'
+                : 'text-gray-400 border-b-2 border-transparent'
+            }`}>
             {t.label}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
         </div>
       ) : (
         <>
-          {/* ── SECTION 1: COVERAGE KPIs ── */}
+          {/* -- SECTION 1: COVERAGE KPIs -- */}
           {activeSection === 'coverage' && (
             <div className="space-y-6">
               {/* Top KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 12, alignItems: 'stretch' }}>
+              <div className="grid grid-cols-8 gap-3 items-stretch">
                 {[
-                  { label: 'Total Records', value: total, color: NAVY },
-                  { label: 'Verified', value: verified, color: '#166534' },
-                  { label: 'In Review', value: inReview, color: '#C2410C' },
-                  { label: 'Unverified', value: unverified, color: NAVY },
-                  { label: 'Rejected', value: rejected, color: '#991B1B' },
-                  { label: 'Overdue', value: overdue, color: '#991B1B' },
-                  { label: 'Needs Update', value: needsUpdate, color: '#C2410C' },
-                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? '#991B1B' : coveragePct === 100 ? '#166534' : '#C2410C' },
+                  { label: 'Total Records', value: total, color: 'text-navy' },
+                  { label: 'Verified', value: verified, color: 'text-[#166534]' },
+                  { label: 'In Review', value: inReview, color: 'text-[#C2410C]' },
+                  { label: 'Unverified', value: unverified, color: 'text-navy' },
+                  { label: 'Rejected', value: rejected, color: 'text-[#991B1B]' },
+                  { label: 'Overdue', value: overdue, color: 'text-[#991B1B]' },
+                  { label: 'Needs Update', value: needsUpdate, color: 'text-[#C2410C]' },
+                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? 'text-[#991B1B]' : coveragePct === 100 ? 'text-[#166534]' : 'text-[#C2410C]' },
                 ].map(k => (
-                  <div key={k.label} style={{
-                    background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
-                    textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+                  <div key={k.label} className="bg-white border border-gray-200 rounded-lg px-5 py-4 text-center flex flex-col items-center justify-center">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
                       {k.label}
                     </div>
-                    <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>{k.value}</div>
+                    <div className={`text-[28px] font-extrabold leading-none ${k.color}`}>{k.value}</div>
                   </div>
                 ))}
               </div>
 
               {/* Per-table breakdown */}
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
-                <div style={{ padding: '12px 16px', borderBottom: `1px solid ${BORDER}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>Coverage by Content Table</div>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
+                <div className="px-4 py-3 border-b border-[#E5E0D8]">
+                  <div className="text-sm font-bold text-navy">Coverage by Content Table</div>
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <table className="w-full border-collapse text-xs">
                   <thead>
-                    <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <tr className="border-b border-[#E5E0D8]">
                       {['Table', 'Total', 'Verified', 'Coverage'].map(h => (
-                        <th key={h} style={{ textAlign: 'left', padding: '8px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                        <th key={h} className="text-left px-[14px] py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {perTable.map(t => (
-                      <tr key={t.table} style={{ borderBottom: `1px solid #F3F4F6` }}>
-                        <td style={{ padding: '8px 14px', fontWeight: 600, color: NAVY }}>{t.label}</td>
-                        <td style={{ padding: '8px 14px', color: TEXT_SEC }}>{t.total}</td>
-                        <td style={{ padding: '8px 14px', color: '#059669', fontWeight: 600 }}>{t.verified}</td>
-                        <td style={{ padding: '8px 14px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ width: 60, height: 6, background: '#E5E7EB', borderRadius: 3 }}>
-                              <div style={{
-                                height: '100%', borderRadius: 3, width: `${t.pct}%`,
+                      <tr key={t.table} className="border-b border-gray-100">
+                        <td className="px-[14px] py-2 font-semibold text-navy">{t.label}</td>
+                        <td className="px-[14px] py-2 text-[#6B7F96]">{t.total}</td>
+                        <td className="px-[14px] py-2 text-[#059669] font-semibold">{t.verified}</td>
+                        <td className="px-[14px] py-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[60px] h-1.5 bg-gray-200 rounded-sm">
+                              <div className="h-full rounded-sm" style={{
+                                width: `${t.pct}%`,
                                 background: t.pct >= 80 ? '#059669' : t.pct >= 50 ? '#D97706' : '#DC2626',
                               }} />
                             </div>
-                            <span style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600 }}>{t.pct}%</span>
+                            <span className="text-[11px] text-[#6B7F96] font-semibold">{t.pct}%</span>
                           </div>
                         </td>
                       </tr>
@@ -334,38 +320,40 @@ export default function VerificationReport() {
             </div>
           )}
 
-          {/* ── SECTION 2: CONTENT VERIFICATION TABLE ── */}
+          {/* -- SECTION 2: CONTENT VERIFICATION TABLE -- */}
           {activeSection === 'content' && (
             <div className="space-y-4">
               {/* Filters */}
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <select value={tableFilter} onChange={e => setTableFilter(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <div className="flex gap-2.5 flex-wrap">
+                <select value={tableFilter} onChange={e => setTableFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
                   <option value="">All Tables</option>
                   {tables.map(t => <option key={t} value={t}>{TABLE_LABELS[t] || t}</option>)}
                 </select>
-                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
                   <option value="">All Statuses</option>
                   {['verified', 'in_review', 'unverified', 'rejected', 'needs_update', 'overdue'].map(s => (
                     <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
                   ))}
                 </select>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+                <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
                   <input type="checkbox" checked={overdueOnly} onChange={e => setOverdueOnly(e.target.checked)} />
                   Overdue only
                 </label>
               </div>
 
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
                 {filteredStatuses.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 20px', color: TEXT_MUTED, fontSize: 13 }}>
+                  <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No records match the current filters.
                   </div>
                 ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                      <tr className="border-b border-[#E5E0D8]">
                         {['Type', 'Title', 'Status', 'Gates', 'Last Verified', 'Verifier', 'Next Review', 'Sources'].map(h => (
-                          <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                          <th key={h} className="text-left px-3 py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -374,34 +362,35 @@ export default function VerificationReport() {
                         const sc = STATUS_COLORS[row.verification_status] || STATUS_COLORS.unverified;
                         const isExpanded = expandedRow?.id === row.id;
                         return (
-                          <tr key={row.id} style={{ borderBottom: `1px solid #F3F4F6`, cursor: 'pointer', background: isExpanded ? '#FAFAF8' : 'transparent' }}
+                          <tr key={row.id}
+                            className={`border-b border-gray-100 cursor-pointer ${isExpanded ? 'bg-[#FAFAF8]' : 'bg-transparent'}`}
                             onClick={() => setExpandedRow(isExpanded ? null : row)}>
-                            <td style={{ padding: '8px 12px' }}>
-                              <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 8, background: '#F3F4F6', color: TEXT_SEC }}>
+                            <td className="px-3 py-2">
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-lg bg-gray-100 text-[#6B7F96]">
                                 {TABLE_LABELS[row.content_table] || row.content_table}
                               </span>
                             </td>
-                            <td style={{ padding: '8px 12px', fontWeight: 600, color: NAVY, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <td className="px-3 py-2 font-semibold text-navy max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {row.content_title || row.content_id.slice(0, 8)}
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
-                              <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sc.bg, color: sc.text }}>
+                            <td className="px-3 py-2">
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-[10px]" style={{ background: sc.bg, color: sc.text }}>
                                 {row.verification_status.replace(/_/g, ' ').toUpperCase()}
                               </span>
                             </td>
-                            <td style={{ padding: '8px 12px', color: TEXT_SEC, fontSize: 11 }}>
+                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
                               {row.gates_passed}/{row.gates_required}
                             </td>
-                            <td style={{ padding: '8px 12px', color: TEXT_MUTED, fontSize: 11 }}>
+                            <td className="px-3 py-2 text-gray-400 text-[11px]">
                               {row.last_verified_at ? new Date(row.last_verified_at).toLocaleDateString() : '—'}
                             </td>
-                            <td style={{ padding: '8px 12px', color: TEXT_SEC, fontSize: 11 }}>
+                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
                               {row.last_verified_by || '—'}
                             </td>
-                            <td style={{ padding: '8px 12px', color: TEXT_MUTED, fontSize: 11 }}>
+                            <td className="px-3 py-2 text-gray-400 text-[11px]">
                               {row.next_review_due ? new Date(row.next_review_due).toLocaleDateString() : '—'}
                             </td>
-                            <td style={{ padding: '8px 12px', color: TEXT_SEC, fontSize: 11 }}>
+                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
                               {row.source_count}
                             </td>
                           </tr>
@@ -414,7 +403,7 @@ export default function VerificationReport() {
 
               {/* Expanded panel */}
               {expandedRow && (
-                <div style={{ marginTop: 12 }}>
+                <div className="mt-3">
                   <VerificationPanel
                     contentTable={expandedRow.content_table}
                     contentId={expandedRow.content_id}
@@ -427,44 +416,43 @@ export default function VerificationReport() {
             </div>
           )}
 
-          {/* ── SECTION 3: VERIFICATION AUDIT LOG ── */}
+          {/* -- SECTION 3: VERIFICATION AUDIT LOG -- */}
           {activeSection === 'log' && (
             <div className="space-y-4">
               {/* Filters + Export */}
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+              <div className="flex gap-2.5 flex-wrap items-center">
                 <input placeholder="Filter by verifier..." value={logVerifier}
-                  onChange={e => setLogVerifier(e.target.value)} style={{ ...inputStyle, minWidth: 160 }} />
-                <select value={logResult} onChange={e => setLogResult(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                  onChange={e => setLogVerifier(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs min-w-[160px]" />
+                <select value={logResult} onChange={e => setLogResult(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
                   <option value="">All Results</option>
                   <option value="passed">Passed</option>
                   <option value="failed">Failed</option>
                   <option value="needs_update">Needs Update</option>
                 </select>
-                <select value={tableFilter} onChange={e => setTableFilter(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                <select value={tableFilter} onChange={e => setTableFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer">
                   <option value="">All Tables</option>
                   {tables.map(t => <option key={t} value={t}>{TABLE_LABELS[t] || t}</option>)}
                 </select>
                 <button onClick={exportCsv}
-                  style={{
-                    padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 700,
-                    cursor: 'pointer', background: GOLD, color: '#fff', border: 'none',
-                    marginLeft: 'auto',
-                  }}>
+                  className="px-4 py-1.5 rounded-md text-[11px] font-bold cursor-pointer bg-gold text-white border-none ml-auto">
                   Export CSV
                 </button>
               </div>
 
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
                 {filteredLogs.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 20px', color: TEXT_MUTED, fontSize: 13 }}>
+                  <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No audit log entries match the current filters.
                   </div>
                 ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                      <tr className="border-b border-[#E5E0D8]">
                         {['Timestamp', 'Content', 'Gate', 'Result', 'Verifier', 'Method', 'Sources', 'Notes', 'Changed'].map(h => (
-                          <th key={h} style={{ textAlign: 'left', padding: '8px 10px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                          <th key={h} className="text-left px-2.5 py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -472,28 +460,28 @@ export default function VerificationReport() {
                       {filteredLogs.slice(0, 100).map(l => {
                         const rc = STATUS_COLORS[l.gate_result === 'passed' ? 'verified' : l.gate_result === 'failed' ? 'rejected' : 'needs_update'] || STATUS_COLORS.unverified;
                         return (
-                          <tr key={l.id} style={{ borderBottom: `1px solid #F3F4F6` }}>
-                            <td style={{ padding: '6px 10px', color: TEXT_MUTED, fontSize: 10, whiteSpace: 'nowrap' }}>
+                          <tr key={l.id} className="border-b border-gray-100">
+                            <td className="px-2.5 py-1.5 text-gray-400 text-[10px] whitespace-nowrap">
                               {new Date(l.created_at).toLocaleString()}
                             </td>
-                            <td style={{ padding: '6px 10px', color: NAVY, fontSize: 11, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <td className="px-2.5 py-1.5 text-navy text-[11px] max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {l.content_title || l.content_id.slice(0, 8)}
                             </td>
-                            <td style={{ padding: '6px 10px', color: TEXT_SEC, fontSize: 10 }}>{l.gate_label}</td>
-                            <td style={{ padding: '6px 10px' }}>
-                              <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: rc.bg, color: rc.text }}>
+                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px]">{l.gate_label}</td>
+                            <td className="px-2.5 py-1.5">
+                              <span className="text-[9px] font-bold px-1.5 py-[1px] rounded-lg" style={{ background: rc.bg, color: rc.text }}>
                                 {l.gate_result.toUpperCase()}
                               </span>
                             </td>
-                            <td style={{ padding: '6px 10px', color: TEXT_SEC, fontSize: 10 }}>{l.verified_by_name || '—'}</td>
-                            <td style={{ padding: '6px 10px', color: TEXT_MUTED, fontSize: 10 }}>{l.verification_method?.replace(/_/g, ' ')}</td>
-                            <td style={{ padding: '6px 10px', color: TEXT_MUTED, fontSize: 10, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px]">{l.verified_by_name || '—'}</td>
+                            <td className="px-2.5 py-1.5 text-gray-400 text-[10px]">{l.verification_method?.replace(/_/g, ' ')}</td>
+                            <td className="px-2.5 py-1.5 text-gray-400 text-[10px] max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {(l.source_urls || []).map((s: { url: string }) => s.url).join(', ') || '—'}
                             </td>
-                            <td style={{ padding: '6px 10px', color: TEXT_SEC, fontSize: 10, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px] max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {l.reviewer_notes || '—'}
                             </td>
-                            <td style={{ padding: '6px 10px', color: l.content_was_corrected ? '#D97706' : TEXT_MUTED, fontSize: 10, fontWeight: l.content_was_corrected ? 600 : 400 }}>
+                            <td className={`px-2.5 py-1.5 text-[10px] ${l.content_was_corrected ? 'text-[#D97706] font-semibold' : 'text-gray-400 font-normal'}`}>
                               {l.content_was_corrected ? 'Yes' : '—'}
                             </td>
                           </tr>
@@ -506,36 +494,36 @@ export default function VerificationReport() {
             </div>
           )}
 
-          {/* ── SECTION 4: SOURCE HEALTH ── */}
+          {/* -- SECTION 4: SOURCE HEALTH -- */}
           {activeSection === 'sources' && (
             <div>
-              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
+              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
                 {sourceHealthRows.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 20px', color: TEXT_MUTED, fontSize: 13 }}>
+                  <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No source URLs have been logged yet. Source health data will appear after verification activity.
                   </div>
                 ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                      <tr className="border-b border-[#E5E0D8]">
                         {['URL', 'Last Verified', 'Times Used'].map(h => (
-                          <th key={h} style={{ textAlign: 'left', padding: '8px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                          <th key={h} className="text-left px-[14px] py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {sourceHealthRows.slice(0, 50).map(s => (
-                        <tr key={s.url} style={{ borderBottom: `1px solid #F3F4F6` }}>
-                          <td style={{ padding: '8px 14px' }}>
+                        <tr key={s.url} className="border-b border-gray-100">
+                          <td className="px-[14px] py-2">
                             <a href={s.url} target="_blank" rel="noopener noreferrer"
-                              style={{ color: '#2563EB', fontSize: 11, textDecoration: 'underline', wordBreak: 'break-all' }}>
+                              className="text-[#2563EB] text-[11px] underline break-all">
                               {s.url.length > 80 ? s.url.slice(0, 80) + '...' : s.url}
                             </a>
                           </td>
-                          <td style={{ padding: '8px 14px', color: TEXT_MUTED, fontSize: 11 }}>
+                          <td className="px-[14px] py-2 text-gray-400 text-[11px]">
                             {new Date(s.lastVerified).toLocaleDateString()}
                           </td>
-                          <td style={{ padding: '8px 14px', color: TEXT_SEC, fontSize: 11, fontWeight: 600 }}>
+                          <td className="px-[14px] py-2 text-[#6B7F96] text-[11px] font-semibold">
                             {s.usageCount}
                           </td>
                         </tr>

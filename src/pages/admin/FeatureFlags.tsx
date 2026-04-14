@@ -16,12 +16,6 @@ import { KpiTile } from '../../components/admin/KpiTile';
 import { AIAssistButton } from '../../components/ui/AIAssistButton';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 // ── Types ──────────────────────────────────────────────────────────
 
 interface FeatureFlag {
@@ -82,11 +76,11 @@ const EVENT_OPTIONS = [
   'guided_tour_complete', 'irr_complete',
 ];
 
-const STATUS_STYLE: Record<string, { label: string; bg: string; color: string }> = {
-  live:       { label: 'Live',     bg: '#ECFDF5', color: '#059669' },
-  scheduled:  { label: 'Scheduled', bg: '#FFFBEB', color: '#D97706' },
-  criteria:   { label: 'Criteria',  bg: '#EFF6FF', color: '#2563EB' },
-  off:        { label: 'Off',      bg: '#FEF2F2', color: '#DC2626' },
+const STATUS_STYLE: Record<string, { label: string; bg: string; fg: string }> = {
+  live:       { label: 'Live',     bg: 'bg-emerald-50', fg: 'text-emerald-600' },
+  scheduled:  { label: 'Scheduled', bg: 'bg-amber-50', fg: 'text-amber-600' },
+  criteria:   { label: 'Criteria',  bg: 'bg-blue-50', fg: 'text-blue-600' },
+  off:        { label: 'Off',      bg: 'bg-red-50', fg: 'text-red-600' },
 };
 
 function getStatus(f: FeatureFlag): string {
@@ -101,37 +95,15 @@ function getStatus(f: FeatureFlag): string {
 // ── Helpers ────────────────────────────────────────────────────────
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
-const inputStyle: React.CSSProperties = {
-  padding: '6px 10px', background: '#F9FAFB', border: '1px solid #D1D5DB',
-  borderRadius: 6, color: NAVY, fontSize: 12, width: '100%', boxSizing: 'border-box',
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle, cursor: 'pointer',
-};
-
-const pillBtn = (active: boolean): React.CSSProperties => ({
-  padding: '4px 12px', borderRadius: 20, border: 'none', fontSize: 11, fontWeight: 600,
-  cursor: 'pointer', transition: 'all 0.12s',
-  background: active ? NAVY : '#F3F4F6', color: active ? '#fff' : TEXT_MUTED,
-});
-
-const sectionBadge = (section: string): React.CSSProperties => {
-  const colors: Record<string, { bg: string; color: string }> = {
-    Core:         { bg: '#F3F4F6', color: '#374151' },
-    Compliance:   { bg: '#ECFDF5', color: '#059669' },
-    Intelligence: { bg: '#EFF6FF', color: '#2563EB' },
-    Growth:       { bg: '#FFFBEB', color: '#D97706' },
-    Admin:        { bg: '#FEF2F2', color: '#DC2626' },
-  };
-  const c = colors[section] ?? colors.Core;
-  return {
-    fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-    background: c.bg, color: c.color, textTransform: 'uppercase' as const,
-  };
+const SECTION_BADGE_CLASSES: Record<string, { bg: string; fg: string }> = {
+  Core:         { bg: 'bg-gray-100', fg: 'text-gray-700' },
+  Compliance:   { bg: 'bg-emerald-50', fg: 'text-emerald-600' },
+  Intelligence: { bg: 'bg-blue-50', fg: 'text-blue-600' },
+  Growth:       { bg: 'bg-amber-50', fg: 'text-amber-600' },
+  Admin:        { bg: 'bg-red-50', fg: 'text-red-600' },
 };
 
 // ── Component ──────────────────────────────────────────────────────
@@ -295,7 +267,7 @@ export default function FeatureFlags() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -304,19 +276,19 @@ export default function FeatureFlags() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Feature Control' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Domain Security & Feature Control</h1>
-        <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Domain Security & Feature Control</h1>
+        <p className="mt-1 text-sm text-gray-400">
           Toggle features, set go-live criteria, customize end-user messages
         </p>
       </div>
 
       {/* ── KPIs ── */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+        <div className="grid grid-cols-5 gap-3">
           {Array.from({ length: 5 }).map((_, i) => <div key={i}><Skeleton h={80} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+        <div className="grid grid-cols-5 gap-3">
           <KpiTile label="Total Features" value={flags.length} valueColor="navy" />
           <KpiTile label="Live" value={live} valueColor="green" />
           <KpiTile label="Scheduled" value={scheduled} valueColor="warning" />
@@ -326,9 +298,14 @@ export default function FeatureFlags() {
       )}
 
       {/* ── Section tabs ── */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      <div className="flex gap-1.5 flex-wrap">
         {SECTION_TABS.map(t => (
-          <button key={t} onClick={() => setSectionTab(t)} style={pillBtn(sectionTab === t)}>
+          <button key={t} onClick={() => setSectionTab(t)}
+            className={`py-1 px-3 rounded-full border-none text-[11px] font-semibold cursor-pointer transition-all duration-[120ms] ${
+              sectionTab === t
+                ? 'bg-navy text-white'
+                : 'bg-gray-100 text-gray-400'
+            }`}>
             {t}
           </button>
         ))}
@@ -336,85 +313,76 @@ export default function FeatureFlags() {
 
       {/* ── Feature cards ── */}
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={60} />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12 }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>{'🔧'}</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>No features in this section</div>
+        <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl">
+          <div className="text-[40px] mb-4">{'🔧'}</div>
+          <div className="text-base font-bold text-navy">No features in this section</div>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="flex flex-col gap-2">
           {filtered.map(flag => {
             const f = getEdited(flag);
             const expanded = expandedKey === f.key;
             const status = getStatus(flag); // use raw flag for status
             const ss = STATUS_STYLE[status];
             const hasEdits = !!edits[f.key];
+            const sbc = SECTION_BADGE_CLASSES[f.section ?? 'Core'] ?? SECTION_BADGE_CLASSES.Core;
 
             return (
-              <div key={f.key} style={{
-                background: '#fff', border: `1px solid ${expanded ? GOLD : BORDER}`,
-                borderRadius: 10, transition: 'border-color 0.15s',
-              }}>
+              <div key={f.key} className={`bg-white border rounded-[10px] transition-[border-color] duration-150 ${
+                expanded ? 'border-gold' : 'border-[#E2D9C8]'
+              }`}>
                 {/* ── Collapsed header ── */}
                 <div
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px',
-                    cursor: 'pointer',
-                  }}
+                  className="flex items-center gap-3 py-3.5 px-[18px] cursor-pointer"
                   onClick={() => setExpandedKey(expanded ? null : f.key)}
                 >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>{f.name}</span>
-                      <span style={sectionBadge(f.section ?? 'Core')}>{f.section ?? 'Core'}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-navy">{f.name}</span>
+                      <span className={`text-[9px] font-bold py-0.5 px-2 rounded-[10px] uppercase ${sbc.bg} ${sbc.fg}`}>{f.section ?? 'Core'}</span>
                     </div>
                     {f.route && (
-                      <div style={{ fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace", marginTop: 2 }}>{f.route}</div>
+                      <div className="text-[11px] text-gray-400 font-['DM_Mono',monospace] mt-0.5">{f.route}</div>
                     )}
                   </div>
-                  <span style={{
-                    fontSize: 10, fontWeight: 700, padding: '2px 10px', borderRadius: 10,
-                    background: ss.bg, color: ss.color,
-                  }}>
+                  <span className={`text-[10px] font-bold py-0.5 px-2.5 rounded-[10px] ${ss.bg} ${ss.fg}`}>
                     {ss.label}
                   </span>
                   {/* Toggle */}
                   <button
                     onClick={e => { e.stopPropagation(); toggleFlag(flag); }}
-                    style={{
-                      width: 40, height: 22, borderRadius: 11, border: 'none',
-                      background: flag.is_enabled ? '#059669' : '#D1D5DB',
-                      position: 'relative', cursor: 'pointer', transition: 'background 0.2s',
-                      flexShrink: 0,
-                    }}
+                    className={`w-10 h-[22px] rounded-[11px] border-none relative cursor-pointer transition-colors duration-200 shrink-0 ${
+                      flag.is_enabled ? 'bg-emerald-600' : 'bg-gray-300'
+                    }`}
                   >
-                    <div style={{
-                      width: 16, height: 16, borderRadius: '50%', background: '#fff',
-                      position: 'absolute', top: 3,
-                      left: flag.is_enabled ? 21 : 3,
-                      transition: 'left 0.2s',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-                    }} />
+                    <div className={`w-4 h-4 rounded-full bg-white absolute top-[3px] transition-[left] duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.15)] ${
+                      flag.is_enabled ? 'left-[21px]' : 'left-[3px]'
+                    }`} />
                   </button>
-                  <span style={{ fontSize: 16, color: TEXT_MUTED, transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                  <span className={`text-base text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}>
                     {'▾'}
                   </span>
                 </div>
 
                 {/* ── Expanded config ── */}
                 {expanded && (
-                  <div style={{ padding: '0 18px 18px', borderTop: `1px solid ${BORDER}` }}>
+                  <div className="px-[18px] pb-[18px] border-t border-[#E2D9C8]">
                     {/* Row 1 — Trigger type */}
-                    <div style={{ marginTop: 14 }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Trigger Type</label>
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6 }}>
+                    <div className="mt-3.5">
+                      <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Trigger Type</label>
+                      <div className="flex gap-1 flex-wrap mt-1.5">
                         {TRIGGER_TYPES.map(tt => (
                           <button key={tt.key}
                             onClick={() => updateEdit(f.key, { trigger_type: tt.key })}
-                            style={pillBtn(f.trigger_type === tt.key)}>
+                            className={`py-1 px-3 rounded-full border-none text-[11px] font-semibold cursor-pointer transition-all duration-[120ms] ${
+                              f.trigger_type === tt.key
+                                ? 'bg-navy text-white'
+                                : 'bg-gray-100 text-gray-400'
+                            }`}>
                             {tt.label}
                           </button>
                         ))}
@@ -422,24 +390,24 @@ export default function FeatureFlags() {
                     </div>
 
                     {/* Row 2 — Dynamic config */}
-                    <div style={{ marginTop: 14 }}>
+                    <div className="mt-3.5">
                       {f.trigger_type === 'fixed_date' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-4 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Go-live date</label>
-                            <input type="date" style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Go-live date</label>
+                            <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.go_live?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, go_live: e.target.value } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Time</label>
-                            <input type="time" style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Time</label>
+                            <input type="time" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.go_live_time ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, go_live_time: e.target.value } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Timezone</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Timezone</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.timezone ?? 'PT'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, timezone: e.target.value } })}>
                               <option value="PT">Pacific (PT)</option>
@@ -448,8 +416,8 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Early access</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Early access</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.early_access ?? 'none'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, early_access: e.target.value } })}>
                               <option value="none">None</option>
@@ -462,16 +430,16 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'relative_date' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Delay</label>
-                            <input type="number" min={0} style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Delay</label>
+                            <input type="number" min={0} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Unit</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Unit</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.unit ?? 'days'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, unit: e.target.value } })}>
                               <option value="days">Days</option>
@@ -480,8 +448,8 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Scope</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Scope</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.scope ?? 'per_user'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, scope: e.target.value } })}>
                               <option value="per_user">Per user</option>
@@ -492,22 +460,22 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'rolling_window' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Active for N days</label>
-                            <input type="number" min={1} style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Active for N days</label>
+                            <input type="number" min={1} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.active_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, active_days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>In last Y days</label>
-                            <input type="number" min={1} style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">In last Y days</label>
+                            <input type="number" min={1} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.window_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, window_days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Action type</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Action type</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.action_type ?? 'any_login'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, action_type: e.target.value } })}>
                               <option value="any_login">Any login</option>
@@ -519,10 +487,10 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'event_delay' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-2 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Trigger event</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Trigger event</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.trigger_event ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, trigger_event: e.target.value } })}>
                               <option value="">Select event...</option>
@@ -532,8 +500,8 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Delay (days)</label>
-                            <input type="number" min={0} style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Delay (days)</label>
+                            <input type="number" min={0} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.delay_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, delay_days: Number(e.target.value) } })} />
                           </div>
@@ -541,22 +509,22 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'time_window' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Start date</label>
-                            <input type="date" style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Start date</label>
+                            <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.start?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, start: e.target.value } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>End date</label>
-                            <input type="date" style={inputStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">End date</label>
+                            <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.end?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, end: e.target.value } })} />
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>After end</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">After end</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.after_end ?? 'off'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, after_end: e.target.value } })}>
                               <option value="off">Turn off</option>
@@ -568,10 +536,10 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'fiscal_renewal' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div className="grid grid-cols-2 gap-2.5">
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Unlock on</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Unlock on</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.unlock_on ?? 'next_renewal'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, unlock_on: e.target.value } })}>
                               <option value="next_renewal">Next renewal</option>
@@ -580,8 +548,8 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Prorate immediately</label>
-                            <select style={selectStyle}
+                            <label className="text-[10px] text-[#6B7F96] font-semibold">Prorate immediately</label>
+                            <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.prorate ? 'yes' : 'no'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, prorate: e.target.value === 'yes' } })}>
                               <option value="yes">Yes</option>
@@ -592,27 +560,31 @@ export default function FeatureFlags() {
                       )}
 
                       {f.trigger_type === 'criteria' && (
-                        <div style={{ marginTop: 4 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                            <span style={{ fontSize: 11, color: TEXT_SEC }}>Match</span>
+                        <div className="mt-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[11px] text-[#6B7F96]">Match</span>
                             {(['all', 'any'] as const).map(logic => (
                               <button key={logic}
                                 onClick={() => updateEdit(f.key, { criteria_logic: logic })}
-                                style={pillBtn(f.criteria_logic === logic)}>
+                                className={`py-1 px-3 rounded-full border-none text-[11px] font-semibold cursor-pointer transition-all duration-[120ms] ${
+                                  f.criteria_logic === logic
+                                    ? 'bg-navy text-white'
+                                    : 'bg-gray-100 text-gray-400'
+                                }`}>
                                 {logic === 'all' ? 'ALL of' : 'ANY of'}
                               </button>
                             ))}
                           </div>
                           {(f.criteria ?? []).map((c: any, idx: number) => (
-                            <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6 }}>
-                              <select style={{ ...selectStyle, width: 'auto' }}
+                            <div key={idx} className="flex gap-1.5 items-center mb-1.5">
+                              <select className="py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer w-auto"
                                 value={c.category ?? 'Data'}
                                 onChange={e => updateCriterion(f.key, idx, { category: e.target.value })}>
                                 {CRITERIA_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                               </select>
-                              <input style={{ ...inputStyle, width: 120 }} placeholder="Type"
+                              <input className="py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs w-[120px]" placeholder="Type"
                                 value={c.type ?? ''} onChange={e => updateCriterion(f.key, idx, { type: e.target.value })} />
-                              <select style={{ ...selectStyle, width: 'auto' }}
+                              <select className="py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer w-auto"
                                 value={c.operator ?? '='}
                                 onChange={e => updateCriterion(f.key, idx, { operator: e.target.value })}>
                                 <option value="=">=</option>
@@ -623,16 +595,16 @@ export default function FeatureFlags() {
                                 <option value="<=">&lt;=</option>
                                 <option value="contains">contains</option>
                               </select>
-                              <input style={{ ...inputStyle, width: 100 }} placeholder="Value"
+                              <input className="py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs w-[100px]" placeholder="Value"
                                 value={c.value ?? ''} onChange={e => updateCriterion(f.key, idx, { value: e.target.value })} />
                               <button onClick={() => removeCriterion(f.key, idx)}
-                                style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
+                                className="bg-transparent border-none text-red-600 cursor-pointer text-sm font-bold">
                                 {'×'}
                               </button>
                             </div>
                           ))}
                           <button onClick={() => addCriterion(f.key)}
-                            style={{ fontSize: 11, color: GOLD, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', marginTop: 2 }}>
+                            className="text-[11px] text-gold font-semibold bg-transparent border-none cursor-pointer mt-0.5">
                             + Add criteria
                           </button>
                         </div>
@@ -640,12 +612,12 @@ export default function FeatureFlags() {
                     </div>
 
                     {/* Row 3 — Visibility */}
-                    <div style={{ marginTop: 16 }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Visibility</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 6 }}>
+                    <div className="mt-4">
+                      <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Visibility</label>
+                      <div className="grid grid-cols-2 gap-2.5 mt-1.5">
                         <div>
-                          <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Visible to</label>
-                          <select style={selectStyle}
+                          <label className="text-[10px] text-[#6B7F96] font-semibold">Visible to</label>
+                          <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                             value={f.visible_to}
                             onChange={e => updateEdit(f.key, { visible_to: e.target.value })}>
                             <option value="all">All users</option>
@@ -654,8 +626,8 @@ export default function FeatureFlags() {
                           </select>
                         </div>
                         <div>
-                          <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Plan tier restriction</label>
-                          <select style={selectStyle}
+                          <label className="text-[10px] text-[#6B7F96] font-semibold">Plan tier restriction</label>
+                          <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                             value={(f.plan_tiers ?? [])[0] ?? 'none'}
                             onChange={e => updateEdit(f.key, { plan_tiers: e.target.value === 'none' ? null : [e.target.value] })}>
                             <option value="none">None (all plans)</option>
@@ -664,13 +636,13 @@ export default function FeatureFlags() {
                         </div>
                       </div>
                       {f.visible_to === 'role_filtered' && (
-                        <div style={{ marginTop: 8 }}>
-                          <label style={{ fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>Allowed roles</label>
-                          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+                        <div className="mt-2">
+                          <label className="text-[10px] text-[#6B7F96] font-semibold">Allowed roles</label>
+                          <div className="flex gap-2 flex-wrap mt-1">
                             {ROLES.map(role => {
                               const checked = (f.allowed_roles ?? []).includes(role);
                               return (
-                                <label key={role} style={{ fontSize: 11, color: checked ? NAVY : TEXT_MUTED, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+                                <label key={role} className={`text-[11px] flex items-center gap-1 cursor-pointer ${checked ? 'text-navy' : 'text-gray-400'}`}>
                                   <input type="checkbox" checked={checked}
                                     onChange={() => {
                                       const current = [...(f.allowed_roles ?? [])];
@@ -687,24 +659,24 @@ export default function FeatureFlags() {
                     </div>
 
                     {/* Row 4 — Disabled message */}
-                    <div style={{ marginTop: 16 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <label style={{ fontSize: 11, fontWeight: 700, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Disabled Message</label>
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Disabled Message</label>
                         <button
                           onClick={() => aiSuggest(flag)}
                           disabled={aiLoading === f.key}
-                          style={{
-                            fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 5,
-                            background: aiLoading === f.key ? '#E5E7EB' : 'linear-gradient(135deg, #A08C5A, #C4A961)',
-                            color: '#fff', border: 'none', cursor: aiLoading === f.key ? 'not-allowed' : 'pointer',
-                          }}>
+                          className={`text-[10px] font-bold py-[3px] px-2.5 rounded-[5px] text-white border-none ${
+                            aiLoading === f.key
+                              ? 'bg-gray-200 cursor-not-allowed'
+                              : 'bg-gradient-to-br from-gold to-gold-light cursor-pointer'
+                          }`}>
                           {aiLoading === f.key ? 'Generating...' : '✦ AI Suggest'}
                         </button>
                       </div>
-                      <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="mt-1.5 flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1">
                           <input
-                            style={{ ...inputStyle, flex: 1 }}
+                            className="flex-1 py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                             placeholder="Title (shown as heading)"
                             value={f.disabled_message_title ?? ''}
                             onChange={e => updateEdit(f.key, { disabled_message_title: e.target.value })}
@@ -717,45 +689,39 @@ export default function FeatureFlags() {
                           />
                         </div>
                         <textarea
-                          style={{ ...inputStyle, minHeight: 60, resize: 'vertical', fontFamily: 'inherit' }}
+                          className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs min-h-[60px] resize-y font-[inherit]"
                           placeholder="Message body (shown to operators when feature is unavailable)"
                           value={f.disabled_message ?? ''}
                           onChange={e => updateEdit(f.key, { disabled_message: e.target.value })}
                         />
-                        <div style={{ fontSize: 10, color: TEXT_MUTED, textAlign: 'right' }}>
+                        <div className="text-[10px] text-gray-400 text-right">
                           {(f.disabled_message ?? '').length} chars
                         </div>
                       </div>
                     </div>
 
                     {/* Row 5 — Audit trail stub */}
-                    <div style={{ marginTop: 12, fontSize: 11, color: TEXT_MUTED }}>
+                    <div className="mt-3 text-[11px] text-gray-400">
                       Last updated: {flag.updated_at ? new Date(flag.updated_at).toLocaleString() : 'never'}
                     </div>
 
                     {/* Save button */}
-                    <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                    <div className="mt-3.5 flex justify-end gap-2">
                       {hasEdits && (
                         <button
                           onClick={() => setEdits(prev => { const next = { ...prev }; delete next[f.key]; return next; })}
-                          style={{
-                            padding: '6px 16px', fontSize: 11, fontWeight: 600,
-                            background: 'none', border: `1px solid ${BORDER}`, borderRadius: 6,
-                            color: TEXT_MUTED, cursor: 'pointer',
-                          }}>
+                          className="py-1.5 px-4 text-[11px] font-semibold bg-transparent border border-[#E2D9C8] rounded-md text-gray-400 cursor-pointer">
                           Discard
                         </button>
                       )}
                       <button
                         onClick={() => saveFlag(flag)}
                         disabled={!hasEdits || saving === f.key}
-                        style={{
-                          padding: '6px 16px', fontSize: 11, fontWeight: 700,
-                          background: hasEdits ? NAVY : '#E5E7EB',
-                          color: hasEdits ? '#fff' : TEXT_MUTED,
-                          border: 'none', borderRadius: 6,
-                          cursor: hasEdits ? 'pointer' : 'not-allowed',
-                        }}>
+                        className={`py-1.5 px-4 text-[11px] font-bold border-none rounded-md ${
+                          hasEdits
+                            ? 'bg-navy text-white cursor-pointer'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        }`}>
                         {saving === f.key ? 'Saving...' : 'Save Changes'}
                       </button>
                     </div>

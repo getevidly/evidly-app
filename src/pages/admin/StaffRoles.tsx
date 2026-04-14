@@ -14,12 +14,6 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 type Tab = 'staff' | 'roles' | 'activity';
 
 /* ── Permission keys ── */
@@ -65,24 +59,24 @@ const PERM_SHORT_LABELS: Record<PermKey, string> = {
 };
 
 const PERM_DOT_COLORS: Record<PermKey, string> = {
-  perm_billing: '#059669',
-  perm_security: '#DC2626',
-  perm_emulate: '#7C3AED',
-  perm_configure: '#2563EB',
-  perm_support_tickets: '#D97706',
-  perm_sales_pipeline: '#059669',
-  perm_crawl_manage: '#EA580C',
-  perm_remote_connect: '#0891B2',
-  perm_intelligence: '#7C3AED',
-  perm_staff_manage: '#DC2626',
+  perm_billing: 'bg-[#059669]',
+  perm_security: 'bg-[#DC2626]',
+  perm_emulate: 'bg-[#7C3AED]',
+  perm_configure: 'bg-[#2563EB]',
+  perm_support_tickets: 'bg-[#D97706]',
+  perm_sales_pipeline: 'bg-[#059669]',
+  perm_crawl_manage: 'bg-[#EA580C]',
+  perm_remote_connect: 'bg-[#0891B2]',
+  perm_intelligence: 'bg-[#7C3AED]',
+  perm_staff_manage: 'bg-[#DC2626]',
 };
 
 /* ── Role badge styling ── */
-const ROLE_BADGE_STYLES: Record<string, { bg: string; text: string }> = {
-  super_admin: { bg: `linear-gradient(135deg, ${NAVY}, ${GOLD})`, text: '#FFFFFF' },
-  admin: { bg: NAVY, text: '#FFFFFF' },
-  support: { bg: '#2563EB', text: '#FFFFFF' },
-  sales: { bg: '#059669', text: '#FFFFFF' },
+const ROLE_BADGE_BG: Record<string, string> = {
+  super_admin: 'bg-gradient-to-br from-navy to-gold',
+  admin: 'bg-navy',
+  support: 'bg-[#2563EB]',
+  sales: 'bg-[#059669]',
 };
 
 const ROLE_DISPLAY: Record<string, string> = {
@@ -96,10 +90,10 @@ const STAFF_ROLES = ['super_admin', 'admin', 'support', 'sales'];
 
 /* ── Level badge colors for activity log ── */
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
-  INFO:  { bg: '#EFF6FF', text: '#2563EB' },
-  WARN:  { bg: '#FFFBEB', text: '#D97706' },
-  ERROR: { bg: '#FEF2F2', text: '#DC2626' },
-  DEBUG: { bg: '#F3F4F6', text: '#6B7280' },
+  INFO:  { bg: 'bg-[#EFF6FF]', text: 'text-[#2563EB]' },
+  WARN:  { bg: 'bg-[#FFFBEB]', text: 'text-[#D97706]' },
+  ERROR: { bg: 'bg-[#FEF2F2]', text: 'text-[#DC2626]' },
+  DEBUG: { bg: 'bg-[#F3F4F6]', text: 'text-[#6B7280]' },
 };
 
 /* ── Interfaces ── */
@@ -150,14 +144,17 @@ interface EventRow {
 
 /* ── Reusable atoms ── */
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div
+    className="rounded-md animate-pulse bg-[#E5E7EB]"
+    style={{ width: w, height: h }}
+  />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -246,39 +243,11 @@ export default function StaffRoles() {
     setShowAddModal(false);
   };
 
-  /* ── Style helpers ── */
-  const tabStyle = (t: Tab): React.CSSProperties => ({
-    padding: '8px 18px', borderRadius: 6, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-    background: tab === t ? '#FFFFFF' : 'transparent', color: tab === t ? NAVY : TEXT_MUTED,
-    boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-  });
-
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%',
-  };
-
-  const thStyle: React.CSSProperties = {
-    textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase',
-  };
-
-  const tdStyle: React.CSSProperties = {
-    padding: '10px 14px', fontSize: 13,
-  };
-
   /* ── Render role badge ── */
   const renderRoleBadge = (role: string) => {
-    const style = ROLE_BADGE_STYLES[role] || { bg: '#6B7280', text: '#FFFFFF' };
-    const isGradient = style.bg.includes('gradient');
+    const bgClass = ROLE_BADGE_BG[role] || 'bg-[#6B7280]';
     return (
-      <span style={{
-        display: 'inline-block',
-        padding: '3px 10px',
-        borderRadius: 4,
-        fontSize: 11,
-        fontWeight: 700,
-        color: style.text,
-        ...(isGradient ? { backgroundImage: style.bg } : { background: style.bg }),
-      }}>
+      <span className={`inline-block px-[10px] py-[3px] rounded text-[11px] font-bold text-white ${bgClass}`}>
         {ROLE_DISPLAY[role] || role}
       </span>
     );
@@ -286,19 +255,14 @@ export default function StaffRoles() {
 
   /* ── Render permission dots ── */
   const renderPermDots = (row: StaffRow) => (
-    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+    <div className="flex gap-1 flex-wrap">
       {PERM_KEYS.map(k => {
         const active = !!(row as any)[k];
         return (
           <span
             key={k}
             title={`${PERM_LABELS[k]}: ${active ? 'Enabled' : 'Disabled'}`}
-            style={{
-              width: 8, height: 8, borderRadius: '50%',
-              background: active ? PERM_DOT_COLORS[k] : '#D1D5DB',
-              display: 'inline-block',
-              cursor: 'help',
-            }}
+            className={`w-2 h-2 rounded-full inline-block cursor-help ${active ? PERM_DOT_COLORS[k] : 'bg-[#D1D5DB]'}`}
           />
         );
       })}
@@ -313,20 +277,28 @@ export default function StaffRoles() {
       <AdminBreadcrumb crumbs={[{ label: 'Staff & Roles' }]} />
 
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Staff & Roles</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Staff & Roles</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1">
           Manage EvidLY internal staff accounts and role-based permissions.
         </p>
       </div>
 
       {/* ── Tab bar ── */}
-      <div style={{ display: 'flex', gap: 2, background: '#F3F4F6', borderRadius: 8, padding: 3, width: 'fit-content' }}>
+      <div className="flex gap-0.5 bg-[#F3F4F6] rounded-lg p-[3px] w-fit">
         {([
           { id: 'staff' as Tab, label: 'Staff Members' },
           { id: 'roles' as Tab, label: 'Role Definitions' },
           { id: 'activity' as Tab, label: 'Activity Log' },
         ]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={tabStyle(t.id)}>
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`px-[18px] py-2 rounded-md border-none text-[13px] font-semibold cursor-pointer ${
+              tab === t.id
+                ? 'bg-white text-navy shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+                : 'bg-transparent text-[#9CA3AF]'
+            }`}
+          >
             {t.label}
           </button>
         ))}
@@ -336,37 +308,34 @@ export default function StaffRoles() {
       {tab === 'staff' && (
         <>
           {/* Header row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>EvidLY Staff Accounts</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-base font-bold text-navy">EvidLY Staff Accounts</h2>
             <button
               onClick={() => {
                 applyRoleDefaults(formRole);
                 setShowAddModal(true);
               }}
-              style={{
-                padding: '8px 16px', borderRadius: 6, border: 'none', fontSize: 13, fontWeight: 600,
-                background: GOLD, color: '#FFFFFF', cursor: 'pointer',
-              }}
+              className="px-4 py-2 rounded-md border-none text-[13px] font-semibold bg-gold text-white cursor-pointer"
             >
               + Add Staff Member
             </button>
           </div>
 
           {/* Staff table */}
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
             {loading ? (
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} h={32} />)}
               </div>
             ) : staff.length === 0 ? (
               <EmptyState icon="👤" title="No staff accounts found" subtitle="Staff accounts with an evidly_staff_role will appear here." />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <tr className="border-b border-[#E2D9C8]">
                       {['Name', 'Email', 'Role', 'Permissions', 'Last Login'].map(h => (
-                        <th key={h} style={thStyle}>{h}</th>
+                        <th key={h} className="text-left px-[14px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -375,15 +344,13 @@ export default function StaffRoles() {
                       <tr
                         key={s.id}
                         onClick={() => setSelectedStaff(s)}
-                        style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#F9FAFB]"
                       >
-                        <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>{s.full_name || '—'}</td>
-                        <td style={{ ...tdStyle, color: TEXT_SEC, fontSize: 12 }}>{s.email}</td>
-                        <td style={tdStyle}>{renderRoleBadge(s.evidly_staff_role)}</td>
-                        <td style={tdStyle}>{renderPermDots(s)}</td>
-                        <td style={{ ...tdStyle, color: TEXT_SEC, fontSize: 12 }}>
+                        <td className="px-[14px] py-[10px] text-navy font-semibold">{s.full_name || '—'}</td>
+                        <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">{s.email}</td>
+                        <td className="px-[14px] py-[10px]">{renderRoleBadge(s.evidly_staff_role)}</td>
+                        <td className="px-[14px] py-[10px]">{renderPermDots(s)}</td>
+                        <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">
                           {s.last_login_at ? new Date(s.last_login_at).toLocaleDateString() : 'Never'}
                         </td>
                       </tr>
@@ -397,54 +364,48 @@ export default function StaffRoles() {
           {/* ── Add Staff Member Modal ── */}
           {showAddModal && (
             <div
-              style={{
-                position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex',
-                alignItems: 'center', justifyContent: 'center', zIndex: 9999,
-              }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
               onClick={() => resetModal()}
             >
               <div
                 onClick={e => e.stopPropagation()}
-                style={{
-                  background: '#FFFFFF', borderRadius: 16, padding: 28, width: 520, maxHeight: '90vh',
-                  overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-                }}
+                className="bg-white rounded-2xl p-7 w-[520px] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
               >
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: 20 }}>
+                <h3 className="text-lg font-bold text-navy mb-5">
                   Add Staff Member
                 </h3>
 
                 {/* Email */}
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>
-                  Email <span style={{ color: '#DC2626' }}>*</span>
+                <label className="block text-xs font-semibold text-[#6B7F96] mb-1">
+                  Email <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
                   type="email"
                   value={formEmail}
                   onChange={e => setFormEmail(e.target.value)}
                   placeholder="name@getevidly.com"
-                  style={{ ...inputStyle, marginBottom: 14 }}
+                  className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] mb-[14px]"
                 />
 
                 {/* Full Name */}
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>
+                <label className="block text-xs font-semibold text-[#6B7F96] mb-1">
                   Full Name
                 </label>
                 <input
                   value={formName}
                   onChange={e => setFormName(e.target.value)}
                   placeholder="First Last"
-                  style={{ ...inputStyle, marginBottom: 14 }}
+                  className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] mb-[14px]"
                 />
 
                 {/* Role */}
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>
+                <label className="block text-xs font-semibold text-[#6B7F96] mb-1">
                   Role
                 </label>
                 <select
                   value={formRole}
                   onChange={e => handleRoleChange(e.target.value)}
-                  style={{ ...inputStyle, marginBottom: 18, cursor: 'pointer' }}
+                  className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] mb-[18px] cursor-pointer"
                 >
                   {STAFF_ROLES.map(r => (
                     <option key={r} value={r}>{ROLE_DISPLAY[r]}</option>
@@ -452,23 +413,20 @@ export default function StaffRoles() {
                 </select>
 
                 {/* Permission checkboxes */}
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: TEXT_SEC, marginBottom: 8 }}>
+                <label className="block text-xs font-semibold text-[#6B7F96] mb-2">
                   Permissions
                 </label>
-                <div style={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24,
-                  background: '#F9FAFB', borderRadius: 8, padding: 14, border: '1px solid #E5E7EB',
-                }}>
+                <div className="grid grid-cols-2 gap-2 mb-6 bg-[#F9FAFB] rounded-lg p-[14px] border border-[#E5E7EB]">
                   {PERM_KEYS.map(k => (
                     <label
                       key={k}
-                      style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: NAVY, cursor: 'pointer' }}
+                      className="flex items-center gap-2 text-xs text-navy cursor-pointer"
                     >
                       <input
                         type="checkbox"
                         checked={formPerms[k]}
                         onChange={e => setFormPerms(prev => ({ ...prev, [k]: e.target.checked }))}
-                        style={{ accentColor: GOLD }}
+                        className="accent-gold"
                       />
                       {PERM_LABELS[k]}
                     </label>
@@ -476,13 +434,10 @@ export default function StaffRoles() {
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                <div className="flex gap-[10px] justify-end">
                   <button
                     onClick={() => resetModal()}
-                    style={{
-                      padding: '8px 16px', borderRadius: 6, border: `1px solid ${BORDER}`,
-                      background: '#FFFFFF', color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    }}
+                    className="px-4 py-2 rounded-md border border-[#E2D9C8] bg-white text-[#6B7F96] text-[13px] font-semibold cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -493,10 +448,7 @@ export default function StaffRoles() {
                       alert(`Invitation for ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to send invitations.`);
                       resetModal();
                     }}
-                    style={{
-                      padding: '8px 16px', borderRadius: 6, border: 'none',
-                      background: '#2563EB', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    }}
+                    className="px-4 py-2 rounded-md border-none bg-[#2563EB] text-white text-[13px] font-semibold cursor-pointer"
                   >
                     Send Invitation
                   </button>
@@ -507,10 +459,7 @@ export default function StaffRoles() {
                       alert(`Provisioning ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to create accounts.`);
                       resetModal();
                     }}
-                    style={{
-                      padding: '8px 16px', borderRadius: 6, border: 'none',
-                      background: GOLD, color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    }}
+                    className="px-4 py-2 rounded-md border-none bg-gold text-white text-[13px] font-semibold cursor-pointer"
                   >
                     Provision Now
                   </button>
@@ -524,19 +473,19 @@ export default function StaffRoles() {
       {/* ═══════ TAB 2: ROLE DEFINITIONS ═══════ */}
       {tab === 'roles' && (
         <>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>Role Definitions</h2>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: -8, marginBottom: 8 }}>
+          <h2 className="text-base font-bold text-navy">Role Definitions</h2>
+          <p className="text-[13px] text-[#6B7F96] -mt-2 mb-2">
             Default permission templates for each internal staff role.
           </p>
 
           {loading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div className="grid grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={240} />)}
             </div>
           ) : roleDefs.length === 0 ? (
             <EmptyState icon="🔐" title="No role definitions" subtitle="Role definitions from evidly_role_permissions will appear here." />
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 16 }}>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-4">
               {roleDefs.map(rd => {
                 const roleIcon = rd.role_name === 'super_admin' ? '👑'
                   : rd.role_name === 'admin' ? '🛡'
@@ -546,20 +495,17 @@ export default function StaffRoles() {
                 return (
                   <div
                     key={rd.id}
-                    style={{
-                      background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`,
-                      padding: 20, display: 'flex', flexDirection: 'column', gap: 14,
-                    }}
+                    className="bg-white rounded-xl border border-[#E2D9C8] p-5 flex flex-col gap-[14px]"
                   >
                     {/* Card header */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="flex items-center gap-[10px]">
                       <span className="text-2xl">{roleIcon}</span>
                       <div>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: NAVY }}>
+                        <div className="text-[15px] font-bold text-navy">
                           {ROLE_DISPLAY[rd.role_name] || rd.role_name}
                         </div>
                         {rd.description && (
-                          <div style={{ fontSize: 12, color: TEXT_SEC, marginTop: 2 }}>
+                          <div className="text-xs text-[#6B7F96] mt-0.5">
                             {rd.description}
                           </div>
                         )}
@@ -567,24 +513,17 @@ export default function StaffRoles() {
                     </div>
 
                     {/* Permission grid */}
-                    <div style={{
-                      display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6,
-                      background: '#F9FAFB', borderRadius: 8, padding: 12,
-                    }}>
+                    <div className="grid grid-cols-2 gap-1.5 bg-[#F9FAFB] rounded-lg p-3">
                       {PERM_KEYS.map(k => {
                         const enabled = !!(rd as any)[k];
                         return (
-                          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
-                            <span style={{
-                              width: 16, height: 16, borderRadius: 4,
-                              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                              background: enabled ? '#F0FFF4' : '#FEF2F2',
-                              color: enabled ? '#059669' : '#DC2626',
-                              fontSize: 10, fontWeight: 700,
-                            }}>
+                          <div key={k} className="flex items-center gap-1.5 text-xs">
+                            <span className={`w-4 h-4 rounded inline-flex items-center justify-center text-[10px] font-bold ${
+                              enabled ? 'bg-[#F0FFF4] text-[#059669]' : 'bg-[#FEF2F2] text-[#DC2626]'
+                            }`}>
                               {enabled ? '✓' : '✗'}
                             </span>
-                            <span style={{ color: enabled ? NAVY : TEXT_MUTED }}>
+                            <span className={enabled ? 'text-navy' : 'text-[#9CA3AF]'}>
                               {PERM_SHORT_LABELS[k]}
                             </span>
                           </div>
@@ -595,11 +534,7 @@ export default function StaffRoles() {
                     {/* Edit button */}
                     <button
                       onClick={() => alert(`Edit defaults for "${ROLE_DISPLAY[rd.role_name] || rd.role_name}" requires write access to evidly_role_permissions table.`)}
-                      style={{
-                        padding: '6px 14px', borderRadius: 6, border: `1px solid ${BORDER}`,
-                        background: '#FFFFFF', color: TEXT_SEC, fontSize: 12, fontWeight: 600,
-                        cursor: 'pointer', alignSelf: 'flex-end',
-                      }}
+                      className="px-[14px] py-1.5 rounded-md border border-[#E2D9C8] bg-white text-[#6B7F96] text-xs font-semibold cursor-pointer self-end"
                     >
                       Edit Defaults
                     </button>
@@ -614,27 +549,27 @@ export default function StaffRoles() {
       {/* ═══════ TAB 3: ACTIVITY LOG ═══════ */}
       {tab === 'activity' && (
         <>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>Activity Log</h2>
-            <span style={{ fontSize: 12, color: TEXT_MUTED }}>
+          <div className="flex justify-between items-center">
+            <h2 className="text-base font-bold text-navy">Activity Log</h2>
+            <span className="text-xs text-[#9CA3AF]">
               Showing up to 200 recent events
             </span>
           </div>
 
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
             {loading ? (
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={28} />)}
               </div>
             ) : events.length === 0 ? (
               <EmptyState icon="📋" title="No activity logged" subtitle="Admin events from getevidly.com staff will appear here." />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <tr className="border-b border-[#E2D9C8]">
                       {['Category', 'Message', 'Level', 'Timestamp'].map(h => (
-                        <th key={h} style={thStyle}>{h}</th>
+                        <th key={h} className="text-left px-[14px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -645,38 +580,29 @@ export default function StaffRoles() {
                       return (
                         <tr
                           key={ev.id}
-                          style={{ borderBottom: `1px solid ${BORDER}` }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                          className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB]"
                         >
-                          <td style={tdStyle}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <td className="px-[14px] py-[10px]">
+                            <div className="flex flex-col gap-0.5">
                               {ev.category && (
-                                <span style={{
-                                  display: 'inline-block', padding: '1px 6px', borderRadius: 3,
-                                  fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC,
-                                  width: 'fit-content',
-                                }}>
+                                <span className="inline-block px-1.5 py-[1px] rounded-[3px] text-[10px] font-semibold bg-[#F3F4F6] text-[#6B7F96] w-fit">
                                   {ev.category}
                                 </span>
                               )}
                               {!ev.category && (
-                                <span style={{ color: TEXT_MUTED, fontSize: 12 }}>{'—'}</span>
+                                <span className="text-[#9CA3AF] text-xs">{'—'}</span>
                               )}
                             </div>
                           </td>
-                          <td style={{ ...tdStyle, color: NAVY, maxWidth: 400 }}>
-                            <span style={{ wordBreak: 'break-word' }}>{ev.message}</span>
+                          <td className="px-[14px] py-[10px] text-navy max-w-[400px]">
+                            <span className="break-words">{ev.message}</span>
                           </td>
-                          <td style={tdStyle}>
-                            <span style={{
-                              padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-                              background: lc.bg, color: lc.text,
-                            }}>
+                          <td className="px-[14px] py-[10px]">
+                            <span className={`px-2 py-[2px] rounded text-[10px] font-bold ${lc.bg} ${lc.text}`}>
                               {ev.level}
                             </span>
                           </td>
-                          <td style={{ ...tdStyle, color: TEXT_SEC, fontSize: 12, whiteSpace: 'nowrap' }}>
+                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs whitespace-nowrap">
                             {ts ? new Date(ts).toLocaleString() : '—'}
                           </td>
                         </tr>
@@ -732,43 +658,43 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
 
   const roleDef = roleDefs.find(r => r.role_name === staff.evidly_staff_role);
 
-  const drawerTabStyle = (t: string): React.CSSProperties => ({
-    padding: '10px 14px', fontSize: 13, fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer',
-    borderBottom: drawerTab === t ? `2px solid ${NAVY}` : '2px solid transparent', marginBottom: -1,
-    color: drawerTab === t ? NAVY : TEXT_MUTED, whiteSpace: 'nowrap',
-  });
-
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 40 }} />
-      <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: 580, maxWidth: '100vw',
-        background: '#FFFFFF', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
-        display: 'flex', flexDirection: 'column', overflow: 'hidden',
-      }}>
+      <div onClick={onClose} className="fixed inset-0 bg-black/20 z-40" />
+      <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
         {/* Header */}
-        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+          <div className="flex justify-between items-start">
             <div>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{staff.full_name || staff.email}</h2>
-              <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 2 }}>{staff.email}</div>
-              <div style={{ marginTop: 6 }}>{renderRoleBadge(staff.evidly_staff_role)}</div>
+              <h2 className="text-lg font-bold text-navy m-0">{staff.full_name || staff.email}</h2>
+              <div className="text-[13px] text-[#6B7F96] mt-0.5">{staff.email}</div>
+              <div className="mt-1.5">{renderRoleBadge(staff.evidly_staff_role)}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-[#9CA3AF] cursor-pointer">{'×'}</button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: `1px solid ${BORDER}`, padding: '0 24px', flexShrink: 0 }}>
+        <div className="flex border-b border-[#E2D9C8] px-6 shrink-0">
           {['Profile', 'Permissions', 'Activity'].map(t => (
-            <button key={t} onClick={() => setDrawerTab(t)} style={drawerTabStyle(t)}>{t}</button>
+            <button
+              key={t}
+              onClick={() => setDrawerTab(t)}
+              className={`px-[14px] py-[10px] text-[13px] font-semibold border-none bg-transparent cursor-pointer whitespace-nowrap -mb-px ${
+                drawerTab === t
+                  ? 'border-b-2 border-navy text-navy'
+                  : 'border-b-2 border-transparent text-[#9CA3AF]'
+              }`}
+            >
+              {t}
+            </button>
           ))}
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           {drawerTab === 'Profile' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {[
                 ['Full Name', staff.full_name],
                 ['Email', staff.email],
@@ -776,35 +702,31 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
                 ['Last Login', staff.last_login_at ? new Date(staff.last_login_at).toLocaleString() : 'Never'],
                 ['Account Created', new Date(staff.created_at).toLocaleDateString()],
               ].map(([label, value]) => (
-                <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
-                  <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
-                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '—'}</span>
+                <div key={label as string} className="flex justify-between py-2 border-b border-[#F3F4F6]">
+                  <span className="text-xs text-[#6B7F96] font-semibold">{label}</span>
+                  <span className="text-[13px] text-navy font-medium">{value || '—'}</span>
                 </div>
               ))}
             </div>
           )}
 
           {drawerTab === 'Permissions' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ fontSize: 12, color: TEXT_SEC, marginBottom: 4 }}>
+            <div className="flex flex-col gap-[10px]">
+              <div className="text-xs text-[#6B7F96] mb-1">
                 Role default: <strong>{ROLE_DISPLAY[staff.evidly_staff_role]}</strong>
-                {roleDef && <span style={{ marginLeft: 8, color: TEXT_MUTED }}>({roleDef.description || 'No description'})</span>}
+                {roleDef && <span className="ml-2 text-[#9CA3AF]">({roleDef.description || 'No description'})</span>}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, background: '#F9FAFB', borderRadius: 8, padding: 14, border: '1px solid #E5E7EB' }}>
+              <div className="grid grid-cols-2 gap-2 bg-[#F9FAFB] rounded-lg p-[14px] border border-[#E5E7EB]">
                 {PERM_KEYS.map(k => {
                   const enabled = !!(staff as any)[k];
                   return (
-                    <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                      <span style={{
-                        width: 20, height: 20, borderRadius: 4,
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        background: enabled ? '#F0FFF4' : '#FEF2F2',
-                        color: enabled ? '#059669' : '#DC2626',
-                        fontSize: 11, fontWeight: 700,
-                      }}>
+                    <div key={k} className="flex items-center gap-2 text-[13px]">
+                      <span className={`w-5 h-5 rounded inline-flex items-center justify-center text-[11px] font-bold ${
+                        enabled ? 'bg-[#F0FFF4] text-[#059669]' : 'bg-[#FEF2F2] text-[#DC2626]'
+                      }`}>
                         {enabled ? '✓' : '✗'}
                       </span>
-                      <span style={{ color: enabled ? NAVY : TEXT_MUTED, fontWeight: enabled ? 600 : 400 }}>
+                      <span className={`${enabled ? 'text-navy font-semibold' : 'text-[#9CA3AF] font-normal'}`}>
                         {PERM_LABELS[k]}
                       </span>
                     </div>
@@ -816,20 +738,20 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
 
           {drawerTab === 'Activity' && (
             eventsLoading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="flex flex-col gap-2">
                 {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} h={24} />)}
               </div>
             ) : events.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded for this staff member.</div>
+              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No activity recorded for this staff member.</div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div className="flex flex-col gap-1">
                 {events.map(ev => {
                   const lc = LEVEL_COLORS[ev.level] || LEVEL_COLORS.INFO;
                   return (
-                    <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
-                      <span style={{ color: TEXT_SEC }}>{ev.event_time ? new Date(ev.event_time).toLocaleString() : '—'}</span>
-                      <span style={{ marginLeft: 6, padding: '1px 5px', borderRadius: 3, fontSize: 9, fontWeight: 700, background: lc.bg, color: lc.text }}>{ev.level}</span>
-                      <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                    <div key={ev.id} className="py-1.5 border-b border-[#F3F4F6] text-xs">
+                      <span className="text-[#6B7F96]">{ev.event_time ? new Date(ev.event_time).toLocaleString() : '—'}</span>
+                      <span className={`ml-1.5 px-[5px] py-[1px] rounded-[3px] text-[9px] font-bold ${lc.bg} ${lc.text}`}>{ev.level}</span>
+                      <span className="ml-2 text-navy">{ev.message}</span>
                     </div>
                   );
                 })}
@@ -839,14 +761,14 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
-          <button onClick={() => alert(`Edit role/permissions for ${staff.full_name || staff.email} requires write access to user_profiles and evidly_role_permissions tables.`)} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-[10px]">
+          <button onClick={() => alert(`Edit role/permissions for ${staff.full_name || staff.email} requires write access to user_profiles and evidly_role_permissions tables.`)} className="px-4 py-2 rounded-lg border-none bg-navy text-white text-xs font-bold cursor-pointer">
             Edit Role & Permissions
           </button>
-          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${staff.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(staff.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${staff.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${staff.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(staff.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${staff.email}.`); } }} className="px-4 py-2 rounded-lg border border-[#E2D9C8] bg-[#F9FAFB] text-[#6B7F96] text-xs font-semibold cursor-pointer">
             Reset Password
           </button>
-          <button onClick={() => alert(`Deactivate ${staff.full_name || staff.email} requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.`)} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => alert(`Deactivate ${staff.full_name || staff.email} requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.`)} className="px-4 py-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] text-xs font-semibold cursor-pointer">
             Deactivate
           </button>
         </div>

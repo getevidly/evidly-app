@@ -19,22 +19,6 @@ import {
 } from '../../lib/testimonialSystem';
 import { toast } from 'sonner';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const BORDER = '#E5E0D8';
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '10px 14px',
-  fontSize: 11,
-  fontWeight: 700,
-  color: '#4A5568',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-};
-const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
-
 export default function AdminTestimonials() {
   useDemoGuard();
   const [data, setData] = useState<Testimonial[]>([]);
@@ -93,22 +77,22 @@ export default function AdminTestimonials() {
   };
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 64px' }}>
+    <div className="max-w-[1100px] mx-auto px-6 pt-6 pb-16">
       <AdminBreadcrumb crumbs={[{ label: 'Growth', path: '/admin' }, { label: 'Testimonials' }]} />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, margin: '0 0 4px', fontFamily: "'DM Sans', sans-serif" }}>
+          <h1 className="text-[22px] font-extrabold text-navy mb-1 font-['DM_Sans',sans-serif]">
             Testimonials
           </h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, margin: 0 }}>
+          <p className="text-[13px] text-[#6B7F96]">
             Manage operator testimonials displayed on ScoreTable county pages
           </p>
         </div>
       </div>
 
       {/* KPI tiles */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div className="grid grid-cols-4 gap-3 mb-6">
         <KpiTile label="Total" value={String(total)} />
         <KpiTile label="Pending Review" value={String(pending)} valueColor={pending > 0 ? 'warning' : undefined} />
         <KpiTile label="Approved" value={String(approved)} valueColor="green" />
@@ -116,22 +100,16 @@ export default function AdminTestimonials() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div className="flex gap-2 mb-4">
         {(['all', 'pending', 'approved'] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 6,
-              border: `1px solid ${filter === f ? NAVY : BORDER}`,
-              background: filter === f ? NAVY : '#fff',
-              color: filter === f ? '#fff' : NAVY,
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              textTransform: 'capitalize',
-            }}
+            className={`py-1.5 px-3.5 rounded-md text-xs font-semibold cursor-pointer capitalize ${
+              filter === f
+                ? 'border border-navy bg-navy text-white'
+                : 'border border-[#E5E0D8] bg-white text-navy'
+            }`}
           >
             {f}
           </button>
@@ -140,130 +118,78 @@ export default function AdminTestimonials() {
 
       {/* Table */}
       {loading ? (
-        <div style={{ padding: 40, textAlign: 'center', color: TEXT_SEC, fontSize: 13 }}>Loading...</div>
+        <div className="p-10 text-center text-[#6B7F96] text-[13px]">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div
-          style={{
-            padding: 48,
-            textAlign: 'center',
-            background: '#fff',
-            borderRadius: 12,
-            border: `1px solid ${BORDER}`,
-          }}
-        >
-          <p style={{ fontSize: 32, margin: '0 0 8px' }}>💬</p>
-          <p style={{ fontSize: 14, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+        <div className="p-12 text-center bg-white rounded-xl border border-[#E5E0D8]">
+          <p className="text-[32px] mb-2">&#x1F4AC;</p>
+          <p className="text-sm font-bold text-navy mb-1">
             No testimonials yet
           </p>
-          <p style={{ fontSize: 12, color: TEXT_SEC, margin: 0 }}>
+          <p className="text-xs text-[#6B7F96]">
             Testimonials are collected from operators after their first inspection with EvidLY
           </p>
         </div>
       ) : (
-        <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+          <table className="w-full border-collapse">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <th style={thStyle}>Quote</th>
-                <th style={thStyle}>Author</th>
-                <th style={thStyle}>County</th>
-                <th style={thStyle}>Status</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Actions</th>
+              <tr className="border-b border-[#E5E0D8]">
+                <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Quote</th>
+                <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Author</th>
+                <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">County</th>
+                <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Status</th>
+                <th className="text-right py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(t => (
-                <tr key={t.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ ...tdStyle, maxWidth: 300, color: NAVY }}>
-                    <p style={{ margin: 0, lineHeight: 1.5, fontSize: 12 }}>
+                <tr key={t.id} className="border-b border-[#E5E0D8]">
+                  <td className="py-2.5 px-3.5 text-xs max-w-[300px] text-navy">
+                    <p className="m-0 leading-relaxed text-xs">
                       "{t.quote.length > 120 ? t.quote.slice(0, 120) + '...' : t.quote}"
                     </p>
                   </td>
-                  <td style={tdStyle}>
-                    <p style={{ margin: 0, fontWeight: 600, color: NAVY, fontSize: 12 }}>{t.author_name || '—'}</p>
-                    <p style={{ margin: 0, color: TEXT_SEC, fontSize: 11 }}>{t.org_name || ''}</p>
+                  <td className="py-2.5 px-3.5 text-xs">
+                    <p className="m-0 font-semibold text-navy text-xs">{t.author_name || '—'}</p>
+                    <p className="m-0 text-[#6B7F96] text-[11px]">{t.org_name || ''}</p>
                   </td>
-                  <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                  <td className="py-2.5 px-3.5 text-xs text-[#6B7F96]">
                     {t.county ? t.county.charAt(0).toUpperCase() + t.county.slice(1) : '—'}
                     {t.city ? ` · ${t.city}` : ''}
                   </td>
-                  <td style={tdStyle}>
+                  <td className="py-2.5 px-3.5 text-xs">
                     <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        padding: '3px 8px',
-                        borderRadius: 4,
-                        fontSize: 10,
-                        fontWeight: 700,
-                        background: t.approved ? '#f0fdf4' : '#fffbeb',
-                        color: t.approved ? '#16a34a' : '#d97706',
-                      }}
+                      className={`inline-flex items-center gap-1 py-0.5 px-2 rounded text-[10px] font-bold ${
+                        t.approved ? 'bg-[#f0fdf4] text-[#16a34a]' : 'bg-[#fffbeb] text-[#d97706]'
+                      }`}
                     >
                       {t.approved ? 'Approved' : 'Pending'}
                     </span>
                     {t.featured && (
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          marginLeft: 4,
-                          padding: '3px 8px',
-                          borderRadius: 4,
-                          fontSize: 10,
-                          fontWeight: 700,
-                          background: '#fffbeb',
-                          color: GOLD,
-                        }}
-                      >
-                        ★ Featured
+                      <span className="inline-flex ml-1 py-0.5 px-2 rounded text-[10px] font-bold bg-[#fffbeb] text-gold">
+                        &#x2605; Featured
                       </span>
                     )}
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                  <td className="py-2.5 px-3.5 text-xs text-right">
+                    <div className="flex gap-1.5 justify-end">
                       <button
                         onClick={() => handleApproveToggle(t)}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 4,
-                          border: `1px solid ${BORDER}`,
-                          background: '#fff',
-                          color: t.approved ? '#d97706' : '#16a34a',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        className={`py-1 px-2.5 rounded border border-[#E5E0D8] bg-white text-[11px] font-semibold cursor-pointer ${
+                          t.approved ? 'text-[#d97706]' : 'text-[#16a34a]'
+                        }`}
                       >
                         {t.approved ? 'Unapprove' : 'Approve'}
                       </button>
                       <button
                         onClick={() => handleFeatureToggle(t)}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 4,
-                          border: `1px solid ${BORDER}`,
-                          background: '#fff',
-                          color: GOLD,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        className="py-1 px-2.5 rounded border border-[#E5E0D8] bg-white text-gold text-[11px] font-semibold cursor-pointer"
                       >
                         {t.featured ? 'Unfeature' : 'Feature'}
                       </button>
                       <button
                         onClick={() => handleDelete(t)}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 4,
-                          border: '1px solid #fecaca',
-                          background: '#fff',
-                          color: '#dc2626',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        className="py-1 px-2.5 rounded border border-[#fecaca] bg-white text-[#dc2626] text-[11px] font-semibold cursor-pointer"
                       >
                         Delete
                       </button>

@@ -24,58 +24,30 @@ export function SettingsPage() {
     item.roles === null || (item.roles as readonly string[]).includes(userRole),
   );
 
-  const navLinkStyle = (isActive: boolean): React.CSSProperties => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '10px 14px',
-    borderRadius: 8,
-    fontSize: 14,
-    fontWeight: isActive ? 600 : 500,
-    color: isActive ? '#FFFFFF' : BODY_TEXT,
-    background: isActive ? NAVY : 'transparent',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    transition: 'background 0.15s, color 0.15s',
-    whiteSpace: 'nowrap' as const,
-  });
+  const navLinkClasses = (isActive: boolean) =>
+    `flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm no-underline cursor-pointer transition-[background,color] duration-150 whitespace-nowrap ${isActive ? 'font-semibold text-white bg-[#163a5f]' : 'font-medium text-[#0B1628] bg-transparent'}`;
 
   return (
     <div style={{ ...FONT }}>
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: BODY_TEXT, margin: '0 0 4px' }}>
+      <div className="mb-6">
+        <h1 className="text-[22px] font-bold text-[#0B1628] mb-1 mt-0">
           Settings
         </h1>
-        <p style={{ color: MUTED, fontSize: 14, margin: 0 }}>
+        <p className="text-[#3D5068] text-sm m-0">
           Manage your EvidLY workspace
         </p>
       </div>
 
       {/* Mobile: horizontal scrollable tabs */}
-      <div
-        className="lg:hidden"
-        style={{
-          display: 'flex',
-          gap: 6,
-          overflowX: 'auto',
-          paddingBottom: 12,
-          marginBottom: 16,
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
+      <div className="lg:hidden flex gap-1.5 overflow-x-auto pb-3 mb-4" style={{ WebkitOverflowScrolling: 'touch' }}>
         {visibleItems.map(item => (
           <NavLink
             key={item.path}
             to={item.path}
-            style={({ isActive }) => ({
-              ...navLinkStyle(isActive),
-              padding: '8px 14px',
-              fontSize: 13,
-              borderRadius: 20,
-              border: `1px solid ${isActive ? NAVY : CARD_BORDER}`,
-              flexShrink: 0,
-            })}
+            className={({ isActive }) =>
+              `${navLinkClasses(isActive)} !py-2 !px-3.5 !text-[13px] !rounded-[20px] shrink-0 ${isActive ? 'border border-[#163a5f]' : 'border border-[#D1D9E6]'}`
+            }
           >
             <item.icon size={16} />
             <span>{item.label}</span>
@@ -84,28 +56,15 @@ export function SettingsPage() {
       </div>
 
       {/* Desktop: 2-column layout */}
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+      <div className="flex gap-6 items-start">
         {/* Sidebar nav (desktop only) */}
-        <nav
-          className="hidden lg:block"
-          style={{
-            width: 240,
-            flexShrink: 0,
-            background: CARD_BG,
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 12,
-            boxShadow: CARD_SHADOW,
-            padding: 8,
-            position: 'sticky' as const,
-            top: 80,
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <nav className="hidden lg:block w-60 shrink-0 bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-2 sticky top-20">
+          <div className="flex flex-col gap-0.5">
             {visibleItems.map(item => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                style={({ isActive }) => navLinkStyle(isActive)}
+                className={({ isActive }) => navLinkClasses(isActive)}
               >
                 <item.icon size={18} />
                 <span>{item.label}</span>
@@ -115,7 +74,7 @@ export function SettingsPage() {
         </nav>
 
         {/* Content area */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="flex-1 min-w-0">
           <Outlet />
         </div>
       </div>

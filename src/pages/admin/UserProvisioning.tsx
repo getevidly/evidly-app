@@ -10,12 +10,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 type Tab = 'all-users' | 'invite-create' | 'audit-log';
 
 interface UserRow {
@@ -66,14 +60,14 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -160,99 +154,95 @@ export default function UserProvisioning() {
     setBulkOrg(null);
   };
 
-  const tabStyle = (t: Tab): React.CSSProperties => ({
-    padding: '8px 18px', borderRadius: 6, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-    background: tab === t ? '#FFFFFF' : 'transparent', color: tab === t ? NAVY : TEXT_MUTED,
-    boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-  });
-
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%',
-  };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'User Provisioning' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Provisioning</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">User Provisioning</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1">
           Invite users, create accounts, and manage roles across all organizations.
         </p>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 2, background: '#F3F4F6', borderRadius: 8, padding: 3, width: 'fit-content' }}>
+      <div className="flex gap-0.5 bg-gray-100 rounded-lg p-[3px] w-fit">
         {([
           { id: 'all-users' as Tab, label: 'All Users' },
           { id: 'invite-create' as Tab, label: 'Invite & Create' },
           { id: 'audit-log' as Tab, label: 'Audit Log' },
         ]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={tabStyle(t.id)}>
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-[18px] py-2 rounded-md border-none text-[13px] font-semibold cursor-pointer ${
+              tab === t.id
+                ? 'bg-white text-navy shadow-sm'
+                : 'bg-transparent text-gray-400 shadow-none'
+            }`}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* ───────── Tab: All Users ───────── */}
+      {/* --------- Tab: All Users --------- */}
       {tab === 'all-users' && (
         <>
           {/* Filters */}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div className="flex gap-3 flex-wrap">
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by name or email..."
-              style={{ ...inputStyle, flex: 1, minWidth: 200 }}
+              className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full flex-1 min-w-[200px]"
             />
-            <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} style={{ ...inputStyle, width: 180, cursor: 'pointer' }}>
+            <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
+              className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-[180px] cursor-pointer">
               <option value="">All Roles</option>
               {ROLES.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
             </select>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...inputStyle, width: 140, cursor: 'pointer' }}>
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+              className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-[140px] cursor-pointer">
               <option value="">All Status</option>
               <option value="active">Active</option>
               <option value="suspended">Suspended</option>
             </select>
           </div>
 
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
             {loading ? (
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
               </div>
             ) : filteredUsers.length === 0 ? (
               <EmptyState icon="👥" title="No users found" subtitle="Users will appear here when organizations have members." />
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <table className="w-full border-collapse text-[13px]">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <tr className="border-b border-[#E2D9C8]">
                     {['Name', 'Email', 'Role', 'Organization', 'Status', 'Last Active'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                      <th key={h} className="text-left px-[14px] py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.slice(0, 50).map(u => {
                     const org = orgs.find(o => o.id === u.organization_id);
-                    const roleColor = ROLE_COLORS[u.role] || TEXT_SEC;
+                    const roleColor = ROLE_COLORS[u.role] || '#6B7F96';
                     return (
-                      <tr key={u.id} onClick={() => setSelectedUser(u)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{u.full_name || '—'}</td>
-                        <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{u.email}</td>
-                        <td style={{ padding: '10px 14px' }}>
-                          <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: `${roleColor}15`, color: roleColor }}>
+                      <tr key={u.id} onClick={() => setSelectedUser(u)}
+                        className="border-b border-[#E2D9C8] cursor-pointer hover:bg-gray-50">
+                        <td className="px-[14px] py-2.5 text-navy font-semibold">{u.full_name || '—'}</td>
+                        <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">{u.email}</td>
+                        <td className="px-[14px] py-2.5">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ background: `${roleColor}15`, color: roleColor }}>
                             {u.role.replace(/_/g, ' ')}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{org?.name || '—'}</td>
-                        <td style={{ padding: '10px 14px' }}>
-                          <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F0FFF4', color: '#059669' }}>
+                        <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">{org?.name || '—'}</td>
+                        <td className="px-[14px] py-2.5">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F0FFF4] text-[#059669]">
                             active
                           </span>
                         </td>
-                        <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
+                        <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">
                           {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : 'Never'}
                         </td>
                       </tr>
@@ -265,28 +255,32 @@ export default function UserProvisioning() {
         </>
       )}
 
-      {/* ───────── Tab: Invite & Create ───────── */}
+      {/* --------- Tab: Invite & Create --------- */}
       {tab === 'invite-create' && (
         <>
           {/* Single user form */}
-          <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Create User</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+          <div className="bg-white border border-[#E2D9C8] rounded-xl p-6">
+            <h3 className="text-sm font-bold text-navy mb-4">Create User</h3>
+            <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Email *</label>
-                <input value={invEmail} onChange={e => setInvEmail(e.target.value)} style={inputStyle} placeholder="user@example.com" />
+                <label className="text-[11px] text-[#6B7F96] block mb-1">Email *</label>
+                <input value={invEmail} onChange={e => setInvEmail(e.target.value)}
+                  className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="user@example.com" />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Full Name</label>
-                <input value={invName} onChange={e => setInvName(e.target.value)} style={inputStyle} placeholder="Jane Smith" />
+                <label className="text-[11px] text-[#6B7F96] block mb-1">Full Name</label>
+                <input value={invName} onChange={e => setInvName(e.target.value)}
+                  className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="Jane Smith" />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Phone Number</label>
-                <input value={invPhone} onChange={e => setInvPhone(e.target.value)} style={inputStyle} placeholder="(555) 000-0000" type="tel" />
+                <label className="text-[11px] text-[#6B7F96] block mb-1">Phone Number</label>
+                <input value={invPhone} onChange={e => setInvPhone(e.target.value)}
+                  className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="(555) 000-0000" type="tel" />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Role</label>
-                <select value={invRole} onChange={e => setInvRole(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                <label className="text-[11px] text-[#6B7F96] block mb-1">Role</label>
+                <select value={invRole} onChange={e => setInvRole(e.target.value)}
+                  className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                   {ROLES.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
                 </select>
               </div>
@@ -301,8 +295,8 @@ export default function UserProvisioning() {
                 />
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+            <div className="flex items-center gap-4 mb-4">
+              <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
                 <input type="checkbox" checked={sendInvite} onChange={e => setSendInvite(e.target.checked)} />
                 Send email invite
               </label>
@@ -310,32 +304,32 @@ export default function UserProvisioning() {
             <button
               onClick={handleCreate}
               disabled={creating || !invEmail}
-              style={{
-                padding: '8px 24px', background: creating || !invEmail ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 6,
-                color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: creating || !invEmail ? 'default' : 'pointer',
-              }}
+              className={`px-6 py-2 border-none rounded-md text-white text-[13px] font-bold ${
+                creating || !invEmail ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
+              }`}
             >
               {creating ? 'Creating...' : 'Create User'}
             </button>
           </div>
 
           {/* Bulk invite */}
-          <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Bulk Invite</h3>
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Email addresses (comma-separated)</label>
+          <div className="bg-white border border-[#E2D9C8] rounded-xl p-6">
+            <h3 className="text-sm font-bold text-navy mb-4">Bulk Invite</h3>
+            <div className="mb-3">
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Email addresses (comma-separated)</label>
               <textarea
                 value={bulkEmails}
                 onChange={e => setBulkEmails(e.target.value)}
                 rows={3}
-                style={{ ...inputStyle, resize: 'vertical' }}
+                className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full resize-y"
                 placeholder="user1@example.com, user2@example.com, user3@example.com"
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div className="grid grid-cols-2 gap-3 mb-4">
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Role</label>
-                <select value={bulkRole} onChange={e => setBulkRole(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+                <label className="text-[11px] text-[#6B7F96] block mb-1">Role</label>
+                <select value={bulkRole} onChange={e => setBulkRole(e.target.value)}
+                  className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                   {ROLES.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
                 </select>
               </div>
@@ -353,10 +347,9 @@ export default function UserProvisioning() {
             <button
               onClick={handleBulkInvite}
               disabled={!bulkEmails.trim()}
-              style={{
-                padding: '8px 24px', background: !bulkEmails.trim() ? '#E5E7EB' : NAVY, border: 'none', borderRadius: 6,
-                color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: !bulkEmails.trim() ? 'default' : 'pointer',
-              }}
+              className={`px-6 py-2 border-none rounded-md text-white text-[13px] font-bold ${
+                !bulkEmails.trim() ? 'bg-gray-200 cursor-default' : 'bg-navy cursor-pointer'
+              }`}
             >
               Send Invites
             </button>
@@ -364,32 +357,32 @@ export default function UserProvisioning() {
         </>
       )}
 
-      {/* ───────── Tab: Audit Log ───────── */}
+      {/* --------- Tab: Audit Log --------- */}
       {tab === 'audit-log' && (
-        <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           {loading ? (
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : auditLog.length === 0 ? (
             <EmptyState icon="📋" title="No audit entries" subtitle="User provisioning and emulation audit entries will appear here." />
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E2D9C8]">
                   {['Timestamp', 'Admin', 'Target User', 'Ended', 'Summary'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                    <th key={h} className="text-left px-[14px] py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {auditLog.map(a => (
-                  <tr key={a.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(a.started_at).toLocaleString()}</td>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12, fontWeight: 600 }}>{a.admin_id.slice(0, 8)}...</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{a.target_user_id.slice(0, 8)}...</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12 }}>{a.actions_summary || '—'}</td>
+                  <tr key={a.id} className="border-b border-[#E2D9C8]">
+                    <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">{new Date(a.started_at).toLocaleString()}</td>
+                    <td className="px-[14px] py-2.5 text-navy text-xs font-semibold">{a.admin_id.slice(0, 8)}...</td>
+                    <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">{a.target_user_id.slice(0, 8)}...</td>
+                    <td className="px-[14px] py-2.5 text-[#6B7F96] text-xs">{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
+                    <td className="px-[14px] py-2.5 text-navy text-xs">{a.actions_summary || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -410,7 +403,7 @@ export default function UserProvisioning() {
   );
 }
 
-// ── User Detail Drawer ──
+// -- User Detail Drawer --
 
 function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow | null; onClose: () => void }) {
   const { isDemoMode } = useDemo();
@@ -433,50 +426,45 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
     })();
   }, [user.email]);
 
-  const roleColor = ROLE_COLORS[user.role] || TEXT_SEC;
-
-  const tabBtn = (t: string): React.CSSProperties => ({
-    padding: '10px 14px', fontSize: 13, fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer',
-    borderBottom: drawerTab === t ? `2px solid ${NAVY}` : '2px solid transparent', marginBottom: -1,
-    color: drawerTab === t ? NAVY : TEXT_MUTED, whiteSpace: 'nowrap',
-  });
+  const roleColor = ROLE_COLORS[user.role] || '#6B7F96';
 
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 40 }} />
-      <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: 580, maxWidth: '100vw',
-        background: '#FFFFFF', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
-        display: 'flex', flexDirection: 'column', overflow: 'hidden',
-      }}>
+      <div onClick={onClose} className="fixed inset-0 bg-black/20 z-40" />
+      <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
         {/* Header */}
-        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+          <div className="flex justify-between items-start">
             <div>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{user.full_name || user.email}</h2>
-              <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 2 }}>{user.email}</div>
-              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: `${roleColor}15`, color: roleColor }}>
+              <h2 className="text-lg font-bold text-navy m-0">{user.full_name || user.email}</h2>
+              <div className="text-[13px] text-[#6B7F96] mt-0.5">{user.email}</div>
+              <div className="flex gap-1.5 mt-1.5">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ background: `${roleColor}15`, color: roleColor }}>
                   {user.role.replace(/_/g, ' ')}
                 </span>
-                {org && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.name}</span>}
+                {org && <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-[#6B7F96]">{org.name}</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-gray-400 cursor-pointer">{'×'}</button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: `1px solid ${BORDER}`, padding: '0 24px', flexShrink: 0 }}>
+        <div className="flex border-b border-[#E2D9C8] px-6 shrink-0">
           {['Profile', 'Activity'].map(t => (
-            <button key={t} onClick={() => setDrawerTab(t)} style={tabBtn(t)}>{t}</button>
+            <button key={t} onClick={() => setDrawerTab(t)}
+              className={`px-[14px] py-2.5 text-[13px] font-semibold border-none bg-transparent cursor-pointer whitespace-nowrap -mb-px ${
+                drawerTab === t
+                  ? 'text-navy border-b-2 border-navy'
+                  : 'text-gray-400 border-b-2 border-transparent'
+              }`}>{t}</button>
           ))}
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           {drawerTab === 'Profile' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {([
                 ['Full Name', user.full_name],
                 ['Email', user.email],
@@ -486,9 +474,9 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
                 ['Last Active', user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'],
                 ['Account Created', new Date(user.created_at).toLocaleDateString()],
               ] as [string, string | null | undefined][]).map(([label, value]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
-                  <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
-                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '—'}</span>
+                <div key={label} className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-xs text-[#6B7F96] font-semibold">{label}</span>
+                  <span className="text-[13px] text-navy font-medium">{value || '—'}</span>
                 </div>
               ))}
             </div>
@@ -496,18 +484,17 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
 
           {drawerTab === 'Activity' && (
             eventsLoading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {Array.from({ length: 5 }).map((_, i) => <EmptyState key={i} icon="" title="" subtitle="" />).slice(0, 0)}
-                <div style={{ width: '100%', height: 20, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div className="flex flex-col gap-2">
+                <div className="w-full h-5 bg-gray-200 rounded-md animate-pulse" />
               </div>
             ) : events.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No activity recorded.</div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div className="flex flex-col gap-1">
                 {events.map((ev: any) => (
-                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
-                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
-                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  <div key={ev.id} className="py-1.5 border-b border-gray-100 text-xs">
+                    <span className="text-[#6B7F96]">{new Date(ev.event_time).toLocaleString()}</span>
+                    <span className="ml-2 text-navy">{ev.message}</span>
                   </div>
                 ))}
               </div>
@@ -516,17 +503,21 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
-          <button onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-2.5">
+          <button onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')}
+            className="px-4 py-2 rounded-lg border-none bg-navy text-white text-xs font-bold cursor-pointer">
             Edit User
           </button>
-          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }}
+            className="px-4 py-2 rounded-lg border border-[#E2D9C8] bg-gray-50 text-[#6B7F96] text-xs font-semibold cursor-pointer">
             Reset Password
           </button>
-          <button onClick={() => { onClose(); navigate('/admin/emulate'); }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => { onClose(); navigate('/admin/emulate'); }}
+            className="px-4 py-2 rounded-lg border border-[#E2D9C8] bg-[#FAF7F2] text-navy text-xs font-semibold cursor-pointer">
             Emulate
           </button>
-          <button onClick={() => alert('Suspend user requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.')} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => alert('Suspend user requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.')}
+            className="px-4 py-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] text-xs font-semibold cursor-pointer">
             Suspend
           </button>
         </div>

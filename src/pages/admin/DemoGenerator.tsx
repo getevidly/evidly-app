@@ -10,8 +10,6 @@ import type { GenerationProgress } from '../../lib/demoDataGenerator';
 import { DemoGenerationLoading } from '../../components/demo/DemoGenerationLoading';
 import { supabase } from '../../lib/supabase';
 
-const NAVY = '#1E2D4D';
-
 interface FormData {
   prospectName: string;
   prospectEmail: string;
@@ -140,7 +138,7 @@ export function DemoGenerator() {
       setGenerationSteps(GENERATION_STEPS.map(s => ({ ...s, status: 'pending' as const })));
 
       try {
-        // ── Step 1: Create real DB account via edge function ──
+        // -- Step 1: Create real DB account via edge function --
         // PROFILE DATA — writes to DB in all modes
         if (!isDemoMode) {
           // First, create a demo_sessions record
@@ -208,7 +206,7 @@ export function DemoGenerator() {
           setDemoExpiresAt(new Date(Date.now() + form.demoDuration * 86400000).toISOString());
         }
 
-        // ── Step 2: Generate mock operational data (local state) ──
+        // -- Step 2: Generate mock operational data (local state) --
         // DEMO ONLY — local state, never persists
         await generateDemoData(
           {
@@ -273,7 +271,7 @@ export function DemoGenerator() {
     }
   }, [form, isDemoMode]);
 
-  // ── Loading Screen ──
+  // -- Loading Screen --
   if (generating) {
     return (
       <DemoGenerationLoading
@@ -285,34 +283,33 @@ export function DemoGenerator() {
     );
   }
 
-  // ── Success Screen ──
+  // -- Success Screen --
   if (success) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-          <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#dcfce7' }}>
+        <div className="bg-white rounded-xl border border-navy/10 p-8 text-center">
+          <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#dcfce7]">
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold mb-2" style={{ color: NAVY }}>
+          <h2 className="text-xl font-bold mb-2 text-navy">
             {form.generateNow ? 'Demo Account Ready!' : 'Demo Scheduled!'}
           </h2>
-          <p className="text-[#1E2D4D]/70 mb-1">
+          <p className="text-navy/70 mb-1">
             Personalized demo for <span className="font-semibold">{form.companyName}</span>
           </p>
-          <p className="text-[#1E2D4D]/50 text-sm mb-4">
+          <p className="text-navy/50 text-sm mb-4">
             {form.city}, {form.state} | {KITCHEN_TYPES.find(t => t.value === form.companyType)?.label} | {OPERATION_VOLUMES.find(v => v.value === form.operationVolume)?.label} Volume
           </p>
 
           {/* Login URL */}
           {credentials && (
             <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 mb-4 text-left">
-              <h3 className="text-sm font-semibold mb-2" style={{ color: NAVY }}>Login URL</h3>
+              <h3 className="text-sm font-semibold mb-2 text-navy">Login URL</h3>
               <div className="flex items-center gap-2">
                 <code className="flex-1 font-mono text-sm text-blue-800 bg-white px-3 py-1.5 rounded border border-blue-200 truncate">{LOGIN_URL}</code>
                 <button
                   onClick={copyLoginLink}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium border border-blue-300 hover:bg-blue-100 transition-colors flex items-center gap-1.5"
-                  style={{ color: NAVY }}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium border border-blue-300 hover:bg-blue-100 transition-colors flex items-center gap-1.5 text-navy"
                 >
                   {linkCopied ? <><Check className="w-3.5 h-3.5 text-green-600" /> Copied</> : <><Link2 className="w-3.5 h-3.5" /> Copy Link</>}
                 </button>
@@ -322,27 +319,27 @@ export function DemoGenerator() {
 
           {/* Credentials display */}
           {credentials && (
-            <div className="bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 p-4 mb-4 text-left">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
+            <div className="bg-cream rounded-xl border border-navy/10 p-4 mb-4 text-left">
+              <h3 className="text-sm font-semibold mb-3 text-navy">Login Credentials</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#1E2D4D]/50">Email:</span>
-                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.email}</code>
+                  <span className="text-navy/50">Email:</span>
+                  <code className="font-mono text-navy/90 bg-white px-2 py-0.5 rounded border border-navy/10">{credentials.email}</code>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#1E2D4D]/50">Password:</span>
-                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.temp_password}</code>
+                  <span className="text-navy/50">Password:</span>
+                  <code className="font-mono text-navy/90 bg-white px-2 py-0.5 rounded border border-navy/10">{credentials.temp_password}</code>
                 </div>
                 {demoExpiresAt && (
-                  <div className="flex items-center justify-between pt-1 border-t border-[#1E2D4D]/10">
-                    <span className="text-[#1E2D4D]/50">Expires:</span>
-                    <span className="text-[#1E2D4D]/80">{new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  <div className="flex items-center justify-between pt-1 border-t border-navy/10">
+                    <span className="text-navy/50">Expires:</span>
+                    <span className="text-navy/80">{new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                 )}
               </div>
               <button
                 onClick={copyCredentials}
-                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-[#1E2D4D]/15 hover:bg-[#1E2D4D]/5 transition-colors flex items-center justify-center gap-2"
+                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-navy/15 hover:bg-navy/5 transition-colors flex items-center justify-center gap-2"
               >
                 {copied ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Credentials</>}
               </button>
@@ -353,10 +350,7 @@ export function DemoGenerator() {
           {credentials && (
             <button
               onClick={sendViaEmail}
-              className="w-full mb-6 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition-colors flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#A08C5A' }}
-              onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#b8982e'}
-              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#A08C5A'}
+              className="w-full mb-6 px-4 py-2.5 rounded-lg font-medium text-sm text-white bg-gold hover:bg-[#b8982e] transition-colors flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4" /> Send Credentials via Email
             </button>
@@ -365,14 +359,13 @@ export function DemoGenerator() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => navigate('/admin/demos')}
-              className="px-6 py-2.5 rounded-lg text-white font-medium text-sm"
-              style={{ backgroundColor: NAVY }}
+              className="px-6 py-2.5 rounded-lg text-white font-medium text-sm bg-navy"
             >
               View Demo Pipeline
             </button>
             <button
               onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setLinkCopied(false); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
-              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-navy/15 text-navy/80 hover:bg-cream"
             >
               Generate Another
             </button>
@@ -382,28 +375,28 @@ export function DemoGenerator() {
     );
   }
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
-  const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-navy/15 focus:border-navy focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
+  const labelClass = 'block text-sm font-medium text-navy/80 mb-1';
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
       <AdminBreadcrumb crumbs={[{ label: 'Demo Generator' }]} />
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${NAVY}10` }}>
-          <Sparkles className="w-5 h-5" style={{ color: NAVY }} />
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-navy/[0.06]">
+          <Sparkles className="w-5 h-5 text-navy" />
         </div>
         <div>
-          <h1 className="text-xl font-bold" style={{ color: NAVY }}>Generate Custom Demo for Prospect</h1>
-          <p className="text-sm text-[#1E2D4D]/50">Build a personalized, jurisdiction-accurate demo environment</p>
+          <h1 className="text-xl font-bold text-navy">Generate Custom Demo for Prospect</h1>
+          <p className="text-sm text-navy/50">Build a personalized, jurisdiction-accurate demo environment</p>
         </div>
       </div>
 
       <form onSubmit={handleGenerate} className="space-y-0">
         {/* Prospect Information */}
-        <div className="bg-white rounded-t-xl border border-[#1E2D4D]/10 p-6">
+        <div className="bg-white rounded-t-xl border border-navy/10 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Users className="w-5 h-5" style={{ color: NAVY }} />
-            <h2 className="font-semibold text-sm" style={{ color: NAVY }}>PROSPECT INFORMATION</h2>
+            <Users className="w-5 h-5 text-navy" />
+            <h2 className="font-semibold text-sm text-navy">PROSPECT INFORMATION</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -430,10 +423,10 @@ export function DemoGenerator() {
         </div>
 
         {/* Kitchen Details */}
-        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
+        <div className="bg-white border-x border-b border-navy/10 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Building2 className="w-5 h-5" style={{ color: NAVY }} />
-            <h2 className="font-semibold text-sm" style={{ color: NAVY }}>KITCHEN DETAILS</h2>
+            <Building2 className="w-5 h-5 text-navy" />
+            <h2 className="font-semibold text-sm text-navy">KITCHEN DETAILS</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -454,10 +447,10 @@ export function DemoGenerator() {
         </div>
 
         {/* Location */}
-        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
+        <div className="bg-white border-x border-b border-navy/10 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5" style={{ color: NAVY }} />
-            <h2 className="font-semibold text-sm" style={{ color: NAVY }}>LOCATION</h2>
+            <MapPin className="w-5 h-5 text-navy" />
+            <h2 className="font-semibold text-sm text-navy">LOCATION</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
@@ -495,10 +488,10 @@ export function DemoGenerator() {
         </div>
 
         {/* Demo Options */}
-        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
+        <div className="bg-white border-x border-b border-navy/10 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Settings2 className="w-5 h-5" style={{ color: NAVY }} />
-            <h2 className="font-semibold text-sm" style={{ color: NAVY }}>DEMO OPTIONS</h2>
+            <Settings2 className="w-5 h-5 text-navy" />
+            <h2 className="font-semibold text-sm text-navy">DEMO OPTIONS</h2>
           </div>
           <div className="space-y-4">
             <div>
@@ -520,12 +513,12 @@ export function DemoGenerator() {
                   { key: 'includeVendors', label: 'Vendor service reminders' },
                   { key: 'includeCorrectiveActions', label: 'Sample corrective actions' },
                 ].map(opt => (
-                  <label key={opt.key} className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
+                  <label key={opt.key} className="flex items-center gap-2 text-sm text-navy/80">
                     <input
                       type="checkbox"
                       checked={form[opt.key as keyof FormData] as boolean}
                       onChange={e => update(opt.key as keyof FormData, e.target.checked)}
-                      className="rounded border-[#1E2D4D]/15"
+                      className="rounded border-navy/15"
                     />
                     {opt.label}
                   </label>
@@ -536,20 +529,20 @@ export function DemoGenerator() {
         </div>
 
         {/* Demo Timing */}
-        <div className="bg-white border-x border-b border-[#1E2D4D]/10 rounded-b-xl p-6">
+        <div className="bg-white border-x border-b border-navy/10 rounded-b-xl p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-5 h-5" style={{ color: NAVY }} />
-            <h2 className="font-semibold text-sm" style={{ color: NAVY }}>DEMO TIMING</h2>
+            <Clock className="w-5 h-5 text-navy" />
+            <h2 className="font-semibold text-sm text-navy">DEMO TIMING</h2>
           </div>
           <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
+            <label className="flex items-center gap-2 text-sm text-navy/80">
               <input type="radio" name="timing" checked={form.generateNow}
-                onChange={() => update('generateNow', true)} className="text-[#1E2D4D]" />
+                onChange={() => update('generateNow', true)} className="text-navy" />
               Generate demo now (ready immediately)
             </label>
-            <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
+            <label className="flex items-center gap-2 text-sm text-navy/80">
               <input type="radio" name="timing" checked={!form.generateNow}
-                onChange={() => update('generateNow', false)} className="text-[#1E2D4D]" />
+                onChange={() => update('generateNow', false)} className="text-navy" />
               Schedule meeting first
             </label>
             {!form.generateNow && (
@@ -573,10 +566,7 @@ export function DemoGenerator() {
         <div className="pt-4">
           <button
             type="submit"
-            className="px-8 py-3 rounded-lg font-semibold text-white transition-colors flex items-center gap-2"
-            style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#2A3F6B'}
-            onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = NAVY}
+            className="px-8 py-3 rounded-lg font-semibold text-white bg-navy hover:bg-navy-light transition-colors flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4" />
             Generate Demo & Save

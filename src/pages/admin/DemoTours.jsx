@@ -49,18 +49,18 @@ function PricingPreview({ numLocations }) {
   const annual = monthly * 12;
 
   return (
-    <div className="bg-[#FAF7F0] border border-[#A08C5A]/20 rounded-xl p-4 mt-4">
-      <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+    <div className="bg-cream border border-gold/20 rounded-xl p-4 mt-4">
+      <p className="text-xs text-navy/50 uppercase tracking-wider mb-2">
         Founder Pricing Preview
       </p>
-      <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">
+      <p className="text-2xl font-bold tracking-tight text-navy">
         ${monthly}<span className="text-sm font-normal">/mo</span>
       </p>
-      <p className="text-sm text-[#1E2D4D]/50">
+      <p className="text-sm text-navy/50">
         ${base}/mo base + ${perAdditional}/mo × {Math.max(0, numLocations - 1)}{' '}
         additional location{numLocations > 2 ? 's' : ''}
       </p>
-      <p className="text-xs text-[#A08C5A] mt-1">
+      <p className="text-xs text-gold mt-1">
         ${annual.toLocaleString()}/yr — locked for life before July 4, 2026
       </p>
     </div>
@@ -109,8 +109,8 @@ function CredentialsCard({ tour }) {
   };
 
   return (
-    <div className="bg-[#1E2D4D] text-white rounded-xl p-6">
-      <p className="text-[#A08C5A] text-xs uppercase tracking-wider mb-4">
+    <div className="bg-navy text-white rounded-xl p-6">
+      <p className="text-gold text-xs uppercase tracking-wider mb-4">
         Demo Account Credentials
       </p>
       <div className="space-y-3 text-sm">
@@ -123,12 +123,12 @@ function CredentialsCard({ tour }) {
           ['Founder price', `$${founderPrice(tour.num_locations)}/mo`, false, true],
         ].map(([label, value, isLink, isGold]) => (
           <div key={label} className="flex justify-between">
-            <span className="text-[#1E2D4D]/30">{label}:</span>
+            <span className="text-navy/30">{label}:</span>
             {isLink ? (
               <a href={value} target="_blank" rel="noopener noreferrer"
-                className="text-[#A08C5A] underline">{value}</a>
+                className="text-gold underline">{value}</a>
             ) : (
-              <span className={isGold ? 'text-[#A08C5A] font-bold' : 'text-white font-mono'}>
+              <span className={isGold ? 'text-gold font-bold' : 'text-white font-mono'}>
                 {value}
               </span>
             )}
@@ -141,7 +141,7 @@ function CredentialsCard({ tour }) {
           <Copy size={14} /> Copy Credentials
         </button>
         <a href={tour.demo_url} target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#A08C5A] hover:bg-[#8a7a50] rounded-lg text-sm text-white transition-colors">
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gold hover:bg-gold-dark rounded-lg text-sm text-white transition-colors">
           <ExternalLink size={14} /> Open Demo
         </a>
       </div>
@@ -155,8 +155,8 @@ function StatusBadge({ status }) {
     pending: 'bg-amber-50 text-amber-700',
     scheduled: 'bg-blue-50 text-blue-700',
     active: 'bg-emerald-50 text-emerald-700',
-    completed: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80',
-    cleaned: 'bg-[#FAF7F0] text-[#1E2D4D]/30',
+    completed: 'bg-navy/5 text-navy/80',
+    cleaned: 'bg-cream text-navy/30',
   };
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || colors.pending}`}>
@@ -397,8 +397,8 @@ export default function DemoTours() {
         { label: 'Demo Tours' },
       ]} />
 
-      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">Demo Tours</h1>
-      <p className="text-sm text-[#1E2D4D]/50 mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-navy mb-1">Demo Tours</h1>
+      <p className="text-sm text-navy/50 mb-6">
         Create and manage virtual demo environments for prospect tours
       </p>
 
@@ -407,18 +407,18 @@ export default function DemoTours() {
         {[
           { label: 'Active', count: activeTours.length, color: 'text-green-700', bg: 'bg-green-50' },
           { label: 'Completed', count: completedTours.filter(t => t.status === 'completed').length, color: 'text-blue-700', bg: 'bg-blue-50' },
-          { label: 'Cleaned', count: completedTours.filter(t => t.status === 'cleaned').length, color: 'text-[#1E2D4D]/50', bg: 'bg-[#FAF7F0]' },
-          { label: 'Templates', count: templates.length, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
+          { label: 'Cleaned', count: completedTours.filter(t => t.status === 'cleaned').length, color: 'text-navy/50', bg: 'bg-cream' },
+          { label: 'Templates', count: templates.length, color: 'text-gold', bg: 'bg-cream' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
-            <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider">{s.label}</p>
+            <p className="text-xs text-navy/50 uppercase tracking-wider">{s.label}</p>
             <p className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.count}</p>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-[#1E2D4D]/10 mb-6">
+      <div className="flex gap-1 border-b border-navy/10 mb-6">
         {TABS.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -426,8 +426,8 @@ export default function DemoTours() {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
-                  ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                  ? 'border-navy text-navy'
+                  : 'border-transparent text-navy/50 hover:text-navy/80'
               }`}>
               <Icon size={15} />
               {tab.label}
@@ -439,27 +439,27 @@ export default function DemoTours() {
       {/* ── Tab: Active Tours ──────────────────────────────────── */}
       {activeTab === 'active' && (
         <div className="space-y-4">
-          {loading && <p className="text-[#1E2D4D]/30 text-sm">Loading tours...</p>}
+          {loading && <p className="text-navy/30 text-sm">Loading tours...</p>}
           {!loading && activeTours.length === 0 && (
-            <div className="text-center py-12 text-[#1E2D4D]/30">
+            <div className="text-center py-12 text-navy/30">
               <Users size={40} className="mx-auto mb-3 opacity-40" />
               <p className="font-medium">No active tours</p>
               <p className="text-sm mt-1">Create a new tour to get started</p>
               <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]">
+                className="mt-3 px-4 py-2 bg-navy text-white rounded-lg text-sm hover:bg-navy-dark transition-all duration-150 active:scale-[0.98]">
                 <Plus size={14} className="inline mr-1" /> Create Tour
               </button>
             </div>
           )}
           {activeTours.map(tour => (
-            <div key={tour.id} className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5">
+            <div key={tour.id} className="bg-white border border-navy/10 rounded-xl p-5">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-[#1E2D4D]">
+                  <h3 className="font-semibold text-navy">
                     {INDUSTRY_ICONS[tour.industry_type] || '🏢'}{' '}
                     {tour.business_name}
                   </h3>
-                  <p className="text-sm text-[#1E2D4D]/50">
+                  <p className="text-sm text-navy/50">
                     {tour.prospect_first_name} {tour.prospect_last_name}
                     {tour.county && ` · ${tour.county} County`}
                     {tour.num_locations > 1 && ` · ${tour.num_locations} locations`}
@@ -501,7 +501,7 @@ export default function DemoTours() {
                 business_name: '', industry_type: 'restaurant', county: 'Los Angeles',
                 state: 'California', num_locations: 1, scheduled_for: '', notes: '',
               }); }}
-                className="text-sm text-[#1E2D4D] underline">
+                className="text-sm text-navy underline">
                 Create another tour
               </button>
             </div>
@@ -509,60 +509,60 @@ export default function DemoTours() {
             <div className="space-y-6">
               {/* Section 1: Prospect Info */}
               <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                   Prospect Information
                 </legend>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">First Name *</span>
+                    <span className="text-xs text-navy/50">First Name *</span>
                     <input value={form.first_name}
                       onChange={e => updateForm('first_name', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                       placeholder="Jane" />
                   </label>
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">Last Name *</span>
+                    <span className="text-xs text-navy/50">Last Name *</span>
                     <input value={form.last_name}
                       onChange={e => updateForm('last_name', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                       placeholder="Smith" />
                   </label>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">Email</span>
+                    <span className="text-xs text-navy/50">Email</span>
                     <input type="email" value={form.email}
                       onChange={e => updateForm('email', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                       placeholder="jane@example.com" />
                   </label>
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">Phone</span>
+                    <span className="text-xs text-navy/50">Phone</span>
                     <input value={form.phone}
                       onChange={e => updateForm('phone', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                      className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                       placeholder="(555) 123-4567" />
                   </label>
                 </div>
                 <label className="block">
-                  <span className="text-xs text-[#1E2D4D]/50">Business Name *</span>
+                  <span className="text-xs text-navy/50">Business Name *</span>
                   <input value={form.business_name}
                     onChange={e => updateForm('business_name', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                    className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                     placeholder="Aramark Yosemite" />
                 </label>
               </fieldset>
 
               {/* Section 2: Template Selection */}
               <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                   Template Selection
                 </legend>
                 <label className="block">
-                  <span className="text-xs text-[#1E2D4D]/50">Industry Type</span>
+                  <span className="text-xs text-navy/50">Industry Type</span>
                   <select value={form.industry_type}
                     onChange={e => updateForm('industry_type', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                    className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy">
                     {templates.map(t => (
                       <option key={t.industry_type} value={t.industry_type}>
                         {INDUSTRY_ICONS[t.industry_type] || ''} {t.industry_label}
@@ -575,19 +575,19 @@ export default function DemoTours() {
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">County</span>
+                    <span className="text-xs text-navy/50">County</span>
                     <select value={form.county}
                       onChange={e => updateForm('county', e.target.value)}
-                      className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                      className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy">
                       {CA_COUNTIES.map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs text-[#1E2D4D]/50">State</span>
+                    <span className="text-xs text-navy/50">State</span>
                     <input value={form.state} readOnly
-                      className="mt-1 w-full border border-[#1E2D4D]/10 rounded-xl px-3 py-2 text-sm bg-[#FAF7F0] text-[#1E2D4D]/50" />
+                      className="mt-1 w-full border border-navy/10 rounded-xl px-3 py-2 text-sm bg-cream text-navy/50" />
                   </label>
                 </div>
 
@@ -598,17 +598,17 @@ export default function DemoTours() {
 
               {/* Section 3: Locations */}
               <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                   Locations
                 </legend>
                 <label className="block">
-                  <span className="text-xs text-[#1E2D4D]/50">Number of Locations</span>
+                  <span className="text-xs text-navy/50">Number of Locations</span>
                   <div className="flex items-center gap-3 mt-1">
                     <button onClick={() => updateForm('num_locations', Math.max(1, form.num_locations - 1))}
-                      className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">−</button>
-                    <span className="text-lg font-bold text-[#1E2D4D] w-8 text-center">{form.num_locations}</span>
+                      className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">−</button>
+                    <span className="text-lg font-bold text-navy w-8 text-center">{form.num_locations}</span>
                     <button onClick={() => updateForm('num_locations', Math.min(9, form.num_locations + 1))}
-                      className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">+</button>
+                      className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">+</button>
                   </div>
                 </label>
                 <PricingPreview numLocations={form.num_locations} />
@@ -616,28 +616,28 @@ export default function DemoTours() {
 
               {/* Section 4: Notes */}
               <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                   Notes & Scheduling
                 </legend>
                 <label className="block">
-                  <span className="text-xs text-[#1E2D4D]/50">Schedule For (optional)</span>
+                  <span className="text-xs text-navy/50">Schedule For (optional)</span>
                   <input type="datetime-local" value={form.scheduled_for}
                     onChange={e => updateForm('scheduled_for', e.target.value)}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                    className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy" />
                 </label>
                 <label className="block">
-                  <span className="text-xs text-[#1E2D4D]/50">Internal Notes</span>
+                  <span className="text-xs text-navy/50">Internal Notes</span>
                   <textarea value={form.notes}
                     onChange={e => updateForm('notes', e.target.value)}
                     rows={3}
-                    className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                    className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                     placeholder="Notes for Arthur (not shown to prospect)" />
                 </label>
               </fieldset>
 
               {/* Submit */}
               <button onClick={handleCreateTour} disabled={creating}
-                className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
+                className="w-full py-3 bg-navy text-white rounded-xl text-sm font-semibold hover:bg-navy-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
                 {creating ? (
                   <span className="flex items-center justify-center gap-2">
                     <RefreshCw size={14} className="animate-spin" /> Creating Demo...
@@ -658,11 +658,11 @@ export default function DemoTours() {
         <div className="grid grid-cols-2 gap-4">
           {templates.map(t => (
             <div key={t.id}
-              className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 hover:border-[#A08C5A]/40 transition-colors">
+              className="bg-white border border-navy/10 rounded-xl p-5 hover:border-gold/40 transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">{INDUSTRY_ICONS[t.industry_type] || '🏢'}</span>
                 <div>
-                  <h3 className="font-semibold text-[#1E2D4D]">{t.industry_label}</h3>
+                  <h3 className="font-semibold text-navy">{t.industry_label}</h3>
                   {t.sb1383_tier && (
                     <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded">
                       SB 1383 {t.sb1383_tier}
@@ -670,23 +670,23 @@ export default function DemoTours() {
                   )}
                 </div>
               </div>
-              <p className="text-sm text-[#1E2D4D]/50 mb-3">{t.description}</p>
-              <div className="flex flex-wrap gap-1.5 text-xs text-[#1E2D4D]/30">
-                <span className="bg-[#FAF7F0] px-2 py-0.5 rounded">60-day data</span>
-                <span className="bg-[#FAF7F0] px-2 py-0.5 rounded">11 vendors</span>
-                <span className="bg-[#FAF7F0] px-2 py-0.5 rounded">All Superpowers</span>
+              <p className="text-sm text-navy/50 mb-3">{t.description}</p>
+              <div className="flex flex-wrap gap-1.5 text-xs text-navy/30">
+                <span className="bg-cream px-2 py-0.5 rounded">60-day data</span>
+                <span className="bg-cream px-2 py-0.5 rounded">11 vendors</span>
+                <span className="bg-cream px-2 py-0.5 rounded">All Superpowers</span>
               </div>
               <button onClick={() => {
                 updateForm('industry_type', t.industry_type);
                 setActiveTab('create');
               }}
-                className="mt-3 text-sm text-[#A08C5A] font-medium hover:underline">
+                className="mt-3 text-sm text-gold font-medium hover:underline">
                 Use This Template →
               </button>
             </div>
           ))}
           {templates.length === 0 && (
-            <p className="col-span-2 text-center text-[#1E2D4D]/30 py-8">
+            <p className="col-span-2 text-center text-navy/30 py-8">
               No templates found. Run the staging migration first.
             </p>
           )}
@@ -697,17 +697,17 @@ export default function DemoTours() {
       {activeTab === 'completed' && (
         <div className="space-y-4">
           {completedTours.length === 0 && (
-            <p className="text-center text-[#1E2D4D]/30 py-8">No completed tours yet.</p>
+            <p className="text-center text-navy/30 py-8">No completed tours yet.</p>
           )}
           {completedTours.map(tour => (
             <div key={tour.id}
-              className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 flex items-center justify-between">
+              className="bg-white border border-navy/10 rounded-xl p-5 flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-[#1E2D4D]">
+                <h3 className="font-medium text-navy">
                   {INDUSTRY_ICONS[tour.industry_type] || '🏢'}{' '}
                   {tour.business_name}
                 </h3>
-                <p className="text-sm text-[#1E2D4D]/50">
+                <p className="text-sm text-navy/50">
                   {tour.prospect_first_name} {tour.prospect_last_name}
                   {tour.completed_at && ` · Completed ${new Date(tour.completed_at).toLocaleDateString()}`}
                   {tour.outcome && ` · ${tour.outcome}`}
@@ -719,7 +719,7 @@ export default function DemoTours() {
                   </p>
                 )}
                 {tour.status === 'cleaned' && tour.cleaned_at && (
-                  <p className="text-xs text-[#1E2D4D]/30 mt-1">
+                  <p className="text-xs text-navy/30 mt-1">
                     Cleaned {new Date(tour.cleaned_at).toLocaleString()}
                   </p>
                 )}

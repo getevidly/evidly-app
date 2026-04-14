@@ -24,14 +24,7 @@ const DEFAULT_PERMISSIONS: RolePermissionRow[] = [
   { permission: 'billing_access', label: 'Billing Access', roles: { owner: true, admin: false, supervisor: false, technician: false, office: false } },
 ];
 
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-  marginBottom: 20,
-};
+const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 export function TeamRolesPage() {
   const { data: serverPerms, isLoading } = useRolePermissions();
@@ -65,10 +58,10 @@ export function TeamRolesPage() {
   if (isLoading) {
     return (
       <div style={{ ...FONT }}>
-        <div style={{ ...cardStyle, height: 300 }}>
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 200, marginBottom: 16 }} />
+        <div className={`${cardClasses} h-[300px]`}>
+          <div className="bg-[#EEF1F7] rounded-lg h-5 w-[200px] mb-4" />
           {[1, 2, 3, 4].map(i => (
-            <div key={i} style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '80%', marginBottom: 10 }} />
+            <div key={i} className="bg-[#EEF1F7] rounded-lg h-3.5 w-4/5 mb-2.5" />
           ))}
         </div>
       </div>
@@ -78,20 +71,20 @@ export function TeamRolesPage() {
   return (
     <div style={{ ...FONT }}>
       {/* Permissions Matrix */}
-      <div style={cardStyle}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>
+      <div className={cardClasses}>
+        <h2 className="flex items-center gap-2 text-base font-bold text-[#0B1628] mb-4 mt-0">
           <Shield size={18} color={NAVY} /> Role Permissions
         </h2>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ background: PANEL_BG, borderBottom: `2px solid ${CARD_BORDER}` }}>
-                <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT, minWidth: 160 }}>
+              <tr className="bg-[#EEF1F7] border-b-2 border-[#D1D9E6]">
+                <th className="text-left px-3.5 py-2.5 font-semibold text-[#0B1628] min-w-[160px]">
                   Permission
                 </th>
                 {ROLES.map(role => (
-                  <th key={role.key} style={{ textAlign: 'center', padding: '10px 12px', fontWeight: 600, color: BODY_TEXT, minWidth: 90 }}>
+                  <th key={role.key} className="text-center px-3 py-2.5 font-semibold text-[#0B1628] min-w-[90px]">
                     {role.label}
                   </th>
                 ))}
@@ -99,26 +92,20 @@ export function TeamRolesPage() {
             </thead>
             <tbody>
               {permissions.map((row, idx) => (
-                <tr key={row.permission} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-                  <td style={{ padding: '10px 14px', fontWeight: 500, color: BODY_TEXT }}>
+                <tr key={row.permission} className="border-b border-[#D1D9E6]">
+                  <td className="px-3.5 py-2.5 font-medium text-[#0B1628]">
                     {row.label}
                   </td>
                   {ROLES.map(role => {
                     const isOwnerOnly = row.permission === 'billing_access' && role.key !== 'owner';
                     return (
-                      <td key={role.key} style={{ textAlign: 'center', padding: '10px 12px' }}>
+                      <td key={role.key} className="text-center px-3 py-2.5">
                         <input
                           type="checkbox"
                           checked={row.roles[role.key]}
                           onChange={() => togglePermission(idx, role.key)}
                           disabled={isOwnerOnly}
-                          style={{
-                            width: 18,
-                            height: 18,
-                            accentColor: NAVY,
-                            cursor: isOwnerOnly ? 'not-allowed' : 'pointer',
-                            opacity: isOwnerOnly ? 0.4 : 1,
-                          }}
+                          className={`w-[18px] h-[18px] accent-[#163a5f] ${isOwnerOnly ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
                         />
                       </td>
                     );
@@ -131,25 +118,17 @@ export function TeamRolesPage() {
       </div>
 
       {/* Default Role */}
-      <div style={cardStyle}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 12px' }}>
+      <div className={cardClasses}>
+        <h2 className="text-base font-bold text-[#0B1628] mb-3 mt-0">
           Default Role
         </h2>
-        <p style={{ color: MUTED, fontSize: 13, margin: '0 0 12px' }}>
+        <p className="text-[#3D5068] text-[13px] mb-3 mt-0">
           New team members will be assigned this role when invited.
         </p>
         <select
           value={defaultRole}
           onChange={e => setDefaultRole(e.target.value as SettingsRole)}
-          style={{
-            padding: '8px 12px',
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 8,
-            fontSize: 14,
-            color: BODY_TEXT,
-            background: '#fff',
-            minWidth: 200,
-          }}
+          className="px-3 py-2 border border-[#D1D9E6] rounded-lg text-sm text-[#0B1628] bg-white min-w-[200px]"
         >
           {ROLES.map(role => (
             <option key={role.key} value={role.key}>{role.label}</option>
@@ -158,24 +137,11 @@ export function TeamRolesPage() {
       </div>
 
       {/* Save */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div className="flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 24px',
-            borderRadius: 8,
-            border: 'none',
-            background: NAVY,
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: saving ? 'not-allowed' : 'pointer',
-            opacity: saving ? 0.7 : 1,
-          }}
+          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Changes'}

@@ -11,12 +11,6 @@ import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 interface OrgRow {
   id: string;
   name: string;
@@ -41,13 +35,13 @@ interface AuditRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-[#E5E7EB] rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ title, subtitle }: { icon?: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '48px 20px' }}>
-    <div style={{ fontSize: 14, color: TEXT_MUTED, marginBottom: 4 }}>{title}</div>
-    <div style={{ fontSize: 12, color: TEXT_MUTED }}>{subtitle}</div>
+  <div className="text-center py-12 px-5">
+    <div className="text-sm text-[#9CA3AF] mb-1">{title}</div>
+    <div className="text-xs text-[#9CA3AF]">{subtitle}</div>
   </div>
 );
 
@@ -134,91 +128,88 @@ export default function UserEmulation() {
     navigate('/dashboard');
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 12,
-  };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'User Emulation' }]} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Emulation</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">User Emulation</h1>
+          <p className="text-[13px] text-[#6B7F96] mt-1">
             View EvidLY as any user — read-only, fully audited
           </p>
         </div>
         {isEmulating && emulatedUser && (
           <button onClick={stopEmulation}
-            style={{ padding: '8px 20px', background: '#DC2626', border: 'none', borderRadius: 8, color: '#FFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+            className="py-2 px-5 bg-[#DC2626] border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
             Exit Emulation ({emulatedUser.full_name})
           </button>
         )}
       </div>
 
       {/* Warning card */}
-      <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 10, padding: '14px 20px', fontSize: 12, color: '#92400E' }}>
+      <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-[10px] py-3.5 px-5 text-xs text-[#92400E]">
         Emulation sessions are fully audited. The target user's role and permissions are applied. Restricted operations (password reset, billing, account deletion, role changes) are blocked.
       </div>
 
       {/* Org filter + User search */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%' }}>
+      <div className="flex gap-3 flex-wrap w-full">
         <input value={orgSearch} onChange={e => setOrgSearch(e.target.value)} placeholder="Search organizations..."
-          style={{ ...inputStyle, flex: 1, minWidth: 180 }} />
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[180px]" />
         <select value={selectedOrgId || ''} onChange={e => setSelectedOrgId(e.target.value || null)}
-          style={{ ...inputStyle, minWidth: 160, cursor: 'pointer' }}>
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs min-w-[160px] cursor-pointer">
           <option value="">All Organizations</option>
           {filteredOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
         </select>
         <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder="Search users by name or email..."
-          style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[200px]" />
       </div>
 
       {loadError && (
-        <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-          <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+        <div className="text-center p-12">
+          <p className="text-[#6B7F96]">Failed to load data.</p>
+          <button onClick={loadData} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
             Try again
           </button>
         </div>
       )}
 
       {/* Users table */}
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : filteredUsers.length === 0 ? (
-          <EmptyState icon="👤" title="No users found" subtitle="Users will appear here when organizations have members." />
+          <EmptyState icon="&#128100;" title="No users found" subtitle="Users will appear here when organizations have members." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E2D9C8]">
                 {['Name', 'Email', 'Role', 'Organization', 'Action'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filteredUsers.slice(0, 50).map(u => {
                 const org = orgs.find(o => o.id === u.organization_id);
-                const roleColor = ROLE_COLORS[u.role] || TEXT_SEC;
+                const roleColor = ROLE_COLORS[u.role] || '#6B7F96';
                 return (
-                  <tr key={u.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{u.full_name || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{u.email}</td>
-                    <td style={{ padding: '10px 14px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: `${roleColor}15`, color: roleColor }}>
+                  <tr key={u.id} className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB]">
+                    <td className="px-3.5 py-2.5 text-navy font-semibold">{u.full_name || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{u.email}</td>
+                    <td className="px-3.5 py-2.5">
+                      <span
+                        className="px-2 py-0.5 rounded text-[10px] font-bold"
+                        style={{ background: `${roleColor}15`, color: roleColor }}
+                      >
                         {u.role.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{org?.name || '—'}</td>
-                    <td style={{ padding: '10px 14px' }}>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{org?.name || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5">
                       <button onClick={() => handleEmulate(u)}
-                        style={{ padding: '4px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: GOLD, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                        className="py-1 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-gold text-[11px] font-bold cursor-pointer">
                         Emulate
                       </button>
                     </td>
@@ -231,25 +222,25 @@ export default function UserEmulation() {
       </div>
 
       {/* Recent emulations */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY }}>Recent Emulation Sessions</h2>
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <h2 className="text-lg font-bold text-navy">Recent Emulation Sessions</h2>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {auditLog.length === 0 ? (
-          <EmptyState icon="📋" title="No emulation sessions recorded" subtitle="Audit entries will appear here after emulation sessions." />
+          <EmptyState icon="&#128203;" title="No emulation sessions recorded" subtitle="Audit entries will appear here after emulation sessions." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E2D9C8]">
                 {['Started', 'Ended', 'Summary'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {auditLog.map(a => (
-                <tr key={a.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(a.started_at).toLocaleString()}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
-                  <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12 }}>{a.actions_summary || '—'}</td>
+                <tr key={a.id} className="border-b border-[#E2D9C8]">
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(a.started_at).toLocaleString()}</td>
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
+                  <td className="px-3.5 py-2.5 text-navy text-xs">{a.actions_summary || '\u2014'}</td>
                 </tr>
               ))}
             </tbody>

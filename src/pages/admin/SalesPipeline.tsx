@@ -18,10 +18,6 @@ import {
 } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const DARK = '#1E2D4D';
-
 const PIPELINE_STAGES = ['prospect', 'tour_scheduled', 'tour_completed', 'proposal_sent', 'negotiating', 'won', 'lost'];
 const STAGE_LABELS: Record<string, string> = {
   prospect: 'Prospect', tour_scheduled: 'Tour Scheduled', tour_completed: 'Tour Completed',
@@ -128,16 +124,16 @@ export default function SalesPipeline() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold" />
       </div>
     );
   }
 
   if (loadError) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-        <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+      <div className="text-center p-12">
+        <p className="text-[#6B7F96]">Failed to load data.</p>
+        <button onClick={loadData} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer">
           Try again
         </button>
       </div>
@@ -145,28 +141,28 @@ export default function SalesPipeline() {
   }
 
   return (
-    <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
+    <div className="font-['DM_Sans','Inter',sans-serif]">
       <AdminBreadcrumb crumbs={[{ label: 'Sales Pipeline' }]} />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Sales Pipeline</h1>
-          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Track deals from prospect to close</p>
+          <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Sales Pipeline</h1>
+          <p className="text-[13px] text-[#6B7280] mt-1 m-0 font-['Inter',sans-serif]">Track deals from prospect to close</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setViewMode('kanban')}
-            className={`p-2 rounded-xl border ${viewMode === 'kanban' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
-            <LayoutGrid className="h-4 w-4" style={{ color: viewMode === 'kanban' ? NAVY : '#9ca3af' }} />
+            className={`p-2 rounded-xl border ${viewMode === 'kanban' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
+            <LayoutGrid className={`h-4 w-4 ${viewMode === 'kanban' ? 'text-navy' : 'text-[#9ca3af]'}`} />
           </button>
           <button onClick={() => setViewMode('table')}
-            className={`p-2 rounded-xl border ${viewMode === 'table' ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10'}`}>
-            <Table2 className="h-4 w-4" style={{ color: viewMode === 'table' ? NAVY : '#9ca3af' }} />
+            className={`p-2 rounded-xl border ${viewMode === 'table' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
+            <Table2 className={`h-4 w-4 ${viewMode === 'table' ? 'text-navy' : 'text-[#9ca3af]'}`} />
           </button>
         </div>
       </div>
 
       {/* Summary bar */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-6">
         <StatCardRow cards={[
           { label: 'TOTAL PIPELINE', value: formatCents(totalPipelineMRR) + ' MRR', valueColor: 'gold' },
           { label: 'WEIGHTED PIPELINE', value: formatCents(Math.round(weightedPipelineMRR)) + ' MRR', valueColor: 'gold' },
@@ -185,16 +181,16 @@ export default function SalesPipeline() {
 
       {/* Win/Loss analysis */}
       {lostReasons.length > 0 && (
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mt-6">
-          <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Lost Reasons</h3>
+        <div className="bg-white rounded-xl border border-navy/10 p-6 mt-6">
+          <h3 className="text-sm font-bold text-navy mb-4 uppercase tracking-wide">Lost Reasons</h3>
           <div className="space-y-2">
             {lostReasons.map(([reason, count]) => (
               <div key={reason} className="flex items-center gap-3">
-                <span className="text-xs text-[#1E2D4D]/70 w-40 truncate">{reason}</span>
-                <div className="flex-1 bg-[#1E2D4D]/5 rounded-full h-4 overflow-hidden">
+                <span className="text-xs text-navy/70 w-40 truncate">{reason}</span>
+                <div className="flex-1 bg-navy/5 rounded-full h-4 overflow-hidden">
                   <div className="h-full rounded-full bg-red-400" style={{ width: `${count / Math.max(...lostReasons.map(([,c]) => c)) * 100}%` }} />
                 </div>
-                <span className="text-xs font-bold text-[#1E2D4D]/80 w-8 text-right">{count}</span>
+                <span className="text-xs font-bold text-navy/80 w-8 text-right">{count}</span>
               </div>
             ))}
           </div>
@@ -210,7 +206,7 @@ export default function SalesPipeline() {
   );
 }
 
-// ── Kanban View ────────────────────────────────────────────
+// -- Kanban View --
 
 function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }: {
   pipeline: any[]; onStageChange: (id: string, stage: string) => void;
@@ -228,23 +224,23 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: STAGE_COLORS[stage] || '#6b7280' }} />
-                <span className="text-xs font-bold text-[#1E2D4D]/80 uppercase">{STAGE_LABELS[stage]}</span>
+                <span className="text-xs font-bold text-navy/80 uppercase">{STAGE_LABELS[stage]}</span>
               </div>
-              <span className="text-xs text-[#1E2D4D]/30">{deals.length} · {formatCents(stageMRR)}</span>
+              <span className="text-xs text-navy/30">{deals.length} · {formatCents(stageMRR)}</span>
             </div>
-            <div className="bg-[#FAF7F0] rounded-xl p-2 min-h-[200px] space-y-2">
+            <div className="bg-cream rounded-xl p-2 min-h-[200px] space-y-2">
               {deals.map(deal => (
                 <div key={deal.id} onClick={() => onSelect(deal)}
-                  className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 cursor-pointer hover:shadow-md transition-shadow">
-                  <div className="font-semibold text-sm text-[#1E2D4D] mb-1">{deal.org_name}</div>
-                  <div className="text-xs text-[#1E2D4D]/50">{deal.contact_name || '—'}{deal.contact_title ? ` · ${deal.contact_title}` : ''}</div>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-[#1E2D4D]/30">
+                  className="bg-white rounded-xl border border-navy/10 p-3 cursor-pointer hover:shadow-md transition-shadow">
+                  <div className="font-semibold text-sm text-navy mb-1">{deal.org_name}</div>
+                  <div className="text-xs text-navy/50">{deal.contact_name || '—'}{deal.contact_title ? ` · ${deal.contact_title}` : ''}</div>
+                  <div className="flex items-center gap-2 mt-2 text-xs text-navy/30">
                     {deal.location_count && <span>{deal.location_count} loc</span>}
                     {deal.industry && <span>· {deal.industry}</span>}
                   </div>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#1E2D4D]/5">
-                    <span className="text-xs font-bold" style={{ color: DARK }}>{formatCents(deal.estimated_mrr_cents || 0)}/mo</span>
-                    <span className="text-xs text-[#1E2D4D]/30">{deal.probability_pct || 0}%</span>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-navy/5">
+                    <span className="text-xs font-bold text-navy">{formatCents(deal.estimated_mrr_cents || 0)}/mo</span>
+                    <span className="text-xs text-navy/30">{deal.probability_pct || 0}%</span>
                   </div>
                   {/* Quick stage buttons */}
                   <div className="flex gap-1 mt-2">
@@ -252,7 +248,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                       <>
                         {columns.indexOf(stage) < columns.length - 2 && (
                           <button onClick={e => { e.stopPropagation(); onStageChange(deal.id, columns[columns.indexOf(stage) + 1]); }}
-                            className="text-xs px-2 py-0.5 border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-0.5">
+                            className="text-xs px-2 py-0.5 border border-navy/10 rounded hover:bg-cream flex items-center gap-0.5">
                             <ChevronRight className="h-3 w-3" /> Next
                           </button>
                         )}
@@ -262,7 +258,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                 </div>
               ))}
               {deals.length === 0 && (
-                <div className="text-xs text-[#1E2D4D]/30 text-center py-8">No deals</div>
+                <div className="text-xs text-navy/30 text-center py-8">No deals</div>
               )}
             </div>
           </div>
@@ -272,55 +268,55 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
   );
 }
 
-// ── Table View ─────────────────────────────────────────────
+// -- Table View --
 
 function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
   pipeline: any[]; onStageChange: (id: string, stage: string) => void;
   onNotes: (id: string) => void; onCloseDate: (id: string) => void;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+    <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-              <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Company</th>
-              <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Contact</th>
-              <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Segment</th>
-              <th className="text-center px-3 py-2 font-semibold text-[#1E2D4D]/80">Loc</th>
-              <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Est. MRR</th>
-              <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Stage</th>
-              <th className="text-center px-3 py-2 font-semibold text-[#1E2D4D]/80">Prob</th>
-              <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Close</th>
-              <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Actions</th>
+            <tr className="bg-cream border-b border-navy/10 hover:bg-navy/[0.02] transition-colors">
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Company</th>
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Contact</th>
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Segment</th>
+              <th className="text-center px-3 py-2 font-semibold text-navy/80">Loc</th>
+              <th className="text-right px-3 py-2 font-semibold text-navy/80">Est. MRR</th>
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Stage</th>
+              <th className="text-center px-3 py-2 font-semibold text-navy/80">Prob</th>
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Close</th>
+              <th className="text-right px-3 py-2 font-semibold text-navy/80">Actions</th>
             </tr>
           </thead>
           <tbody>
             {pipeline.map(deal => (
-              <tr key={deal.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
-                <td className="px-3 py-2 font-medium text-[#1E2D4D]">{deal.org_name}</td>
-                <td className="px-3 py-2 text-[#1E2D4D]/70 text-xs">{deal.contact_name || '—'}</td>
-                <td className="px-3 py-2 text-xs text-[#1E2D4D]/50 capitalize">{deal.segment?.replace(/_/g, ' ') || '—'}</td>
-                <td className="px-3 py-2 text-center text-[#1E2D4D]/50">{deal.location_count || '—'}</td>
-                <td className="px-3 py-2 text-right font-medium text-[#1E2D4D]">{formatCents(deal.estimated_mrr_cents || 0)}</td>
+              <tr key={deal.id} className="border-b border-navy/5 hover:bg-cream">
+                <td className="px-3 py-2 font-medium text-navy">{deal.org_name}</td>
+                <td className="px-3 py-2 text-navy/70 text-xs">{deal.contact_name || '—'}</td>
+                <td className="px-3 py-2 text-xs text-navy/50 capitalize">{deal.segment?.replace(/_/g, ' ') || '—'}</td>
+                <td className="px-3 py-2 text-center text-navy/50">{deal.location_count || '—'}</td>
+                <td className="px-3 py-2 text-right font-medium text-navy">{formatCents(deal.estimated_mrr_cents || 0)}</td>
                 <td className="px-3 py-2">
                   <select value={deal.stage} onChange={e => onStageChange(deal.id, e.target.value)}
-                    className="text-xs border border-[#1E2D4D]/10 rounded px-2 py-1 bg-white">
+                    className="text-xs border border-navy/10 rounded px-2 py-1 bg-white">
                     {PIPELINE_STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
                   </select>
                 </td>
-                <td className="px-3 py-2 text-center text-xs text-[#1E2D4D]/50">{deal.probability_pct || 0}%</td>
-                <td className="px-3 py-2 text-xs text-[#1E2D4D]/50">{formatDate(deal.expected_close_date)}</td>
+                <td className="px-3 py-2 text-center text-xs text-navy/50">{deal.probability_pct || 0}%</td>
+                <td className="px-3 py-2 text-xs text-navy/50">{formatDate(deal.expected_close_date)}</td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex items-center gap-1 justify-end">
-                    <button onClick={() => onCloseDate(deal.id)} className="p-1 hover:bg-[#1E2D4D]/5 rounded" title="Set close date"><Calendar className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
-                    <button onClick={() => onNotes(deal.id)} className="p-1 hover:bg-[#1E2D4D]/5 rounded" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-[#1E2D4D]/30" /></button>
+                    <button onClick={() => onCloseDate(deal.id)} className="p-1 hover:bg-navy/5 rounded" title="Set close date"><Calendar className="h-3.5 w-3.5 text-navy/30" /></button>
+                    <button onClick={() => onNotes(deal.id)} className="p-1 hover:bg-navy/5 rounded" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-navy/30" /></button>
                   </div>
                 </td>
               </tr>
             ))}
             {pipeline.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-8 text-center text-[#1E2D4D]/30">No deals in pipeline. Launch a guided tour to create one.</td></tr>
+              <tr><td colSpan={9} className="px-4 py-8 text-center text-navy/30">No deals in pipeline. Launch a guided tour to create one.</td></tr>
             )}
           </tbody>
         </table>
@@ -329,7 +325,7 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
   );
 }
 
-// ── Deal detail panel ──────────────────────────────────────
+// -- Deal detail panel --
 
 function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefresh, isDemoMode }: {
   deal: any; onClose: () => void;
@@ -354,8 +350,8 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50">
       <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6 modal-content-enter">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-[#1E2D4D]">{deal.org_name}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-[#1E2D4D]/5 rounded" aria-label="Close"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
+          <h3 className="text-lg font-bold text-navy">{deal.org_name}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-navy/5 rounded" aria-label="Close"><X className="h-5 w-5 text-navy/30" /></button>
         </div>
 
         <div className="space-y-3 text-sm">
@@ -372,19 +368,19 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
           {deal.notes && <Row label="Notes" value={deal.notes} />}
         </div>
 
-        <div className="mt-4 pt-4 border-t border-[#1E2D4D]/10">
-          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Update Stage</label>
+        <div className="mt-4 pt-4 border-t border-navy/10">
+          <label className="block text-xs font-medium text-navy/80 mb-1">Update Stage</label>
           <select value={deal.stage} onChange={e => { onStageChange(deal.id, e.target.value); onClose(); }}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
+            className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
             {PIPELINE_STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
           </select>
         </div>
 
         <div className="flex gap-2 mt-4">
           <button onClick={() => { onNotes(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] font-medium">Add Notes</button>
+            className="flex-1 px-3 py-2 text-xs border border-navy/10 rounded-xl hover:bg-cream font-medium">Add Notes</button>
           <button onClick={() => { onCloseDate(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] font-medium">Set Close Date</button>
+            className="flex-1 px-3 py-2 text-xs border border-navy/10 rounded-xl hover:bg-cream font-medium">Set Close Date</button>
           <button onClick={handleLostReason}
             className="px-3 py-2 text-xs border border-red-200 rounded-xl hover:bg-red-50 text-red-600 font-medium">Mark Lost</button>
         </div>
@@ -396,8 +392,8 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-[#1E2D4D]/50">{label}</span>
-      <span className="font-medium text-[#1E2D4D] text-right max-w-[60%] break-words">{value}</span>
+      <span className="text-navy/50">{label}</span>
+      <span className="font-medium text-navy text-right max-w-[60%] break-words">{value}</span>
     </div>
   );
 }

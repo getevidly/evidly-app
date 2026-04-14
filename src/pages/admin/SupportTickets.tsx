@@ -11,12 +11,6 @@ import { KpiTile } from '../../components/admin/KpiTile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 type Tab = 'all' | 'mine' | 'analytics';
 
 interface Ticket {
@@ -110,27 +104,29 @@ function hoursBetween(from: string, to: string): number {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="rounded-md animate-pulse bg-gray-200" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
 function Badge({ label, colors }: { label: string; colors: { bg: string; text: string } }) {
   return (
-    <span style={{
-      padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-      background: colors.bg, color: colors.text, whiteSpace: 'nowrap',
-    }}>
+    <span
+      className="px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap"
+      style={{ background: colors.bg, color: colors.text }}
+    >
       {label.replace(/_/g, ' ')}
     </span>
   );
 }
+
+const INPUT_CLASS = 'px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-full';
 
 export default function SupportTickets() {
   useDemoGuard();
@@ -440,37 +436,35 @@ export default function SupportTickets() {
     setCreating(false);
   };
 
-  const tabStyle = (t: Tab): React.CSSProperties => ({
-    padding: '8px 18px', borderRadius: 6, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-    background: tab === t ? '#FFFFFF' : 'transparent', color: tab === t ? NAVY : TEXT_MUTED,
-    boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-  });
-
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%',
-  };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Support Tickets' }]} />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Support Tickets</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">Support Tickets</h1>
+          <p className="text-[13px] text-[#6B7F96] mt-1">
             Manage customer support requests, track SLAs, and monitor satisfaction.
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 2, background: '#F3F4F6', borderRadius: 8, padding: 3, width: 'fit-content' }}>
+      <div className="flex gap-0.5 bg-gray-100 rounded-lg p-[3px] w-fit">
         {([
           { id: 'all' as Tab, label: 'All Tickets' },
           { id: 'mine' as Tab, label: 'My Tickets' },
           { id: 'analytics' as Tab, label: 'Analytics' },
         ]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={tabStyle(t.id)}>
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`px-[18px] py-2 rounded-md border-none text-[13px] font-semibold cursor-pointer ${
+              tab === t.id
+                ? 'bg-white text-navy shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+                : 'bg-transparent text-gray-400'
+            }`}
+          >
             {t.label}
           </button>
         ))}
@@ -480,7 +474,7 @@ export default function SupportTickets() {
       {(tab === 'all' || tab === 'mine') && (
         <>
           {/* KPI Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+          <div className="grid grid-cols-5 gap-3 items-stretch">
             <KpiTile label="Open" value={kpis.openCount.toString()} valueColor="navy" />
             <KpiTile label="In Progress" value={kpis.inProgressCount.toString()} valueColor="warning" />
             <KpiTile label="SLA Breached" value={kpis.slaBreachedCount.toString()} valueColor={kpis.slaBreachedCount > 0 ? 'red' : 'green'} />
@@ -489,22 +483,19 @@ export default function SupportTickets() {
           </div>
 
           {/* Filter bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
-            background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '10px 14px',
-          }}>
+          <div className="flex items-center gap-[10px] flex-wrap bg-white border border-[#E2D9C8] rounded-[10px] px-[14px] py-[10px]">
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              style={{ ...inputStyle, width: 140, cursor: 'pointer' }}>
+              className={`${INPUT_CLASS} !w-[140px] cursor-pointer`}>
               <option value="">All Statuses</option>
               {STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
             </select>
             <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}
-              style={{ ...inputStyle, width: 140, cursor: 'pointer' }}>
+              className={`${INPUT_CLASS} !w-[140px] cursor-pointer`}>
               <option value="">All Priorities</option>
               {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
             <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-              style={{ ...inputStyle, width: 150, cursor: 'pointer' }}>
+              className={`${INPUT_CLASS} !w-[150px] cursor-pointer`}>
               <option value="">All Categories</option>
               {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
             </select>
@@ -512,21 +503,18 @@ export default function SupportTickets() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search tickets..."
-              style={{ ...inputStyle, flex: 1, minWidth: 160 }}
+              className={`${INPUT_CLASS} flex-1 min-w-[160px]`}
             />
             <button onClick={() => setShowCreate(true)}
-              style={{
-                padding: '8px 18px', background: GOLD, border: 'none', borderRadius: 6,
-                color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
-              }}>
+              className="px-[18px] py-2 bg-gold border-none rounded-md text-white text-[13px] font-bold cursor-pointer whitespace-nowrap">
               + Create Ticket
             </button>
           </div>
 
           {/* Ticket table */}
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
             {loading ? (
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} h={36} />)}
               </div>
             ) : filteredTickets.length === 0 ? (
@@ -536,15 +524,12 @@ export default function SupportTickets() {
                 subtitle={tab === 'mine' ? 'Tickets assigned to your email will appear here.' : 'Adjust your filters or create a new ticket to get started.'}
               />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <tr className="border-b border-[#E2D9C8]">
                       {['Ticket #', 'Subject', 'Org', 'Category', 'Priority', 'Status', 'Assigned', 'SLA Due', 'Created'].map(h => (
-                        <th key={h} style={{
-                          textAlign: 'left', padding: '10px 14px', color: TEXT_SEC,
-                          fontWeight: 600, fontSize: 11, textTransform: 'uppercase', whiteSpace: 'nowrap',
-                        }}>
+                        <th key={h} className="text-left px-[14px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase whitespace-nowrap">
                           {h}
                         </th>
                       ))}
@@ -556,35 +541,33 @@ export default function SupportTickets() {
                       return (
                         <tr key={ticket.id}
                           onClick={() => openDrawer(ticket)}
-                          style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#FAFAF8')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                          <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600, fontFamily: 'monospace', fontSize: 12 }}>
+                          className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#FAFAF8]">
+                          <td className="px-[14px] py-[10px] text-navy font-semibold font-mono text-xs">
                             {ticket.ticket_number}
                           </td>
-                          <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 500, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <td className="px-[14px] py-[10px] text-navy font-medium max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {ticket.subject}
                           </td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
+                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">
                             {ticket.organizations?.name || '—'}
                           </td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12, textTransform: 'capitalize' }}>
+                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs capitalize">
                             {(ticket.category || '').replace(/_/g, ' ')}
                           </td>
-                          <td style={{ padding: '10px 14px' }}>
+                          <td className="px-[14px] py-[10px]">
                             <Badge label={ticket.priority} colors={PRIORITY_COLORS[ticket.priority] || PRIORITY_COLORS.normal} />
                           </td>
-                          <td style={{ padding: '10px 14px' }}>
+                          <td className="px-[14px] py-[10px]">
                             <Badge label={ticket.status} colors={STATUS_COLORS[ticket.status] || STATUS_COLORS.open} />
                           </td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
+                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">
                             {ticket.assigned_to || '—'}
                           </td>
-                          <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: breached ? 700 : 400, color: breached ? '#DC2626' : TEXT_SEC }}>
+                          <td className={`px-[14px] py-[10px] text-xs ${breached ? 'font-bold text-[#DC2626]' : 'font-normal text-[#6B7F96]'}`}>
                             {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
-                            {breached && <span style={{ marginLeft: 4, fontSize: 10, color: '#DC2626' }}>BREACHED</span>}
+                            {breached && <span className="ml-1 text-[10px] text-[#DC2626]">BREACHED</span>}
                           </td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12, whiteSpace: 'nowrap' }}>
+                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs whitespace-nowrap">
                             {formatDate(ticket.created_at)}
                           </td>
                         </tr>
@@ -602,7 +585,7 @@ export default function SupportTickets() {
       {tab === 'analytics' && (
         <>
           {/* Analytics KPI row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+          <div className="grid grid-cols-5 gap-3 items-stretch">
             <KpiTile label="Total Tickets" value={analyticsKpis.total.toString()} valueColor="navy" />
             <KpiTile label="Avg First Response" value={`${analyticsKpis.avgFirstResponse}h`} valueColor="navy" />
             <KpiTile label="Avg Resolution" value={`${analyticsKpis.avgResolutionHours}h`} valueColor="navy" />
@@ -611,31 +594,31 @@ export default function SupportTickets() {
           </div>
 
           {/* Top orgs table */}
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-            <div style={{ padding: '14px 18px', borderBottom: `1px solid ${BORDER}` }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, margin: 0 }}>Top Organizations by Ticket Volume</h3>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+            <div className="px-[18px] py-[14px] border-b border-[#E2D9C8]">
+              <h3 className="text-sm font-bold text-navy m-0">Top Organizations by Ticket Volume</h3>
             </div>
             {analyticsKpis.topOrgs.length === 0 ? (
               <EmptyState icon="📊" title="No data yet" subtitle="Ticket analytics will appear once tickets are created." />
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <table className="w-full border-collapse text-[13px]">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <th style={{ textAlign: 'left', padding: '10px 18px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>Organization</th>
-                    <th style={{ textAlign: 'right', padding: '10px 18px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>Tickets</th>
-                    <th style={{ textAlign: 'left', padding: '10px 18px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', width: '50%' }}>Volume</th>
+                  <tr className="border-b border-[#E2D9C8]">
+                    <th className="text-left px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">Organization</th>
+                    <th className="text-right px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">Tickets</th>
+                    <th className="text-left px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase w-1/2">Volume</th>
                   </tr>
                 </thead>
                 <tbody>
                   {analyticsKpis.topOrgs.map((org, i) => {
                     const maxCount = analyticsKpis.topOrgs[0]?.count || 1;
                     return (
-                      <tr key={i} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                        <td style={{ padding: '10px 18px', color: NAVY, fontWeight: 600 }}>{org.name}</td>
-                        <td style={{ padding: '10px 18px', color: TEXT_SEC, textAlign: 'right', fontWeight: 600 }}>{org.count}</td>
-                        <td style={{ padding: '10px 18px' }}>
-                          <div style={{ background: '#F3F4F6', borderRadius: 4, height: 8, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 4, background: GOLD, width: `${(org.count / maxCount) * 100}%` }} />
+                      <tr key={i} className="border-b border-[#E2D9C8]">
+                        <td className="px-[18px] py-[10px] text-navy font-semibold">{org.name}</td>
+                        <td className="px-[18px] py-[10px] text-[#6B7F96] text-right font-semibold">{org.count}</td>
+                        <td className="px-[18px] py-[10px]">
+                          <div className="bg-gray-100 rounded h-2 overflow-hidden">
+                            <div className="h-full rounded bg-gold" style={{ width: `${(org.count / maxCount) * 100}%` }} />
                           </div>
                         </td>
                       </tr>
@@ -677,38 +660,27 @@ export default function SupportTickets() {
 
       {/* CSAT Prompt Modal */}
       {showCsatPrompt && csatResolvedTicket && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{
-            background: '#FFFFFF', borderRadius: 14, width: 420, maxWidth: '90vw',
-            padding: '28px 24px', boxShadow: '0 12px 40px rgba(0,0,0,0.15)', textAlign: 'center',
-          }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>&#9993;</div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 8px' }}>
+        <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
+          <div className="bg-white rounded-[14px] w-[420px] max-w-[90vw] px-6 py-7 shadow-[0_12px_40px_rgba(0,0,0,0.15)] text-center">
+            <div className="text-4xl mb-3">&#9993;</div>
+            <h3 className="text-base font-bold text-navy mb-2">
               Send CSAT Survey?
             </h3>
-            <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
+            <p className="text-[13px] text-[#6B7F96] leading-normal mb-1.5">
               Ticket <strong>{csatResolvedTicket.ticket_number}</strong> has been resolved.
             </p>
-            <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 20 }}>
+            <p className="text-[13px] text-[#6B7F96] leading-normal mb-5">
               Send a satisfaction survey to <strong>{csatResolvedTicket.contact_email}</strong>?
             </p>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <div className="flex gap-[10px] justify-center">
               <button onClick={handleSkipCsat}
-                style={{
-                  padding: '8px 20px', background: '#F3F4F6', border: `1px solid ${BORDER}`,
-                  borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                }}>
+                className="px-5 py-2 bg-gray-100 border border-[#E2D9C8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
                 Skip
               </button>
               <button onClick={handleSendCsat} disabled={csatSending}
-                style={{
-                  padding: '8px 20px', background: csatSending ? '#E5E7EB' : GOLD,
-                  border: 'none', borderRadius: 8, color: '#FFFFFF', fontSize: 13, fontWeight: 700,
-                  cursor: csatSending ? 'default' : 'pointer',
-                }}>
+                className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-bold ${
+                  csatSending ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
+                }`}>
                 {csatSending ? 'Sending...' : 'Send Survey'}
               </button>
             </div>
@@ -729,7 +701,6 @@ export default function SupportTickets() {
           createPriority={createPriority}
           createDescription={createDescription}
           creating={creating}
-          inputStyle={inputStyle}
           onOrgChange={setCreateOrg}
           onEmailChange={setCreateEmail}
           onNameChange={setCreateName}
@@ -770,96 +741,81 @@ function TicketDrawer({
   onSendReply: () => void;
   onResolveAndClose: () => void;
 }) {
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%',
-  };
-
   return (
     <>
       {/* Overlay */}
       <div
         onClick={onClose}
-        style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40,
-        }}
+        className="fixed inset-0 bg-black/30 z-40"
       />
       {/* Drawer */}
-      <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: 420, maxWidth: '100vw',
-        background: '#FFFFFF', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
-        display: 'flex', flexDirection: 'column', overflow: 'hidden',
-      }}>
+      <div className="fixed top-0 right-0 bottom-0 w-[420px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
         {/* Header */}
-        <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontFamily: 'monospace', fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>
+        <div className="px-5 py-4 border-b border-[#E2D9C8] shrink-0">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-mono text-xs text-[#6B7F96] font-semibold">
               {ticket.ticket_number}
             </span>
-            <button onClick={onClose} style={{
-              background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: TEXT_MUTED, lineHeight: 1,
-            }}>
+            <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-xl text-gray-400 leading-none">
               {'×'}
             </button>
           </div>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+          <div className="flex gap-1.5 mb-2">
             <Badge label={ticket.status} colors={STATUS_COLORS[ticket.status] || STATUS_COLORS.open} />
             <Badge label={ticket.priority} colors={PRIORITY_COLORS[ticket.priority] || PRIORITY_COLORS.normal} />
           </div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0, lineHeight: 1.3 }}>
+          <h3 className="text-base font-bold text-navy m-0 leading-tight">
             {ticket.subject}
           </h3>
         </div>
 
         {/* Details */}
-        <div style={{ padding: '14px 20px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 12 }}>
+        <div className="px-5 py-[14px] border-b border-[#E2D9C8] shrink-0">
+          <div className="grid grid-cols-2 gap-[10px] text-xs">
             <div>
-              <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Organization</div>
-              <div style={{ color: NAVY, fontWeight: 600 }}>{ticket.organizations?.name || '—'}</div>
+              <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">Organization</div>
+              <div className="text-navy font-semibold">{ticket.organizations?.name || '—'}</div>
             </div>
             <div>
-              <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Submitted By</div>
-              <div style={{ color: NAVY, fontWeight: 500 }}>{ticket.contact_name || '—'}</div>
-              <div style={{ color: TEXT_SEC, fontSize: 11 }}>{ticket.contact_email || ''}</div>
+              <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">Submitted By</div>
+              <div className="text-navy font-medium">{ticket.contact_name || '—'}</div>
+              <div className="text-[#6B7F96] text-[11px]">{ticket.contact_email || ''}</div>
             </div>
             <div>
-              <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>SLA Due</div>
-              <div style={{
-                color: isSlaBreached(ticket) ? '#DC2626' : '#059669',
-                fontWeight: 600,
-              }}>
+              <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">SLA Due</div>
+              <div className={`font-semibold ${isSlaBreached(ticket) ? 'text-[#DC2626]' : 'text-[#059669]'}`}>
                 {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
-                {isSlaBreached(ticket) && <span style={{ marginLeft: 4, fontSize: 10 }}>BREACHED</span>}
+                {isSlaBreached(ticket) && <span className="ml-1 text-[10px]">BREACHED</span>}
               </div>
             </div>
             <div>
-              <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Category</div>
-              <div style={{ color: NAVY, fontWeight: 500, textTransform: 'capitalize' }}>{(ticket.category || '').replace(/_/g, ' ')}</div>
+              <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">Category</div>
+              <div className="text-navy font-medium capitalize">{(ticket.category || '').replace(/_/g, ' ')}</div>
             </div>
           </div>
 
           {/* Assigned To dropdown */}
-          <div style={{ marginTop: 12 }}>
-            <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+          <div className="mt-3">
+            <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-1">
               Assigned To
             </label>
             <input
               value={drawerAssigned}
               onChange={e => onAssignChange(e.target.value)}
               placeholder="Enter email..."
-              style={inputStyle}
+              className={INPUT_CLASS}
             />
           </div>
 
           {/* Status dropdown */}
-          <div style={{ marginTop: 10 }}>
-            <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+          <div className="mt-[10px]">
+            <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-1">
               Status
             </label>
             <select
               value={drawerStatus}
               onChange={e => onStatusChange(e.target.value)}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
+              className={`${INPUT_CLASS} cursor-pointer`}>
               {STATUSES.map(s => (
                 <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
               ))}
@@ -868,33 +824,33 @@ function TicketDrawer({
 
           {/* CSAT Status */}
           {(ticket.satisfaction_score || ticket.csat_sent_at) && (
-            <div style={{ marginTop: 12, padding: '10px 12px', background: '#F9FAFB', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', marginBottom: 6 }}>
+            <div className="mt-3 px-3 py-[10px] bg-[#F9FAFB] rounded-lg border border-[#E2D9C8]">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5">
                 Customer Satisfaction
               </div>
               {ticket.satisfaction_score ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ display: 'flex', gap: 2 }}>
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <span key={s} style={{ fontSize: 16, color: s <= ticket.satisfaction_score! ? '#F59E0B' : '#D1D5DB' }}>
+                      <span key={s} className={`text-base ${s <= ticket.satisfaction_score! ? 'text-[#F59E0B]' : 'text-[#D1D5DB]'}`}>
                         &#9733;
                       </span>
                     ))}
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: NAVY }}>{ticket.satisfaction_score}/5</span>
+                  <span className="text-xs font-bold text-navy">{ticket.satisfaction_score}/5</span>
                   {ticket.csat_completed_at && (
-                    <span style={{ fontSize: 10, color: TEXT_MUTED, marginLeft: 'auto' }}>
+                    <span className="text-[10px] text-gray-400 ml-auto">
                       {formatDate(ticket.csat_completed_at)}
                     </span>
                   )}
                 </div>
               ) : (
-                <div style={{ fontSize: 12, color: TEXT_SEC }}>
+                <div className="text-xs text-[#6B7F96]">
                   Survey sent {formatDateTime(ticket.csat_sent_at)} — awaiting response
                 </div>
               )}
               {ticket.csat_comment && (
-                <div style={{ marginTop: 6, fontSize: 12, color: NAVY, fontStyle: 'italic', lineHeight: 1.4 }}>
+                <div className="mt-1.5 text-xs text-navy italic leading-snug">
                   "{ticket.csat_comment}"
                 </div>
               )}
@@ -904,32 +860,32 @@ function TicketDrawer({
 
         {/* Description */}
         {ticket.description && (
-          <div style={{ padding: '12px 20px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', marginBottom: 6 }}>Description</div>
-            <div style={{ fontSize: 13, color: NAVY, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{ticket.description}</div>
+          <div className="px-5 py-3 border-b border-[#E2D9C8] shrink-0">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5">Description</div>
+            <div className="text-[13px] text-navy leading-normal whitespace-pre-wrap">{ticket.description}</div>
           </div>
         )}
 
         {/* Conversation thread */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="flex-1 overflow-y-auto px-5 py-[14px]">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase mb-[10px]">
             Conversation ({replies.length})
           </div>
           {repliesLoading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="flex flex-col gap-2">
               <Skeleton h={50} />
               <Skeleton h={50} />
             </div>
           ) : replies.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '30px 10px', color: TEXT_MUTED, fontSize: 12 }}>
+            <div className="text-center py-[30px] px-[10px] text-gray-400 text-xs">
               No replies yet. Send the first response below.
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="flex flex-col gap-[10px]">
               {replies.map(reply => {
                 let bgColor = '#FFFFFF';
                 let borderColor = '#E5E7EB';
-                let labelColor = TEXT_SEC;
+                let labelColor = '#6B7F96';
                 let labelText = 'Staff';
 
                 if (reply.reply_type === 'customer') {
@@ -945,29 +901,31 @@ function TicketDrawer({
                 }
 
                 return (
-                  <div key={reply.id} style={{
-                    background: bgColor, border: `1px solid ${borderColor}`,
-                    borderRadius: 8, padding: '10px 12px',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div key={reply.id}
+                    className="rounded-lg px-3 py-[10px]"
+                    style={{ background: bgColor, border: `1px solid ${borderColor}` }}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5">
                         {reply.reply_type === 'internal_note' && (
                           <span className="text-xs">&#128274;</span>
                         )}
-                        <span style={{ fontSize: 11, fontWeight: 700, color: NAVY }}>
+                        <span className="text-[11px] font-bold text-navy">
                           {reply.author_name || reply.author_email}
                         </span>
-                        <span style={{
-                          fontSize: 9, fontWeight: 700, color: labelColor,
-                          background: reply.reply_type === 'customer' ? '#DBEAFE' : reply.reply_type === 'internal_note' ? '#E5E7EB' : '#F0FDF4',
-                          padding: '1px 6px', borderRadius: 3,
-                        }}>
+                        <span
+                          className="text-[9px] font-bold px-1.5 py-px rounded-sm"
+                          style={{
+                            color: labelColor,
+                            background: reply.reply_type === 'customer' ? '#DBEAFE' : reply.reply_type === 'internal_note' ? '#E5E7EB' : '#F0FDF4',
+                          }}
+                        >
                           {labelText}
                         </span>
                       </div>
-                      <span style={{ fontSize: 10, color: TEXT_MUTED }}>{formatDateTime(reply.created_at)}</span>
+                      <span className="text-[10px] text-gray-400">{formatDateTime(reply.created_at)}</span>
                     </div>
-                    <div style={{ fontSize: 13, color: NAVY, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                    <div className="text-[13px] text-navy leading-normal whitespace-pre-wrap">
                       {reply.body}
                     </div>
                   </div>
@@ -978,36 +936,31 @@ function TicketDrawer({
         </div>
 
         {/* Reply form */}
-        <div style={{ padding: '14px 20px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, background: '#FAFAF8' }}>
+        <div className="px-5 py-[14px] border-t border-[#E2D9C8] shrink-0 bg-[#FAFAF8]">
           <textarea
             value={replyBody}
             onChange={e => onReplyBodyChange(e.target.value)}
             placeholder={isInternalNote ? 'Write an internal note (not visible to customer)...' : 'Write a reply...'}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical', marginBottom: 8, background: isInternalNote ? '#F9FAFB' : '#FFFFFF' }}
+            className={`${INPUT_CLASS} resize-y mb-2 ${isInternalNote ? '!bg-[#F9FAFB]' : '!bg-white'}`}
           />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
               <input type="checkbox" checked={isInternalNote} onChange={e => onInternalNoteChange(e.target.checked)} />
               Internal Note
             </label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="flex gap-2">
               <button
                 onClick={onResolveAndClose}
-                style={{
-                  padding: '6px 14px', background: '#F0FDF4', border: '1px solid #BBF7D0',
-                  borderRadius: 6, color: '#059669', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                }}>
+                className="px-[14px] py-1.5 bg-[#F0FDF4] border border-[#BBF7D0] rounded-md text-[#059669] text-xs font-bold cursor-pointer">
                 Resolve & Close
               </button>
               <button
                 onClick={onSendReply}
                 disabled={sendingReply || !replyBody.trim()}
-                style={{
-                  padding: '6px 14px', background: sendingReply || !replyBody.trim() ? '#E5E7EB' : GOLD,
-                  border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 12, fontWeight: 700,
-                  cursor: sendingReply || !replyBody.trim() ? 'default' : 'pointer',
-                }}>
+                className={`px-[14px] py-1.5 border-none rounded-md text-white text-xs font-bold ${
+                  sendingReply || !replyBody.trim() ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
+                }`}>
                 {sendingReply ? 'Sending...' : 'Send Reply'}
               </button>
             </div>
@@ -1022,7 +975,7 @@ function TicketDrawer({
 
 function CreateTicketModal({
   orgs, createOrg, createEmail, createName, createPhone, createSubject, createCategory,
-  createPriority, createDescription, creating, inputStyle,
+  createPriority, createDescription, creating,
   onOrgChange, onEmailChange, onNameChange, onPhoneChange, onSubjectChange,
   onCategoryChange, onPriorityChange, onDescriptionChange, onSubmit, onClose,
 }: {
@@ -1036,7 +989,6 @@ function CreateTicketModal({
   createPriority: string;
   createDescription: string;
   creating: boolean;
-  inputStyle: React.CSSProperties;
   onOrgChange: (org: OrgOption | null) => void;
   onEmailChange: (val: string) => void;
   onNameChange: (val: string) => void;
@@ -1049,64 +1001,55 @@ function CreateTicketModal({
   onClose: () => void;
 }) {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <div style={{
-        background: '#FFFFFF', borderRadius: 14, width: 520, maxWidth: '90vw',
-        maxHeight: '90vh', overflowY: 'auto', padding: 24,
-        boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>Create Ticket</h2>
-          <button onClick={onClose} style={{
-            background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: TEXT_MUTED, lineHeight: 1,
-          }}>
+    <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
+      <div className="bg-white rounded-[14px] w-[520px] max-w-[90vw] max-h-[90vh] overflow-y-auto p-6 shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-navy m-0">Create Ticket</h2>
+          <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-[22px] text-gray-400 leading-none">
             {'×'}
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="flex flex-col gap-[14px]">
           {/* Org */}
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Organization</label>
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Organization</label>
             <OrgCombobox orgs={orgs} value={createOrg} onChange={onOrgChange} placeholder="Search organization..." />
           </div>
 
           {/* Name + Email + Phone */}
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Contact Name *</label>
-            <input value={createName} onChange={e => onNameChange(e.target.value)} style={inputStyle} placeholder="Contact name" />
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Name *</label>
+            <input value={createName} onChange={e => onNameChange(e.target.value)} className={INPUT_CLASS} placeholder="Contact name" />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Contact Email *</label>
-              <input value={createEmail} onChange={e => onEmailChange(e.target.value)} style={inputStyle} placeholder="customer@example.com" type="email" />
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Email *</label>
+              <input value={createEmail} onChange={e => onEmailChange(e.target.value)} className={INPUT_CLASS} placeholder="customer@example.com" type="email" />
             </div>
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Contact Phone</label>
-              <input value={createPhone} onChange={e => onPhoneChange(e.target.value)} style={inputStyle} placeholder="(555) 000-0000" type="tel" />
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Phone</label>
+              <input value={createPhone} onChange={e => onPhoneChange(e.target.value)} className={INPUT_CLASS} placeholder="(555) 000-0000" type="tel" />
             </div>
           </div>
 
           {/* Subject */}
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Subject *</label>
-            <input value={createSubject} onChange={e => onSubjectChange(e.target.value)} style={inputStyle} placeholder="Ticket subject" />
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Subject *</label>
+            <input value={createSubject} onChange={e => onSubjectChange(e.target.value)} className={INPUT_CLASS} placeholder="Ticket subject" />
           </div>
 
           {/* Category + Priority */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Category</label>
-              <select value={createCategory} onChange={e => onCategoryChange(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Category</label>
+              <select value={createCategory} onChange={e => onCategoryChange(e.target.value)} className={`${INPUT_CLASS} cursor-pointer`}>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Priority</label>
-              <select value={createPriority} onChange={e => onPriorityChange(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Priority</label>
+              <select value={createPriority} onChange={e => onPriorityChange(e.target.value)} className={`${INPUT_CLASS} cursor-pointer`}>
                 {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
@@ -1114,39 +1057,33 @@ function CreateTicketModal({
 
           {/* Description */}
           <div>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Description *</label>
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Description *</label>
             <textarea
               value={createDescription}
               onChange={e => onDescriptionChange(e.target.value)}
               rows={4}
-              style={{ ...inputStyle, resize: 'vertical' }}
+              className={`${INPUT_CLASS} resize-y`}
               placeholder="Describe the issue..."
             />
           </div>
 
           {/* SLA note */}
-          <div style={{ fontSize: 11, color: TEXT_MUTED, background: '#F9FAFB', borderRadius: 6, padding: '8px 12px' }}>
+          <div className="text-[11px] text-gray-400 bg-[#F9FAFB] rounded-md px-3 py-2">
             SLA will be set based on priority: Critical = 4h, High = 24h, Normal = 72h, Low = 7 days
           </div>
 
           {/* Actions */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
+          <div className="flex justify-end gap-[10px] mt-1">
             <button onClick={onClose}
-              style={{
-                padding: '8px 18px', background: '#F3F4F6', border: `1px solid ${BORDER}`,
-                borderRadius: 6, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              }}>
+              className="px-[18px] py-2 bg-gray-100 border border-[#E2D9C8] rounded-md text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
               Cancel
             </button>
             <button
               onClick={onSubmit}
               disabled={creating || !createSubject || !createDescription}
-              style={{
-                padding: '8px 18px',
-                background: creating || !createSubject || !createDescription ? '#E5E7EB' : GOLD,
-                border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 13, fontWeight: 700,
-                cursor: creating || !createSubject || !createDescription ? 'default' : 'pointer',
-              }}>
+              className={`px-[18px] py-2 border-none rounded-md text-white text-[13px] font-bold ${
+                creating || !createSubject || !createDescription ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
+              }`}>
               {creating ? 'Creating...' : 'Create Ticket'}
             </button>
           </div>

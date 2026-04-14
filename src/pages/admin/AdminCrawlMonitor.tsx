@@ -11,12 +11,6 @@ import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   live:        { bg: '#ECFDF5', text: '#059669', label: 'Live' },
   error:       { bg: '#FEF2F2', text: '#DC2626', label: 'Error' },
@@ -75,14 +69,14 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="rounded-md animate-pulse bg-gray-200" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 360, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[360px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -192,16 +186,12 @@ export default function AdminCrawlMonitor() {
 
 
   const KpiCard = ({ label, value, color, sub }: { label: string; value: string | number; color?: string; sub?: string }) => (
-    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>{label}</div>
-      <div style={{ fontSize: 28, fontWeight: 800, color: color || NAVY, lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 6 }}>{sub}</div>}
+    <div className="bg-white border border-[#E2D9C8] rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center">
+      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">{label}</div>
+      <div className="text-[28px] font-extrabold leading-none" style={{ color: color || '#1E2D4D' }}>{value}</div>
+      {sub && <div className="text-[11px] text-[#9CA3AF] mt-1.5">{sub}</div>}
     </div>
   );
-
-  const inputStyle: React.CSSProperties = {
-    padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 12,
-  };
 
   // Distinct categories from actual data
   const categories = [...new Set(sources.map(s => s.category))].sort();
@@ -209,109 +199,109 @@ export default function AdminCrawlMonitor() {
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Crawl Monitor' }]} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Crawl Monitor</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">Crawl Monitor</h1>
+          <p className="text-[13px] text-[#6B7F96] mt-1">
             {sources.length} intelligence sources tracked
           </p>
         </div>
         <button onClick={runCrawl} disabled={running}
-          style={{ padding: '8px 20px', background: running ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 8, color: running ? TEXT_MUTED : '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: running ? 'default' : 'pointer' }}>
+          className={`py-2 px-5 border-none rounded-lg text-[13px] font-bold ${running ? 'bg-gray-200 text-[#9CA3AF] cursor-default' : 'bg-gold text-white cursor-pointer'}`}>
           {running ? 'Running...' : 'Run Crawl Now'}
         </button>
       </div>
 
       {/* Proactive offline notice — shows on load when crawl has never run */}
       {!loading && !crawlError && !crawlSuccess && sources.length > 0 && !latestRun && (
-        <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-          <span style={{ color: '#D97706', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
+        <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-md px-4 py-2.5 flex gap-2.5 items-start">
+          <span className="text-[#D97706] text-base leading-none shrink-0">&#9888;</span>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#92400E' }}>
+            <div className="text-[13px] font-semibold text-[#92400E]">
               Intelligence crawl has never run — {sources.length} sources are not being monitored
             </div>
-            <div style={{ fontSize: 12, color: '#B45309', marginTop: 2 }}>
-              Click "Run Crawl Now" to start the first crawl, or deploy the edge function: <code style={{ fontSize: 11, background: '#FEF3C7', padding: '1px 4px', borderRadius: 3 }}>supabase functions deploy crawl-monitor</code>
+            <div className="text-xs text-[#B45309] mt-0.5">
+              Click "Run Crawl Now" to start the first crawl, or deploy the edge function: <code className="text-[11px] bg-[#FEF3C7] px-1 py-px rounded">supabase functions deploy crawl-monitor</code>
             </div>
           </div>
         </div>
       )}
 
       {crawlError && (
-        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-          <span style={{ color: '#DC2626', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
+        <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-md px-4 py-2.5 flex gap-2.5 items-start">
+          <span className="text-[#DC2626] text-base leading-none shrink-0">&#9888;</span>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#991B1B' }}>
+            <div className="text-[13px] font-semibold text-[#991B1B]">
               Intelligence crawl is offline — {sources.length} sources are not being monitored
             </div>
-            <div style={{ fontSize: 12, color: '#B91C1C', marginTop: 2 }}>
+            <div className="text-xs text-[#B91C1C] mt-0.5">
               Edge Function error at crawl-monitor · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
             </div>
-            <div style={{ fontSize: 11, color: '#991B1B', marginTop: 4, fontFamily: "'DM Mono', monospace" }}>
+            <div className="text-[11px] text-[#991B1B] mt-1 font-[DM_Mono,monospace]">
               {crawlError}
             </div>
           </div>
         </div>
       )}
       {crawlSuccess && (
-        <div style={{ fontSize: 13, color: '#059669', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, padding: '10px 14px' }}>
+        <div className="text-[13px] text-[#059669] bg-[#F0FDF4] border border-[#BBF7D0] rounded-lg px-3.5 py-2.5">
           {crawlSuccess}
         </div>
       )}
 
       {/* KPIs */}
       {loading ? (
-        <div style={{ display: 'flex', gap: 12 }}>
-          {Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
+        <div className="flex gap-3">
+          {Array.from({ length: 6 }).map((_, i) => <div key={i} className="flex-1"><Skeleton h={70} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+        <div className="grid grid-cols-5 gap-3 items-stretch">
           <KpiCard label="Live" value={liveCount} color="#16A34A" />
           <KpiCard label="Errors" value={errorCount} color="#DC2626" />
           <KpiCard label="Changed" value={changedCount} color="#D97706" />
-          <KpiCard label="Total" value={totalCount} color={NAVY} />
+          <KpiCard label="Total" value={totalCount} color="#1E2D4D" />
           <KpiCard
             label="Last Crawl"
             value={lastCrawled ? new Date(lastCrawled).toLocaleDateString() : 'Never'}
-            color={NAVY}
+            color="#1E2D4D"
             sub={lastCrawled ? new Date(lastCrawled).toLocaleTimeString() : undefined}
           />
         </div>
       )}
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={inputStyle}>
+      <div className="flex gap-3 items-center flex-wrap">
+        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
           <option value="all">All Categories</option>
           {categories.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c] || c}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle}>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
           <option value="all">All Statuses</option>
           {Object.entries(STATUS_COLORS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+        <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
           <input type="checkbox" checked={demoOnly} onChange={e => setDemoOnly(e.target.checked)} />
           Demo critical only
         </label>
-        <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 'auto' }}>
+        <span className="text-[11px] text-[#9CA3AF] ml-auto">
           {filtered.length} of {sources.length} sources
         </span>
       </div>
 
       {/* Source Table */}
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : sources.length === 0 ? (
-          <EmptyState icon="🕷️" title="No sources configured" subtitle="Intelligence sources will appear once the system is seeded." />
+          <EmptyState icon="&#128375;" title="No sources configured" subtitle="Intelligence sources will appear once the system is seeded." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                {['Source', 'Category', 'Method', 'Freq', 'Status', 'Last Crawled', 'Signals', '⭐'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+              <tr className="border-b border-[#E2D9C8]">
+                {['Source', 'Category', 'Method', 'Freq', 'Status', 'Last Crawled', 'Signals', '&#11088;'].map(h => (
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-[0.5px]" dangerouslySetInnerHTML={{ __html: h }} />
                 ))}
               </tr>
             </thead>
@@ -319,39 +309,37 @@ export default function AdminCrawlMonitor() {
               {filtered.map(s => {
                 const sc = STATUS_COLORS[s.status] || STATUS_COLORS.pending;
                 return (
-                  <tr key={s.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ padding: '10px 14px' }}>
-                      <div style={{ color: NAVY, fontWeight: 600, fontSize: 13 }}>{s.name}</div>
+                  <tr key={s.id} className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors">
+                    <td className="px-3.5 py-2.5">
+                      <div className="text-navy font-semibold text-[13px]">{s.name}</div>
                       {s.url && (
                         <a href={s.url} target="_blank" rel="noreferrer"
-                          style={{ fontSize: 10, color: GOLD, textDecoration: 'none' }}>
+                          className="text-[10px] text-gold no-underline">
                           {s.url.replace('https://', '').substring(0, 40)}{s.url.length > 48 ? '...' : ''}
                         </a>
                       )}
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 11 }}>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px]">
                       {CATEGORY_LABELS[s.category] || s.category}
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px] font-[DM_Mono,monospace]">
                       {s.fetch_method || s.crawl_method || '—'}
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 11 }}>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px]">
                       {s.crawl_frequency}
                     </td>
-                    <td style={{ padding: '10px 14px' }}>
-                      <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: 10, fontSize: 10, fontWeight: 700, background: sc.bg, color: sc.text }}>
+                    <td className="px-3.5 py-2.5">
+                      <span className="inline-block px-2 py-0.5 rounded-[10px] text-[10px] font-bold" style={{ background: sc.bg, color: sc.text }}>
                         {sc.label}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_MUTED, fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+                    <td className="px-3.5 py-2.5 text-[#9CA3AF] text-[11px] font-[DM_Mono,monospace]">
                       {s.last_crawled_at ? new Date(s.last_crawled_at).toLocaleString() : '—'}
                     </td>
-                    <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: "'DM Mono', monospace", color: s.signal_count_30d > 0 ? NAVY : TEXT_MUTED }}>
+                    <td className={`px-3.5 py-2.5 text-xs font-[DM_Mono,monospace] ${s.signal_count_30d > 0 ? 'text-navy' : 'text-[#9CA3AF]'}`}>
                       {s.signal_count_30d || 0}
                     </td>
-                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                    <td className="px-3.5 py-2.5 text-center">
                       {s.is_demo_critical ? '⭐' : ''}
                     </td>
                   </tr>
@@ -363,29 +351,29 @@ export default function AdminCrawlMonitor() {
       </div>
 
       {/* Run History */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY }}>Run History</h2>
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <h2 className="text-lg font-bold text-navy">Run History</h2>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {runs.length === 0 ? (
-          <EmptyState icon="📊" title="No crawl runs recorded" subtitle="Click 'Run Crawl Now' to start the first run." />
+          <EmptyState icon="&#128202;" title="No crawl runs recorded" subtitle="Click 'Run Crawl Now' to start the first run." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E2D9C8]">
                 {['Started', 'Type', 'Live', 'Failed', 'Changed', 'Duration', 'Triggered By'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-[0.5px]">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {runs.map(r => (
-                <tr key={r.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(r.started_at).toLocaleString()}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{r.run_type}</td>
-                  <td style={{ padding: '10px 14px', color: '#059669', fontSize: 12, fontWeight: 600 }}>{r.feeds_live}</td>
-                  <td style={{ padding: '10px 14px', color: r.feeds_failed > 0 ? '#DC2626' : TEXT_SEC, fontSize: 12, fontWeight: 600 }}>{r.feeds_failed}</td>
-                  <td style={{ padding: '10px 14px', color: r.feeds_changed > 0 ? '#D97706' : TEXT_SEC, fontSize: 12 }}>{r.feeds_changed}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : '—'}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{r.triggered_by}</td>
+                <tr key={r.id} className="border-b border-[#E2D9C8]">
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(r.started_at).toLocaleString()}</td>
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.run_type}</td>
+                  <td className="px-3.5 py-2.5 text-[#059669] text-xs font-semibold">{r.feeds_live}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-semibold ${r.feeds_failed > 0 ? 'text-[#DC2626]' : 'text-[#6B7F96]'}`}>{r.feeds_failed}</td>
+                  <td className={`px-3.5 py-2.5 text-xs ${r.feeds_changed > 0 ? 'text-[#D97706]' : 'text-[#6B7F96]'}`}>{r.feeds_changed}</td>
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : '—'}</td>
+                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.triggered_by}</td>
                 </tr>
               ))}
             </tbody>

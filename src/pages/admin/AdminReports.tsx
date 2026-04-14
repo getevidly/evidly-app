@@ -13,12 +13,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { KpiTile } from '../../components/admin/KpiTile';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E5E0D8';
-
 type Tab = 'internal' | 'client' | 'partner' | 'investor';
 
 interface Report {
@@ -67,11 +61,6 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   ready:      { bg: '#ECFDF5', text: '#059669' },
   published:  { bg: '#EFF6FF', text: '#2563EB' },
   archived:   { bg: '#F3F4F6', text: '#9CA3AF' },
-};
-
-const inputStyle: React.CSSProperties = {
-  padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB',
-  borderRadius: 6, color: NAVY, fontSize: 12,
 };
 
 export default function AdminReports() {
@@ -145,17 +134,11 @@ export default function AdminReports() {
     setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'archived' } : r));
   };
 
-  const thStyle: React.CSSProperties = {
-    textAlign: 'left', padding: '10px 14px', color: TEXT_SEC,
-    fontWeight: 600, fontSize: 11, textTransform: 'uppercase',
-  };
-  const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
-
   if (error) {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -163,10 +146,10 @@ export default function AdminReports() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Reports</h1>
-          <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">Reports</h1>
+          <p className="mt-1 text-sm text-[#9CA3AF]">
             Generate and share internal, client, partner, and investor reports.
           </p>
         </div>
@@ -185,41 +168,36 @@ export default function AdminReports() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}` }}>
+      <div className="flex border-b-2 border-[#E5E0D8]">
         {([
           { key: 'internal' as Tab, label: 'Internal' },
           { key: 'client' as Tab, label: 'Client Reports' },
           { key: 'partner' as Tab, label: 'Partner Reports' },
           { key: 'investor' as Tab, label: 'Investor Reports' },
         ]).map(t => (
-          <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
-            padding: '10px 20px', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none',
-            color: activeTab === t.key ? GOLD : TEXT_MUTED,
-            borderBottom: `2px solid ${activeTab === t.key ? GOLD : 'transparent'}`,
-            marginBottom: -2, fontWeight: activeTab === t.key ? 600 : 400, transition: 'all 0.12s',
-          }}>
+          <button key={t.key} onClick={() => setActiveTab(t.key)}
+            className={`py-2.5 px-5 text-[13px] cursor-pointer bg-transparent border-none border-b-2 -mb-[2px] transition-all duration-150 ${
+              activeTab === t.key
+                ? 'text-gold border-gold font-semibold'
+                : 'text-[#9CA3AF] border-transparent font-normal'
+            }`}>
             {t.label}
           </button>
         ))}
       </div>
 
       {/* Report type cards (generate) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+      <div className="grid grid-cols-3 gap-3">
         {REPORT_TYPES[activeTab].map(rt => (
-          <div key={rt.key} style={{
-            background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10,
-            padding: '16px 18px', display: 'flex', flexDirection: 'column',
-          }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>{rt.label}</div>
-            <div style={{ fontSize: 11, color: TEXT_SEC, lineHeight: 1.6, flex: 1, marginBottom: 12 }}>{rt.description}</div>
+          <div key={rt.key} className="bg-white border border-[#E5E0D8] rounded-[10px] py-4 px-[18px] flex flex-col">
+            <div className="text-[13px] font-bold text-navy mb-1">{rt.label}</div>
+            <div className="text-[11px] text-[#6B7F96] leading-relaxed flex-1 mb-3">{rt.description}</div>
             <button
               onClick={() => generateReport(rt.key)}
               disabled={generating === rt.key}
-              style={{
-                padding: '6px 14px', background: generating === rt.key ? '#E5E7EB' : NAVY,
-                border: 'none', borderRadius: 6, color: '#fff', fontSize: 11,
-                fontWeight: 700, cursor: generating === rt.key ? 'not-allowed' : 'pointer',
-              }}
+              className={`py-1.5 px-3.5 border-none rounded-md text-white text-[11px] font-bold ${
+                generating === rt.key ? 'bg-[#E5E7EB] cursor-not-allowed' : 'bg-navy cursor-pointer'
+              }`}
             >
               {generating === rt.key ? 'Generating...' : 'Generate Report'}
             </button>
@@ -229,30 +207,30 @@ export default function AdminReports() {
 
       {/* Generated reports table */}
       <div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>
+        <div className="text-[13px] font-bold text-navy mb-3">
           Generated Reports
-          <span style={{ fontWeight: 400, color: TEXT_MUTED, marginLeft: 8 }}>({tabReports.length})</span>
+          <span className="font-normal text-[#9CA3AF] ml-2">({tabReports.length})</span>
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="flex flex-col gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} style={{ height: 40, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div key={i} className="h-10 bg-[#E5E7EB] rounded-md animate-pulse" />
             ))}
           </div>
         ) : tabReports.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>{'📋'}</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: NAVY }}>No reports generated yet</div>
-            <div style={{ fontSize: 12, color: TEXT_SEC, marginTop: 4 }}>Use the cards above to generate your first report.</div>
+          <div className="text-center py-10 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+            <div className="text-[32px] mb-2.5">{'📋'}</div>
+            <div className="text-[13px] font-semibold text-navy">No reports generated yet</div>
+            <div className="text-xs text-[#6B7F96] mt-1">Use the cards above to generate your first report.</div>
           </div>
         ) : (
-          <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <tr className="border-b border-[#E5E0D8]">
                   {['Report', 'Period', 'Generated By', 'Status', 'Shared', 'Actions'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
+                    <th key={h} className="text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -260,43 +238,35 @@ export default function AdminReports() {
                 {tabReports.map(r => {
                   const sc = STATUS_COLORS[r.status] || STATUS_COLORS.draft;
                   return (
-                    <tr key={r.id} style={{ borderBottom: `1px solid ${BORDER}` }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                      <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>{r.title}</td>
-                      <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>
+                    <tr key={r.id} className="border-b border-[#E5E0D8] transition-colors hover:bg-[#F9FAFB]">
+                      <td className="py-2.5 px-3.5 text-xs font-medium text-navy">{r.title}</td>
+                      <td className="py-2.5 px-3.5 text-[11px] font-['DM_Mono',monospace] text-[#6B7F96]">
                         {r.period_start && r.period_end
                           ? `${new Date(r.period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(r.period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
                           : '—'}
                       </td>
-                      <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{r.generated_by || '—'}</td>
-                      <td style={tdStyle}>
-                        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sc.bg, color: sc.text }}>
+                      <td className="py-2.5 px-3.5 text-[11px] text-[#6B7F96]">{r.generated_by || '—'}</td>
+                      <td className="py-2.5 px-3.5 text-xs">
+                        <span className="text-[10px] font-bold py-0.5 px-2 rounded-[10px]" style={{ background: sc.bg, color: sc.text }}>
                           {r.status}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, fontSize: 11 }}>
+                      <td className="py-2.5 px-3.5 text-[11px]">
                         {r.share_token
-                          ? <span style={{ color: '#059669' }}>{'✓'} Shared</span>
-                          : <span style={{ color: TEXT_MUTED }}>—</span>}
+                          ? <span className="text-[#059669]">{'✓'} Shared</span>
+                          : <span className="text-[#9CA3AF]">—</span>}
                       </td>
-                      <td style={tdStyle}>
-                        <div style={{ display: 'flex', gap: 6 }}>
+                      <td className="py-2.5 px-3.5 text-xs">
+                        <div className="flex gap-1.5">
                           {!r.share_token && r.status !== 'archived' && (
                             <button onClick={() => createShareLink(r.id)}
-                              style={{
-                                fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 5,
-                                background: 'none', border: `1px solid ${GOLD}`, color: GOLD, cursor: 'pointer',
-                              }}>
+                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px] bg-transparent border border-gold text-gold cursor-pointer">
                               Share
                             </button>
                           )}
                           {r.status !== 'archived' && (
                             <button onClick={() => archiveReport(r.id)}
-                              style={{
-                                fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 5,
-                                background: 'none', border: `1px solid ${BORDER}`, color: TEXT_MUTED, cursor: 'pointer',
-                              }}>
+                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px] bg-transparent border border-[#E5E0D8] text-[#9CA3AF] cursor-pointer">
                               Archive
                             </button>
                           )}

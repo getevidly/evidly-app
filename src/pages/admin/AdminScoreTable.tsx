@@ -7,12 +7,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E5E0D8';
-
 interface CountyRow {
   county_slug: string;
   total_views: number;
@@ -23,14 +17,8 @@ interface CountyRow {
 }
 
 const Skeleton = ({ h = 20 }: { h?: number }) => (
-  <div style={{ width: '100%', height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="w-full rounded-md animate-pulse bg-[#E5E7EB]" style={{ height: h }} />
 );
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700,
-  color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.04em',
-};
-const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
 
 export default function AdminScoreTable() {
   useDemoGuard();
@@ -84,32 +72,32 @@ export default function AdminScoreTable() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, marginBottom: 4 }}>ScoreTable Analytics</h1>
-      <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 16 }}>
+      <h1 className="text-[22px] font-extrabold text-navy mb-1">ScoreTable Analytics</h1>
+      <div className="text-xs text-[#6B7F96] leading-relaxed mb-4">
         Public ScoreTable pages (/scoretable/[county]-county) drive SEO traffic and convert operators into assessment leads.
         Track views, sessions, and conversion signals across all 62 county pages.
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 16 }}>
+      <div className="grid grid-cols-4 gap-3 items-stretch mb-4">
         {[
           { label: 'Total Pages', value: data.length || 62 },
           { label: 'Total Views', value: data.reduce((s, d) => s + d.total_views, 0) },
           { label: 'Views (7d)', value: data.reduce((s, d) => s + d.views_7d, 0) },
           { label: 'Views (30d)', value: data.reduce((s, d) => s + d.views_30d, 0) },
         ].map(k => (
-          <div key={k.label} style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+          <div key={k.label} className="bg-white border border-[#E5E7EB] rounded-lg px-5 py-4 text-center flex flex-col items-center justify-center">
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6B7280] mb-2">
               {k.label}
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, color: '#1E2D4D' }}>
+            <div className="text-[28px] font-extrabold leading-none text-navy">
               {loading ? '—' : k.value}
             </div>
           </div>
@@ -117,40 +105,38 @@ export default function AdminScoreTable() {
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
         </div>
       ) : data.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '48px 0' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 6 }}>No ScoreTable views yet</div>
-          <div style={{ fontSize: 12, color: TEXT_SEC, maxWidth: 360, margin: '0 auto' }}>
+        <div className="text-center py-12">
+          <div className="text-[32px] mb-3">📊</div>
+          <div className="text-[15px] font-bold text-navy mb-1.5">No ScoreTable views yet</div>
+          <div className="text-xs text-[#6B7F96] max-w-[360px] mx-auto">
             ScoreTable page views will appear here once users visit /scoretable/[county]-county pages. All 62 counties are tracked automatically.
           </div>
         </div>
       ) : (
-        <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E5E0D8]">
                 {['County', 'Total Views', 'Unique Sessions', '7-Day', '30-Day', 'Last Viewed'].map(h => (
-                  <th key={h} style={thStyle}>{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {data.map(d => (
-                <tr key={d.county_slug} style={{ borderBottom: `1px solid ${BORDER}` }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
+                <tr key={d.county_slug} className="border-b border-[#E5E0D8] hover:bg-[#F9FAFB] transition-colors">
+                  <td className="px-3.5 py-2.5 text-xs font-medium text-navy">
                     {(d.county_slug || '').replace(/-county$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} County
                   </td>
-                  <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontWeight: 600, color: NAVY }}>{d.total_views}</td>
-                  <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>{d.unique_sessions}</td>
-                  <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_7d > 0 ? '#2563EB' : TEXT_MUTED }}>{d.views_7d}</td>
-                  <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_30d > 0 ? '#059669' : TEXT_MUTED }}>{d.views_30d}</td>
-                  <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_MUTED }}>
+                  <td className="px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] font-semibold text-navy">{d.total_views}</td>
+                  <td className="px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] text-[#6B7F96]">{d.unique_sessions}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_7d > 0 ? 'text-[#2563EB]' : 'text-[#9CA3AF]'}`}>{d.views_7d}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_30d > 0 ? 'text-[#059669]' : 'text-[#9CA3AF]'}`}>{d.views_30d}</td>
+                  <td className="px-3.5 py-2.5 text-[11px] font-['DM_Mono',monospace] text-[#9CA3AF]">
                     {d.last_viewed ? new Date(d.last_viewed).toLocaleDateString() : '—'}
                   </td>
                 </tr>

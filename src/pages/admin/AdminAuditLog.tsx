@@ -17,14 +17,6 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-const GREEN = '#10B981';
-const RED = '#DC2626';
-
 interface AuditEntry {
   id: string;
   actor_id: string | null;
@@ -45,21 +37,11 @@ interface AuditEntry {
 
 const ACTION_CATEGORIES: Record<string, { label: string; color: string; bg: string }> = {
   'auth': { label: 'Auth', color: '#1D4ED8', bg: '#EFF6FF' },
-  'admin': { label: 'Admin', color: NAVY, bg: '#F0F4F8' },
-  'security': { label: 'Security', color: RED, bg: '#FEF2F2' },
+  'admin': { label: 'Admin', color: '#1E2D4D', bg: '#F0F4F8' },
+  'security': { label: 'Security', color: '#DC2626', bg: '#FEF2F2' },
   'data': { label: 'Data', color: '#059669', bg: '#ECFDF5' },
   'edge_fn': { label: 'Edge Fn', color: '#7C3AED', bg: '#F5F3FF' },
 };
-
-const inputStyle: React.CSSProperties = {
-  padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
-  borderRadius: 6, outline: 'none', color: NAVY, background: '#fff',
-};
-
-const btnStyle = (bg: string, fg: string): React.CSSProperties => ({
-  padding: '6px 14px', fontSize: 12, fontWeight: 600, border: 'none',
-  borderRadius: 6, cursor: 'pointer', background: bg, color: fg,
-});
 
 const PAGE_SIZE = 50;
 
@@ -184,7 +166,7 @@ export default function AdminAuditLog() {
 
   const getActionCategory = (action: string) => {
     const prefix = action.split('.')[0];
-    return ACTION_CATEGORIES[prefix] || { label: prefix, color: TEXT_MUTED, bg: '#F3F4F6' };
+    return ACTION_CATEGORIES[prefix] || { label: prefix, color: '#9CA3AF', bg: '#F3F4F6' };
   };
 
   const formatTime = (iso: string) => {
@@ -201,13 +183,9 @@ export default function AdminAuditLog() {
   };
 
   const renderJson = (obj: any) => {
-    if (!obj) return <span style={{ color: TEXT_MUTED, fontStyle: 'italic' }}>null</span>;
+    if (!obj) return <span className="text-[#9CA3AF] italic">null</span>;
     return (
-      <pre style={{
-        fontSize: 12, fontFamily: 'monospace', background: '#F8FAFC',
-        padding: 10, borderRadius: 6, margin: 0, whiteSpace: 'pre-wrap',
-        wordBreak: 'break-all', color: NAVY, maxHeight: 200, overflowY: 'auto',
-      }}>
+      <pre className="text-xs font-mono bg-[#F8FAFC] p-2.5 rounded-md m-0 whitespace-pre-wrap break-all text-navy max-h-[200px] overflow-y-auto">
         {JSON.stringify(obj, null, 2)}
       </pre>
     );
@@ -229,14 +207,14 @@ export default function AdminAuditLog() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Audit Log' }]} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="flex justify-between items-start">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>Platform Audit Log</h1>
-          <p style={{ fontSize: 13, color: TEXT_MUTED, marginTop: 2 }}>
+          <h1 className="text-[22px] font-extrabold text-navy">Platform Audit Log</h1>
+          <p className="text-[13px] text-[#9CA3AF] mt-0.5">
             SOX-grade immutable audit trail — all admin and security events
           </p>
         </div>
-        <button onClick={exportCsv} style={btnStyle(GOLD, '#fff')}>
+        <button onClick={exportCsv} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white">
           Export CSV
         </button>
       </div>
@@ -244,33 +222,33 @@ export default function AdminAuditLog() {
       {/* KPI row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="Total Events" value={totalEvents} />
-        <KpiTile label="Failed Events" value={failedEvents} valueColor={failedEvents > 0 ? RED : undefined} />
+        <KpiTile label="Failed Events" value={failedEvents} valueColor={failedEvents > 0 ? '#DC2626' : undefined} />
         <KpiTile label="Unique Actors" value={uniqueActors} />
-        <KpiTile label="Security Events" value={securityEvents} valueColor={securityEvents > 0 ? RED : undefined} />
+        <KpiTile label="Security Events" value={securityEvents} valueColor={securityEvents > 0 ? '#DC2626' : undefined} />
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="flex gap-2.5 flex-wrap items-center">
         <input
-          style={{ ...inputStyle, width: 160 }}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[160px]"
           placeholder="Filter by action..."
           value={actionFilter}
           onChange={e => { setActionFilter(e.target.value); setPage(0); }}
         />
         <input
-          style={{ ...inputStyle, width: 180 }}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[180px]"
           placeholder="Filter by actor email..."
           value={actorFilter}
           onChange={e => { setActorFilter(e.target.value); setPage(0); }}
         />
         <input
-          style={{ ...inputStyle, width: 160 }}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[160px]"
           placeholder="Filter by resource..."
           value={resourceFilter}
           onChange={e => { setResourceFilter(e.target.value); setPage(0); }}
         />
         <select
-          style={inputStyle}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
           value={successFilter}
           onChange={e => { setSuccessFilter(e.target.value as any); setPage(0); }}
         >
@@ -280,31 +258,31 @@ export default function AdminAuditLog() {
         </select>
         <input
           type="date"
-          style={inputStyle}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
           value={dateFrom}
           onChange={e => { setDateFrom(e.target.value); setPage(0); }}
           title="From date"
         />
         <input
           type="date"
-          style={inputStyle}
+          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
           value={dateTo}
           onChange={e => { setDateTo(e.target.value); setPage(0); }}
           title="To date"
         />
         {hasFilters && (
-          <button onClick={clearFilters} style={{ ...btnStyle('#F0F4F8', TEXT_SEC), fontSize: 11 }}>
+          <button onClick={clearFilters} className="px-3.5 py-1.5 text-[11px] font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">
             Clear Filters
           </button>
         )}
       </div>
 
       {/* Audit table */}
-      <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
+      <div className="bg-white border border-[#E2D9C8] rounded-[10px] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>Loading audit log...</div>
+          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">Loading audit log...</div>
         ) : entries.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No audit entries match filters</div>
+          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No audit entries match filters</div>
         ) : (
           <>
             {entries.map(entry => {
@@ -313,85 +291,68 @@ export default function AdminAuditLog() {
               const hasDetail = entry.old_value || entry.new_value || entry.metadata || entry.error_message;
 
               return (
-                <div key={entry.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <div key={entry.id} className="border-b border-[#E2D9C8]">
                   {/* Main row */}
                   <div
                     onClick={() => hasDetail && toggleExpand(entry.id)}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '140px 180px 1fr 120px 100px 60px',
-                      padding: '10px 16px',
-                      alignItems: 'center',
-                      fontSize: 13,
-                      cursor: hasDetail ? 'pointer' : 'default',
-                      background: isExpanded ? '#FAFBFC' : 'transparent',
-                    }}
+                    className={`grid grid-cols-[140px_180px_1fr_120px_100px_60px] px-4 py-2.5 items-center text-[13px] ${hasDetail ? 'cursor-pointer' : 'cursor-default'} ${isExpanded ? 'bg-[#FAFBFC]' : 'bg-transparent'}`}
                   >
                     {/* Timestamp */}
-                    <div style={{ fontSize: 12, color: TEXT_SEC }}>{formatTime(entry.created_at)}</div>
+                    <div className="text-xs text-[#6B7F96]">{formatTime(entry.created_at)}</div>
 
                     {/* Actor */}
                     <div>
-                      <div style={{ fontSize: 12, color: NAVY, fontWeight: 500 }}>
+                      <div className="text-xs text-navy font-medium">
                         {entry.actor_email || 'System'}
                       </div>
                       {entry.actor_ip && (
-                        <div style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: 'monospace' }}>{entry.actor_ip}</div>
+                        <div className="text-[10px] text-[#9CA3AF] font-mono">{entry.actor_ip}</div>
                       )}
                     </div>
 
                     {/* Action + Resource */}
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <span style={{
-                        display: 'inline-block', padding: '2px 6px', borderRadius: 4,
-                        fontSize: 10, fontWeight: 700, background: cat.bg, color: cat.color,
-                        textTransform: 'uppercase',
-                      }}>
+                    <div className="flex gap-2 items-center">
+                      <span
+                        className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
+                        style={{ background: cat.bg, color: cat.color }}
+                      >
                         {cat.label}
                       </span>
-                      <span style={{ color: NAVY, fontWeight: 500, fontSize: 12 }}>
+                      <span className="text-navy font-medium text-xs">
                         {entry.action.split('.').slice(1).join('.')}
                       </span>
                       {entry.resource_type && (
-                        <span style={{ fontSize: 11, color: TEXT_MUTED }}>
+                        <span className="text-[11px] text-[#9CA3AF]">
                           on {entry.resource_type}{entry.resource_id ? `:${entry.resource_id.substring(0, 8)}` : ''}
                         </span>
                       )}
                     </div>
 
                     {/* Role */}
-                    <div style={{ fontSize: 11, color: TEXT_MUTED }}>
-                      {entry.actor_role || '—'}
+                    <div className="text-[11px] text-[#9CA3AF]">
+                      {entry.actor_role || '\u2014'}
                     </div>
 
                     {/* Status */}
                     <div>
-                      <span style={{
-                        display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                        fontSize: 10, fontWeight: 600,
-                        background: entry.success ? '#ECFDF5' : '#FEF2F2',
-                        color: entry.success ? GREEN : RED,
-                      }}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${entry.success ? 'bg-[#ECFDF5] text-[#10B981]' : 'bg-[#FEF2F2] text-[#DC2626]'}`}>
                         {entry.success ? 'OK' : 'FAIL'}
                       </span>
                     </div>
 
                     {/* Expand indicator */}
-                    <div style={{ textAlign: 'right', color: TEXT_MUTED, fontSize: 14 }}>
+                    <div className="text-right text-[#9CA3AF] text-sm">
                       {hasDetail ? (isExpanded ? '\u25B2' : '\u25BC') : ''}
                     </div>
                   </div>
 
                   {/* Expanded detail */}
                   {isExpanded && hasDetail && (
-                    <div style={{
-                      padding: '12px 16px 16px', background: '#FAFBFC',
-                      borderTop: `1px solid ${BORDER}`,
-                    }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                    <div className="px-4 pt-3 pb-4 bg-[#FAFBFC] border-t border-[#E2D9C8]">
+                      <div className="grid grid-cols-3 gap-4">
                         {entry.old_value && (
                           <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: TEXT_MUTED, marginBottom: 4, textTransform: 'uppercase' }}>
+                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
                               Old Value
                             </div>
                             {renderJson(entry.old_value)}
@@ -399,7 +360,7 @@ export default function AdminAuditLog() {
                         )}
                         {entry.new_value && (
                           <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: TEXT_MUTED, marginBottom: 4, textTransform: 'uppercase' }}>
+                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
                               New Value
                             </div>
                             {renderJson(entry.new_value)}
@@ -407,7 +368,7 @@ export default function AdminAuditLog() {
                         )}
                         {entry.metadata && (
                           <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: TEXT_MUTED, marginBottom: 4, textTransform: 'uppercase' }}>
+                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
                               Metadata
                             </div>
                             {renderJson(entry.metadata)}
@@ -415,11 +376,11 @@ export default function AdminAuditLog() {
                         )}
                       </div>
                       {entry.error_message && (
-                        <div style={{ marginTop: 10 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: RED, marginBottom: 4, textTransform: 'uppercase' }}>
+                        <div className="mt-2.5">
+                          <div className="text-[11px] font-bold text-[#DC2626] mb-1 uppercase">
                             Error
                           </div>
-                          <div style={{ fontSize: 12, color: RED, fontFamily: 'monospace', background: '#FEF2F2', padding: 8, borderRadius: 4 }}>
+                          <div className="text-xs text-[#DC2626] font-mono bg-[#FEF2F2] p-2 rounded">
                             {entry.error_message}
                           </div>
                         </div>
@@ -432,25 +393,22 @@ export default function AdminAuditLog() {
 
             {/* Pagination */}
             {total > PAGE_SIZE && (
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '12px 16px', borderTop: `1px solid ${BORDER}`,
-              }}>
-                <span style={{ fontSize: 12, color: TEXT_MUTED }}>
-                  Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+              <div className="flex justify-between items-center px-4 py-3 border-t border-[#E2D9C8]">
+                <span className="text-xs text-[#9CA3AF]">
+                  Showing {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
                 </span>
-                <div style={{ display: 'flex', gap: 6 }}>
+                <div className="flex gap-1.5">
                   <button
                     onClick={() => setPage(p => Math.max(0, p - 1))}
                     disabled={page === 0}
-                    style={{ ...btnStyle('#F0F4F8', page === 0 ? TEXT_MUTED : NAVY), opacity: page === 0 ? 0.5 : 1 }}
+                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${page === 0 ? 'text-[#9CA3AF] opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setPage(p => p + 1)}
                     disabled={(page + 1) * PAGE_SIZE >= total}
-                    style={{ ...btnStyle('#F0F4F8', (page + 1) * PAGE_SIZE >= total ? TEXT_MUTED : NAVY), opacity: (page + 1) * PAGE_SIZE >= total ? 0.5 : 1 }}
+                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${(page + 1) * PAGE_SIZE >= total ? 'text-[#9CA3AF] opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
                   >
                     Next
                   </button>

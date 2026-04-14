@@ -17,15 +17,6 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-const GREEN = '#10B981';
-const RED = '#DC2626';
-const AMBER = '#F59E0B';
-
 const ROLE_LABELS: Record<string, string> = {
   platform_admin: 'Platform Admin',
   owner_operator: 'Owner/Operator',
@@ -63,26 +54,6 @@ interface ActiveSession {
   expires_at: string;
   revoked_at: string | null;
 }
-
-
-const inputStyle: React.CSSProperties = {
-  padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
-  borderRadius: 6, outline: 'none', color: NAVY, background: '#fff',
-};
-
-const btnStyle = (bg: string, fg: string): React.CSSProperties => ({
-  padding: '6px 14px', fontSize: 12, fontWeight: 600, border: 'none',
-  borderRadius: 6, cursor: 'pointer', background: bg, color: fg,
-});
-
-const thStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase',
-  padding: '10px 12px', borderBottom: `1px solid ${BORDER}`, textAlign: 'left',
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: '10px 12px', borderBottom: `1px solid ${BORDER}`, fontSize: 13, color: NAVY,
-};
 
 type Tab = 'mfa' | 'sessions_policy' | 'active_sessions';
 
@@ -238,15 +209,11 @@ export default function AdminSecurity() {
   const tabBtn = (t: Tab, label: string) => (
     <button
       onClick={() => setTab(t)}
-      style={{
-        padding: '8px 18px', fontSize: 13, fontWeight: tab === t ? 700 : 500,
-        color: tab === t ? NAVY : TEXT_SEC,
-        background: tab === t ? '#fff' : 'transparent',
-        border: tab === t ? `1px solid ${BORDER}` : '1px solid transparent',
-        borderBottom: tab === t ? '1px solid #fff' : `1px solid ${BORDER}`,
-        borderRadius: '8px 8px 0 0', cursor: 'pointer',
-        marginBottom: -1,
-      }}
+      className={`px-[18px] py-2 text-[13px] cursor-pointer rounded-t-lg -mb-px ${
+        tab === t
+          ? 'font-bold text-navy bg-white border border-[#E2D9C8] border-b-white'
+          : 'font-medium text-[#6B7F96] bg-transparent border border-transparent border-b-[#E2D9C8]'
+      }`}
     >
       {label}
     </button>
@@ -257,16 +224,16 @@ export default function AdminSecurity() {
       <AdminBreadcrumb crumbs={[{ label: 'Security' }]} />
 
       <div>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>Platform Security</h1>
-        <p style={{ fontSize: 13, color: TEXT_MUTED, marginTop: 2 }}>
+        <h1 className="text-[22px] font-extrabold text-navy">Platform Security</h1>
+        <p className="text-[13px] text-gray-400 mt-0.5">
           MFA enforcement, session policies, and active session management
         </p>
       </div>
 
       {loadError && (
-        <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-          <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+        <div className="text-center p-12">
+          <p className="text-[#6B7F96]">Failed to load data.</p>
+          <button onClick={loadData} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer">
             Try again
           </button>
         </div>
@@ -281,60 +248,54 @@ export default function AdminSecurity() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: `1px solid ${BORDER}` }}>
+      <div className="flex gap-0 border-b border-[#E2D9C8]">
         {tabBtn('mfa', 'MFA Policy')}
         {tabBtn('sessions_policy', 'Session Policy')}
         {tabBtn('active_sessions', `Active Sessions (${activeSessions})`)}
       </div>
 
       {/* Tab content */}
-      <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: '0 10px 10px 10px', overflow: 'hidden' }}>
+      <div className="bg-white border border-[#E2D9C8] rounded-[0_10px_10px_10px] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>Loading...</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">Loading...</div>
         ) : tab === 'mfa' ? (
           /* ── MFA Policy Tab ── */
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th style={thStyle}>Role</th>
-                <th style={thStyle}>MFA Required</th>
-                <th style={thStyle}>Grace Period</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Enforcement</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Role</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">MFA Required</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Grace Period</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-right">Enforcement</th>
               </tr>
             </thead>
             <tbody>
               {mfaPolicy.map(row => (
                 <tr key={row.role}>
-                  <td style={tdStyle}>
-                    <span style={{ fontWeight: 600 }}>{ROLE_LABELS[row.role] || row.role}</span>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                    <span className="font-semibold">{ROLE_LABELS[row.role] || row.role}</span>
                   </td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
                     <button
                       onClick={() => toggleMfa(row.role, row.mfa_required)}
-                      style={{
-                        width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
-                        background: row.mfa_required ? GREEN : '#D1D5DB',
-                        position: 'relative', transition: 'background 0.2s',
-                      }}
+                      className={`w-[44px] h-6 rounded-xl border-none cursor-pointer relative transition-colors duration-200 ${
+                        row.mfa_required ? 'bg-emerald-500' : 'bg-gray-300'
+                      }`}
                     >
-                      <span style={{
-                        position: 'absolute', top: 2,
-                        left: row.mfa_required ? 22 : 2,
-                        width: 20, height: 20, borderRadius: '50%',
-                        background: '#fff', transition: 'left 0.2s',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                      }} />
+                      <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${
+                        row.mfa_required ? 'left-[22px]' : 'left-0.5'
+                      }`} />
                     </button>
                   </td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
                     {mfaEditing === row.role ? (
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <div className="flex gap-1.5 items-center">
                         <input
                           type="number"
                           defaultValue={row.grace_period_days}
                           min={0}
                           max={90}
-                          style={{ ...inputStyle, width: 70 }}
+                          className="px-2.5 py-[7px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[70px]"
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
                               updateGracePeriod(row.role, parseInt((e.target as HTMLInputElement).value) || 0);
@@ -342,31 +303,25 @@ export default function AdminSecurity() {
                           }}
                           autoFocus
                         />
-                        <span style={{ fontSize: 12, color: TEXT_MUTED }}>days</span>
-                        <button onClick={() => setMfaEditing(null)} style={{ fontSize: 11, color: TEXT_MUTED, background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                        <span className="text-xs text-gray-400">days</span>
+                        <button onClick={() => setMfaEditing(null)} className="text-[11px] text-gray-400 bg-transparent border-none cursor-pointer">Cancel</button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setMfaEditing(row.role)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: NAVY, fontSize: 13 }}
+                        className="bg-transparent border-none cursor-pointer text-navy text-[13px]"
                       >
                         {row.grace_period_days === 0 ? 'Immediate' : `${row.grace_period_days} days`}
                       </button>
                     )}
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'right' }}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy text-right">
                     {row.mfa_required ? (
-                      <span style={{
-                        display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                        fontSize: 11, fontWeight: 600, background: '#ECFDF5', color: GREEN,
-                      }}>
+                      <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-500">
                         Enforced
                       </span>
                     ) : (
-                      <span style={{
-                        display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                        fontSize: 11, fontWeight: 600, background: '#F3F4F6', color: TEXT_MUTED,
-                      }}>
+                      <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-gray-100 text-gray-400">
                         Optional
                       </span>
                     )}
@@ -377,30 +332,30 @@ export default function AdminSecurity() {
           </table>
         ) : tab === 'sessions_policy' ? (
           /* ── Session Policy Tab ── */
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th style={thStyle}>Role</th>
-                <th style={thStyle}>Idle Timeout</th>
-                <th style={thStyle}>Absolute Timeout</th>
-                <th style={thStyle}>Admin Timeout</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Role</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Idle Timeout</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Absolute Timeout</th>
+                <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Admin Timeout</th>
               </tr>
             </thead>
             <tbody>
               {sessionPolicy.map(row => (
                 <tr key={row.role}>
-                  <td style={tdStyle}>
-                    <span style={{ fontWeight: 600 }}>{ROLE_LABELS[row.role] || row.role}</span>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                    <span className="font-semibold">{ROLE_LABELS[row.role] || row.role}</span>
                   </td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
                     {sessionEditing === `${row.role}-idle` ? (
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <div className="flex gap-1.5 items-center">
                         <input
                           type="number"
                           defaultValue={row.idle_timeout_minutes}
                           min={5}
                           max={480}
-                          style={{ ...inputStyle, width: 70 }}
+                          className="px-2.5 py-[7px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[70px]"
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
                               updateSessionPolicy(row.role, 'idle_timeout_minutes', parseInt((e.target as HTMLInputElement).value) || 60);
@@ -408,27 +363,27 @@ export default function AdminSecurity() {
                           }}
                           autoFocus
                         />
-                        <span style={{ fontSize: 12, color: TEXT_MUTED }}>min</span>
-                        <button onClick={() => setSessionEditing(null)} style={{ fontSize: 11, color: TEXT_MUTED, background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                        <span className="text-xs text-gray-400">min</span>
+                        <button onClick={() => setSessionEditing(null)} className="text-[11px] text-gray-400 bg-transparent border-none cursor-pointer">Cancel</button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setSessionEditing(`${row.role}-idle`)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: NAVY, fontSize: 13 }}
+                        className="bg-transparent border-none cursor-pointer text-navy text-[13px]"
                       >
                         {row.idle_timeout_minutes} min
                       </button>
                     )}
                   </td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
                     {sessionEditing === `${row.role}-abs` ? (
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <div className="flex gap-1.5 items-center">
                         <input
                           type="number"
                           defaultValue={row.absolute_timeout_hours}
                           min={1}
                           max={168}
-                          style={{ ...inputStyle, width: 70 }}
+                          className="px-2.5 py-[7px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[70px]"
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
                               updateSessionPolicy(row.role, 'absolute_timeout_hours', parseInt((e.target as HTMLInputElement).value) || 24);
@@ -436,27 +391,27 @@ export default function AdminSecurity() {
                           }}
                           autoFocus
                         />
-                        <span style={{ fontSize: 12, color: TEXT_MUTED }}>hrs</span>
-                        <button onClick={() => setSessionEditing(null)} style={{ fontSize: 11, color: TEXT_MUTED, background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                        <span className="text-xs text-gray-400">hrs</span>
+                        <button onClick={() => setSessionEditing(null)} className="text-[11px] text-gray-400 bg-transparent border-none cursor-pointer">Cancel</button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setSessionEditing(`${row.role}-abs`)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: NAVY, fontSize: 13 }}
+                        className="bg-transparent border-none cursor-pointer text-navy text-[13px]"
                       >
                         {row.absolute_timeout_hours} hrs
                       </button>
                     )}
                   </td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
                     {sessionEditing === `${row.role}-admin` ? (
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <div className="flex gap-1.5 items-center">
                         <input
                           type="number"
                           defaultValue={row.admin_timeout_minutes}
                           min={5}
                           max={120}
-                          style={{ ...inputStyle, width: 70 }}
+                          className="px-2.5 py-[7px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[70px]"
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
                               updateSessionPolicy(row.role, 'admin_timeout_minutes', parseInt((e.target as HTMLInputElement).value) || 30);
@@ -464,13 +419,13 @@ export default function AdminSecurity() {
                           }}
                           autoFocus
                         />
-                        <span style={{ fontSize: 12, color: TEXT_MUTED }}>min</span>
-                        <button onClick={() => setSessionEditing(null)} style={{ fontSize: 11, color: TEXT_MUTED, background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                        <span className="text-xs text-gray-400">min</span>
+                        <button onClick={() => setSessionEditing(null)} className="text-[11px] text-gray-400 bg-transparent border-none cursor-pointer">Cancel</button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setSessionEditing(`${row.role}-admin`)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: NAVY, fontSize: 13 }}
+                        className="bg-transparent border-none cursor-pointer text-navy text-[13px]"
                       >
                         {row.admin_timeout_minutes} min
                       </button>
@@ -484,59 +439,59 @@ export default function AdminSecurity() {
           /* ── Active Sessions Tab ── */
           <div>
             {/* Header with bulk revoke */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: `1px solid ${BORDER}` }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: NAVY }}>
+            <div className="flex justify-between items-center px-4 py-3 border-b border-[#E2D9C8]">
+              <span className="text-[13px] font-semibold text-navy">
                 {sessions.length} active session{sessions.length !== 1 ? 's' : ''}
               </span>
               {sessions.length > 0 && (
-                <button onClick={revokeAllSessions} style={btnStyle('#FEF2F2', RED)}>
+                <button onClick={revokeAllSessions} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-red-50 text-red-600">
                   Revoke All
                 </button>
               )}
             </div>
 
             {sessions.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>
+              <div className="p-10 text-center text-gray-400 text-[13px]">
                 No active sessions
               </div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th style={thStyle}>User</th>
-                    <th style={thStyle}>IP Address</th>
-                    <th style={thStyle}>Browser</th>
-                    <th style={thStyle}>Last Active</th>
-                    <th style={thStyle}>Expires</th>
-                    <th style={{ ...thStyle, textAlign: 'right' }}>Action</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">User</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">IP Address</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Browser</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Last Active</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-left">Expires</th>
+                    <th className="text-[11px] font-bold text-gray-400 uppercase px-3 py-2.5 border-b border-[#E2D9C8] text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sessions.map(s => (
                     <tr key={s.id}>
-                      <td style={tdStyle}>
-                        <div style={{ fontWeight: 600 }}>{s.user_name}</div>
-                        <div style={{ fontSize: 11, color: TEXT_MUTED }}>{s.user_email}</div>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                        <div className="font-semibold">{s.user_name}</div>
+                        <div className="text-[11px] text-gray-400">{s.user_email}</div>
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{ fontFamily: 'monospace', fontSize: 12 }}>{s.ip_address || '—'}</span>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                        <span className="font-mono text-xs">{s.ip_address || '—'}</span>
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{ fontSize: 12, color: TEXT_SEC }}>{parseBrowser(s.user_agent)}</span>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                        <span className="text-xs text-[#6B7F96]">{parseBrowser(s.user_agent)}</span>
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{ fontSize: 12, color: TEXT_SEC }}>{relativeTime(s.last_active_at)}</span>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                        <span className="text-xs text-[#6B7F96]">{relativeTime(s.last_active_at)}</span>
                       </td>
-                      <td style={tdStyle}>
-                        <span style={{ fontSize: 12, color: TEXT_SEC }}>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy">
+                        <span className="text-xs text-[#6B7F96]">
                           {new Date(s.expires_at).toLocaleDateString()}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, textAlign: 'right' }}>
+                      <td className="px-3 py-2.5 border-b border-[#E2D9C8] text-[13px] text-navy text-right">
                         <button
                           onClick={() => revokeSession(s.id)}
                           disabled={revoking === s.id}
-                          style={btnStyle('#FEF2F2', RED)}
+                          className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-red-50 text-red-600"
                         >
                           {revoking === s.id ? '...' : 'Revoke'}
                         </button>

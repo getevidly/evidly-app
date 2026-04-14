@@ -18,11 +18,6 @@ import {
   Play, Pause, Save, Search, Tag, Clock, RefreshCw,
 } from 'lucide-react';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const BORDER = '#E2D9C8';
-
 type Tab = 'sequences' | 'editor' | 'vendor-pipeline' | 'notifications' | 'referrals';
 
 // ── Demo Data ─────────────────────────────────────────────────────
@@ -306,8 +301,8 @@ export default function EmailSequenceManager() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
-        <p className="mt-3 text-sm" style={{ color: TEXT_SEC }}>Loading...</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold" />
+        <p className="mt-3 text-sm text-[#6B7F96]">Loading...</p>
       </div>
     );
   }
@@ -321,12 +316,12 @@ export default function EmailSequenceManager() {
   ];
 
   return (
-    <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
+    <div className="font-['DM_Sans','Inter',sans-serif]">
       <AdminBreadcrumb crumbs={[{ label: 'Admin', path: '/admin' }, { label: 'Email Sequences' }]} />
 
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: NAVY, margin: 0, fontFamily: 'Outfit, sans-serif' }}>Email Sequence Manager</h1>
-        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Manage trial sequences, vendor outreach, and referral tracking</p>
+      <div className="mb-6">
+        <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Email Sequence Manager</h1>
+        <p className="text-[13px] text-[#6B7280] mt-1 mb-0 font-['Inter',sans-serif]">Manage trial sequences, vendor outreach, and referral tracking</p>
       </div>
 
       {/* KPI Row */}
@@ -338,11 +333,11 @@ export default function EmailSequenceManager() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-[#1E2D4D]/10 overflow-x-auto">
+      <div className="flex items-center gap-1 mb-6 border-b border-navy/10 overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+              activeTab === tab.id ? 'border-navy text-navy' : 'border-transparent text-navy/50 hover:text-navy/80'
             }`}>
             <tab.icon className="h-4 w-4" />
             {tab.label}
@@ -467,34 +462,33 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-[#1E2D4D]">{sequences.length} Steps</h3>
+        <h3 className="text-sm font-bold text-navy">{sequences.length} Steps</h3>
         <button onClick={() => setShowAddForm(!showAddForm)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg"
-          style={{ backgroundColor: NAVY }}>
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg bg-navy">
           {showAddForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {showAddForm ? 'Cancel' : 'Add Step'}
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+      <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-16">Step</th>
-                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-20">Day</th>
-                <th className="text-left px-3 py-3 font-semibold text-[#1E2D4D]/80">Subject</th>
-                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-24">Status</th>
-                <th className="text-right px-3 py-3 font-semibold text-[#1E2D4D]/80 w-20">Sent</th>
-                <th className="text-right px-3 py-3 font-semibold text-[#1E2D4D]/80 w-24">Open Rate</th>
+              <tr className="bg-cream border-b border-navy/10 hover:bg-navy/[0.02] transition-colors">
+                <th className="text-center px-3 py-3 font-semibold text-navy/80 w-16">Step</th>
+                <th className="text-center px-3 py-3 font-semibold text-navy/80 w-20">Day</th>
+                <th className="text-left px-3 py-3 font-semibold text-navy/80">Subject</th>
+                <th className="text-center px-3 py-3 font-semibold text-navy/80 w-24">Status</th>
+                <th className="text-right px-3 py-3 font-semibold text-navy/80 w-20">Sent</th>
+                <th className="text-right px-3 py-3 font-semibold text-navy/80 w-24">Open Rate</th>
               </tr>
             </thead>
             <tbody>
               {sequences.map(seq => (
-                <tr key={seq.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
-                  <td className="px-3 py-3 text-center font-bold" style={{ color: NAVY }}>{seq.step}</td>
-                  <td className="px-3 py-3 text-center text-[#1E2D4D]/70">Day {seq.day}</td>
-                  <td className="px-3 py-3 text-[#1E2D4D] font-medium">{seq.subject}</td>
+                <tr key={seq.id} className="border-b border-navy/5 hover:bg-cream">
+                  <td className="px-3 py-3 text-center font-bold text-navy">{seq.step}</td>
+                  <td className="px-3 py-3 text-center text-navy/70">Day {seq.day}</td>
+                  <td className="px-3 py-3 text-navy font-medium">{seq.subject}</td>
                   <td className="px-3 py-3 text-center">
                     <button
                       onClick={() => handleToggleStatus(seq)}
@@ -507,40 +501,39 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
                       {seq.status === 'active' ? 'Active' : 'Paused'}
                     </button>
                   </td>
-                  <td className="px-3 py-3 text-right text-[#1E2D4D]/70">{seq.sent}</td>
-                  <td className="px-3 py-3 text-right font-medium" style={{ color: NAVY }}>{seq.openRate}%</td>
+                  <td className="px-3 py-3 text-right text-navy/70">{seq.sent}</td>
+                  <td className="px-3 py-3 text-right font-medium text-navy">{seq.openRate}%</td>
                 </tr>
               ))}
               {sequences.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-[#1E2D4D]/30">No sequence steps configured.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-navy/30">No sequence steps configured.</td></tr>
               )}
 
               {/* Inline add form */}
               {showAddForm && (
-                <tr className="bg-blue-50 border-t-2 border-blue-200 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <tr className="bg-blue-50 border-t-2 border-blue-200 hover:bg-navy/[0.02] transition-colors">
                   <td className="px-3 py-3">
                     <input type="number" placeholder="#" value={newStep.step_number}
                       onChange={e => setNewStep(p => ({ ...p, step_number: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm text-center" />
+                      className="w-full px-2 py-1.5 border border-navy/15 rounded text-sm text-center" />
                   </td>
                   <td className="px-3 py-3">
                     <input type="number" placeholder="Day" value={newStep.trigger_day}
                       onChange={e => setNewStep(p => ({ ...p, trigger_day: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm text-center" />
+                      className="w-full px-2 py-1.5 border border-navy/15 rounded text-sm text-center" />
                   </td>
                   <td className="px-3 py-3" colSpan={2}>
                     <input type="text" placeholder="Email subject line..." value={newStep.subject}
                       onChange={e => setNewStep(p => ({ ...p, subject: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm mb-2" />
+                      className="w-full px-2 py-1.5 border border-navy/15 rounded text-sm mb-2" />
                     <textarea placeholder="Email body (HTML)..." value={newStep.body}
                       onChange={e => setNewStep(p => ({ ...p, body: e.target.value }))}
                       rows={3}
-                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm font-mono" />
+                      className="w-full px-2 py-1.5 border border-navy/15 rounded text-sm font-mono" />
                   </td>
                   <td className="px-3 py-3 text-center" colSpan={2}>
                     <button onClick={handleAddStep}
-                      className="px-4 py-2 text-sm font-bold text-white rounded-lg"
-                      style={{ backgroundColor: NAVY }}>
+                      className="px-4 py-2 text-sm font-bold text-white rounded-lg bg-navy">
                       <Save className="h-4 w-4 inline mr-1" />
                       Save
                     </button>
@@ -603,15 +596,15 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4" style={{ minHeight: 500 }}>
+    <div className="flex flex-col lg:flex-row gap-4 min-h-[500px]">
       {/* Left: Editor */}
       <div className="flex-[3] space-y-4">
         <div>
-          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Select Sequence Step</label>
+          <label className="block text-xs font-medium text-navy/80 mb-1">Select Sequence Step</label>
           <select
             value={selectedStepId}
             onChange={e => setSelectedStepId(e.target.value)}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-gold">
             {sequences.map(s => (
               <option key={s.id} value={s.id}>Step {s.step} (Day {s.day}): {s.subject}</option>
             ))}
@@ -619,32 +612,30 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Subject</label>
+          <label className="block text-xs font-medium text-navy/80 mb-1">Subject</label>
           <input type="text" value={editSubject} onChange={e => setEditSubject(e.target.value)}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+            className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-gold" />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Body (HTML)</label>
+          <label className="block text-xs font-medium text-navy/80 mb-1">Body (HTML)</label>
           <textarea
             value={editBody}
             onChange={e => setEditBody(e.target.value)}
             rows={15}
-            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-            style={{ fontFamily: "'Fira Code', 'Courier New', monospace", fontSize: 13 }}
+            className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus:ring-gold font-['Fira_Code','Courier_New',monospace] text-[13px]"
           />
         </div>
 
-        <p className="text-xs" style={{ color: TEXT_SEC }}>
-          Available tokens: <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
-          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
-          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
-          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
+        <p className="text-xs text-[#6B7F96]">
+          Available tokens: <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
+          <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
+          <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
+          <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
         </p>
 
         <button onClick={handleSave} disabled={saving}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white rounded-lg disabled:opacity-40"
-          style={{ backgroundColor: NAVY }}>
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white rounded-lg disabled:opacity-40 bg-navy">
           <Save className="h-4 w-4" />
           {saving ? 'Saving...' : 'Save Template'}
         </button>
@@ -653,16 +644,13 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
       {/* Right: Preview */}
       <div className="flex-[2]">
         <div className="flex items-center gap-2 mb-2">
-          <Eye className="h-4 w-4" style={{ color: TEXT_SEC }} />
-          <span className="text-xs font-bold uppercase tracking-wide" style={{ color: TEXT_SEC }}>Live Preview</span>
+          <Eye className="h-4 w-4 text-[#6B7F96]" />
+          <span className="text-xs font-bold uppercase tracking-wide text-[#6B7F96]">Live Preview</span>
         </div>
-        <div
-          className="bg-white rounded-xl border overflow-hidden"
-          style={{ borderColor: BORDER }}
-        >
+        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
           <div
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderEmailPreview(editSubject, editBody)) }}
-            style={{ maxHeight: 520, overflowY: 'auto' }}
+            className="max-h-[520px] overflow-y-auto"
           />
         </div>
       </div>
@@ -701,7 +689,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-bold text-[#1E2D4D]">{vendors.length} Vendors</h3>
+      <h3 className="text-sm font-bold text-navy">{vendors.length} Vendors</h3>
 
       {/* Stage columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
@@ -710,10 +698,10 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
           return (
             <div key={stage}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wide" style={{ color: NAVY }}>
+                <span className="text-xs font-bold uppercase tracking-wide text-navy">
                   {STAGE_LABELS[stage]}
                 </span>
-                <span className="text-xs bg-[#1E2D4D]/5 text-[#1E2D4D]/50 px-1.5 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-navy/5 text-navy/50 px-1.5 py-0.5 rounded-full font-bold">
                   {stageVendors.length}
                 </span>
               </div>
@@ -722,14 +710,14 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   const typeStyle = SERVICE_TYPE_COLORS[vendor.type] || { bg: '#F3F4F6', color: '#6B7280', label: vendor.type };
                   const isExpanded = expandedNotes === vendor.id;
                   return (
-                    <div key={vendor.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 transition-shadow">
-                      <div className="font-semibold text-sm text-[#1E2D4D] mb-1">{vendor.name}</div>
+                    <div key={vendor.id} className="bg-white rounded-xl border border-navy/10 p-3 transition-shadow">
+                      <div className="font-semibold text-sm text-navy mb-1">{vendor.name}</div>
                       <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2"
                         style={{ background: typeStyle.bg, color: typeStyle.color }}>
                         {typeStyle.label}
                       </span>
 
-                      <div className="space-y-1 text-xs text-[#1E2D4D]/50">
+                      <div className="space-y-1 text-xs text-navy/50">
                         {vendor.lastTouch && (
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
@@ -749,7 +737,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                         <select
                           value={vendor.stage}
                           onChange={e => handleStageChange(vendor, e.target.value)}
-                          className="w-full text-xs border border-[#1E2D4D]/10 rounded px-2 py-1 bg-white">
+                          className="w-full text-xs border border-navy/10 rounded px-2 py-1 bg-white">
                           {VENDOR_STAGES.map(s => (
                             <option key={s} value={s}>{STAGE_LABELS[s]}</option>
                           ))}
@@ -759,14 +747,13 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                       {/* Notes */}
                       {vendor.notes && (
                         <div className="mt-2">
-                          <p className={`text-xs text-[#1E2D4D]/50 ${isExpanded ? '' : 'line-clamp-2'}`}>
+                          <p className={`text-xs text-navy/50 ${isExpanded ? '' : 'line-clamp-2'}`}>
                             {vendor.notes}
                           </p>
                           {vendor.notes.length > 80 && (
                             <button
                               onClick={() => setExpandedNotes(isExpanded ? null : vendor.id)}
-                              className="text-xs font-medium mt-0.5"
-                              style={{ color: GOLD }}>
+                              className="text-xs font-medium mt-0.5 text-gold">
                               {isExpanded ? 'Show less' : 'Show more'}
                             </button>
                           )}
@@ -776,7 +763,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   );
                 })}
                 {stageVendors.length === 0 && (
-                  <div className="text-xs text-[#1E2D4D]/30 text-center py-6 bg-[#FAF7F0] rounded-lg">
+                  <div className="text-xs text-navy/30 text-center py-6 bg-cream rounded-lg">
                     No vendors
                   </div>
                 )}
@@ -818,9 +805,9 @@ function NotificationsTab({ notifications, isDemoMode }: {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4" style={{ color: TEXT_SEC }} />
+          <Filter className="h-4 w-4 text-[#6B7F96]" />
           <select value={dateFilter} onChange={e => setDateFilter(e.target.value as any)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
+            className="px-3 py-1.5 border border-navy/15 rounded-xl text-sm bg-white">
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="all">All time</option>
@@ -828,15 +815,15 @@ function NotificationsTab({ notifications, isDemoMode }: {
         </div>
 
         <div className="flex items-center gap-2">
-          <Search className="h-4 w-4" style={{ color: TEXT_SEC }} />
+          <Search className="h-4 w-4 text-[#6B7F96]" />
           <input type="text" placeholder="Search vendor..." value={vendorSearch}
             onChange={e => setVendorSearch(e.target.value)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm w-48" />
+            className="px-3 py-1.5 border border-navy/15 rounded-xl text-sm w-48" />
         </div>
 
         <div>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
+            className="px-3 py-1.5 border border-navy/15 rounded-xl text-sm bg-white">
             <option value="all">All statuses</option>
             <option value="delivered">Delivered</option>
             <option value="opened">Opened</option>
@@ -847,45 +834,45 @@ function NotificationsTab({ notifications, isDemoMode }: {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+      <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Vendor Name</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Document Type</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Sent At</th>
-                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Opened At</th>
+              <tr className="bg-cream border-b border-navy/10 hover:bg-navy/[0.02] transition-colors">
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Vendor Name</th>
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Document Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Sent At</th>
+                <th className="text-center px-4 py-3 font-semibold text-navy/80">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Opened At</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(n => {
                 const statusStyle = DELIVERY_STATUS_COLORS[n.deliveryStatus] || { bg: '#F3F4F6', color: '#6B7280', label: n.deliveryStatus };
                 return (
-                  <tr key={n.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
-                    <td className="px-4 py-3 font-medium text-[#1E2D4D]">{n.vendorName}</td>
-                    <td className="px-4 py-3 text-[#1E2D4D]/70">{n.documentType}</td>
-                    <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDateTime(n.sentAt)}</td>
+                  <tr key={n.id} className="border-b border-navy/5 hover:bg-cream">
+                    <td className="px-4 py-3 font-medium text-navy">{n.vendorName}</td>
+                    <td className="px-4 py-3 text-navy/70">{n.documentType}</td>
+                    <td className="px-4 py-3 text-xs text-navy/50">{formatDateTime(n.sentAt)}</td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full"
                         style={{ background: statusStyle.bg, color: statusStyle.color }}>
                         {statusStyle.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDateTime(n.openedAt)}</td>
+                    <td className="px-4 py-3 text-xs text-navy/50">{formatDateTime(n.openedAt)}</td>
                   </tr>
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-[#1E2D4D]/30">No notifications match the current filters.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-navy/30">No notifications match the current filters.</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      <p className="text-xs" style={{ color: TEXT_SEC }}>
+      <p className="text-xs text-[#6B7F96]">
         Showing {filtered.length} of {notifications.length} notifications
       </p>
     </div>
@@ -904,32 +891,32 @@ function ReferralsTab({ referrals, isDemoMode }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-[#1E2D4D]">{referrals.length} Referral Codes</h3>
-        <div className="flex items-center gap-4 text-xs" style={{ color: TEXT_SEC }}>
-          <span>Total Uses: <strong style={{ color: NAVY }}>{totalUses}</strong></span>
-          <span>Total Revenue: <strong style={{ color: NAVY }}>${totalRevenue.toLocaleString()}</strong></span>
+        <h3 className="text-sm font-bold text-navy">{referrals.length} Referral Codes</h3>
+        <div className="flex items-center gap-4 text-xs text-[#6B7F96]">
+          <span>Total Uses: <strong className="text-navy">{totalUses}</strong></span>
+          <span>Total Revenue: <strong className="text-navy">${totalRevenue.toLocaleString()}</strong></span>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+      <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Code</th>
-                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Type</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Created By</th>
-                <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Uses</th>
-                <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Revenue Impact</th>
+              <tr className="bg-cream border-b border-navy/10 hover:bg-navy/[0.02] transition-colors">
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Code</th>
+                <th className="text-center px-4 py-3 font-semibold text-navy/80">Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-navy/80">Created By</th>
+                <th className="text-right px-4 py-3 font-semibold text-navy/80">Uses</th>
+                <th className="text-right px-4 py-3 font-semibold text-navy/80">Revenue Impact</th>
               </tr>
             </thead>
             <tbody>
               {referrals.map(r => {
                 const typeStyle = REFERRAL_TYPE_COLORS[r.type] || { bg: '#F3F4F6', color: '#6B7280', label: r.type };
                 return (
-                  <tr key={r.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                  <tr key={r.id} className="border-b border-navy/5 hover:bg-cream">
                     <td className="px-4 py-3">
-                      <code className="text-sm font-mono font-bold px-2 py-0.5 rounded" style={{ background: '#F3F4F6', color: NAVY }}>
+                      <code className="text-sm font-mono font-bold px-2 py-0.5 rounded bg-[#F3F4F6] text-navy">
                         {r.code}
                       </code>
                     </td>
@@ -939,16 +926,16 @@ function ReferralsTab({ referrals, isDemoMode }: {
                         {typeStyle.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[#1E2D4D] font-medium">{r.createdBy}</td>
-                    <td className="px-4 py-3 text-right font-medium" style={{ color: NAVY }}>{r.uses}</td>
-                    <td className="px-4 py-3 text-right font-bold" style={{ color: '#166534' }}>
+                    <td className="px-4 py-3 text-navy font-medium">{r.createdBy}</td>
+                    <td className="px-4 py-3 text-right font-medium text-navy">{r.uses}</td>
+                    <td className="px-4 py-3 text-right font-bold text-[#166534]">
                       ${r.revenue.toLocaleString()}
                     </td>
                   </tr>
                 );
               })}
               {referrals.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-[#1E2D4D]/30">No referral codes yet.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-navy/30">No referral codes yet.</td></tr>
               )}
             </tbody>
           </table>

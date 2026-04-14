@@ -14,8 +14,6 @@ import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
-const NAVY = '#1E2D4D';
-
 interface JurisdictionUpdate {
   id: string;
   jurisdiction_key: string;
@@ -94,7 +92,7 @@ export default function JurisdictionIntelligence() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-navy border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -103,8 +101,8 @@ export default function JurisdictionIntelligence() {
       <AdminBreadcrumb crumbs={[{ label: 'Jurisdiction Intelligence' }]} />
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Jurisdiction Intelligence</h1>
-        <p className="text-sm text-[#1E2D4D]/50 mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Jurisdiction Intelligence</h1>
+        <p className="text-sm text-navy/50 mt-1">
           Inspection methodology changes, scoring updates, and policy shifts across all 62 CA EHDs + Fire AHJs
         </p>
       </div>
@@ -120,7 +118,7 @@ export default function JurisdictionIntelligence() {
         <select
           value={filterCounty}
           onChange={e => setFilterCounty(e.target.value)}
-          className="border border-[#1E2D4D]/10 rounded-xl px-3 py-2 text-sm"
+          className="border border-navy/10 rounded-xl px-3 py-2 text-sm"
         >
           <option value="">All Counties</option>
           {counties.map(c => <option key={c} value={c}>{c}</option>)}
@@ -130,11 +128,7 @@ export default function JurisdictionIntelligence() {
       {/* Demo highlight banner */}
       {isDemoMode && filterCounty && (
         <div
-          className="rounded-lg mb-6"
-          style={{
-            background: NAVY, color: '#FAF7F0',
-            padding: '12px 16px', fontSize: 13,
-          }}
+          className="rounded-lg mb-6 bg-navy text-cream px-4 py-3 text-[13px]"
         >
           Showing real inspection data for <strong>{filterCounty} County</strong>.
           This is how your inspector actually scores your kitchen.
@@ -143,8 +137,8 @@ export default function JurisdictionIntelligence() {
 
       {filtered.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-sm font-semibold text-[#1E2D4D]/70 mb-2">No jurisdiction updates yet</p>
-          <p className="text-xs text-[#1E2D4D]/30">
+          <p className="text-sm font-semibold text-navy/70 mb-2">No jurisdiction updates yet</p>
+          <p className="text-xs text-navy/30">
             Crawler monitors all 62 CA EHDs + Fire AHJs for inspection methodology and scoring changes.
           </p>
         </div>
@@ -154,7 +148,7 @@ export default function JurisdictionIntelligence() {
             const pc = PILLAR_BADGE[item.pillar] || PILLAR_BADGE.both;
             const meta = jurisdictionMeta[item.jurisdiction_name] || jurisdictionMeta[item.jurisdiction_key];
             return (
-              <div key={item.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+              <div key={item.id} className="bg-white rounded-xl border border-navy/10 p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-2 flex-wrap">
@@ -165,7 +159,7 @@ export default function JurisdictionIntelligence() {
                         className="text-xs px-2 py-0.5 rounded-full font-medium">
                         {item.pillar.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-xs px-2 py-0.5 bg-[#1E2D4D]/5 text-[#1E2D4D]/70 rounded-full">
+                      <span className="text-xs px-2 py-0.5 bg-navy/5 text-navy/70 rounded-full">
                         {item.update_type.replace(/_/g, ' ')}
                       </span>
                       {item.published && (
@@ -179,11 +173,11 @@ export default function JurisdictionIntelligence() {
                         </span>
                       )}
                     </div>
-                    <p className="font-semibold text-sm mb-1" style={{ color: NAVY }}>{item.title}</p>
+                    <p className="font-semibold text-sm mb-1 text-navy">{item.title}</p>
                     {item.description && (
-                      <p className="text-xs text-[#1E2D4D]/50 line-clamp-2 mb-2">{item.description}</p>
+                      <p className="text-xs text-navy/50 line-clamp-2 mb-2">{item.description}</p>
                     )}
-                    <div className="flex gap-4 text-xs text-[#1E2D4D]/30">
+                    <div className="flex gap-4 text-xs text-navy/30">
                       {item.county && <span>{item.county} County</span>}
                       {meta?.scoring_type && <span>Scoring: {meta.scoring_type.replace(/_/g, ' ')}</span>}
                       {meta?.confidence_score != null && <span>Confidence: {meta.confidence_score}%</span>}
@@ -194,7 +188,7 @@ export default function JurisdictionIntelligence() {
                   {!item.published && (
                     <button
                       onClick={() => publishItem(item.id)}
-                      className="flex-shrink-0 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-xs font-medium hover:bg-[#162340]"
+                      className="flex-shrink-0 px-4 py-2 bg-navy text-white rounded-lg text-xs font-medium hover:bg-[#162340]"
                     >
                       Publish
                     </button>

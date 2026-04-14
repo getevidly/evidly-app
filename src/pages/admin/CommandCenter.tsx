@@ -19,12 +19,6 @@ import { StatCardRow } from '../../components/admin/StatCardRow';
 import { RefreshCw, Activity, Ticket, Radio, Zap } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const BORDER = '#E2D9C8';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-
 interface EventRow {
   id: string;
   level: string;
@@ -70,15 +64,15 @@ const PRIORITY_COLORS: Record<string, { bg: string; color: string }> = {
 };
 
 const SOURCE_STATUS_ICON: Record<string, string> = {
-  active: '✅',
-  broken: '❌',
-  waf_blocked: '🚫',
-  paused: '⏸️',
-  pending: '🕐',
+  active: '\u2705',
+  broken: '\u274C',
+  waf_blocked: '\uD83D\uDEAB',
+  paused: '\u23F8\uFE0F',
+  pending: '\uD83D\uDD50',
 };
 
 const Skeleton = ({ h = 20 }: { h?: number }) => (
-  <div style={{ width: '100%', height: h, background: '#E5E7EB', borderRadius: 6 }} className="animate-pulse" />
+  <div className="w-full bg-[#E5E7EB] rounded-md animate-pulse" style={{ height: h }} />
 );
 
 function timeAgo(dateStr: string): string {
@@ -149,7 +143,7 @@ export default function CommandCenter() {
   const healthy = liveFeeds === totalFeeds;
   const degraded = liveFeeds > 0 && liveFeeds < totalFeeds;
 
-  const systemStatus = neverRun  ? { label: 'Not Configured', color: GOLD }
+  const systemStatus = neverRun  ? { label: 'Not Configured', color: '#A08C5A' }
                      : allDown   ? { label: 'Critical',        color: '#DC2626' }
                      : degraded  ? { label: 'Degraded',        color: '#D97706' }
                      :             { label: 'Healthy',         color: '#16A34A' };
@@ -190,51 +184,35 @@ export default function CommandCenter() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Command Center' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Command Center</h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">Command Center</h1>
+        <p className="text-[13px] text-[#6B7F96] mt-1">
           Platform operations health — live events, crawl status, open tickets.
         </p>
       </div>
 
       {/* KPI Strip */}
       <StatCardRow cards={[
-        { label: 'Active Orgs', value: activeOrgs ?? '—' },
-        { label: 'Active Locations', value: activeLocs ?? '—' },
-        { label: 'Crawl Feeds', value: loading ? '—' : `${liveFeeds}/${totalFeeds}`, valueColor: liveFeeds < totalFeeds ? 'red' : 'green', subtext: statusSubtext },
-        { label: 'Open Tickets', value: loading ? '—' : tickets.length, valueColor: tickets.length > 5 ? 'red' : 'default' },
-        { label: 'System Status', value: loading ? '—' : systemStatus.label, subtext: statusSubtext },
+        { label: 'Active Orgs', value: activeOrgs ?? '\u2014' },
+        { label: 'Active Locations', value: activeLocs ?? '\u2014' },
+        { label: 'Crawl Feeds', value: loading ? '\u2014' : `${liveFeeds}/${totalFeeds}`, valueColor: liveFeeds < totalFeeds ? 'red' : 'green', subtext: statusSubtext },
+        { label: 'Open Tickets', value: loading ? '\u2014' : tickets.length, valueColor: tickets.length > 5 ? 'red' : 'default' },
+        { label: 'System Status', value: loading ? '\u2014' : systemStatus.label, subtext: statusSubtext },
       ]} />
 
       {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="flex gap-2 flex-wrap items-center">
         <button
           onClick={handleRunNow}
           disabled={crawling}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: crawling ? '#9CA3AF' : NAVY,
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: 6,
-            padding: '8px 16px',
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: crawling ? 'not-allowed' : 'pointer',
-            fontFamily: 'Inter, sans-serif',
-          }}
+          className={`flex items-center gap-1.5 border-none rounded-md px-4 py-2 text-[13px] font-semibold font-[Inter,sans-serif] text-white ${crawling ? 'bg-[#9CA3AF] cursor-not-allowed' : 'bg-navy cursor-pointer'}`}
         >
           <Zap size={13} />
-          {crawling ? 'Crawling...' : '▶ Run Now'}
+          {crawling ? 'Crawling...' : '\u25B6 Run Now'}
         </button>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
-            background: refreshing ? '#F3F4F6' : '#fff', border: `1px solid ${BORDER}`,
-            borderRadius: 8, fontSize: 12, fontWeight: 600, color: refreshing ? TEXT_MUTED : NAVY,
-            cursor: refreshing ? 'default' : 'pointer',
-          }}
+          className={`flex items-center gap-1.5 py-[7px] px-4 border border-[#E2D9C8] rounded-lg text-xs font-semibold ${refreshing ? 'bg-[#F3F4F6] text-[#9CA3AF] cursor-default' : 'bg-white text-navy cursor-pointer'}`}
         >
           <RefreshCw size={13} />
           {refreshing ? 'Refreshing...' : 'Refresh Metrics'}
@@ -243,74 +221,61 @@ export default function CommandCenter() {
 
       {/* Crawl result inline */}
       {crawlResult && (
-        <div style={{
-          fontSize: 12,
-          color: crawlResult.failed > 0 ? '#D97706' : '#16A34A',
-          background: crawlResult.failed > 0 ? '#FFFBEB' : '#F0FDF4',
-          border: `1px solid ${crawlResult.failed > 0 ? '#FDE68A' : '#BBF7D0'}`,
-          borderRadius: 8, padding: '10px 14px',
-          fontFamily: 'Inter, sans-serif',
-        }}>
+        <div className={`text-xs rounded-lg px-3.5 py-2.5 font-[Inter,sans-serif] ${crawlResult.failed > 0 ? 'text-[#D97706] bg-[#FFFBEB] border border-[#FDE68A]' : 'text-[#16A34A] bg-[#F0FDF4] border border-[#BBF7D0]'}`}>
           Last run: {crawlResult.succeeded}/{crawlResult.total} feeds succeeded
-          {crawlResult.failed > 0 && ` · ${crawlResult.failed} failed`}
+          {crawlResult.failed > 0 && ` \u00B7 ${crawlResult.failed} failed`}
         </div>
       )}
       {crawlError && (
-        <div style={{
-          fontSize: 13, borderRadius: 8, padding: '10px 14px',
-          color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA',
-        }}>
+        <div className="text-[13px] rounded-lg px-3.5 py-2.5 text-[#DC2626] bg-[#FEF2F2] border border-[#FECACA]">
           Crawl failed: {crawlError}
         </div>
       )}
 
       {/* 3-Column Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16 }}>
+      <div className="grid grid-cols-[2fr_1fr_1fr] gap-4">
 
         {/* LEFT: Live Event Feed */}
-        <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '14px 18px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Activity size={14} color={GOLD} />
-              <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Live Event Feed</span>
-              <span style={{ fontSize: 10, color: TEXT_MUTED }}>Last 50</span>
+        <div className="bg-white border border-[#E2D9C8] rounded-xl overflow-hidden">
+          <div className="px-[18px] py-3.5 border-b border-[#E2D9C8] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity size={14} className="text-gold" />
+              <span className="text-[13px] font-bold text-navy">Live Event Feed</span>
+              <span className="text-[10px] text-[#9CA3AF]">Last 50</span>
             </div>
-            <div style={{ display: 'flex', gap: 4 }}>
+            <div className="flex gap-1">
               {['all', 'ERROR', 'WARN', 'INFO', 'configure', 'crawl', 'auth'].map(f => (
                 <button key={f} onClick={() => setEventFilter(f)}
-                  style={{
-                    padding: '2px 8px', borderRadius: 4, border: 'none', fontSize: 10, fontWeight: 600,
-                    background: eventFilter === f ? NAVY : '#F3F4F6',
-                    color: eventFilter === f ? '#fff' : TEXT_MUTED, cursor: 'pointer',
-                  }}>
+                  className={`px-2 py-0.5 rounded border-none text-[10px] font-semibold cursor-pointer ${eventFilter === f ? 'bg-navy text-white' : 'bg-[#F3F4F6] text-[#9CA3AF]'}`}>
                   {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
                 </button>
               ))}
             </div>
           </div>
-          <div style={{ maxHeight: 480, overflowY: 'auto' }}>
+          <div className="max-h-[480px] overflow-y-auto">
             {loading ? (
-              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="p-4 flex flex-col gap-2">
                 {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={28} />)}
               </div>
             ) : filteredEvents.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No events match this filter.</div>
+              <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No events match this filter.</div>
             ) : filteredEvents.map(ev => {
               const lc = LEVEL_COLORS[ev.level] || LEVEL_COLORS.INFO;
               return (
-                <div key={ev.id} style={{ padding: '8px 18px', borderBottom: `1px solid #F3F4F6`, display: 'flex', alignItems: 'center', gap: 10, fontSize: 12 }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#FAFAF8'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <span style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, fontWeight: 700, background: lc.bg, color: lc.color, minWidth: 36, textAlign: 'center' }}>
+                <div key={ev.id} className="px-[18px] py-2 border-b border-[#F3F4F6] flex items-center gap-2.5 text-xs hover:bg-[#FAFAF8]">
+                  <span
+                    className="px-1.5 py-px rounded-[3px] text-[9px] font-bold min-w-[36px] text-center"
+                    style={{ background: lc.bg, color: lc.color }}
+                  >
                     {ev.level}
                   </span>
-                  <span style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>
+                  <span className="px-1.5 py-px rounded-[3px] text-[9px] font-semibold bg-[#F3F4F6] text-[#6B7F96]">
                     {ev.category}
                   </span>
-                  <span style={{ flex: 1, color: NAVY, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className="flex-1 text-navy overflow-hidden text-ellipsis whitespace-nowrap">
                     {ev.message}
                   </span>
-                  <span style={{ color: TEXT_MUTED, fontSize: 10, whiteSpace: 'nowrap' }}>{timeAgo(ev.created_at)}</span>
+                  <span className="text-[#9CA3AF] text-[10px] whitespace-nowrap">{timeAgo(ev.created_at)}</span>
                 </div>
               );
             })}
@@ -318,70 +283,70 @@ export default function CommandCenter() {
         </div>
 
         {/* MIDDLE: Crawl Status — reads from intelligence_sources */}
-        <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '14px 18px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Radio size={14} color={GOLD} />
-            <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Crawl Status</span>
-            <span style={{ fontSize: 10, color: TEXT_MUTED }}>{liveFeeds}/{totalFeeds}</span>
+        <div className="bg-white border border-[#E2D9C8] rounded-xl overflow-hidden">
+          <div className="px-[18px] py-3.5 border-b border-[#E2D9C8] flex items-center gap-2">
+            <Radio size={14} className="text-gold" />
+            <span className="text-[13px] font-bold text-navy">Crawl Status</span>
+            <span className="text-[10px] text-[#9CA3AF]">{liveFeeds}/{totalFeeds}</span>
           </div>
-          <div style={{ maxHeight: 480, overflowY: 'auto' }}>
+          <div className="max-h-[480px] overflow-y-auto">
             {loading ? (
-              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="p-4 flex flex-col gap-2">
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={24} />)}
               </div>
             ) : sources.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No crawl feeds configured.</div>
+              <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No crawl feeds configured.</div>
             ) : sources.map(s => (
-              <div key={s.id} style={{ padding: '7px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}
+              <div key={s.id} className="px-[18px] py-[7px] border-b border-[#F3F4F6] flex items-center gap-2 text-[11px]"
                 title={s.last_crawl_error || undefined}>
-                <span className="text-[13px]">{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
-                <span style={{ flex: 1, color: NAVY, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span className="text-[13px]">{SOURCE_STATUS_ICON[s.status] || '\u2753'}</span>
+                <span className="flex-1 text-navy font-medium overflow-hidden text-ellipsis whitespace-nowrap">
                   {s.name}
                 </span>
                 {s.last_crawl_status && (
-                  <span style={{
-                    fontSize: 9, fontWeight: 600,
-                    color: s.last_crawl_status === 'success' ? '#16A34A' : s.last_crawl_status === 'error' ? '#DC2626' : TEXT_MUTED,
-                  }}>
+                  <span className={`text-[9px] font-semibold ${s.last_crawl_status === 'success' ? 'text-[#16A34A]' : s.last_crawl_status === 'error' ? 'text-[#DC2626]' : 'text-[#9CA3AF]'}`}>
                     {s.last_crawl_status}
                   </span>
                 )}
-                <span style={{ fontSize: 9, color: TEXT_MUTED }}>{s.last_crawled_at ? timeAgo(s.last_crawled_at) : '—'}</span>
+                <span className="text-[9px] text-[#9CA3AF]">{s.last_crawled_at ? timeAgo(s.last_crawled_at) : '\u2014'}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* RIGHT: Open Tickets */}
-        <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '14px 18px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Ticket size={14} color={GOLD} />
-              <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Open Tickets</span>
+        <div className="bg-white border border-[#E2D9C8] rounded-xl overflow-hidden">
+          <div className="px-[18px] py-3.5 border-b border-[#E2D9C8] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Ticket size={14} className="text-gold" />
+              <span className="text-[13px] font-bold text-navy">Open Tickets</span>
             </div>
-            <a href="/admin/support" style={{ fontSize: 10, color: GOLD, fontWeight: 600, textDecoration: 'none' }}>View All →</a>
+            <a href="/admin/support" className="text-[10px] text-gold font-semibold no-underline">View All &rarr;</a>
           </div>
-          <div style={{ maxHeight: 480, overflowY: 'auto' }}>
+          <div className="max-h-[480px] overflow-y-auto">
             {loading ? (
-              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="p-4 flex flex-col gap-2">
                 {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={24} />)}
               </div>
             ) : tickets.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No open tickets.</div>
+              <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No open tickets.</div>
             ) : tickets.map(t => {
               const pc = PRIORITY_COLORS[t.priority] || PRIORITY_COLORS.normal;
               return (
-                <div key={t.id} style={{ padding: '8px 18px', borderBottom: '1px solid #F3F4F6', fontSize: 11 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, fontWeight: 700, background: pc.bg, color: pc.color }}>
+                <div key={t.id} className="px-[18px] py-2 border-b border-[#F3F4F6] text-[11px]">
+                  <div className="flex items-center gap-1.5 mb-[3px]">
+                    <span
+                      className="px-1.5 py-px rounded-[3px] text-[9px] font-bold"
+                      style={{ background: pc.bg, color: pc.color }}
+                    >
                       {t.priority}
                     </span>
-                    <span style={{ color: TEXT_MUTED, fontSize: 9 }}>#{t.ticket_number}</span>
+                    <span className="text-[#9CA3AF] text-[9px]">#{t.ticket_number}</span>
                   </div>
-                  <div style={{ color: NAVY, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div className="text-navy font-medium overflow-hidden text-ellipsis whitespace-nowrap">
                     {t.subject}
                   </div>
-                  {t.contact_name && <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>{t.contact_name}</div>}
+                  {t.contact_name && <div className="text-[10px] text-[#9CA3AF] mt-0.5">{t.contact_name}</div>}
                 </div>
               );
             })}

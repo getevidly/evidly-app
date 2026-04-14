@@ -24,12 +24,6 @@ import {
 import { EmulationPanel } from '../../components/admin/EmulationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-// ── Colors ──────────────────────────────────────────────────
-const BRAND = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#3D5068';
-const TEXT_TERT = '#6B7F96';
-
 // ── Types ───────────────────────────────────────────────────
 
 interface CrawlHealthRow {
@@ -242,7 +236,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Dashboard' }]} />
       {isDemoMode && (
-        <div className="rounded-xl px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+        <div className="rounded-xl px-4 py-2 text-sm font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
           Demo Mode — displaying sample data
         </div>
       )}
@@ -250,8 +244,8 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: BRAND }}>Admin Dashboard</h1>
-          <p className="text-sm mt-1" style={{ color: TEXT_TERT }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">Admin Dashboard</h1>
+          <p className="text-sm mt-1 text-[#6B7F96]">
             Platform metrics, crawl health, and operational monitoring
           </p>
         </div>
@@ -259,10 +253,7 @@ export default function AdminDashboard() {
           <button
             onClick={runCrawlNow}
             disabled={crawlRunning}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
-            style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!crawlRunning) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 bg-navy hover:bg-navy-light"
           >
             {crawlRunning ? <Loader2 size={15} className="animate-spin" /> : <Activity size={15} />}
             {crawlRunning ? 'Running...' : 'Run Crawl Now'}
@@ -270,8 +261,7 @@ export default function AdminDashboard() {
           <button
             onClick={fetchAll}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors"
-            style={{ borderColor: '#D1D9E6', color: TEXT_SEC }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors border-[#D1D9E6] text-[#3D5068]"
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             Refresh
@@ -288,17 +278,16 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 overflow-x-auto pb-1 border-b" style={{ borderColor: '#D1D9E6' }}>
+      <div className="flex gap-1 overflow-x-auto pb-1 border-b border-[#D1D9E6]">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors"
-            style={{
-              color: activeTab === tab.id ? BRAND : TEXT_TERT,
-              borderBottom: activeTab === tab.id ? `2px solid ${GOLD}` : '2px solid transparent',
-              backgroundColor: activeTab === tab.id ? '#eef4f8' : 'transparent',
-            }}
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors ${
+              activeTab === tab.id
+                ? 'text-navy border-b-2 border-gold bg-[#eef4f8]'
+                : 'text-[#6B7F96] border-b-2 border-transparent bg-transparent'
+            }`}
           >
             {tab.icon}
             <span className="hidden sm:inline">{tab.label}</span>
@@ -307,10 +296,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab content */}
-      <div className="bg-white rounded-xl border shadow-sm p-4 sm:p-6" style={{ borderColor: '#D1D9E6' }}>
+      <div className="bg-white rounded-xl border border-[#D1D9E6] shadow-sm p-4 sm:p-6">
         {loading && !isDemoMode ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 size={24} className="animate-spin" style={{ color: BRAND }} />
+            <Loader2 size={24} className="animate-spin text-navy" />
           </div>
         ) : (
           <>
@@ -338,10 +327,10 @@ export default function AdminDashboard() {
 
 function KpiCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color?: string }) {
   return (
-    <div className="bg-white rounded-xl border p-4" style={{ borderColor: '#D1D9E6' }}>
+    <div className="bg-white rounded-xl border border-[#D1D9E6] p-4">
       <div className="flex items-center gap-2 mb-1">
-        <span style={{ color: color || BRAND }}>{icon}</span>
-        <span className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</span>
+        <span style={{ color: color || '#1E2D4D' }}>{icon}</span>
+        <span className="text-xs font-medium text-[#6B7F96]">{label}</span>
       </div>
       <p className="text-2xl font-bold tracking-tight" style={{ color: color || '#0B1628' }}>{value}</p>
     </div>
@@ -368,7 +357,7 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 }) {
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Overview</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">Platform Overview</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MiniStat label="Feeds Live" value={crawlStats.live} total={crawlStats.total} color="#16a34a" />
         <MiniStat label="Feeds Failed" value={crawlStats.failed} color="#dc2626" />
@@ -377,9 +366,9 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
       </div>
 
       {latestRun && (
-        <div className="rounded-lg p-3 text-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-          <p className="font-medium" style={{ color: BRAND }}>Last Crawl Run</p>
-          <p style={{ color: TEXT_SEC }}>
+        <div className="rounded-lg p-3 text-sm bg-[#f8fafc] border border-[#e2e8f0]">
+          <p className="font-medium text-navy">Last Crawl Run</p>
+          <p className="text-[#3D5068]">
             {fmtDate(latestRun.started_at)} &middot; {latestRun.feeds_live}/{latestRun.feeds_total} live
             {latestRun.feeds_changed > 0 && <span className="text-amber-600"> &middot; {latestRun.feeds_changed} changed</span>}
             {latestRun.duration_ms && ` &middot; ${(latestRun.duration_ms / 1000).toFixed(1)}s`}
@@ -388,13 +377,13 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
       )}
 
       <div>
-        <h4 className="text-sm font-medium mb-2" style={{ color: TEXT_SEC }}>Recent Events</h4>
+        <h4 className="text-sm font-medium mb-2 text-[#3D5068]">Recent Events</h4>
         <div className="space-y-1">
           {events.map(e => (
             <div key={e.id} className="flex items-center gap-2 text-xs py-1">
               <LevelBadge level={e.level} />
-              <span style={{ color: TEXT_TERT }}>{fmtDate(e.event_time)}</span>
-              <span style={{ color: '#374151' }} className="truncate">{e.message}</span>
+              <span className="text-[#6B7F96]">{fmtDate(e.event_time)}</span>
+              <span className="text-[#374151] truncate">{e.message}</span>
             </div>
           ))}
         </div>
@@ -405,10 +394,10 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 
 function MiniStat({ label, value, total, color }: { label: string; value: number; total?: number; color: string }) {
   return (
-    <div className="rounded-lg p-3" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-      <p className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</p>
+    <div className="rounded-lg p-3 bg-[#f8fafc] border border-[#e2e8f0]">
+      <p className="text-xs font-medium text-[#6B7F96]">{label}</p>
       <p className="text-xl font-bold" style={{ color }}>
-        {value}{total !== undefined && <span className="text-sm font-normal" style={{ color: TEXT_TERT }}>/{total}</span>}
+        {value}{total !== undefined && <span className="text-sm font-normal text-[#6B7F96]">/{total}</span>}
       </p>
     </div>
   );
@@ -423,17 +412,17 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
+        <h3 className="text-lg font-semibold tracking-tight text-navy">Crawl Health ({feeds.length} feeds)</h3>
         <div className="flex gap-1">
           {(['all', 'food_safety', 'facility_safety'] as const).map(p => (
             <button
               key={p}
               onClick={() => setPillarFilter(p)}
-              className="px-3 py-1 rounded-full text-xs font-medium transition-colors"
-              style={{
-                backgroundColor: pillarFilter === p ? BRAND : '#f1f5f9',
-                color: pillarFilter === p ? '#fff' : TEXT_SEC,
-              }}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                pillarFilter === p
+                  ? 'bg-navy text-white'
+                  : 'bg-[#f1f5f9] text-[#3D5068]'
+              }`}
             >
               {p === 'all' ? 'All' : p === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
             </button>
@@ -444,30 +433,30 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
-              <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
-              <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Feed</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>Pillar</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell" style={{ color: TEXT_TERT }}>Response</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell" style={{ color: TEXT_TERT }}>Last Check</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell" style={{ color: TEXT_TERT }}>Retries</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell" style={{ color: TEXT_TERT }}>Error</th>
+            <tr className="border-b border-[#e2e8f0] hover:bg-navy/[0.02] transition-colors">
+              <th className="text-left py-2 px-2 text-xs font-medium text-[#6B7F96]">Status</th>
+              <th className="text-left py-2 px-2 text-xs font-medium text-[#6B7F96]">Feed</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell text-[#6B7F96]">Pillar</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell text-[#6B7F96]">Response</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell text-[#6B7F96]">Last Check</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell text-[#6B7F96]">Retries</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell text-[#6B7F96]">Error</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(f => (
-              <tr key={f.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
+              <tr key={f.id} className="border-b border-[#f1f5f9] hover:bg-cream">
                 <td className="py-2 px-2"><StatusDot status={f.status} /> <span className="text-xs ml-1">{f.status}</span></td>
-                <td className="py-2 px-2 font-medium" style={{ color: '#0B1628' }}>{f.feed_name}</td>
+                <td className="py-2 px-2 font-medium text-[#0B1628]">{f.feed_name}</td>
                 <td className="py-2 px-2 hidden sm:table-cell">
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: f.pillar === 'food_safety' ? '#dcfce7' : '#fef3c7', color: f.pillar === 'food_safety' ? '#166534' : '#92400e' }}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${f.pillar === 'food_safety' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fef3c7] text-[#92400e]'}`}>
                     {f.pillar === 'food_safety' ? 'Food' : 'Facility'}
                   </span>
                 </td>
-                <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{f.response_ms ? `${f.response_ms}ms` : '—'}</td>
-                <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_TERT }}>{fmtDate(f.last_checked_at)}</td>
-                <td className="py-2 px-2 hidden lg:table-cell" style={{ color: f.retry_count > 0 ? '#dc2626' : TEXT_TERT }}>{f.retry_count}</td>
-                <td className="py-2 px-2 hidden lg:table-cell text-xs truncate max-w-48" style={{ color: '#dc2626' }}>{f.error_message || '—'}</td>
+                <td className="py-2 px-2 hidden md:table-cell text-[#3D5068]">{f.response_ms ? `${f.response_ms}ms` : '—'}</td>
+                <td className="py-2 px-2 hidden md:table-cell text-[#6B7F96]">{fmtDate(f.last_checked_at)}</td>
+                <td className="py-2 px-2 hidden lg:table-cell" style={{ color: f.retry_count > 0 ? '#dc2626' : '#6B7F96' }}>{f.retry_count}</td>
+                <td className="py-2 px-2 hidden lg:table-cell text-xs truncate max-w-48 text-[#dc2626]">{f.error_message || '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -476,15 +465,15 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
 
       {runs.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium mb-2 mt-4" style={{ color: TEXT_SEC }}>Recent Runs</h4>
+          <h4 className="text-sm font-medium mb-2 mt-4 text-[#3D5068]">Recent Runs</h4>
           <div className="space-y-1">
             {runs.slice(0, 5).map(r => (
-              <div key={r.id} className="flex items-center gap-3 text-xs py-1.5 px-2 rounded" style={{ backgroundColor: '#f8fafc' }}>
-                <span style={{ color: TEXT_TERT }}>{fmtDate(r.started_at)}</span>
+              <div key={r.id} className="flex items-center gap-3 text-xs py-1.5 px-2 rounded bg-[#f8fafc]">
+                <span className="text-[#6B7F96]">{fmtDate(r.started_at)}</span>
                 <span className="font-medium">{r.feeds_live}/{r.feeds_total} live</span>
-                {r.feeds_failed > 0 && <span style={{ color: '#dc2626' }}>{r.feeds_failed} failed</span>}
-                {r.feeds_changed > 0 && <span style={{ color: '#d97706' }}>{r.feeds_changed} changed</span>}
-                {r.duration_ms && <span style={{ color: TEXT_TERT }}>{(r.duration_ms / 1000).toFixed(1)}s</span>}
+                {r.feeds_failed > 0 && <span className="text-[#dc2626]">{r.feeds_failed} failed</span>}
+                {r.feeds_changed > 0 && <span className="text-[#d97706]">{r.feeds_changed} changed</span>}
+                {r.duration_ms && <span className="text-[#6B7F96]">{(r.duration_ms / 1000).toFixed(1)}s</span>}
               </div>
             ))}
           </div>
@@ -514,11 +503,11 @@ function EventLogTab({ events }: { events: EventRow[] }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Event Log</h3>
+        <h3 className="text-lg font-semibold tracking-tight text-navy">Event Log</h3>
         <select
           value={levelFilter}
           onChange={e => setLevelFilter(e.target.value)}
-          className="text-xs border rounded px-2 py-1" style={{ borderColor: '#D1D9E6' }}
+          className="text-xs border border-[#D1D9E6] rounded px-2 py-1"
         >
           <option value="all">All Levels</option>
           <option value="INFO">INFO</option>
@@ -528,23 +517,23 @@ function EventLogTab({ events }: { events: EventRow[] }) {
         <select
           value={catFilter}
           onChange={e => setCatFilter(e.target.value)}
-          className="text-xs border rounded px-2 py-1" style={{ borderColor: '#D1D9E6' }}
+          className="text-xs border border-[#D1D9E6] rounded px-2 py-1"
         >
           {categories.map(c => <option key={c} value={c}>{c === 'all' ? 'All Categories' : c}</option>)}
         </select>
-        <span className="text-xs ml-auto" style={{ color: TEXT_TERT }}>{filtered.length} events</span>
+        <span className="text-xs ml-auto text-[#6B7F96]">{filtered.length} events</span>
       </div>
 
       <div className="space-y-0.5 max-h-[60vh] overflow-y-auto">
         {filtered.map(e => (
-          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-[#FAF7F0]">
+          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-cream">
             <LevelBadge level={e.level} />
-            <span className="flex-shrink-0" style={{ color: TEXT_TERT }}>{fmtDate(e.event_time)}</span>
-            {e.category && <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
-            <span style={{ color: '#374151' }} className="break-all">{e.message}</span>
+            <span className="flex-shrink-0 text-[#6B7F96]">{fmtDate(e.event_time)}</span>
+            {e.category && <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-[#f1f5f9] text-[#3D5068]">{e.category}</span>}
+            <span className="text-[#374151] break-all">{e.message}</span>
           </div>
         ))}
-        {filtered.length === 0 && <p className="text-sm text-center py-8" style={{ color: TEXT_TERT }}>No events match filters</p>}
+        {filtered.length === 0 && <p className="text-sm text-center py-8 text-[#6B7F96]">No events match filters</p>}
       </div>
     </div>
   );
@@ -552,13 +541,13 @@ function EventLogTab({ events }: { events: EventRow[] }) {
 
 function LevelBadge({ level }: { level: string }) {
   const styles: Record<string, { bg: string; text: string }> = {
-    INFO: { bg: '#dbeafe', text: '#1E2D4D' },
-    WARN: { bg: '#fef3c7', text: '#92400e' },
-    ERROR: { bg: '#fee2e2', text: '#991b1b' },
-    DEBUG: { bg: '#f3f4f6', text: '#6b7280' },
+    INFO: { bg: 'bg-[#dbeafe]', text: 'text-navy' },
+    WARN: { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]' },
+    ERROR: { bg: 'bg-[#fee2e2]', text: 'text-[#991b1b]' },
+    DEBUG: { bg: 'bg-[#f3f4f6]', text: 'text-[#6b7280]' },
   };
   const s = styles[level] || styles.DEBUG;
-  return <span className="px-1.5 py-0.5 rounded text-xs font-bold flex-shrink-0" style={{ backgroundColor: s.bg, color: s.text }}>{level}</span>;
+  return <span className={`px-1.5 py-0.5 rounded text-xs font-bold flex-shrink-0 ${s.bg} ${s.text}`}>{level}</span>;
 }
 
 // ── API Keys ────────────────────────────────────────────────
@@ -566,21 +555,21 @@ function LevelBadge({ level }: { level: string }) {
 function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>API Keys ({keys.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">API Keys ({keys.length})</h3>
       {keys.length === 0 ? (
-        <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No API keys configured</p>
+        <p className="text-sm py-8 text-center text-[#6B7F96]">No API keys configured</p>
       ) : (
         <div className="space-y-2">
           {keys.map(k => (
-            <div key={k.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
-              <Key size={16} style={{ color: GOLD }} />
+            <div key={k.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#e2e8f0]">
+              <Key size={16} className="text-gold" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{k.name}</p>
-                <p className="text-xs font-mono" style={{ color: TEXT_TERT }}>{k.key_preview}</p>
+                <p className="text-xs font-mono text-[#6B7F96]">{k.key_preview}</p>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: k.scope === 'full' ? '#dbeafe' : '#f1f5f9', color: k.scope === 'full' ? '#1E2D4D' : TEXT_SEC }}>{k.scope}</span>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: k.status === 'active' ? '#dcfce7' : '#fee2e2', color: k.status === 'active' ? '#166534' : '#991b1b' }}>{k.status}</span>
-              <span className="text-xs hidden sm:inline" style={{ color: TEXT_TERT }}>{k.last_used_at ? `Used ${fmtDate(k.last_used_at)}` : 'Never used'}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${k.scope === 'full' ? 'bg-[#dbeafe] text-navy' : 'bg-[#f1f5f9] text-[#3D5068]'}`}>{k.scope}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${k.status === 'active' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>{k.status}</span>
+              <span className="text-xs hidden sm:inline text-[#6B7F96]">{k.last_used_at ? `Used ${fmtDate(k.last_used_at)}` : 'Never used'}</span>
             </div>
           ))}
         </div>
@@ -593,43 +582,43 @@ function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
 
 function LeadsTab({ leads }: { leads: LeadRow[] }) {
   const statusColors: Record<string, { bg: string; text: string }> = {
-    new: { bg: '#dbeafe', text: '#1E2D4D' },
-    contacted: { bg: '#fef3c7', text: '#92400e' },
-    demo_scheduled: { bg: '#e0e7ff', text: '#3730a3' },
-    converted: { bg: '#dcfce7', text: '#166534' },
-    lost: { bg: '#f3f4f6', text: '#6b7280' },
+    new: { bg: 'bg-[#dbeafe]', text: 'text-navy' },
+    contacted: { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]' },
+    demo_scheduled: { bg: 'bg-[#e0e7ff]', text: 'text-[#3730a3]' },
+    converted: { bg: 'bg-[#dcfce7]', text: 'text-[#166534]' },
+    lost: { bg: 'bg-[#f3f4f6]', text: 'text-[#6b7280]' },
   };
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Assessment Leads ({leads.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">Assessment Leads ({leads.length})</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
-              <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Business</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>County</th>
-              <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell" style={{ color: TEXT_TERT }}>Type</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell" style={{ color: TEXT_TERT }}>Source</th>
-              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell" style={{ color: TEXT_TERT }}>Created</th>
+            <tr className="border-b border-[#e2e8f0] hover:bg-navy/[0.02] transition-colors">
+              <th className="text-left py-2 px-2 text-xs font-medium text-[#6B7F96]">Business</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell text-[#6B7F96]">County</th>
+              <th className="text-left py-2 px-2 text-xs font-medium text-[#6B7F96]">Status</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell text-[#6B7F96]">Type</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden md:table-cell text-[#6B7F96]">Source</th>
+              <th className="text-left py-2 px-2 text-xs font-medium hidden lg:table-cell text-[#6B7F96]">Created</th>
             </tr>
           </thead>
           <tbody>
             {leads.map(l => {
               const sc = statusColors[l.status] || statusColors.new;
               return (
-                <tr key={l.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
+                <tr key={l.id} className="border-b border-[#f1f5f9] hover:bg-cream">
                   <td className="py-2 px-2 font-medium">{l.business_name}</td>
-                  <td className="py-2 px-2 hidden sm:table-cell" style={{ color: TEXT_SEC }}>{l.county || '—'}</td>
+                  <td className="py-2 px-2 hidden sm:table-cell text-[#3D5068]">{l.county || '—'}</td>
                   <td className="py-2 px-2">
-                    <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: sc.bg, color: sc.text }}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${sc.bg} ${sc.text}`}>
                       {l.status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{l.account_type || '—'}</td>
-                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_TERT }}>{l.source || '—'}</td>
-                  <td className="py-2 px-2 hidden lg:table-cell" style={{ color: TEXT_TERT }}>{fmtDate(l.created_at)}</td>
+                  <td className="py-2 px-2 hidden md:table-cell text-[#3D5068]">{l.account_type || '—'}</td>
+                  <td className="py-2 px-2 hidden md:table-cell text-[#6B7F96]">{l.source || '—'}</td>
+                  <td className="py-2 px-2 hidden lg:table-cell text-[#6B7F96]">{fmtDate(l.created_at)}</td>
                 </tr>
               );
             })}
@@ -656,12 +645,12 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {KNOWN_FUNCTIONS.map(fn => {
           const errCount = edgeErrors.filter(e => e.message?.includes(fn) || e.metadata?.feedId === fn).length;
           return (
-            <div key={fn} className="flex items-center gap-2 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={fn} className="flex items-center gap-2 p-3 rounded-xl border border-[#e2e8f0]">
               <Zap size={14} style={{ color: errCount > 0 ? '#dc2626' : '#16a34a' }} />
               <span className="text-sm font-medium flex-1">{fn}</span>
               {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700">{errCount} err</span>}
@@ -678,21 +667,21 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 function DemoSessionsTab({ sessions }: { sessions: DemoSessionRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Demo Sessions ({sessions.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">Demo Sessions ({sessions.length})</h3>
       {sessions.length === 0 ? (
-        <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No demo sessions recorded</p>
+        <p className="text-sm py-8 text-center text-[#6B7F96]">No demo sessions recorded</p>
       ) : (
         <div className="space-y-2">
           {sessions.map(s => (
-            <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
-              <Play size={14} style={{ color: BRAND }} />
+            <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#e2e8f0]">
+              <Play size={14} className="text-navy" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{s.account_name}</p>
-                <p className="text-xs" style={{ color: TEXT_TERT }}>
+                <p className="text-xs text-[#6B7F96]">
                   {s.county || 'N/A'} &middot; {Math.round(s.duration_seconds / 60)}min &middot; {fmtDate(s.started_at)}
                 </p>
               </div>
-              {s.user_email && <span className="text-xs hidden sm:inline" style={{ color: TEXT_TERT }}>{s.user_email}</span>}
+              {s.user_email && <span className="text-xs hidden sm:inline text-[#6B7F96]">{s.user_email}</span>}
             </div>
           ))}
         </div>
@@ -732,14 +721,11 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Kitchen to Community</h3>
+        <h3 className="text-lg font-semibold tracking-tight text-navy">Kitchen to Community</h3>
         <button
           onClick={processK2C}
           disabled={processing}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
-          style={{ backgroundColor: '#16a34a' }}
-          onMouseEnter={e => { if (!processing) e.currentTarget.style.backgroundColor = '#15803d'; }}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = '#16a34a'}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 bg-[#16a34a] hover:bg-[#15803d]"
         >
           {processing ? <Loader2 size={14} className="animate-spin" /> : <Heart size={14} />}
           {processing ? 'Processing...' : 'Process Now'}
@@ -747,18 +733,18 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
       </div>
       <div className="grid grid-cols-2 gap-3">
         <MiniStat label="Total Meals" value={totalMeals.toLocaleString()} color="#16a34a" />
-        <MiniStat label="Total Donated" value={`$${totalDollars.toLocaleString()}`} color={BRAND} />
+        <MiniStat label="Total Donated" value={`$${totalDollars.toLocaleString()}`} color="#1E2D4D" />
       </div>
       <div className="space-y-2">
         {donations.map(d => (
-          <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
-            <Heart size={14} style={{ color: '#dc2626' }} />
+          <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#e2e8f0]">
+            <Heart size={14} className="text-[#dc2626]" />
             <div className="flex-1">
               <p className="text-sm font-medium">{d.account_name}</p>
-              <p className="text-xs" style={{ color: TEXT_TERT }}>{d.county || 'N/A'}</p>
+              <p className="text-xs text-[#6B7F96]">{d.county || 'N/A'}</p>
             </div>
-            <span className="text-sm font-semibold" style={{ color: '#16a34a' }}>{d.meals_count} meals</span>
-            <span className="text-xs hidden sm:inline" style={{ color: TEXT_TERT }}>${(d.amount_cents / 100).toFixed(0)}</span>
+            <span className="text-sm font-semibold text-[#16a34a]">{d.meals_count} meals</span>
+            <span className="text-xs hidden sm:inline text-[#6B7F96]">${(d.amount_cents / 100).toFixed(0)}</span>
           </div>
         ))}
       </div>
@@ -849,20 +835,19 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Usage</h3>
+        <h3 className="text-lg font-semibold tracking-tight text-navy">Platform Usage</h3>
         <button
           onClick={refreshMetrics}
           disabled={refreshing}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-50"
-          style={{ borderColor: '#D1D9E6', color: TEXT_SEC }}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-50 border-[#D1D9E6] text-[#3D5068]"
         >
           <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
           Refresh Metrics
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MiniStat label="Organizations" value={orgCount} color={BRAND} />
-        <MiniStat label="Locations" value={locCount} color={BRAND} />
+        <MiniStat label="Organizations" value={orgCount} color="#1E2D4D" />
+        <MiniStat label="Locations" value={locCount} color="#1E2D4D" />
         {metrics && (
           <>
             <MiniStat label="Temp Logs" value={metrics.temp_logs.toLocaleString()} color="#dc2626" />
@@ -877,24 +862,24 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
           <div className="relative group">
             <MiniStat label="Time Saved" value={`${metrics.time_saved_hours.toLocaleString()} hrs`} color="#8b5cf6" />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-navy/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 8 min/temp log + 12 min/checklist + 20 min/doc + 25 min/corrective action
               </div>
             </div>
           </div>
           <div className="relative group">
-            <MiniStat label="Est. Money Saved" value={`$${metrics.money_saved_dollars.toLocaleString()}`} color={GOLD} />
+            <MiniStat label="Est. Money Saved" value={`$${metrics.money_saved_dollars.toLocaleString()}`} color="#A08C5A" />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-navy/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 $28/hr labor + $500 x 15% fine avoidance + $200/loc/yr insurance
               </div>
             </div>
           </div>
         </div>
       )}
-      <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg" style={{ background: '#eef4f8', border: '1px solid #D1D9E6' }}>
-        <Shield size={14} style={{ color: BRAND, flexShrink: 0 }} />
-        <span className="text-xs" style={{ color: TEXT_SEC }}>Emulation sessions are excluded from all usage metrics. Formulas use real DB counts from platform_metrics_daily.</span>
+      <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-[#eef4f8] border border-[#D1D9E6]">
+        <Shield size={14} className="text-navy shrink-0" />
+        <span className="text-xs text-[#3D5068]">Emulation sessions are excluded from all usage metrics. Formulas use real DB counts from platform_metrics_daily.</span>
       </div>
     </div>
   );
@@ -914,27 +899,27 @@ function WebAnalyticsTab({ leads }: { leads: LeadRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Web Analytics</h3>
+      <h3 className="text-lg font-semibold tracking-tight text-navy">Web Analytics</h3>
       {sourceBreakdown.length > 0 ? (
         <div>
-          <h4 className="text-sm font-medium mb-2" style={{ color: TEXT_SEC }}>Lead Sources</h4>
+          <h4 className="text-sm font-medium mb-2 text-[#3D5068]">Lead Sources</h4>
           <div className="space-y-1.5">
             {sourceBreakdown.map(([source, count]) => (
               <div key={source} className="flex items-center gap-3 text-sm">
-                <span className="w-32 font-medium" style={{ color: '#0B1628' }}>{source}</span>
-                <div className="flex-1 h-4 rounded-full" style={{ backgroundColor: '#f1f5f9' }}>
+                <span className="w-32 font-medium text-[#0B1628]">{source}</span>
+                <div className="flex-1 h-4 rounded-full bg-[#f1f5f9]">
                   <div
-                    className="h-full rounded-full"
-                    style={{ width: `${(count / leads.length) * 100}%`, backgroundColor: BRAND, minWidth: 4 }}
+                    className="h-full rounded-full bg-navy min-w-[4px]"
+                    style={{ width: `${(count / leads.length) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs font-semibold w-8 text-right" style={{ color: TEXT_SEC }}>{count}</span>
+                <span className="text-xs font-semibold w-8 text-right text-[#3D5068]">{count}</span>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <p className="text-sm" style={{ color: TEXT_TERT }}>
+        <p className="text-sm text-[#6B7F96]">
           No lead source data available. Connect Plausible or PostHog for full web analytics.
         </p>
       )}

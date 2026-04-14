@@ -10,13 +10,10 @@ import type { DemoSession } from '../../data/demoGeneratorData';
 import { DemoConversionModal } from '../../components/demo/DemoConversionModal';
 import { supabase } from '../../lib/supabase';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-
 type PipelineTab = 'active' | 'expiring_soon' | 'expired' | 'converted' | 'scheduled';
 
 const TABS: { key: PipelineTab; label: string; color: string; description: string }[] = [
-  { key: 'active', label: 'Active', color: GOLD, description: 'Demo currently accessible to prospect' },
+  { key: 'active', label: 'Active', color: '#A08C5A', description: 'Demo currently accessible to prospect' },
   { key: 'expiring_soon', label: 'Expiring Soon', color: '#f59e0b', description: 'Expiring within 7 days — follow up!' },
   { key: 'scheduled', label: 'Scheduled', color: '#3b82f6', description: 'Meetings booked, demos not yet generated' },
   { key: 'expired', label: 'Expired', color: '#9ca3af', description: 'Demo expired without conversion' },
@@ -45,12 +42,12 @@ function StatusBadge({ status, expiresAt }: { status: string; expiresAt?: string
     ready: 'bg-green-50 text-green-700 border-green-200',
     active: isExpiringSoon ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-green-50 text-green-700 border-green-200',
     converted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    expired: 'bg-[#FAF7F0] text-[#1E2D4D]/50 border-[#1E2D4D]/10',
+    expired: 'bg-cream text-navy/50 border-navy/10',
     generating: 'bg-blue-50 text-blue-700 border-blue-200',
   };
   const label = isExpiringSoon ? 'Expiring Soon' : status.charAt(0).toUpperCase() + status.slice(1);
   return (
-    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-[#FAF7F0] text-[#1E2D4D]/50 border-[#1E2D4D]/10'}`}>
+    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-cream text-navy/50 border-navy/10'}`}>
       {label}
     </span>
   );
@@ -60,15 +57,15 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
   const remaining = daysUntil(session.expires_at);
 
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 hover:border-[#1E2D4D]/15 transition-colors">
+    <div className="bg-white rounded-xl border border-navy/10 p-4 hover:border-navy/15 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-sm truncate" style={{ color: NAVY }}>{session.company_name}</h3>
+            <h3 className="font-semibold text-sm truncate text-navy">{session.company_name}</h3>
             <StatusBadge status={session.status} expiresAt={session.expires_at} />
           </div>
-          <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50">
+          <div className="flex items-center gap-3 text-xs text-navy/50">
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
               {session.city}, {session.state}
@@ -85,7 +82,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       </div>
 
       {/* Contact */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#1E2D4D]/70 mb-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-navy/70 mb-3">
         <span className="flex items-center gap-1">
           <Users className="w-3 h-3" />
           {session.prospect_name}
@@ -103,17 +100,17 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       </div>
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#1E2D4D]/50 mb-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-navy/50 mb-3">
         <span>{getKitchenTypeLabel(session.company_type)}</span>
-        <span className="text-[#1E2D4D]/30">|</span>
+        <span className="text-navy/30">|</span>
         <span>{getOperationLabel(session.operation_type)} volume</span>
-        <span className="text-[#1E2D4D]/30">|</span>
+        <span className="text-navy/30">|</span>
         <span>{session.num_locations} location{session.num_locations > 1 ? 's' : ''}</span>
       </div>
 
       {/* Schedule / Jurisdiction info */}
       {session.scheduled_at && session.status === 'scheduled' && (
-        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/70 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-navy/70 mb-3">
           <Calendar className="w-3.5 h-3.5" />
           <span>Meeting: {formatDateTime(session.scheduled_at)}</span>
         </div>
@@ -124,14 +121,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
           <span className="text-green-700 font-medium">Demo ready</span>
           {session.health_authority && (
             <>
-              <span className="text-[#1E2D4D]/30 mx-1">|</span>
-              <span className="text-[#1E2D4D]/50">{session.health_authority} configured</span>
+              <span className="text-navy/30 mx-1">|</span>
+              <span className="text-navy/50">{session.health_authority} configured</span>
             </>
           )}
         </div>
       )}
       {session.status === 'active' && session.total_logins > 0 && (
-        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/50 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-navy/50 mb-3">
           <Eye className="w-3.5 h-3.5" />
           <span>{session.total_logins} logins, {session.pages_visited.length} pages visited</span>
         </div>
@@ -143,23 +140,22 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         </div>
       )}
       {session.status === 'expired' && session.expires_at && (
-        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/50 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-navy/50 mb-3">
           <Clock className="w-3.5 h-3.5" />
           <span>Expired on {formatDate(session.expires_at)}</span>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1E2D4D]/5">
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-navy/5">
         {session.status === 'scheduled' && (
           <>
             <button onClick={() => onAction('generate', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1"
-              style={{ backgroundColor: NAVY }}>
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1 bg-navy">
               <Sparkles className="w-3 h-3" /> Generate Demo
             </button>
             <button onClick={() => onAction('reschedule', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Reschedule
             </button>
             <button onClick={() => onAction('cancel', session)}
@@ -171,16 +167,15 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         {(session.status === 'ready' || session.status === 'active') && (
           <>
             <button onClick={() => onAction('convert', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1"
-              style={{ backgroundColor: '#10b981' }}>
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1 bg-emerald-500">
               <CheckCircle2 className="w-3 h-3" /> Convert to Live
             </button>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
               <Clock className="w-3 h-3" /> Extend 7 Days
             </button>
             <button onClick={() => onAction('preview', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
               <Eye className="w-3 h-3" /> View Demo
             </button>
           </>
@@ -188,7 +183,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         {session.status === 'expired' && (
           <>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Re-activate
             </button>
             <button onClick={() => onAction('reengage', session)}
@@ -196,14 +191,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <Mail className="w-3 h-3" /> Re-engage Email
             </button>
             <button onClick={() => onAction('delete', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/50 border border-navy/10 hover:bg-cream flex items-center gap-1">
               <Trash2 className="w-3 h-3" /> Archive
             </button>
           </>
         )}
         {session.status === 'converted' && (
           <button onClick={() => onAction('delete', session)}
-            className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
+            className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/50 border border-navy/10 hover:bg-cream flex items-center gap-1">
             <Trash2 className="w-3 h-3" /> Archive
           </button>
         )}
@@ -368,19 +363,18 @@ export function DemoPipeline() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${NAVY}10` }}>
-            <Building2 className="w-5 h-5" style={{ color: NAVY }} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-navy/[0.06]">
+            <Building2 className="w-5 h-5 text-navy" />
           </div>
           <div>
-            <h1 className="text-xl font-bold" style={{ color: NAVY }}>Demo Pipeline</h1>
-            <p className="text-sm text-[#1E2D4D]/50">Manage personalized prospect demos</p>
+            <h1 className="text-xl font-bold text-navy">Demo Pipeline</h1>
+            <p className="text-sm text-navy/50">Manage personalized prospect demos</p>
           </div>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => navigate('/admin/demo-launcher')}
-            className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-1.5"
-            style={{ backgroundColor: NAVY }}
+            className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-1.5 bg-navy"
           >
             <Plus className="w-4 h-4" /> Generate New Demo
           </button>
@@ -399,13 +393,13 @@ export function DemoPipeline() {
       </div>
 
       {/* Tab selector */}
-      <div className="flex items-center gap-1 mb-4 border-b border-[#1E2D4D]/10">
+      <div className="flex items-center gap-1 mb-4 border-b border-navy/10">
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.key ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+              activeTab === tab.key ? 'border-navy text-navy' : 'border-transparent text-navy/50 hover:text-navy/80'
             }`}
           >
             {tab.label}
@@ -415,10 +409,10 @@ export function DemoPipeline() {
 
       {/* Tab heading */}
       <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-[#1E2D4D]/50">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-navy/50">
           {TABS.find(t => t.key === activeTab)?.label}
         </h2>
-        <span className="text-xs text-[#1E2D4D]/30">
+        <span className="text-xs text-navy/30">
           — {TABS.find(t => t.key === activeTab)?.description}
         </span>
       </div>
@@ -426,13 +420,13 @@ export function DemoPipeline() {
       {/* Cards */}
       <div className="space-y-3">
         {loading ? (
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#1E2D4D]/20 mx-auto mb-2" />
-            <p className="text-sm text-[#1E2D4D]/50">Loading demo pipeline...</p>
+          <div className="bg-white rounded-xl border border-navy/10 p-8 text-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-navy/20 mx-auto mb-2" />
+            <p className="text-sm text-navy/50">Loading demo pipeline...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-            <p className="text-sm text-[#1E2D4D]/50">No demos in this stage.</p>
+          <div className="bg-white rounded-xl border border-navy/10 p-8 text-center">
+            <p className="text-sm text-navy/50">No demos in this stage.</p>
           </div>
         ) : (
           filtered.map(session => (

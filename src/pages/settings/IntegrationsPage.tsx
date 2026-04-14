@@ -69,106 +69,62 @@ export function IntegrationsPage() {
       {/* Back link */}
       <button
         onClick={() => navigate('/settings/company')}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          background: 'none',
-          border: 'none',
-          color: TEXT_TERTIARY,
-          fontSize: 13,
-          cursor: 'pointer',
-          padding: 0,
-          marginBottom: 16,
-        }}
+        className="flex items-center gap-1.5 bg-none border-none text-[#6B7F96] text-[13px] cursor-pointer p-0 mb-4"
       >
         <ArrowLeft size={16} /> Back to Settings
       </button>
 
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 22, fontWeight: 700, color: BODY_TEXT, margin: '0 0 4px' }}>
+      <div className="mb-6">
+        <h1 className="flex items-center gap-2.5 text-[22px] font-bold text-[#0B1628] mb-1 mt-0">
           <Plug size={22} color={NAVY} /> Integrations
         </h1>
-        <p style={{ color: MUTED, fontSize: 14, margin: 0 }}>
+        <p className="text-[#3D5068] text-sm m-0">
           Connect HoodOps with your favorite tools and services.
         </p>
       </div>
 
       {/* Integration grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
         {INTEGRATION_DEFS.map(def => {
           const connected = getConnectionStatus(def.slug);
           return (
             <div
               key={def.slug}
               onClick={() => setSelectedIntegration({ ...def, connected })}
-              style={{
-                background: CARD_BG,
-                border: `1px solid ${connected ? '#bbf7d0' : CARD_BORDER}`,
-                borderRadius: 12,
-                boxShadow: CARD_SHADOW,
-                padding: 20,
-                cursor: 'pointer',
-                transition: 'border-color 0.15s, box-shadow 0.15s',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = NAVY;
-                (e.currentTarget as HTMLDivElement).style.boxShadow = `0 2px 8px rgba(30,77,107,0.12)`;
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = connected ? '#bbf7d0' : CARD_BORDER;
-                (e.currentTarget as HTMLDivElement).style.boxShadow = CARD_SHADOW;
-              }}
+              className={`bg-white rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-5 cursor-pointer transition-[border-color,box-shadow] duration-150 border ${connected ? 'border-[#bbf7d0]' : 'border-[#D1D9E6]'} hover:border-[#163a5f] hover:shadow-[0_2px_8px_rgba(30,77,107,0.12)]`}
             >
               {/* Top: icon + status */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 10,
-                  background: PANEL_BG,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+              <div className="flex justify-between items-start mb-3.5">
+                <div className="w-11 h-11 rounded-[10px] bg-[#EEF1F7] flex items-center justify-center">
                   <def.icon size={22} color={NAVY} />
                 </div>
                 {connected ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 10, background: '#f0fdf4' }}>
+                  <div className="flex items-center gap-1 px-2.5 py-[3px] rounded-[10px] bg-[#f0fdf4]">
                     <CheckCircle2 size={14} color="#16a34a" />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#15803d' }}>Connected</span>
+                    <span className="text-[11px] font-bold text-[#15803d]">Connected</span>
                   </div>
                 ) : (
-                  <span style={{ fontSize: 11, fontWeight: 600, color: TEXT_TERTIARY, padding: '3px 10px', borderRadius: 10, background: PANEL_BG }}>
+                  <span className="text-[11px] font-semibold text-[#6B7F96] px-2.5 py-[3px] rounded-[10px] bg-[#EEF1F7]">
                     Not Connected
                   </span>
                 )}
               </div>
 
               {/* Name + category */}
-              <div style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: BODY_TEXT }}>{def.name}</span>
-                <span style={{ marginLeft: 8, fontSize: 11, color: TEXT_TERTIARY, fontWeight: 600 }}>{def.category}</span>
+              <div className="mb-1.5">
+                <span className="text-[15px] font-bold text-[#0B1628]">{def.name}</span>
+                <span className="ml-2 text-[11px] text-[#6B7F96] font-semibold">{def.category}</span>
               </div>
 
               {/* Description */}
-              <p style={{ color: MUTED, fontSize: 13, margin: '0 0 14px', lineHeight: 1.5 }}>
+              <p className="text-[#3D5068] text-[13px] mt-0 mb-3.5 leading-normal">
                 {def.description}
               </p>
 
               {/* Action */}
               <button
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: 6,
-                  border: `1px solid ${connected ? CARD_BORDER : NAVY}`,
-                  background: connected ? '#fff' : NAVY,
-                  color: connected ? BODY_TEXT : '#fff',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
+                className={`py-1.5 px-3.5 rounded-md text-[13px] font-semibold cursor-pointer ${connected ? 'border border-[#D1D9E6] bg-white text-[#0B1628]' : 'border border-[#163a5f] bg-[#163a5f] text-white'}`}
                 onClick={e => {
                   e.stopPropagation();
                   setSelectedIntegration({ ...def, connected });

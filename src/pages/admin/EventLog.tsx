@@ -8,11 +8,6 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const PAGE_SIZE = 50;
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
   INFO:  { bg: '#F0FFF4', text: '#059669' },
@@ -33,14 +28,14 @@ interface EventRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="rounded-md animate-pulse bg-[#E5E7EB]" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 360, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[360px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -116,62 +111,58 @@ export default function EventLog() {
     URL.revokeObjectURL(url);
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 12,
-  };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Event Log' }]} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Event Log</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+          <h1 className="text-2xl font-bold tracking-tight text-navy">Event Log</h1>
+          <p className="text-[13px] text-[#6B7F96] mt-1">
             {totalCount !== null ? `${totalCount.toLocaleString()} events` : '—'}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+        <div className="flex gap-3">
+          <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
             <input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)} />
             Auto-refresh (10s)
           </label>
-          <button onClick={exportCsv} style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_SEC, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
-          <button onClick={loadEvents} style={{ padding: '6px 14px', background: GOLD, border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Refresh</button>
+          <button onClick={exportCsv} className="py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-[#6B7F96] text-xs cursor-pointer">Export CSV</button>
+          <button onClick={loadEvents} className="py-1.5 px-3.5 bg-gold border-none rounded-md text-white text-xs font-bold cursor-pointer">Refresh</button>
         </div>
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <div className="flex gap-3 flex-wrap">
         <select value={levelFilter} onChange={e => { setLevelFilter(e.target.value); setPage(0); }}
-          style={inputStyle}>
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
           <option value="all">All Levels</option>
           {['INFO', 'WARN', 'ERROR', 'DEBUG'].map(l => <option key={l} value={l}>{l}</option>)}
         </select>
         <select value={categoryFilter} onChange={e => { setCategoryFilter(e.target.value); setPage(0); }}
-          style={inputStyle}>
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
           {CATEGORIES.map(c => <option key={c} value={c}>{c === 'all' ? 'All Categories' : c}</option>)}
         </select>
         <input
           value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
           placeholder="Search messages..."
-          style={{ ...inputStyle, flex: 1, minWidth: 200 }}
+          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[200px]"
         />
       </div>
 
       {/* Table */}
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : events.length === 0 ? (
           <EmptyState icon="📋" title="No events logged yet" subtitle="Events will appear here as EvidLY runs." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E2D9C8]">
                 {['Time', 'Level', 'Category', 'Message'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                  <th key={h} className="text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -182,23 +173,21 @@ export default function EventLog() {
                 return (
                   <tr key={e.id}
                     onClick={() => setExpandedId(isExpanded ? null : e.id)}
-                    style={{ borderBottom: `1px solid ${BORDER}`, cursor: e.metadata ? 'pointer' : 'default', transition: 'background 0.15s' }}
-                    onMouseEnter={ev => ev.currentTarget.style.background = '#F9FAFB'}
-                    onMouseLeave={ev => ev.currentTarget.style.background = 'transparent'}
+                    className={`border-b border-[#E2D9C8] transition-colors hover:bg-[#F9FAFB] ${e.metadata ? 'cursor-pointer' : 'cursor-default'}`}
                   >
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, whiteSpace: 'nowrap', fontSize: 12 }}>
+                    <td className="py-2.5 px-3.5 text-[#6B7F96] whitespace-nowrap text-xs">
                       {new Date(e.event_time).toLocaleString()}
                     </td>
-                    <td style={{ padding: '10px 14px' }}>
-                      <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: lc.bg, color: lc.text }}>
+                    <td className="py-2.5 px-3.5">
+                      <span className="inline-block py-0.5 px-2 rounded text-[10px] font-bold" style={{ background: lc.bg, color: lc.text }}>
                         {e.level}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{e.category || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: NAVY }}>
+                    <td className="py-2.5 px-3.5 text-[#6B7F96] text-xs">{e.category || '—'}</td>
+                    <td className="py-2.5 px-3.5 text-navy">
                       {e.message}
                       {isExpanded && e.metadata && (
-                        <pre style={{ marginTop: 8, padding: 12, background: '#F3F4F6', borderRadius: 6, fontSize: 11, color: TEXT_SEC, overflow: 'auto', maxHeight: 200 }}>
+                        <pre className="mt-2 p-3 bg-[#F3F4F6] rounded-md text-[11px] text-[#6B7F96] overflow-auto max-h-[200px]">
                           {JSON.stringify(e.metadata, null, 2)}
                         </pre>
                       )}
@@ -213,16 +202,16 @@ export default function EventLog() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+        <div className="flex justify-center gap-2">
           <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: page === 0 ? TEXT_MUTED : NAVY, fontSize: 12, cursor: page === 0 ? 'default' : 'pointer' }}>
+            className={`py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-xs ${page === 0 ? 'text-[#9CA3AF] cursor-default' : 'text-navy cursor-pointer'}`}>
             Previous
           </button>
-          <span style={{ padding: '6px 14px', fontSize: 12, color: TEXT_SEC }}>
+          <span className="py-1.5 px-3.5 text-xs text-[#6B7F96]">
             Page {page + 1} of {totalPages}
           </span>
           <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}
-            style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: page >= totalPages - 1 ? TEXT_MUTED : NAVY, fontSize: 12, cursor: page >= totalPages - 1 ? 'default' : 'pointer' }}>
+            className={`py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-xs ${page >= totalPages - 1 ? 'text-[#9CA3AF] cursor-default' : 'text-navy cursor-pointer'}`}>
             Next
           </button>
         </div>

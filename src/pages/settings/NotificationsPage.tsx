@@ -31,43 +31,18 @@ const CHANNEL_META: { key: Channel; label: string; icon: typeof Mail; desc: stri
   { key: 'push', label: 'Push', icon: Smartphone, desc: 'Receive push notifications in browser' },
 ];
 
-const cardStyle: React.CSSProperties = {
-  background: CARD_BG,
-  border: `1px solid ${CARD_BORDER}`,
-  borderRadius: 12,
-  boxShadow: CARD_SHADOW,
-  padding: 24,
-  marginBottom: 20,
-};
+const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
     <button
       onClick={() => !disabled && onChange(!checked)}
-      style={{
-        width: 44,
-        height: 24,
-        borderRadius: 12,
-        border: 'none',
-        background: checked ? NAVY : '#d1d5db',
-        position: 'relative',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'background 0.2s',
-        flexShrink: 0,
-        opacity: disabled ? 0.4 : 1,
-      }}
+      className={`w-[44px] h-6 rounded-xl border-none relative shrink-0 transition-colors duration-200 ${checked ? 'bg-[#163a5f]' : 'bg-gray-300'} ${disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
     >
-      <div style={{
-        width: 18,
-        height: 18,
-        borderRadius: '50%',
-        background: '#fff',
-        position: 'absolute',
-        top: 3,
-        left: checked ? 23 : 3,
-        transition: 'left 0.2s',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-      }} />
+      <div
+        className="w-[18px] h-[18px] rounded-full bg-white absolute top-[3px] shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-[left] duration-200"
+        style={{ left: checked ? 23 : 3 }}
+      />
     </button>
   );
 }
@@ -180,9 +155,9 @@ export function NotificationsPage() {
   if (isLoading) {
     return (
       <div style={{ ...FONT }}>
-        <div style={{ ...cardStyle, height: 120 }}>
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 20, width: 200, marginBottom: 16 }} />
-          <div style={{ background: PANEL_BG, borderRadius: 8, height: 14, width: '50%' }} />
+        <div className={`${cardClasses} h-[120px]`}>
+          <div className="bg-[#EEF1F7] rounded-lg h-5 w-[200px] mb-4" />
+          <div className="bg-[#EEF1F7] rounded-lg h-3.5 w-1/2" />
         </div>
       </div>
     );
@@ -191,18 +166,18 @@ export function NotificationsPage() {
   return (
     <div style={{ ...FONT }}>
       {/* Global Channel Toggles */}
-      <div style={cardStyle}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 16px' }}>
+      <div className={cardClasses}>
+        <h2 className="flex items-center gap-2 text-base font-bold text-[#0B1628] mb-4 mt-0">
           <Bell size={18} color={NAVY} /> Notification Channels
         </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="flex flex-col gap-3.5">
           {CHANNEL_META.map(ch => (
-            <div key={ch.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div key={ch.key} className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
                 <ch.icon size={18} color={MUTED} />
                 <div>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: BODY_TEXT }}>{ch.label} Notifications</span>
-                  <p style={{ fontSize: 12, color: MUTED, margin: '2px 0 0' }}>{ch.desc}</p>
+                  <span className="text-sm font-semibold text-[#0B1628]">{ch.label} Notifications</span>
+                  <p className="text-xs text-[#3D5068] mt-0.5 mb-0">{ch.desc}</p>
                 </div>
               </div>
               <ToggleSwitch checked={globalToggles[ch.key]} onChange={v => toggleGlobal(ch.key, v)} />
@@ -212,21 +187,21 @@ export function NotificationsPage() {
       </div>
 
       {/* Per-Category Settings */}
-      <div style={cardStyle}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, margin: '0 0 4px' }}>
+      <div className={cardClasses}>
+        <h2 className="text-base font-bold text-[#0B1628] mb-1 mt-0">
           Category Preferences
         </h2>
-        <p style={{ fontSize: 12, color: MUTED, margin: '0 0 16px' }}>
+        <p className="text-xs text-[#3D5068] mb-4 mt-0">
           Control which notification categories reach you on each channel.
         </p>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ background: PANEL_BG, borderBottom: `2px solid ${CARD_BORDER}` }}>
-                <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT, minWidth: 200 }}>Category</th>
+              <tr className="bg-[#EEF1F7] border-b-2 border-[#D1D9E6]">
+                <th className="text-left px-3.5 py-2.5 font-semibold text-[#0B1628] min-w-[200px]">Category</th>
                 {CHANNEL_META.map(ch => (
-                  <th key={ch.key} style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: BODY_TEXT, minWidth: 80 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                  <th key={ch.key} className="text-center px-3.5 py-2.5 font-semibold text-[#0B1628] min-w-[80px]">
+                    <div className="flex items-center justify-center gap-1">
                       <ch.icon size={14} /> {ch.label}
                     </div>
                   </th>
@@ -235,38 +210,27 @@ export function NotificationsPage() {
             </thead>
             <tbody>
               {NOTIFICATION_CATEGORIES.map(cat => (
-                <tr key={cat.key} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-                  <td style={{ padding: '10px 14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <tr key={cat.key} className="border-b border-[#D1D9E6]">
+                  <td className="px-3.5 py-2.5">
+                    <div className="flex items-center gap-2">
                       <div
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          backgroundColor: cat.color,
-                          flexShrink: 0,
-                        }}
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: cat.color }}
                       />
                       <div>
-                        <span style={{ fontWeight: 600, color: BODY_TEXT }}>{cat.label}</span>
-                        <p style={{ fontSize: 11, color: MUTED, margin: '2px 0 0' }}>{cat.description}</p>
+                        <span className="font-semibold text-[#0B1628]">{cat.label}</span>
+                        <p className="text-[11px] text-[#3D5068] mt-0.5 mb-0">{cat.description}</p>
                       </div>
                     </div>
                   </td>
                   {CHANNEL_META.map(ch => (
-                    <td key={ch.key} style={{ textAlign: 'center', padding: '10px 14px' }}>
+                    <td key={ch.key} className="text-center px-3.5 py-2.5">
                       <input
                         type="checkbox"
                         checked={prefs[cat.key]?.[ch.key] || false}
                         onChange={() => toggleCategory(cat.key, ch.key)}
                         disabled={!globalToggles[ch.key]}
-                        style={{
-                          width: 18,
-                          height: 18,
-                          accentColor: NAVY,
-                          cursor: globalToggles[ch.key] ? 'pointer' : 'not-allowed',
-                          opacity: globalToggles[ch.key] ? 1 : 0.4,
-                        }}
+                        className={`w-[18px] h-[18px] accent-[#163a5f] ${globalToggles[ch.key] ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-40'}`}
                       />
                     </td>
                   ))}
@@ -278,24 +242,11 @@ export function NotificationsPage() {
       </div>
 
       {/* Save */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div className="flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 24px',
-            borderRadius: 8,
-            border: 'none',
-            background: NAVY,
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: saving ? 'not-allowed' : 'pointer',
-            opacity: saving ? 0.7 : 1,
-          }}
+          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Preferences'}

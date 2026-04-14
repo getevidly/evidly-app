@@ -90,8 +90,8 @@ function CredentialsCard({ demo }) {
   };
 
   return (
-    <div className="bg-[#1E2D4D] text-white rounded-xl p-6">
-      <p className="text-[#A08C5A] text-xs uppercase tracking-wider mb-4">
+    <div className="bg-navy text-white rounded-xl p-6">
+      <p className="text-gold text-xs uppercase tracking-wider mb-4">
         Demo Account Credentials
       </p>
       <div className="space-y-3 text-sm">
@@ -103,10 +103,10 @@ function CredentialsCard({ demo }) {
           ['Type', demo.partner_type],
         ].map(([label, value, isLink]) => (
           <div key={label} className="flex justify-between">
-            <span className="text-[#1E2D4D]/30">{label}:</span>
+            <span className="text-navy/30">{label}:</span>
             {isLink ? (
               <a href={value} target="_blank" rel="noopener noreferrer"
-                className="text-[#A08C5A] underline">{value}</a>
+                className="text-gold underline">{value}</a>
             ) : (
               <span className="text-white font-mono">{value}</span>
             )}
@@ -119,7 +119,7 @@ function CredentialsCard({ demo }) {
           <Copy size={14} /> Copy Credentials
         </button>
         <a href={demo.demo_url} target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#A08C5A] hover:bg-[#8a7a50] rounded-lg text-sm text-white transition-colors">
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gold hover:bg-gold-dark rounded-lg text-sm text-white transition-colors">
           <ExternalLink size={14} /> Open Demo
         </a>
       </div>
@@ -132,9 +132,9 @@ function StatusBadge({ status }) {
   const colors = {
     pending: 'bg-amber-50 text-amber-700',
     active: 'bg-emerald-50 text-emerald-700',
-    completed: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80',
+    completed: 'bg-navy/5 text-navy/80',
     expired: 'bg-red-50 text-red-700',
-    cleaned: 'bg-[#FAF7F0] text-[#1E2D4D]/30',
+    cleaned: 'bg-cream text-navy/30',
   };
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || colors.pending}`}>
@@ -363,8 +363,8 @@ export default function PartnerDemos() {
         { label: 'Partner Demos' },
       ]} />
 
-      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">Partner Demos</h1>
-      <p className="text-sm text-[#1E2D4D]/50 mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-navy mb-1">Partner Demos</h1>
+      <p className="text-sm text-navy/50 mb-6">
         Create and manage partner demo environments for vendor, association, carrier, and integration partners
       </p>
 
@@ -373,18 +373,18 @@ export default function PartnerDemos() {
         {[
           { label: 'Active', count: activeDemos.length, color: 'text-green-700', bg: 'bg-green-50' },
           { label: 'Completed', count: completedDemos.filter(d => d.status === 'completed').length, color: 'text-blue-700', bg: 'bg-blue-50' },
-          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-[#1E2D4D]/50', bg: 'bg-[#FAF7F0]' },
-          { label: 'Total', count: demos.length, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
+          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-navy/50', bg: 'bg-cream' },
+          { label: 'Total', count: demos.length, color: 'text-gold', bg: 'bg-cream' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
-            <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider">{s.label}</p>
+            <p className="text-xs text-navy/50 uppercase tracking-wider">{s.label}</p>
             <p className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.count}</p>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-[#1E2D4D]/10 mb-6">
+      <div className="flex gap-1 border-b border-navy/10 mb-6">
         {[
           { id: 'create', label: 'Create Partner Demo', icon: Plus },
           { id: 'active', label: 'Active Demos', icon: Play },
@@ -396,8 +396,8 @@ export default function PartnerDemos() {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
-                  ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                  ? 'border-navy text-navy'
+                  : 'border-transparent text-navy/50 hover:text-navy/80'
               }`}>
               <Icon size={15} />
               {tab.label}
@@ -422,7 +422,7 @@ export default function PartnerDemos() {
               </div>
               <CredentialsCard demo={createdDemo} />
               <button onClick={() => { setCreatedDemo(null); setSelectedType(null); }}
-                className="text-sm text-[#1E2D4D] underline">
+                className="text-sm text-navy underline">
                 Create another demo
               </button>
             </div>
@@ -430,7 +430,7 @@ export default function PartnerDemos() {
             <div className="space-y-6">
               {/* Step 1: Partner type selection */}
               <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                   1. Select Partner Type
                 </legend>
                 <div className="grid grid-cols-1 gap-3">
@@ -442,19 +442,19 @@ export default function PartnerDemos() {
                         onClick={() => setSelectedType(pt.id)}
                         className={`text-left p-4 rounded-xl border-2 transition-all ${
                           isSelected
-                            ? 'border-[#1E2D4D] bg-[#FAF7F0]'
-                            : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15 bg-white'
+                            ? 'border-navy bg-cream'
+                            : 'border-navy/10 hover:border-navy/15 bg-white'
                         }`}>
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-lg ${pt.bg}`}>
                             <Icon size={20} className={pt.color} />
                           </div>
                           <div>
-                            <p className="font-medium text-[#1E2D4D]">{pt.label}</p>
-                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{pt.description}</p>
+                            <p className="font-medium text-navy">{pt.label}</p>
+                            <p className="text-xs text-navy/50 mt-0.5">{pt.description}</p>
                           </div>
                           {isSelected && (
-                            <CheckCircle2 size={20} className="ml-auto text-[#1E2D4D]" />
+                            <CheckCircle2 size={20} className="ml-auto text-navy" />
                           )}
                         </div>
                       </button>
@@ -467,14 +467,14 @@ export default function PartnerDemos() {
                 <>
                   {/* Step 2: Partner info */}
                   <fieldset className="space-y-3">
-                    <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                    <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                       2. Partner Information
                     </legend>
                     <label className="block">
-                      <span className="text-xs text-[#1E2D4D]/50">Company Name *</span>
+                      <span className="text-xs text-navy/50">Company Name *</span>
                       <input value={form.company_name}
                         onChange={e => updateForm('company_name', e.target.value)}
-                        className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                        className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                         placeholder={
                           selectedType === 'vendor' ? 'Cleaning Pros Plus' :
                           selectedType === 'association' ? 'California Restaurant Association' :
@@ -485,17 +485,17 @@ export default function PartnerDemos() {
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <label className="block">
-                        <span className="text-xs text-[#1E2D4D]/50">Contact Name</span>
+                        <span className="text-xs text-navy/50">Contact Name</span>
                         <input value={form.contact_name}
                           onChange={e => updateForm('contact_name', e.target.value)}
-                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                           placeholder="Jane Smith" />
                       </label>
                       <label className="block">
-                        <span className="text-xs text-[#1E2D4D]/50">Contact Email</span>
+                        <span className="text-xs text-navy/50">Contact Email</span>
                         <input type="email" value={form.contact_email}
                           onChange={e => updateForm('contact_email', e.target.value)}
-                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                           placeholder="jane@partner.com" />
                       </label>
                     </div>
@@ -503,16 +503,16 @@ export default function PartnerDemos() {
 
                   {/* Step 3: Type-specific fields */}
                   <fieldset className="space-y-3">
-                    <legend className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wider mb-2">
+                    <legend className="text-sm font-semibold text-navy uppercase tracking-wider mb-2">
                       3. Configuration
                     </legend>
 
                     {selectedType === 'vendor' && (
                       <label className="block">
-                        <span className="text-xs text-[#1E2D4D]/50">Service Types</span>
+                        <span className="text-xs text-navy/50">Service Types</span>
                         <input value={form.service_types}
                           onChange={e => updateForm('service_types', e.target.value)}
-                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                           placeholder="hood_cleaning, fire_suppression" />
                       </label>
                     )}
@@ -520,16 +520,16 @@ export default function PartnerDemos() {
                     {selectedType === 'association' && (
                       <>
                         <label className="block">
-                          <span className="text-xs text-[#1E2D4D]/50">Estimated Member Count</span>
+                          <span className="text-xs text-navy/50">Estimated Member Count</span>
                           <input type="number" value={form.member_count} min={5} max={50}
                             onChange={e => updateForm('member_count', parseInt(e.target.value) || 10)}
-                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                            className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy" />
                         </label>
                         <label className="block">
-                          <span className="text-xs text-[#1E2D4D]/50">State(s)</span>
+                          <span className="text-xs text-navy/50">State(s)</span>
                           <input value={form.states}
                             onChange={e => updateForm('states', e.target.value)}
-                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                            className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                             placeholder="California" />
                         </label>
                       </>
@@ -537,10 +537,10 @@ export default function PartnerDemos() {
 
                     {selectedType === 'integration' && (
                       <label className="block">
-                        <span className="text-xs text-[#1E2D4D]/50">Integration Type</span>
+                        <span className="text-xs text-navy/50">Integration Type</span>
                         <select value={form.integration_type}
                           onChange={e => updateForm('integration_type', e.target.value)}
-                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                          className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy">
                           {INTEGRATION_TYPES.map(t => (
                             <option key={t.value} value={t.value}>{t.label}</option>
                           ))}
@@ -550,10 +550,10 @@ export default function PartnerDemos() {
 
                     {selectedType === 'carrier' && (
                       <label className="block">
-                        <span className="text-xs text-[#1E2D4D]/50">Coverage Area</span>
+                        <span className="text-xs text-navy/50">Coverage Area</span>
                         <input value={form.coverage_area}
                           onChange={e => updateForm('coverage_area', e.target.value)}
-                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy"
                           placeholder="Central California" />
                       </label>
                     )}
@@ -561,23 +561,23 @@ export default function PartnerDemos() {
                     {selectedType === 'tribal_casino' && (
                       <>
                         <label className="block">
-                          <span className="text-xs text-[#1E2D4D]/50">Tribe</span>
+                          <span className="text-xs text-navy/50">Tribe</span>
                           <select value={form.tribe_index}
                             onChange={e => updateForm('tribe_index', parseInt(e.target.value))}
-                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
+                            className="mt-1 w-full border border-navy/15 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2/20 focus:border-navy">
                             {TRIBAL_OPTIONS.map((t, i) => (
                               <option key={i} value={i}>{t.name} — {t.casino}</option>
                             ))}
                           </select>
                         </label>
                         <label className="block">
-                          <span className="text-xs text-[#1E2D4D]/50">Food Outlet Count</span>
+                          <span className="text-xs text-navy/50">Food Outlet Count</span>
                           <div className="flex items-center gap-3 mt-1">
                             <button onClick={() => updateForm('outlet_count', Math.max(1, form.outlet_count - 1))}
-                              className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">-</button>
-                            <span className="text-lg font-bold text-[#1E2D4D] w-8 text-center">{form.outlet_count}</span>
+                              className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">-</button>
+                            <span className="text-lg font-bold text-navy w-8 text-center">{form.outlet_count}</span>
                             <button onClick={() => updateForm('outlet_count', Math.min(8, form.outlet_count + 1))}
-                              className="w-8 h-8 rounded-xl border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">+</button>
+                              className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">+</button>
                           </div>
                         </label>
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -595,7 +595,7 @@ export default function PartnerDemos() {
 
                   {/* Submit */}
                   <button onClick={handleCreateDemo} disabled={creating}
-                    className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
+                    className="w-full py-3 bg-navy text-white rounded-xl text-sm font-semibold hover:bg-navy-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
                     {creating ? (
                       <span className="flex items-center justify-center gap-2">
                         <RefreshCw size={14} className="animate-spin" /> Generating Partner Demo...
@@ -616,14 +616,14 @@ export default function PartnerDemos() {
       {/* ── Tab: Active Demos ────────────────────────────────────── */}
       {activeTab === 'active' && (
         <div className="space-y-4">
-          {loading && <p className="text-[#1E2D4D]/30 text-sm">Loading demos...</p>}
+          {loading && <p className="text-navy/30 text-sm">Loading demos...</p>}
           {!loading && activeDemos.length === 0 && (
-            <div className="text-center py-12 text-[#1E2D4D]/30">
+            <div className="text-center py-12 text-navy/30">
               <Handshake size={40} className="mx-auto mb-3 opacity-40" />
               <p className="font-medium">No active partner demos</p>
               <p className="text-sm mt-1">Create a new partner demo to get started</p>
               <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]">
+                className="mt-3 px-4 py-2 bg-navy text-white rounded-lg text-sm hover:bg-navy-dark transition-all duration-150 active:scale-[0.98]">
                 <Plus size={14} className="inline mr-1" /> Create Demo
               </button>
             </div>
@@ -632,15 +632,15 @@ export default function PartnerDemos() {
             const typeConfig = getTypeConfig(demo.partner_type);
             const TypeIcon = typeConfig?.icon || Handshake;
             return (
-              <div key={demo.id} className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5">
+              <div key={demo.id} className="bg-white border border-navy/10 rounded-xl p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${typeConfig?.bg || 'bg-[#FAF7F0]'}`}>
-                      <TypeIcon size={20} className={typeConfig?.color || 'text-[#1E2D4D]/80'} />
+                    <div className={`p-2 rounded-lg ${typeConfig?.bg || 'bg-cream'}`}>
+                      <TypeIcon size={20} className={typeConfig?.color || 'text-navy/80'} />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[#1E2D4D]">{demo.partner_company}</h3>
-                      <p className="text-sm text-[#1E2D4D]/50">
+                      <h3 className="font-semibold text-navy">{demo.partner_company}</h3>
+                      <p className="text-sm text-navy/50">
                         {typeConfig?.label || demo.partner_type}
                         {demo.contact_name && ` · ${demo.contact_name}`}
                       </p>
@@ -649,7 +649,7 @@ export default function PartnerDemos() {
                   <div className="flex items-center gap-2">
                     <StatusBadge status={demo.status} />
                     <button onClick={() => handleExtend(demo.id)}
-                      className="px-3 py-1.5 text-[#1E2D4D] border border-[#1E2D4D]/10 rounded-xl text-xs hover:bg-[#FAF7F0] transition-colors">
+                      className="px-3 py-1.5 text-navy border border-navy/10 rounded-xl text-xs hover:bg-cream transition-colors">
                       <Clock size={12} className="inline mr-1" /> Extend 7d
                     </button>
                     <button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
@@ -660,7 +660,7 @@ export default function PartnerDemos() {
                 </div>
                 <CredentialsCard demo={demo} />
                 {demo.cleanup_scheduled_for && (
-                  <p className="text-xs text-[#1E2D4D]/30 mt-3">
+                  <p className="text-xs text-navy/30 mt-3">
                     <Clock size={12} className="inline mr-1" />
                     Auto-cleanup: {new Date(demo.cleanup_scheduled_for).toLocaleDateString()}
                   </p>
@@ -675,23 +675,23 @@ export default function PartnerDemos() {
       {activeTab === 'completed' && (
         <div className="space-y-4">
           {completedDemos.length === 0 && (
-            <p className="text-center text-[#1E2D4D]/30 py-8">No completed demos yet.</p>
+            <p className="text-center text-navy/30 py-8">No completed demos yet.</p>
           )}
           {completedDemos.map(demo => {
             const typeConfig = getTypeConfig(demo.partner_type);
             return (
               <div key={demo.id}
-                className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 flex items-center justify-between">
+                className="bg-white border border-navy/10 rounded-xl p-5 flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-[#1E2D4D]">
+                  <h3 className="font-medium text-navy">
                     {demo.partner_company}
                   </h3>
-                  <p className="text-sm text-[#1E2D4D]/50">
+                  <p className="text-sm text-navy/50">
                     {typeConfig?.label || demo.partner_type}
                     {demo.completed_at && ` · Completed ${new Date(demo.completed_at).toLocaleDateString()}`}
                   </p>
                   {demo.status === 'cleaned' && demo.cleaned_at && (
-                    <p className="text-xs text-[#1E2D4D]/30 mt-1">
+                    <p className="text-xs text-navy/30 mt-1">
                       Cleaned {new Date(demo.cleaned_at).toLocaleString()}
                     </p>
                   )}

@@ -5,8 +5,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 
-const NAVY = '#1E2D4D';
-
 interface ChannelRow {
   channel: string;
   leads: number;
@@ -139,22 +137,22 @@ export default function GtmDashboard() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-5xl" style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
+    <div className="p-8 max-w-5xl font-['DM_Sans','Inter',sans-serif]">
       <AdminBreadcrumb crumbs={[{ label: 'GTM Dashboard' }]} />
 
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>GTM Dashboard</h1>
-        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Go-to-market metrics — pipeline velocity, conversion rates, channel performance.</p>
+      <div className="mb-6">
+        <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">GTM Dashboard</h1>
+        <p className="text-[13px] text-gray-500 mt-1 mb-0 font-['Inter',sans-serif]">Go-to-market metrics — pipeline velocity, conversion rates, channel performance.</p>
       </div>
 
       {/* Metric cards */}
-      <div style={{ marginBottom: 32 }}>
+      <div className="mb-8">
         <StatCardRow cards={[
           { label: 'ACTIVE DEMOS', value: loading ? '…' : fmt(activeDemos) },
           { label: 'PIPELINE VALUE', value: loading ? '…' : fmtDollar(pipelineValue), valueColor: 'gold' },
@@ -164,26 +162,26 @@ export default function GtmDashboard() {
       </div>
 
       {/* Channel performance table */}
-      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden mb-8">
-        <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">Channel Performance</h2>
+      <div className="bg-white border border-navy/10 rounded-xl overflow-hidden mb-8">
+        <div className="px-5 py-3 border-b border-navy/5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-navy/50">Channel Performance</h2>
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-              <th className="text-left px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Channel</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Leads</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Demos</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Conversions</th>
+            <tr className="border-b border-navy/5 hover:bg-navy/[0.02] transition-colors">
+              <th className="text-left px-5 py-2.5 text-xs font-semibold text-navy/50 uppercase tracking-wider">Channel</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-navy/50 uppercase tracking-wider">Leads</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-navy/50 uppercase tracking-wider">Demos</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-navy/50 uppercase tracking-wider">Conversions</th>
             </tr>
           </thead>
           <tbody>
             {channels.map(row => (
-              <tr key={row.channel} className="border-b border-[#1E2D4D]/3 last:border-0">
-                <td className="px-5 py-3 font-medium" style={{ color: NAVY }}>{row.channel}</td>
-                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.leads}</td>
-                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.demos}</td>
-                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.conversions}</td>
+              <tr key={row.channel} className="border-b border-navy/3 last:border-0">
+                <td className="px-5 py-3 font-medium text-navy">{row.channel}</td>
+                <td className="px-5 py-3 text-right text-navy/50">{row.leads}</td>
+                <td className="px-5 py-3 text-right text-navy/50">{row.demos}</td>
+                <td className="px-5 py-3 text-right text-navy/50">{row.conversions}</td>
               </tr>
             ))}
           </tbody>
@@ -191,9 +189,9 @@ export default function GtmDashboard() {
       </div>
 
       {/* Status banner */}
-      <div className="bg-[#FAF7F0] border border-[#1E2D4D]/10 rounded-xl p-5 text-center">
-        <p className="text-sm font-medium text-[#1E2D4D]/50">Metrics populate automatically as demos are launched and prospects convert.</p>
-        <p className="text-xs text-[#1E2D4D]/30 mt-1">Connect data sources in Settings to enable live tracking.</p>
+      <div className="bg-cream border border-navy/10 rounded-xl p-5 text-center">
+        <p className="text-sm font-medium text-navy/50">Metrics populate automatically as demos are launched and prospects convert.</p>
+        <p className="text-xs text-navy/30 mt-1">Connect data sources in Settings to enable live tracking.</p>
       </div>
     </div>
   );

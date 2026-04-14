@@ -65,17 +65,6 @@ import {
 
 // ── Constants ────────────────────────────────────────────────
 
-const MIDNIGHT_NAVY = '#0B1628';
-const BRAND_BLUE = '#1E2D4D';
-const BRAND_BLUE_HOVER = '#2A3F6B';
-const BRAND_GOLD = '#A08C5A';
-const PAGE_BG = '#F4F6FA';
-const CARD_BG = '#FFFFFF';
-const CARD_BORDER = '#D1D9E6';
-const TEXT_PRIMARY = '#0B1628';
-const TEXT_SECONDARY = '#3D5068';
-const TEXT_TERTIARY = '#6B7F96';
-
 const TIER_COLORS: Record<RfpRelevanceTier, { bg: string; text: string; dot: string; label: string }> = {
   high:       { bg: '#f0fdf4', text: '#16a34a', dot: '#22c55e', label: 'High' },
   medium:     { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b', label: 'Medium' },
@@ -172,40 +161,31 @@ function FilterBar({ filters, setFilters, resetFilters }: {
   }
 
   return (
-    <div className="rounded-xl border" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
+    <div className="rounded-xl border border-[#D1D9E6] bg-white">
       {/* Search + toggle row */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: TEXT_TERTIARY }} />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7F96]" />
           <input
             type="text"
             placeholder="Search RFPs by title, entity, keywords…"
             value={filters.search}
             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2"
-            style={{
-              borderColor: CARD_BORDER,
-              color: TEXT_PRIMARY,
-              background: PAGE_BG,
-            }}
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-[#D1D9E6] text-[#0B1628] bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2"
           />
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-colors"
-          style={{
-            borderColor: hasActiveFilters ? BRAND_GOLD : CARD_BORDER,
-            color: hasActiveFilters ? BRAND_GOLD : TEXT_SECONDARY,
-            background: hasActiveFilters ? `${BRAND_GOLD}10` : 'transparent',
-          }}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-colors ${
+            hasActiveFilters
+              ? 'border-gold text-gold bg-gold/[0.06]'
+              : 'border-[#D1D9E6] text-[#3D5068] bg-transparent'
+          }`}
         >
           <Filter size={14} />
           Filters
           {activeCount > 0 && (
-            <span
-              className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full"
-              style={{ background: `${BRAND_GOLD}20`, color: BRAND_GOLD }}
-            >
+            <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full bg-gold/[0.12] text-gold">
               {activeCount}
             </span>
           )}
@@ -214,8 +194,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="text-xs px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
-            style={{ color: TEXT_TERTIARY }}
+            className="text-xs px-2 py-1 rounded text-[#6B7F96] hover:bg-navy/5 transition-colors"
           >
             Clear all
           </button>
@@ -224,7 +203,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
       {/* Expanded filters */}
       {expanded && (
-        <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 border-t pt-3" style={{ borderColor: CARD_BORDER }}>
+        <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 border-t border-[#D1D9E6] pt-3">
           {/* Relevance Tier */}
           <FilterGroup label="Relevance">
             {(['high', 'medium', 'low'] as RfpRelevanceTier[]).map(tier => (
@@ -276,10 +255,9 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* State */}
           <div className="col-span-2 md:col-span-1">
-            <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>State</label>
+            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">State</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
-              style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
+              className="w-full text-sm px-3 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
               value={filters.state[0] ?? ''}
               onChange={e => setFilters(f => ({ ...f, state: e.target.value ? [e.target.value] : [] }))}
             >
@@ -304,10 +282,9 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* NAICS Code */}
           <div>
-            <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>NAICS Code</label>
+            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">NAICS Code</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
-              style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
+              className="w-full text-sm px-3 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
               value={filters.naics_code}
               onChange={e => setFilters(f => ({ ...f, naics_code: e.target.value }))}
             >
@@ -320,19 +297,17 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* Date Range */}
           <div>
-            <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>Due Date Range</label>
+            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">Due Date Range</label>
             <div className="flex gap-2">
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
-                style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
                 value={filters.date_from ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_from: e.target.value || null }))}
               />
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
-                style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
                 value={filters.date_to ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_to: e.target.value || null }))}
               />
@@ -347,7 +322,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>{label}</label>
+      <label className="text-xs font-medium mb-1 block text-[#6B7F96]">{label}</label>
       <div className="flex flex-wrap gap-1">{children}</div>
     </div>
   );
@@ -362,12 +337,11 @@ function FilterChip({ label, active, onClick, dotColor }: {
   return (
     <button
       onClick={onClick}
-      className="px-2 py-1 text-xs rounded-full border transition-all"
-      style={{
-        borderColor: active ? BRAND_BLUE : CARD_BORDER,
-        background: active ? `${BRAND_BLUE}12` : 'transparent',
-        color: active ? BRAND_BLUE : TEXT_SECONDARY,
-      }}
+      className={`px-2 py-1 text-xs rounded-full border transition-all ${
+        active
+          ? 'border-navy bg-navy/[0.07] text-navy'
+          : 'border-[#D1D9E6] bg-transparent text-[#3D5068]'
+      }`}
     >
       {dotColor && (
         <span
@@ -398,8 +372,9 @@ function RfpCard({ item, onSelect, onAction }: {
 
   return (
     <div
-      className="rounded-xl border p-4 transition-shadow hover:shadow-md cursor-pointer"
-      style={{ background: CARD_BG, borderColor: isVeteran ? BRAND_GOLD : CARD_BORDER }}
+      className={`rounded-xl border p-4 transition-shadow hover:shadow-md cursor-pointer bg-white ${
+        isVeteran ? 'border-gold' : 'border-[#D1D9E6]'
+      }`}
       onClick={onSelect}
     >
       {/* Top row: score + title */}
@@ -416,15 +391,12 @@ function RfpCard({ item, onSelect, onAction }: {
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold leading-tight mb-1" style={{ color: TEXT_PRIMARY }}>
+          <h3 className="text-sm font-semibold leading-tight mb-1 text-[#0B1628]">
             {item.title}
           </h3>
-          <div className="flex items-center gap-2 flex-wrap text-xs" style={{ color: TEXT_SECONDARY }}>
+          <div className="flex items-center gap-2 flex-wrap text-xs text-[#3D5068]">
             <span>{item.issuing_entity}</span>
-            <span
-              className="px-1.5 py-0.5 rounded text-xs font-medium"
-              style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
-            >
+            <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-navy/[0.07] text-navy">
               {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
             </span>
             {item.state && (
@@ -444,8 +416,7 @@ function RfpCard({ item, onSelect, onAction }: {
           {cls.matched_modules.map(mod => (
             <span
               key={mod}
-              className="px-2 py-0.5 rounded-full text-xs font-medium"
-              style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}
+              className="px-2 py-0.5 rounded-full text-xs font-medium bg-gold/[0.09] text-gold"
             >
               {MODULE_LABELS[mod] ?? mod}
             </span>
@@ -454,22 +425,19 @@ function RfpCard({ item, onSelect, onAction }: {
       )}
 
       {/* Meta row: set-aside, due date, value */}
-      <div className="flex items-center gap-3 flex-wrap text-xs mb-2" style={{ color: TEXT_SECONDARY }}>
+      <div className="flex items-center gap-3 flex-wrap text-xs mb-2 text-[#3D5068]">
         {setAside && (
           <span
-            className="flex items-center gap-1 px-2 py-0.5 rounded-full font-medium"
-            style={{
-              background: isVeteran ? `${BRAND_GOLD}18` : `${BRAND_BLUE}12`,
-              color: isVeteran ? BRAND_GOLD : BRAND_BLUE,
-            }}
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full font-medium ${
+              isVeteran ? 'bg-gold/[0.09] text-gold' : 'bg-navy/[0.07] text-navy'
+            }`}
           >
             {setAside.icon} {setAside.label}
           </span>
         )}
         {days !== null && (
           <span
-            className="flex items-center gap-1"
-            style={{ color: isUrgent ? '#dc2626' : TEXT_SECONDARY }}
+            className={`flex items-center gap-1 ${isUrgent ? 'text-[#dc2626]' : 'text-[#3D5068]'}`}
           >
             <Calendar size={12} />
             {days < 0 ? 'Expired' : days === 0 ? 'Due today' : `${days}d left`}
@@ -505,14 +473,13 @@ function RfpCard({ item, onSelect, onAction }: {
       {/* AI Reasoning (truncated) */}
       {cls?.ai_reasoning && (
         <div className="mb-3">
-          <p className="text-xs leading-relaxed" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-xs leading-relaxed text-[#6B7F96]">
             {reasoningExpanded ? cls.ai_reasoning : truncate(cls.ai_reasoning, 160)}
           </p>
           {cls.ai_reasoning.length > 160 && (
             <button
               onClick={e => { e.stopPropagation(); setReasoningExpanded(!reasoningExpanded); }}
-              className="text-xs mt-0.5 hover:underline"
-              style={{ color: BRAND_BLUE }}
+              className="text-xs mt-0.5 hover:underline text-navy"
             >
               {reasoningExpanded ? 'Show less' : 'Show more'}
             </button>
@@ -521,27 +488,22 @@ function RfpCard({ item, onSelect, onAction }: {
       )}
 
       {/* Action buttons */}
-      <div className="flex items-center gap-2 border-t pt-3" style={{ borderColor: CARD_BORDER }}>
+      <div className="flex items-center gap-2 border-t border-[#D1D9E6] pt-3">
         <button
           onClick={e => { e.stopPropagation(); onAction('pursuing'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
-          style={{ background: BRAND_BLUE }}
-          onMouseEnter={e => (e.currentTarget.style.background = BRAND_BLUE_HOVER)}
-          onMouseLeave={e => (e.currentTarget.style.background = BRAND_BLUE)}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors bg-navy hover:bg-navy-light"
         >
           <CheckCircle2 size={12} /> Pursue
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('watching'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
-          style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-[#D1D9E6] text-[#3D5068] transition-colors hover:bg-cream"
         >
           <Eye size={12} /> Watch
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('declined'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
-          style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-[#D1D9E6] text-[#6B7F96] transition-colors hover:bg-cream"
         >
           <XCircle size={12} /> Skip
         </button>
@@ -551,8 +513,7 @@ function RfpCard({ item, onSelect, onAction }: {
             target="_blank"
             rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}
-            className="ml-auto flex items-center gap-1 text-xs hover:underline"
-            style={{ color: BRAND_BLUE }}
+            className="ml-auto flex items-center gap-1 text-xs hover:underline text-navy"
           >
             <ExternalLink size={12} /> View RFP
           </a>
@@ -570,19 +531,19 @@ function RfpTableView({ items, onSelect, onAction }: {
   onAction: (rfpId: string, action: RfpActionType) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border" style={{ borderColor: CARD_BORDER }}>
-      <table className="w-full text-sm" style={{ background: CARD_BG }}>
+    <div className="overflow-x-auto rounded-xl border border-[#D1D9E6]">
+      <table className="w-full text-sm bg-white">
         <thead>
-          <tr style={{ background: PAGE_BG }}>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Score</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Title</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Entity</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>State</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Modules</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Due</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Value</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Set-Aside</th>
-            <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Actions</th>
+          <tr className="bg-[#F4F6FA]">
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Score</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Title</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Entity</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">State</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Modules</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Due</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Value</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Set-Aside</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -596,8 +557,7 @@ function RfpTableView({ items, onSelect, onAction }: {
             return (
               <tr
                 key={item.id}
-                className="border-t cursor-pointer hover:bg-[#FAF7F0] transition-colors"
-                style={{ borderColor: CARD_BORDER }}
+                className="border-t border-[#D1D9E6] cursor-pointer hover:bg-cream transition-colors"
                 onClick={() => onSelect(item.id)}
               >
                 <td className="px-4 py-3">
@@ -611,67 +571,64 @@ function RfpTableView({ items, onSelect, onAction }: {
                   )}
                 </td>
                 <td className="px-4 py-3 max-w-[240px]">
-                  <span className="font-medium block truncate" style={{ color: TEXT_PRIMARY }}>{item.title}</span>
+                  <span className="font-medium block truncate text-[#0B1628]">{item.title}</span>
                 </td>
-                <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
+                <td className="px-4 py-3 text-xs text-[#3D5068]">
                   <span className="block truncate max-w-[140px]">{item.issuing_entity}</span>
-                  <span
-                    className="inline-block px-1.5 py-0.5 rounded text-xs mt-0.5"
-                    style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
-                  >
+                  <span className="inline-block px-1.5 py-0.5 rounded text-xs mt-0.5 bg-navy/[0.07] text-navy">
                     {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
+                <td className="px-4 py-3 text-xs text-[#3D5068]">
                   {item.state ? (US_STATES[item.state] ?? item.state) : '—'}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1 max-w-[160px]">
                     {(cls?.matched_modules ?? []).slice(0, 3).map(mod => (
-                      <span key={mod} className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
+                      <span key={mod} className="px-1.5 py-0.5 rounded text-xs bg-gold/[0.09] text-gold">
                         {MODULE_LABELS[mod] ?? mod}
                       </span>
                     ))}
                     {(cls?.matched_modules?.length ?? 0) > 3 && (
-                      <span className="text-xs" style={{ color: TEXT_TERTIARY }}>+{cls!.matched_modules.length - 3}</span>
+                      <span className="text-xs text-[#6B7F96]">+{cls!.matched_modules.length - 3}</span>
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: isUrgent ? '#dc2626' : TEXT_SECONDARY }}>
+                <td className={`px-4 py-3 text-xs whitespace-nowrap ${isUrgent ? 'text-[#dc2626]' : 'text-[#3D5068]'}`}>
                   {days != null ? (days < 0 ? 'Expired' : `${days}d`) : '—'}
                 </td>
-                <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
+                <td className="px-4 py-3 text-xs text-[#3D5068]">
                   {formatCurrency(item.estimated_value)}
                 </td>
                 <td className="px-4 py-3 text-xs">
                   {setAside ? (
                     <span>{setAside.icon} {setAside.label}</span>
                   ) : (
-                    <span style={{ color: TEXT_TERTIARY }}>—</span>
+                    <span className="text-[#6B7F96]">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                     <button
                       onClick={() => onAction(item.id, 'pursuing')}
-                      className="p-1.5 rounded hover:bg-green-50"
+                      className="p-1.5 rounded hover:bg-green-50 text-[#16a34a]"
                       title="Pursue"
                     >
-                      <CheckCircle2 size={14} style={{ color: '#16a34a' }} />
+                      <CheckCircle2 size={14} />
                     </button>
                     <button
                       onClick={() => onAction(item.id, 'watching')}
-                      className="p-1.5 rounded hover:bg-blue-50"
+                      className="p-1.5 rounded hover:bg-blue-50 text-[#2563eb]"
                       title="Watch"
                     >
-                      <Eye size={14} style={{ color: '#2563eb' }} />
+                      <Eye size={14} />
                     </button>
                     <button
                       onClick={() => onAction(item.id, 'declined')}
-                      className="p-1.5 rounded hover:bg-red-50"
+                      className="p-1.5 rounded hover:bg-red-50 text-[#dc2626]"
                       title="Skip"
                     >
-                      <XCircle size={14} style={{ color: '#dc2626' }} />
+                      <XCircle size={14} />
                     </button>
                   </div>
                 </td>
@@ -680,7 +637,7 @@ function RfpTableView({ items, onSelect, onAction }: {
           })}
           {items.length === 0 && (
             <tr>
-              <td colSpan={9} className="px-4 py-12 text-center text-sm" style={{ color: TEXT_TERTIARY }}>
+              <td colSpan={9} className="px-4 py-12 text-center text-sm text-[#6B7F96]">
                 No RFPs match your filters
               </td>
             </tr>
@@ -711,12 +668,9 @@ function DetailPanel({ item, onClose, onAction }: {
       <div className="flex-1 bg-black/30" onClick={onClose} />
 
       {/* Panel */}
-      <div
-        className="w-full max-w-lg h-full overflow-y-auto shadow-xl border-l"
-        style={{ background: CARD_BG, borderColor: CARD_BORDER }}
-      >
+      <div className="w-full max-w-lg h-full overflow-y-auto shadow-xl border-l border-[#D1D9E6] bg-white">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b" style={{ background: MIDNIGHT_NAVY, borderColor: '#1e2d4d' }}>
+        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-navy bg-[#0B1628]">
           <h2 className="text-sm font-semibold text-white truncate pr-4">{item.title}</h2>
           <button onClick={onClose} className="text-white/70 hover:text-white" aria-label="Close">
             <X size={18} />
@@ -732,9 +686,9 @@ function DetailPanel({ item, onClose, onAction }: {
                 <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
               </div>
               <div>
-                <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>{item.issuing_entity}</div>
-                <div className="text-xs flex items-center gap-2" style={{ color: TEXT_SECONDARY }}>
-                  <span className="px-1.5 py-0.5 rounded" style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}>
+                <div className="text-sm font-medium text-[#0B1628]">{item.issuing_entity}</div>
+                <div className="text-xs flex items-center gap-2 text-[#3D5068]">
+                  <span className="px-1.5 py-0.5 rounded bg-navy/[0.07] text-navy">
                     {ENTITY_LABELS[item.entity_type]}
                   </span>
                   {item.state && <span><MapPin size={10} className="inline" /> {US_STATES[item.state] ?? item.state}</span>}
@@ -744,33 +698,30 @@ function DetailPanel({ item, onClose, onAction }: {
           )}
 
           {/* Meta */}
-          <div className="grid grid-cols-2 gap-3 text-xs" style={{ color: TEXT_SECONDARY }}>
+          <div className="grid grid-cols-2 gap-3 text-xs text-[#3D5068]">
             <div>
-              <span className="block font-medium" style={{ color: TEXT_TERTIARY }}>Posted</span>
+              <span className="block font-medium text-[#6B7F96]">Posted</span>
               {formatDate(item.posted_date)}
             </div>
             <div>
-              <span className="block font-medium" style={{ color: TEXT_TERTIARY }}>Due Date</span>
-              <span style={{ color: days !== null && days <= 7 && days >= 0 ? '#dc2626' : TEXT_SECONDARY }}>
+              <span className="block font-medium text-[#6B7F96]">Due Date</span>
+              <span className={days !== null && days <= 7 && days >= 0 ? 'text-[#dc2626]' : 'text-[#3D5068]'}>
                 {formatDate(item.due_date)}
                 {days !== null && ` (${days < 0 ? 'expired' : `${days}d`})`}
               </span>
             </div>
             <div>
-              <span className="block font-medium" style={{ color: TEXT_TERTIARY }}>Estimated Value</span>
+              <span className="block font-medium text-[#6B7F96]">Estimated Value</span>
               {formatCurrency(item.estimated_value)}
             </div>
             <div>
-              <span className="block font-medium" style={{ color: TEXT_TERTIARY }}>NAICS Code</span>
+              <span className="block font-medium text-[#6B7F96]">NAICS Code</span>
               {item.naics_code ? `${item.naics_code} — ${EVIDLY_NAICS_CODES[item.naics_code] ?? ''}` : '—'}
             </div>
             {setAside && (
               <div className="col-span-2">
-                <span className="block font-medium" style={{ color: TEXT_TERTIARY }}>Set-Aside</span>
-                <span
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full mt-0.5"
-                  style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}
-                >
+                <span className="block font-medium text-[#6B7F96]">Set-Aside</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full mt-0.5 bg-gold/[0.09] text-gold">
                   {setAside.icon} {setAside.label}
                 </span>
               </div>
@@ -780,18 +731,18 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Description */}
           {item.description && (
             <div>
-              <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Description</h4>
-              <p className="text-xs leading-relaxed" style={{ color: TEXT_SECONDARY }}>{item.description}</p>
+              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Description</h4>
+              <p className="text-xs leading-relaxed text-[#3D5068]">{item.description}</p>
             </div>
           )}
 
           {/* Modules */}
           {cls && cls.matched_modules.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Matched EvidLY Modules</h4>
+              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Matched EvidLY Modules</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_modules.map(mod => (
-                  <span key={mod} className="px-2 py-1 rounded-full text-xs" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
+                  <span key={mod} className="px-2 py-1 rounded-full text-xs bg-gold/[0.09] text-gold">
                     {MODULE_LABELS[mod] ?? mod}
                   </span>
                 ))}
@@ -802,10 +753,10 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Keywords */}
           {cls && cls.matched_keywords.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Matched Keywords</h4>
+              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Matched Keywords</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_keywords.map(kw => (
-                  <span key={kw} className="px-2 py-0.5 rounded text-xs border" style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}>
+                  <span key={kw} className="px-2 py-0.5 rounded text-xs border border-[#D1D9E6] text-[#3D5068]">
                     {kw}
                   </span>
                 ))}
@@ -816,8 +767,8 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* AI Reasoning */}
           {cls?.ai_reasoning && (
             <div>
-              <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>AI Analysis</h4>
-              <p className="text-xs leading-relaxed p-3 rounded-lg" style={{ background: PAGE_BG, color: TEXT_SECONDARY }}>
+              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">AI Analysis</h4>
+              <p className="text-xs leading-relaxed p-3 rounded-lg bg-[#F4F6FA] text-[#3D5068]">
                 {cls.ai_reasoning}
               </p>
             </div>
@@ -826,23 +777,23 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Competition Notes */}
           {cls?.competition_notes && (
             <div>
-              <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Competitive Landscape</h4>
-              <p className="text-xs leading-relaxed" style={{ color: TEXT_SECONDARY }}>{cls.competition_notes}</p>
+              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Competitive Landscape</h4>
+              <p className="text-xs leading-relaxed text-[#3D5068]">{cls.competition_notes}</p>
             </div>
           )}
 
           {/* Action History */}
           {item.actions.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-2" style={{ color: TEXT_PRIMARY }}>Action History</h4>
+              <h4 className="text-xs font-semibold mb-2 text-[#0B1628]">Action History</h4>
               <div className="space-y-2">
                 {item.actions.map(act => (
                   <div key={act.id} className="flex items-start gap-2 text-xs">
-                    <span className="w-2 h-2 mt-1 rounded-full flex-shrink-0" style={{ background: BRAND_BLUE }} />
+                    <span className="w-2 h-2 mt-1 rounded-full flex-shrink-0 bg-navy" />
                     <div>
-                      <span className="font-medium capitalize" style={{ color: TEXT_PRIMARY }}>{act.action}</span>
-                      {act.notes && <span style={{ color: TEXT_SECONDARY }}> — {act.notes}</span>}
-                      <span className="block text-xs" style={{ color: TEXT_TERTIARY }}>
+                      <span className="font-medium capitalize text-[#0B1628]">{act.action}</span>
+                      {act.notes && <span className="text-[#3D5068]"> — {act.notes}</span>}
+                      <span className="block text-xs text-[#6B7F96]">
                         {formatDateShort(act.created_at)} by {act.created_by ?? 'admin'}
                       </span>
                     </div>
@@ -853,9 +804,9 @@ function DetailPanel({ item, onClose, onAction }: {
           )}
 
           {/* Notes + Actions */}
-          <div className="border-t pt-4" style={{ borderColor: CARD_BORDER }}>
+          <div className="border-t border-[#D1D9E6] pt-4">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Notes</label>
+              <label className="text-xs font-medium text-[#6B7F96]">Notes</label>
               <AIAssistButton
                 fieldLabel="Notes"
                 context={{ rfpTitle: item.title }}
@@ -867,44 +818,38 @@ function DetailPanel({ item, onClose, onAction }: {
               value={notes}
               onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Add notes about this RFP…"
-              className="w-full text-sm p-3 rounded-xl border mb-1 resize-none"
-              style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
+              className="w-full text-sm p-3 rounded-xl border border-[#D1D9E6] text-[#0B1628] mb-1 resize-none"
               rows={3}
             />
             {aiFields.has('notes') && <AIGeneratedIndicator />}
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => { onAction('pursuing', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white"
-                style={{ background: BRAND_BLUE }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-navy"
               >
                 <CheckCircle2 size={14} /> Pursue
               </button>
               <button
                 onClick={() => { onAction('watching', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border"
-                style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#D1D9E6] text-[#3D5068]"
               >
                 <Eye size={14} /> Watch
               </button>
               <button
                 onClick={() => { onAction('won', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border"
-                style={{ borderColor: '#bbf7d0', color: '#16a34a', background: '#f0fdf4' }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#bbf7d0] text-[#16a34a] bg-[#f0fdf4]"
               >
                 <Trophy size={14} /> Won
               </button>
               <button
                 onClick={() => { onAction('lost', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border"
-                style={{ borderColor: '#fecaca', color: '#dc2626', background: '#fef2f2' }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#fecaca] text-[#dc2626] bg-[#fef2f2]"
               >
                 <XCircle size={14} /> Lost
               </button>
               <button
                 onClick={() => { onAction('declined', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border"
-                style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#D1D9E6] text-[#6B7F96]"
               >
                 Skip
               </button>
@@ -917,8 +862,7 @@ function DetailPanel({ item, onClose, onAction }: {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm hover:underline"
-              style={{ color: BRAND_BLUE }}
+              className="flex items-center gap-1.5 text-sm hover:underline text-navy"
             >
               <ExternalLink size={14} /> View Original RFP
             </a>
@@ -983,8 +927,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Relevance Distribution */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Relevance Distribution</h3>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">Relevance Distribution</h3>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>
             <Pie data={tierData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
@@ -998,41 +942,41 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* By State */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>RFPs by State (Top 10)</h3>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by State (Top 10)</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={stateData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
-            <XAxis type="number" tick={{ fontSize: 11, fill: TEXT_TERTIARY }} />
-            <YAxis dataKey="state" type="category" width={30} tick={{ fontSize: 11, fill: TEXT_SECONDARY }} />
+            <XAxis type="number" tick={{ fontSize: 11, fill: '#6B7F96' }} />
+            <YAxis dataKey="state" type="category" width={30} tick={{ fontSize: 11, fill: '#3D5068' }} />
             <Tooltip />
-            <Bar dataKey="count" fill={BRAND_BLUE} radius={[0, 4, 4, 0]} />
+            <Bar dataKey="count" fill="#1E2D4D" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* By Entity Type */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>RFPs by Entity Type</h3>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by Entity Type</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={entityData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
-            <XAxis dataKey="name" tick={{ fontSize: 10, fill: TEXT_SECONDARY }} />
-            <YAxis tick={{ fontSize: 11, fill: TEXT_TERTIARY }} />
+            <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#3D5068' }} />
+            <YAxis tick={{ fontSize: 11, fill: '#6B7F96' }} />
             <Tooltip />
-            <Bar dataKey="count" fill={BRAND_GOLD} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="count" fill="#A08C5A" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* By Module */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>RFPs by EvidLY Module</h3>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by EvidLY Module</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={moduleData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
-            <XAxis type="number" tick={{ fontSize: 11, fill: TEXT_TERTIARY }} />
-            <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 10, fill: TEXT_SECONDARY }} />
+            <XAxis type="number" tick={{ fontSize: 11, fill: '#6B7F96' }} />
+            <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 10, fill: '#3D5068' }} />
             <Tooltip />
             <Bar dataKey="count" fill="#22c55e" radius={[0, 4, 4, 0]} />
           </BarChart>
@@ -1040,8 +984,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* Keywords cloud */}
-      <div className="rounded-xl border p-4 lg:col-span-2" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Trending Keywords</h3>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 lg:col-span-2 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">Trending Keywords</h3>
         <KeywordCloud listings={listings} />
       </div>
     </div>
@@ -1074,21 +1018,16 @@ function KeywordCloud({ listings }: { listings: RfpListingWithDetails[] }) {
         return (
           <span
             key={word}
-            className="px-2 py-1 rounded-full border"
-            style={{
-              fontSize: `${size}px`,
-              borderColor: CARD_BORDER,
-              color: TEXT_SECONDARY,
-              opacity,
-            }}
+            className="px-2 py-1 rounded-full border border-[#D1D9E6] text-[#3D5068]"
+            style={{ fontSize: `${size}px`, opacity }}
           >
             {word}
-            <span className="ml-1 text-xs" style={{ color: TEXT_TERTIARY }}>{count}</span>
+            <span className="ml-1 text-xs text-[#6B7F96]">{count}</span>
           </span>
         );
       })}
       {keywords.length === 0 && (
-        <span className="text-sm" style={{ color: TEXT_TERTIARY }}>No keyword data available</span>
+        <span className="text-sm text-[#6B7F96]">No keyword data available</span>
       )}
     </div>
   );
@@ -1117,32 +1056,31 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
   return (
     <div className="space-y-3">
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: TEXT_TERTIARY }} />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7F96]" />
         <input
           type="text"
           placeholder="Search sources…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus:outline-none"
-          style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY, background: CARD_BG }}
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-[#D1D9E6] text-[#0B1628] bg-white focus:outline-none"
         />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border" style={{ borderColor: CARD_BORDER }}>
-        <table className="w-full text-sm" style={{ background: CARD_BG }}>
+      <div className="overflow-x-auto rounded-xl border border-[#D1D9E6]">
+        <table className="w-full text-sm bg-white">
           <thead>
-            <tr style={{ background: PAGE_BG }}>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Status</th>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Source</th>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Type</th>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Coverage</th>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Frequency</th>
-              <th className="text-left px-4 py-3 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Last Crawled</th>
+            <tr className="bg-[#F4F6FA]">
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Status</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Source</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Type</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Coverage</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Frequency</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Last Crawled</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(src => (
-              <tr key={src.id} className="border-t" style={{ borderColor: CARD_BORDER }}>
+              <tr key={src.id} className="border-t border-[#D1D9E6]">
                 <td className="px-4 py-3">
                   <span className="flex items-center gap-1.5 text-xs">
                     <span className="w-2 h-2 rounded-full" style={{ background: statusDot(src.status) }} />
@@ -1150,24 +1088,24 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="font-medium block" style={{ color: TEXT_PRIMARY }}>{src.name}</span>
-                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline" style={{ color: BRAND_BLUE }}>
+                  <span className="font-medium block text-[#0B1628]">{src.name}</span>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline text-navy">
                     {src.url}
                   </a>
                 </td>
-                <td className="px-4 py-3 text-xs capitalize" style={{ color: TEXT_SECONDARY }}>{src.source_type}</td>
-                <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
+                <td className="px-4 py-3 text-xs capitalize text-[#3D5068]">{src.source_type}</td>
+                <td className="px-4 py-3 text-xs text-[#3D5068]">
                   {src.coverage === 'national' ? 'National' : (src.states_covered ?? []).join(', ')}
                 </td>
-                <td className="px-4 py-3 text-xs capitalize" style={{ color: TEXT_SECONDARY }}>{src.crawl_frequency}</td>
-                <td className="px-4 py-3 text-xs" style={{ color: TEXT_TERTIARY }}>
+                <td className="px-4 py-3 text-xs capitalize text-[#3D5068]">{src.crawl_frequency}</td>
+                <td className="px-4 py-3 text-xs text-[#6B7F96]">
                   {src.last_crawled_at ? formatDateShort(src.last_crawled_at) : 'Never'}
                 </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm" style={{ color: TEXT_TERTIARY }}>
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-[#6B7F96]">
                   No sources match your search
                 </td>
               </tr>
@@ -1176,7 +1114,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
         </table>
       </div>
 
-      <div className="text-xs text-right" style={{ color: TEXT_TERTIARY }}>
+      <div className="text-xs text-right text-[#6B7F96]">
         {sources.filter(s => s.status === 'active').length} active / {sources.length} total sources
       </div>
     </div>
@@ -1198,12 +1136,12 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
       ]} />
 
       {/* Budget bar */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>Monthly Budget ($100.00)</h3>
-          <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{budgetPct.toFixed(1)}% used</span>
+          <h3 className="text-sm font-semibold text-[#0B1628]">Monthly Budget ($100.00)</h3>
+          <span className="text-xs text-[#6B7F96]">{budgetPct.toFixed(1)}% used</span>
         </div>
-        <div className="w-full h-3 rounded-full overflow-hidden" style={{ background: PAGE_BG }}>
+        <div className="w-full h-3 rounded-full overflow-hidden bg-[#F4F6FA]">
           <div
             className="h-full rounded-full transition-all"
             style={{
@@ -1212,30 +1150,30 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
             }}
           />
         </div>
-        <p className="text-xs mt-2" style={{ color: TEXT_TERTIARY }}>
+        <p className="text-xs mt-2 text-[#6B7F96]">
           Classification pauses automatically when the monthly budget is reached.
           Cost is estimated at Sonnet pricing (~$3/$15 per MTok input/output).
         </p>
       </div>
 
       {/* Cost breakdown */}
-      <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-        <h3 className="text-sm font-semibold mb-2" style={{ color: TEXT_PRIMARY }}>Cost Management</h3>
-        <ul className="space-y-2 text-xs" style={{ color: TEXT_SECONDARY }}>
+      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-2 text-[#0B1628]">Cost Management</h3>
+        <ul className="space-y-2 text-xs text-[#3D5068]">
           <li className="flex items-start gap-2">
-            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0" style={{ background: BRAND_BLUE }} />
+            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0 bg-navy" />
             Pre-filter with NAICS codes and keywords before sending to AI
           </li>
           <li className="flex items-start gap-2">
-            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0" style={{ background: BRAND_BLUE }} />
+            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0 bg-navy" />
             Rate limit: max 10 classifications per minute
           </li>
           <li className="flex items-start gap-2">
-            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0" style={{ background: BRAND_BLUE }} />
+            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0 bg-navy" />
             Only store classifications with relevance score &ge; 25
           </li>
           <li className="flex items-start gap-2">
-            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0" style={{ background: BRAND_BLUE }} />
+            <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0 bg-navy" />
             Budget cap: $100/month — classifications pause when reached
           </li>
         </ul>
@@ -1289,16 +1227,16 @@ export default function RfpIntelligence() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: PAGE_BG }}>
+    <div className="min-h-screen bg-[#F4F6FA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
         <AdminBreadcrumb crumbs={[{ label: 'RFP Monitor' }]} />
       </div>
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4" style={{ background: MIDNIGHT_NAVY }}>
+      <div className="px-4 sm:px-6 py-4 bg-[#0B1628]">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${BRAND_GOLD}20` }}>
-              <FileSearch size={20} style={{ color: BRAND_GOLD }} />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gold/[0.12]">
+              <FileSearch size={20} className="text-gold" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">RFP Intelligence Monitor</h1>
@@ -1324,7 +1262,7 @@ export default function RfpIntelligence() {
 
       {/* Demo banner */}
       {isDemoMode && (
-        <div className="px-4 sm:px-6 py-2 text-xs text-center" style={{ background: `${BRAND_GOLD}15`, color: BRAND_GOLD }}>
+        <div className="px-4 sm:px-6 py-2 text-xs text-center bg-gold/[0.09] text-gold">
           Demo Mode — Showing sample RFP data. Crawl and classification are simulated.
         </div>
       )}
@@ -1341,18 +1279,16 @@ export default function RfpIntelligence() {
         ]} />
 
         {/* Tab bar */}
-        <div className="flex items-center gap-1 border-b" style={{ borderColor: CARD_BORDER }}>
+        <div className="flex items-center gap-1 border-b border-[#D1D9E6]">
           {tabs.map(tab => {
             const active = activeTab === tab.key;
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors"
-                style={{
-                  borderColor: active ? BRAND_BLUE : 'transparent',
-                  color: active ? BRAND_BLUE : TEXT_TERTIARY,
-                }}
+                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                  active ? 'border-navy text-navy' : 'border-transparent text-[#6B7F96]'
+                }`}
               >
                 <tab.icon size={14} /> {tab.label}
               </button>
@@ -1363,8 +1299,8 @@ export default function RfpIntelligence() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <RefreshCw size={20} className="animate-spin" style={{ color: TEXT_TERTIARY }} />
-            <span className="ml-2 text-sm" style={{ color: TEXT_TERTIARY }}>Loading RFP data…</span>
+            <RefreshCw size={20} className="animate-spin text-[#6B7F96]" />
+            <span className="ml-2 text-sm text-[#6B7F96]">Loading RFP data…</span>
           </div>
         )}
 
@@ -1376,22 +1312,24 @@ export default function RfpIntelligence() {
 
             {/* View toggle + count */}
             <div className="flex items-center justify-between">
-              <span className="text-sm" style={{ color: TEXT_SECONDARY }}>
+              <span className="text-sm text-[#3D5068]">
                 {filteredListings.length} RFP{filteredListings.length !== 1 ? 's' : ''}
                 {filters.search || filters.relevance_tier.length > 0 ? ' (filtered)' : ''}
               </span>
-              <div className="flex items-center gap-1 border rounded-xl p-0.5" style={{ borderColor: CARD_BORDER }}>
+              <div className="flex items-center gap-1 border border-[#D1D9E6] rounded-xl p-0.5">
                 <button
                   onClick={() => setViewMode('cards')}
-                  className="p-1.5 rounded transition-colors"
-                  style={{ background: viewMode === 'cards' ? `${BRAND_BLUE}12` : 'transparent', color: viewMode === 'cards' ? BRAND_BLUE : TEXT_TERTIARY }}
+                  className={`p-1.5 rounded transition-colors ${
+                    viewMode === 'cards' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-[#6B7F96]'
+                  }`}
                 >
                   <LayoutGrid size={16} />
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className="p-1.5 rounded transition-colors"
-                  style={{ background: viewMode === 'table' ? `${BRAND_BLUE}12` : 'transparent', color: viewMode === 'table' ? BRAND_BLUE : TEXT_TERTIARY }}
+                  className={`p-1.5 rounded transition-colors ${
+                    viewMode === 'table' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-[#6B7F96]'
+                  }`}
                 >
                   <List size={16} />
                 </button>
@@ -1411,9 +1349,9 @@ export default function RfpIntelligence() {
                 ))}
                 {filteredListings.length === 0 && (
                   <div className="col-span-2 text-center py-12">
-                    <FileSearch size={32} className="mx-auto mb-3" style={{ color: TEXT_TERTIARY }} />
-                    <p className="text-sm" style={{ color: TEXT_TERTIARY }}>No RFPs match your current filters</p>
-                    <button onClick={resetFilters} className="mt-2 text-sm hover:underline" style={{ color: BRAND_BLUE }}>
+                    <FileSearch size={32} className="mx-auto mb-3 text-[#6B7F96]" />
+                    <p className="text-sm text-[#6B7F96]">No RFPs match your current filters</p>
+                    <button onClick={resetFilters} className="mt-2 text-sm hover:underline text-navy">
                       Clear all filters
                     </button>
                   </div>

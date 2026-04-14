@@ -22,12 +22,6 @@ import {
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#0B1628';
-const BRAND = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#3D5068';
-const TEXT_TERT = '#6B7F96';
-
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface AssessmentLeadRow {
@@ -158,19 +152,19 @@ function AssessmentLeadsPage() {
   }, [leads]);
 
   if (!allowed) {
-    return <div className="p-8 text-center text-[#1E2D4D]/50">Access restricted to admin users.</div>;
+    return <div className="p-8 text-center text-navy/50">Access restricted to admin users.</div>;
   }
 
   return (
     <div>
       <AdminBreadcrumb crumbs={[{ label: 'Leads' }]} />
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Leads</h1>
-        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Kitchen Checkup submissions and inbound lead pipeline</p>
+      <div className="mb-6">
+        <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Leads</h1>
+        <p className="text-[13px] text-[#6B7280] mt-1 mb-0 font-['Inter',sans-serif]">Kitchen Checkup submissions and inbound lead pipeline</p>
       </div>
 
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-6">
         <StatCardRow cards={[
           { label: 'TOTAL LEADS', value: stats.total },
           { label: 'HIGH RISK', value: stats.highRisk, valueColor: 'red' },
@@ -180,12 +174,12 @@ function AssessmentLeadsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 bg-white rounded-xl p-1 border border-[#1E2D4D]/10">
+      <div className="flex gap-1 mb-4 bg-white rounded-xl p-1 border border-navy/10">
         {(['leads', 'analytics'] as const).map(t => (
           <button
             key={t} onClick={() => setTab(t)}
             className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              tab === t ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+              tab === t ? 'bg-navy/5 text-navy' : 'text-navy/50 hover:text-navy/80'
             }`}
           >
             {t === 'leads' ? 'Leads' : 'Analytics'}
@@ -199,22 +193,22 @@ function AssessmentLeadsPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-4" data-demo-allow>
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-navy/30" />
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search leads..." data-demo-allow
-                className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full pl-9 pr-3 py-2 border border-navy/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2"
               />
             </div>
             <select value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}
               data-demo-allow
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
+              className="px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
               <option value="all">All Grades</option>
               {['A', 'B', 'C', 'D', 'F'].map(g => <option key={g} value={g}>Grade {g}</option>)}
             </select>
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
               data-demo-allow
-              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
+              className="px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
               <option value="date">Newest First</option>
               <option value="grade">Highest Risk First</option>
               <option value="exposure">Highest Exposure First</option>
@@ -222,25 +216,25 @@ function AssessmentLeadsPage() {
           </div>
 
           {loadError ? (
-            <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-              <button onClick={() => { setLoading(true); setLoadError(false); }} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+            <div className="text-center py-12">
+              <p className="text-[#6B7F96]">Failed to load data.</p>
+              <button onClick={() => { setLoading(true); setLoadError(false); }} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
                 Try again
               </button>
             </div>
           ) : loading ? (
-            <div className="text-center py-12 text-[#1E2D4D]/50">Loading...</div>
+            <div className="text-center py-12 text-navy/50">Loading...</div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-[#1E2D4D]/50">No leads found.</div>
+            <div className="text-center py-12 text-navy/50">No leads found.</div>
           ) : (
             <div className="space-y-2">
               {filtered.map(lead => (
-                <div key={lead.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+                <div key={lead.id} className="bg-white rounded-xl border border-navy/10 overflow-hidden">
                   {/* Row */}
                   <button
                     onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
                     data-demo-allow
-                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-[#FAF7F0] transition-colors"
+                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-cream transition-colors"
                   >
                     {/* Grade badge */}
                     <div
@@ -252,8 +246,8 @@ function AssessmentLeadsPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate" style={{ color: NAVY }}>{lead.business_name}</p>
-                      <p className="text-xs text-[#1E2D4D]/50 truncate">{lead.contact_name} · {lead.email} · {lead.city}</p>
+                      <p className="font-semibold text-sm truncate text-[#0B1628]">{lead.business_name}</p>
+                      <p className="text-xs text-navy/50 truncate">{lead.contact_name} · {lead.email} · {lead.city}</p>
                     </div>
 
                     {/* Risk mini bars (desktop) */}
@@ -265,8 +259,8 @@ function AssessmentLeadsPage() {
                         { label: 'Ops', val: lead.operational_risk },
                       ].map(r => (
                         <div key={r.label} className="text-center">
-                          <div className="text-xs text-[#1E2D4D]/30">{r.label}</div>
-                          <div className="w-12 h-1.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
+                          <div className="text-xs text-navy/30">{r.label}</div>
+                          <div className="w-12 h-1.5 bg-navy/[0.08] rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{
                               width: `${r.val || 0}%`,
                               backgroundColor: r.val && r.val > 60 ? '#ef4444' : r.val && r.val > 40 ? '#f59e0b' : '#22c55e',
@@ -278,43 +272,43 @@ function AssessmentLeadsPage() {
 
                     {/* Exposure */}
                     <div className="hidden sm:block text-right flex-shrink-0">
-                      <p className="text-xs text-[#1E2D4D]/30">Exposure</p>
-                      <p className="text-sm font-semibold" style={{ color: GOLD }}>
+                      <p className="text-xs text-navy/30">Exposure</p>
+                      <p className="text-sm font-semibold text-gold">
                         {lead.total_estimated_exposure_high ? formatDollars(lead.total_estimated_exposure_high) : '—'}
                       </p>
                     </div>
 
                     {/* Date */}
                     <div className="text-right flex-shrink-0 hidden lg:block">
-                      <p className="text-xs text-[#1E2D4D]/30">
+                      <p className="text-xs text-navy/30">
                         {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
 
-                    {expandedId === lead.id ? <ChevronUp className="h-4 w-4 text-[#1E2D4D]/30" /> : <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" />}
+                    {expandedId === lead.id ? <ChevronUp className="h-4 w-4 text-navy/30" /> : <ChevronDown className="h-4 w-4 text-navy/30" />}
                   </button>
 
                   {/* Expanded details */}
                   {expandedId === lead.id && (
-                    <div className="px-4 pb-4 border-t border-[#1E2D4D]/5 pt-3">
+                    <div className="px-4 pb-4 border-t border-navy/5 pt-3">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
-                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Contact Info</p>
-                          <p className="text-sm" style={{ color: NAVY }}>{lead.contact_name}</p>
-                          <p className="text-xs text-[#1E2D4D]/50">{lead.email}</p>
-                          {lead.phone && <p className="text-xs text-[#1E2D4D]/50">{lead.phone}</p>}
-                          <p className="text-xs text-[#1E2D4D]/50">{lead.city}, {lead.zip_code}</p>
+                          <p className="text-xs text-navy/30 mb-1">Contact Info</p>
+                          <p className="text-sm text-[#0B1628]">{lead.contact_name}</p>
+                          <p className="text-xs text-navy/50">{lead.email}</p>
+                          {lead.phone && <p className="text-xs text-navy/50">{lead.phone}</p>}
+                          <p className="text-xs text-navy/50">{lead.city}, {lead.zip_code}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Category Scores</p>
+                          <p className="text-xs text-navy/30 mb-1">Category Scores</p>
                           {[
                             { label: 'Facility Safety', val: lead.facility_safety_score },
                             { label: 'Food Safety', val: lead.food_safety_score },
                             { label: 'Documentation', val: lead.documentation_score },
                           ].map(s => (
                             <div key={s.label} className="flex items-center gap-2 mb-1">
-                              <span className="text-xs text-[#1E2D4D]/50 w-24">{s.label}</span>
-                              <div className="flex-1 h-1.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
+                              <span className="text-xs text-navy/50 w-24">{s.label}</span>
+                              <div className="flex-1 h-1.5 bg-navy/[0.08] rounded-full overflow-hidden">
                                 <div className="h-full rounded-full" style={{
                                   width: `${s.val || 0}%`,
                                   backgroundColor: s.val && s.val > 60 ? '#ef4444' : s.val && s.val > 40 ? '#f59e0b' : '#22c55e',
@@ -325,12 +319,12 @@ function AssessmentLeadsPage() {
                           ))}
                         </div>
                         <div>
-                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Referral Source</p>
-                          <p className="text-sm capitalize" style={{ color: NAVY }}>
+                          <p className="text-xs text-navy/30 mb-1">Referral Source</p>
+                          <p className="text-sm capitalize text-[#0B1628]">
                             {(lead.referral_source || 'Unknown').replace('_', ' ')}
                           </p>
-                          <p className="text-xs text-[#1E2D4D]/30 mt-2 mb-1">Exposure Range</p>
-                          <p className="text-sm font-semibold" style={{ color: GOLD }}>
+                          <p className="text-xs text-navy/30 mt-2 mb-1">Exposure Range</p>
+                          <p className="text-sm font-semibold text-gold">
                             {formatDollars(lead.total_estimated_exposure_low || 0)} – {formatDollars(lead.total_estimated_exposure_high || 0)}
                           </p>
                         </div>
@@ -338,14 +332,14 @@ function AssessmentLeadsPage() {
                       {/* Findings */}
                       {lead.findings_json && lead.findings_json.length > 0 && (
                         <div>
-                          <p className="text-xs text-[#1E2D4D]/30 mb-1.5">Top Findings</p>
+                          <p className="text-xs text-navy/30 mb-1.5">Top Findings</p>
                           <div className="space-y-1">
                             {(lead.findings_json as any[]).filter(f => !f.isPositive).slice(0, 5).map((f: any, i: number) => (
                               <div key={i} className="flex items-center gap-2 text-xs">
                                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{
                                   backgroundColor: f.severity === 'critical' ? '#ef4444' : f.severity === 'high' ? '#f97316' : '#eab308',
                                 }} />
-                                <span style={{ color: TEXT_SEC }}>{f.title}</span>
+                                <span className="text-[#3D5068]">{f.title}</span>
                               </div>
                             ))}
                           </div>
@@ -364,15 +358,15 @@ function AssessmentLeadsPage() {
       {tab === 'analytics' && (
         <div className="space-y-6">
           {/* Grade Distribution */}
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Grade Distribution</h3>
+          <div className="bg-white rounded-xl border border-navy/10 p-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Grade Distribution</h3>
             <div className="flex items-end gap-3 h-32">
               {['A', 'B', 'C', 'D', 'F'].map(g => {
                 const count = stats.gradeCount[g] || 0;
                 const pct = stats.total > 0 ? (count / stats.total) * 100 : 0;
                 return (
                   <div key={g} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-xs font-semibold" style={{ color: NAVY }}>{count}</span>
+                    <span className="text-xs font-semibold text-[#0B1628]">{count}</span>
                     <div className="w-full rounded-t-lg" style={{
                       height: `${Math.max(4, pct)}%`,
                       backgroundColor: gradeColor(g),
@@ -386,8 +380,8 @@ function AssessmentLeadsPage() {
           </div>
 
           {/* Referral Sources */}
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Referral Sources</h3>
+          <div className="bg-white rounded-xl border border-navy/10 p-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Referral Sources</h3>
             <div className="space-y-2">
               {Object.entries(
                 leads.reduce((acc, l) => {
@@ -397,30 +391,29 @@ function AssessmentLeadsPage() {
                 }, {} as Record<string, number>)
               ).sort((a, b) => b[1] - a[1]).map(([src, count]) => (
                 <div key={src} className="flex items-center gap-3">
-                  <span className="text-sm capitalize w-32 text-[#1E2D4D]/70">{src}</span>
-                  <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{
+                  <span className="text-sm capitalize w-32 text-navy/70">{src}</span>
+                  <div className="flex-1 h-2 bg-navy/[0.08] rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-navy" style={{
                       width: `${(count / stats.total) * 100}%`,
-                      backgroundColor: BRAND,
                     }} />
                   </div>
-                  <span className="text-sm font-medium w-6 text-right" style={{ color: NAVY }}>{count}</span>
+                  <span className="text-sm font-medium w-6 text-right text-[#0B1628]">{count}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Top Risk Findings */}
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Most Common Findings</h3>
+          <div className="bg-white rounded-xl border border-navy/10 p-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Most Common Findings</h3>
             <div className="space-y-2">
               {Object.entries(
                 leads.flatMap(l => (l.findings_json as any[] || []).filter((f: any) => !f.isPositive).map((f: any) => f.title))
                   .reduce((acc, title) => { acc[title] = (acc[title] || 0) + 1; return acc; }, {} as Record<string, number>)
               ).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([title, count]) => (
                 <div key={title} className="flex items-center gap-3">
-                  <span className="text-xs text-[#1E2D4D]/70 flex-1 truncate">{title}</span>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5" style={{ color: NAVY }}>
+                  <span className="text-xs text-navy/70 flex-1 truncate">{title}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-navy/5 text-[#0B1628]">
                     {count}
                   </span>
                 </div>

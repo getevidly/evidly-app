@@ -14,9 +14,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-
 const CA_COUNTIES = [
   'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa',
   'Del Norte','El Dorado','Fresno','Glenn','Humboldt','Imperial','Inyo',
@@ -191,50 +188,49 @@ export default function DemoLauncher() {
     <div className="p-8 max-w-3xl">
       <AdminBreadcrumb crumbs={[{ label: 'Demo Launcher' }]} />
 
-      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1 mt-4">Demo Launcher</h1>
-      <p className="text-sm text-[#1E2D4D]/50 mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-navy mb-1 mt-4">Demo Launcher</h1>
+      <p className="text-sm text-navy/50 mb-6">
         Prepare your demo in 60 seconds. Configure the prospect, then use the 3 flows below.
       </p>
 
-      {/* ── 3 EMOTIONAL TRIGGER FLOWS ── */}
-      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 mb-6">
-        <h2 className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: GOLD }}>
+      {/* -- 3 EMOTIONAL TRIGGER FLOWS -- */}
+      <div className="bg-white border border-navy/10 rounded-xl p-5 mb-6">
+        <h2 className="text-xs font-bold uppercase tracking-wider mb-4 text-gold">
           3 Demo Flows
         </h2>
         <div className="space-y-3">
 
           {/* Flow 1: Jurisdiction Reveal */}
-          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#EEF4F8' }}>
-              <Globe size={18} style={{ color: NAVY }} />
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#EEF4F8]">
+              <Globe size={18} className="text-navy" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+              <p className="text-sm font-semibold text-navy">
                 Flow 1: "I didn't know that"
               </p>
-              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
+              <p className="text-xs text-navy/50 mt-0.5">
                 Show how their inspector actually scores kitchens in their county.
               </p>
             </div>
             <Link
               to={`/admin/jurisdiction-intelligence?county=${encodeURIComponent(jieCounty)}`}
-              className="shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90"
-              style={{ background: NAVY, color: '#fff' }}
+              className="shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 bg-navy text-white"
             >
               <ExternalLink size={12} /> Open
             </Link>
           </div>
 
           {/* Flow 2: Live Notification */}
-          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#FEF2F2' }}>
-              <Bell size={18} style={{ color: '#DC2626' }} />
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#FEF2F2]">
+              <Bell size={18} className="text-[#DC2626]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+              <p className="text-sm font-semibold text-navy">
                 Flow 2: "It caught something"
               </p>
-              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
+              <p className="text-xs text-navy/50 mt-0.5">
                 Fire a live signal — the bell badge updates in real time.
               </p>
             </div>
@@ -242,15 +238,13 @@ export default function DemoLauncher() {
               <button
                 onClick={fireDemoSignal}
                 disabled={firingSignal}
-                className="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 disabled:opacity-50"
-                style={{ background: '#DC2626', color: '#fff', border: 'none', cursor: firingSignal ? 'not-allowed' : 'pointer' }}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 disabled:opacity-50 bg-[#DC2626] text-white border-none ${firingSignal ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <Zap size={12} /> {firingSignal ? 'Firing...' : 'Fire Signal'}
               </button>
               <Link
                 to="/insights/intelligence"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-[#1E2D4D]/5"
-                style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
               >
                 View Feed
               </Link>
@@ -258,30 +252,28 @@ export default function DemoLauncher() {
           </div>
 
           {/* Flow 3: Compliance Record */}
-          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#F0FDF4' }}>
-              <FileText size={18} style={{ color: '#166534' }} />
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#F0FDF4]">
+              <FileText size={18} className="text-[#166534]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+              <p className="text-sm font-semibold text-navy">
                 Flow 3: "I look good"
               </p>
-              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
+              <p className="text-xs text-navy/50 mt-0.5">
                 Show the full compliance record — documents, reports, export.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/documents"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-[#1E2D4D]/5"
-                style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
               >
                 Documents
               </Link>
               <Link
                 to="/reports"
-                className="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90"
-                style={{ background: NAVY, color: '#fff' }}
+                className="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 bg-navy text-white"
               >
                 <ExternalLink size={12} /> Reports
               </Link>
@@ -290,9 +282,9 @@ export default function DemoLauncher() {
         </div>
       </div>
 
-      {/* ── QUICK LINKS ── */}
-      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 mb-6">
-        <h2 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: GOLD }}>
+      {/* -- QUICK LINKS -- */}
+      <div className="bg-white border border-navy/10 rounded-xl p-5 mb-6">
+        <h2 className="text-xs font-bold uppercase tracking-wider mb-3 text-gold">
           Quick Links
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -300,8 +292,7 @@ export default function DemoLauncher() {
             <Link
               key={l.path}
               to={l.path}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
-              style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
             >
               {l.label}
             </Link>
@@ -309,8 +300,8 @@ export default function DemoLauncher() {
         </div>
       </div>
 
-      {/* ── PROSPECT CONFIG ── */}
-      <h2 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Prospect Setup (Optional)</h2>
+      {/* -- PROSPECT CONFIG -- */}
+      <h2 className="text-sm font-semibold text-navy/80 mb-3">Prospect Setup (Optional)</h2>
 
       {launched ? (
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
@@ -320,17 +311,17 @@ export default function DemoLauncher() {
           </p>
           <button
             onClick={resetForm}
-            className="px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
+            className="px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
           >
             Launch Another
           </button>
         </div>
       ) : (
-        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6 space-y-5">
+        <div className="bg-white border border-navy/10 rounded-xl p-6 space-y-5">
           {/* Prospect info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Prospect Name *</label>
+              <label className="block text-xs font-semibold text-navy/80 mb-1">Prospect Name *</label>
               <input
                 value={form.prospectName}
                 onChange={e => setForm(f => ({ ...f, prospectName: e.target.value }))}
@@ -339,7 +330,7 @@ export default function DemoLauncher() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Company *</label>
+              <label className="block text-xs font-semibold text-navy/80 mb-1">Company *</label>
               <input
                 value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
@@ -351,7 +342,7 @@ export default function DemoLauncher() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Industry</label>
+              <label className="block text-xs font-semibold text-navy/80 mb-1">Industry</label>
               <select
                 value={form.industry}
                 onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
@@ -362,7 +353,7 @@ export default function DemoLauncher() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Number of Locations</label>
+              <label className="block text-xs font-semibold text-navy/80 mb-1">Number of Locations</label>
               <input
                 type="number"
                 value={form.locationCount}
@@ -375,10 +366,10 @@ export default function DemoLauncher() {
 
           {/* County selector */}
           <div>
-            <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">
-              Counties {form.counties.length > 0 && <span className="text-[#A08C5A] ml-1">({form.counties.length} selected)</span>}
+            <label className="block text-xs font-semibold text-navy/80 mb-2">
+              Counties {form.counties.length > 0 && <span className="text-gold ml-1">({form.counties.length} selected)</span>}
             </label>
-            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-xl bg-[#FAF7F0]">
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-xl bg-cream">
               {CA_COUNTIES.map(county => (
                 <button
                   key={county}
@@ -386,8 +377,8 @@ export default function DemoLauncher() {
                   onClick={() => toggleCounty(county)}
                   className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                     form.counties.includes(county)
-                      ? 'bg-[#1E2D4D] text-white'
-                      : 'bg-white border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-[#1E2D4D]/20'
+                      ? 'bg-navy text-white'
+                      : 'bg-white border border-navy/10 text-navy/70 hover:border-navy/20'
                   }`}
                 >
                   {county}
@@ -398,7 +389,7 @@ export default function DemoLauncher() {
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Notes (optional)</label>
+            <label className="block text-xs font-semibold text-navy/80 mb-1">Notes (optional)</label>
             <textarea
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -412,7 +403,7 @@ export default function DemoLauncher() {
             type="button"
             onClick={handleLaunch}
             disabled={!form.prospectName || !form.company || loading}
-            className="w-full py-3 bg-[#1E2D4D] text-white rounded-lg font-medium text-sm
+            className="w-full py-3 bg-navy text-white rounded-lg font-medium text-sm
                        disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#162340]"
           >
             {loading ? 'Launching...' : 'Launch Personalized Demo'}
@@ -422,16 +413,16 @@ export default function DemoLauncher() {
 
       {/* Recent sessions */}
       <div className="mt-8">
-        <h2 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Recent Demo Sessions</h2>
+        <h2 className="text-sm font-semibold text-navy/80 mb-3">Recent Demo Sessions</h2>
         {loadError ? (
-          <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-            <button onClick={loadSessions} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+          <div className="text-center p-12">
+            <p className="text-[#6B7F96]">Failed to load data.</p>
+            <button onClick={loadSessions} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer">
               Try again
             </button>
           </div>
         ) : sessions.length === 0 ? (
-          <div className="text-center py-8 text-[#1E2D4D]/30 text-sm">
+          <div className="text-center py-8 text-navy/30 text-sm">
             No demo sessions yet. Launch your first demo above.
           </div>
         ) : (
@@ -439,12 +430,12 @@ export default function DemoLauncher() {
             {sessions.map(s => (
               <div key={s.id} className="border rounded-xl p-3 text-sm flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-[#1E2D4D]">{s.prospect_name} — {s.company}</p>
-                  <p className="text-xs text-[#1E2D4D]/50">
+                  <p className="font-medium text-navy">{s.prospect_name} — {s.company}</p>
+                  <p className="text-xs text-navy/50">
                     {s.counties?.join(', ')} · {s.industry} · {s.location_count ?? '?'} locations
                   </p>
                 </div>
-                <div className="text-xs text-[#1E2D4D]/30">{new Date(s.launched_at).toLocaleDateString()}</div>
+                <div className="text-xs text-navy/30">{new Date(s.launched_at).toLocaleDateString()}</div>
               </div>
             ))}
           </div>

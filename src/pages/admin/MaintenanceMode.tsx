@@ -8,12 +8,6 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 interface MaintenanceConfig {
   is_active: boolean;
   message: string;
@@ -111,113 +105,111 @@ export default function MaintenanceMode() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div style={{ color: TEXT_SEC }}>Loading...</div>
+        <div className="text-[#6B7F96]">Loading...</div>
       </div>
     );
   }
 
   if (loadError) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
-        <button onClick={loadConfig} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+      <div className="text-center p-12">
+        <p className="text-[#6B7F96]">Failed to load data.</p>
+        <button onClick={loadConfig} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
           Try again
         </button>
       </div>
     );
   }
 
-  const inputStyle: React.CSSProperties = {
-    padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13,
-  };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Maintenance Mode' }]} />
-      <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Maintenance Mode</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-navy">Maintenance Mode</h1>
 
       {/* Status card */}
-      <div style={{
-        background: config.is_active ? '#FEF2F2' : '#F0FFF4',
-        border: `2px solid ${config.is_active ? '#DC2626' : '#059669'}`,
-        borderRadius: 12, padding: 24, textAlign: 'center',
-      }}>
-        <div style={{ fontSize: 32, marginBottom: 8 }}>{config.is_active ? '🚧' : '●'}</div>
-        <div style={{ fontSize: 20, fontWeight: 800, color: config.is_active ? '#DC2626' : '#059669', marginBottom: 4 }}>
+      <div className={`rounded-xl p-6 text-center border-2 ${
+        config.is_active ? 'bg-[#FEF2F2] border-[#DC2626]' : 'bg-[#F0FFF4] border-[#059669]'
+      }`}>
+        <div className="text-[32px] mb-2">{config.is_active ? '🚧' : '●'}</div>
+        <div className={`text-xl font-extrabold mb-1 ${
+          config.is_active ? 'text-[#DC2626]' : 'text-[#059669]'
+        }`}>
           {config.is_active ? 'MAINTENANCE ACTIVE' : 'Platform Live'}
         </div>
         {config.is_active && config.activated_at && (
-          <div style={{ fontSize: 12, color: TEXT_SEC, marginBottom: 12 }}>
+          <div className="text-xs text-[#6B7F96] mb-3">
             Since {new Date(config.activated_at).toLocaleString()}
           </div>
         )}
         <button onClick={toggleMaintenance} disabled={saving}
-          style={{
-            padding: '10px 24px', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: saving ? 'default' : 'pointer',
-            background: config.is_active ? '#059669' : '#DC2626',
-            color: '#FFFFFF',
-          }}>
+          className={`py-2.5 px-6 border-none rounded-lg text-sm font-bold text-white ${
+            saving ? 'cursor-default' : 'cursor-pointer'
+          } ${config.is_active ? 'bg-[#059669]' : 'bg-[#DC2626]'}`}>
           {saving ? 'Saving...' : config.is_active ? 'Deactivate — Go Live' : 'Activate Maintenance Mode'}
         </button>
       </div>
 
       {/* Config form */}
-      <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 16 }}>Configuration</h3>
+      <div className="bg-white border border-[#E2D9C8] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-navy mb-4">Configuration</h3>
 
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 12, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Maintenance Message</label>
+        <div className="mb-4">
+          <label className="text-xs text-[#6B7F96] block mb-1">Maintenance Message</label>
           <textarea value={config.message} onChange={e => setConfig(c => ({ ...c, message: e.target.value }))}
-            rows={3} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+            rows={3} className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-full resize-y" />
         </div>
 
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 12, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Estimated Duration</label>
+        <div className="mb-4">
+          <label className="text-xs text-[#6B7F96] block mb-1">Estimated Duration</label>
           <input value={config.estimated_duration} onChange={e => setConfig(c => ({ ...c, estimated_duration: e.target.value }))}
-            style={{ ...inputStyle, width: 200 }} />
+            className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-[200px]" />
         </div>
 
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 12, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Bypass Emails (can still access during maintenance)</label>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        <div className="mb-4">
+          <label className="text-xs text-[#6B7F96] block mb-1">Bypass Emails (can still access during maintenance)</label>
+          <div className="flex gap-2 mb-2">
             <input value={bypassInput} onChange={e => setBypassInput(e.target.value)} placeholder="email@getevidly.com"
-              style={{ ...inputStyle, flex: 1 }}
+              className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] flex-1"
               onKeyDown={e => e.key === 'Enter' && addBypassEmail()} />
-            <button onClick={addBypassEmail} style={{ padding: '8px 14px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_SEC, fontSize: 12, cursor: 'pointer' }}>Add</button>
+            <button onClick={addBypassEmail} className="py-2 px-3.5 bg-[#F9FAFB] border border-[#E2D9C8] rounded-md text-[#6B7F96] text-xs cursor-pointer">Add</button>
           </div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <div className="flex gap-1.5 flex-wrap">
             {config.bypass_emails.map(email => (
-              <span key={email} style={{ padding: '4px 10px', background: '#F3F4F6', borderRadius: 4, fontSize: 11, color: TEXT_SEC, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span key={email} className="py-1 px-2.5 bg-[#F3F4F6] rounded text-[11px] text-[#6B7F96] flex items-center gap-1.5">
                 {email}
-                <button onClick={() => removeBypassEmail(email)} style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontSize: 14, padding: 0 }}>&times;</button>
+                <button onClick={() => removeBypassEmail(email)} className="bg-transparent border-none text-[#DC2626] cursor-pointer text-sm p-0">&times;</button>
               </span>
             ))}
           </div>
         </div>
 
         <button onClick={() => saveConfig(config)} disabled={saving}
-          style={{ padding: '8px 20px', background: saving ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: saving ? 'default' : 'pointer' }}>
+          className={`py-2 px-5 border-none rounded-md text-white text-[13px] font-bold ${
+            saving ? 'bg-[#E5E7EB] cursor-default' : 'bg-gold cursor-pointer'
+          }`}>
           {saving ? 'Saving...' : 'Save Configuration'}
         </button>
       </div>
 
       {/* History */}
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>Recent Maintenance Events</h3>
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <h3 className="text-sm font-bold text-navy">Recent Maintenance Events</h3>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {history.length === 0 ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No maintenance events recorded yet.</div>
+          <div className="py-10 px-5 text-center text-[#9CA3AF] text-[13px]">No maintenance events recorded yet.</div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <tbody>
               {history.map(e => (
-                <tr key={e.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12, whiteSpace: 'nowrap' }}>{new Date(e.event_time).toLocaleString()}</td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-                      background: e.level === 'WARN' ? '#FFFBEB' : '#F0FFF4',
-                      color: e.level === 'WARN' ? '#D97706' : '#059669' }}>{e.level}</span>
+                <tr key={e.id} className="border-b border-[#E2D9C8]">
+                  <td className="py-2.5 px-3.5 text-[#6B7F96] text-xs whitespace-nowrap">{new Date(e.event_time).toLocaleString()}</td>
+                  <td className="py-2.5 px-3.5">
+                    <span className="py-0.5 px-2 rounded text-[10px] font-bold"
+                      style={{
+                        background: e.level === 'WARN' ? '#FFFBEB' : '#F0FFF4',
+                        color: e.level === 'WARN' ? '#D97706' : '#059669',
+                      }}>{e.level}</span>
                   </td>
-                  <td style={{ padding: '10px 14px', color: NAVY }}>{e.message}</td>
+                  <td className="py-2.5 px-3.5 text-navy">{e.message}</td>
                 </tr>
               ))}
             </tbody>

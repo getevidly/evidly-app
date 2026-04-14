@@ -8,12 +8,6 @@ import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const BORDER = '#E2D9C8';
-
 interface SystemMessage {
   id: string;
   title: string;
@@ -31,22 +25,22 @@ interface SystemMessage {
 }
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
-    <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl mx-4">
+    <div className="text-[40px] mb-4">{icon}</div>
+    <div className="text-base font-bold text-navy mb-2">{title}</div>
+    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
-  info:     { bg: '#F0FFF4', text: '#059669' },
-  warning:  { bg: '#FFFBEB', text: '#D97706' },
-  critical: { bg: '#FEF2F2', text: '#DC2626' },
-  feature:  { bg: '#EFF6FF', text: '#2563EB' },
+  info:     { bg: 'bg-green-50', text: 'text-emerald-600' },
+  warning:  { bg: 'bg-amber-50', text: 'text-amber-600' },
+  critical: { bg: 'bg-red-50', text: 'text-red-600' },
+  feature:  { bg: 'bg-blue-50', text: 'text-blue-600' },
 };
 
 export default function SystemMessages() {
@@ -109,31 +103,29 @@ export default function SystemMessages() {
   const active = messages.filter(m => m.is_active);
   const inactive = messages.filter(m => !m.is_active);
 
-  const inputStyle: React.CSSProperties = { padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, width: '100%' };
-
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'System Messages' }]} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>System Messages</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-navy">System Messages</h1>
         <button onClick={() => setShowCompose(!showCompose)}
-          style={{ padding: '8px 20px', background: GOLD, border: 'none', borderRadius: 8, color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+          className="px-5 py-2 bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
           {showCompose ? 'Cancel' : '+ Compose Message'}
         </button>
       </div>
 
       {/* Compose form */}
       {showCompose && (
-        <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 16 }}>New Message</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+        <div className="bg-white border border-[#E2D9C8] rounded-xl p-5">
+          <h3 className="text-sm font-bold text-navy mb-4">New Message</h3>
+          <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title *</label>
-              <input value={title} onChange={e => setTitle(e.target.value)} style={inputStyle} placeholder="Message title" />
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Title *</label>
+              <input value={title} onChange={e => setTitle(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="Message title" />
             </div>
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Type</label>
-              <select value={msgType} onChange={e => setMsgType(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Type</label>
+              <select value={msgType} onChange={e => setMsgType(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
                 <option value="critical">Critical</option>
@@ -141,16 +133,16 @@ export default function SystemMessages() {
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Display Style</label>
-              <select value={displayStyle} onChange={e => setDisplayStyle(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Display Style</label>
+              <select value={displayStyle} onChange={e => setDisplayStyle(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="banner">Banner</option>
                 <option value="modal">Modal</option>
                 <option value="toast">Toast</option>
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Target Audience</label>
-              <select value={target} onChange={e => setTarget(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+              <label className="text-[11px] text-[#6B7F96] block mb-1">Target Audience</label>
+              <select value={target} onChange={e => setTarget(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="all">All Users</option>
                 <option value="owners">Owners Only</option>
                 <option value="admins">Admins Only</option>
@@ -158,56 +150,55 @@ export default function SystemMessages() {
               </select>
             </div>
           </div>
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Body *</label>
-            <textarea value={body} onChange={e => setBody(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Message body..." />
+          <div className="mb-3">
+            <label className="text-[11px] text-[#6B7F96] block mb-1">Body *</label>
+            <textarea value={body} onChange={e => setBody(e.target.value)} rows={3} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full resize-y" placeholder="Message body..." />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
+          <div className="flex items-center gap-4 mb-4">
+            <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
               <input type="checkbox" checked={dismissible} onChange={e => setDismissible(e.target.checked)} />
               Dismissible
             </label>
             <button onClick={() => setPreview(!preview)}
-              style={{ padding: '4px 12px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: TEXT_SEC, fontSize: 11, cursor: 'pointer' }}>
+              className="px-3 py-1 bg-gray-50 border border-[#E2D9C8] rounded text-[#6B7F96] text-[11px] cursor-pointer">
               {preview ? 'Hide Preview' : 'Preview'}
             </button>
           </div>
 
           {/* Preview */}
-          {preview && title && body && (
-            <div style={{
-              marginBottom: 16, padding: '12px 16px', borderRadius: 8,
-              background: TYPE_COLORS[msgType]?.bg || '#F3F4F6',
-              border: `1px solid ${BORDER}`,
-            }}>
-              <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 4 }}>Preview ({displayStyle})</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: TYPE_COLORS[msgType]?.text || NAVY, marginBottom: 4 }}>{title}</div>
-              <div style={{ fontSize: 13, color: TEXT_SEC }}>{body}</div>
-            </div>
-          )}
+          {preview && title && body && (() => {
+            const tc = TYPE_COLORS[msgType] || TYPE_COLORS.info;
+            return (
+              <div className={`mb-4 px-4 py-3 rounded-lg border border-[#E2D9C8] ${tc.bg}`}>
+                <div className="text-[11px] text-gray-400 mb-1">Preview ({displayStyle})</div>
+                <div className={`text-sm font-bold mb-1 ${tc.text}`}>{title}</div>
+                <div className="text-[13px] text-[#6B7F96]">{body}</div>
+              </div>
+            );
+          })()}
 
           <button onClick={sendMessage} disabled={sending || !title || !body}
-            style={{ padding: '8px 20px', background: sending ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: sending ? 'default' : 'pointer' }}>
+            className={`px-5 py-2 border-none rounded-md text-white text-[13px] font-bold ${sending ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'}`}>
             {sending ? 'Sending...' : 'Send Message'}
           </button>
         </div>
       )}
 
       {/* Active messages */}
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>Active Messages ({active.length})</h3>
-      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <h3 className="text-sm font-bold text-navy">Active Messages ({active.length})</h3>
+      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
         {loading ? (
-          <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : active.length === 0 ? (
           <EmptyState icon="📢" title="No active messages" subtitle="No messages sent yet. Use the form to broadcast an announcement to all users." />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <tr className="border-b border-[#E2D9C8]">
                 {['Title', 'Type', 'Style', 'Target', 'Views', 'Dismissed', 'Created', ''].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -215,18 +206,18 @@ export default function SystemMessages() {
               {active.map(m => {
                 const tc = TYPE_COLORS[m.message_type] || TYPE_COLORS.info;
                 return (
-                  <tr key={m.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{m.title}</td>
-                    <td style={{ padding: '10px 14px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: tc.bg, color: tc.text }}>{m.message_type}</span>
+                  <tr key={m.id} className="border-b border-[#E2D9C8]">
+                    <td className="px-3.5 py-2.5 text-navy font-semibold">{m.title}</td>
+                    <td className="px-3.5 py-2.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${tc.bg} ${tc.text}`}>{m.message_type}</span>
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{m.display_style}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{m.target_audience}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{m.views_count}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{m.dismissals_count}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(m.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '10px 14px' }}>
-                      <button onClick={() => deactivate(m.id)} style={{ padding: '4px 10px', background: '#FEF2F2', border: 'none', borderRadius: 4, color: '#DC2626', fontSize: 11, cursor: 'pointer' }}>Deactivate</button>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.display_style}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.target_audience}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.views_count}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.dismissals_count}</td>
+                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(m.created_at).toLocaleDateString()}</td>
+                    <td className="px-3.5 py-2.5">
+                      <button onClick={() => deactivate(m.id)} className="px-2.5 py-1 bg-red-50 border-none rounded text-red-600 text-[11px] cursor-pointer">Deactivate</button>
                     </td>
                   </tr>
                 );
@@ -239,16 +230,16 @@ export default function SystemMessages() {
       {/* Message history */}
       {inactive.length > 0 && (
         <>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>History ({inactive.length})</h3>
-          <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <h3 className="text-sm font-bold text-navy">History ({inactive.length})</h3>
+          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+            <table className="w-full border-collapse text-[13px]">
               <tbody>
                 {inactive.slice(0, 20).map(m => (
-                  <tr key={m.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '10px 14px', color: TEXT_MUTED }}>{m.title}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_MUTED, fontSize: 12 }}>{m.message_type}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_MUTED, fontSize: 12 }}>Views: {m.views_count}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT_MUTED, fontSize: 12 }}>{new Date(m.created_at).toLocaleDateString()}</td>
+                  <tr key={m.id} className="border-b border-[#E2D9C8]">
+                    <td className="px-3.5 py-2.5 text-gray-400">{m.title}</td>
+                    <td className="px-3.5 py-2.5 text-gray-400 text-xs">{m.message_type}</td>
+                    <td className="px-3.5 py-2.5 text-gray-400 text-xs">Views: {m.views_count}</td>
+                    <td className="px-3.5 py-2.5 text-gray-400 text-xs">{new Date(m.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

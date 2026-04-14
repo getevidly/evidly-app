@@ -20,16 +20,9 @@ import {
 } from '../../data/demoData';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT = '#374151';
-const TEXT_SEC = '#6B7280';
-const BORDER = '#E5E7EB';
-const CARD = 'background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;';
-
 function SectionTitle({ title }: { title: string }) {
   return (
-    <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 12, marginTop: 32 }}>
+    <h2 className="text-base font-bold text-navy mb-3 mt-8">
       {title}
     </h2>
   );
@@ -37,28 +30,24 @@ function SectionTitle({ title }: { title: string }) {
 
 function Card({ children, title }: { children: React.ReactNode; title: string }) {
   return (
-    <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 8, marginBottom: 16 }}>
-      <div style={{ padding: '12px 16px', borderBottom: `1px solid ${BORDER}` }}>
-        <h3 style={{ fontSize: 13, fontWeight: 600, color: NAVY }}>{title}</h3>
+    <div className="bg-white border border-gray-200 rounded-lg mb-4">
+      <div className="py-3 px-4 border-b border-gray-200">
+        <h3 className="text-[13px] font-semibold text-navy">{title}</h3>
       </div>
-      <div style={{ padding: 16 }}>{children}</div>
+      <div className="p-4">{children}</div>
     </div>
   );
 }
 
 function Badge({ color, label }: { color: string; label: string }) {
   const bgMap: Record<string, string> = {
-    green: '#dcfce7', red: '#fef2f2', amber: '#fffbeb', gray: '#f3f4f6', blue: '#eff6ff',
+    green: 'bg-green-100', red: 'bg-red-50', amber: 'bg-amber-50', gray: 'bg-gray-100', blue: 'bg-blue-50',
   };
   const fgMap: Record<string, string> = {
-    green: '#16a34a', red: '#dc2626', amber: '#d97706', gray: '#6b7280', blue: '#2563eb',
+    green: 'text-green-600', red: 'text-red-600', amber: 'text-amber-600', gray: 'text-gray-500', blue: 'text-blue-600',
   };
   return (
-    <span style={{
-      fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
-      backgroundColor: bgMap[color] || bgMap.gray,
-      color: fgMap[color] || fgMap.gray,
-    }}>
+    <span className={`text-[11px] font-semibold py-0.5 px-2 rounded ${bgMap[color] || bgMap.gray} ${fgMap[color] || fgMap.gray}`}>
       {label}
     </span>
   );
@@ -72,11 +61,11 @@ export default function DemoDashboard() {
     s === 'failing' || s === 'critical' ? 'red' : 'gray';
 
   return (
-      <div style={{ maxWidth: 900 }}>
+      <div className="max-w-[900px]">
         {/* Header */}
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>Demo Data Dashboard</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
+        <div className="mb-6">
+          <h1 className="text-[22px] font-extrabold text-navy">Demo Data Dashboard</h1>
+          <p className="text-[13px] text-gray-500 mt-1">
             Visual reference of all hardcoded demo constants used in demo mode.
           </p>
         </div>
@@ -84,31 +73,31 @@ export default function DemoDashboard() {
         {/* ── Org Overview ── */}
         <SectionTitle title="Organization" />
         <Card title="DEMO_ORG">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <div style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600 }}>Name</div>
-              <div style={{ fontSize: 14, color: TEXT, fontWeight: 500 }}>{DEMO_ORG.name}</div>
+              <div className="text-[11px] text-gray-500 font-semibold">Name</div>
+              <div className="text-sm text-gray-700 font-medium">{DEMO_ORG.name}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600 }}>Locations</div>
-              <div style={{ fontSize: 14, color: TEXT, fontWeight: 500 }}>{DEMO_ORG.locationCount}</div>
+              <div className="text-[11px] text-gray-500 font-semibold">Locations</div>
+              <div className="text-sm text-gray-700 font-medium">{DEMO_ORG.locationCount}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600 }}>Industry</div>
-              <div style={{ fontSize: 14, color: TEXT, fontWeight: 500 }}>{DEMO_ORG.industry_type}</div>
+              <div className="text-[11px] text-gray-500 font-semibold">Industry</div>
+              <div className="text-sm text-gray-700 font-medium">{DEMO_ORG.industry_type}</div>
             </div>
           </div>
         </Card>
 
         <Card title="Org-Level Scores (DEMO_ORG_SCORES)">
-          <div style={{ display: 'flex', gap: 32 }}>
+          <div className="flex gap-8">
             <div>
-              <div style={{ fontSize: 11, color: TEXT_SEC }}>Food Safety Avg</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: NAVY }}>{DEMO_ORG_SCORES.foodSafety}</div>
+              <div className="text-[11px] text-gray-500">Food Safety Avg</div>
+              <div className="text-2xl font-bold text-navy">{DEMO_ORG_SCORES.foodSafety}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: TEXT_SEC }}>Facility Safety Avg</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: NAVY }}>{DEMO_ORG_SCORES.facilitySafety}</div>
+              <div className="text-[11px] text-gray-500">Facility Safety Avg</div>
+              <div className="text-2xl font-bold text-navy">{DEMO_ORG_SCORES.facilitySafety}</div>
             </div>
           </div>
         </Card>
@@ -116,20 +105,20 @@ export default function DemoDashboard() {
         {/* ── Roles ── */}
         <SectionTitle title="Demo Users (per role)" />
         <Card title="demoUsers">
-          <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+          <table className="w-full text-[13px] border-collapse">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <th style={{ textAlign: 'left', padding: '6px 8px', color: TEXT_SEC, fontSize: 11 }}>Role</th>
-                <th style={{ textAlign: 'left', padding: '6px 8px', color: TEXT_SEC, fontSize: 11 }}>Name</th>
-                <th style={{ textAlign: 'left', padding: '6px 8px', color: TEXT_SEC, fontSize: 11 }}>Title</th>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-1.5 px-2 text-gray-500 text-[11px]">Role</th>
+                <th className="text-left py-1.5 px-2 text-gray-500 text-[11px]">Name</th>
+                <th className="text-left py-1.5 px-2 text-gray-500 text-[11px]">Title</th>
               </tr>
             </thead>
             <tbody>
               {Object.entries(demoUsers).map(([role, user]) => (
-                <tr key={role} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '6px 8px', fontFamily: 'monospace', fontSize: 12 }}>{role}</td>
-                  <td style={{ padding: '6px 8px' }}>{user.name}</td>
-                  <td style={{ padding: '6px 8px', color: TEXT_SEC }}>{user.title}</td>
+                <tr key={role} className="border-b border-gray-200">
+                  <td className="py-1.5 px-2 font-mono text-xs">{role}</td>
+                  <td className="py-1.5 px-2">{user.name}</td>
+                  <td className="py-1.5 px-2 text-gray-500">{user.title}</td>
                 </tr>
               ))}
             </tbody>
@@ -143,16 +132,12 @@ export default function DemoDashboard() {
             const jStatus = LOCATION_JURISDICTION_STATUS[loc.id];
             const scores = LOCATIONS_WITH_SCORES.find(l => l.id === loc.id);
             return (
-              <div key={loc.id} style={{
-                padding: '12px 0',
-                borderBottom: `1px solid ${BORDER}`,
-                display: 'flex', alignItems: 'center', gap: 16,
-              }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: TEXT }}>
-                    {loc.name} <span style={{ fontSize: 12, color: TEXT_SEC }}>({loc.id})</span>
+              <div key={loc.id} className="py-3 border-b border-gray-200 flex items-center gap-4">
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-gray-700">
+                    {loc.name} <span className="text-xs text-gray-500">({loc.id})</span>
                   </div>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
+                  <div className="flex gap-2 mt-1 flex-wrap">
                     <Badge color={statusColor(loc.status)} label={loc.status} />
                     {jStatus && (
                       <>
@@ -169,10 +154,10 @@ export default function DemoDashboard() {
                   </div>
                 </div>
                 {scores && (
-                  <div style={{ textAlign: 'right', fontSize: 12, color: TEXT_SEC }}>
+                  <div className="text-right text-xs text-gray-500">
                     <div>Food: {scores.foodScore}</div>
                     <div>Facility: {scores.fireScore}</div>
-                    <div style={{ color: loc.trend > 0 ? '#16a34a' : loc.trend < 0 ? '#dc2626' : TEXT_SEC }}>
+                    <div className={loc.trend > 0 ? 'text-green-600' : loc.trend < 0 ? 'text-red-600' : 'text-gray-500'}>
                       Trend: {loc.trend > 0 ? '+' : ''}{loc.trend}
                     </div>
                   </div>
@@ -185,7 +170,7 @@ export default function DemoDashboard() {
         {/* ── Weekly Activity ── */}
         <SectionTitle title="Weekly Activity" />
         <Card title="DEMO_WEEKLY_ACTIVITY">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+          <div className="grid grid-cols-5 gap-3">
             {[
               { label: 'Temp Checks', value: DEMO_WEEKLY_ACTIVITY.tempChecks.total, sub: `${DEMO_WEEKLY_ACTIVITY.tempChecks.onTimePercent}% on time` },
               { label: 'Checklists', value: `${DEMO_WEEKLY_ACTIVITY.checklists.completed}/${DEMO_WEEKLY_ACTIVITY.checklists.required}`, sub: `${DEMO_WEEKLY_ACTIVITY.checklists.percent}%` },
@@ -193,10 +178,10 @@ export default function DemoDashboard() {
               { label: 'Incidents', value: DEMO_WEEKLY_ACTIVITY.incidents.total, sub: `${DEMO_WEEKLY_ACTIVITY.incidents.open} open` },
               { label: 'Active Team', value: DEMO_WEEKLY_ACTIVITY.activeTeam, sub: 'members' },
             ].map(item => (
-              <div key={item.label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: NAVY }}>{item.value}</div>
-                <div style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600 }}>{item.label}</div>
-                <div style={{ fontSize: 10, color: TEXT_SEC }}>{item.sub}</div>
+              <div key={item.label} className="text-center">
+                <div className="text-xl font-bold text-navy">{item.value}</div>
+                <div className="text-[11px] text-gray-500 font-semibold">{item.label}</div>
+                <div className="text-[10px] text-gray-500">{item.sub}</div>
               </div>
             ))}
           </div>
@@ -206,35 +191,29 @@ export default function DemoDashboard() {
         <SectionTitle title="Attention Items" />
         <Card title={`DEMO_ATTENTION_ITEMS (${DEMO_ATTENTION_ITEMS.length})`}>
           {DEMO_ATTENTION_ITEMS.map((item, i) => (
-            <div key={i} style={{
-              padding: '8px 0',
-              borderBottom: i < DEMO_ATTENTION_ITEMS.length - 1 ? `1px solid ${BORDER}` : 'none',
-              display: 'flex', alignItems: 'center', gap: 12,
-            }}>
+            <div key={i} className={`py-2 flex items-center gap-3 ${
+              i < DEMO_ATTENTION_ITEMS.length - 1 ? 'border-b border-gray-200' : ''
+            }`}>
               <Badge color={item.status === 'critical' ? 'red' : 'amber'} label={item.status} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: TEXT }}>{item.locationName}</div>
-                <div style={{ fontSize: 12, color: TEXT_SEC }}>{item.summary}</div>
+              <div className="flex-1">
+                <div className="text-[13px] font-medium text-gray-700">{item.locationName}</div>
+                <div className="text-xs text-gray-500">{item.summary}</div>
               </div>
-              <div style={{ fontSize: 11, color: GOLD, fontWeight: 600 }}>{item.action}</div>
+              <div className="text-[11px] text-gold font-semibold">{item.action}</div>
             </div>
           ))}
         </Card>
 
         <Card title={`needsAttentionItems (${needsAttentionItems.length})`}>
-          <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+          <div className="max-h-[300px] overflow-y-auto">
             {needsAttentionItems.map(item => (
-              <div key={item.id} style={{
-                padding: '6px 0',
-                borderBottom: `1px solid ${BORDER}`,
-                display: 'flex', alignItems: 'center', gap: 10,
-              }}>
+              <div key={item.id} className="py-1.5 border-b border-gray-200 flex items-center gap-2.5">
                 <Badge color={item.color} label={item.color} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: TEXT }}>{item.title}</div>
-                  <div style={{ fontSize: 11, color: TEXT_SEC }}>{item.detail}</div>
+                <div className="flex-1">
+                  <div className="text-xs font-medium text-gray-700">{item.title}</div>
+                  <div className="text-[11px] text-gray-500">{item.detail}</div>
                 </div>
-                <div style={{ fontSize: 10, color: TEXT_SEC, fontFamily: 'monospace' }}>{item.url}</div>
+                <div className="text-[10px] text-gray-500 font-mono">{item.url}</div>
               </div>
             ))}
           </div>
@@ -243,28 +222,28 @@ export default function DemoDashboard() {
         {/* ── Vendors ── */}
         <SectionTitle title="Vendors" />
         <Card title={`vendors (${vendors.length})`}>
-          <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-            <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
+          <div className="max-h-[300px] overflow-y-auto">
+            <table className="w-full text-xs border-collapse">
               <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}`, position: 'sticky', top: 0, background: '#fff' }}>
+                <tr className="border-b border-gray-200 sticky top-0 bg-white">
                   {['Company', 'Service', 'Status', 'Next Due', 'Loc'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '4px 6px', color: TEXT_SEC, fontSize: 10 }}>{h}</th>
+                    <th key={h} className="text-left py-1 px-1.5 text-gray-500 text-[10px]">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {vendors.map(v => (
-                  <tr key={v.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '4px 6px' }}>{v.companyName}</td>
-                    <td style={{ padding: '4px 6px' }}>{v.serviceType}</td>
-                    <td style={{ padding: '4px 6px' }}>
+                  <tr key={v.id} className="border-b border-gray-200">
+                    <td className="py-1 px-1.5">{v.companyName}</td>
+                    <td className="py-1 px-1.5">{v.serviceType}</td>
+                    <td className="py-1 px-1.5">
                       <Badge
                         color={v.status === 'current' ? 'green' : v.status === 'overdue' ? 'red' : 'amber'}
                         label={v.status}
                       />
                     </td>
-                    <td style={{ padding: '4px 6px', fontFamily: 'monospace' }}>{v.nextDue || '—'}</td>
-                    <td style={{ padding: '4px 6px' }}>L{v.locationId}</td>
+                    <td className="py-1 px-1.5 font-mono">{v.nextDue || '—'}</td>
+                    <td className="py-1 px-1.5">L{v.locationId}</td>
                   </tr>
                 ))}
               </tbody>
@@ -275,7 +254,7 @@ export default function DemoDashboard() {
         {/* ── Vendor Services ── */}
         <SectionTitle title="Vendor Services" />
         <Card title="Vendor Service Records">
-          <div style={{ padding: 20, textAlign: 'center', fontSize: 13, color: TEXT_SEC }}>
+          <div className="p-5 text-center text-[13px] text-gray-500">
             Service records will appear here once HoodOps completes work at this location.
           </div>
         </Card>
@@ -283,46 +262,38 @@ export default function DemoDashboard() {
         {/* ── Trend Data ── */}
         <SectionTitle title="30-Day Trend" />
         <Card title={`DEMO_TREND_DATA (${DEMO_TREND_DATA.length} points)`}>
-          <div style={{ display: 'flex', gap: 24, marginBottom: 12 }}>
+          <div className="flex gap-6 mb-3">
             <div className="text-xs">
-              <span style={{ color: '#16a34a', fontWeight: 600 }}>Food Safety</span>: {DEMO_TREND_DATA[0].foodSafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].foodSafety}
+              <span className="text-green-600 font-semibold">Food Safety</span>: {DEMO_TREND_DATA[0].foodSafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].foodSafety}
             </div>
             <div className="text-xs">
-              <span style={{ color: '#2563eb', fontWeight: 600 }}>Facility Safety</span>: {DEMO_TREND_DATA[0].facilitySafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].facilitySafety}
+              <span className="text-blue-600 font-semibold">Facility Safety</span>: {DEMO_TREND_DATA[0].facilitySafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].facilitySafety}
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 80 }}>
+          <div className="flex items-end gap-0.5 h-20">
             {DEMO_TREND_DATA.map((d, i) => (
-              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <div key={i} className="flex-1 flex flex-col gap-px">
                 <div
-                  style={{
-                    height: Math.max(2, (d.foodSafety - 60) * 2),
-                    backgroundColor: '#16a34a',
-                    borderRadius: 1,
-                    opacity: 0.6,
-                  }}
+                  className="bg-green-600 rounded-sm opacity-60"
+                  style={{ height: Math.max(2, (d.foodSafety - 60) * 2) }}
                   title={`${d.date}: Food ${d.foodSafety}`}
                 />
                 <div
-                  style={{
-                    height: Math.max(2, (d.facilitySafety - 60) * 2),
-                    backgroundColor: '#2563eb',
-                    borderRadius: 1,
-                    opacity: 0.6,
-                  }}
+                  className="bg-blue-600 rounded-sm opacity-60"
+                  style={{ height: Math.max(2, (d.facilitySafety - 60) * 2) }}
                   title={`${d.date}: Facility ${d.facilitySafety}`}
                 />
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 10, color: TEXT_SEC }}>
+          <div className="flex justify-between mt-1 text-[10px] text-gray-500">
             <span>{DEMO_TREND_DATA[0].date}</span>
             <span>{DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].date}</span>
           </div>
         </Card>
 
         {/* Footer */}
-        <div style={{ marginTop: 40, paddingTop: 16, borderTop: `1px solid ${BORDER}`, fontSize: 12, color: TEXT_SEC }}>
+        <div className="mt-10 pt-4 border-t border-gray-200 text-xs text-gray-500">
           Data sources: <code>src/data/demoData.ts</code>
         </div>
       </div>

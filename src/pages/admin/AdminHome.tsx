@@ -19,12 +19,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
-const CARD_BORDER = '#E2D9C8';
-
 const LAUNCH_DATE = new Date('2026-05-05T00:00:00-07:00');
 
 /* ------------------------------------------------------------------ */
@@ -70,11 +64,11 @@ function relativeTime(dateStr: string): string {
   return `${days}d ago`;
 }
 
-const SEVERITY_COLORS: Record<string, { bg: string; color: string }> = {
-  critical: { bg: '#FEE2E2', color: '#DC2626' },
-  high: { bg: '#FEF3C7', color: '#D97706' },
-  medium: { bg: '#DBEAFE', color: '#2563EB' },
-  low: { bg: '#F3F4F6', color: '#6B7280' },
+const SEVERITY_COLORS: Record<string, { bg: string; text: string }> = {
+  critical: { bg: 'bg-red-100', text: 'text-red-600' },
+  high: { bg: 'bg-amber-100', text: 'text-amber-600' },
+  medium: { bg: 'bg-blue-100', text: 'text-blue-600' },
+  low: { bg: 'bg-gray-100', text: 'text-gray-500' },
 };
 
 /* ------------------------------------------------------------------ */
@@ -179,16 +173,16 @@ export default function AdminHome() {
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="flex flex-col gap-6">
         <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
+        <div className="grid grid-cols-6 gap-3.5">
           {[...Array(6)].map((_, i) => (
-            <div key={i} style={{ height: 96, borderRadius: 10, background: '#E8EDF4', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} className="h-24 rounded-[10px] bg-[#E8EDF4] animate-pulse" />
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+        <div className="grid grid-cols-3 gap-5">
           {[...Array(3)].map((_, i) => (
-            <div key={i} style={{ height: 220, borderRadius: 12, background: '#E8EDF4', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} className="h-[220px] rounded-xl bg-[#E8EDF4] animate-pulse" />
           ))}
         </div>
       </div>
@@ -197,11 +191,11 @@ export default function AdminHome() {
 
   if (loadError) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="flex flex-col gap-6">
         <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
-        <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ color: '#6B7F96', fontSize: 14 }}>Failed to load dashboard data.</p>
-          <button onClick={loadStats} style={{ marginTop: 12, background: GOLD, color: '#fff', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+        <div className="text-center py-12 px-12">
+          <p className="text-[#6B7F96] text-sm">Failed to load dashboard data.</p>
+          <button onClick={loadStats} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer text-[13px] font-semibold">
             Try again
           </button>
         </div>
@@ -210,29 +204,16 @@ export default function AdminHome() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="flex flex-col gap-6">
       <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
 
       {/* ── A. Alert Banner ──────────────────────────────────── */}
       {crawlErrors > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 18px',
-            background: '#FEF3C7',
-            border: '1px solid #F59E0B',
-            borderRadius: 10,
-            fontSize: 13,
-            fontWeight: 500,
-            color: '#92400E',
-          }}
-        >
+        <div className="flex items-center justify-between px-[18px] py-3 bg-[#FEF3C7] border border-amber-500 rounded-[10px] text-[13px] font-medium text-[#92400E]">
           <span>{crawlErrors} crawl source{crawlErrors !== 1 ? 's' : ''} in error state</span>
           <span
             onClick={() => navigate('/admin/intelligence')}
-            style={{ cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', textDecorationColor: '#D97706' }}
+            className="cursor-pointer font-semibold underline decoration-amber-600"
           >
             View in EvidLY Intelligence &rarr; Sources
           </span>
@@ -241,24 +222,11 @@ export default function AdminHome() {
 
       {/* AUDIT-FIX-08 / A-3: AI Budget Alert Banner */}
       {aiBudgetAlert && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 18px',
-            background: '#FEF3C7',
-            border: '1px solid #F59E0B',
-            borderRadius: 10,
-            fontSize: 13,
-            fontWeight: 500,
-            color: '#92400E',
-          }}
-        >
+        <div className="flex items-center justify-between px-[18px] py-3 bg-[#FEF3C7] border border-amber-500 rounded-[10px] text-[13px] font-medium text-[#92400E]">
           <span>AI classification spend today: ${aiBudgetAlert.spend.toFixed(4)} / ${aiBudgetAlert.budget.toFixed(2)} daily budget</span>
           <span
             onClick={() => navigate('/admin/intelligence-admin')}
-            style={{ cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', textDecorationColor: '#D97706' }}
+            className="cursor-pointer font-semibold underline decoration-amber-600"
           >
             View AI Costs &rarr;
           </span>
@@ -267,101 +235,65 @@ export default function AdminHome() {
 
       {/* ── B. Page Header ───────────────────────────────────── */}
       <div>
-        <h1
-          style={{
-            fontSize: 26,
-            fontWeight: 800,
-            color: NAVY,
-            fontFamily: 'Syne, DM Sans, sans-serif',
-            margin: 0,
-            letterSpacing: '-0.02em',
-          }}
-        >
+        <h1 className="text-[26px] font-extrabold text-navy font-[Syne,DM_Sans,sans-serif] m-0 tracking-[-0.02em]">
           Welcome back, {firstName}
         </h1>
-        <p style={{ fontSize: 14, color: TEXT_SEC, marginTop: 4 }}>
+        <p className="text-sm text-[#6B7F96] mt-1">
           EvidLY Admin Console — platform operations, intelligence, and growth.
         </p>
       </div>
 
       {/* ── C. Stat Cards Row ────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, alignItems: 'stretch' }}>
+      <div className="grid grid-cols-6 gap-3.5 items-stretch">
         {([
           {
             label: 'MRR',
             value: mrr === null ? '—' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
-            color: GOLD,
+            color: 'text-gold',
             sub: 'Pre-launch',
           },
           {
             label: 'Organizations',
             value: orgCount ?? '—',
-            color: NAVY,
+            color: 'text-navy',
             sub: 'Active',
           },
           {
             label: 'Locations',
             value: locCount ?? '—',
-            color: NAVY,
+            color: 'text-navy',
             sub: 'Active',
           },
           {
             label: 'Crawl Sources',
             value: crawlLive === null || crawlTotal === null ? '—' : `${crawlLive}/${crawlTotal}`,
-            color: crawlLive !== null && crawlLive > 0 ? '#166534' : '#C2410C',
+            color: crawlLive !== null && crawlLive > 0 ? 'text-green-800' : 'text-orange-700',
             sub: 'Live feeds',
           },
           {
             label: 'Signals Pending',
             value: pendingSignals ?? '—',
-            color: '#C2410C',
+            color: 'text-orange-700',
             sub: 'Awaiting review',
           },
           {
             label: 'Launch Countdown',
             value: countdown || '—',
-            color: GOLD,
+            color: 'text-gold',
             sub: 'May 5, 2026',
           },
         ] as const).map((card, i) => (
           <div
             key={i}
-            style={{
-              background: '#FFFFFF',
-              border: `1px solid ${CARD_BORDER}`,
-              borderRadius: 10,
-              padding: '16px 20px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-            }}
+            className="bg-white border border-[#E2D9C8] rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center"
           >
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                color: '#6B7280',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                marginBottom: 8,
-              }}
-            >
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">
               {card.label}
             </div>
-            <div
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: card.color,
-                lineHeight: 1,
-                fontFamily: 'DM Sans, sans-serif',
-              }}
-            >
+            <div className={`text-[28px] font-extrabold leading-none font-[DM_Sans,sans-serif] ${card.color}`}>
               {card.value}
             </div>
-            <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 6 }}>
+            <div className="text-[11px] text-gray-400 mt-1.5">
               {card.sub}
             </div>
           </div>
@@ -369,68 +301,27 @@ export default function AdminHome() {
       </div>
 
       {/* ── D. Three-column grid ─────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+      <div className="grid grid-cols-3 gap-5">
 
         {/* Column 1 — Quick Access */}
-        <div
-          style={{
-            background: '#FFFFFF',
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 12,
-            padding: '20px 22px',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: NAVY,
-              margin: '0 0 14px 0',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
+        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5">
+          <h2 className="text-sm font-bold text-navy mb-3.5 font-[DM_Sans,sans-serif]">
             Quick Access
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div className="grid grid-cols-2 gap-2.5">
             {QUICK_ACCESS.map(card => (
               <button
                 key={card.path}
                 onClick={() => navigate(card.path)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '10px 12px',
-                  borderRadius: 8,
-                  border: `1px solid ${CARD_BORDER}`,
-                  background: '#FFFFFF',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                  textAlign: 'left',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = GOLD;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = CARD_BORDER;
-                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-[#E2D9C8] bg-white cursor-pointer transition-all text-left hover:border-gold"
               >
                 <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 7,
-                    background: card.bg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 15,
-                    flexShrink: 0,
-                  }}
+                  className="w-8 h-8 rounded-[7px] flex items-center justify-center text-[15px] shrink-0"
+                  style={{ background: card.bg }}
                 >
                   {card.icon}
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 600, color: NAVY }}>
+                <span className="text-xs font-semibold text-navy">
                   {card.label}
                 </span>
               </button>
@@ -439,86 +330,54 @@ export default function AdminHome() {
         </div>
 
         {/* Column 2 — Platform Health */}
-        <div
-          style={{
-            background: '#FFFFFF',
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 12,
-            padding: '20px 22px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: NAVY,
-              margin: '0 0 14px 0',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
+        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5 flex flex-col">
+          <h2 className="text-sm font-bold text-navy mb-3.5 font-[DM_Sans,sans-serif]">
             Platform Health
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+          <div className="flex flex-col gap-3 flex-1">
             {([
               {
                 label: 'Intelligence Sources Live',
                 value: crawlLive !== null && crawlTotal !== null ? `${crawlLive} / ${crawlTotal}` : '—',
-                color: crawlLive !== null && crawlLive > 0 ? '#166534' : TEXT_MUTED,
+                color: crawlLive !== null && crawlLive > 0 ? 'text-green-800' : 'text-gray-400',
               },
               {
                 label: 'Sources with Errors',
                 value: healthErrorCount ?? '—',
-                color: healthErrorCount !== null && healthErrorCount > 0 ? '#DC2626' : '#059669',
+                color: healthErrorCount !== null && healthErrorCount > 0 ? 'text-red-600' : 'text-emerald-600',
               },
               {
                 label: 'Signals Pending Review',
                 value: pendingSignals ?? '—',
-                color: pendingSignals !== null && pendingSignals > 0 ? '#C2410C' : '#059669',
+                color: pendingSignals !== null && pendingSignals > 0 ? 'text-orange-700' : 'text-emerald-600',
               },
               {
                 label: 'Edge Functions',
                 value: 'See Supabase',
-                color: TEXT_MUTED,
+                color: 'text-gray-400',
               },
             ] as const).map((row, i) => (
               <div
                 key={i}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '8px 0',
-                  borderBottom: i < 3 ? `1px solid #F3F0EA` : 'none',
-                }}
+                className={`flex justify-between items-center py-2 ${i < 3 ? 'border-b border-[#F3F0EA]' : ''}`}
               >
-                <span style={{ fontSize: 12, color: TEXT_SEC }}>{row.label}</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: row.color }}>{row.value}</span>
+                <span className="text-xs text-[#6B7F96]">{row.label}</span>
+                <span className={`text-[13px] font-bold ${row.color}`}>{row.value}</span>
               </div>
             ))}
           </div>
 
           {/* System status footer */}
-          <div
-            style={{
-              marginTop: 16,
-              paddingTop: 12,
-              borderTop: `1px solid ${CARD_BORDER}`,
-              display: 'flex',
-              gap: 16,
-              fontSize: 11,
-            }}
-          >
-            <span style={{ color: TEXT_SEC }}>
-              Supabase: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
+          <div className="mt-4 pt-3 border-t border-[#E2D9C8] flex gap-4 text-[11px]">
+            <span className="text-[#6B7F96]">
+              Supabase: <span className="text-emerald-600 font-semibold">OK</span>
             </span>
-            <span style={{ color: TEXT_SEC }}>
-              Vercel: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
+            <span className="text-[#6B7F96]">
+              Vercel: <span className="text-emerald-600 font-semibold">OK</span>
             </span>
-            <span style={{ color: TEXT_SEC }}>
+            <span className="text-[#6B7F96]">
               Crawl Engine:{' '}
-              <span style={{ color: crawlErrors > 0 ? '#DC2626' : '#059669', fontWeight: 600 }}>
+              <span className={`font-semibold ${crawlErrors > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                 {crawlErrors > 0 ? `${crawlErrors} errors` : 'OK'}
               </span>
             </span>
@@ -526,101 +385,44 @@ export default function AdminHome() {
         </div>
 
         {/* Column 3 — Open Tickets */}
-        <div
-          style={{
-            background: '#FFFFFF',
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 12,
-            padding: '20px 22px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <h2
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                color: NAVY,
-                margin: 0,
-                fontFamily: 'DM Sans, sans-serif',
-              }}
-            >
+        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5 flex flex-col">
+          <div className="flex items-center gap-2 mb-3.5">
+            <h2 className="text-sm font-bold text-navy m-0 font-[DM_Sans,sans-serif]">
               Open Tickets
             </h2>
             {tickets.length > 0 && (
-              <span
-                style={{
-                  background: '#DC2626',
-                  color: '#FFFFFF',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  padding: '2px 7px',
-                  borderRadius: 10,
-                }}
-              >
+              <span className="bg-red-600 text-white text-[10px] font-bold px-[7px] py-0.5 rounded-[10px]">
                 {tickets.length}
               </span>
             )}
           </div>
 
           {tickets.length === 0 ? (
-            <div
-              style={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: TEXT_MUTED,
-                fontSize: 13,
-                fontStyle: 'italic',
-              }}
-            >
+            <div className="flex-1 flex items-center justify-center text-gray-400 text-[13px] italic">
               No open tickets
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <div className="flex flex-col">
               {tickets.map((ticket, i) => {
                 const sev = SEVERITY_COLORS[ticket.severity] || SEVERITY_COLORS.low;
                 return (
                   <div
                     key={ticket.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      padding: '8px 6px',
-                      borderBottom: i < tickets.length - 1 ? '1px solid #F3F0EA' : 'none',
-                      borderRadius: 6,
-                      border: '1px solid transparent',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.15s',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'transparent'; }}
+                    className={`flex items-center gap-2.5 px-1.5 py-2 rounded-md border border-transparent cursor-pointer transition-colors hover:border-gold ${
+                      i < tickets.length - 1 ? 'border-b border-b-[#F3F0EA]' : ''
+                    }`}
                     onClick={() => navigate('/admin/support')}
                   >
-                    <span style={{ fontSize: 11, color: TEXT_MUTED, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
+                    <span className="text-[11px] text-gray-400 tabular-nums shrink-0">
                       #{ticket.id.slice(0, 6)}
                     </span>
-                    <span style={{ fontSize: 12, color: NAVY, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span className="text-xs text-navy flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
                       {ticket.title}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 600,
-                        padding: '2px 6px',
-                        borderRadius: 4,
-                        background: sev.bg,
-                        color: sev.color,
-                        textTransform: 'uppercase',
-                        flexShrink: 0,
-                      }}
-                    >
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase shrink-0 ${sev.bg} ${sev.text}`}>
                       {ticket.severity}
                     </span>
-                    <span style={{ fontSize: 11, color: TEXT_MUTED, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+                    <span className="text-[11px] text-gray-400 shrink-0 tabular-nums">
                       {relativeTime(ticket.created_at)}
                     </span>
                   </div>
