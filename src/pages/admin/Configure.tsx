@@ -10,6 +10,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { useAuth } from '../../contexts/AuthContext';
+import Button from '../../components/ui/Button';
 
 type Tab = 'organizations' | 'locations' | 'users' | 'vendors';
 
@@ -42,19 +43,19 @@ const SERVICE_TYPES = ['Hood Cleaning','Fire Suppression','Pest Control','Grease
 const CERTIFICATIONS = ['IKECA','NFPA','EPA','State Licensed','Insured','Bonded'];
 
 const Skeleton = ({ h = 20 }: { h?: number }) => (
-  <div className="w-full rounded-md animate-pulse bg-[#E5E7EB]" style={{ height: h }} />
+  <div className="w-full rounded-md animate-pulse bg-gray-200" style={{ height: h }} />
 );
 
 const statusBadgeClass = (status: string) => {
   const base = 'px-2 py-[2px] rounded text-[10px] font-bold';
-  if (status === 'active') return `${base} bg-[#F0FFF4] text-[#059669]`;
-  if (status === 'pending') return `${base} bg-[#FFFBEB] text-[#D97706]`;
-  return `${base} bg-[#FEF2F2] text-[#DC2626]`;
+  if (status === 'active') return `${base} bg-green-50 text-emerald-600`;
+  if (status === 'pending') return `${base} bg-amber-50 text-amber-600`;
+  return `${base} bg-red-50 text-red-600`;
 };
 
-const inputCls = 'w-full px-3 py-2 border border-[#D1D5DB] rounded-lg text-[13px] text-navy bg-white outline-none';
+const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-[13px] text-navy bg-white outline-none';
 
-const labelCls = 'text-[11px] text-[#6B7F96] block mb-1';
+const labelCls = 'text-[11px] text-slate_ui block mb-1';
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
@@ -62,7 +63,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       <div className="bg-white rounded-[14px] p-7 w-[95vw] max-w-[560px] max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-base font-bold text-navy">{title}</h3>
-          <button onClick={onClose} className="bg-transparent border-none text-xl text-[#9CA3AF] cursor-pointer">{'×'}</button>
+          <button onClick={onClose} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">{'×'}</button>
         </div>
         {children}
       </div>
@@ -140,18 +141,18 @@ export default function Configure() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Configure</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">Manage organizations, locations, users, and vendors.</p>
+          <p className="text-[13px] text-slate_ui mt-1">Manage organizations, locations, users, and vendors.</p>
         </div>
-        <button onClick={openModal} className="px-5 py-2 bg-navy text-white border-none rounded-lg text-[13px] font-semibold cursor-pointer">{addButtonLabel}</button>
+        <Button variant="primary" size="sm" onClick={openModal}>{addButtonLabel}</Button>
       </div>
 
       {/* Tabs + search */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-[2px] bg-[#F3F4F6] rounded-lg p-[3px]">
+        <div className="flex gap-[2px] bg-gray-100 rounded-lg p-[3px]">
           {(['organizations', 'locations', 'users', 'vendors'] as Tab[]).map(t => (
             <button key={t} onClick={() => { setTab(t); setSearch(''); }}
               className={`px-[18px] py-2 rounded-md border-none text-[13px] font-semibold cursor-pointer ${
-                tab === t ? 'bg-white text-navy shadow-[0_1px_3px_rgba(0,0,0,0.08)]' : 'bg-transparent text-[#9CA3AF]'
+                tab === t ? 'bg-white text-navy shadow-[0_1px_3px_rgba(0,0,0,0.08)]' : 'bg-transparent text-gray-400'
               }`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
@@ -160,7 +161,7 @@ export default function Configure() {
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className={`${inputCls} !w-[220px]`} />
       </div>
 
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {loading ? (
           <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -197,20 +198,20 @@ function EmptyAction({ icon, title, subtitle, actionLabel, onAction }: {
   icon: string; title: string; subtitle: string; actionLabel: string; onAction: () => void;
 }) {
   return (
-    <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+    <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
       <div className="text-[40px] mb-4">{icon}</div>
       <div className="text-base font-bold text-navy mb-2">{title}</div>
-      <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto mb-4">{subtitle}</div>
-      <button onClick={onAction} className="px-5 py-2 bg-navy text-white border-none rounded-lg text-[13px] font-semibold cursor-pointer">{actionLabel}</button>
+      <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto mb-4">{subtitle}</div>
+      <Button variant="primary" size="sm" onClick={onAction}>{actionLabel}</Button>
     </div>
   );
 }
 
 const TH = ({ children }: { children: string }) => (
-  <th className="text-left px-[14px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">{children}</th>
+  <th className="text-left px-[14px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase">{children}</th>
 );
 const TD = ({ children, fw, fs }: { children: React.ReactNode; fw?: boolean; fs?: number }) => (
-  <td className={`px-[14px] py-[10px] ${fw ? 'text-navy font-semibold' : 'text-[#6B7F96] font-normal'}`} style={fs ? { fontSize: fs } : { fontSize: 13 }}>{children}</td>
+  <td className={`px-[14px] py-[10px] ${fw ? 'text-navy font-semibold' : 'text-slate_ui font-normal'}`} style={fs ? { fontSize: fs } : { fontSize: 13 }}>{children}</td>
 );
 
 function OrgsTable({ orgs, search, onAdd, onSelect }: { orgs: Org[]; search: string; onAdd: () => void; onSelect: (o: Org) => void }) {
@@ -219,13 +220,13 @@ function OrgsTable({ orgs, search, onAdd, onSelect }: { orgs: Org[]; search: str
   if (filtered.length === 0) return <EmptyAction icon="🏢" title="No organizations yet" subtitle="Add your first organization to get started." actionLabel="+ Add Organization" onAction={onAdd} />;
   return (
     <table className="w-full border-collapse text-[13px]">
-      <thead><tr className="border-b border-[#E2D9C8]"><TH>Name</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Plan</TH><TH>Locations</TH><TH>Status</TH></tr></thead>
+      <thead><tr className="border-b border-border_ui-warm"><TH>Name</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Plan</TH><TH>Locations</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(o => (
-        <tr key={o.id} onClick={() => onSelect(o)} className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#F9FAFB]">
+        <tr key={o.id} onClick={() => onSelect(o)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
           <TD fw>{o.name}</TD>
           <td className="px-[14px] py-[10px]">
             <div className="text-[13px] text-navy">{o.primary_contact_name || '—'}</div>
-            {o.primary_contact_email && <div className="text-[11px] text-[#6B7F96]">{o.primary_contact_email}</div>}
+            {o.primary_contact_email && <div className="text-[11px] text-slate_ui">{o.primary_contact_email}</div>}
           </td>
           <TD fs={12}>{o.primary_contact_phone || o.main_phone || '—'}</TD>
           <TD>{o.plan || '—'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
@@ -242,9 +243,9 @@ function LocsTable({ locs, search, onAdd, onSelect }: { locs: Location[]; search
   if (filtered.length === 0) return <EmptyAction icon="📍" title="No locations yet" subtitle="Add a location to begin configuring sites." actionLabel="+ Add Location" onAction={onAdd} />;
   return (
     <table className="w-full border-collapse text-[13px]">
-      <thead><tr className="border-b border-[#E2D9C8]"><TH>Name</TH><TH>Organization</TH><TH>Site Contact</TH><TH>Phone</TH><TH>County</TH><TH>Status</TH></tr></thead>
+      <thead><tr className="border-b border-border_ui-warm"><TH>Name</TH><TH>Organization</TH><TH>Site Contact</TH><TH>Phone</TH><TH>County</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(l => (
-        <tr key={l.id} onClick={() => onSelect(l)} className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#F9FAFB]">
+        <tr key={l.id} onClick={() => onSelect(l)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
           <TD fw>{l.name}</TD><TD>{l.organizations?.name || '—'}</TD>
           <TD fs={12}>{l.site_contact_name || l.manager_name || '—'}</TD>
           <TD fs={12}>{l.site_contact_phone || l.site_phone || l.manager_phone || '—'}</TD>
@@ -262,11 +263,11 @@ function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfi
   if (filtered.length === 0) return <EmptyAction icon="👥" title="No users yet" subtitle="Invite or provision users to get started." actionLabel="+ Invite User" onAction={onAdd} />;
   return (
     <table className="w-full border-collapse text-[13px]">
-      <thead><tr className="border-b border-[#E2D9C8]"><TH>Name</TH><TH>Email</TH><TH>Role</TH><TH>Organization</TH><TH>Last Login</TH><TH>Created</TH></tr></thead>
+      <thead><tr className="border-b border-border_ui-warm"><TH>Name</TH><TH>Email</TH><TH>Role</TH><TH>Organization</TH><TH>Last Login</TH><TH>Created</TH></tr></thead>
       <tbody>{filtered.map(u => {
         const org = orgs.find(o => o.id === u.organization_id);
         return (
-          <tr key={u.user_id} onClick={() => onSelect(u)} className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#F9FAFB]">
+          <tr key={u.user_id} onClick={() => onSelect(u)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
             <TD fw>{u.full_name || '—'}</TD><TD fs={12}>{u.email || '—'}</TD><TD>{u.role}</TD>
             <TD fs={12}>{org?.name || '—'}</TD>
             <TD fs={12}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString() : 'Never'}</TD>
@@ -284,16 +285,16 @@ function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[];
   if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to EvidLY below." actionLabel="+ Add Vendor" onAction={onAdd} />;
   return (
     <table className="w-full border-collapse text-[13px]">
-      <thead><tr className="border-b border-[#E2D9C8]"><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>
+      <thead><tr className="border-b border-border_ui-warm"><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(v => (
-        <tr key={v.id} onClick={() => onSelect(v)} className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#F9FAFB]">
+        <tr key={v.id} onClick={() => onSelect(v)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
           <TD fw>{v.company_name}</TD><TD>{v.service_type || '—'}</TD>
           <td className="px-[14px] py-[10px]">
             <div className="text-[13px] text-navy">{v.primary_contact_name || v.contact_name || '—'}</div>
-            {(v.primary_contact_email || v.email) && <div className="text-[11px] text-[#6B7F96]">{v.primary_contact_email || v.email}</div>}
+            {(v.primary_contact_email || v.email) && <div className="text-[11px] text-slate_ui">{v.primary_contact_email || v.email}</div>}
           </td>
           <TD fs={12}>{v.primary_contact_phone || v.phone || v.main_phone || '—'}</TD>
-          <td className="px-[14px] py-[10px]">{v.is_partner ? <span className="text-[10px] font-bold text-[#059669] bg-[#F0FFF4] px-2 py-[2px] rounded">Partner</span> : '—'}</td>
+          <td className="px-[14px] py-[10px]">{v.is_partner ? <span className="text-[10px] font-bold text-emerald-600 bg-green-50 px-2 py-[2px] rounded">Partner</span> : '—'}</td>
           <td className="px-[14px] py-[10px]"><span className={statusBadgeClass(v.status)}>{v.status}</span></td>
         </tr>
       ))}</tbody>
@@ -369,7 +370,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
           <div><label className={labelCls}>Billing Email</label><input className={inputCls} value={billingEmail} onChange={e => setBillingEmail(e.target.value)} placeholder="billing@company.com" type="email" /></div>
         </div>
         {/* Primary Contact */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Primary Contact</p>
           <div className="flex flex-col gap-[10px]">
             <input className={inputCls} value={pcName} onChange={e => setPcName(e.target.value)} placeholder="Full name" />
@@ -380,7 +381,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
           </div>
         </div>
         {/* Alternate Contact */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Alternate Contact</p>
           <div className="flex flex-col gap-[10px]">
             <input className={inputCls} value={acName} onChange={e => setAcName(e.target.value)} placeholder="Full name" />
@@ -392,8 +393,8 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
         </div>
         <div><label className={labelCls}>Notes</label><textarea className={`${inputCls} resize-y`} rows={2} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Internal notes..." /></div>
         <div className="flex gap-[10px] justify-end mt-2">
-          <button onClick={onClose} className="px-5 py-2 border border-[#E2D9C8] rounded-lg bg-white text-navy text-[13px] font-semibold cursor-pointer">Cancel</button>
-          <button onClick={handleSave} disabled={!name.trim() || saving} className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-semibold ${saving || !name.trim() ? 'bg-[#E5E7EB] cursor-default' : 'bg-navy cursor-pointer'}`}>{saving ? 'Saving...' : 'Create Organization'}</button>
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Organization'}</Button>
         </div>
       </div>
     </Modal>
@@ -460,7 +461,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
           </div>
         </div>
         {/* Site Contact */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Site Contact</p>
           <div className="flex flex-col gap-[10px]">
             <input className={inputCls} value={scName} onChange={e => setScName(e.target.value)} placeholder="Full name" />
@@ -471,7 +472,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
           </div>
         </div>
         {/* Manager */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Manager</p>
           <div className="grid grid-cols-2 gap-3">
             <input className={inputCls} value={mgrName} onChange={e => setMgrName(e.target.value)} placeholder="Manager name" />
@@ -480,8 +481,8 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
         </div>
         <div><label className={labelCls}>Site Phone (main line)</label><input className={inputCls} value={sitePhone} onChange={e => setSitePhone(e.target.value)} placeholder="(555) 000-0000" type="tel" /></div>
         <div className="flex gap-[10px] justify-end mt-2">
-          <button onClick={onClose} className="px-5 py-2 border border-[#E2D9C8] rounded-lg bg-white text-navy text-[13px] font-semibold cursor-pointer">Cancel</button>
-          <button onClick={handleSave} disabled={!name.trim() || saving} className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-semibold ${saving || !name.trim() ? 'bg-[#E5E7EB] cursor-default' : 'bg-navy cursor-pointer'}`}>{saving ? 'Saving...' : 'Create Location'}</button>
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Location'}</Button>
         </div>
       </div>
     </Modal>
@@ -522,8 +523,8 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
           <OrgCombobox label="Organization" orgs={orgs} value={selectedOrg} onChange={setSelectedOrg} placeholder="Search or create..." />
         </div>
         <div className="flex gap-[10px] justify-end mt-2">
-          <button onClick={onClose} className="px-5 py-2 border border-[#E2D9C8] rounded-lg bg-white text-navy text-[13px] font-semibold cursor-pointer">Cancel</button>
-          <button onClick={handleInvite} disabled={!email.trim() || saving} className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-semibold ${saving || !email.trim() ? 'bg-[#E5E7EB] cursor-default' : 'bg-navy cursor-pointer'}`}>{saving ? 'Sending...' : 'Send Invitation'}</button>
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={handleInvite} disabled={!email.trim() || saving} isLoading={saving}>{saving ? 'Sending...' : 'Send Invitation'}</Button>
         </div>
       </div>
     </Modal>
@@ -595,7 +596,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
           </div>
         </div>
         {/* Primary Contact */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Primary Contact</p>
           <div className="flex flex-col gap-[10px]">
             <input className={inputCls} value={pcName} onChange={e => setPcName(e.target.value)} placeholder="Full name" />
@@ -606,7 +607,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
           </div>
         </div>
         {/* Alternate Contact */}
-        <div className="border-t border-[#E5E7EB] pt-[14px] mt-[2px]">
+        <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
           <p className="text-xs font-bold text-navy mb-[10px]">Alternate Contact</p>
           <div className="flex flex-col gap-[10px]">
             <input className={inputCls} value={acName} onChange={e => setAcName(e.target.value)} placeholder="Full name" />
@@ -618,11 +619,11 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
         </div>
 
         <div><label className={labelCls}>Counties Served</label>
-          <div className="flex flex-wrap gap-1 max-h-[100px] overflow-y-auto p-2 border border-[#E2D9C8] rounded-lg">
+          <div className="flex flex-wrap gap-1 max-h-[100px] overflow-y-auto p-2 border border-border_ui-warm rounded-lg">
             {['Fresno','Los Angeles','Merced','Sacramento','San Diego','San Francisco','Stanislaus'].map(c => (
               <button key={c} type="button" onClick={() => toggleCounty(c)}
                 className={`px-2 py-[2px] rounded-xl text-[10px] font-semibold cursor-pointer ${
-                  counties.includes(c) ? 'border border-gold bg-[#FAF7F2] text-gold' : 'border border-[#E5E0D8] bg-white text-[#9CA3AF]'
+                  counties.includes(c) ? 'border border-gold bg-cream-warm text-gold' : 'border border-border_ui bg-white text-gray-400'
                 }`}>{c}</button>
             ))}
           </div>
@@ -633,7 +634,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
             {CERTIFICATIONS.map(c => (
               <button key={c} type="button" onClick={() => toggleCert(c)}
                 className={`px-[10px] py-[3px] rounded-xl text-[10px] font-semibold cursor-pointer ${
-                  certs.includes(c) ? 'border border-[#059669] bg-[#F0FFF4] text-[#059669]' : 'border border-[#E5E0D8] bg-white text-[#9CA3AF]'
+                  certs.includes(c) ? 'border border-emerald-600 bg-green-50 text-emerald-600' : 'border border-border_ui bg-white text-gray-400'
                 }`}>{c}</button>
             ))}
           </div>
@@ -641,8 +642,8 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
 
         <div><label className={labelCls}>Notes</label><textarea className={`${inputCls} resize-y`} rows={2} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Internal notes..." /></div>
         <div className="flex gap-[10px] justify-end mt-2">
-          <button onClick={onClose} className="px-5 py-2 border border-[#E2D9C8] rounded-lg bg-white text-navy text-[13px] font-semibold cursor-pointer">Cancel</button>
-          <button onClick={handleSave} disabled={!companyName.trim() || saving} className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-semibold ${saving || !companyName.trim() ? 'bg-[#E5E7EB] cursor-default' : 'bg-navy cursor-pointer'}`}>{saving ? 'Saving...' : 'Create Vendor'}</button>
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={handleSave} disabled={!companyName.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Vendor'}</Button>
         </div>
       </div>
     </Modal>
@@ -653,11 +654,11 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
 
 function DrawerTabBar({ tabs, active, onChange }: { tabs: string[]; active: string; onChange: (t: string) => void }) {
   return (
-    <div className="flex border-b border-[#E2D9C8] px-6 shrink-0 overflow-x-auto">
+    <div className="flex border-b border-border_ui-warm px-6 shrink-0 overflow-x-auto">
       {tabs.map(t => (
         <button key={t} onClick={() => onChange(t)}
           className={`px-[14px] py-[10px] text-[13px] font-semibold border-none bg-transparent cursor-pointer -mb-px whitespace-nowrap ${
-            active === t ? 'border-b-2 border-navy text-navy' : 'border-b-2 border-transparent text-[#9CA3AF]'
+            active === t ? 'border-b-2 border-navy text-navy' : 'border-b-2 border-transparent text-gray-400'
           }`}>{t}</button>
       ))}
     </div>
@@ -666,8 +667,8 @@ function DrawerTabBar({ tabs, active, onChange }: { tabs: string[]; active: stri
 
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex justify-between py-2 border-b border-[#F3F4F6]">
-      <span className="text-xs text-[#6B7F96] font-semibold">{label}</span>
+    <div className="flex justify-between py-2 border-b border-gray-100">
+      <span className="text-xs text-slate_ui font-semibold">{label}</span>
       <span className="text-[13px] text-navy font-medium text-right max-w-[60%]">{value || '—'}</span>
     </div>
   );
@@ -716,17 +717,17 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
     <>
       <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
       <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+        <div className="px-6 py-5 border-b border-border_ui-warm shrink-0">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-lg font-bold text-navy m-0">{org.name}</h2>
               <div className="flex gap-1.5 mt-1.5">
                 <span className={statusBadgeClass(org.status)}>{org.status}</span>
-                {org.plan && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB]">{org.plan}</span>}
-                {org.industry_type && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-[#F3F4F6] text-[#6B7F96]">{org.industry_type.replace(/_/g, ' ')}</span>}
+                {org.plan && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-blue-50 text-blue-600">{org.plan}</span>}
+                {org.industry_type && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-gray-100 text-slate_ui">{org.industry_type.replace(/_/g, ' ')}</span>}
               </div>
             </div>
-            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-[#9CA3AF] cursor-pointer">{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-gray-400 cursor-pointer">{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Overview', 'Locations', 'Users', 'Vendors', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -734,17 +735,17 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           {tab === 'Overview' && (
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-3 gap-[10px]">
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
                   <div className="text-xl font-extrabold text-navy">{locs.length}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Locations</div>
+                  <div className="text-[11px] text-slate_ui">Locations</div>
                 </div>
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
                   <div className="text-xl font-extrabold text-navy">{users.length}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Users</div>
+                  <div className="text-[11px] text-slate_ui">Users</div>
                 </div>
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
                   <div className="text-xl font-extrabold text-navy">{tickets.filter(t => t.status === 'open').length}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Open Tickets</div>
+                  <div className="text-[11px] text-slate_ui">Open Tickets</div>
                 </div>
               </div>
               <div>
@@ -769,13 +770,13 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
           {tab === 'Locations' && (
             relLoading ? <Skeleton h={100} /> : locs.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No locations found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No locations found.</div>
             ) : (
               <div className="flex flex-col gap-2">
                 {locs.map(l => (
-                  <div key={l.id} className="bg-[#F9FAFB] border border-[#E2D9C8] rounded-lg px-[14px] py-[10px]">
+                  <div key={l.id} className="bg-gray-50 border border-border_ui-warm rounded-lg px-[14px] py-[10px]">
                     <div className="font-semibold text-navy text-[13px]">{l.name}</div>
-                    <div className="text-xs text-[#6B7F96]">{[l.address, l.city, l.county].filter(Boolean).join(', ') || 'No address'}</div>
+                    <div className="text-xs text-slate_ui">{[l.address, l.city, l.county].filter(Boolean).join(', ') || 'No address'}</div>
                     <span className={`${statusBadgeClass(l.status)} mt-1 inline-block`}>{l.status}</span>
                   </div>
                 ))}
@@ -784,16 +785,16 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
           {tab === 'Users' && (
             relLoading ? <Skeleton h={100} /> : users.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No users found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No users found.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {users.map((u: any) => (
-                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{u.full_name || u.email}</div>
-                      <div className="text-[11px] text-[#6B7F96]">{u.email}</div>
+                      <div className="text-[11px] text-slate_ui">{u.email}</div>
                     </div>
-                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#F3F4F6] text-[#6B7F96]">{u.role?.replace(/_/g, ' ')}</span>
+                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-gray-100 text-slate_ui">{u.role?.replace(/_/g, ' ')}</span>
                   </div>
                 ))}
               </div>
@@ -801,17 +802,17 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
           {tab === 'Vendors' && (
             relLoading ? <Skeleton h={100} /> : orgVendors.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No vendors found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No vendors found.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {orgVendors.map((v: any) => (
-                  <div key={v.id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                  <div key={v.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{v.company_name}</div>
-                      <div className="text-[11px] text-[#6B7F96]">{v.service_type || 'No service type'}</div>
+                      <div className="text-[11px] text-slate_ui">{v.service_type || 'No service type'}</div>
                     </div>
                     <div className="flex gap-1">
-                      {v.is_partner && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#F0FFF4] text-[#059669]">Partner</span>}
+                      {v.is_partner && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-green-50 text-emerald-600">Partner</span>}
                       <span className={statusBadgeClass(v.status)}>{v.status}</span>
                     </div>
                   </div>
@@ -821,16 +822,16 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
           {tab === 'Tickets' && (
             relLoading ? <Skeleton h={100} /> : tickets.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No tickets found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No tickets found.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {tickets.map((t: any) => {
                   const sc = { open: { bg: '#EFF6FF', text: '#2563EB' }, in_progress: { bg: '#FFFBEB', text: '#D97706' }, resolved: { bg: '#F0FFF4', text: '#059669' }, closed: { bg: '#F3F4F6', text: '#6B7280' } }[t.status as string] || { bg: '#F3F4F6', text: '#6B7280' };
                   return (
-                    <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                    <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                       <div>
                         <div className="font-semibold text-navy text-[13px]">{t.subject}</div>
-                        <div className="text-[11px] text-[#6B7F96]">{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
+                        <div className="text-[11px] text-slate_ui">{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
                       </div>
                       <span className="px-2 py-[2px] rounded text-[10px] font-bold" style={{ background: sc.bg, color: sc.text }}>{t.status}</span>
                     </div>
@@ -841,12 +842,12 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
           {tab === 'Activity' && (
             relLoading ? <Skeleton h={100} /> : events.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No activity recorded.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No activity recorded.</div>
             ) : (
               <div className="flex flex-col gap-1">
                 {events.map((ev: any) => (
-                  <div key={ev.id} className="py-1.5 border-b border-[#F3F4F6] text-xs">
-                    <span className="text-[#6B7F96]">{new Date(ev.event_time).toLocaleString()}</span>
+                  <div key={ev.id} className="py-1.5 border-b border-gray-100 text-xs">
+                    <span className="text-slate_ui">{new Date(ev.event_time).toLocaleString()}</span>
                     <span className="ml-2 text-navy">{ev.message}</span>
                   </div>
                 ))}
@@ -854,7 +855,7 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
             )
           )}
         </div>
-        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-[10px]">
+        <div className="px-6 py-[14px] border-t border-border_ui-warm shrink-0 flex gap-[10px]">
           <FooterBtn label="Edit Organization" color="#fff" bg="#1E2D4D" onClick={() => alert(`Edit "${org.name}" requires direct database access. Use Supabase Dashboard → Table Editor → organizations.`)} />
           <FooterBtn label="View Billing" color="#1E2D4D" bg="#F9FAFB" border="1px solid #E2D9C8" onClick={() => { onClose(); window.location.assign('/admin/billing'); }} />
         </div>
@@ -911,16 +912,16 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
     <>
       <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
       <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+        <div className="px-6 py-5 border-b border-border_ui-warm shrink-0">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-lg font-bold text-navy m-0">{loc.name}</h2>
               <div className="flex gap-1.5 mt-1.5">
                 <span className={statusBadgeClass(loc.status)}>{loc.status}</span>
-                {loc.county && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-[#F3F4F6] text-[#6B7F96]">{loc.county} County</span>}
+                {loc.county && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-gray-100 text-slate_ui">{loc.county} County</span>}
               </div>
             </div>
-            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-[#9CA3AF] cursor-pointer">{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-gray-400 cursor-pointer">{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Overview', 'Compliance', 'Users', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -928,17 +929,17 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           {tab === 'Overview' && (
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-3 gap-[10px]">
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
                   <div className="text-xl font-extrabold text-navy">{users.length}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Users</div>
+                  <div className="text-[11px] text-slate_ui">Users</div>
                 </div>
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
                   <div className="text-xl font-extrabold text-navy">{tickets.filter(t => t.status === 'open').length}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Open Tickets</div>
+                  <div className="text-[11px] text-slate_ui">Open Tickets</div>
                 </div>
-                <div className="bg-[#F9FAFB] rounded-lg px-[14px] py-3 text-center">
-                  <div className={`text-xl font-extrabold ${jurisdiction ? 'text-[#059669]' : 'text-[#9CA3AF]'}`}>{jurisdiction ? '✓' : '—'}</div>
-                  <div className="text-[11px] text-[#6B7F96]">Jurisdiction</div>
+                <div className="bg-gray-50 rounded-lg px-[14px] py-3 text-center">
+                  <div className={`text-xl font-extrabold ${jurisdiction ? 'text-emerald-600' : 'text-gray-400'}`}>{jurisdiction ? '✓' : '—'}</div>
+                  <div className="text-[11px] text-slate_ui">Jurisdiction</div>
                 </div>
               </div>
               <div>
@@ -968,7 +969,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
           {tab === 'Compliance' && (
             relLoading ? <Skeleton h={100} /> : !jurisdiction ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">
                 {loc.county ? `No jurisdiction config found for ${loc.county} County.` : 'No county assigned to this location.'}
               </div>
             ) : (
@@ -991,16 +992,16 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
           {tab === 'Users' && (
             relLoading ? <Skeleton h={100} /> : users.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No users found for this organization.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No users found for this organization.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {users.map((u: any) => (
-                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{u.full_name || u.email}</div>
-                      <div className="text-[11px] text-[#6B7F96]">{u.email}</div>
+                      <div className="text-[11px] text-slate_ui">{u.email}</div>
                     </div>
-                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#F3F4F6] text-[#6B7F96]">{u.role?.replace(/_/g, ' ')}</span>
+                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-gray-100 text-slate_ui">{u.role?.replace(/_/g, ' ')}</span>
                   </div>
                 ))}
               </div>
@@ -1008,16 +1009,16 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
           {tab === 'Tickets' && (
             relLoading ? <Skeleton h={100} /> : tickets.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No tickets found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No tickets found.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {tickets.map((t: any) => {
                   const sc = { open: { bg: '#EFF6FF', text: '#2563EB' }, in_progress: { bg: '#FFFBEB', text: '#D97706' }, resolved: { bg: '#F0FFF4', text: '#059669' }, closed: { bg: '#F3F4F6', text: '#6B7280' } }[t.status as string] || { bg: '#F3F4F6', text: '#6B7280' };
                   return (
-                    <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                    <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                       <div>
                         <div className="font-semibold text-navy text-[13px]">{t.subject}</div>
-                        <div className="text-[11px] text-[#6B7F96]">{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
+                        <div className="text-[11px] text-slate_ui">{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
                       </div>
                       <span className="px-2 py-[2px] rounded text-[10px] font-bold" style={{ background: sc.bg, color: sc.text }}>{t.status}</span>
                     </div>
@@ -1028,12 +1029,12 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
           {tab === 'Activity' && (
             events.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No activity recorded.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No activity recorded.</div>
             ) : (
               <div className="flex flex-col gap-1">
                 {events.map((ev: any) => (
-                  <div key={ev.id} className="py-1.5 border-b border-[#F3F4F6] text-xs">
-                    <span className="text-[#6B7F96]">{new Date(ev.event_time).toLocaleString()}</span>
+                  <div key={ev.id} className="py-1.5 border-b border-gray-100 text-xs">
+                    <span className="text-slate_ui">{new Date(ev.event_time).toLocaleString()}</span>
                     <span className="ml-2 text-navy">{ev.message}</span>
                   </div>
                 ))}
@@ -1041,7 +1042,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
             )
           )}
         </div>
-        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-[10px]">
+        <div className="px-6 py-[14px] border-t border-border_ui-warm shrink-0 flex gap-[10px]">
           <FooterBtn label="Edit Location" color="#fff" bg="#1E2D4D" onClick={() => alert(`Edit "${loc.name}" requires direct database access. Use Supabase Dashboard → Table Editor → locations.`)} />
           <FooterBtn label="View Organization" color="#1E2D4D" bg="#F9FAFB" border="1px solid #E2D9C8" onClick={() => alert('Navigate to Configure → Organizations tab to view organization details.')} />
         </div>
@@ -1075,17 +1076,17 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
     <>
       <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
       <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+        <div className="px-6 py-5 border-b border-border_ui-warm shrink-0">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-lg font-bold text-navy m-0">{user.full_name || user.email}</h2>
-              <div className="text-[13px] text-[#6B7F96] mt-[2px]">{user.email}</div>
+              <div className="text-[13px] text-slate_ui mt-[2px]">{user.email}</div>
               <div className="flex gap-1.5 mt-1.5">
-                <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB]">{user.role.replace(/_/g, ' ')}</span>
-                {org && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-[#F3F4F6] text-[#6B7F96]">{org.name}</span>}
+                <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-blue-50 text-blue-600">{user.role.replace(/_/g, ' ')}</span>
+                {org && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-gray-100 text-slate_ui">{org.name}</span>}
               </div>
             </div>
-            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-[#9CA3AF] cursor-pointer">{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-gray-400 cursor-pointer">{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Profile', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -1103,16 +1104,16 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
           )}
           {tab === 'Tickets' && (
             tickets.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No tickets found.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No tickets found.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {tickets.map((t: any) => (
-                  <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-[#F9FAFB] rounded-md border border-[#E2D9C8]">
+                  <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{t.subject}</div>
-                      <div className="text-[11px] text-[#6B7F96]">{t.ticket_number}</div>
+                      <div className="text-[11px] text-slate_ui">{t.ticket_number}</div>
                     </div>
-                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#F3F4F6] text-[#6B7F96]">{t.status}</span>
+                    <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-gray-100 text-slate_ui">{t.status}</span>
                   </div>
                 ))}
               </div>
@@ -1120,12 +1121,12 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
           )}
           {tab === 'Activity' && (
             events.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No activity recorded.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No activity recorded.</div>
             ) : (
               <div className="flex flex-col gap-1">
                 {events.map((ev: any) => (
-                  <div key={ev.id} className="py-1.5 border-b border-[#F3F4F6] text-xs">
-                    <span className="text-[#6B7F96]">{new Date(ev.event_time).toLocaleString()}</span>
+                  <div key={ev.id} className="py-1.5 border-b border-gray-100 text-xs">
+                    <span className="text-slate_ui">{new Date(ev.event_time).toLocaleString()}</span>
                     <span className="ml-2 text-navy">{ev.message}</span>
                   </div>
                 ))}
@@ -1133,7 +1134,7 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
             )
           )}
         </div>
-        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-[10px]">
+        <div className="px-6 py-[14px] border-t border-border_ui-warm shrink-0 flex gap-[10px]">
           <FooterBtn label="Edit User" color="#fff" bg="#1E2D4D" onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} />
           <FooterBtn label="Emulate" color="#1E2D4D" bg="#FAF7F2" border="1px solid #E2D9C8" onClick={() => { onClose(); window.location.assign('/admin/emulate'); }} />
           <FooterBtn label="Reset Password" color="#6B7F96" bg="#F9FAFB" border="1px solid #E2D9C8" onClick={async () => { if (isDemoMode) return; if (user.email && confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} />
@@ -1169,17 +1170,17 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
     <>
       <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
       <div className="fixed top-0 right-0 bottom-0 w-[580px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E2D9C8] shrink-0">
+        <div className="px-6 py-5 border-b border-border_ui-warm shrink-0">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-lg font-bold text-navy m-0">{vendor.company_name}</h2>
               <div className="flex gap-1.5 mt-1.5">
                 <span className={statusBadgeClass(vendor.status)}>{vendor.status}</span>
-                {vendor.service_type && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-[#F3F4F6] text-[#6B7F96]">{vendor.service_type}</span>}
-                {vendor.is_partner && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-[#F0FFF4] text-[#059669]">Partner</span>}
+                {vendor.service_type && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-gray-100 text-slate_ui">{vendor.service_type}</span>}
+                {vendor.is_partner && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-green-50 text-emerald-600">Partner</span>}
               </div>
             </div>
-            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-[#9CA3AF] cursor-pointer">{'×'}</button>
+            <button onClick={onClose} className="bg-transparent border-none text-[22px] text-gray-400 cursor-pointer">{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Profile', 'Locations Served', 'Activity']} active={tab} onChange={setTab} />
@@ -1209,15 +1210,15 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
           )}
           {tab === 'Locations Served' && (
             relLoading ? <Skeleton h={100} /> : servedLocations.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No locations in the system yet.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No locations in the system yet.</div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {servedLocations.map((l: any) => (
-                  <div key={l.id} className="bg-[#F9FAFB] border border-[#E2D9C8] rounded-lg px-[14px] py-[10px]">
+                  <div key={l.id} className="bg-gray-50 border border-border_ui-warm rounded-lg px-[14px] py-[10px]">
                     <div className="flex justify-between items-center">
                       <div>
                         <div className="font-semibold text-navy text-[13px]">{l.name}</div>
-                        <div className="text-[11px] text-[#6B7F96]">{[l.city, l.county].filter(Boolean).join(', ') || 'No address'} &middot; {(l.organizations as any)?.name || ''}</div>
+                        <div className="text-[11px] text-slate_ui">{[l.city, l.county].filter(Boolean).join(', ') || 'No address'} &middot; {(l.organizations as any)?.name || ''}</div>
                       </div>
                       <span className={statusBadgeClass(l.status)}>{l.status}</span>
                     </div>
@@ -1228,12 +1229,12 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
           )}
           {tab === 'Activity' && (
             events.length === 0 ? (
-              <div className="text-center p-[30px] text-[#9CA3AF] text-[13px]">No activity recorded.</div>
+              <div className="text-center p-[30px] text-gray-400 text-[13px]">No activity recorded.</div>
             ) : (
               <div className="flex flex-col gap-1">
                 {events.map((ev: any) => (
-                  <div key={ev.id} className="py-1.5 border-b border-[#F3F4F6] text-xs">
-                    <span className="text-[#6B7F96]">{new Date(ev.event_time).toLocaleString()}</span>
+                  <div key={ev.id} className="py-1.5 border-b border-gray-100 text-xs">
+                    <span className="text-slate_ui">{new Date(ev.event_time).toLocaleString()}</span>
                     <span className="ml-2 text-navy">{ev.message}</span>
                   </div>
                 ))}
@@ -1241,7 +1242,7 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
             )
           )}
         </div>
-        <div className="px-6 py-[14px] border-t border-[#E2D9C8] shrink-0 flex gap-[10px]">
+        <div className="px-6 py-[14px] border-t border-border_ui-warm shrink-0 flex gap-[10px]">
           <FooterBtn label="Edit Vendor" color="#fff" bg="#1E2D4D" onClick={() => alert(`Edit "${vendor.company_name}" requires direct database access. Use Supabase Dashboard → Table Editor → vendors.`)} />
           <FooterBtn label="Send Portal Invite" color="#1E2D4D" bg="#FAF7F2" border="1px solid #E2D9C8" onClick={() => alert(`Portal invite for ${vendor.company_name} requires the vendor portal invitation edge function.`)} />
           <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => alert(`Deactivate "${vendor.company_name}" requires admin edge function. Use Supabase Dashboard to update vendor status.`)} />

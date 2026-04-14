@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 
 interface MaintenanceConfig {
   is_active: boolean;
@@ -105,7 +106,7 @@ export default function MaintenanceMode() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="text-[#6B7F96]">Loading...</div>
+        <div className="text-slate_ui">Loading...</div>
       </div>
     );
   }
@@ -113,10 +114,10 @@ export default function MaintenanceMode() {
   if (loadError) {
     return (
       <div className="text-center p-12">
-        <p className="text-[#6B7F96]">Failed to load data.</p>
-        <button onClick={loadConfig} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
+        <p className="text-slate_ui">Failed to load data.</p>
+        <Button variant="gold" size="sm" onClick={loadConfig} className="mt-3">
           Try again
-        </button>
+        </Button>
       </div>
     );
   }
@@ -128,80 +129,75 @@ export default function MaintenanceMode() {
 
       {/* Status card */}
       <div className={`rounded-xl p-6 text-center border-2 ${
-        config.is_active ? 'bg-[#FEF2F2] border-[#DC2626]' : 'bg-[#F0FFF4] border-[#059669]'
+        config.is_active ? 'bg-red-50 border-red-600' : 'bg-green-50 border-emerald-600'
       }`}>
         <div className="text-[32px] mb-2">{config.is_active ? '🚧' : '●'}</div>
         <div className={`text-xl font-extrabold mb-1 ${
-          config.is_active ? 'text-[#DC2626]' : 'text-[#059669]'
+          config.is_active ? 'text-red-600' : 'text-emerald-600'
         }`}>
           {config.is_active ? 'MAINTENANCE ACTIVE' : 'Platform Live'}
         </div>
         {config.is_active && config.activated_at && (
-          <div className="text-xs text-[#6B7F96] mb-3">
+          <div className="text-xs text-slate_ui mb-3">
             Since {new Date(config.activated_at).toLocaleString()}
           </div>
         )}
-        <button onClick={toggleMaintenance} disabled={saving}
-          className={`py-2.5 px-6 border-none rounded-lg text-sm font-bold text-white ${
-            saving ? 'cursor-default' : 'cursor-pointer'
-          } ${config.is_active ? 'bg-[#059669]' : 'bg-[#DC2626]'}`}>
+        <Button variant={config.is_active ? 'primary' : 'destructive'} onClick={toggleMaintenance} disabled={saving}
+          className={config.is_active ? 'bg-emerald-600 hover:bg-emerald-700' : ''}>
           {saving ? 'Saving...' : config.is_active ? 'Deactivate — Go Live' : 'Activate Maintenance Mode'}
-        </button>
+        </Button>
       </div>
 
       {/* Config form */}
-      <div className="bg-white border border-[#E2D9C8] rounded-xl p-5">
+      <div className="bg-white border border-border_ui-warm rounded-xl p-5">
         <h3 className="text-sm font-bold text-navy mb-4">Configuration</h3>
 
         <div className="mb-4">
-          <label className="text-xs text-[#6B7F96] block mb-1">Maintenance Message</label>
+          <label className="text-xs text-slate_ui block mb-1">Maintenance Message</label>
           <textarea value={config.message} onChange={e => setConfig(c => ({ ...c, message: e.target.value }))}
-            rows={3} className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-full resize-y" />
+            rows={3} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full resize-y" />
         </div>
 
         <div className="mb-4">
-          <label className="text-xs text-[#6B7F96] block mb-1">Estimated Duration</label>
+          <label className="text-xs text-slate_ui block mb-1">Estimated Duration</label>
           <input value={config.estimated_duration} onChange={e => setConfig(c => ({ ...c, estimated_duration: e.target.value }))}
-            className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-[200px]" />
+            className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-[200px]" />
         </div>
 
         <div className="mb-4">
-          <label className="text-xs text-[#6B7F96] block mb-1">Bypass Emails (can still access during maintenance)</label>
+          <label className="text-xs text-slate_ui block mb-1">Bypass Emails (can still access during maintenance)</label>
           <div className="flex gap-2 mb-2">
             <input value={bypassInput} onChange={e => setBypassInput(e.target.value)} placeholder="email@getevidly.com"
-              className="py-2 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] flex-1"
+              className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] flex-1"
               onKeyDown={e => e.key === 'Enter' && addBypassEmail()} />
-            <button onClick={addBypassEmail} className="py-2 px-3.5 bg-[#F9FAFB] border border-[#E2D9C8] rounded-md text-[#6B7F96] text-xs cursor-pointer">Add</button>
+            <Button variant="secondary" size="sm" onClick={addBypassEmail}>Add</Button>
           </div>
           <div className="flex gap-1.5 flex-wrap">
             {config.bypass_emails.map(email => (
-              <span key={email} className="py-1 px-2.5 bg-[#F3F4F6] rounded text-[11px] text-[#6B7F96] flex items-center gap-1.5">
+              <span key={email} className="py-1 px-2.5 bg-gray-100 rounded text-[11px] text-slate_ui flex items-center gap-1.5">
                 {email}
-                <button onClick={() => removeBypassEmail(email)} className="bg-transparent border-none text-[#DC2626] cursor-pointer text-sm p-0">&times;</button>
+                <Button variant="ghost" size="sm" onClick={() => removeBypassEmail(email)} className="text-red-600 text-sm p-0 h-auto min-h-0">&times;</Button>
               </span>
             ))}
           </div>
         </div>
 
-        <button onClick={() => saveConfig(config)} disabled={saving}
-          className={`py-2 px-5 border-none rounded-md text-white text-[13px] font-bold ${
-            saving ? 'bg-[#E5E7EB] cursor-default' : 'bg-gold cursor-pointer'
-          }`}>
+        <Button variant="gold" size="sm" onClick={() => saveConfig(config)} disabled={saving}>
           {saving ? 'Saving...' : 'Save Configuration'}
-        </button>
+        </Button>
       </div>
 
       {/* History */}
       <h3 className="text-sm font-bold text-navy">Recent Maintenance Events</h3>
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {history.length === 0 ? (
-          <div className="py-10 px-5 text-center text-[#9CA3AF] text-[13px]">No maintenance events recorded yet.</div>
+          <div className="py-10 px-5 text-center text-gray-400 text-[13px]">No maintenance events recorded yet.</div>
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <tbody>
               {history.map(e => (
-                <tr key={e.id} className="border-b border-[#E2D9C8]">
-                  <td className="py-2.5 px-3.5 text-[#6B7F96] text-xs whitespace-nowrap">{new Date(e.event_time).toLocaleString()}</td>
+                <tr key={e.id} className="border-b border-border_ui-warm">
+                  <td className="py-2.5 px-3.5 text-slate_ui text-xs whitespace-nowrap">{new Date(e.event_time).toLocaleString()}</td>
                   <td className="py-2.5 px-3.5">
                     <span className="py-0.5 px-2 rounded text-[10px] font-bold"
                       style={{

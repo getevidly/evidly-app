@@ -18,6 +18,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 
 const LAUNCH_DATE = new Date('2026-05-05T00:00:00-07:00');
 
@@ -194,10 +195,10 @@ export default function AdminHome() {
       <div className="flex flex-col gap-6">
         <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
         <div className="text-center py-12 px-12">
-          <p className="text-[#6B7F96] text-sm">Failed to load dashboard data.</p>
-          <button onClick={loadStats} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer text-[13px] font-semibold">
+          <p className="text-slate_ui text-sm">Failed to load dashboard data.</p>
+          <Button onClick={loadStats} variant="gold" size="sm" className="mt-3">
             Try again
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -209,7 +210,7 @@ export default function AdminHome() {
 
       {/* ── A. Alert Banner ──────────────────────────────────── */}
       {crawlErrors > 0 && (
-        <div className="flex items-center justify-between px-[18px] py-3 bg-[#FEF3C7] border border-amber-500 rounded-[10px] text-[13px] font-medium text-[#92400E]">
+        <div className="flex items-center justify-between px-[18px] py-3 bg-amber-100 border border-amber-500 rounded-[10px] text-[13px] font-medium text-amber-800">
           <span>{crawlErrors} crawl source{crawlErrors !== 1 ? 's' : ''} in error state</span>
           <span
             onClick={() => navigate('/admin/intelligence')}
@@ -222,7 +223,7 @@ export default function AdminHome() {
 
       {/* AUDIT-FIX-08 / A-3: AI Budget Alert Banner */}
       {aiBudgetAlert && (
-        <div className="flex items-center justify-between px-[18px] py-3 bg-[#FEF3C7] border border-amber-500 rounded-[10px] text-[13px] font-medium text-[#92400E]">
+        <div className="flex items-center justify-between px-[18px] py-3 bg-amber-100 border border-amber-500 rounded-[10px] text-[13px] font-medium text-amber-800">
           <span>AI classification spend today: ${aiBudgetAlert.spend.toFixed(4)} / ${aiBudgetAlert.budget.toFixed(2)} daily budget</span>
           <span
             onClick={() => navigate('/admin/intelligence-admin')}
@@ -238,7 +239,7 @@ export default function AdminHome() {
         <h1 className="text-[26px] font-extrabold text-navy font-[Syne,DM_Sans,sans-serif] m-0 tracking-[-0.02em]">
           Welcome back, {firstName}
         </h1>
-        <p className="text-sm text-[#6B7F96] mt-1">
+        <p className="text-sm text-slate_ui mt-1">
           EvidLY Admin Console — platform operations, intelligence, and growth.
         </p>
       </div>
@@ -285,7 +286,7 @@ export default function AdminHome() {
         ] as const).map((card, i) => (
           <div
             key={i}
-            className="bg-white border border-[#E2D9C8] rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center"
+            className="bg-white border border-border_ui-warm rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center"
           >
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">
               {card.label}
@@ -304,7 +305,7 @@ export default function AdminHome() {
       <div className="grid grid-cols-3 gap-5">
 
         {/* Column 1 — Quick Access */}
-        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5">
+        <div className="bg-white border border-border_ui-warm rounded-xl px-[22px] py-5">
           <h2 className="text-sm font-bold text-navy mb-3.5 font-[DM_Sans,sans-serif]">
             Quick Access
           </h2>
@@ -313,7 +314,7 @@ export default function AdminHome() {
               <button
                 key={card.path}
                 onClick={() => navigate(card.path)}
-                className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-[#E2D9C8] bg-white cursor-pointer transition-all text-left hover:border-gold"
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-border_ui-warm bg-white cursor-pointer transition-all text-left hover:border-gold"
               >
                 <div
                   className="w-8 h-8 rounded-[7px] flex items-center justify-center text-[15px] shrink-0"
@@ -330,7 +331,7 @@ export default function AdminHome() {
         </div>
 
         {/* Column 2 — Platform Health */}
-        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5 flex flex-col">
+        <div className="bg-white border border-border_ui-warm rounded-xl px-[22px] py-5 flex flex-col">
           <h2 className="text-sm font-bold text-navy mb-3.5 font-[DM_Sans,sans-serif]">
             Platform Health
           </h2>
@@ -361,21 +362,21 @@ export default function AdminHome() {
                 key={i}
                 className={`flex justify-between items-center py-2 ${i < 3 ? 'border-b border-[#F3F0EA]' : ''}`}
               >
-                <span className="text-xs text-[#6B7F96]">{row.label}</span>
+                <span className="text-xs text-slate_ui">{row.label}</span>
                 <span className={`text-[13px] font-bold ${row.color}`}>{row.value}</span>
               </div>
             ))}
           </div>
 
           {/* System status footer */}
-          <div className="mt-4 pt-3 border-t border-[#E2D9C8] flex gap-4 text-[11px]">
-            <span className="text-[#6B7F96]">
+          <div className="mt-4 pt-3 border-t border-border_ui-warm flex gap-4 text-[11px]">
+            <span className="text-slate_ui">
               Supabase: <span className="text-emerald-600 font-semibold">OK</span>
             </span>
-            <span className="text-[#6B7F96]">
+            <span className="text-slate_ui">
               Vercel: <span className="text-emerald-600 font-semibold">OK</span>
             </span>
-            <span className="text-[#6B7F96]">
+            <span className="text-slate_ui">
               Crawl Engine:{' '}
               <span className={`font-semibold ${crawlErrors > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                 {crawlErrors > 0 ? `${crawlErrors} errors` : 'OK'}
@@ -385,7 +386,7 @@ export default function AdminHome() {
         </div>
 
         {/* Column 3 — Open Tickets */}
-        <div className="bg-white border border-[#E2D9C8] rounded-xl px-[22px] py-5 flex flex-col">
+        <div className="bg-white border border-border_ui-warm rounded-xl px-[22px] py-5 flex flex-col">
           <div className="flex items-center gap-2 mb-3.5">
             <h2 className="text-sm font-bold text-navy m-0 font-[DM_Sans,sans-serif]">
               Open Tickets

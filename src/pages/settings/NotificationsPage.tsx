@@ -31,13 +31,13 @@ const CHANNEL_META: { key: Channel; label: string; icon: typeof Mail; desc: stri
   { key: 'push', label: 'Push', icon: Smartphone, desc: 'Receive push notifications in browser' },
 ];
 
-const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
+const cardClasses = 'bg-white border border-border_ui-cool rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
     <button
       onClick={() => !disabled && onChange(!checked)}
-      className={`w-[44px] h-6 rounded-xl border-none relative shrink-0 transition-colors duration-200 ${checked ? 'bg-[#163a5f]' : 'bg-gray-300'} ${disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
+      className={`w-[44px] h-6 rounded-xl border-none relative shrink-0 transition-colors duration-200 ${checked ? 'bg-navy-muted' : 'bg-gray-300'} ${disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
     >
       <div
         className="w-[18px] h-[18px] rounded-full bg-white absolute top-[3px] shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-[left] duration-200"
@@ -167,7 +167,7 @@ export function NotificationsPage() {
     <div style={{ ...FONT }}>
       {/* Global Channel Toggles */}
       <div className={cardClasses}>
-        <h2 className="flex items-center gap-2 text-base font-bold text-[#0B1628] mb-4 mt-0">
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy-deeper mb-4 mt-0">
           <Bell size={18} color={NAVY} /> Notification Channels
         </h2>
         <div className="flex flex-col gap-3.5">
@@ -176,8 +176,8 @@ export function NotificationsPage() {
               <div className="flex items-center gap-2.5">
                 <ch.icon size={18} color={MUTED} />
                 <div>
-                  <span className="text-sm font-semibold text-[#0B1628]">{ch.label} Notifications</span>
-                  <p className="text-xs text-[#3D5068] mt-0.5 mb-0">{ch.desc}</p>
+                  <span className="text-sm font-semibold text-navy-deeper">{ch.label} Notifications</span>
+                  <p className="text-xs text-navy-mid mt-0.5 mb-0">{ch.desc}</p>
                 </div>
               </div>
               <ToggleSwitch checked={globalToggles[ch.key]} onChange={v => toggleGlobal(ch.key, v)} />
@@ -188,19 +188,19 @@ export function NotificationsPage() {
 
       {/* Per-Category Settings */}
       <div className={cardClasses}>
-        <h2 className="text-base font-bold text-[#0B1628] mb-1 mt-0">
+        <h2 className="text-base font-bold text-navy-deeper mb-1 mt-0">
           Category Preferences
         </h2>
-        <p className="text-xs text-[#3D5068] mb-4 mt-0">
+        <p className="text-xs text-navy-mid mb-4 mt-0">
           Control which notification categories reach you on each channel.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="bg-[#EEF1F7] border-b-2 border-[#D1D9E6]">
-                <th className="text-left px-3.5 py-2.5 font-semibold text-[#0B1628] min-w-[200px]">Category</th>
+              <tr className="bg-[#EEF1F7] border-b-2 border-border_ui-cool">
+                <th className="text-left px-3.5 py-2.5 font-semibold text-navy-deeper min-w-[200px]">Category</th>
                 {CHANNEL_META.map(ch => (
-                  <th key={ch.key} className="text-center px-3.5 py-2.5 font-semibold text-[#0B1628] min-w-[80px]">
+                  <th key={ch.key} className="text-center px-3.5 py-2.5 font-semibold text-navy-deeper min-w-[80px]">
                     <div className="flex items-center justify-center gap-1">
                       <ch.icon size={14} /> {ch.label}
                     </div>
@@ -210,7 +210,7 @@ export function NotificationsPage() {
             </thead>
             <tbody>
               {NOTIFICATION_CATEGORIES.map(cat => (
-                <tr key={cat.key} className="border-b border-[#D1D9E6]">
+                <tr key={cat.key} className="border-b border-border_ui-cool">
                   <td className="px-3.5 py-2.5">
                     <div className="flex items-center gap-2">
                       <div
@@ -218,8 +218,8 @@ export function NotificationsPage() {
                         style={{ backgroundColor: cat.color }}
                       />
                       <div>
-                        <span className="font-semibold text-[#0B1628]">{cat.label}</span>
-                        <p className="text-[11px] text-[#3D5068] mt-0.5 mb-0">{cat.description}</p>
+                        <span className="font-semibold text-navy-deeper">{cat.label}</span>
+                        <p className="text-[11px] text-navy-mid mt-0.5 mb-0">{cat.description}</p>
                       </div>
                     </div>
                   </td>
@@ -230,7 +230,7 @@ export function NotificationsPage() {
                         checked={prefs[cat.key]?.[ch.key] || false}
                         onChange={() => toggleCategory(cat.key, ch.key)}
                         disabled={!globalToggles[ch.key]}
-                        className={`w-[18px] h-[18px] accent-[#163a5f] ${globalToggles[ch.key] ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-40'}`}
+                        className={`w-[18px] h-[18px] accent-navy-muted ${globalToggles[ch.key] ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-40'}`}
                       />
                     </td>
                   ))}
@@ -246,7 +246,7 @@ export function NotificationsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
+          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-navy-muted text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Preferences'}

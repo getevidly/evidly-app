@@ -306,7 +306,7 @@ export default function TrialHealth() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold mb-3" />
-        <p className="text-sm text-[#6B7F96]">Loading...</p>
+        <p className="text-sm text-slate_ui">Loading...</p>
       </div>
     );
   }
@@ -321,7 +321,7 @@ export default function TrialHealth() {
 
       <div className="mb-6">
         <h1 className="text-[22px] font-bold text-navy m-0 font-[Outfit,sans-serif]">Trial Health</h1>
-        <p className="text-[13px] text-[#6B7F96] mt-1 mb-0 font-[Inter,sans-serif]">
+        <p className="text-[13px] text-slate_ui mt-1 mb-0 font-[Inter,sans-serif]">
           Cohort retention, email engagement, and expiring trial management.
         </p>
       </div>
@@ -343,55 +343,55 @@ export default function TrialHealth() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Week</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Signups</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Day 7 Active</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Day 14 Active</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Converted</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Churned</th>
+              <tr className="border-b border-border_ui-warm">
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Week</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Signups</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Day 7 Active</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Day 14 Active</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Converted</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Churned</th>
               </tr>
             </thead>
             <tbody>
               {cohorts.map((row) => (
-                <tr key={row.week} className="border-b border-[#F3F4F6]">
+                <tr key={row.week} className="border-b border-gray-100">
                   <td className="px-3 py-2.5 font-medium text-navy">{row.week}</td>
                   <td className="px-3 py-2.5 text-center text-navy font-semibold">{row.signups}</td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: retentionBg(row.day7, row.signups) }}>
                     {row.day7 !== null ? (
                       <div>
                         <span className="font-semibold text-navy">{row.day7}</span>
-                        <span className="block text-xs text-[#6B7F96]">({pct(row.day7, row.signups)})</span>
+                        <span className="block text-xs text-slate_ui">({pct(row.day7, row.signups)})</span>
                       </div>
                     ) : (
-                      <span className="text-[#9CA3AF]">&mdash;</span>
+                      <span className="text-gray-400">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: retentionBg(row.day14, row.signups) }}>
                     {row.day14 !== null ? (
                       <div>
                         <span className="font-semibold text-navy">{row.day14}</span>
-                        <span className="block text-xs text-[#6B7F96]">({pct(row.day14, row.signups)})</span>
+                        <span className="block text-xs text-slate_ui">({pct(row.day14, row.signups)})</span>
                       </div>
                     ) : (
-                      <span className="text-[#9CA3AF]">&mdash;</span>
+                      <span className="text-gray-400">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: row.converted !== null ? '#D1FAE5' : 'transparent' }}>
                     {row.converted !== null ? (
                       <div>
-                        <span className="font-semibold text-[#065F46]">{row.converted}</span>
-                        <span className="block text-xs text-[#047857]">({pct(row.converted, row.signups)})</span>
+                        <span className="font-semibold text-emerald-800">{row.converted}</span>
+                        <span className="block text-xs text-emerald-700">({pct(row.converted, row.signups)})</span>
                       </div>
                     ) : (
-                      <span className="text-[#9CA3AF]">&mdash;</span>
+                      <span className="text-gray-400">&mdash;</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-center" style={{ backgroundColor: row.churned !== null ? '#F3F4F6' : 'transparent' }}>
                     {row.churned !== null ? (
-                      <span className="font-semibold text-[#6B7280]">{row.churned}</span>
+                      <span className="font-semibold text-gray-500">{row.churned}</span>
                     ) : (
-                      <span className="text-[#9CA3AF]">&mdash;</span>
+                      <span className="text-gray-400">&mdash;</span>
                     )}
                   </td>
                 </tr>
@@ -419,7 +419,7 @@ export default function TrialHealth() {
                 {/* Drop-off annotation */}
                 {dropPct !== null && (
                   <div className="flex items-center gap-2 py-1 pl-2">
-                    <span className="text-xs text-[#6B7F96]">
+                    <span className="text-xs text-slate_ui">
                       &darr; {dropPct}% drop
                     </span>
                   </div>
@@ -438,7 +438,7 @@ export default function TrialHealth() {
                       <span className="text-xs font-bold text-white">{step.count.toLocaleString()}</span>
                     </div>
                   </div>
-                  <span className="text-xs font-medium w-12 text-right shrink-0 text-[#6B7F96]">
+                  <span className="text-xs font-medium w-12 text-right shrink-0 text-slate_ui">
                     {ratePct !== null ? `${ratePct}%` : ''}
                   </span>
                 </div>
@@ -457,26 +457,26 @@ export default function TrialHealth() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[800px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Org Name</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Owner Email</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Trial Start</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Days Left</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Last Login</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Emails Sent</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#6B7F96]">Action</th>
+              <tr className="border-b border-border_ui-warm">
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Org Name</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Owner Email</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Trial Start</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Days Left</th>
+                <th className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Last Login</th>
+                <th className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Emails Sent</th>
+                <th className="text-right px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate_ui">Action</th>
               </tr>
             </thead>
             <tbody>
               {expiring.map((trial) => {
                 const badge = daysLeftBadge(trial.daysLeft);
                 return (
-                  <tr key={trial.email} className="border-b border-[#F3F4F6]">
+                  <tr key={trial.email} className="border-b border-gray-100">
                     <td className="px-3 py-2.5 font-semibold text-navy">{trial.org}</td>
-                    <td className="px-3 py-2.5 text-[#6B7F96]">{trial.email}</td>
-                    <td className="px-3 py-2.5 text-[#6B7F96]">
+                    <td className="px-3 py-2.5 text-slate_ui">{trial.email}</td>
+                    <td className="px-3 py-2.5 text-slate_ui">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-[#6B7F96]" />
+                        <Calendar className="w-3.5 h-3.5 text-slate_ui" />
                         {formatDate(trial.trialStart)}
                       </div>
                     </td>
@@ -488,13 +488,13 @@ export default function TrialHealth() {
                         {trial.daysLeft}d
                       </span>
                     </td>
-                    <td className="px-3 py-2.5 text-[#6B7F96]">
+                    <td className="px-3 py-2.5 text-slate_ui">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-[#6B7F96]" />
+                        <Clock className="w-3.5 h-3.5 text-slate_ui" />
                         {trial.lastLogin}
                       </div>
                     </td>
-                    <td className="px-3 py-2.5 text-center text-[#6B7F96]">{trial.emailsSent}</td>
+                    <td className="px-3 py-2.5 text-center text-slate_ui">{trial.emailsSent}</td>
                     <td className="px-3 py-2.5 text-right">
                       <div className="flex items-center gap-2 justify-end">
                         <button
@@ -506,7 +506,7 @@ export default function TrialHealth() {
                         </button>
                         <button
                           onClick={() => handleExtend(trial)}
-                          className="px-3 py-1.5 rounded-md text-xs font-medium text-navy border border-[#E2D9C8] flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-md text-xs font-medium text-navy border border-border_ui-warm flex items-center gap-1"
                         >
                           <TrendingUp className="w-3 h-3" />
                           Extend 7d
@@ -518,7 +518,7 @@ export default function TrialHealth() {
               })}
               {expiring.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-[#6B7F96]">
+                  <td colSpan={7} className="px-4 py-8 text-center text-slate_ui">
                     No trials expiring in the next 7 days.
                   </td>
                 </tr>

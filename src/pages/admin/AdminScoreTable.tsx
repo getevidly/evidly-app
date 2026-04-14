@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 interface CountyRow {
   county_slug: string;
@@ -17,7 +18,7 @@ interface CountyRow {
 }
 
 const Skeleton = ({ h = 20 }: { h?: number }) => (
-  <div className="w-full rounded-md animate-pulse bg-[#E5E7EB]" style={{ height: h }} />
+  <div className="w-full rounded-md animate-pulse bg-gray-200" style={{ height: h }} />
 );
 
 export default function AdminScoreTable() {
@@ -72,7 +73,7 @@ export default function AdminScoreTable() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <Button onClick={() => window.location.reload()} variant="primary" className="mt-4">Retry</Button>
       </div>
     );
   }
@@ -80,7 +81,7 @@ export default function AdminScoreTable() {
   return (
     <div>
       <h1 className="text-[22px] font-extrabold text-navy mb-1">ScoreTable Analytics</h1>
-      <div className="text-xs text-[#6B7F96] leading-relaxed mb-4">
+      <div className="text-xs text-slate_ui leading-relaxed mb-4">
         Public ScoreTable pages (/scoretable/[county]-county) drive SEO traffic and convert operators into assessment leads.
         Track views, sessions, and conversion signals across all 62 county pages.
       </div>
@@ -93,8 +94,8 @@ export default function AdminScoreTable() {
           { label: 'Views (7d)', value: data.reduce((s, d) => s + d.views_7d, 0) },
           { label: 'Views (30d)', value: data.reduce((s, d) => s + d.views_30d, 0) },
         ].map(k => (
-          <div key={k.label} className="bg-white border border-[#E5E7EB] rounded-lg px-5 py-4 text-center flex flex-col items-center justify-center">
-            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6B7280] mb-2">
+          <div key={k.label} className="bg-white border border-gray-200 rounded-lg px-5 py-4 text-center flex flex-col items-center justify-center">
+            <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-gray-500 mb-2">
               {k.label}
             </div>
             <div className="text-[28px] font-extrabold leading-none text-navy">
@@ -112,15 +113,15 @@ export default function AdminScoreTable() {
         <div className="text-center py-12">
           <div className="text-[32px] mb-3">📊</div>
           <div className="text-[15px] font-bold text-navy mb-1.5">No ScoreTable views yet</div>
-          <div className="text-xs text-[#6B7F96] max-w-[360px] mx-auto">
+          <div className="text-xs text-slate_ui max-w-[360px] mx-auto">
             ScoreTable page views will appear here once users visit /scoretable/[county]-county pages. All 62 counties are tracked automatically.
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui overflow-hidden">
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E5E0D8]">
+              <tr className="border-b border-border_ui">
                 {['County', 'Total Views', 'Unique Sessions', '7-Day', '30-Day', 'Last Viewed'].map(h => (
                   <th key={h} className="text-left px-3.5 py-2.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">{h}</th>
                 ))}
@@ -128,15 +129,15 @@ export default function AdminScoreTable() {
             </thead>
             <tbody>
               {data.map(d => (
-                <tr key={d.county_slug} className="border-b border-[#E5E0D8] hover:bg-[#F9FAFB] transition-colors">
+                <tr key={d.county_slug} className="border-b border-border_ui hover:bg-gray-50 transition-colors">
                   <td className="px-3.5 py-2.5 text-xs font-medium text-navy">
                     {(d.county_slug || '').replace(/-county$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} County
                   </td>
                   <td className="px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] font-semibold text-navy">{d.total_views}</td>
-                  <td className="px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] text-[#6B7F96]">{d.unique_sessions}</td>
-                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_7d > 0 ? 'text-[#2563EB]' : 'text-[#9CA3AF]'}`}>{d.views_7d}</td>
-                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_30d > 0 ? 'text-[#059669]' : 'text-[#9CA3AF]'}`}>{d.views_30d}</td>
-                  <td className="px-3.5 py-2.5 text-[11px] font-['DM_Mono',monospace] text-[#9CA3AF]">
+                  <td className="px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] text-slate_ui">{d.unique_sessions}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_7d > 0 ? 'text-blue-600' : 'text-gray-400'}`}>{d.views_7d}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-['DM_Mono',monospace] ${d.views_30d > 0 ? 'text-emerald-600' : 'text-gray-400'}`}>{d.views_30d}</td>
+                  <td className="px-3.5 py-2.5 text-[11px] font-['DM_Mono',monospace] text-gray-400">
                     {d.last_viewed ? new Date(d.last_viewed).toLocaleDateString() : '—'}
                   </td>
                 </tr>

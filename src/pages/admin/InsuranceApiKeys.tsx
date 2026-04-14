@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
@@ -304,20 +305,20 @@ export default function InsuranceApiKeys() {
           <p className="text-sm text-navy/70 mt-1">Create, manage, and monitor API keys for partner integrations</p>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="secondary"
             onClick={() => { setRequestLogKeyId(null); loadRequestLog(); setShowRequestLog(true); }}
-            className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-navy/10 rounded-lg text-sm font-medium text-navy/80 hover:bg-cream"
           >
             <Activity className="h-4 w-4" />
             Request Log
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
             onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2 min-h-[44px] text-white rounded-lg text-sm font-medium shadow-sm bg-navy"
           >
             <Plus className="h-4 w-4" />
             Create API Key
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -527,20 +528,21 @@ export default function InsuranceApiKeys() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button
+              <Button
+                variant="secondary"
+                className="flex-1"
                 onClick={() => setShowCreateForm(false)}
-                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-navy/15 rounded-lg text-sm font-medium text-navy/80 hover:bg-cream"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                className="flex-1"
                 onClick={handleCreateKey}
                 disabled={!newLabel.trim() || creating}
-                className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40"
-                style={{ backgroundColor: NAVY }}
               >
                 {creating ? 'Creating...' : 'Create Key'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

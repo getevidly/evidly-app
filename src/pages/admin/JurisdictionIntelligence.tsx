@@ -188,7 +188,7 @@ export default function JurisdictionIntelligence() {
                   {!item.published && (
                     <button
                       onClick={() => publishItem(item.id)}
-                      className="flex-shrink-0 px-4 py-2 bg-navy text-white rounded-lg text-xs font-medium hover:bg-[#162340]"
+                      className="flex-shrink-0 px-4 py-2 bg-navy text-white rounded-lg text-xs font-medium hover:bg-navy-hover"
                     >
                       Publish
                     </button>

@@ -97,12 +97,12 @@ function Toggle({ checked, onChange, label, description }: { checked: boolean; o
   return (
     <div className="flex items-center justify-between py-3">
       <div>
-        <p className="text-sm font-medium text-[#0B1628]">{label}</p>
-        {description && <p className="text-xs mt-0.5 text-[#6B7F96]">{description}</p>}
+        <p className="text-sm font-medium text-navy-deeper">{label}</p>
+        {description && <p className="text-xs mt-0.5 text-slate_ui">{description}</p>}
       </div>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? 'bg-navy' : 'bg-[#D1D9E6]'}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? 'bg-navy' : 'bg-border_ui-cool'}`}
       >
         <span
           className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? 'translate-x-[1.375rem]' : 'translate-x-1'}`}
@@ -221,7 +221,7 @@ export function SecuritySettings() {
       <AdminBreadcrumb crumbs={[{ label: 'Security Settings' }]} />
 
       {isDemoMode && (
-        <div className="rounded-xl px-4 py-2 text-sm font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
+        <div className="rounded-xl px-4 py-2 text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
           Demo Mode — changes are not persisted
         </div>
       )}
@@ -232,17 +232,17 @@ export function SecuritySettings() {
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy font-[DM_Sans,sans-serif]">Domain Security Policy</h1>
-          <p className="text-sm mt-0.5 text-[#6B7F96]">HTTPS enforcement, security headers, CORS, and domain verification</p>
+          <p className="text-sm mt-0.5 text-slate_ui">HTTPS enforcement, security headers, CORS, and domain verification</p>
         </div>
       </div>
 
       {/* ── Section A: HTTPS & Transport ───────────────────── */}
-      <section className="bg-white rounded-xl border border-[#D1D9E6] shadow-sm p-5">
-        <h2 className="text-lg font-semibold tracking-tight mb-1 text-[#0B1628] font-[DM_Sans,sans-serif]">
+      <section className="bg-white rounded-xl border border-border_ui-cool shadow-sm p-5">
+        <h2 className="text-lg font-semibold tracking-tight mb-1 text-navy-deeper font-[DM_Sans,sans-serif]">
           <Lock size={16} className="inline mr-2 text-navy" />
           HTTPS & Transport Security
         </h2>
-        <p className="text-xs mb-4 text-[#6B7F96]">Controls how data is encrypted in transit</p>
+        <p className="text-xs mb-4 text-slate_ui">Controls how data is encrypted in transit</p>
 
         <div className="divide-y divide-[#E8EDF5]">
           <Toggle
@@ -259,14 +259,14 @@ export function SecuritySettings() {
           />
           <div className="flex items-center justify-between py-3">
             <div>
-              <p className="text-sm font-medium text-[#0B1628]">HSTS Max Age</p>
-              <p className="text-xs mt-0.5 text-[#6B7F96]">Duration in seconds (31536000 = 1 year, recommended)</p>
+              <p className="text-sm font-medium text-navy-deeper">HSTS Max Age</p>
+              <p className="text-xs mt-0.5 text-slate_ui">Duration in seconds (31536000 = 1 year, recommended)</p>
             </div>
             <input
               type="number"
               value={config.hsts_max_age_seconds}
               onChange={e => setConfig(c => ({ ...c, hsts_max_age_seconds: parseInt(e.target.value) || 0 }))}
-              className="w-32 px-3 py-1.5 text-sm border border-[#D1D9E6] rounded-xl text-right"
+              className="w-32 px-3 py-1.5 text-sm border border-border_ui-cool rounded-xl text-right"
             />
           </div>
           <Toggle
@@ -279,18 +279,18 @@ export function SecuritySettings() {
       </section>
 
       {/* ── Section B: Security Headers ────────────────────── */}
-      <section className="bg-white rounded-xl border border-[#D1D9E6] shadow-sm p-5">
+      <section className="bg-white rounded-xl border border-border_ui-cool shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-[#0B1628] font-[DM_Sans,sans-serif]">
+            <h2 className="text-lg font-semibold tracking-tight text-navy-deeper font-[DM_Sans,sans-serif]">
               <Shield size={16} className="inline mr-2 text-navy" />
               Security Headers
             </h2>
-            <p className="text-xs mt-0.5 text-[#6B7F96]">Configured at the Vercel / edge level — read only</p>
+            <p className="text-xs mt-0.5 text-slate_ui">Configured at the Vercel / edge level — read only</p>
           </div>
           <button
             onClick={copyHeaders}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-[#D1D9E6] transition-colors ${copied ? 'text-[#16a34a]' : 'text-[#3D5068]'}`}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-border_ui-cool transition-colors ${copied ? 'text-green-600' : 'text-navy-mid'}`}
           >
             {copied ? <CheckCircle size={14} /> : <Copy size={14} />}
             {copied ? 'Copied!' : 'Copy vercel.json headers'}
@@ -301,19 +301,19 @@ export function SecuritySettings() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#E8EDF5] hover:bg-navy/[0.02] transition-colors">
-                <th className="text-left py-2 pr-4 font-medium text-[#3D5068]">Header</th>
-                <th className="text-left py-2 pr-4 font-medium text-[#3D5068]">Value</th>
-                <th className="text-center py-2 font-medium text-[#3D5068]">Status</th>
+                <th className="text-left py-2 pr-4 font-medium text-navy-mid">Header</th>
+                <th className="text-left py-2 pr-4 font-medium text-navy-mid">Value</th>
+                <th className="text-center py-2 font-medium text-navy-mid">Status</th>
               </tr>
             </thead>
             <tbody>
               {SECURITY_HEADERS_TABLE.map(row => (
                 <tr key={row.header} className="border-b border-[#E8EDF5]">
                   <td className="py-2.5 pr-4">
-                    <p className="font-mono text-xs font-medium text-[#0B1628]">{row.header}</p>
-                    <p className="text-xs mt-0.5 text-[#6B7F96]">{row.desc}</p>
+                    <p className="font-mono text-xs font-medium text-navy-deeper">{row.header}</p>
+                    <p className="text-xs mt-0.5 text-slate_ui">{row.desc}</p>
                   </td>
-                  <td className="py-2.5 pr-4 font-mono text-xs text-[#3D5068]">{row.value}</td>
+                  <td className="py-2.5 pr-4 font-mono text-xs text-navy-mid">{row.value}</td>
                   <td className="py-2.5 text-center">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
                       <CheckCircle size={12} /> Set
@@ -327,21 +327,21 @@ export function SecuritySettings() {
       </section>
 
       {/* ── Section C: Allowed Domains / CORS ──────────────── */}
-      <section className="bg-white rounded-xl border border-[#D1D9E6] shadow-sm p-5">
-        <h2 className="text-lg font-semibold tracking-tight mb-1 text-[#0B1628] font-[DM_Sans,sans-serif]">
+      <section className="bg-white rounded-xl border border-border_ui-cool shadow-sm p-5">
+        <h2 className="text-lg font-semibold tracking-tight mb-1 text-navy-deeper font-[DM_Sans,sans-serif]">
           <Globe size={16} className="inline mr-2 text-navy" />
           Allowed Domains & CORS
         </h2>
-        <p className="text-xs mb-4 text-[#6B7F96]">Origins allowed to call the EvidLY API</p>
+        <p className="text-xs mb-4 text-slate_ui">Origins allowed to call the EvidLY API</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5 text-[#3D5068]">CORS Origins (one per line)</label>
+            <label className="block text-sm font-medium mb-1.5 text-navy-mid">CORS Origins (one per line)</label>
             <textarea
               value={config.cors_origins.join('\n')}
               onChange={e => setConfig(c => ({ ...c, cors_origins: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) }))}
               rows={4}
-              className="w-full px-3 py-2 text-sm border border-[#D1D9E6] rounded-xl font-mono"
+              className="w-full px-3 py-2 text-sm border border-border_ui-cool rounded-xl font-mono"
             />
           </div>
 
@@ -354,8 +354,8 @@ export function SecuritySettings() {
           <div className="flex items-start gap-3 py-3 px-4 rounded-xl bg-[#F4F6FA] border border-[#E8EDF5]">
             <Info size={16} className="mt-0.5 shrink-0 text-navy" />
             <div>
-              <p className="text-sm font-medium text-[#0B1628]">Session Cookies</p>
-              <p className="text-xs mt-1 text-[#6B7F96]">
+              <p className="text-sm font-medium text-navy-deeper">Session Cookies</p>
+              <p className="text-xs mt-1 text-slate_ui">
                 Session cookies are managed by Supabase Auth with <strong>httpOnly</strong> and <strong>Secure</strong> flags enforced automatically.
                 Cookie settings (JWT expiry, refresh token rotation, SameSite policy) are configured in the Supabase Dashboard under Authentication → Settings.
               </p>
@@ -374,14 +374,14 @@ export function SecuritySettings() {
       </section>
 
       {/* ── Section D: Domain Verification ─────────────────── */}
-      <section className="bg-white rounded-xl border border-[#D1D9E6] shadow-sm p-5">
+      <section className="bg-white rounded-xl border border-border_ui-cool shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-[#0B1628] font-[DM_Sans,sans-serif]">
+            <h2 className="text-lg font-semibold tracking-tight text-navy-deeper font-[DM_Sans,sans-serif]">
               <CheckCircle size={16} className="inline mr-2 text-navy" />
               Domain Verification Status
             </h2>
-            <p className="text-xs mt-0.5 text-[#6B7F96]">Checks that each domain returns expected security headers</p>
+            <p className="text-xs mt-0.5 text-slate_ui">Checks that each domain returns expected security headers</p>
           </div>
           <button
             onClick={verifyDomains}
@@ -398,23 +398,23 @@ export function SecuritySettings() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#E8EDF5] hover:bg-navy/[0.02] transition-colors">
-                  <th className="text-left py-2 pr-4 font-medium text-[#3D5068]">Domain</th>
-                  <th className="text-center py-2 px-2 font-medium text-[#3D5068]">HTTPS</th>
-                  <th className="text-center py-2 px-2 font-medium text-[#3D5068]">HSTS</th>
-                  <th className="text-center py-2 px-2 font-medium text-[#3D5068]">CSP</th>
-                  <th className="text-center py-2 px-2 font-medium text-[#3D5068]">X-Frame</th>
-                  <th className="text-left py-2 pl-4 font-medium text-[#3D5068]">Last Checked</th>
+                  <th className="text-left py-2 pr-4 font-medium text-navy-mid">Domain</th>
+                  <th className="text-center py-2 px-2 font-medium text-navy-mid">HTTPS</th>
+                  <th className="text-center py-2 px-2 font-medium text-navy-mid">HSTS</th>
+                  <th className="text-center py-2 px-2 font-medium text-navy-mid">CSP</th>
+                  <th className="text-center py-2 px-2 font-medium text-navy-mid">X-Frame</th>
+                  <th className="text-left py-2 pl-4 font-medium text-navy-mid">Last Checked</th>
                 </tr>
               </thead>
               <tbody>
                 {verifyResults.map(r => (
                   <tr key={r.domain} className="border-b border-[#E8EDF5]">
-                    <td className="py-2.5 pr-4 font-mono text-xs text-[#0B1628]">{r.domain}</td>
+                    <td className="py-2.5 pr-4 font-mono text-xs text-navy-deeper">{r.domain}</td>
                     <td className="py-2.5 px-2 text-center"><StatusIcon ok={r.https} /></td>
                     <td className="py-2.5 px-2 text-center"><StatusIcon ok={r.hsts} /></td>
                     <td className="py-2.5 px-2 text-center"><StatusIcon ok={r.csp} /></td>
                     <td className="py-2.5 px-2 text-center"><StatusIcon ok={r.xframe} /></td>
-                    <td className="py-2.5 pl-4 text-xs text-[#6B7F96]">
+                    <td className="py-2.5 pl-4 text-xs text-slate_ui">
                       {r.checked_at ? new Date(r.checked_at).toLocaleTimeString() : '—'}
                     </td>
                   </tr>
@@ -424,8 +424,8 @@ export function SecuritySettings() {
           </div>
         ) : (
           <div className="flex items-center gap-2 px-4 py-6 rounded-lg text-center bg-[#F4F6FA]">
-            <Info size={16} className="text-[#6B7F96]" />
-            <span className="text-sm text-[#3D5068]">
+            <Info size={16} className="text-slate_ui" />
+            <span className="text-sm text-navy-mid">
               Click "Verify All" to check security headers on your allowed domains
             </span>
           </div>

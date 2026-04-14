@@ -16,6 +16,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
+import Button from '../../components/ui/Button';
 
 const ROLES = [
   'platform_admin', 'owner_operator', 'executive', 'compliance_officer',
@@ -257,7 +258,7 @@ export default function AdminUsers() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load users</p>
-        <button onClick={loadUsers} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <Button onClick={loadUsers} variant="primary" size="sm" className="mt-4">Retry</Button>
       </div>
     );
   }
@@ -274,12 +275,12 @@ export default function AdminUsers() {
             Manage user accounts, roles, and access across EvidLY
           </p>
         </div>
-        <button
+        <Button
           onClick={() => setShowInvite(true)}
-          className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white"
+          variant="gold" size="sm"
         >
           + Invite User
-        </button>
+        </Button>
       </div>
 
       {/* KPI row */}
@@ -293,13 +294,13 @@ export default function AdminUsers() {
       {/* Filters */}
       <div className="flex gap-2.5 flex-wrap">
         <input
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-60"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-60"
           placeholder="Search by name or email..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         <select
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white"
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
         >
@@ -307,7 +308,7 @@ export default function AdminUsers() {
           {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r] || r}</option>)}
         </select>
         <select
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white"
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
         >
@@ -316,9 +317,9 @@ export default function AdminUsers() {
       </div>
 
       {/* Users table */}
-      <div className="bg-white border border-[#E2D9C8] rounded-[10px] overflow-hidden">
+      <div className="bg-white border border-border_ui-warm rounded-[10px] overflow-hidden">
         {/* Header row */}
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-2.5 border-b border-[#E2D9C8] text-[11px] font-bold text-gray-400 uppercase">
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-2.5 border-b border-border_ui-warm text-[11px] font-bold text-gray-400 uppercase">
           <span>User</span>
           <span>Role</span>
           <span>Status</span>
@@ -334,7 +335,7 @@ export default function AdminUsers() {
           filtered.map(u => {
             const status = getStatus(u);
             return (
-              <div key={u.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-3 border-b border-[#E2D9C8] items-center text-[13px]">
+              <div key={u.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] px-4 py-3 border-b border-border_ui-warm items-center text-[13px]">
                 {/* User */}
                 <div>
                   <div className="font-semibold text-navy">{u.full_name}</div>
@@ -362,7 +363,7 @@ export default function AdminUsers() {
 
                 {/* Last Login */}
                 <div>
-                  <div className="text-[#6B7F96] text-xs">{relativeTime(u.last_login_at)}</div>
+                  <div className="text-slate_ui text-xs">{relativeTime(u.last_login_at)}</div>
                   {u.last_login_ip && (
                     <div className="text-[10px] text-gray-400 font-mono">{u.last_login_ip}</div>
                   )}
@@ -371,32 +372,34 @@ export default function AdminUsers() {
                 {/* Actions */}
                 <div className="text-right flex gap-1 justify-end flex-wrap">
                   {u.is_suspended ? (
-                    <button onClick={() => openAction(u, 'unsuspend')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-emerald-50 text-emerald-500">Unsuspend</button>
+                    <Button onClick={() => openAction(u, 'unsuspend')} variant="ghost" size="sm" className="bg-emerald-50 text-emerald-500">Unsuspend</Button>
                   ) : (
-                    <button onClick={() => openAction(u, 'suspend')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-red-50 text-red-600">Suspend</button>
+                    <Button onClick={() => openAction(u, 'suspend')} variant="ghost" size="sm" className="bg-red-50 text-red-600">Suspend</Button>
                   )}
-                  <button onClick={() => openAction(u, 'change_role')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-navy">Role</button>
+                  <Button onClick={() => openAction(u, 'change_role')} variant="ghost" size="sm" className="bg-[#F0F4F8] text-navy">Role</Button>
                   {u.locked_until && new Date(u.locked_until) > new Date() && (
-                    <button onClick={() => openAction(u, 'unlock')} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-amber-50 text-amber-500">Unlock</button>
+                    <Button onClick={() => openAction(u, 'unlock')} variant="ghost" size="sm" className="bg-amber-50 text-amber-500">Unlock</Button>
                   )}
                   <div className="relative">
-                    <button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} className="px-2 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">
+                    <Button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} variant="ghost" size="sm" className="px-2 py-1.5 bg-[#F0F4F8] text-slate_ui">
                       ···
-                    </button>
+                    </Button>
                     {moreMenuId === u.id && (
-                      <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-[#E2D9C8] rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[180px] overflow-hidden">
-                        <button
+                      <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-border_ui-warm rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[180px] overflow-hidden">
+                        <Button
                           onClick={() => { setMoreMenuId(null); openAction(u, 'reset_password'); }}
-                          className="block w-full px-3.5 py-2.5 text-xs font-semibold text-navy bg-transparent border-none text-left cursor-pointer hover:bg-[#F0F4F8]"
+                          variant="ghost" size="sm"
+                          className="block w-full px-3.5 py-2.5 text-navy text-left rounded-none justify-start hover:bg-[#F0F4F8]"
                         >
                           Reset Password
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => { setMoreMenuId(null); openAction(u, 'revoke_sessions'); }}
-                          className="block w-full px-3.5 py-2.5 text-xs font-semibold text-red-600 bg-transparent border-none text-left cursor-pointer hover:bg-red-50"
+                          variant="ghost" size="sm"
+                          className="block w-full px-3.5 py-2.5 text-red-600 text-left rounded-none justify-start hover:bg-red-50"
                         >
                           Revoke Sessions
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -422,11 +425,11 @@ export default function AdminUsers() {
 
             {actionType === 'suspend' && (
               <div className="mb-4">
-                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">
+                <label className="text-xs font-semibold text-slate_ui block mb-1">
                   Reason for suspension
                 </label>
                 <textarea
-                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full min-h-[60px] resize-y"
+                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full min-h-[60px] resize-y"
                   placeholder="Enter reason..."
                   value={actionReason}
                   onChange={e => setActionReason(e.target.value)}
@@ -439,11 +442,11 @@ export default function AdminUsers() {
 
             {actionType === 'change_role' && (
               <div className="mb-4">
-                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">
+                <label className="text-xs font-semibold text-slate_ui block mb-1">
                   New role
                 </label>
                 <select
-                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                   value={actionRole}
                   onChange={e => setActionRole(e.target.value)}
                 >
@@ -456,45 +459,44 @@ export default function AdminUsers() {
             )}
 
             {actionType === 'unsuspend' && (
-              <p className="text-[13px] text-[#6B7F96] mb-4">
+              <p className="text-[13px] text-slate_ui mb-4">
                 This will restore access for {actionUser.full_name}. They will be able to log in again.
               </p>
             )}
 
             {actionType === 'unlock' && (
-              <p className="text-[13px] text-[#6B7F96] mb-4">
+              <p className="text-[13px] text-slate_ui mb-4">
                 This will reset the failed login counter and remove the account lockout.
               </p>
             )}
 
             {actionType === 'reset_password' && (
-              <p className="text-[13px] text-[#6B7F96] mb-4">
+              <p className="text-[13px] text-slate_ui mb-4">
                 A password reset email will be sent to {actionUser.email}. This action is logged.
               </p>
             )}
 
             {actionType === 'revoke_sessions' && (
-              <p className="text-[13px] text-[#6B7F96] mb-4">
+              <p className="text-[13px] text-slate_ui mb-4">
                 All active sessions will be immediately revoked. The user will need to log in again.
               </p>
             )}
 
             <div className="flex gap-2 justify-end">
-              <button
+              <Button
                 onClick={closeAction}
-                className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]"
+                variant="ghost" size="sm" className="bg-[#F0F4F8] text-slate_ui"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={executeAction}
                 disabled={actionLoading}
-                className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer text-white ${
-                  actionType === 'suspend' ? 'bg-red-600' : 'bg-navy'
-                }`}
+                variant={actionType === 'suspend' ? 'destructive' : 'primary'}
+                size="sm"
               >
                 {actionLoading ? 'Processing...' : 'Confirm'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -507,18 +509,18 @@ export default function AdminUsers() {
             <h3 className="text-base font-bold text-navy mb-4">Invite New User</h3>
             <div className="flex flex-col gap-3">
               <div>
-                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">Email</label>
+                <label className="text-xs font-semibold text-slate_ui block mb-1">Email</label>
                 <input
-                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                   placeholder="user@example.com"
                   value={inviteEmail}
                   onChange={e => setInviteEmail(e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-[#6B7F96] block mb-1">Role</label>
+                <label className="text-xs font-semibold text-slate_ui block mb-1">Role</label>
                 <select
-                  className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                   value={inviteRole}
                   onChange={e => setInviteRole(e.target.value)}
                 >
@@ -527,10 +529,10 @@ export default function AdminUsers() {
               </div>
             </div>
             <div className="flex gap-2 justify-end mt-5">
-              <button onClick={() => setShowInvite(false)} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">Cancel</button>
-              <button onClick={sendInvite} disabled={actionLoading || !inviteEmail} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white">
+              <Button onClick={() => setShowInvite(false)} variant="ghost" size="sm" className="bg-[#F0F4F8] text-slate_ui">Cancel</Button>
+              <Button onClick={sendInvite} disabled={actionLoading || !inviteEmail} variant="gold" size="sm">
                 {actionLoading ? 'Sending...' : 'Send Invite'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

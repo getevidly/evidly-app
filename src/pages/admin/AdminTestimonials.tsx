@@ -85,7 +85,7 @@ export default function AdminTestimonials() {
           <h1 className="text-[22px] font-extrabold text-navy mb-1 font-['DM_Sans',sans-serif]">
             Testimonials
           </h1>
-          <p className="text-[13px] text-[#6B7F96]">
+          <p className="text-[13px] text-slate_ui">
             Manage operator testimonials displayed on ScoreTable county pages
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function AdminTestimonials() {
             className={`py-1.5 px-3.5 rounded-md text-xs font-semibold cursor-pointer capitalize ${
               filter === f
                 ? 'border border-navy bg-navy text-white'
-                : 'border border-[#E5E0D8] bg-white text-navy'
+                : 'border border-border_ui bg-white text-navy'
             }`}
           >
             {f}
@@ -118,22 +118,22 @@ export default function AdminTestimonials() {
 
       {/* Table */}
       {loading ? (
-        <div className="p-10 text-center text-[#6B7F96] text-[13px]">Loading...</div>
+        <div className="p-10 text-center text-slate_ui text-[13px]">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-xl border border-[#E5E0D8]">
+        <div className="p-12 text-center bg-white rounded-xl border border-border_ui">
           <p className="text-[32px] mb-2">&#x1F4AC;</p>
           <p className="text-sm font-bold text-navy mb-1">
             No testimonials yet
           </p>
-          <p className="text-xs text-[#6B7F96]">
+          <p className="text-xs text-slate_ui">
             Testimonials are collected from operators after their first inspection with EvidLY
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui overflow-hidden">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b border-[#E5E0D8]">
+              <tr className="border-b border-border_ui">
                 <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Quote</th>
                 <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">Author</th>
                 <th className="text-left py-2.5 px-3.5 text-[11px] font-bold text-[#4A5568] uppercase tracking-[0.04em]">County</th>
@@ -143,7 +143,7 @@ export default function AdminTestimonials() {
             </thead>
             <tbody>
               {filtered.map(t => (
-                <tr key={t.id} className="border-b border-[#E5E0D8]">
+                <tr key={t.id} className="border-b border-border_ui">
                   <td className="py-2.5 px-3.5 text-xs max-w-[300px] text-navy">
                     <p className="m-0 leading-relaxed text-xs">
                       "{t.quote.length > 120 ? t.quote.slice(0, 120) + '...' : t.quote}"
@@ -151,22 +151,22 @@ export default function AdminTestimonials() {
                   </td>
                   <td className="py-2.5 px-3.5 text-xs">
                     <p className="m-0 font-semibold text-navy text-xs">{t.author_name || '—'}</p>
-                    <p className="m-0 text-[#6B7F96] text-[11px]">{t.org_name || ''}</p>
+                    <p className="m-0 text-slate_ui text-[11px]">{t.org_name || ''}</p>
                   </td>
-                  <td className="py-2.5 px-3.5 text-xs text-[#6B7F96]">
+                  <td className="py-2.5 px-3.5 text-xs text-slate_ui">
                     {t.county ? t.county.charAt(0).toUpperCase() + t.county.slice(1) : '—'}
                     {t.city ? ` · ${t.city}` : ''}
                   </td>
                   <td className="py-2.5 px-3.5 text-xs">
                     <span
                       className={`inline-flex items-center gap-1 py-0.5 px-2 rounded text-[10px] font-bold ${
-                        t.approved ? 'bg-[#f0fdf4] text-[#16a34a]' : 'bg-[#fffbeb] text-[#d97706]'
+                        t.approved ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'
                       }`}
                     >
                       {t.approved ? 'Approved' : 'Pending'}
                     </span>
                     {t.featured && (
-                      <span className="inline-flex ml-1 py-0.5 px-2 rounded text-[10px] font-bold bg-[#fffbeb] text-gold">
+                      <span className="inline-flex ml-1 py-0.5 px-2 rounded text-[10px] font-bold bg-amber-50 text-gold">
                         &#x2605; Featured
                       </span>
                     )}
@@ -175,21 +175,21 @@ export default function AdminTestimonials() {
                     <div className="flex gap-1.5 justify-end">
                       <button
                         onClick={() => handleApproveToggle(t)}
-                        className={`py-1 px-2.5 rounded border border-[#E5E0D8] bg-white text-[11px] font-semibold cursor-pointer ${
-                          t.approved ? 'text-[#d97706]' : 'text-[#16a34a]'
+                        className={`py-1 px-2.5 rounded border border-border_ui bg-white text-[11px] font-semibold cursor-pointer ${
+                          t.approved ? 'text-amber-600' : 'text-green-600'
                         }`}
                       >
                         {t.approved ? 'Unapprove' : 'Approve'}
                       </button>
                       <button
                         onClick={() => handleFeatureToggle(t)}
-                        className="py-1 px-2.5 rounded border border-[#E5E0D8] bg-white text-gold text-[11px] font-semibold cursor-pointer"
+                        className="py-1 px-2.5 rounded border border-border_ui bg-white text-gold text-[11px] font-semibold cursor-pointer"
                       >
                         {t.featured ? 'Unfeature' : 'Feature'}
                       </button>
                       <button
                         onClick={() => handleDelete(t)}
-                        className="py-1 px-2.5 rounded border border-[#fecaca] bg-white text-[#dc2626] text-[11px] font-semibold cursor-pointer"
+                        className="py-1 px-2.5 rounded border border-red-200 bg-white text-red-600 text-[11px] font-semibold cursor-pointer"
                       >
                         Delete
                       </button>

@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 interface SystemMessage {
@@ -25,10 +26,10 @@ interface SystemMessage {
 }
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl mx-4">
+  <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl mx-4">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -108,23 +109,22 @@ export default function SystemMessages() {
       <AdminBreadcrumb crumbs={[{ label: 'System Messages' }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-navy">System Messages</h1>
-        <button onClick={() => setShowCompose(!showCompose)}
-          className="px-5 py-2 bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
+        <Button variant="gold" size="sm" onClick={() => setShowCompose(!showCompose)}>
           {showCompose ? 'Cancel' : '+ Compose Message'}
-        </button>
+        </Button>
       </div>
 
       {/* Compose form */}
       {showCompose && (
-        <div className="bg-white border border-[#E2D9C8] rounded-xl p-5">
+        <div className="bg-white border border-border_ui-warm rounded-xl p-5">
           <h3 className="text-sm font-bold text-navy mb-4">New Message</h3>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Title *</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Title *</label>
               <input value={title} onChange={e => setTitle(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="Message title" />
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Type</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Type</label>
               <select value={msgType} onChange={e => setMsgType(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
@@ -133,7 +133,7 @@ export default function SystemMessages() {
               </select>
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Display Style</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Display Style</label>
               <select value={displayStyle} onChange={e => setDisplayStyle(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="banner">Banner</option>
                 <option value="modal">Modal</option>
@@ -141,7 +141,7 @@ export default function SystemMessages() {
               </select>
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Target Audience</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Target Audience</label>
               <select value={target} onChange={e => setTarget(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 <option value="all">All Users</option>
                 <option value="owners">Owners Only</option>
@@ -151,42 +151,40 @@ export default function SystemMessages() {
             </div>
           </div>
           <div className="mb-3">
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Body *</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Body *</label>
             <textarea value={body} onChange={e => setBody(e.target.value)} rows={3} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full resize-y" placeholder="Message body..." />
           </div>
           <div className="flex items-center gap-4 mb-4">
-            <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+            <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
               <input type="checkbox" checked={dismissible} onChange={e => setDismissible(e.target.checked)} />
               Dismissible
             </label>
-            <button onClick={() => setPreview(!preview)}
-              className="px-3 py-1 bg-gray-50 border border-[#E2D9C8] rounded text-[#6B7F96] text-[11px] cursor-pointer">
+            <Button variant="secondary" size="sm" onClick={() => setPreview(!preview)}>
               {preview ? 'Hide Preview' : 'Preview'}
-            </button>
+            </Button>
           </div>
 
           {/* Preview */}
           {preview && title && body && (() => {
             const tc = TYPE_COLORS[msgType] || TYPE_COLORS.info;
             return (
-              <div className={`mb-4 px-4 py-3 rounded-lg border border-[#E2D9C8] ${tc.bg}`}>
+              <div className={`mb-4 px-4 py-3 rounded-lg border border-border_ui-warm ${tc.bg}`}>
                 <div className="text-[11px] text-gray-400 mb-1">Preview ({displayStyle})</div>
                 <div className={`text-sm font-bold mb-1 ${tc.text}`}>{title}</div>
-                <div className="text-[13px] text-[#6B7F96]">{body}</div>
+                <div className="text-[13px] text-slate_ui">{body}</div>
               </div>
             );
           })()}
 
-          <button onClick={sendMessage} disabled={sending || !title || !body}
-            className={`px-5 py-2 border-none rounded-md text-white text-[13px] font-bold ${sending ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'}`}>
+          <Button variant="gold" size="sm" onClick={sendMessage} disabled={sending || !title || !body}>
             {sending ? 'Sending...' : 'Send Message'}
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Active messages */}
       <h3 className="text-sm font-bold text-navy">Active Messages ({active.length})</h3>
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {loading ? (
           <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -196,9 +194,9 @@ export default function SystemMessages() {
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Title', 'Type', 'Style', 'Target', 'Views', 'Dismissed', 'Created', ''].map(h => (
-                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -206,18 +204,18 @@ export default function SystemMessages() {
               {active.map(m => {
                 const tc = TYPE_COLORS[m.message_type] || TYPE_COLORS.info;
                 return (
-                  <tr key={m.id} className="border-b border-[#E2D9C8]">
+                  <tr key={m.id} className="border-b border-border_ui-warm">
                     <td className="px-3.5 py-2.5 text-navy font-semibold">{m.title}</td>
                     <td className="px-3.5 py-2.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${tc.bg} ${tc.text}`}>{m.message_type}</span>
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.display_style}</td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.target_audience}</td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.views_count}</td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{m.dismissals_count}</td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(m.created_at).toLocaleDateString()}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{m.display_style}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{m.target_audience}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{m.views_count}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{m.dismissals_count}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{new Date(m.created_at).toLocaleDateString()}</td>
                     <td className="px-3.5 py-2.5">
-                      <button onClick={() => deactivate(m.id)} className="px-2.5 py-1 bg-red-50 border-none rounded text-red-600 text-[11px] cursor-pointer">Deactivate</button>
+                      <Button variant="destructive" size="sm" onClick={() => deactivate(m.id)}>Deactivate</Button>
                     </td>
                   </tr>
                 );
@@ -231,11 +229,11 @@ export default function SystemMessages() {
       {inactive.length > 0 && (
         <>
           <h3 className="text-sm font-bold text-navy">History ({inactive.length})</h3>
-          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+          <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
             <table className="w-full border-collapse text-[13px]">
               <tbody>
                 {inactive.slice(0, 20).map(m => (
-                  <tr key={m.id} className="border-b border-[#E2D9C8]">
+                  <tr key={m.id} className="border-b border-border_ui-warm">
                     <td className="px-3.5 py-2.5 text-gray-400">{m.title}</td>
                     <td className="px-3.5 py-2.5 text-gray-400 text-xs">{m.message_type}</td>
                     <td className="px-3.5 py-2.5 text-gray-400 text-xs">Views: {m.views_count}</td>

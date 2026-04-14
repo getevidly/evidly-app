@@ -70,10 +70,10 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-border_ui-warm rounded-xl m-4">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -234,13 +234,13 @@ export default function RemoteConnect() {
       <AdminBreadcrumb crumbs={[{ label: 'Remote Connect' }]} />
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-navy">Remote Connect</h1>
-        <p className="text-[13px] text-[#6B7F96] mt-1">
+        <p className="text-[13px] text-slate_ui mt-1">
           Initiate and manage remote support sessions with customers.
         </p>
       </div>
 
       {/* ───────── Section 1: Initiate New Session ───────── */}
-      <div className="bg-white border border-[#E2D9C8] rounded-xl p-6">
+      <div className="bg-white border border-border_ui-warm rounded-xl p-6">
         <h3 className="text-sm font-bold text-navy mb-4">Initiate New Session</h3>
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
@@ -254,21 +254,21 @@ export default function RemoteConnect() {
             />
           </div>
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Customer Email *</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Customer Email *</label>
             <input
               value={customerEmail}
               onChange={e => setCustomerEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px]"
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px]"
               placeholder="customer@example.com"
               type="email"
             />
           </div>
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Customer Phone</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Customer Phone</label>
             <input
               value={customerPhone}
               onChange={e => setCustomerPhone(e.target.value)}
-              className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px]"
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px]"
               placeholder="(555) 000-0000"
               type="tel"
             />
@@ -276,8 +276,8 @@ export default function RemoteConnect() {
         </div>
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Linked Ticket (optional)</label>
-            <select value={linkedTicket} onChange={e => setLinkedTicket(e.target.value)} className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] cursor-pointer">
+            <label className="text-[11px] text-slate_ui block mb-1">Linked Ticket (optional)</label>
+            <select value={linkedTicket} onChange={e => setLinkedTicket(e.target.value)} className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] cursor-pointer">
               <option value="">No linked ticket</option>
               {tickets.map(t => (
                 <option key={t.id} value={t.id}>#{t.ticket_number} — {t.subject}</option>
@@ -285,7 +285,7 @@ export default function RemoteConnect() {
             </select>
           </div>
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-2">Session Type</label>
+            <label className="text-[11px] text-slate_ui block mb-2">Session Type</label>
             <div className="flex gap-3 flex-wrap">
               {(Object.entries(SESSION_TYPE_LABELS) as [SessionType, string][]).map(([key, label]) => (
                 <label key={key} className="flex items-center gap-[5px] text-xs text-navy cursor-pointer">
@@ -304,12 +304,12 @@ export default function RemoteConnect() {
           </div>
         </div>
         <div className="mb-4">
-          <label className="text-[11px] text-[#6B7F96] block mb-1">Notes</label>
+          <label className="text-[11px] text-slate_ui block mb-1">Notes</label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] resize-y"
+            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] resize-y"
             placeholder="Session context, customer issue description, etc."
           />
         </div>
@@ -326,9 +326,9 @@ export default function RemoteConnect() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <h3 className="text-sm font-bold text-navy m-0">Active Sessions</h3>
-          <span className="text-[10px] text-[#6B7F96] italic">Auto-refreshes every 15s</span>
+          <span className="text-[10px] text-slate_ui italic">Auto-refreshes every 15s</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
           {loading ? (
             <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -338,9 +338,9 @@ export default function RemoteConnect() {
           ) : (
             <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr className="border-b border-[#E2D9C8]">
+                <tr className="border-b border-border_ui-warm">
                   {['Org', 'Customer Email', 'Type', 'Status', 'Created', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -350,12 +350,12 @@ export default function RemoteConnect() {
                   return (
                     <tr
                       key={s.id}
-                      className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors"
+                      className="border-b border-border_ui-warm hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {s.organizations?.name || '—'}
                       </td>
-                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">{s.customer_email}</td>
+                      <td className="px-3.5 py-2.5 text-xs text-slate_ui">{s.customer_email}</td>
                       <td className="px-3.5 py-2.5 text-xs text-navy">
                         {SESSION_TYPE_LABELS[s.session_type] || s.session_type}
                       </td>
@@ -364,19 +364,19 @@ export default function RemoteConnect() {
                           {s.status}
                         </span>
                       </td>
-                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
+                      <td className="px-3.5 py-2.5 text-xs text-slate_ui">
                         {new Date(s.created_at).toLocaleString()}
                       </td>
                       <td className="px-3.5 py-2.5 text-xs flex gap-1.5">
                         <button
                           onClick={() => window.open(s.connection_url, '_blank', 'noopener')}
-                          className="px-2.5 py-1 bg-[#F0FFF4] border border-[#BBF7D0] rounded text-[#059669] text-[11px] font-semibold cursor-pointer"
+                          className="px-2.5 py-1 bg-green-50 border border-green-200 rounded text-emerald-600 text-[11px] font-semibold cursor-pointer"
                         >
                           Join Room
                         </button>
                         <button
                           onClick={() => handleEndSession(s)}
-                          className="px-2.5 py-1 bg-[#FEF2F2] border-none rounded text-[#DC2626] text-[11px] font-semibold cursor-pointer"
+                          className="px-2.5 py-1 bg-red-50 border-none rounded text-red-600 text-[11px] font-semibold cursor-pointer"
                         >
                           End Session
                         </button>
@@ -393,7 +393,7 @@ export default function RemoteConnect() {
       {/* ───────── Section 3: Session History ───────── */}
       <div>
         <h3 className="text-sm font-bold text-navy mb-3">Session History</h3>
-        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
           {loading ? (
             <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -403,9 +403,9 @@ export default function RemoteConnect() {
           ) : (
             <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr className="border-b border-[#E2D9C8]">
+                <tr className="border-b border-border_ui-warm">
                   {['Org', 'Type', 'Status', 'Staff', 'Duration', 'Ticket #', 'Created'].map(h => (
-                    <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                    <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -415,7 +415,7 @@ export default function RemoteConnect() {
                   return (
                     <tr
                       key={s.id}
-                      className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors"
+                      className="border-b border-border_ui-warm hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {s.organizations?.name || '—'}
@@ -428,16 +428,16 @@ export default function RemoteConnect() {
                           {s.status}
                         </span>
                       </td>
-                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
+                      <td className="px-3.5 py-2.5 text-xs text-slate_ui">
                         {s.staff_user_id ? s.staff_user_id.slice(0, 8) + '...' : '—'}
                       </td>
                       <td className="px-3.5 py-2.5 text-xs text-navy font-semibold">
                         {formatDuration(s.duration_seconds)}
                       </td>
-                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
+                      <td className="px-3.5 py-2.5 text-xs text-slate_ui">
                         {s.ticket_number ? `#${s.ticket_number}` : '—'}
                       </td>
-                      <td className="px-3.5 py-2.5 text-xs text-[#6B7F96]">
+                      <td className="px-3.5 py-2.5 text-xs text-slate_ui">
                         {new Date(s.created_at).toLocaleString()}
                       </td>
                     </tr>
@@ -460,16 +460,16 @@ export default function RemoteConnect() {
             onClick={e => e.stopPropagation()}
           >
             <div className="text-center mb-5">
-              <div className="w-12 h-12 rounded-full bg-[#F0FFF4] inline-flex items-center justify-center mb-3">
+              <div className="w-12 h-12 rounded-full bg-green-50 inline-flex items-center justify-center mb-3">
                 <span className="text-2xl">&#x2713;</span>
               </div>
               <h3 className="text-lg font-bold text-navy m-0">Session Created</h3>
-              <p className="text-[13px] text-[#6B7F96] mt-1.5">
+              <p className="text-[13px] text-slate_ui mt-1.5">
                 The support session has been created. Share the connection link with the customer.
               </p>
             </div>
 
-            <div className="bg-[#F9FAFB] border border-[#D1D5DB] rounded-lg p-3 mb-4 flex items-center gap-2">
+            <div className="bg-gray-50 border border-gray-300 rounded-lg p-3 mb-4 flex items-center gap-2">
               <input
                 readOnly
                 value={createdUrl}
@@ -477,7 +477,7 @@ export default function RemoteConnect() {
               />
               <button
                 onClick={handleCopyUrl}
-                className={`px-3.5 py-1.5 border-none rounded-md text-[11px] font-bold text-white cursor-pointer whitespace-nowrap transition-colors ${copied ? 'bg-[#059669]' : 'bg-navy'}`}
+                className={`px-3.5 py-1.5 border-none rounded-md text-[11px] font-bold text-white cursor-pointer whitespace-nowrap transition-colors ${copied ? 'bg-emerald-600' : 'bg-navy'}`}
               >
                 {copied ? 'Copied!' : 'Copy'}
               </button>
@@ -492,7 +492,7 @@ export default function RemoteConnect() {
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 py-2.5 px-4 bg-[#F3F4F6] border border-[#E2D9C8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer"
+                className="flex-1 py-2.5 px-4 bg-gray-100 border border-border_ui-warm rounded-lg text-slate_ui text-[13px] font-semibold cursor-pointer"
               >
                 Close
               </button>

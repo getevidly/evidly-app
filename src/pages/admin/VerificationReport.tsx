@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
@@ -221,17 +222,17 @@ export default function VerificationReport() {
       <AdminBreadcrumb crumbs={[{ label: 'Verification Report' }]} />
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-navy">Verification Report</h1>
-        <p className="text-[13px] text-[#6B7F96] mt-1">
+        <p className="text-[13px] text-slate_ui mt-1">
           Platform-wide verification coverage, audit trail, and source health.
         </p>
       </div>
 
       {/* Tables-not-initialized guard */}
       {!tablesExist && (
-        <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl">
+        <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl">
           <div className="text-[40px] mb-4">{'🔒'}</div>
           <div className="text-base font-bold text-navy mb-2">Verification system tables not yet initialized</div>
-          <div className="text-[13px] text-[#6B7F96] max-w-[480px] mx-auto leading-relaxed">
+          <div className="text-[13px] text-slate_ui max-w-[480px] mx-auto leading-relaxed">
             Run the verification schema migration (<code>20260507100000_platform_verification_architecture.sql</code>) to enable this feature.
           </div>
         </div>
@@ -239,16 +240,15 @@ export default function VerificationReport() {
 
       {tablesExist && <>
       {/* Section tabs */}
-      <div className="flex gap-1.5 border-b border-[#E5E0D8] pb-0">
+      <div className="flex gap-1.5 border-b border-border_ui pb-0">
         {sectionTabs.map(t => (
-          <button key={t.key} onClick={() => setActiveSection(t.key)}
-            className={`px-[18px] py-2 text-xs font-semibold cursor-pointer bg-transparent border-none ${
-              activeSection === t.key
-                ? 'text-navy border-b-2 border-gold'
-                : 'text-gray-400 border-b-2 border-transparent'
-            }`}>
+          <Button key={t.key} variant="ghost" size="sm" onClick={() => setActiveSection(t.key)}
+            className={activeSection === t.key
+              ? 'text-navy border-b-2 border-gold rounded-none'
+              : 'text-gray-400 border-b-2 border-transparent rounded-none'
+            }>
             {t.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -265,13 +265,13 @@ export default function VerificationReport() {
               <div className="grid grid-cols-8 gap-3 items-stretch">
                 {[
                   { label: 'Total Records', value: total, color: 'text-navy' },
-                  { label: 'Verified', value: verified, color: 'text-[#166534]' },
-                  { label: 'In Review', value: inReview, color: 'text-[#C2410C]' },
+                  { label: 'Verified', value: verified, color: 'text-green-800' },
+                  { label: 'In Review', value: inReview, color: 'text-orange-700' },
                   { label: 'Unverified', value: unverified, color: 'text-navy' },
-                  { label: 'Rejected', value: rejected, color: 'text-[#991B1B]' },
-                  { label: 'Overdue', value: overdue, color: 'text-[#991B1B]' },
-                  { label: 'Needs Update', value: needsUpdate, color: 'text-[#C2410C]' },
-                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? 'text-[#991B1B]' : coveragePct === 100 ? 'text-[#166534]' : 'text-[#C2410C]' },
+                  { label: 'Rejected', value: rejected, color: 'text-red-800' },
+                  { label: 'Overdue', value: overdue, color: 'text-red-800' },
+                  { label: 'Needs Update', value: needsUpdate, color: 'text-orange-700' },
+                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? 'text-red-800' : coveragePct === 100 ? 'text-green-800' : 'text-orange-700' },
                 ].map(k => (
                   <div key={k.label} className="bg-white border border-gray-200 rounded-lg px-5 py-4 text-center flex flex-col items-center justify-center">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
@@ -283,15 +283,15 @@ export default function VerificationReport() {
               </div>
 
               {/* Per-table breakdown */}
-              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
-                <div className="px-4 py-3 border-b border-[#E5E0D8]">
+              <div className="bg-white border border-border_ui rounded-[10px] overflow-hidden">
+                <div className="px-4 py-3 border-b border-border_ui">
                   <div className="text-sm font-bold text-navy">Coverage by Content Table</div>
                 </div>
                 <table className="w-full border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#E5E0D8]">
+                    <tr className="border-b border-border_ui">
                       {['Table', 'Total', 'Verified', 'Coverage'].map(h => (
-                        <th key={h} className="text-left px-[14px] py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
+                        <th key={h} className="text-left px-[14px] py-2 text-slate_ui font-semibold text-[10px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -299,8 +299,8 @@ export default function VerificationReport() {
                     {perTable.map(t => (
                       <tr key={t.table} className="border-b border-gray-100">
                         <td className="px-[14px] py-2 font-semibold text-navy">{t.label}</td>
-                        <td className="px-[14px] py-2 text-[#6B7F96]">{t.total}</td>
-                        <td className="px-[14px] py-2 text-[#059669] font-semibold">{t.verified}</td>
+                        <td className="px-[14px] py-2 text-slate_ui">{t.total}</td>
+                        <td className="px-[14px] py-2 text-emerald-600 font-semibold">{t.verified}</td>
                         <td className="px-[14px] py-2">
                           <div className="flex items-center gap-2">
                             <div className="w-[60px] h-1.5 bg-gray-200 rounded-sm">
@@ -309,7 +309,7 @@ export default function VerificationReport() {
                                 background: t.pct >= 80 ? '#059669' : t.pct >= 50 ? '#D97706' : '#DC2626',
                               }} />
                             </div>
-                            <span className="text-[11px] text-[#6B7F96] font-semibold">{t.pct}%</span>
+                            <span className="text-[11px] text-slate_ui font-semibold">{t.pct}%</span>
                           </div>
                         </td>
                       </tr>
@@ -337,13 +337,13 @@ export default function VerificationReport() {
                     <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
                   ))}
                 </select>
-                <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+                <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
                   <input type="checkbox" checked={overdueOnly} onChange={e => setOverdueOnly(e.target.checked)} />
                   Overdue only
                 </label>
               </div>
 
-              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
+              <div className="bg-white border border-border_ui rounded-[10px] overflow-hidden">
                 {filteredStatuses.length === 0 ? (
                   <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No records match the current filters.
@@ -351,9 +351,9 @@ export default function VerificationReport() {
                 ) : (
                   <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-[#E5E0D8]">
+                      <tr className="border-b border-border_ui">
                         {['Type', 'Title', 'Status', 'Gates', 'Last Verified', 'Verifier', 'Next Review', 'Sources'].map(h => (
-                          <th key={h} className="text-left px-3 py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
+                          <th key={h} className="text-left px-3 py-2 text-slate_ui font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -366,7 +366,7 @@ export default function VerificationReport() {
                             className={`border-b border-gray-100 cursor-pointer ${isExpanded ? 'bg-[#FAFAF8]' : 'bg-transparent'}`}
                             onClick={() => setExpandedRow(isExpanded ? null : row)}>
                             <td className="px-3 py-2">
-                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-lg bg-gray-100 text-[#6B7F96]">
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-lg bg-gray-100 text-slate_ui">
                                 {TABLE_LABELS[row.content_table] || row.content_table}
                               </span>
                             </td>
@@ -378,19 +378,19 @@ export default function VerificationReport() {
                                 {row.verification_status.replace(/_/g, ' ').toUpperCase()}
                               </span>
                             </td>
-                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
+                            <td className="px-3 py-2 text-slate_ui text-[11px]">
                               {row.gates_passed}/{row.gates_required}
                             </td>
                             <td className="px-3 py-2 text-gray-400 text-[11px]">
                               {row.last_verified_at ? new Date(row.last_verified_at).toLocaleDateString() : '—'}
                             </td>
-                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
+                            <td className="px-3 py-2 text-slate_ui text-[11px]">
                               {row.last_verified_by || '—'}
                             </td>
                             <td className="px-3 py-2 text-gray-400 text-[11px]">
                               {row.next_review_due ? new Date(row.next_review_due).toLocaleDateString() : '—'}
                             </td>
-                            <td className="px-3 py-2 text-[#6B7F96] text-[11px]">
+                            <td className="px-3 py-2 text-slate_ui text-[11px]">
                               {row.source_count}
                             </td>
                           </tr>
@@ -436,13 +436,12 @@ export default function VerificationReport() {
                   <option value="">All Tables</option>
                   {tables.map(t => <option key={t} value={t}>{TABLE_LABELS[t] || t}</option>)}
                 </select>
-                <button onClick={exportCsv}
-                  className="px-4 py-1.5 rounded-md text-[11px] font-bold cursor-pointer bg-gold text-white border-none ml-auto">
+                <Button variant="gold" size="sm" className="ml-auto" onClick={exportCsv}>
                   Export CSV
-                </button>
+                </Button>
               </div>
 
-              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
+              <div className="bg-white border border-border_ui rounded-[10px] overflow-hidden">
                 {filteredLogs.length === 0 ? (
                   <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No audit log entries match the current filters.
@@ -450,9 +449,9 @@ export default function VerificationReport() {
                 ) : (
                   <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-[#E5E0D8]">
+                      <tr className="border-b border-border_ui">
                         {['Timestamp', 'Content', 'Gate', 'Result', 'Verifier', 'Method', 'Sources', 'Notes', 'Changed'].map(h => (
-                          <th key={h} className="text-left px-2.5 py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
+                          <th key={h} className="text-left px-2.5 py-2 text-slate_ui font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -467,21 +466,21 @@ export default function VerificationReport() {
                             <td className="px-2.5 py-1.5 text-navy text-[11px] max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {l.content_title || l.content_id.slice(0, 8)}
                             </td>
-                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px]">{l.gate_label}</td>
+                            <td className="px-2.5 py-1.5 text-slate_ui text-[10px]">{l.gate_label}</td>
                             <td className="px-2.5 py-1.5">
                               <span className="text-[9px] font-bold px-1.5 py-[1px] rounded-lg" style={{ background: rc.bg, color: rc.text }}>
                                 {l.gate_result.toUpperCase()}
                               </span>
                             </td>
-                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px]">{l.verified_by_name || '—'}</td>
+                            <td className="px-2.5 py-1.5 text-slate_ui text-[10px]">{l.verified_by_name || '—'}</td>
                             <td className="px-2.5 py-1.5 text-gray-400 text-[10px]">{l.verification_method?.replace(/_/g, ' ')}</td>
                             <td className="px-2.5 py-1.5 text-gray-400 text-[10px] max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {(l.source_urls || []).map((s: { url: string }) => s.url).join(', ') || '—'}
                             </td>
-                            <td className="px-2.5 py-1.5 text-[#6B7F96] text-[10px] max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                            <td className="px-2.5 py-1.5 text-slate_ui text-[10px] max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                               {l.reviewer_notes || '—'}
                             </td>
-                            <td className={`px-2.5 py-1.5 text-[10px] ${l.content_was_corrected ? 'text-[#D97706] font-semibold' : 'text-gray-400 font-normal'}`}>
+                            <td className={`px-2.5 py-1.5 text-[10px] ${l.content_was_corrected ? 'text-amber-600 font-semibold' : 'text-gray-400 font-normal'}`}>
                               {l.content_was_corrected ? 'Yes' : '—'}
                             </td>
                           </tr>
@@ -497,7 +496,7 @@ export default function VerificationReport() {
           {/* -- SECTION 4: SOURCE HEALTH -- */}
           {activeSection === 'sources' && (
             <div>
-              <div className="bg-white border border-[#E5E0D8] rounded-[10px] overflow-hidden">
+              <div className="bg-white border border-border_ui rounded-[10px] overflow-hidden">
                 {sourceHealthRows.length === 0 ? (
                   <div className="text-center py-12 px-5 text-gray-400 text-[13px]">
                     No source URLs have been logged yet. Source health data will appear after verification activity.
@@ -505,9 +504,9 @@ export default function VerificationReport() {
                 ) : (
                   <table className="w-full border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-[#E5E0D8]">
+                      <tr className="border-b border-border_ui">
                         {['URL', 'Last Verified', 'Times Used'].map(h => (
-                          <th key={h} className="text-left px-[14px] py-2 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
+                          <th key={h} className="text-left px-[14px] py-2 text-slate_ui font-semibold text-[10px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -516,14 +515,14 @@ export default function VerificationReport() {
                         <tr key={s.url} className="border-b border-gray-100">
                           <td className="px-[14px] py-2">
                             <a href={s.url} target="_blank" rel="noopener noreferrer"
-                              className="text-[#2563EB] text-[11px] underline break-all">
+                              className="text-blue-600 text-[11px] underline break-all">
                               {s.url.length > 80 ? s.url.slice(0, 80) + '...' : s.url}
                             </a>
                           </td>
                           <td className="px-[14px] py-2 text-gray-400 text-[11px]">
                             {new Date(s.lastVerified).toLocaleDateString()}
                           </td>
-                          <td className="px-[14px] py-2 text-[#6B7F96] text-[11px] font-semibold">
+                          <td className="px-[14px] py-2 text-slate_ui text-[11px] font-semibold">
                             {s.usageCount}
                           </td>
                         </tr>

@@ -17,6 +17,7 @@ import {
   Mail, Send, Users, Filter, Plus, X, ChevronRight, Eye,
   Play, Pause, Save, Search, Tag, Clock, RefreshCw,
 } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 type Tab = 'sequences' | 'editor' | 'vendor-pipeline' | 'notifications' | 'referrals';
 
@@ -302,7 +303,7 @@ export default function EmailSequenceManager() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold" />
-        <p className="mt-3 text-sm text-[#6B7F96]">Loading...</p>
+        <p className="mt-3 text-sm text-slate_ui">Loading...</p>
       </div>
     );
   }
@@ -321,7 +322,7 @@ export default function EmailSequenceManager() {
 
       <div className="mb-6">
         <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Email Sequence Manager</h1>
-        <p className="text-[13px] text-[#6B7280] mt-1 mb-0 font-['Inter',sans-serif]">Manage trial sequences, vendor outreach, and referral tracking</p>
+        <p className="text-[13px] text-gray-500 mt-1 mb-0 font-['Inter',sans-serif]">Manage trial sequences, vendor outreach, and referral tracking</p>
       </div>
 
       {/* KPI Row */}
@@ -463,11 +464,10 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-navy">{sequences.length} Steps</h3>
-        <button onClick={() => setShowAddForm(!showAddForm)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg bg-navy">
+        <Button variant="primary" size="sm" onClick={() => setShowAddForm(!showAddForm)}>
           {showAddForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {showAddForm ? 'Cancel' : 'Add Step'}
-        </button>
+        </Button>
       </div>
 
       <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
@@ -532,11 +532,10 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
                       className="w-full px-2 py-1.5 border border-navy/15 rounded text-sm font-mono" />
                   </td>
                   <td className="px-3 py-3 text-center" colSpan={2}>
-                    <button onClick={handleAddStep}
-                      className="px-4 py-2 text-sm font-bold text-white rounded-lg bg-navy">
+                    <Button variant="primary" size="sm" onClick={handleAddStep}>
                       <Save className="h-4 w-4 inline mr-1" />
                       Save
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               )}
@@ -627,27 +626,26 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
           />
         </div>
 
-        <p className="text-xs text-[#6B7F96]">
+        <p className="text-xs text-slate_ui">
           Available tokens: <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
           <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
           <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
           <code className="bg-navy/5 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
         </p>
 
-        <button onClick={handleSave} disabled={saving}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white rounded-lg disabled:opacity-40 bg-navy">
+        <Button variant="primary" onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4" />
           {saving ? 'Saving...' : 'Save Template'}
-        </button>
+        </Button>
       </div>
 
       {/* Right: Preview */}
       <div className="flex-[2]">
         <div className="flex items-center gap-2 mb-2">
-          <Eye className="h-4 w-4 text-[#6B7F96]" />
-          <span className="text-xs font-bold uppercase tracking-wide text-[#6B7F96]">Live Preview</span>
+          <Eye className="h-4 w-4 text-slate_ui" />
+          <span className="text-xs font-bold uppercase tracking-wide text-slate_ui">Live Preview</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
           <div
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderEmailPreview(editSubject, editBody)) }}
             className="max-h-[520px] overflow-y-auto"
@@ -751,11 +749,13 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                             {vendor.notes}
                           </p>
                           {vendor.notes.length > 80 && (
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => setExpandedNotes(isExpanded ? null : vendor.id)}
-                              className="text-xs font-medium mt-0.5 text-gold">
+                              className="text-xs font-medium mt-0.5 text-gold p-0 h-auto min-h-0">
                               {isExpanded ? 'Show less' : 'Show more'}
-                            </button>
+                            </Button>
                           )}
                         </div>
                       )}
@@ -805,7 +805,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-[#6B7F96]" />
+          <Filter className="h-4 w-4 text-slate_ui" />
           <select value={dateFilter} onChange={e => setDateFilter(e.target.value as any)}
             className="px-3 py-1.5 border border-navy/15 rounded-xl text-sm bg-white">
             <option value="7d">Last 7 days</option>
@@ -815,7 +815,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
         </div>
 
         <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-[#6B7F96]" />
+          <Search className="h-4 w-4 text-slate_ui" />
           <input type="text" placeholder="Search vendor..." value={vendorSearch}
             onChange={e => setVendorSearch(e.target.value)}
             className="px-3 py-1.5 border border-navy/15 rounded-xl text-sm w-48" />
@@ -872,7 +872,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
         </div>
       </div>
 
-      <p className="text-xs text-[#6B7F96]">
+      <p className="text-xs text-slate_ui">
         Showing {filtered.length} of {notifications.length} notifications
       </p>
     </div>
@@ -892,7 +892,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-navy">{referrals.length} Referral Codes</h3>
-        <div className="flex items-center gap-4 text-xs text-[#6B7F96]">
+        <div className="flex items-center gap-4 text-xs text-slate_ui">
           <span>Total Uses: <strong className="text-navy">{totalUses}</strong></span>
           <span>Total Revenue: <strong className="text-navy">${totalRevenue.toLocaleString()}</strong></span>
         </div>
@@ -916,7 +916,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
                 return (
                   <tr key={r.id} className="border-b border-navy/5 hover:bg-cream">
                     <td className="px-4 py-3">
-                      <code className="text-sm font-mono font-bold px-2 py-0.5 rounded bg-[#F3F4F6] text-navy">
+                      <code className="text-sm font-mono font-bold px-2 py-0.5 rounded bg-gray-100 text-navy">
                         {r.code}
                       </code>
                     </td>
@@ -928,7 +928,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
                     </td>
                     <td className="px-4 py-3 text-navy font-medium">{r.createdBy}</td>
                     <td className="px-4 py-3 text-right font-medium text-navy">{r.uses}</td>
-                    <td className="px-4 py-3 text-right font-bold text-[#166534]">
+                    <td className="px-4 py-3 text-right font-bold text-green-800">
                       ${r.revenue.toLocaleString()}
                     </td>
                   </tr>

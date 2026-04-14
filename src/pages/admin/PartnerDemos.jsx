@@ -10,6 +10,7 @@ import {
   Clock, RefreshCw, Handshake, Building2, ShieldCheck,
   Truck, Users, Landmark,
 } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 // ── Production guard ────────────────────────────────────────────
 const IS_PRODUCTION = import.meta.env.VITE_APP_ENV === 'production';
@@ -114,10 +115,11 @@ function CredentialsCard({ demo }) {
         ))}
       </div>
       <div className="mt-4 pt-4 border-t border-white/10 flex gap-3">
-        <button onClick={copyCredentials}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors">
+        <Button onClick={copyCredentials}
+          variant="ghost" size="sm"
+          className="text-white bg-white/10 hover:bg-white/20">
           <Copy size={14} /> Copy Credentials
-        </button>
+        </Button>
         <a href={demo.demo_url} target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-1.5 px-3 py-1.5 bg-gold hover:bg-gold-dark rounded-lg text-sm text-white transition-colors">
           <ExternalLink size={14} /> Open Demo
@@ -393,15 +395,16 @@ export default function PartnerDemos() {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            <Button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              variant="ghost" size="sm"
+              className={`border-b-2 rounded-none ${
                 isActive
                   ? 'border-navy text-navy'
                   : 'border-transparent text-navy/50 hover:text-navy/80'
               }`}>
               <Icon size={15} />
               {tab.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -421,10 +424,11 @@ export default function PartnerDemos() {
                 </p>
               </div>
               <CredentialsCard demo={createdDemo} />
-              <button onClick={() => { setCreatedDemo(null); setSelectedType(null); }}
-                className="text-sm text-navy underline">
+              <Button onClick={() => { setCreatedDemo(null); setSelectedType(null); }}
+                variant="ghost" size="sm"
+                className="underline">
                 Create another demo
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-6">
@@ -438,14 +442,15 @@ export default function PartnerDemos() {
                     const Icon = pt.icon;
                     const isSelected = selectedType === pt.id;
                     return (
-                      <button key={pt.id}
+                      <Button key={pt.id}
                         onClick={() => setSelectedType(pt.id)}
-                        className={`text-left p-4 rounded-xl border-2 transition-all ${
+                        variant={isSelected ? 'secondary' : 'ghost'}
+                        className={`text-left p-4 h-auto border-2 w-full ${
                           isSelected
                             ? 'border-navy bg-cream'
                             : 'border-navy/10 hover:border-navy/15 bg-white'
                         }`}>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 w-full">
                           <div className={`p-2 rounded-lg ${pt.bg}`}>
                             <Icon size={20} className={pt.color} />
                           </div>
@@ -457,7 +462,7 @@ export default function PartnerDemos() {
                             <CheckCircle2 size={20} className="ml-auto text-navy" />
                           )}
                         </div>
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -573,11 +578,13 @@ export default function PartnerDemos() {
                         <label className="block">
                           <span className="text-xs text-navy/50">Food Outlet Count</span>
                           <div className="flex items-center gap-3 mt-1">
-                            <button onClick={() => updateForm('outlet_count', Math.max(1, form.outlet_count - 1))}
-                              className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">-</button>
+                            <Button onClick={() => updateForm('outlet_count', Math.max(1, form.outlet_count - 1))}
+                              variant="secondary" size="sm"
+                              className="w-8 h-8 p-0">-</Button>
                             <span className="text-lg font-bold text-navy w-8 text-center">{form.outlet_count}</span>
-                            <button onClick={() => updateForm('outlet_count', Math.min(8, form.outlet_count + 1))}
-                              className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">+</button>
+                            <Button onClick={() => updateForm('outlet_count', Math.min(8, form.outlet_count + 1))}
+                              variant="secondary" size="sm"
+                              className="w-8 h-8 p-0">+</Button>
                           </div>
                         </label>
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -594,8 +601,9 @@ export default function PartnerDemos() {
                   </fieldset>
 
                   {/* Submit */}
-                  <button onClick={handleCreateDemo} disabled={creating}
-                    className="w-full py-3 bg-navy text-white rounded-xl text-sm font-semibold hover:bg-navy-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
+                  <Button onClick={handleCreateDemo} disabled={creating}
+                    variant="primary" size="lg"
+                    className="w-full">
                     {creating ? (
                       <span className="flex items-center justify-center gap-2">
                         <RefreshCw size={14} className="animate-spin" /> Generating Partner Demo...
@@ -605,7 +613,7 @@ export default function PartnerDemos() {
                         <Play size={14} /> Create & Generate Demo
                       </span>
                     )}
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -622,10 +630,10 @@ export default function PartnerDemos() {
               <Handshake size={40} className="mx-auto mb-3 opacity-40" />
               <p className="font-medium">No active partner demos</p>
               <p className="text-sm mt-1">Create a new partner demo to get started</p>
-              <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-navy text-white rounded-lg text-sm hover:bg-navy-dark transition-all duration-150 active:scale-[0.98]">
-                <Plus size={14} className="inline mr-1" /> Create Demo
-              </button>
+              <Button onClick={() => setActiveTab('create')}
+                variant="primary" className="mt-3">
+                <Plus size={14} /> Create Demo
+              </Button>
             </div>
           )}
           {activeDemos.map(demo => {
@@ -648,14 +656,15 @@ export default function PartnerDemos() {
                   </div>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={demo.status} />
-                    <button onClick={() => handleExtend(demo.id)}
-                      className="px-3 py-1.5 text-navy border border-navy/10 rounded-xl text-xs hover:bg-cream transition-colors">
-                      <Clock size={12} className="inline mr-1" /> Extend 7d
-                    </button>
-                    <button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
-                      className="px-3 py-1.5 text-red-600 border border-red-200 rounded-xl text-xs hover:bg-red-50 transition-colors">
-                      <Trash2 size={12} className="inline mr-1" /> Clean Up
-                    </button>
+                    <Button onClick={() => handleExtend(demo.id)}
+                      variant="secondary" size="sm">
+                      <Clock size={12} /> Extend 7d
+                    </Button>
+                    <Button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
+                      variant="destructive" size="sm"
+                      className="bg-white text-red-600 border border-red-200 hover:bg-red-50">
+                      <Trash2 size={12} /> Clean Up
+                    </Button>
                   </div>
                 </div>
                 <CredentialsCard demo={demo} />
@@ -699,10 +708,11 @@ export default function PartnerDemos() {
                 <div className="flex items-center gap-2">
                   <StatusBadge status={demo.status} />
                   {['completed', 'expired'].includes(demo.status) && (
-                    <button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
-                      className="px-3 py-1.5 text-red-600 border border-red-200 rounded-xl text-xs hover:bg-red-50 transition-colors">
-                      <Trash2 size={12} className="inline mr-1" /> Clean Up Now
-                    </button>
+                    <Button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
+                      variant="destructive" size="sm"
+                      className="bg-white text-red-600 border border-red-200 hover:bg-red-50">
+                      <Trash2 size={12} /> Clean Up Now
+                    </Button>
                   )}
                 </div>
               </div>

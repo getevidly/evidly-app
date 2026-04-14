@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useEmulation } from '../../contexts/EmulationContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
@@ -35,13 +36,13 @@ interface AuditRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div className="bg-[#E5E7EB] rounded-md animate-pulse" style={{ width: w, height: h }} />
+  <div className="bg-gray-200 rounded-md animate-pulse" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ title, subtitle }: { icon?: string; title: string; subtitle: string }) => (
   <div className="text-center py-12 px-5">
-    <div className="text-sm text-[#9CA3AF] mb-1">{title}</div>
-    <div className="text-xs text-[#9CA3AF]">{subtitle}</div>
+    <div className="text-sm text-gray-400 mb-1">{title}</div>
+    <div className="text-xs text-gray-400">{subtitle}</div>
   </div>
 );
 
@@ -134,47 +135,46 @@ export default function UserEmulation() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">User Emulation</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">
+          <p className="text-[13px] text-slate_ui mt-1">
             View EvidLY as any user — read-only, fully audited
           </p>
         </div>
         {isEmulating && emulatedUser && (
-          <button onClick={stopEmulation}
-            className="py-2 px-5 bg-[#DC2626] border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
+          <Button variant="destructive" size="sm" onClick={stopEmulation}>
             Exit Emulation ({emulatedUser.full_name})
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Warning card */}
-      <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-[10px] py-3.5 px-5 text-xs text-[#92400E]">
+      <div className="bg-amber-50 border border-amber-200 rounded-[10px] py-3.5 px-5 text-xs text-amber-800">
         Emulation sessions are fully audited. The target user's role and permissions are applied. Restricted operations (password reset, billing, account deletion, role changes) are blocked.
       </div>
 
       {/* Org filter + User search */}
       <div className="flex gap-3 flex-wrap w-full">
         <input value={orgSearch} onChange={e => setOrgSearch(e.target.value)} placeholder="Search organizations..."
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[180px]" />
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs flex-1 min-w-[180px]" />
         <select value={selectedOrgId || ''} onChange={e => setSelectedOrgId(e.target.value || null)}
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs min-w-[160px] cursor-pointer">
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs min-w-[160px] cursor-pointer">
           <option value="">All Organizations</option>
           {filteredOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
         </select>
         <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder="Search users by name or email..."
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[200px]" />
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs flex-1 min-w-[200px]" />
       </div>
 
       {loadError && (
         <div className="text-center p-12">
-          <p className="text-[#6B7F96]">Failed to load data.</p>
-          <button onClick={loadData} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
+          <p className="text-slate_ui">Failed to load data.</p>
+          <Button variant="gold" size="sm" className="mt-3" onClick={loadData}>
             Try again
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Users table */}
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {loading ? (
           <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -184,9 +184,9 @@ export default function UserEmulation() {
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Name', 'Email', 'Role', 'Organization', 'Action'].map(h => (
-                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -195,9 +195,9 @@ export default function UserEmulation() {
                 const org = orgs.find(o => o.id === u.organization_id);
                 const roleColor = ROLE_COLORS[u.role] || '#6B7F96';
                 return (
-                  <tr key={u.id} className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB]">
+                  <tr key={u.id} className="border-b border-border_ui-warm hover:bg-gray-50">
                     <td className="px-3.5 py-2.5 text-navy font-semibold">{u.full_name || '\u2014'}</td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{u.email}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{u.email}</td>
                     <td className="px-3.5 py-2.5">
                       <span
                         className="px-2 py-0.5 rounded text-[10px] font-bold"
@@ -206,12 +206,11 @@ export default function UserEmulation() {
                         {u.role.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{org?.name || '\u2014'}</td>
+                    <td className="px-3.5 py-2.5 text-slate_ui text-xs">{org?.name || '\u2014'}</td>
                     <td className="px-3.5 py-2.5">
-                      <button onClick={() => handleEmulate(u)}
-                        className="py-1 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-gold text-[11px] font-bold cursor-pointer">
+                      <Button variant="outline" size="sm" onClick={() => handleEmulate(u)}>
                         Emulate
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 );
@@ -223,23 +222,23 @@ export default function UserEmulation() {
 
       {/* Recent emulations */}
       <h2 className="text-lg font-bold text-navy">Recent Emulation Sessions</h2>
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {auditLog.length === 0 ? (
           <EmptyState icon="&#128203;" title="No emulation sessions recorded" subtitle="Audit entries will appear here after emulation sessions." />
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Started', 'Ended', 'Summary'].map(h => (
-                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {auditLog.map(a => (
-                <tr key={a.id} className="border-b border-[#E2D9C8]">
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(a.started_at).toLocaleString()}</td>
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
+                <tr key={a.id} className="border-b border-border_ui-warm">
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{new Date(a.started_at).toLocaleString()}</td>
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
                   <td className="px-3.5 py-2.5 text-navy text-xs">{a.actions_summary || '\u2014'}</td>
                 </tr>
               ))}

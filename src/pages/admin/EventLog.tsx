@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 const PAGE_SIZE = 50;
 
@@ -28,14 +29,14 @@ interface EventRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div className="rounded-md animate-pulse bg-[#E5E7EB]" style={{ width: w, height: h }} />
+  <div className="rounded-md animate-pulse bg-gray-200" style={{ width: w, height: h }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+  <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[360px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[360px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -117,40 +118,40 @@ export default function EventLog() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Event Log</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">
+          <p className="text-[13px] text-slate_ui mt-1">
             {totalCount !== null ? `${totalCount.toLocaleString()} events` : '—'}
           </p>
         </div>
         <div className="flex gap-3">
-          <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+          <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
             <input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)} />
             Auto-refresh (10s)
           </label>
-          <button onClick={exportCsv} className="py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-[#6B7F96] text-xs cursor-pointer">Export CSV</button>
-          <button onClick={loadEvents} className="py-1.5 px-3.5 bg-gold border-none rounded-md text-white text-xs font-bold cursor-pointer">Refresh</button>
+          <Button variant="secondary" size="sm" onClick={exportCsv}>Export CSV</Button>
+          <Button variant="gold" size="sm" onClick={loadEvents}>Refresh</Button>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <select value={levelFilter} onChange={e => { setLevelFilter(e.target.value); setPage(0); }}
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs">
           <option value="all">All Levels</option>
           {['INFO', 'WARN', 'ERROR', 'DEBUG'].map(l => <option key={l} value={l}>{l}</option>)}
         </select>
         <select value={categoryFilter} onChange={e => { setCategoryFilter(e.target.value); setPage(0); }}
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs">
           {CATEGORIES.map(c => <option key={c} value={c}>{c === 'all' ? 'All Categories' : c}</option>)}
         </select>
         <input
           value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
           placeholder="Search messages..."
-          className="py-1.5 px-3 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs flex-1 min-w-[200px]"
+          className="py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs flex-1 min-w-[200px]"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {loading ? (
           <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -160,9 +161,9 @@ export default function EventLog() {
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Time', 'Level', 'Category', 'Message'].map(h => (
-                  <th key={h} className="text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left py-2.5 px-3.5 text-slate_ui font-semibold text-[11px] uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -173,9 +174,9 @@ export default function EventLog() {
                 return (
                   <tr key={e.id}
                     onClick={() => setExpandedId(isExpanded ? null : e.id)}
-                    className={`border-b border-[#E2D9C8] transition-colors hover:bg-[#F9FAFB] ${e.metadata ? 'cursor-pointer' : 'cursor-default'}`}
+                    className={`border-b border-border_ui-warm transition-colors hover:bg-gray-50 ${e.metadata ? 'cursor-pointer' : 'cursor-default'}`}
                   >
-                    <td className="py-2.5 px-3.5 text-[#6B7F96] whitespace-nowrap text-xs">
+                    <td className="py-2.5 px-3.5 text-slate_ui whitespace-nowrap text-xs">
                       {new Date(e.event_time).toLocaleString()}
                     </td>
                     <td className="py-2.5 px-3.5">
@@ -183,11 +184,11 @@ export default function EventLog() {
                         {e.level}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3.5 text-[#6B7F96] text-xs">{e.category || '—'}</td>
+                    <td className="py-2.5 px-3.5 text-slate_ui text-xs">{e.category || '—'}</td>
                     <td className="py-2.5 px-3.5 text-navy">
                       {e.message}
                       {isExpanded && e.metadata && (
-                        <pre className="mt-2 p-3 bg-[#F3F4F6] rounded-md text-[11px] text-[#6B7F96] overflow-auto max-h-[200px]">
+                        <pre className="mt-2 p-3 bg-gray-100 rounded-md text-[11px] text-slate_ui overflow-auto max-h-[200px]">
                           {JSON.stringify(e.metadata, null, 2)}
                         </pre>
                       )}
@@ -203,17 +204,15 @@ export default function EventLog() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">
-          <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            className={`py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-xs ${page === 0 ? 'text-[#9CA3AF] cursor-default' : 'text-navy cursor-pointer'}`}>
+          <Button variant="secondary" size="sm" disabled={page === 0} onClick={() => setPage(p => p - 1)}>
             Previous
-          </button>
-          <span className="py-1.5 px-3.5 text-xs text-[#6B7F96]">
+          </Button>
+          <span className="py-1.5 px-3.5 text-xs text-slate_ui">
             Page {page + 1} of {totalPages}
           </span>
-          <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}
-            className={`py-1.5 px-3.5 bg-white border border-[#E2D9C8] rounded-md text-xs ${page >= totalPages - 1 ? 'text-[#9CA3AF] cursor-default' : 'text-navy cursor-pointer'}`}>
+          <Button variant="secondary" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>
             Next
-          </button>
+          </Button>
         </div>
       )}
     </div>

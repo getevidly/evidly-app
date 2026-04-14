@@ -15,6 +15,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { AIAssistButton } from '../../components/ui/AIAssistButton';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import Button from '../../components/ui/Button';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -267,7 +268,7 @@ export default function FeatureFlags() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <Button variant="primary" onClick={() => window.location.reload()} className="mt-4">Retry</Button>
       </div>
     );
   }
@@ -317,7 +318,7 @@ export default function FeatureFlags() {
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={60} />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl">
+        <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl">
           <div className="text-[40px] mb-4">{'🔧'}</div>
           <div className="text-base font-bold text-navy">No features in this section</div>
         </div>
@@ -333,7 +334,7 @@ export default function FeatureFlags() {
 
             return (
               <div key={f.key} className={`bg-white border rounded-[10px] transition-[border-color] duration-150 ${
-                expanded ? 'border-gold' : 'border-[#E2D9C8]'
+                expanded ? 'border-gold' : 'border-border_ui-warm'
               }`}>
                 {/* ── Collapsed header ── */}
                 <div
@@ -370,10 +371,10 @@ export default function FeatureFlags() {
 
                 {/* ── Expanded config ── */}
                 {expanded && (
-                  <div className="px-[18px] pb-[18px] border-t border-[#E2D9C8]">
+                  <div className="px-[18px] pb-[18px] border-t border-border_ui-warm">
                     {/* Row 1 — Trigger type */}
                     <div className="mt-3.5">
-                      <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Trigger Type</label>
+                      <label className="text-[11px] font-bold text-slate_ui uppercase tracking-[0.05em]">Trigger Type</label>
                       <div className="flex gap-1 flex-wrap mt-1.5">
                         {TRIGGER_TYPES.map(tt => (
                           <button key={tt.key}
@@ -394,19 +395,19 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'fixed_date' && (
                         <div className="grid grid-cols-4 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Go-live date</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Go-live date</label>
                             <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.go_live?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, go_live: e.target.value } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Time</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Time</label>
                             <input type="time" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.go_live_time ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, go_live_time: e.target.value } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Timezone</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Timezone</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.timezone ?? 'PT'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, timezone: e.target.value } })}>
@@ -416,7 +417,7 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Early access</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Early access</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.early_access ?? 'none'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, early_access: e.target.value } })}>
@@ -432,13 +433,13 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'relative_date' && (
                         <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Delay</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Delay</label>
                             <input type="number" min={0} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Unit</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Unit</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.unit ?? 'days'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, unit: e.target.value } })}>
@@ -448,7 +449,7 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Scope</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Scope</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.scope ?? 'per_user'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, scope: e.target.value } })}>
@@ -462,19 +463,19 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'rolling_window' && (
                         <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Active for N days</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Active for N days</label>
                             <input type="number" min={1} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.active_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, active_days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">In last Y days</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">In last Y days</label>
                             <input type="number" min={1} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.window_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, window_days: Number(e.target.value) } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Action type</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Action type</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.action_type ?? 'any_login'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, action_type: e.target.value } })}>
@@ -489,7 +490,7 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'event_delay' && (
                         <div className="grid grid-cols-2 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Trigger event</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Trigger event</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.trigger_event ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, trigger_event: e.target.value } })}>
@@ -500,7 +501,7 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Delay (days)</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Delay (days)</label>
                             <input type="number" min={0} className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.delay_days ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, delay_days: Number(e.target.value) } })} />
@@ -511,19 +512,19 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'time_window' && (
                         <div className="grid grid-cols-3 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Start date</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Start date</label>
                             <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.start?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, start: e.target.value } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">End date</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">End date</label>
                             <input type="date" className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs"
                               value={f.date_config?.end?.split('T')[0] ?? ''}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, end: e.target.value } })} />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">After end</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">After end</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.after_end ?? 'off'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, after_end: e.target.value } })}>
@@ -538,7 +539,7 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'fiscal_renewal' && (
                         <div className="grid grid-cols-2 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Unlock on</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Unlock on</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.unlock_on ?? 'next_renewal'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, unlock_on: e.target.value } })}>
@@ -548,7 +549,7 @@ export default function FeatureFlags() {
                             </select>
                           </div>
                           <div>
-                            <label className="text-[10px] text-[#6B7F96] font-semibold">Prorate immediately</label>
+                            <label className="text-[10px] text-slate_ui font-semibold">Prorate immediately</label>
                             <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                               value={f.date_config?.prorate ? 'yes' : 'no'}
                               onChange={e => updateEdit(f.key, { date_config: { ...f.date_config, prorate: e.target.value === 'yes' } })}>
@@ -562,7 +563,7 @@ export default function FeatureFlags() {
                       {f.trigger_type === 'criteria' && (
                         <div className="mt-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[11px] text-[#6B7F96]">Match</span>
+                            <span className="text-[11px] text-slate_ui">Match</span>
                             {(['all', 'any'] as const).map(logic => (
                               <button key={logic}
                                 onClick={() => updateEdit(f.key, { criteria_logic: logic })}
@@ -597,26 +598,26 @@ export default function FeatureFlags() {
                               </select>
                               <input className="py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs w-[100px]" placeholder="Value"
                                 value={c.value ?? ''} onChange={e => updateCriterion(f.key, idx, { value: e.target.value })} />
-                              <button onClick={() => removeCriterion(f.key, idx)}
-                                className="bg-transparent border-none text-red-600 cursor-pointer text-sm font-bold">
+                              <Button variant="ghost" size="sm" onClick={() => removeCriterion(f.key, idx)}
+                                className="text-red-600 text-sm font-bold">
                                 {'×'}
-                              </button>
+                              </Button>
                             </div>
                           ))}
-                          <button onClick={() => addCriterion(f.key)}
-                            className="text-[11px] text-gold font-semibold bg-transparent border-none cursor-pointer mt-0.5">
+                          <Button variant="ghost" size="sm" onClick={() => addCriterion(f.key)}
+                            className="text-[11px] text-gold font-semibold mt-0.5">
                             + Add criteria
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
 
                     {/* Row 3 — Visibility */}
                     <div className="mt-4">
-                      <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Visibility</label>
+                      <label className="text-[11px] font-bold text-slate_ui uppercase tracking-[0.05em]">Visibility</label>
                       <div className="grid grid-cols-2 gap-2.5 mt-1.5">
                         <div>
-                          <label className="text-[10px] text-[#6B7F96] font-semibold">Visible to</label>
+                          <label className="text-[10px] text-slate_ui font-semibold">Visible to</label>
                           <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                             value={f.visible_to}
                             onChange={e => updateEdit(f.key, { visible_to: e.target.value })}>
@@ -626,7 +627,7 @@ export default function FeatureFlags() {
                           </select>
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#6B7F96] font-semibold">Plan tier restriction</label>
+                          <label className="text-[10px] text-slate_ui font-semibold">Plan tier restriction</label>
                           <select className="w-full py-1.5 px-2.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs cursor-pointer"
                             value={(f.plan_tiers ?? [])[0] ?? 'none'}
                             onChange={e => updateEdit(f.key, { plan_tiers: e.target.value === 'none' ? null : [e.target.value] })}>
@@ -637,7 +638,7 @@ export default function FeatureFlags() {
                       </div>
                       {f.visible_to === 'role_filtered' && (
                         <div className="mt-2">
-                          <label className="text-[10px] text-[#6B7F96] font-semibold">Allowed roles</label>
+                          <label className="text-[10px] text-slate_ui font-semibold">Allowed roles</label>
                           <div className="flex gap-2 flex-wrap mt-1">
                             {ROLES.map(role => {
                               const checked = (f.allowed_roles ?? []).includes(role);
@@ -661,17 +662,15 @@ export default function FeatureFlags() {
                     {/* Row 4 — Disabled message */}
                     <div className="mt-4">
                       <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-bold text-[#6B7F96] uppercase tracking-[0.05em]">Disabled Message</label>
-                        <button
+                        <label className="text-[11px] font-bold text-slate_ui uppercase tracking-[0.05em]">Disabled Message</label>
+                        <Button
+                          variant="gold"
+                          size="sm"
                           onClick={() => aiSuggest(flag)}
                           disabled={aiLoading === f.key}
-                          className={`text-[10px] font-bold py-[3px] px-2.5 rounded-[5px] text-white border-none ${
-                            aiLoading === f.key
-                              ? 'bg-gray-200 cursor-not-allowed'
-                              : 'bg-gradient-to-br from-gold to-gold-light cursor-pointer'
-                          }`}>
+                          className="text-[10px] font-bold py-[3px] px-2.5 rounded-[5px]">
                           {aiLoading === f.key ? 'Generating...' : '✦ AI Suggest'}
-                        </button>
+                        </Button>
                       </div>
                       <div className="mt-1.5 flex flex-col gap-1.5">
                         <div className="flex items-center gap-1">
@@ -708,22 +707,22 @@ export default function FeatureFlags() {
                     {/* Save button */}
                     <div className="mt-3.5 flex justify-end gap-2">
                       {hasEdits && (
-                        <button
+                        <Button
+                          variant="secondary"
+                          size="sm"
                           onClick={() => setEdits(prev => { const next = { ...prev }; delete next[f.key]; return next; })}
-                          className="py-1.5 px-4 text-[11px] font-semibold bg-transparent border border-[#E2D9C8] rounded-md text-gray-400 cursor-pointer">
+                          className="text-[11px] text-gray-400">
                           Discard
-                        </button>
+                        </Button>
                       )}
-                      <button
+                      <Button
+                        variant="primary"
+                        size="sm"
                         onClick={() => saveFlag(flag)}
                         disabled={!hasEdits || saving === f.key}
-                        className={`py-1.5 px-4 text-[11px] font-bold border-none rounded-md ${
-                          hasEdits
-                            ? 'bg-navy text-white cursor-pointer'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        }`}>
+                        className="text-[11px] font-bold">
                         {saving === f.key ? 'Saving...' : 'Save Changes'}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}

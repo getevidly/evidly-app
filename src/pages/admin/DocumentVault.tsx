@@ -8,6 +8,7 @@ import { uploadFile, getSignedUrl, deleteFile, BUCKETS } from '../../lib/storage
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 const CATEGORIES = ['all', 'Build Docs', 'Architecture', 'Legal', 'Financial', 'Pitch', 'Security', 'Contracts', 'IP', 'Other'];
 
@@ -27,10 +28,10 @@ interface VaultDoc {
 }
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl">
+  <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -153,56 +154,54 @@ export default function DocumentVault() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Document Vault</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">
+          <p className="text-[13px] text-slate_ui mt-1">
             {docs.length} documents · {formatSize(totalSize)}
           </p>
         </div>
-        <button onClick={() => setShowUpload(!showUpload)}
-          className="px-5 py-2 bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
+        <Button variant="gold" size="sm" onClick={() => setShowUpload(!showUpload)}>
           {showUpload ? 'Cancel' : '+ Upload Document'}
-        </button>
+        </Button>
       </div>
 
       {/* Upload form */}
       {showUpload && (
-        <div className="bg-white border border-[#E2D9C8] rounded-xl p-5">
+        <div className="bg-white border border-border_ui-warm rounded-xl p-5">
           <h3 className="text-sm font-bold text-navy mb-4">Upload Document</h3>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Name *</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Name *</label>
               <input value={formName} onChange={e => setFormName(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="Document name" />
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Category</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Category</label>
               <select value={formCategory} onChange={e => setFormCategory(e.target.value)}
                 className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full cursor-pointer">
                 {CATEGORIES.filter(c => c !== 'all').map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Version</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Version</label>
               <input value={formVersion} onChange={e => setFormVersion(e.target.value)} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full" placeholder="1.0" />
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">File</label>
+              <label className="text-[11px] text-slate_ui block mb-1">File</label>
               <input type="file" onChange={e => setFormFile(e.target.files?.[0] || null)}
-                className="p-1.5 bg-gray-50 border border-gray-300 rounded-md text-[#6B7F96] text-xs w-full" />
+                className="p-1.5 bg-gray-50 border border-gray-300 rounded-md text-slate_ui text-xs w-full" />
             </div>
           </div>
           <div className="mb-3">
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Description</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Description</label>
             <textarea value={formDescription} onChange={e => setFormDescription(e.target.value)} rows={2} className="py-2 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full resize-y" placeholder="Brief description" />
           </div>
           <div className="flex items-center gap-3 mb-4">
-            <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+            <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
               <input type="checkbox" checked={formConfidential} onChange={e => setFormConfidential(e.target.checked)} />
               Confidential
             </label>
           </div>
-          <button onClick={uploadDocument} disabled={uploading || !formName}
-            className={`px-5 py-2 border-none rounded-md text-white text-[13px] font-bold ${uploading ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'}`}>
+          <Button variant="gold" size="sm" onClick={uploadDocument} disabled={uploading || !formName}>
             {uploading ? 'Uploading...' : 'Upload'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -214,7 +213,7 @@ export default function DocumentVault() {
               className={`flex justify-between items-center w-full px-3 py-2 mb-0.5 rounded-md border-none cursor-pointer text-xs text-left ${
                 category === c
                   ? 'bg-white text-navy font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-                  : 'bg-transparent text-[#6B7F96] font-normal'
+                  : 'bg-transparent text-slate_ui font-normal'
               }`}>
               <span>{c === 'all' ? 'All' : c}</span>
               {c !== 'all' && categoryCounts[c] ? (
@@ -237,7 +236,7 @@ export default function DocumentVault() {
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
               {docs.map(doc => (
-                <div key={doc.id} className="bg-white border border-[#E2D9C8] rounded-[10px] p-4 relative">
+                <div key={doc.id} className="bg-white border border-border_ui-warm rounded-[10px] p-4 relative">
                   {doc.is_confidential && (
                     <span className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5 bg-red-50 text-red-600 rounded font-bold">
                       CONFIDENTIAL
@@ -245,26 +244,26 @@ export default function DocumentVault() {
                   )}
                   <div className="text-2xl mb-2">{getIcon(doc.file_type)}</div>
                   <div className="text-sm font-semibold text-navy mb-1">{doc.name}</div>
-                  <div className="text-[11px] text-[#6B7F96] mb-0.5">{doc.category} {doc.version ? `· v${doc.version}` : ''}</div>
+                  <div className="text-[11px] text-slate_ui mb-0.5">{doc.category} {doc.version ? `· v${doc.version}` : ''}</div>
                   {doc.description && <div className="text-[11px] text-gray-400 mb-2">{doc.description}</div>}
                   <div className="text-[11px] text-gray-400 mb-2">
                     {formatSize(doc.file_size)} · {new Date(doc.created_at).toLocaleDateString()}
                   </div>
                   <div className="flex gap-1.5">
                     {doc.storage_path && (
-                      <button onClick={async () => {
+                      <Button variant="secondary" size="sm" onClick={async () => {
                         try {
                           const url = await getSignedUrl(BUCKETS.VAULT, doc.storage_path!, 60);
                           window.open(url, '_blank');
                         } catch { /* ignore */ }
-                      }} className="px-2.5 py-1 bg-gray-50 border border-[#E2D9C8] rounded text-[#6B7F96] text-[11px] cursor-pointer">
+                      }} className="text-[11px]">
                         Download
-                      </button>
+                      </Button>
                     )}
-                    <button onClick={() => deleteDoc(doc)}
-                      className="px-2.5 py-1 bg-gray-50 border border-[#E2D9C8] rounded text-red-600 text-[11px] cursor-pointer">
+                    <Button variant="secondary" size="sm" onClick={() => deleteDoc(doc)}
+                      className="text-red-600 text-[11px]">
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

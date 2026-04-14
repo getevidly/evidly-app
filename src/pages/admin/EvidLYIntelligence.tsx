@@ -14,11 +14,12 @@ import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { useDemo } from '../../contexts/DemoContext';
+import Button from '../../components/ui/Button';
 
 // Color constants removed — now using Tailwind equivalents:
 // NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold
-// TEXT_SEC=#6B7F96 → text-[#6B7F96], TEXT_MUTED=#9CA3AF → text-gray-400
-// BORDER=#E5E0D8 → border-[#E5E0D8]
+// TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400
+// BORDER=#E5E0D8 → border-border_ui
 
 type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
 
@@ -234,10 +235,10 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-12 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+  <div className="text-center py-12 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-border_ui rounded-[10px]">
     <div className="text-4xl mb-3">{icon}</div>
     <div className="text-sm font-bold text-navy mb-1.5">{title}</div>
-    <div className="text-xs text-[#6B7F96] max-w-[400px] mx-auto leading-relaxed">{subtitle}</div>
+    <div className="text-xs text-slate_ui max-w-[400px] mx-auto leading-relaxed">{subtitle}</div>
   </div>
 );
 
@@ -753,7 +754,7 @@ export default function EvidLYIntelligence() {
   };
 
   const inputCls = 'py-1.5 px-3 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs';
-  const thCls = 'text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase';
+  const thCls = 'text-left py-2.5 px-3.5 text-slate_ui font-semibold text-[11px] uppercase';
   const tdCls = 'py-2.5 px-3.5 text-xs';
 
   return (
@@ -779,14 +780,14 @@ export default function EvidLYIntelligence() {
               {crawlFeedback.msg}
             </span>
           )}
-          <button onClick={runIntelligence} disabled={crawlRunning}
-            className={`py-2 px-4 border-none rounded-lg text-white text-xs font-bold ${crawlRunning ? 'bg-gray-400 cursor-wait opacity-70' : 'bg-navy cursor-pointer'}`}>
+          <Button onClick={runIntelligence} disabled={crawlRunning}
+            variant="primary" size="sm">
             {crawlRunning ? '⟳ Crawling...' : '⟳ Run Now'}
-          </button>
-          <button onClick={() => setActiveTab('sources')}
-            className="py-2 px-4 bg-white border border-[#E5E0D8] rounded-lg text-navy text-xs font-semibold cursor-pointer">
+          </Button>
+          <Button onClick={() => setActiveTab('sources')}
+            variant="secondary" size="sm">
             Manage Sources
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -794,11 +795,11 @@ export default function EvidLYIntelligence() {
       <div className="grid grid-cols-6 gap-3 items-stretch">
         {[
           { label: 'Total Signals', value: signals.length, color: 'text-navy' },
-          { label: 'Pending Review', value: pendingReview, color: 'text-[#C2410C]' },
-          { label: 'Critical', value: criticalSignals, color: 'text-[#991B1B]' },
-          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? 'text-[#166534]' : 'text-[#991B1B]' },
+          { label: 'Pending Review', value: pendingReview, color: 'text-orange-700' },
+          { label: 'Critical', value: criticalSignals, color: 'text-red-800' },
+          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? 'text-green-800' : 'text-red-800' },
           { label: 'Sources', value: totalSources, color: 'text-navy' },
-          { label: 'Correlations', value: correlations.length, color: 'text-[#166534]' },
+          { label: 'Correlations', value: correlations.length, color: 'text-green-800' },
         ].map(k => (
           <div key={k.label} className="bg-white border border-gray-200 rounded-lg py-4 px-5 text-center flex flex-col items-center justify-center">
             <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
@@ -812,7 +813,7 @@ export default function EvidLYIntelligence() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b-2 border-[#E5E0D8] overflow-x-auto scrollbar-none">
+      <div className="flex border-b-2 border-border_ui overflow-x-auto scrollbar-none">
         {([
           { key: 'overview' as Tab, label: 'Overview', count: null },
           { key: 'signals' as Tab, label: 'Signals', count: signals.length },
@@ -824,15 +825,16 @@ export default function EvidLYIntelligence() {
         ]).map(t => {
           const isActive = activeTab === t.key;
           return (
-            <button key={t.key} onClick={() => setActiveTab(t.key)}
-              className={`py-2.5 px-4 text-[13px] cursor-pointer bg-transparent border-none -mb-[2px] transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap ${isActive ? 'text-gold font-semibold border-b-2 border-gold' : 'text-gray-400 font-normal border-b-2 border-transparent'}`}>
+            <Button key={t.key} onClick={() => setActiveTab(t.key)}
+              variant="ghost" size="sm"
+              className={`rounded-none -mb-[2px] shrink-0 whitespace-nowrap ${isActive ? 'text-gold font-semibold border-b-2 border-gold' : 'text-gray-400 font-normal border-b-2 border-transparent'}`}>
               {t.label}
               {t.count != null && t.count > 0 && (
                 <span className={`text-[10px] font-bold py-[1px] px-1.5 rounded-[10px] font-mono ${isActive ? 'bg-[#F5F0E8] text-navy' : 'bg-gray-100 text-gray-500'}`}>
                   {t.count}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -844,13 +846,13 @@ export default function EvidLYIntelligence() {
         <div className="grid grid-cols-5 gap-3 items-stretch mb-5">
           {([
             { label: 'Total Sources', value: totalSources, color: 'text-navy' },
-            { label: 'Active Sources', value: activeSources, color: 'text-[#166534]' },
-            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? 'text-[#991B1B]' : 'text-navy' },
+            { label: 'Active Sources', value: activeSources, color: 'text-green-800' },
+            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? 'text-red-800' : 'text-navy' },
             { label: 'Total Signals', value: totalSignals, color: 'text-navy' },
-            { label: 'Pending Signals', value: pendingSignals, color: 'text-[#C2410C]' },
-            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? 'text-[#166534]' : 'text-[#991B1B]' },
-            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? 'text-[#991B1B]' : 'text-navy' },
-            { label: 'Correlations', value: totalCorrelations, color: 'text-[#166534]' },
+            { label: 'Pending Signals', value: pendingSignals, color: 'text-orange-700' },
+            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? 'text-green-800' : 'text-red-800' },
+            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? 'text-red-800' : 'text-navy' },
+            { label: 'Correlations', value: totalCorrelations, color: 'text-green-800' },
             { label: 'Regulatory', value: regulatoryCount, color: 'text-navy' },
             { label: 'RFP Listings', value: rfpCount, color: 'text-navy' },
           ] as const).map(card => (
@@ -873,7 +875,7 @@ export default function EvidLYIntelligence() {
 
         <div className="grid grid-cols-2 gap-5">
           {/* Source health by category */}
-          <div className="bg-white border border-[#E5E0D8] rounded-[10px] p-5">
+          <div className="bg-white border border-border_ui rounded-[10px] p-5">
             <div className="text-[13px] font-bold text-navy mb-4">Source Health by Category</div>
             {loading ? (
               <div className="flex flex-col gap-2">
@@ -900,7 +902,7 @@ export default function EvidLYIntelligence() {
           </div>
 
           {/* Recent signals */}
-          <div className="bg-white border border-[#E5E0D8] rounded-[10px] p-5">
+          <div className="bg-white border border-border_ui rounded-[10px] p-5">
             <div className="text-[13px] font-bold text-navy mb-4">
               Recent Signals
               {criticalSignals > 0 && (
@@ -993,20 +995,22 @@ export default function EvidLYIntelligence() {
           {/* CIC Pillar filter pills */}
           <div className="flex gap-1.5 items-center mt-2">
             <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide">Pillar:</span>
-            <button onClick={() => setSigFilter(f => ({ ...f, pillar: '' }))}
-              className={`py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border ${!sigFilter.pillar ? 'bg-gold text-white border-gold' : 'bg-white text-gray-400 border-[#E5E0D8]'}`}>
+            <Button onClick={() => setSigFilter(f => ({ ...f, pillar: '' }))}
+              variant="ghost" size="sm"
+              className={`py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold border ${!sigFilter.pillar ? 'bg-gold text-white border-gold' : 'bg-white text-gray-400 border-border_ui'}`}>
               All Pillars
-            </button>
+            </Button>
             {CIC_PILLARS.map(p => (
-              <button key={p.id} onClick={() => setSigFilter(f => ({ ...f, pillar: p.id }))}
-                className="py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold cursor-pointer border"
+              <Button key={p.id} onClick={() => setSigFilter(f => ({ ...f, pillar: p.id }))}
+                variant="ghost" size="sm"
+                className="py-[3px] px-2.5 rounded-[14px] text-[10px] font-semibold border"
                 style={{
                   background: sigFilter.pillar === p.id ? p.color : '#fff',
                   color: sigFilter.pillar === p.id ? '#fff' : '#9CA3AF',
                   borderColor: sigFilter.pillar === p.id ? p.color : '#E5E0D8',
                 }}>
                 {p.shortLabel}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -1023,7 +1027,7 @@ export default function EvidLYIntelligence() {
           ) : filteredSignals.map(sig => {
             const uc = URGENCY_COLORS[sig.ai_urgency || ''] || URGENCY_COLORS.low;
             return (
-              <div key={sig.id} className={`bg-white border rounded-[10px] py-4 px-[18px] mb-2.5 ${sig.ai_urgency === 'critical' ? 'border-red-200' : 'border-[#E5E0D8]'}`}>
+              <div key={sig.id} className={`bg-white border rounded-[10px] py-4 px-[18px] mb-2.5 ${sig.ai_urgency === 'critical' ? 'border-red-200' : 'border-border_ui'}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -1061,7 +1065,7 @@ export default function EvidLYIntelligence() {
                           </span>
                         );
                       })()}
-                      <span className="text-[10px] text-[#6B7F96] bg-gray-50 border border-[#E5E0D8] py-[1px] px-[7px] rounded-[10px]">
+                      <span className="text-[10px] text-slate_ui bg-gray-50 border border-border_ui py-[1px] px-[7px] rounded-[10px]">
                         {sig.signal_type?.replace(/_/g, ' ')}
                       </span>
                       <span className="text-[10px] text-gold">{sig.source_key}</span>
@@ -1079,12 +1083,12 @@ export default function EvidLYIntelligence() {
                         ))
                       )}
                       {sig.target_counties && sig.target_counties.length > 0 && (
-                        <span className="text-[9px] text-[#6B7F96]">{sig.target_counties.length} {sig.target_counties.length === 1 ? 'county' : 'counties'}</span>
+                        <span className="text-[9px] text-slate_ui">{sig.target_counties.length} {sig.target_counties.length === 1 ? 'county' : 'counties'}</span>
                       )}
                     </div>
                     <div className="text-[13px] font-semibold text-navy mb-1.5">{sig.title}</div>
                     {sig.ai_summary && (
-                      <div className="text-xs text-[#6B7F96] leading-relaxed mb-2">{sig.ai_summary}</div>
+                      <div className="text-xs text-slate_ui leading-relaxed mb-2">{sig.ai_summary}</div>
                     )}
                     {sig.ai_client_impact && (
                       <div className="text-[11px] text-blue-700 bg-blue-50 py-1.5 px-2.5 rounded-md mb-1.5">
@@ -1146,10 +1150,10 @@ export default function EvidLYIntelligence() {
                       <option value="published">Publish</option>
                       <option value="dismissed">Dismiss</option>
                     </select>
-                    <button onClick={() => openPublishModal(sig)}
-                      className="text-[10px] font-bold py-1 px-2.5 rounded-md cursor-pointer bg-gold text-white border-none w-full">
+                    <Button onClick={() => openPublishModal(sig)}
+                      variant="gold" size="sm" className="w-full text-[10px] py-1 px-2.5">
                       Publish Advisory
-                    </button>
+                    </Button>
                     {sig.ai_impact_score != null && (
                       <div className="text-center text-[10px] text-gray-400">
                         Impact: <strong className={sig.ai_impact_score > 75 ? 'text-red-600' : sig.ai_impact_score > 50 ? 'text-amber-600' : 'text-emerald-600'}>{sig.ai_impact_score}/100</strong>
@@ -1170,7 +1174,7 @@ export default function EvidLYIntelligence() {
                       {(['revenue','liability','cost','operational'] as const).map(dim => (
                         <select key={dim} value={(sig as any)[`risk_${dim}`] || 'none'}
                           onChange={e => updateSignalRisk(sig.id, dim, e.target.value)}
-                          className="text-[9px] py-[2px] px-[3px] border border-[#E5E0D8] rounded bg-[#FAFAFA] text-[#6B7F96] cursor-pointer">
+                          className="text-[9px] py-[2px] px-[3px] border border-border_ui rounded bg-[#FAFAFA] text-slate_ui cursor-pointer">
                           <option value="none">{dim.slice(0,3).toUpperCase()}</option>
                           <option value="critical">Crit</option>
                           <option value="high">High</option>
@@ -1212,7 +1216,7 @@ export default function EvidLYIntelligence() {
             </span>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+          <div className="bg-white rounded-xl border border-border_ui overflow-hidden">
             {loading ? (
               <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -1220,7 +1224,7 @@ export default function EvidLYIntelligence() {
             ) : (
               <table className="w-full border-collapse text-[13px]">
                 <thead>
-                  <tr className="border-b border-[#E5E0D8]">
+                  <tr className="border-b border-border_ui">
                     {['Source', 'Category', 'Method', 'Frequency', 'Status', 'Last Crawled', 'Signals (30d)'].map(h => (
                       <th key={h} className={thCls}>{h}</th>
                     ))}
@@ -1230,7 +1234,7 @@ export default function EvidLYIntelligence() {
                   {filteredSources.map(s => {
                     const sc = STATUS_COLORS[s.status] || STATUS_COLORS.pending;
                     return (
-                      <tr key={s.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                      <tr key={s.id} className="border-b border-border_ui hover:bg-gray-50">
                         <td className={tdCls}>
                           <div className="text-xs font-medium text-navy">{s.name}</div>
                           {s.url && (
@@ -1240,9 +1244,9 @@ export default function EvidLYIntelligence() {
                             </a>
                           )}
                         </td>
-                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{s.category?.replace(/_/g, ' ')}</td>
-                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] text-[#6B7F96]`}>{s.crawl_method}</td>
-                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{s.crawl_frequency}</td>
+                        <td className={`${tdCls} text-[11px] text-slate_ui`}>{s.category?.replace(/_/g, ' ')}</td>
+                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] text-slate_ui`}>{s.crawl_method}</td>
+                        <td className={`${tdCls} text-[11px] text-slate_ui`}>{s.crawl_frequency}</td>
                         <td className={tdCls}>
                           <span className="text-[10px] font-bold py-[2px] px-2 rounded-[10px]"
                             style={{ background: sc.bg, color: sc.text }}>
@@ -1291,10 +1295,11 @@ export default function EvidLYIntelligence() {
           {/* Pillar filter pills */}
           <div className="flex gap-2 mb-5 flex-wrap">
             {['All', ...CORR_PILLARS].map(p => (
-              <button
+              <Button
                 key={p}
                 onClick={() => setCorrPillarFilter(p)}
-                className="py-[5px] px-3.5 rounded-full border text-xs cursor-pointer"
+                variant="ghost" size="sm"
+                className="py-[5px] px-3.5 rounded-full border"
                 style={{
                   borderColor: corrPillarFilter === p
                     ? (p === 'All' ? '#A08C5A' : CORR_PILLAR_COLORS[p])
@@ -1307,24 +1312,26 @@ export default function EvidLYIntelligence() {
                 }}
               >
                 {p}
-              </button>
+              </Button>
             ))}
           </div>
 
           {/* Report Format selector */}
-          <div className="bg-white border border-[#E5E0D8] rounded-lg py-4 px-5 mb-6">
+          <div className="bg-white border border-border_ui rounded-lg py-4 px-5 mb-6">
             <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">
               Export Report Format
             </div>
             <div className="flex gap-2 flex-wrap">
               {REPORT_FORMATS.map(fmt => (
-                <button
+                <Button
                   key={fmt}
                   onClick={() => setCorrReportFormat(fmt)}
-                  className={`py-2 px-4 rounded-md border text-xs cursor-pointer ${corrReportFormat === fmt ? 'border-navy bg-navy text-white font-bold' : 'border-gray-200 bg-gray-50 text-gray-700 font-normal'}`}
+                  variant={corrReportFormat === fmt ? 'primary' : 'secondary'}
+                  size="sm"
+                  className={corrReportFormat === fmt ? '' : 'border-gray-200 bg-gray-50 text-gray-700 font-normal'}
                 >
                   {fmt}
-                </button>
+                </Button>
               ))}
             </div>
             <div className="mt-2.5 text-[11px] text-gray-400">
@@ -1333,19 +1340,19 @@ export default function EvidLYIntelligence() {
               {corrReportFormat === 'PDF/Print Ready' && 'Print-optimized layout with EvidLY letterhead, table of contents, and signature block. Exports as PDF.'}
               {corrReportFormat === 'Risk Register' && 'Tabular format: Risk ID, Pillar, Description, Dollar Impact, Owner, Due Date, Status. Imports into risk management tools.'}
             </div>
-            <button
-              className="mt-3 py-2 px-5 bg-gold text-white border-none rounded-md text-xs font-bold cursor-pointer"
+            <Button
+              variant="gold" size="sm" className="mt-3"
               onClick={() => alert(`Export as ${corrReportFormat} — wire to export function when ready`)}
             >
               Export {corrReportFormat}
-            </button>
+            </Button>
           </div>
 
           {/* Empty state for production (no sample data) */}
           {!isDemoMode && correlations.length === 0 && (
             <div className="bg-gray-50 border border-gray-200 rounded-[10px] py-8 px-6 text-center mb-5">
               <div className="text-sm font-semibold text-navy mb-1.5">No correlation data available</div>
-              <div className="text-xs text-[#6B7F96] leading-relaxed">
+              <div className="text-xs text-slate_ui leading-relaxed">
                 Correlations appear as intelligence signals are published and analyzed.
               </div>
             </div>
@@ -1371,7 +1378,7 @@ export default function EvidLYIntelligence() {
                   {items.map(corr => (
                     <div
                       key={corr.id}
-                      className="bg-white border border-[#E5E0D8] rounded-lg py-3.5 px-4 cursor-pointer"
+                      className="bg-white border border-border_ui rounded-lg py-3.5 px-4 cursor-pointer"
                       style={{ borderLeft: `3px solid ${color}` }}
                       onClick={() => setCorrExpanded(corrExpanded === corr.id ? null : corr.id)}
                     >
@@ -1512,7 +1519,7 @@ export default function EvidLYIntelligence() {
 
         return (
           <>
-            <div className="text-xs text-[#6B7F96] leading-relaxed mb-3">
+            <div className="text-xs text-slate_ui leading-relaxed mb-3">
               All 62 California jurisdictions with correlated intelligence signals, risk dimensions, and methodology changes.
             </div>
 
@@ -1520,7 +1527,7 @@ export default function EvidLYIntelligence() {
             <div className="grid grid-cols-4 gap-3 items-stretch mb-4">
               {[
                 { label: 'Total Jurisdictions', value: allJurisdictions.length || 62, color: 'text-navy' },
-                { label: 'Active', value: activeCount, color: 'text-[#166534]' },
+                { label: 'Active', value: activeCount, color: 'text-green-800' },
                 { label: 'Quiet', value: quietCount, color: 'text-navy' },
                 { label: 'Methodology Changes', value: methCount, color: 'text-gold' },
               ].map(k => (
@@ -1563,10 +1570,10 @@ export default function EvidLYIntelligence() {
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={44} />)}
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+              <div className="bg-white rounded-xl border border-border_ui overflow-hidden">
                 <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr className="border-b border-[#E5E0D8]">
+                    <tr className="border-b border-border_ui">
                       {['Jurisdiction', 'Region', 'Signals', 'Risk Dimensions', 'Last Signal', 'Methodology', 'Status'].map(h => (
                         <th key={h} className={thCls}>{h}</th>
                       ))}
@@ -1574,27 +1581,27 @@ export default function EvidLYIntelligence() {
                   </thead>
                   <tbody>
                     {filtered.map(j => (
-                      <tr key={j.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                      <tr key={j.id} className="border-b border-border_ui hover:bg-gray-50">
                         <td className={`${tdCls} font-medium text-navy`}>
                           {j.county}
                         </td>
-                        <td className={`${tdCls} text-[11px] text-[#6B7F96]`}>{j.region}</td>
+                        <td className={`${tdCls} text-[11px] text-slate_ui`}>{j.region}</td>
                         <td className={`${tdCls} font-['DM_Mono',monospace] font-semibold ${j.signalCount > 0 ? 'text-navy' : 'text-gray-400'}`}>
                           {j.signalCount}
                         </td>
                         <td className={tdCls}>
                           <div className="flex gap-1">
-                            {j.dims.rev && <span className="w-2 h-2 rounded-full bg-[#C2410C] inline-block" title="Revenue" />}
-                            {j.dims.liab && <span className="w-2 h-2 rounded-full bg-[#991B1B] inline-block" title="Liability" />}
+                            {j.dims.rev && <span className="w-2 h-2 rounded-full bg-orange-700 inline-block" title="Revenue" />}
+                            {j.dims.liab && <span className="w-2 h-2 rounded-full bg-red-800 inline-block" title="Liability" />}
                             {j.dims.cost && <span className="w-2 h-2 rounded-full bg-navy inline-block" title="Cost" />}
-                            {j.dims.ops && <span className="w-2 h-2 rounded-full bg-[#166534] inline-block" title="Operational" />}
-                            {j.dims.wkf && <span className="w-2 h-2 rounded-full bg-[#6B21A8] inline-block" title="Workforce" />}
+                            {j.dims.ops && <span className="w-2 h-2 rounded-full bg-green-800 inline-block" title="Operational" />}
+                            {j.dims.wkf && <span className="w-2 h-2 rounded-full bg-purple-800 inline-block" title="Workforce" />}
                             {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && !j.dims.wkf && (
                               <span className="text-[10px] text-gray-400">{'—'}</span>
                             )}
                           </div>
                         </td>
-                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] ${j.lastSignal ? 'text-[#6B7F96]' : 'text-gray-400'}`}>
+                        <td className={`${tdCls} text-[11px] font-['DM_Mono',monospace] ${j.lastSignal ? 'text-slate_ui' : 'text-gray-400'}`}>
                           {j.lastSignal ? new Date(j.lastSignal).toLocaleDateString() : 'No signals'}
                         </td>
                         <td className={tdCls}>
@@ -1622,7 +1629,7 @@ export default function EvidLYIntelligence() {
       {/* ────────── TAB: REGULATORY UPDATES ────────── */}
       {activeTab === 'regulatory_updates' && (
         <>
-          <div className="text-xs text-[#6B7F96] leading-relaxed mb-2">
+          <div className="text-xs text-slate_ui leading-relaxed mb-2">
             Regulatory code changes monitored across federal, state, county, and industry standards.
             Published changes are delivered to all affected client intelligence feeds.
           </div>
@@ -1646,7 +1653,7 @@ export default function EvidLYIntelligence() {
                     ? { bg: '#FFFBEB', text: '#D97706' }
                     : { bg: '#F9FAFB', text: '#6B7280' };
                 return (
-                  <div key={rc.id} className="bg-white border border-[#E5E0D8] rounded-[10px] py-4 px-[18px]"
+                  <div key={rc.id} className="bg-white border border-border_ui rounded-[10px] py-4 px-[18px]"
                     style={{ borderLeft: `4px solid ${impactColor.text}` }}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
@@ -1656,7 +1663,7 @@ export default function EvidLYIntelligence() {
                             style={{ background: impactColor.bg, color: impactColor.text }}>
                             {rc.impact_level.toUpperCase()}
                           </span>
-                          <span className="text-[9px] font-semibold py-[2px] px-2 rounded-[10px] bg-gray-50 text-[#6B7F96] border border-[#E5E0D8]">
+                          <span className="text-[9px] font-semibold py-[2px] px-2 rounded-[10px] bg-gray-50 text-slate_ui border border-border_ui">
                             {(rc.change_type || '').replace(/_/g, ' ')}
                           </span>
                           {rc.affected_pillars && rc.affected_pillars.length > 0 && rc.affected_pillars.map(p => {
@@ -1674,7 +1681,7 @@ export default function EvidLYIntelligence() {
                         </div>
                         {/* Title + summary */}
                         <div className="text-[13px] font-semibold text-navy mb-1">{rc.title}</div>
-                        <div className="text-xs text-[#6B7F96] leading-relaxed mb-1.5">{rc.summary}</div>
+                        <div className="text-xs text-slate_ui leading-relaxed mb-1.5">{rc.summary}</div>
                         {rc.impact_description && rc.impact_description !== rc.summary && (
                           <div className="text-[11px] text-blue-700 bg-blue-50 py-1.5 px-2.5 rounded-md mb-1.5">
                             <strong>Impact:</strong> {rc.impact_description}
@@ -1701,15 +1708,15 @@ export default function EvidLYIntelligence() {
                         {rc.published ? (
                           <span className="text-[10px] text-gold font-semibold">Published</span>
                         ) : (
-                          <button onClick={async () => {
+                          <Button onClick={async () => {
                             await deliverToClients('regulatory_update', rc.id, rc.title);
                             setRegulatoryChanges(prev => prev.map(r =>
                               r.id === rc.id ? { ...r, published: true, published_at: new Date().toISOString() } : r
                             ));
                           }}
-                            className="text-[10px] font-bold py-1 px-2.5 rounded-md cursor-pointer bg-gold text-white border-none w-full">
+                            variant="gold" size="sm" className="w-full text-[10px] py-1 px-2.5">
                             Publish
-                          </button>
+                          </Button>
                         )}
                         {rc.source_url && (
                           <a href={rc.source_url} target="_blank" rel="noreferrer"
@@ -1717,11 +1724,11 @@ export default function EvidLYIntelligence() {
                             Source
                           </a>
                         )}
-                        <button
+                        <Button
                           onClick={() => setExpandedRegVerification(expandedRegVerification === rc.id ? null : rc.id)}
-                          className="py-1 px-2.5 rounded-md text-[10px] font-semibold cursor-pointer bg-transparent text-[#6B7F96] border border-[#E5E0D8]">
+                          variant="secondary" size="sm" className="text-[10px] py-1 px-2.5 text-slate_ui">
                           {expandedRegVerification === rc.id ? 'Hide Gates' : 'Verify'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     {/* Verification Panel */}
@@ -1852,10 +1859,10 @@ export default function EvidLYIntelligence() {
                   subtitle="Trigger the generate-alerts edge function to run the first prediction. Predictions will appear here with risk scores per location."
                 />
               ) : (
-                <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-auto">
+                <div className="bg-white rounded-xl border border-border_ui overflow-auto">
                   <table className="w-full border-collapse text-xs min-w-[900px]">
                     <thead>
-                      <tr className="border-b border-[#E5E0D8]">
+                      <tr className="border-b border-border_ui">
                         <th className={thCls}>Location</th>
                         <th className={thCls}>Organization</th>
                         <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('risk_level')}>
@@ -1877,11 +1884,11 @@ export default function EvidLYIntelligence() {
                         const badge = RISK_BADGE[p.risk_level] || RISK_BADGE.unknown;
                         const pct = Math.round(p.failure_probability * 100);
                         return (
-                          <tr key={p.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                          <tr key={p.id} className="border-b border-border_ui hover:bg-gray-50">
                             <td className={`${tdCls} font-semibold text-navy`}>
                               {p.locations?.name || p.location_id.slice(0, 8)}
                             </td>
-                            <td className={`${tdCls} text-[#6B7F96]`}>
+                            <td className={`${tdCls} text-slate_ui`}>
                               {p.organizations?.name || '\u2014'}
                             </td>
                             <td className={tdCls}>
@@ -1948,7 +1955,7 @@ export default function EvidLYIntelligence() {
             {/* Section 3: Prediction Accuracy Log */}
             <div className="mt-7">
               <h3 className="text-[15px] font-bold text-navy mb-1">Prediction Accuracy Log</h3>
-              <p className="text-[11px] text-[#6B7F96] mb-3 leading-relaxed">
+              <p className="text-[11px] text-slate_ui mb-3 leading-relaxed">
                 Accuracy tracking begins when actual inspection results are received. Rows with no outcome represent predictions awaiting validation.
               </p>
               {predLoading ? (
@@ -1962,10 +1969,10 @@ export default function EvidLYIntelligence() {
                   subtitle="Records appear here after actual inspection outcomes are recorded against prior predictions."
                 />
               ) : (
-                <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-auto">
+                <div className="bg-white rounded-xl border border-border_ui overflow-auto">
                   <table className="w-full border-collapse text-xs min-w-[800px]">
                     <thead>
-                      <tr className="border-b border-[#E5E0D8]">
+                      <tr className="border-b border-border_ui">
                         {['Location', 'Predicted Risk', 'Actual Outcome', 'Correct', 'Prob. Error', 'Model', 'Logged At'].map(h => (
                           <th key={h} className={thCls}>{h}</th>
                         ))}
@@ -1975,7 +1982,7 @@ export default function EvidLYIntelligence() {
                       {accuracyLog.map(row => {
                         const rBadge = RISK_BADGE[row.predicted_risk_level || 'unknown'] || RISK_BADGE.unknown;
                         return (
-                          <tr key={row.id} className="border-b border-[#E5E0D8] hover:bg-gray-50">
+                          <tr key={row.id} className="border-b border-border_ui hover:bg-gray-50">
                             <td className={`${tdCls} font-medium text-navy`}>
                               {row.locations?.name || row.location_id.slice(0, 8)}
                             </td>
@@ -2003,7 +2010,7 @@ export default function EvidLYIntelligence() {
                                 <span className="text-gray-400">{'\u2014'}</span>
                               )}
                             </td>
-                            <td className={`${tdCls} font-['DM_Mono',monospace] text-[#6B7F96]`}>
+                            <td className={`${tdCls} font-['DM_Mono',monospace] text-slate_ui`}>
                               {row.probability_error != null ? `${Math.round(row.probability_error * 100)}%` : '\u2014'}
                             </td>
                             <td className={`${tdCls} text-[11px] text-gray-400`}>{row.model_version}</td>
@@ -2029,27 +2036,27 @@ export default function EvidLYIntelligence() {
                     Phase 1 {'\u00B7'} Active
                   </div>
                   <div className="text-sm font-bold text-navy mb-2">Rules-Based Scoring</div>
-                  <div className="text-xs text-[#6B7F96] leading-relaxed">
+                  <div className="text-xs text-slate_ui leading-relaxed">
                     Deterministic rules using checklist rate, temp log compliance, hood cleaning recency, and open corrective actions. Model version: rules-v1.
                   </div>
                 </div>
                 {/* Phase 2 — Upcoming */}
-                <div className="bg-white rounded-xl py-5 px-[22px] border border-[#E5E0D8]">
+                <div className="bg-white rounded-xl py-5 px-[22px] border border-border_ui">
                   <div className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
                     Phase 2 {'\u00B7'} 10{'\u2013'}25 Customers
                   </div>
                   <div className="text-sm font-bold text-navy mb-2">MindsDB ML Forecasting</div>
-                  <div className="text-xs text-[#6B7F96] leading-relaxed">
+                  <div className="text-xs text-slate_ui leading-relaxed">
                     LightGBM model trained on customer compliance data via MindsDB connected to Supabase Postgres. Replaces rules with probability forecasting.
                   </div>
                 </div>
                 {/* Phase 3 — Future */}
-                <div className="bg-white rounded-xl py-5 px-[22px] border border-[#E5E0D8]">
+                <div className="bg-white rounded-xl py-5 px-[22px] border border-border_ui">
                   <div className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
                     Phase 3 {'\u00B7'} 50+ Customers
                   </div>
                   <div className="text-sm font-bold text-navy mb-2">Custom Python Microservice</div>
-                  <div className="text-xs text-[#6B7F96] leading-relaxed">
+                  <div className="text-xs text-slate_ui leading-relaxed">
                     XGBoost classifier + Facebook Prophet time-series deployed as Edge Function. Full model training on real California compliance + inspection data.
                   </div>
                 </div>
@@ -2083,7 +2090,7 @@ export default function EvidLYIntelligence() {
               </div>
 
               {/* Signal info */}
-              <div className="bg-gray-50 rounded-lg py-2.5 px-3.5 mb-4 border border-[#E5E0D8]">
+              <div className="bg-gray-50 rounded-lg py-2.5 px-3.5 mb-4 border border-border_ui">
                 <div className="text-xs font-semibold text-navy">{publishModal.signal?.title}</div>
                 <div className="text-[10px] text-gray-400 mt-0.5">
                   Source: {publishModal.signal?.source_key} · {publishModal.signal?.signal_type?.replace(/_/g, ' ')}
@@ -2094,18 +2101,18 @@ export default function EvidLYIntelligence() {
               <div className="flex flex-col gap-3.5">
                 {/* Title + Summary */}
                 <div>
-                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Title (shown to clients)</label>
+                  <label className="text-[11px] font-semibold text-slate_ui block mb-1">Title (shown to clients)</label>
                   <input value={pubForm.title} onChange={e => setPubForm(f => ({ ...f, title: e.target.value }))}
                     className={`${inputCls} w-full`} />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Summary</label>
+                  <label className="text-[11px] font-semibold text-slate_ui block mb-1">Summary</label>
                   <textarea value={pubForm.summary} onChange={e => setPubForm(f => ({ ...f, summary: e.target.value }))}
                     rows={3} className={`${inputCls} w-full resize-y`} />
                 </div>
 
                 {/* Risk Dimension Tagging — 4 rows */}
-                <div className="border-t border-[#E5E0D8] pt-3.5">
+                <div className="border-t border-border_ui pt-3.5">
                   <div className="text-xs font-bold text-navy mb-2.5">Risk Dimension Tagging</div>
                   <div className="flex flex-col gap-2.5">
                     {DIMS.map(dim => (
@@ -2130,25 +2137,25 @@ export default function EvidLYIntelligence() {
                 </div>
 
                 {/* Targeting Section */}
-                <div className="border-t border-[#E5E0D8] pt-3.5">
+                <div className="border-t border-border_ui pt-3.5">
                   <div className="text-xs font-bold text-navy mb-2.5">Signal Targeting</div>
                   <div className="flex flex-col gap-2.5">
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Scope</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Scope</label>
                         <select value={pubForm.signalScope} onChange={e => setPubForm(f => ({ ...f, signalScope: e.target.value }))}
                           className={`${inputCls} w-full cursor-pointer`}>
                           {Object.entries(SCOPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Counties (comma-separated)</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Counties (comma-separated)</label>
                         <input value={pubForm.targetCounties} onChange={e => setPubForm(f => ({ ...f, targetCounties: e.target.value }))}
                           placeholder="e.g. Fresno, Madera, Merced" className={`${inputCls} w-full`} />
                       </div>
                     </div>
                     <div>
-                      <label className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6B7F96] cursor-pointer">
+                      <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate_ui cursor-pointer">
                         <input type="checkbox" checked={pubForm.allIndustries}
                           onChange={e => setPubForm(f => ({ ...f, allIndustries: e.target.checked }))} />
                         All Industries
@@ -2156,7 +2163,7 @@ export default function EvidLYIntelligence() {
                       {!pubForm.allIndustries && (
                         <div className="flex gap-2 flex-wrap mt-2">
                           {Object.entries(INDUSTRY_LABELS).map(([k, v]) => (
-                            <label key={k} className="flex items-center gap-1 text-[11px] text-[#6B7F96] cursor-pointer">
+                            <label key={k} className="flex items-center gap-1 text-[11px] text-slate_ui cursor-pointer">
                               <input type="checkbox" checked={pubForm.targetIndustries.includes(k)}
                                 onChange={e => setPubForm(f => ({
                                   ...f,
@@ -2174,7 +2181,7 @@ export default function EvidLYIntelligence() {
                 </div>
 
                 {/* Opportunity Dimensions — 4 rows (green-tinted) */}
-                <div className="border-t border-[#E5E0D8] pt-3.5">
+                <div className="border-t border-border_ui pt-3.5">
                   <div className="text-xs font-bold text-emerald-800 mb-2.5">Opportunity Dimensions (upside of acting early)</div>
                   <div className="flex flex-col gap-2.5">
                     {[
@@ -2221,9 +2228,9 @@ export default function EvidLYIntelligence() {
                 )}
 
                 {/* Recommended Action + Deadline */}
-                <div className="border-t border-[#E5E0D8] pt-3.5">
+                <div className="border-t border-border_ui pt-3.5">
                   <div>
-                    <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
+                    <label className="text-[11px] font-semibold text-slate_ui block mb-1">
                       Recommended Action (shown to client)
                     </label>
                     <textarea value={pubForm.recommendedAction}
@@ -2232,7 +2239,7 @@ export default function EvidLYIntelligence() {
                       className={`${inputCls} w-full resize-y`} />
                   </div>
                   <div className="mt-2.5">
-                    <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">
+                    <label className="text-[11px] font-semibold text-slate_ui block mb-1">
                       Action Deadline
                     </label>
                     <input type="date" value={pubForm.actionDeadline}
@@ -2246,22 +2253,22 @@ export default function EvidLYIntelligence() {
                   const p = computePriority(pubForm);
                   const pColor = p === 'critical' ? 'text-red-600' : p === 'high' ? 'text-amber-600' : p === 'normal' ? 'text-blue-600' : 'text-gray-500';
                   return (
-                    <div className="text-[11px] text-[#6B7F96]">
+                    <div className="text-[11px] text-slate_ui">
                       Computed priority: <span className={`font-bold ${pColor}`}>{p.toUpperCase()}</span>
                     </div>
                   );
                 })()}
               </div>
 
-              <div className="flex justify-end gap-2.5 mt-5 border-t border-[#E5E0D8] pt-4">
-                <button onClick={() => setPublishModal({ open: false, signal: null })}
-                  className="py-2 px-[18px] bg-white border border-[#E5E0D8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
+              <div className="flex justify-end gap-2.5 mt-5 border-t border-border_ui pt-4">
+                <Button onClick={() => setPublishModal({ open: false, signal: null })}
+                  variant="secondary" size="sm">
                   Cancel
-                </button>
-                <button onClick={submitAdvisory}
-                  className="py-2 px-[18px] bg-gold border-none rounded-lg text-white text-[13px] font-bold cursor-pointer">
+                </Button>
+                <Button onClick={submitAdvisory}
+                  variant="gold" size="sm">
                   Publish to Clients
-                </button>
+                </Button>
               </div>
             </div>
           </div>

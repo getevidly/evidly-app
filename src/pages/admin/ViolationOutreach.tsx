@@ -13,6 +13,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { FeatureGate } from '../../components/feature-flags/FeatureGate';
 import { KpiTile } from '../../components/admin/KpiTile';
+import Button from '../../components/ui/Button';
 
 // -- Types --
 
@@ -208,7 +209,7 @@ export default function ViolationOutreach() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <Button onClick={() => window.location.reload()} className="mt-4">Retry</Button>
       </div>
     );
   }
@@ -245,14 +246,12 @@ export default function ViolationOutreach() {
           { key: 'prospects' as const, label: `Prospect Queue (${filtered.length})` },
           { key: 'followups' as const, label: `Follow-ups Due (${followups.length})` },
         ]).map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`px-4 py-1.5 rounded-md border-none text-xs font-semibold cursor-pointer ${
-              tab === t.key
-                ? 'bg-white text-navy shadow-sm'
-                : 'bg-transparent text-gray-400 shadow-none'
-            }`}>
+          <Button key={t.key} onClick={() => setTab(t.key)}
+            variant={tab === t.key ? 'secondary' : 'ghost'}
+            size="sm"
+            className={tab === t.key ? 'shadow-sm' : ''}>
             {t.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -277,7 +276,7 @@ export default function ViolationOutreach() {
             <option value="filta_fryer">Filta Fryer</option>
           </select>
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-[#6B7F96]">Min Relevance:</span>
+            <span className="text-[11px] text-slate_ui">Min Relevance:</span>
             <input type="range" min={0} max={100} value={minRelevance}
               onChange={e => setMinRelevance(Number(e.target.value))}
               className="w-20" />
@@ -288,16 +287,16 @@ export default function ViolationOutreach() {
 
       {/* -- Prospect Queue Table -- */}
       {tab === 'prospects' && (
-        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
           {loading ? (
             <div className="p-6 flex flex-col gap-3">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+            <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
               <div className="text-[40px] mb-4">{'🔍'}</div>
               <div className="text-base font-bold text-navy mb-2">No prospects found</div>
-              <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">
+              <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">
                 Run the violation crawl to populate prospects, or adjust your filters.
               </div>
             </div>
@@ -305,9 +304,9 @@ export default function ViolationOutreach() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-xs min-w-[1000px]">
                 <thead>
-                  <tr className="border-b border-[#E2D9C8]">
+                  <tr className="border-b border-border_ui-warm">
                     {['Business', 'City / County', 'Violations', 'Crit', 'Relevance', 'Offerings', 'Status', 'Last Touch', 'Next Follow-up', 'Actions'].map(h => (
-                      <th key={h} className="text-left px-3 py-2.5 text-[#6B7F96] font-semibold text-[10px] uppercase whitespace-nowrap">{h}</th>
+                      <th key={h} className="text-left px-3 py-2.5 text-slate_ui font-semibold text-[10px] uppercase whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -315,25 +314,25 @@ export default function ViolationOutreach() {
                   {filtered.map(p => {
                     const sl = STATUS_LABELS[p.outreach_status] ?? STATUS_LABELS.new;
                     return (
-                      <tr key={p.id} className="border-b border-[#E2D9C8] hover:bg-gray-50">
+                      <tr key={p.id} className="border-b border-border_ui-warm hover:bg-gray-50">
                         <td className="px-3 py-2.5 text-navy font-semibold max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
                           {p.business_name}
                         </td>
-                        <td className="px-3 py-2.5 text-[#6B7F96] whitespace-nowrap">
+                        <td className="px-3 py-2.5 text-slate_ui whitespace-nowrap">
                           {p.city ?? '—'}{p.county ? `, ${p.county}` : ''}
                         </td>
                         <td className="px-3 py-2.5 text-navy font-semibold text-center">{p.violation_count}</td>
                         <td className="px-3 py-2.5 text-center">
-                          <span className={`${p.critical_violation_count > 0 ? 'text-[#DC2626] font-bold' : 'text-[#6B7F96] font-normal'}`}>
+                          <span className={`${p.critical_violation_count > 0 ? 'text-red-600 font-bold' : 'text-slate_ui font-normal'}`}>
                             {p.critical_violation_count}
                           </span>
                         </td>
                         <td className="px-3 py-2.5 text-center">
                           <span className={`inline-block min-w-[32px] px-1.5 py-0.5 rounded text-[10px] font-bold text-center ${
                             (p.relevance_score ?? 0) >= 70
-                              ? 'bg-[#DCFCE7] text-[#166534]'
+                              ? 'bg-green-100 text-green-800'
                               : (p.relevance_score ?? 0) >= 40
-                                ? 'bg-[#FFFBEB] text-[#92400E]'
+                                ? 'bg-amber-50 text-amber-800'
                                 : 'bg-gray-100 text-gray-500'
                           }`}>
                             {p.relevance_score ?? 0}
@@ -342,7 +341,7 @@ export default function ViolationOutreach() {
                         <td className="px-3 py-2.5">
                           <div className="flex gap-1 flex-wrap">
                             {(p.relevant_offerings ?? []).map(o => (
-                              <span key={o} className="text-[9px] font-semibold px-1.5 py-[1px] rounded-sm bg-[#F0F4FF] text-[#3B82F6]">
+                              <span key={o} className="text-[9px] font-semibold px-1.5 py-[1px] rounded-sm bg-[#F0F4FF] text-blue-500">
                                 {OFFERING_LABELS[o] ?? o}
                               </span>
                             ))}
@@ -353,42 +352,42 @@ export default function ViolationOutreach() {
                             {sl.label}
                           </span>
                         </td>
-                        <td className="px-3 py-2.5 text-[#6B7F96] text-[11px] whitespace-nowrap">
+                        <td className="px-3 py-2.5 text-slate_ui text-[11px] whitespace-nowrap">
                           {p.last_outreach_at ? new Date(p.last_outreach_at).toLocaleDateString() : '—'}
                         </td>
-                        <td className="px-3 py-2.5 text-[#6B7F96] text-[11px] whitespace-nowrap">
+                        <td className="px-3 py-2.5 text-slate_ui text-[11px] whitespace-nowrap">
                           {p.next_followup_at ? new Date(p.next_followup_at).toLocaleDateString() : '—'}
                         </td>
                         <td className="px-3 py-2.5">
                           <div className="flex gap-1 flex-wrap">
-                            <button
+                            <Button
                               onClick={() => generateOutreach(p.id, 'letter')}
                               disabled={generating === `${p.id}-letter`}
-                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
-                                generating === `${p.id}-letter` ? 'bg-gray-200' : 'bg-navy'
-                              }`}>
+                              variant="primary"
+                              size="sm">
                               {generating === `${p.id}-letter` ? '...' : 'Letter'}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => generateOutreach(p.id, 'call')}
                               disabled={generating === `${p.id}-call`}
-                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
-                                generating === `${p.id}-call` ? 'bg-gray-200' : 'bg-gold'
-                              }`}>
+                              variant="gold"
+                              size="sm">
                               {generating === `${p.id}-call` ? '...' : 'Call'}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => generateOutreach(p.id, 'email')}
                               disabled={generating === `${p.id}-email`}
-                              className={`px-2.5 py-1 border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-white ${
-                                generating === `${p.id}-email` ? 'bg-gray-200' : 'bg-[#059669]'
-                              }`}>
+                              variant="primary"
+                              size="sm"
+                              className="bg-emerald-600 hover:bg-emerald-700">
                               {generating === `${p.id}-email` ? '...' : 'Email'}
-                            </button>
-                            <button onClick={() => viewTouchHistory(p)}
-                              className="px-2.5 py-1 bg-transparent border-none rounded-[5px] text-[10px] font-bold cursor-pointer text-gold" title="View touch history">
+                            </Button>
+                            <Button onClick={() => viewTouchHistory(p)}
+                              variant="ghost"
+                              size="sm"
+                              className="text-gold" title="View touch history">
                               {'📋'}
-                            </button>
+                            </Button>
                             {!['do_not_contact', 'converted'].includes(p.outreach_status) && (
                               <select
                                 value=""
@@ -418,19 +417,19 @@ export default function ViolationOutreach() {
 
       {/* -- Follow-ups Due -- */}
       {tab === 'followups' && (
-        <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+        <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
           {followups.length === 0 ? (
-            <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+            <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
               <div className="text-[40px] mb-4">{'✅'}</div>
               <div className="text-base font-bold text-navy mb-2">All caught up</div>
-              <div className="text-[13px] text-[#6B7F96]">No follow-ups are due right now.</div>
+              <div className="text-[13px] text-slate_ui">No follow-ups are due right now.</div>
             </div>
           ) : (
             <table className="w-full border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#E2D9C8]">
+                <tr className="border-b border-border_ui-warm">
                   {['Business', 'City / County', 'Follow-up Due', 'Outreach Count', 'Last Touch', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-3 py-2.5 text-[#6B7F96] font-semibold text-[10px] uppercase">{h}</th>
+                    <th key={h} className="text-left px-3 py-2.5 text-slate_ui font-semibold text-[10px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -438,14 +437,14 @@ export default function ViolationOutreach() {
                 {followups.map(p => {
                   const sl = STATUS_LABELS[p.outreach_status] ?? STATUS_LABELS.new;
                   return (
-                    <tr key={p.id} className="border-b border-[#E2D9C8] hover:bg-gray-50">
+                    <tr key={p.id} className="border-b border-border_ui-warm hover:bg-gray-50">
                       <td className="px-3 py-2.5 text-navy font-semibold">{p.business_name}</td>
-                      <td className="px-3 py-2.5 text-[#6B7F96]">{p.city ?? '—'}{p.county ? `, ${p.county}` : ''}</td>
-                      <td className="px-3 py-2.5 text-[#DC2626] font-semibold text-[11px]">
+                      <td className="px-3 py-2.5 text-slate_ui">{p.city ?? '—'}{p.county ? `, ${p.county}` : ''}</td>
+                      <td className="px-3 py-2.5 text-red-600 font-semibold text-[11px]">
                         {p.next_followup_at ? new Date(p.next_followup_at).toLocaleDateString() : '—'}
                       </td>
                       <td className="px-3 py-2.5 text-navy text-center">{p.outreach_count}</td>
-                      <td className="px-3 py-2.5 text-[#6B7F96] text-[11px]">
+                      <td className="px-3 py-2.5 text-slate_ui text-[11px]">
                         {p.last_outreach_at ? new Date(p.last_outreach_at).toLocaleDateString() : '—'}
                       </td>
                       <td className="px-3 py-2.5">
@@ -455,12 +454,14 @@ export default function ViolationOutreach() {
                       </td>
                       <td className="px-3 py-2.5">
                         <div className="flex gap-1">
-                          <button onClick={() => generateOutreach(p.id, 'call')}
-                            className="px-2.5 py-1 bg-gold text-white border-none rounded-[5px] text-[10px] font-bold cursor-pointer">Call Script</button>
-                          <button onClick={() => generateOutreach(p.id, 'email')}
-                            className="px-2.5 py-1 bg-[#059669] text-white border-none rounded-[5px] text-[10px] font-bold cursor-pointer">Email</button>
-                          <button onClick={() => viewTouchHistory(p)}
-                            className="px-2.5 py-1 bg-transparent text-gold border-none rounded-[5px] text-[10px] font-bold cursor-pointer">{'📋'}</button>
+                          <Button onClick={() => generateOutreach(p.id, 'call')}
+                            variant="gold" size="sm">Call Script</Button>
+                          <Button onClick={() => generateOutreach(p.id, 'email')}
+                            variant="primary" size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700">Email</Button>
+                          <Button onClick={() => viewTouchHistory(p)}
+                            variant="ghost" size="sm"
+                            className="text-gold">{'📋'}</Button>
                         </div>
                       </td>
                     </tr>
@@ -478,33 +479,33 @@ export default function ViolationOutreach() {
           onClick={() => setModalContent(null)}>
           <div className="bg-white rounded-2xl max-w-[640px] w-full max-h-[80vh] overflow-hidden flex flex-col"
             onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-[#E2D9C8] flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-border_ui-warm flex items-center justify-between">
               <div>
                 <div className="text-[15px] font-bold text-navy">{modalContent.title}</div>
                 <div className="text-[11px] text-gray-400 mt-0.5">AI-generated outreach content</div>
               </div>
-              <button onClick={() => setModalContent(null)} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">
+              <Button onClick={() => setModalContent(null)} variant="ghost" size="sm" className="text-xl text-gray-400">
                 {'✕'}
-              </button>
+              </Button>
             </div>
             <div className="p-6 overflow-y-auto flex-1">
               <pre className="whitespace-pre-wrap break-words font-['DM_Sans',sans-serif] text-[13px] leading-relaxed text-gray-800 m-0">
                 {modalContent.body}
               </pre>
             </div>
-            <div className="px-6 py-3 border-t border-[#E2D9C8] flex gap-2 justify-end">
-              <button onClick={() => copyToClipboard(modalContent.body)}
-                className="px-[14px] py-1.5 bg-gray-100 text-navy border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
+            <div className="px-6 py-3 border-t border-border_ui-warm flex gap-2 justify-end">
+              <Button onClick={() => copyToClipboard(modalContent.body)}
+                variant="secondary" size="sm">
                 Copy
-              </button>
-              <button onClick={() => window.print()}
-                className="px-[14px] py-1.5 bg-gray-100 text-navy border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
+              </Button>
+              <Button onClick={() => window.print()}
+                variant="secondary" size="sm">
                 Print
-              </button>
-              <button onClick={() => setModalContent(null)}
-                className="px-[14px] py-1.5 bg-navy text-white border-none rounded-[5px] text-[11px] font-bold cursor-pointer">
+              </Button>
+              <Button onClick={() => setModalContent(null)}
+                variant="primary" size="sm">
                 Done
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -516,14 +517,14 @@ export default function ViolationOutreach() {
           onClick={() => setTouchHistory(null)}>
           <div className="bg-white rounded-2xl max-w-[560px] w-full max-h-[70vh] overflow-hidden flex flex-col"
             onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-[#E2D9C8] flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-border_ui-warm flex items-center justify-between">
               <div>
                 <div className="text-[15px] font-bold text-navy">Touch History</div>
-                <div className="text-xs text-[#6B7F96] mt-0.5">{touchHistory.prospectName}</div>
+                <div className="text-xs text-slate_ui mt-0.5">{touchHistory.prospectName}</div>
               </div>
-              <button onClick={() => setTouchHistory(null)} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">
+              <Button onClick={() => setTouchHistory(null)} variant="ghost" size="sm" className="text-xl text-gray-400">
                 {'✕'}
-              </button>
+              </Button>
             </div>
             <div className="p-6 overflow-y-auto flex-1">
               {touchHistory.items.length === 0 ? (
@@ -531,20 +532,20 @@ export default function ViolationOutreach() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {touchHistory.items.map(t => (
-                    <div key={t.id} className="p-3 bg-gray-50 rounded-lg border border-[#E2D9C8]">
+                    <div key={t.id} className="p-3 bg-gray-50 rounded-lg border border-border_ui-warm">
                       <div className="flex justify-between mb-1.5">
                         <span className="text-xs font-bold text-navy capitalize">{t.touch_type}</span>
-                        <span className="text-[11px] text-[#6B7F96]">{new Date(t.created_at).toLocaleDateString()}</span>
+                        <span className="text-[11px] text-slate_ui">{new Date(t.created_at).toLocaleDateString()}</span>
                       </div>
                       {t.outcome && (
-                        <span className="text-[10px] px-1.5 py-[1px] rounded-sm bg-[#EFF6FF] text-[#2563EB] font-semibold">
+                        <span className="text-[10px] px-1.5 py-[1px] rounded-sm bg-blue-50 text-blue-600 font-semibold">
                           {t.outcome}
                         </span>
                       )}
                       {t.body && (
                         <details className="mt-2">
                           <summary className="text-[11px] text-gold cursor-pointer font-semibold">View content</summary>
-                          <pre className="whitespace-pre-wrap text-[11px] text-[#374151] mt-1.5 leading-relaxed">{t.body}</pre>
+                          <pre className="whitespace-pre-wrap text-[11px] text-gray-700 mt-1.5 leading-relaxed">{t.body}</pre>
                         </details>
                       )}
                     </div>
@@ -552,9 +553,9 @@ export default function ViolationOutreach() {
                 </div>
               )}
             </div>
-            <div className="px-6 py-3 border-t border-[#E2D9C8] flex justify-end">
-              <button onClick={() => setTouchHistory(null)}
-                className="px-[14px] py-1.5 bg-navy text-white border-none rounded-[5px] text-[11px] font-bold cursor-pointer">Close</button>
+            <div className="px-6 py-3 border-t border-border_ui-warm flex justify-end">
+              <Button onClick={() => setTouchHistory(null)}
+                variant="primary" size="sm">Close</Button>
             </div>
           </div>
         </div>

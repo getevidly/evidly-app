@@ -10,6 +10,7 @@ import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox'
 import { KpiTile } from '../../components/admin/KpiTile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 type Tab = 'all' | 'mine' | 'analytics';
 
@@ -108,10 +109,10 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-[#FAF7F2] border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+  <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[400px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -126,7 +127,7 @@ function Badge({ label, colors }: { label: string; colors: { bg: string; text: s
   );
 }
 
-const INPUT_CLASS = 'px-3 py-2 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-[13px] w-full';
+const INPUT_CLASS = 'px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-navy text-[13px] w-full';
 
 export default function SupportTickets() {
   useDemoGuard();
@@ -443,7 +444,7 @@ export default function SupportTickets() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Support Tickets</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">
+          <p className="text-[13px] text-slate_ui mt-1">
             Manage customer support requests, track SLAs, and monitor satisfaction.
           </p>
         </div>
@@ -483,7 +484,7 @@ export default function SupportTickets() {
           </div>
 
           {/* Filter bar */}
-          <div className="flex items-center gap-[10px] flex-wrap bg-white border border-[#E2D9C8] rounded-[10px] px-[14px] py-[10px]">
+          <div className="flex items-center gap-[10px] flex-wrap bg-white border border-border_ui-warm rounded-[10px] px-[14px] py-[10px]">
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
               className={`${INPUT_CLASS} !w-[140px] cursor-pointer`}>
               <option value="">All Statuses</option>
@@ -505,14 +506,13 @@ export default function SupportTickets() {
               placeholder="Search tickets..."
               className={`${INPUT_CLASS} flex-1 min-w-[160px]`}
             />
-            <button onClick={() => setShowCreate(true)}
-              className="px-[18px] py-2 bg-gold border-none rounded-md text-white text-[13px] font-bold cursor-pointer whitespace-nowrap">
+            <Button variant="gold" size="sm" onClick={() => setShowCreate(true)} className="whitespace-nowrap">
               + Create Ticket
-            </button>
+            </Button>
           </div>
 
           {/* Ticket table */}
-          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+          <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
             {loading ? (
               <div className="p-6 flex flex-col gap-3">
                 {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} h={36} />)}
@@ -527,9 +527,9 @@ export default function SupportTickets() {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr className="border-b border-[#E2D9C8]">
+                    <tr className="border-b border-border_ui-warm">
                       {['Ticket #', 'Subject', 'Org', 'Category', 'Priority', 'Status', 'Assigned', 'SLA Due', 'Created'].map(h => (
-                        <th key={h} className="text-left px-[14px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase whitespace-nowrap">
+                        <th key={h} className="text-left px-[14px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase whitespace-nowrap">
                           {h}
                         </th>
                       ))}
@@ -541,17 +541,17 @@ export default function SupportTickets() {
                       return (
                         <tr key={ticket.id}
                           onClick={() => openDrawer(ticket)}
-                          className="border-b border-[#E2D9C8] cursor-pointer hover:bg-[#FAFAF8]">
+                          className="border-b border-border_ui-warm cursor-pointer hover:bg-[#FAFAF8]">
                           <td className="px-[14px] py-[10px] text-navy font-semibold font-mono text-xs">
                             {ticket.ticket_number}
                           </td>
                           <td className="px-[14px] py-[10px] text-navy font-medium max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {ticket.subject}
                           </td>
-                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">
+                          <td className="px-[14px] py-[10px] text-slate_ui text-xs">
                             {ticket.organizations?.name || '—'}
                           </td>
-                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs capitalize">
+                          <td className="px-[14px] py-[10px] text-slate_ui text-xs capitalize">
                             {(ticket.category || '').replace(/_/g, ' ')}
                           </td>
                           <td className="px-[14px] py-[10px]">
@@ -560,14 +560,14 @@ export default function SupportTickets() {
                           <td className="px-[14px] py-[10px]">
                             <Badge label={ticket.status} colors={STATUS_COLORS[ticket.status] || STATUS_COLORS.open} />
                           </td>
-                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs">
+                          <td className="px-[14px] py-[10px] text-slate_ui text-xs">
                             {ticket.assigned_to || '—'}
                           </td>
-                          <td className={`px-[14px] py-[10px] text-xs ${breached ? 'font-bold text-[#DC2626]' : 'font-normal text-[#6B7F96]'}`}>
+                          <td className={`px-[14px] py-[10px] text-xs ${breached ? 'font-bold text-red-600' : 'font-normal text-slate_ui'}`}>
                             {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
-                            {breached && <span className="ml-1 text-[10px] text-[#DC2626]">BREACHED</span>}
+                            {breached && <span className="ml-1 text-[10px] text-red-600">BREACHED</span>}
                           </td>
-                          <td className="px-[14px] py-[10px] text-[#6B7F96] text-xs whitespace-nowrap">
+                          <td className="px-[14px] py-[10px] text-slate_ui text-xs whitespace-nowrap">
                             {formatDate(ticket.created_at)}
                           </td>
                         </tr>
@@ -594,8 +594,8 @@ export default function SupportTickets() {
           </div>
 
           {/* Top orgs table */}
-          <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
-            <div className="px-[18px] py-[14px] border-b border-[#E2D9C8]">
+          <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
+            <div className="px-[18px] py-[14px] border-b border-border_ui-warm">
               <h3 className="text-sm font-bold text-navy m-0">Top Organizations by Ticket Volume</h3>
             </div>
             {analyticsKpis.topOrgs.length === 0 ? (
@@ -603,19 +603,19 @@ export default function SupportTickets() {
             ) : (
               <table className="w-full border-collapse text-[13px]">
                 <thead>
-                  <tr className="border-b border-[#E2D9C8]">
-                    <th className="text-left px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">Organization</th>
-                    <th className="text-right px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase">Tickets</th>
-                    <th className="text-left px-[18px] py-[10px] text-[#6B7F96] font-semibold text-[11px] uppercase w-1/2">Volume</th>
+                  <tr className="border-b border-border_ui-warm">
+                    <th className="text-left px-[18px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase">Organization</th>
+                    <th className="text-right px-[18px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase">Tickets</th>
+                    <th className="text-left px-[18px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase w-1/2">Volume</th>
                   </tr>
                 </thead>
                 <tbody>
                   {analyticsKpis.topOrgs.map((org, i) => {
                     const maxCount = analyticsKpis.topOrgs[0]?.count || 1;
                     return (
-                      <tr key={i} className="border-b border-[#E2D9C8]">
+                      <tr key={i} className="border-b border-border_ui-warm">
                         <td className="px-[18px] py-[10px] text-navy font-semibold">{org.name}</td>
-                        <td className="px-[18px] py-[10px] text-[#6B7F96] text-right font-semibold">{org.count}</td>
+                        <td className="px-[18px] py-[10px] text-slate_ui text-right font-semibold">{org.count}</td>
                         <td className="px-[18px] py-[10px]">
                           <div className="bg-gray-100 rounded h-2 overflow-hidden">
                             <div className="h-full rounded bg-gold" style={{ width: `${(org.count / maxCount) * 100}%` }} />
@@ -666,23 +666,19 @@ export default function SupportTickets() {
             <h3 className="text-base font-bold text-navy mb-2">
               Send CSAT Survey?
             </h3>
-            <p className="text-[13px] text-[#6B7F96] leading-normal mb-1.5">
+            <p className="text-[13px] text-slate_ui leading-normal mb-1.5">
               Ticket <strong>{csatResolvedTicket.ticket_number}</strong> has been resolved.
             </p>
-            <p className="text-[13px] text-[#6B7F96] leading-normal mb-5">
+            <p className="text-[13px] text-slate_ui leading-normal mb-5">
               Send a satisfaction survey to <strong>{csatResolvedTicket.contact_email}</strong>?
             </p>
             <div className="flex gap-[10px] justify-center">
-              <button onClick={handleSkipCsat}
-                className="px-5 py-2 bg-gray-100 border border-[#E2D9C8] rounded-lg text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
+              <Button variant="secondary" size="sm" onClick={handleSkipCsat}>
                 Skip
-              </button>
-              <button onClick={handleSendCsat} disabled={csatSending}
-                className={`px-5 py-2 border-none rounded-lg text-white text-[13px] font-bold ${
-                  csatSending ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
-                }`}>
+              </Button>
+              <Button variant="gold" size="sm" onClick={handleSendCsat} disabled={csatSending}>
                 {csatSending ? 'Sending...' : 'Send Survey'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -751,9 +747,9 @@ function TicketDrawer({
       {/* Drawer */}
       <div className="fixed top-0 right-0 bottom-0 w-[420px] max-w-[100vw] bg-white z-50 shadow-[-4px_0_24px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-[#E2D9C8] shrink-0">
+        <div className="px-5 py-4 border-b border-border_ui-warm shrink-0">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-xs text-[#6B7F96] font-semibold">
+            <span className="font-mono text-xs text-slate_ui font-semibold">
               {ticket.ticket_number}
             </span>
             <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-xl text-gray-400 leading-none">
@@ -770,7 +766,7 @@ function TicketDrawer({
         </div>
 
         {/* Details */}
-        <div className="px-5 py-[14px] border-b border-[#E2D9C8] shrink-0">
+        <div className="px-5 py-[14px] border-b border-border_ui-warm shrink-0">
           <div className="grid grid-cols-2 gap-[10px] text-xs">
             <div>
               <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">Organization</div>
@@ -779,11 +775,11 @@ function TicketDrawer({
             <div>
               <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">Submitted By</div>
               <div className="text-navy font-medium">{ticket.contact_name || '—'}</div>
-              <div className="text-[#6B7F96] text-[11px]">{ticket.contact_email || ''}</div>
+              <div className="text-slate_ui text-[11px]">{ticket.contact_email || ''}</div>
             </div>
             <div>
               <div className="text-gray-400 text-[10px] font-semibold uppercase mb-0.5">SLA Due</div>
-              <div className={`font-semibold ${isSlaBreached(ticket) ? 'text-[#DC2626]' : 'text-[#059669]'}`}>
+              <div className={`font-semibold ${isSlaBreached(ticket) ? 'text-red-600' : 'text-emerald-600'}`}>
                 {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
                 {isSlaBreached(ticket) && <span className="ml-1 text-[10px]">BREACHED</span>}
               </div>
@@ -824,7 +820,7 @@ function TicketDrawer({
 
           {/* CSAT Status */}
           {(ticket.satisfaction_score || ticket.csat_sent_at) && (
-            <div className="mt-3 px-3 py-[10px] bg-[#F9FAFB] rounded-lg border border-[#E2D9C8]">
+            <div className="mt-3 px-3 py-[10px] bg-gray-50 rounded-lg border border-border_ui-warm">
               <div className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5">
                 Customer Satisfaction
               </div>
@@ -832,7 +828,7 @@ function TicketDrawer({
                 <div className="flex items-center gap-2">
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <span key={s} className={`text-base ${s <= ticket.satisfaction_score! ? 'text-[#F59E0B]' : 'text-[#D1D5DB]'}`}>
+                      <span key={s} className={`text-base ${s <= ticket.satisfaction_score! ? 'text-amber-500' : 'text-gray-300'}`}>
                         &#9733;
                       </span>
                     ))}
@@ -845,7 +841,7 @@ function TicketDrawer({
                   )}
                 </div>
               ) : (
-                <div className="text-xs text-[#6B7F96]">
+                <div className="text-xs text-slate_ui">
                   Survey sent {formatDateTime(ticket.csat_sent_at)} — awaiting response
                 </div>
               )}
@@ -860,7 +856,7 @@ function TicketDrawer({
 
         {/* Description */}
         {ticket.description && (
-          <div className="px-5 py-3 border-b border-[#E2D9C8] shrink-0">
+          <div className="px-5 py-3 border-b border-border_ui-warm shrink-0">
             <div className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5">Description</div>
             <div className="text-[13px] text-navy leading-normal whitespace-pre-wrap">{ticket.description}</div>
           </div>
@@ -936,33 +932,34 @@ function TicketDrawer({
         </div>
 
         {/* Reply form */}
-        <div className="px-5 py-[14px] border-t border-[#E2D9C8] shrink-0 bg-[#FAFAF8]">
+        <div className="px-5 py-[14px] border-t border-border_ui-warm shrink-0 bg-[#FAFAF8]">
           <textarea
             value={replyBody}
             onChange={e => onReplyBodyChange(e.target.value)}
             placeholder={isInternalNote ? 'Write an internal note (not visible to customer)...' : 'Write a reply...'}
             rows={3}
-            className={`${INPUT_CLASS} resize-y mb-2 ${isInternalNote ? '!bg-[#F9FAFB]' : '!bg-white'}`}
+            className={`${INPUT_CLASS} resize-y mb-2 ${isInternalNote ? '!bg-gray-50' : '!bg-white'}`}
           />
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+            <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
               <input type="checkbox" checked={isInternalNote} onChange={e => onInternalNoteChange(e.target.checked)} />
               Internal Note
             </label>
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={onResolveAndClose}
-                className="px-[14px] py-1.5 bg-[#F0FDF4] border border-[#BBF7D0] rounded-md text-[#059669] text-xs font-bold cursor-pointer">
+                className="bg-green-50 border-green-200 text-emerald-600 text-xs font-bold">
                 Resolve & Close
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="gold"
+                size="sm"
                 onClick={onSendReply}
-                disabled={sendingReply || !replyBody.trim()}
-                className={`px-[14px] py-1.5 border-none rounded-md text-white text-xs font-bold ${
-                  sendingReply || !replyBody.trim() ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
-                }`}>
+                disabled={sendingReply || !replyBody.trim()}>
                 {sendingReply ? 'Sending...' : 'Send Reply'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -1013,42 +1010,42 @@ function CreateTicketModal({
         <div className="flex flex-col gap-[14px]">
           {/* Org */}
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Organization</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Organization</label>
             <OrgCombobox orgs={orgs} value={createOrg} onChange={onOrgChange} placeholder="Search organization..." />
           </div>
 
           {/* Name + Email + Phone */}
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Name *</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Contact Name *</label>
             <input value={createName} onChange={e => onNameChange(e.target.value)} className={INPUT_CLASS} placeholder="Contact name" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Email *</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Contact Email *</label>
               <input value={createEmail} onChange={e => onEmailChange(e.target.value)} className={INPUT_CLASS} placeholder="customer@example.com" type="email" />
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Contact Phone</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Contact Phone</label>
               <input value={createPhone} onChange={e => onPhoneChange(e.target.value)} className={INPUT_CLASS} placeholder="(555) 000-0000" type="tel" />
             </div>
           </div>
 
           {/* Subject */}
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Subject *</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Subject *</label>
             <input value={createSubject} onChange={e => onSubjectChange(e.target.value)} className={INPUT_CLASS} placeholder="Ticket subject" />
           </div>
 
           {/* Category + Priority */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Category</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Category</label>
               <select value={createCategory} onChange={e => onCategoryChange(e.target.value)} className={`${INPUT_CLASS} cursor-pointer`}>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-[11px] text-[#6B7F96] block mb-1">Priority</label>
+              <label className="text-[11px] text-slate_ui block mb-1">Priority</label>
               <select value={createPriority} onChange={e => onPriorityChange(e.target.value)} className={`${INPUT_CLASS} cursor-pointer`}>
                 {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
@@ -1057,7 +1054,7 @@ function CreateTicketModal({
 
           {/* Description */}
           <div>
-            <label className="text-[11px] text-[#6B7F96] block mb-1">Description *</label>
+            <label className="text-[11px] text-slate_ui block mb-1">Description *</label>
             <textarea
               value={createDescription}
               onChange={e => onDescriptionChange(e.target.value)}
@@ -1068,24 +1065,22 @@ function CreateTicketModal({
           </div>
 
           {/* SLA note */}
-          <div className="text-[11px] text-gray-400 bg-[#F9FAFB] rounded-md px-3 py-2">
+          <div className="text-[11px] text-gray-400 bg-gray-50 rounded-md px-3 py-2">
             SLA will be set based on priority: Critical = 4h, High = 24h, Normal = 72h, Low = 7 days
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-[10px] mt-1">
-            <button onClick={onClose}
-              className="px-[18px] py-2 bg-gray-100 border border-[#E2D9C8] rounded-md text-[#6B7F96] text-[13px] font-semibold cursor-pointer">
+            <Button variant="secondary" size="sm" onClick={onClose}>
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="gold"
+              size="sm"
               onClick={onSubmit}
-              disabled={creating || !createSubject || !createDescription}
-              className={`px-[18px] py-2 border-none rounded-md text-white text-[13px] font-bold ${
-                creating || !createSubject || !createDescription ? 'bg-gray-200 cursor-default' : 'bg-gold cursor-pointer'
-              }`}>
+              disabled={creating || !createSubject || !createDescription}>
               {creating ? 'Creating...' : 'Create Ticket'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

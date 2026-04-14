@@ -156,7 +156,7 @@ export default function AdminOrgs() {
 
       <div>
         <h1 className="text-[22px] font-extrabold text-navy">Organizations</h1>
-        <p className="text-[13px] text-[#9CA3AF] mt-0.5">
+        <p className="text-[13px] text-gray-400 mt-0.5">
           View and manage organization settings, plans, and preferences
         </p>
       </div>
@@ -172,7 +172,7 @@ export default function AdminOrgs() {
       {/* Search */}
       <div>
         <input
-          className="py-[7px] px-[10px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[280px]"
+          className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-[280px]"
           placeholder="Search by name or industry..."
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -182,13 +182,13 @@ export default function AdminOrgs() {
       {/* Org list */}
       <div className="flex flex-col gap-2">
         {loading ? (
-          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">Loading organizations...</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">Loading organizations...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No organizations match filters</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">No organizations match filters</div>
         ) : filtered.map(org => {
           const isEditing = editingId === org.id;
           return (
-            <div key={org.id} className="bg-white border border-[#E2D9C8] rounded-[10px] py-4 px-5">
+            <div key={org.id} className="bg-white border border-border_ui-warm rounded-[10px] py-4 px-5">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   {/* Name */}
@@ -196,7 +196,7 @@ export default function AdminOrgs() {
                     <input
                       value={editForm.name || ''}
                       onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                      className="py-[7px] px-[10px] text-[15px] font-bold border border-[#E2D9C8] rounded-md outline-none text-navy bg-white mb-2 w-full"
+                      className="py-[7px] px-[10px] text-[15px] font-bold border border-border_ui-warm rounded-md outline-none text-navy bg-white mb-2 w-full"
                     />
                   ) : (
                     <div className="text-[15px] font-bold text-navy mb-1">
@@ -209,20 +209,20 @@ export default function AdminOrgs() {
                     <div className="flex gap-1.5 flex-wrap mb-2">
                       {org.plan && (
                         <span className={`text-[10px] font-bold py-0.5 px-2 rounded-[10px] ${
-                          org.plan === 'enterprise' ? 'bg-[#EFF6FF] text-[#1D4ED8]' :
-                          org.plan === 'founder' ? 'bg-[#FEF3C7] text-[#D97706]' :
-                          'bg-[#F9FAFB] text-[#6B7F96]'
+                          org.plan === 'enterprise' ? 'bg-blue-50 text-blue-700' :
+                          org.plan === 'founder' ? 'bg-amber-100 text-amber-600' :
+                          'bg-gray-50 text-slate_ui'
                         }`}>
                           {PLAN_LABELS[org.plan] || org.plan}
                         </span>
                       )}
                       {org.industry_type && (
-                        <span className="text-[10px] font-semibold py-0.5 px-2 rounded-[10px] bg-[#F9FAFB] text-[#6B7F96] border border-[#E2D9C8]">
+                        <span className="text-[10px] font-semibold py-0.5 px-2 rounded-[10px] bg-gray-50 text-slate_ui border border-border_ui-warm">
                           {org.industry_type.replace(/_/g, ' ')}
                         </span>
                       )}
                       {org.timezone && (
-                        <span className="text-[10px] font-semibold text-[#9CA3AF]">
+                        <span className="text-[10px] font-semibold text-gray-400">
                           {org.timezone.replace('America/', '')}
                         </span>
                       )}
@@ -233,43 +233,43 @@ export default function AdminOrgs() {
                   {isEditing && (
                     <div className="grid grid-cols-3 gap-3 mb-3">
                       <div>
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Industry Type</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Industry Type</label>
                         <select
                           value={editForm.industry_type || ''}
                           onChange={e => setEditForm(prev => ({ ...prev, industry_type: e.target.value }))}
-                          className="py-[7px] px-[10px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                          className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                         >
                           <option value="">Not set</option>
                           {INDUSTRY_OPTIONS.map(i => <option key={i} value={i}>{i.replace(/_/g, ' ')}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Plan Tier</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Plan Tier</label>
                         <select
                           value={editForm.plan || 'founder'}
                           onChange={e => setEditForm(prev => ({ ...prev, plan: e.target.value }))}
-                          className="py-[7px] px-[10px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                          className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                         >
                           {PLAN_OPTIONS.map(p => <option key={p} value={p}>{PLAN_LABELS[p]}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Timezone</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Timezone</label>
                         <select
                           value={editForm.timezone || 'America/Los_Angeles'}
                           onChange={e => setEditForm(prev => ({ ...prev, timezone: e.target.value }))}
-                          className="py-[7px] px-[10px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full"
+                          className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                         >
                           {TIMEZONE_OPTIONS.map(tz => <option key={tz} value={tz}>{tz.replace('America/', '').replace('Pacific/', '')}</option>)}
                         </select>
                       </div>
                       <div className="col-span-full">
-                        <label className="text-[11px] font-semibold text-[#6B7F96] block mb-1">Notes</label>
+                        <label className="text-[11px] font-semibold text-slate_ui block mb-1">Notes</label>
                         <textarea
                           value={editForm.notes || ''}
                           onChange={e => setEditForm(prev => ({ ...prev, notes: e.target.value }))}
                           rows={2}
-                          className="py-[7px] px-[10px] text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-full resize-y"
+                          className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full resize-y"
                           placeholder="Internal notes..."
                         />
                       </div>
@@ -278,7 +278,7 @@ export default function AdminOrgs() {
 
                   {/* Meta */}
                   {!isEditing && (
-                    <div className="text-[11px] text-[#9CA3AF]">
+                    <div className="text-[11px] text-gray-400">
                       Created: {org.created_at ? new Date(org.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                       {org.updated_at && <> · Updated: {new Date(org.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</>}
                       {org.notes && <> · {org.notes}</>}
@@ -294,14 +294,14 @@ export default function AdminOrgs() {
                         onClick={saveEdit}
                         disabled={saving}
                         className={`py-1.5 px-3.5 text-xs font-semibold border-none rounded-md cursor-pointer ${
-                          saving ? 'bg-[#E5E7EB] text-[#9CA3AF]' : 'bg-[#059669] text-white'
+                          saving ? 'bg-gray-200 text-gray-400' : 'bg-emerald-600 text-white'
                         }`}
                       >
                         {saving ? 'Saving...' : 'Save'}
                       </button>
                       <button
                         onClick={cancelEdit}
-                        className="py-1.5 px-3.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]"
+                        className="py-1.5 px-3.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-slate_ui"
                       >
                         Cancel
                       </button>
@@ -309,7 +309,7 @@ export default function AdminOrgs() {
                   ) : (
                     <button
                       onClick={() => startEdit(org)}
-                      className="py-1.5 px-3.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-[#EFF6FF] text-[#2563EB]"
+                      className="py-1.5 px-3.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-blue-50 text-blue-600"
                     >
                       Edit
                     </button>

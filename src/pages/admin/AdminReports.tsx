@@ -12,6 +12,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { KpiTile } from '../../components/admin/KpiTile';
+import Button from '../../components/ui/Button';
 
 type Tab = 'internal' | 'client' | 'partner' | 'investor';
 
@@ -138,7 +139,7 @@ export default function AdminReports() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <Button variant="primary" onClick={() => window.location.reload()} className="mt-4">Retry</Button>
       </div>
     );
   }
@@ -149,7 +150,7 @@ export default function AdminReports() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Reports</h1>
-          <p className="mt-1 text-sm text-[#9CA3AF]">
+          <p className="mt-1 text-sm text-gray-400">
             Generate and share internal, client, partner, and investor reports.
           </p>
         </div>
@@ -168,7 +169,7 @@ export default function AdminReports() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b-2 border-[#E5E0D8]">
+      <div className="flex border-b-2 border-border_ui">
         {([
           { key: 'internal' as Tab, label: 'Internal' },
           { key: 'client' as Tab, label: 'Client Reports' },
@@ -179,7 +180,7 @@ export default function AdminReports() {
             className={`py-2.5 px-5 text-[13px] cursor-pointer bg-transparent border-none border-b-2 -mb-[2px] transition-all duration-150 ${
               activeTab === t.key
                 ? 'text-gold border-gold font-semibold'
-                : 'text-[#9CA3AF] border-transparent font-normal'
+                : 'text-gray-400 border-transparent font-normal'
             }`}>
             {t.label}
           </button>
@@ -189,18 +190,18 @@ export default function AdminReports() {
       {/* Report type cards (generate) */}
       <div className="grid grid-cols-3 gap-3">
         {REPORT_TYPES[activeTab].map(rt => (
-          <div key={rt.key} className="bg-white border border-[#E5E0D8] rounded-[10px] py-4 px-[18px] flex flex-col">
+          <div key={rt.key} className="bg-white border border-border_ui rounded-[10px] py-4 px-[18px] flex flex-col">
             <div className="text-[13px] font-bold text-navy mb-1">{rt.label}</div>
-            <div className="text-[11px] text-[#6B7F96] leading-relaxed flex-1 mb-3">{rt.description}</div>
-            <button
+            <div className="text-[11px] text-slate_ui leading-relaxed flex-1 mb-3">{rt.description}</div>
+            <Button
+              variant="primary"
+              size="sm"
               onClick={() => generateReport(rt.key)}
               disabled={generating === rt.key}
-              className={`py-1.5 px-3.5 border-none rounded-md text-white text-[11px] font-bold ${
-                generating === rt.key ? 'bg-[#E5E7EB] cursor-not-allowed' : 'bg-navy cursor-pointer'
-              }`}
+              className="text-[11px] font-bold"
             >
               {generating === rt.key ? 'Generating...' : 'Generate Report'}
-            </button>
+            </Button>
           </div>
         ))}
       </div>
@@ -209,28 +210,28 @@ export default function AdminReports() {
       <div>
         <div className="text-[13px] font-bold text-navy mb-3">
           Generated Reports
-          <span className="font-normal text-[#9CA3AF] ml-2">({tabReports.length})</span>
+          <span className="font-normal text-gray-400 ml-2">({tabReports.length})</span>
         </div>
 
         {loading ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-10 bg-[#E5E7EB] rounded-md animate-pulse" />
+              <div key={i} className="h-10 bg-gray-200 rounded-md animate-pulse" />
             ))}
           </div>
         ) : tabReports.length === 0 ? (
-          <div className="text-center py-10 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-[#E5E0D8] rounded-[10px]">
+          <div className="text-center py-10 px-5 bg-[#FAFAF8] border-[1.5px] border-dashed border-border_ui rounded-[10px]">
             <div className="text-[32px] mb-2.5">{'📋'}</div>
             <div className="text-[13px] font-semibold text-navy">No reports generated yet</div>
-            <div className="text-xs text-[#6B7F96] mt-1">Use the cards above to generate your first report.</div>
+            <div className="text-xs text-slate_ui mt-1">Use the cards above to generate your first report.</div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden">
+          <div className="bg-white rounded-xl border border-border_ui overflow-hidden">
             <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr className="border-b border-[#E5E0D8]">
+                <tr className="border-b border-border_ui">
                   {['Report', 'Period', 'Generated By', 'Status', 'Shared', 'Actions'].map(h => (
-                    <th key={h} className="text-left py-2.5 px-3.5 text-[#6B7F96] font-semibold text-[11px] uppercase">{h}</th>
+                    <th key={h} className="text-left py-2.5 px-3.5 text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -238,14 +239,14 @@ export default function AdminReports() {
                 {tabReports.map(r => {
                   const sc = STATUS_COLORS[r.status] || STATUS_COLORS.draft;
                   return (
-                    <tr key={r.id} className="border-b border-[#E5E0D8] transition-colors hover:bg-[#F9FAFB]">
+                    <tr key={r.id} className="border-b border-border_ui transition-colors hover:bg-gray-50">
                       <td className="py-2.5 px-3.5 text-xs font-medium text-navy">{r.title}</td>
-                      <td className="py-2.5 px-3.5 text-[11px] font-['DM_Mono',monospace] text-[#6B7F96]">
+                      <td className="py-2.5 px-3.5 text-[11px] font-['DM_Mono',monospace] text-slate_ui">
                         {r.period_start && r.period_end
                           ? `${new Date(r.period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(r.period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
                           : '—'}
                       </td>
-                      <td className="py-2.5 px-3.5 text-[11px] text-[#6B7F96]">{r.generated_by || '—'}</td>
+                      <td className="py-2.5 px-3.5 text-[11px] text-slate_ui">{r.generated_by || '—'}</td>
                       <td className="py-2.5 px-3.5 text-xs">
                         <span className="text-[10px] font-bold py-0.5 px-2 rounded-[10px]" style={{ background: sc.bg, color: sc.text }}>
                           {r.status}
@@ -253,22 +254,22 @@ export default function AdminReports() {
                       </td>
                       <td className="py-2.5 px-3.5 text-[11px]">
                         {r.share_token
-                          ? <span className="text-[#059669]">{'✓'} Shared</span>
-                          : <span className="text-[#9CA3AF]">—</span>}
+                          ? <span className="text-emerald-600">{'✓'} Shared</span>
+                          : <span className="text-gray-400">—</span>}
                       </td>
                       <td className="py-2.5 px-3.5 text-xs">
                         <div className="flex gap-1.5">
                           {!r.share_token && r.status !== 'archived' && (
-                            <button onClick={() => createShareLink(r.id)}
-                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px] bg-transparent border border-gold text-gold cursor-pointer">
+                            <Button variant="outline" size="sm" onClick={() => createShareLink(r.id)}
+                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px]">
                               Share
-                            </button>
+                            </Button>
                           )}
                           {r.status !== 'archived' && (
-                            <button onClick={() => archiveReport(r.id)}
-                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px] bg-transparent border border-[#E5E0D8] text-[#9CA3AF] cursor-pointer">
+                            <Button variant="secondary" size="sm" onClick={() => archiveReport(r.id)}
+                              className="text-[10px] font-semibold py-[3px] px-2 rounded-[5px] text-gray-400">
                               Archive
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </td>

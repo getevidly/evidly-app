@@ -14,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import { gradeColor, formatDollars } from '../../lib/assessmentScoring';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
+import Button from '../../components/ui/Button';
 import {
   Search,
   ChevronDown,
@@ -161,7 +162,7 @@ function AssessmentLeadsPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Leads</h1>
-        <p className="text-[13px] text-[#6B7280] mt-1 mb-0 font-['Inter',sans-serif]">Kitchen Checkup submissions and inbound lead pipeline</p>
+        <p className="text-[13px] text-gray-500 mt-1 mb-0 font-['Inter',sans-serif]">Kitchen Checkup submissions and inbound lead pipeline</p>
       </div>
 
       <div className="mb-6">
@@ -217,10 +218,10 @@ function AssessmentLeadsPage() {
 
           {loadError ? (
             <div className="text-center py-12">
-              <p className="text-[#6B7F96]">Failed to load data.</p>
-              <button onClick={() => { setLoading(true); setLoadError(false); }} className="mt-3 bg-gold text-white border-none rounded-md py-2 px-5 cursor-pointer">
+              <p className="text-slate_ui">Failed to load data.</p>
+              <Button onClick={() => { setLoading(true); setLoadError(false); }} variant="gold" size="sm" className="mt-3">
                 Try again
-              </button>
+              </Button>
             </div>
           ) : loading ? (
             <div className="text-center py-12 text-navy/50">Loading...</div>
@@ -246,7 +247,7 @@ function AssessmentLeadsPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate text-[#0B1628]">{lead.business_name}</p>
+                      <p className="font-semibold text-sm truncate text-navy-deeper">{lead.business_name}</p>
                       <p className="text-xs text-navy/50 truncate">{lead.contact_name} · {lead.email} · {lead.city}</p>
                     </div>
 
@@ -294,7 +295,7 @@ function AssessmentLeadsPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
                           <p className="text-xs text-navy/30 mb-1">Contact Info</p>
-                          <p className="text-sm text-[#0B1628]">{lead.contact_name}</p>
+                          <p className="text-sm text-navy-deeper">{lead.contact_name}</p>
                           <p className="text-xs text-navy/50">{lead.email}</p>
                           {lead.phone && <p className="text-xs text-navy/50">{lead.phone}</p>}
                           <p className="text-xs text-navy/50">{lead.city}, {lead.zip_code}</p>
@@ -320,7 +321,7 @@ function AssessmentLeadsPage() {
                         </div>
                         <div>
                           <p className="text-xs text-navy/30 mb-1">Referral Source</p>
-                          <p className="text-sm capitalize text-[#0B1628]">
+                          <p className="text-sm capitalize text-navy-deeper">
                             {(lead.referral_source || 'Unknown').replace('_', ' ')}
                           </p>
                           <p className="text-xs text-navy/30 mt-2 mb-1">Exposure Range</p>
@@ -339,7 +340,7 @@ function AssessmentLeadsPage() {
                                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{
                                   backgroundColor: f.severity === 'critical' ? '#ef4444' : f.severity === 'high' ? '#f97316' : '#eab308',
                                 }} />
-                                <span className="text-[#3D5068]">{f.title}</span>
+                                <span className="text-navy-mid">{f.title}</span>
                               </div>
                             ))}
                           </div>
@@ -359,14 +360,14 @@ function AssessmentLeadsPage() {
         <div className="space-y-6">
           {/* Grade Distribution */}
           <div className="bg-white rounded-xl border border-navy/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Grade Distribution</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-navy-deeper">Grade Distribution</h3>
             <div className="flex items-end gap-3 h-32">
               {['A', 'B', 'C', 'D', 'F'].map(g => {
                 const count = stats.gradeCount[g] || 0;
                 const pct = stats.total > 0 ? (count / stats.total) * 100 : 0;
                 return (
                   <div key={g} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-xs font-semibold text-[#0B1628]">{count}</span>
+                    <span className="text-xs font-semibold text-navy-deeper">{count}</span>
                     <div className="w-full rounded-t-lg" style={{
                       height: `${Math.max(4, pct)}%`,
                       backgroundColor: gradeColor(g),
@@ -381,7 +382,7 @@ function AssessmentLeadsPage() {
 
           {/* Referral Sources */}
           <div className="bg-white rounded-xl border border-navy/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Referral Sources</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-navy-deeper">Referral Sources</h3>
             <div className="space-y-2">
               {Object.entries(
                 leads.reduce((acc, l) => {
@@ -397,7 +398,7 @@ function AssessmentLeadsPage() {
                       width: `${(count / stats.total) * 100}%`,
                     }} />
                   </div>
-                  <span className="text-sm font-medium w-6 text-right text-[#0B1628]">{count}</span>
+                  <span className="text-sm font-medium w-6 text-right text-navy-deeper">{count}</span>
                 </div>
               ))}
             </div>
@@ -405,7 +406,7 @@ function AssessmentLeadsPage() {
 
           {/* Top Risk Findings */}
           <div className="bg-white rounded-xl border border-navy/10 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#0B1628]">Most Common Findings</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-navy-deeper">Most Common Findings</h3>
             <div className="space-y-2">
               {Object.entries(
                 leads.flatMap(l => (l.findings_json as any[] || []).filter((f: any) => !f.isPositive).map((f: any) => f.title))
@@ -413,7 +414,7 @@ function AssessmentLeadsPage() {
               ).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([title, count]) => (
                 <div key={title} className="flex items-center gap-3">
                   <span className="text-xs text-navy/70 flex-1 truncate">{title}</span>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-navy/5 text-[#0B1628]">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-navy/5 text-navy-deeper">
                     {count}
                   </span>
                 </div>

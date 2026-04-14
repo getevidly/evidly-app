@@ -288,7 +288,7 @@ export function DemoGenerator() {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
         <div className="bg-white rounded-xl border border-navy/10 p-8 text-center">
-          <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#dcfce7]">
+          <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-green-100">
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-xl font-bold mb-2 text-navy">

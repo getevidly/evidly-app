@@ -13,6 +13,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 
 const CA_COUNTIES = [
   'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa',
@@ -201,7 +202,7 @@ export default function DemoLauncher() {
         <div className="space-y-3">
 
           {/* Flow 1: Jurisdiction Reveal */}
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-gray-200">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#EEF4F8]">
               <Globe size={18} className="text-navy" />
             </div>
@@ -222,9 +223,9 @@ export default function DemoLauncher() {
           </div>
 
           {/* Flow 2: Live Notification */}
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#FEF2F2]">
-              <Bell size={18} className="text-[#DC2626]" />
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-gray-200">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-red-50">
+              <Bell size={18} className="text-red-600" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-navy">
@@ -238,13 +239,13 @@ export default function DemoLauncher() {
               <button
                 onClick={fireDemoSignal}
                 disabled={firingSignal}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 disabled:opacity-50 bg-[#DC2626] text-white border-none ${firingSignal ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 disabled:opacity-50 bg-red-600 text-white border-none ${firingSignal ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <Zap size={12} /> {firingSignal ? 'Firing...' : 'Fire Signal'}
               </button>
               <Link
                 to="/insights/intelligence"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-gray-200"
               >
                 View Feed
               </Link>
@@ -252,9 +253,9 @@ export default function DemoLauncher() {
           </div>
 
           {/* Flow 3: Compliance Record */}
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-[#E5E7EB]">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#F0FDF4]">
-              <FileText size={18} className="text-[#166534]" />
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#F8F9FB] border border-gray-200">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-green-50">
+              <FileText size={18} className="text-green-800" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-navy">
@@ -267,7 +268,7 @@ export default function DemoLauncher() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/documents"
-                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-navy/5 text-navy border border-gray-200"
               >
                 Documents
               </Link>
@@ -292,7 +293,7 @@ export default function DemoLauncher() {
             <Link
               key={l.path}
               to={l.path}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-navy/5 text-navy border border-[#E5E7EB]"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-navy/5 text-navy border border-gray-200"
             >
               {l.label}
             </Link>
@@ -309,12 +310,9 @@ export default function DemoLauncher() {
           <p className="text-sm text-green-600 mb-4">
             Personalized demo for {form.prospectName} at {form.company} is now open.
           </p>
-          <button
-            onClick={resetForm}
-            className="px-4 py-2.5 bg-navy text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
-          >
+          <Button onClick={resetForm} variant="primary">
             Launch Another
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="bg-white border border-navy/10 rounded-xl p-6 space-y-5">
@@ -404,7 +402,7 @@ export default function DemoLauncher() {
             onClick={handleLaunch}
             disabled={!form.prospectName || !form.company || loading}
             className="w-full py-3 bg-navy text-white rounded-lg font-medium text-sm
-                       disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#162340]"
+                       disabled:opacity-50 disabled:cursor-not-allowed hover:bg-navy-hover"
           >
             {loading ? 'Launching...' : 'Launch Personalized Demo'}
           </button>
@@ -416,7 +414,7 @@ export default function DemoLauncher() {
         <h2 className="text-sm font-semibold text-navy/80 mb-3">Recent Demo Sessions</h2>
         {loadError ? (
           <div className="text-center p-12">
-            <p className="text-[#6B7F96]">Failed to load data.</p>
+            <p className="text-slate_ui">Failed to load data.</p>
             <button onClick={loadSessions} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer">
               Try again
             </button>

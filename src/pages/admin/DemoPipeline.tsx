@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, CheckCircle2, Clock, Eye, MapPin, Phone, Mail, Plus, Sparkles, RefreshCw, Trash2, ArrowRight, XCircle, Building2, Users, AlertTriangle } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
+import Button from '../../components/ui/Button';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
@@ -150,57 +151,47 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       <div className="flex flex-wrap gap-2 pt-2 border-t border-navy/5">
         {session.status === 'scheduled' && (
           <>
-            <button onClick={() => onAction('generate', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1 bg-navy">
+            <Button onClick={() => onAction('generate', session)} variant="primary" size="sm">
               <Sparkles className="w-3 h-3" /> Generate Demo
-            </button>
-            <button onClick={() => onAction('reschedule', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('reschedule', session)} variant="secondary" size="sm">
               <RefreshCw className="w-3 h-3" /> Reschedule
-            </button>
-            <button onClick={() => onAction('cancel', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-red-600 border border-red-200 hover:bg-red-50 flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('cancel', session)} variant="destructive" size="sm" className="bg-transparent text-red-600 border border-red-200 hover:bg-red-50">
               <XCircle className="w-3 h-3" /> Cancel
-            </button>
+            </Button>
           </>
         )}
         {(session.status === 'ready' || session.status === 'active') && (
           <>
-            <button onClick={() => onAction('convert', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1 bg-emerald-500">
+            <Button onClick={() => onAction('convert', session)} variant="primary" size="sm" className="bg-emerald-500 hover:bg-emerald-600">
               <CheckCircle2 className="w-3 h-3" /> Convert to Live
-            </button>
-            <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('extend', session)} variant="secondary" size="sm">
               <Clock className="w-3 h-3" /> Extend 7 Days
-            </button>
-            <button onClick={() => onAction('preview', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('preview', session)} variant="secondary" size="sm">
               <Eye className="w-3 h-3" /> View Demo
-            </button>
+            </Button>
           </>
         )}
         {session.status === 'expired' && (
           <>
-            <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/70 border border-navy/15 hover:bg-cream flex items-center gap-1">
+            <Button onClick={() => onAction('extend', session)} variant="secondary" size="sm">
               <RefreshCw className="w-3 h-3" /> Re-activate
-            </button>
-            <button onClick={() => onAction('reengage', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-blue-600 border border-blue-200 hover:bg-blue-50 flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('reengage', session)} variant="secondary" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50">
               <Mail className="w-3 h-3" /> Re-engage Email
-            </button>
-            <button onClick={() => onAction('delete', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/50 border border-navy/10 hover:bg-cream flex items-center gap-1">
+            </Button>
+            <Button onClick={() => onAction('delete', session)} variant="ghost" size="sm" className="text-navy/50 border border-navy/10 hover:bg-cream">
               <Trash2 className="w-3 h-3" /> Archive
-            </button>
+            </Button>
           </>
         )}
         {session.status === 'converted' && (
-          <button onClick={() => onAction('delete', session)}
-            className="px-3 py-1.5 rounded-md text-xs font-medium text-navy/50 border border-navy/10 hover:bg-cream flex items-center gap-1">
+          <Button onClick={() => onAction('delete', session)} variant="ghost" size="sm" className="text-navy/50 border border-navy/10 hover:bg-cream">
             <Trash2 className="w-3 h-3" /> Archive
-          </button>
+          </Button>
         )}
       </div>
     </div>
@@ -372,12 +363,13 @@ export function DemoPipeline() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => navigate('/admin/demo-launcher')}
-            className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-1.5 bg-navy"
+            variant="primary"
+            size="sm"
           >
             <Plus className="w-4 h-4" /> Generate New Demo
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -395,15 +387,17 @@ export function DemoPipeline() {
       {/* Tab selector */}
       <div className="flex items-center gap-1 mb-4 border-b border-navy/10">
         {TABS.map(tab => (
-          <button
+          <Button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
+            variant="ghost"
+            size="sm"
+            className={`rounded-none border-b-2 ${
               activeTab === tab.key ? 'border-navy text-navy' : 'border-transparent text-navy/50 hover:text-navy/80'
             }`}
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -13,6 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRfpIntelligence, type RfpTab, type RfpViewMode } from '../../hooks/useRfpIntelligence';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import type {
   RfpListingWithDetails,
   RfpSource,
@@ -161,17 +162,17 @@ function FilterBar({ filters, setFilters, resetFilters }: {
   }
 
   return (
-    <div className="rounded-xl border border-[#D1D9E6] bg-white">
+    <div className="rounded-xl border border-border_ui-cool bg-white">
       {/* Search + toggle row */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7F96]" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate_ui" />
           <input
             type="text"
             placeholder="Search RFPs by title, entity, keywords…"
             value={filters.search}
             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-[#D1D9E6] text-[#0B1628] bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-border_ui-cool text-navy-deeper bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2"
           />
         </div>
         <button
@@ -179,7 +180,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-colors ${
             hasActiveFilters
               ? 'border-gold text-gold bg-gold/[0.06]'
-              : 'border-[#D1D9E6] text-[#3D5068] bg-transparent'
+              : 'border-border_ui-cool text-navy-mid bg-transparent'
           }`}
         >
           <Filter size={14} />
@@ -194,7 +195,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="text-xs px-2 py-1 rounded text-[#6B7F96] hover:bg-navy/5 transition-colors"
+            className="text-xs px-2 py-1 rounded text-slate_ui hover:bg-navy/5 transition-colors"
           >
             Clear all
           </button>
@@ -203,7 +204,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
       {/* Expanded filters */}
       {expanded && (
-        <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 border-t border-[#D1D9E6] pt-3">
+        <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 border-t border-border_ui-cool pt-3">
           {/* Relevance Tier */}
           <FilterGroup label="Relevance">
             {(['high', 'medium', 'low'] as RfpRelevanceTier[]).map(tier => (
@@ -255,9 +256,9 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* State */}
           <div className="col-span-2 md:col-span-1">
-            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">State</label>
+            <label className="text-xs font-medium mb-1 block text-slate_ui">State</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-xl border border-border_ui-cool text-navy-deeper focus:outline-none"
               value={filters.state[0] ?? ''}
               onChange={e => setFilters(f => ({ ...f, state: e.target.value ? [e.target.value] : [] }))}
             >
@@ -282,9 +283,9 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* NAICS Code */}
           <div>
-            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">NAICS Code</label>
+            <label className="text-xs font-medium mb-1 block text-slate_ui">NAICS Code</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-xl border border-border_ui-cool text-navy-deeper focus:outline-none"
               value={filters.naics_code}
               onChange={e => setFilters(f => ({ ...f, naics_code: e.target.value }))}
             >
@@ -297,17 +298,17 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 
           {/* Date Range */}
           <div>
-            <label className="text-xs font-medium mb-1 block text-[#6B7F96]">Due Date Range</label>
+            <label className="text-xs font-medium mb-1 block text-slate_ui">Due Date Range</label>
             <div className="flex gap-2">
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-border_ui-cool text-navy-deeper focus:outline-none"
                 value={filters.date_from ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_from: e.target.value || null }))}
               />
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-[#D1D9E6] text-[#0B1628] focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-xl border border-border_ui-cool text-navy-deeper focus:outline-none"
                 value={filters.date_to ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_to: e.target.value || null }))}
               />
@@ -322,7 +323,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-xs font-medium mb-1 block text-[#6B7F96]">{label}</label>
+      <label className="text-xs font-medium mb-1 block text-slate_ui">{label}</label>
       <div className="flex flex-wrap gap-1">{children}</div>
     </div>
   );
@@ -340,7 +341,7 @@ function FilterChip({ label, active, onClick, dotColor }: {
       className={`px-2 py-1 text-xs rounded-full border transition-all ${
         active
           ? 'border-navy bg-navy/[0.07] text-navy'
-          : 'border-[#D1D9E6] bg-transparent text-[#3D5068]'
+          : 'border-border_ui-cool bg-transparent text-navy-mid'
       }`}
     >
       {dotColor && (
@@ -373,7 +374,7 @@ function RfpCard({ item, onSelect, onAction }: {
   return (
     <div
       className={`rounded-xl border p-4 transition-shadow hover:shadow-md cursor-pointer bg-white ${
-        isVeteran ? 'border-gold' : 'border-[#D1D9E6]'
+        isVeteran ? 'border-gold' : 'border-border_ui-cool'
       }`}
       onClick={onSelect}
     >
@@ -391,10 +392,10 @@ function RfpCard({ item, onSelect, onAction }: {
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold leading-tight mb-1 text-[#0B1628]">
+          <h3 className="text-sm font-semibold leading-tight mb-1 text-navy-deeper">
             {item.title}
           </h3>
-          <div className="flex items-center gap-2 flex-wrap text-xs text-[#3D5068]">
+          <div className="flex items-center gap-2 flex-wrap text-xs text-navy-mid">
             <span>{item.issuing_entity}</span>
             <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-navy/[0.07] text-navy">
               {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
@@ -425,7 +426,7 @@ function RfpCard({ item, onSelect, onAction }: {
       )}
 
       {/* Meta row: set-aside, due date, value */}
-      <div className="flex items-center gap-3 flex-wrap text-xs mb-2 text-[#3D5068]">
+      <div className="flex items-center gap-3 flex-wrap text-xs mb-2 text-navy-mid">
         {setAside && (
           <span
             className={`flex items-center gap-1 px-2 py-0.5 rounded-full font-medium ${
@@ -437,7 +438,7 @@ function RfpCard({ item, onSelect, onAction }: {
         )}
         {days !== null && (
           <span
-            className={`flex items-center gap-1 ${isUrgent ? 'text-[#dc2626]' : 'text-[#3D5068]'}`}
+            className={`flex items-center gap-1 ${isUrgent ? 'text-red-600' : 'text-navy-mid'}`}
           >
             <Calendar size={12} />
             {days < 0 ? 'Expired' : days === 0 ? 'Due today' : `${days}d left`}
@@ -473,7 +474,7 @@ function RfpCard({ item, onSelect, onAction }: {
       {/* AI Reasoning (truncated) */}
       {cls?.ai_reasoning && (
         <div className="mb-3">
-          <p className="text-xs leading-relaxed text-[#6B7F96]">
+          <p className="text-xs leading-relaxed text-slate_ui">
             {reasoningExpanded ? cls.ai_reasoning : truncate(cls.ai_reasoning, 160)}
           </p>
           {cls.ai_reasoning.length > 160 && (
@@ -488,7 +489,7 @@ function RfpCard({ item, onSelect, onAction }: {
       )}
 
       {/* Action buttons */}
-      <div className="flex items-center gap-2 border-t border-[#D1D9E6] pt-3">
+      <div className="flex items-center gap-2 border-t border-border_ui-cool pt-3">
         <button
           onClick={e => { e.stopPropagation(); onAction('pursuing'); }}
           className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors bg-navy hover:bg-navy-light"
@@ -497,13 +498,13 @@ function RfpCard({ item, onSelect, onAction }: {
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('watching'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-[#D1D9E6] text-[#3D5068] transition-colors hover:bg-cream"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-border_ui-cool text-navy-mid transition-colors hover:bg-cream"
         >
           <Eye size={12} /> Watch
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('declined'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-[#D1D9E6] text-[#6B7F96] transition-colors hover:bg-cream"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-border_ui-cool text-slate_ui transition-colors hover:bg-cream"
         >
           <XCircle size={12} /> Skip
         </button>
@@ -531,19 +532,19 @@ function RfpTableView({ items, onSelect, onAction }: {
   onAction: (rfpId: string, action: RfpActionType) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#D1D9E6]">
+    <div className="overflow-x-auto rounded-xl border border-border_ui-cool">
       <table className="w-full text-sm bg-white">
         <thead>
           <tr className="bg-[#F4F6FA]">
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Score</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Title</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Entity</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">State</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Modules</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Due</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Value</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Set-Aside</th>
-            <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Actions</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Score</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Title</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Entity</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">State</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Modules</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Due</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Value</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Set-Aside</th>
+            <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -557,7 +558,7 @@ function RfpTableView({ items, onSelect, onAction }: {
             return (
               <tr
                 key={item.id}
-                className="border-t border-[#D1D9E6] cursor-pointer hover:bg-cream transition-colors"
+                className="border-t border-border_ui-cool cursor-pointer hover:bg-cream transition-colors"
                 onClick={() => onSelect(item.id)}
               >
                 <td className="px-4 py-3">
@@ -571,15 +572,15 @@ function RfpTableView({ items, onSelect, onAction }: {
                   )}
                 </td>
                 <td className="px-4 py-3 max-w-[240px]">
-                  <span className="font-medium block truncate text-[#0B1628]">{item.title}</span>
+                  <span className="font-medium block truncate text-navy-deeper">{item.title}</span>
                 </td>
-                <td className="px-4 py-3 text-xs text-[#3D5068]">
+                <td className="px-4 py-3 text-xs text-navy-mid">
                   <span className="block truncate max-w-[140px]">{item.issuing_entity}</span>
                   <span className="inline-block px-1.5 py-0.5 rounded text-xs mt-0.5 bg-navy/[0.07] text-navy">
                     {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs text-[#3D5068]">
+                <td className="px-4 py-3 text-xs text-navy-mid">
                   {item.state ? (US_STATES[item.state] ?? item.state) : '—'}
                 </td>
                 <td className="px-4 py-3">
@@ -590,42 +591,42 @@ function RfpTableView({ items, onSelect, onAction }: {
                       </span>
                     ))}
                     {(cls?.matched_modules?.length ?? 0) > 3 && (
-                      <span className="text-xs text-[#6B7F96]">+{cls!.matched_modules.length - 3}</span>
+                      <span className="text-xs text-slate_ui">+{cls!.matched_modules.length - 3}</span>
                     )}
                   </div>
                 </td>
-                <td className={`px-4 py-3 text-xs whitespace-nowrap ${isUrgent ? 'text-[#dc2626]' : 'text-[#3D5068]'}`}>
+                <td className={`px-4 py-3 text-xs whitespace-nowrap ${isUrgent ? 'text-red-600' : 'text-navy-mid'}`}>
                   {days != null ? (days < 0 ? 'Expired' : `${days}d`) : '—'}
                 </td>
-                <td className="px-4 py-3 text-xs text-[#3D5068]">
+                <td className="px-4 py-3 text-xs text-navy-mid">
                   {formatCurrency(item.estimated_value)}
                 </td>
                 <td className="px-4 py-3 text-xs">
                   {setAside ? (
                     <span>{setAside.icon} {setAside.label}</span>
                   ) : (
-                    <span className="text-[#6B7F96]">—</span>
+                    <span className="text-slate_ui">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                     <button
                       onClick={() => onAction(item.id, 'pursuing')}
-                      className="p-1.5 rounded hover:bg-green-50 text-[#16a34a]"
+                      className="p-1.5 rounded hover:bg-green-50 text-green-600"
                       title="Pursue"
                     >
                       <CheckCircle2 size={14} />
                     </button>
                     <button
                       onClick={() => onAction(item.id, 'watching')}
-                      className="p-1.5 rounded hover:bg-blue-50 text-[#2563eb]"
+                      className="p-1.5 rounded hover:bg-blue-50 text-blue-600"
                       title="Watch"
                     >
                       <Eye size={14} />
                     </button>
                     <button
                       onClick={() => onAction(item.id, 'declined')}
-                      className="p-1.5 rounded hover:bg-red-50 text-[#dc2626]"
+                      className="p-1.5 rounded hover:bg-red-50 text-red-600"
                       title="Skip"
                     >
                       <XCircle size={14} />
@@ -637,7 +638,7 @@ function RfpTableView({ items, onSelect, onAction }: {
           })}
           {items.length === 0 && (
             <tr>
-              <td colSpan={9} className="px-4 py-12 text-center text-sm text-[#6B7F96]">
+              <td colSpan={9} className="px-4 py-12 text-center text-sm text-slate_ui">
                 No RFPs match your filters
               </td>
             </tr>
@@ -668,9 +669,9 @@ function DetailPanel({ item, onClose, onAction }: {
       <div className="flex-1 bg-black/30" onClick={onClose} />
 
       {/* Panel */}
-      <div className="w-full max-w-lg h-full overflow-y-auto shadow-xl border-l border-[#D1D9E6] bg-white">
+      <div className="w-full max-w-lg h-full overflow-y-auto shadow-xl border-l border-border_ui-cool bg-white">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-navy bg-[#0B1628]">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-navy bg-navy-deeper">
           <h2 className="text-sm font-semibold text-white truncate pr-4">{item.title}</h2>
           <button onClick={onClose} className="text-white/70 hover:text-white" aria-label="Close">
             <X size={18} />
@@ -686,8 +687,8 @@ function DetailPanel({ item, onClose, onAction }: {
                 <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
               </div>
               <div>
-                <div className="text-sm font-medium text-[#0B1628]">{item.issuing_entity}</div>
-                <div className="text-xs flex items-center gap-2 text-[#3D5068]">
+                <div className="text-sm font-medium text-navy-deeper">{item.issuing_entity}</div>
+                <div className="text-xs flex items-center gap-2 text-navy-mid">
                   <span className="px-1.5 py-0.5 rounded bg-navy/[0.07] text-navy">
                     {ENTITY_LABELS[item.entity_type]}
                   </span>
@@ -698,29 +699,29 @@ function DetailPanel({ item, onClose, onAction }: {
           )}
 
           {/* Meta */}
-          <div className="grid grid-cols-2 gap-3 text-xs text-[#3D5068]">
+          <div className="grid grid-cols-2 gap-3 text-xs text-navy-mid">
             <div>
-              <span className="block font-medium text-[#6B7F96]">Posted</span>
+              <span className="block font-medium text-slate_ui">Posted</span>
               {formatDate(item.posted_date)}
             </div>
             <div>
-              <span className="block font-medium text-[#6B7F96]">Due Date</span>
-              <span className={days !== null && days <= 7 && days >= 0 ? 'text-[#dc2626]' : 'text-[#3D5068]'}>
+              <span className="block font-medium text-slate_ui">Due Date</span>
+              <span className={days !== null && days <= 7 && days >= 0 ? 'text-red-600' : 'text-navy-mid'}>
                 {formatDate(item.due_date)}
                 {days !== null && ` (${days < 0 ? 'expired' : `${days}d`})`}
               </span>
             </div>
             <div>
-              <span className="block font-medium text-[#6B7F96]">Estimated Value</span>
+              <span className="block font-medium text-slate_ui">Estimated Value</span>
               {formatCurrency(item.estimated_value)}
             </div>
             <div>
-              <span className="block font-medium text-[#6B7F96]">NAICS Code</span>
+              <span className="block font-medium text-slate_ui">NAICS Code</span>
               {item.naics_code ? `${item.naics_code} — ${EVIDLY_NAICS_CODES[item.naics_code] ?? ''}` : '—'}
             </div>
             {setAside && (
               <div className="col-span-2">
-                <span className="block font-medium text-[#6B7F96]">Set-Aside</span>
+                <span className="block font-medium text-slate_ui">Set-Aside</span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full mt-0.5 bg-gold/[0.09] text-gold">
                   {setAside.icon} {setAside.label}
                 </span>
@@ -731,15 +732,15 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Description */}
           {item.description && (
             <div>
-              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Description</h4>
-              <p className="text-xs leading-relaxed text-[#3D5068]">{item.description}</p>
+              <h4 className="text-xs font-semibold mb-1 text-navy-deeper">Description</h4>
+              <p className="text-xs leading-relaxed text-navy-mid">{item.description}</p>
             </div>
           )}
 
           {/* Modules */}
           {cls && cls.matched_modules.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Matched EvidLY Modules</h4>
+              <h4 className="text-xs font-semibold mb-1 text-navy-deeper">Matched EvidLY Modules</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_modules.map(mod => (
                   <span key={mod} className="px-2 py-1 rounded-full text-xs bg-gold/[0.09] text-gold">
@@ -753,10 +754,10 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Keywords */}
           {cls && cls.matched_keywords.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Matched Keywords</h4>
+              <h4 className="text-xs font-semibold mb-1 text-navy-deeper">Matched Keywords</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_keywords.map(kw => (
-                  <span key={kw} className="px-2 py-0.5 rounded text-xs border border-[#D1D9E6] text-[#3D5068]">
+                  <span key={kw} className="px-2 py-0.5 rounded text-xs border border-border_ui-cool text-navy-mid">
                     {kw}
                   </span>
                 ))}
@@ -767,8 +768,8 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* AI Reasoning */}
           {cls?.ai_reasoning && (
             <div>
-              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">AI Analysis</h4>
-              <p className="text-xs leading-relaxed p-3 rounded-lg bg-[#F4F6FA] text-[#3D5068]">
+              <h4 className="text-xs font-semibold mb-1 text-navy-deeper">AI Analysis</h4>
+              <p className="text-xs leading-relaxed p-3 rounded-lg bg-[#F4F6FA] text-navy-mid">
                 {cls.ai_reasoning}
               </p>
             </div>
@@ -777,23 +778,23 @@ function DetailPanel({ item, onClose, onAction }: {
           {/* Competition Notes */}
           {cls?.competition_notes && (
             <div>
-              <h4 className="text-xs font-semibold mb-1 text-[#0B1628]">Competitive Landscape</h4>
-              <p className="text-xs leading-relaxed text-[#3D5068]">{cls.competition_notes}</p>
+              <h4 className="text-xs font-semibold mb-1 text-navy-deeper">Competitive Landscape</h4>
+              <p className="text-xs leading-relaxed text-navy-mid">{cls.competition_notes}</p>
             </div>
           )}
 
           {/* Action History */}
           {item.actions.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold mb-2 text-[#0B1628]">Action History</h4>
+              <h4 className="text-xs font-semibold mb-2 text-navy-deeper">Action History</h4>
               <div className="space-y-2">
                 {item.actions.map(act => (
                   <div key={act.id} className="flex items-start gap-2 text-xs">
                     <span className="w-2 h-2 mt-1 rounded-full flex-shrink-0 bg-navy" />
                     <div>
-                      <span className="font-medium capitalize text-[#0B1628]">{act.action}</span>
-                      {act.notes && <span className="text-[#3D5068]"> — {act.notes}</span>}
-                      <span className="block text-xs text-[#6B7F96]">
+                      <span className="font-medium capitalize text-navy-deeper">{act.action}</span>
+                      {act.notes && <span className="text-navy-mid"> — {act.notes}</span>}
+                      <span className="block text-xs text-slate_ui">
                         {formatDateShort(act.created_at)} by {act.created_by ?? 'admin'}
                       </span>
                     </div>
@@ -804,9 +805,9 @@ function DetailPanel({ item, onClose, onAction }: {
           )}
 
           {/* Notes + Actions */}
-          <div className="border-t border-[#D1D9E6] pt-4">
+          <div className="border-t border-border_ui-cool pt-4">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-[#6B7F96]">Notes</label>
+              <label className="text-xs font-medium text-slate_ui">Notes</label>
               <AIAssistButton
                 fieldLabel="Notes"
                 context={{ rfpTitle: item.title }}
@@ -818,7 +819,7 @@ function DetailPanel({ item, onClose, onAction }: {
               value={notes}
               onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Add notes about this RFP…"
-              className="w-full text-sm p-3 rounded-xl border border-[#D1D9E6] text-[#0B1628] mb-1 resize-none"
+              className="w-full text-sm p-3 rounded-xl border border-border_ui-cool text-navy-deeper mb-1 resize-none"
               rows={3}
             />
             {aiFields.has('notes') && <AIGeneratedIndicator />}
@@ -831,25 +832,25 @@ function DetailPanel({ item, onClose, onAction }: {
               </button>
               <button
                 onClick={() => { onAction('watching', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#D1D9E6] text-[#3D5068]"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border_ui-cool text-navy-mid"
               >
                 <Eye size={14} /> Watch
               </button>
               <button
                 onClick={() => { onAction('won', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#bbf7d0] text-[#16a34a] bg-[#f0fdf4]"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-green-200 text-green-600 bg-green-50"
               >
                 <Trophy size={14} /> Won
               </button>
               <button
                 onClick={() => { onAction('lost', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#fecaca] text-[#dc2626] bg-[#fef2f2]"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-red-200 text-red-600 bg-red-50"
               >
                 <XCircle size={14} /> Lost
               </button>
               <button
                 onClick={() => { onAction('declined', notes); setNotes(''); }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[#D1D9E6] text-[#6B7F96]"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border_ui-cool text-slate_ui"
               >
                 Skip
               </button>
@@ -927,8 +928,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Relevance Distribution */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
-        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">Relevance Distribution</h3>
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-navy-deeper">Relevance Distribution</h3>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>
             <Pie data={tierData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
@@ -942,8 +943,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* By State */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
-        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by State (Top 10)</h3>
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-navy-deeper">RFPs by State (Top 10)</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={stateData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
@@ -956,8 +957,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* By Entity Type */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
-        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by Entity Type</h3>
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-navy-deeper">RFPs by Entity Type</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={entityData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
@@ -970,8 +971,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* By Module */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
-        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">RFPs by EvidLY Module</h3>
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-navy-deeper">RFPs by EvidLY Module</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={moduleData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
@@ -984,8 +985,8 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
       </div>
 
       {/* Keywords cloud */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 lg:col-span-2 bg-white">
-        <h3 className="text-sm font-semibold mb-3 text-[#0B1628]">Trending Keywords</h3>
+      <div className="rounded-xl border border-border_ui-cool p-4 lg:col-span-2 bg-white">
+        <h3 className="text-sm font-semibold mb-3 text-navy-deeper">Trending Keywords</h3>
         <KeywordCloud listings={listings} />
       </div>
     </div>
@@ -1018,16 +1019,16 @@ function KeywordCloud({ listings }: { listings: RfpListingWithDetails[] }) {
         return (
           <span
             key={word}
-            className="px-2 py-1 rounded-full border border-[#D1D9E6] text-[#3D5068]"
+            className="px-2 py-1 rounded-full border border-border_ui-cool text-navy-mid"
             style={{ fontSize: `${size}px`, opacity }}
           >
             {word}
-            <span className="ml-1 text-xs text-[#6B7F96]">{count}</span>
+            <span className="ml-1 text-xs text-slate_ui">{count}</span>
           </span>
         );
       })}
       {keywords.length === 0 && (
-        <span className="text-sm text-[#6B7F96]">No keyword data available</span>
+        <span className="text-sm text-slate_ui">No keyword data available</span>
       )}
     </div>
   );
@@ -1056,31 +1057,31 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
   return (
     <div className="space-y-3">
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7F96]" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate_ui" />
         <input
           type="text"
           placeholder="Search sources…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-[#D1D9E6] text-[#0B1628] bg-white focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-border_ui-cool text-navy-deeper bg-white focus:outline-none"
         />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[#D1D9E6]">
+      <div className="overflow-x-auto rounded-xl border border-border_ui-cool">
         <table className="w-full text-sm bg-white">
           <thead>
             <tr className="bg-[#F4F6FA]">
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Status</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Source</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Type</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Coverage</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Frequency</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#6B7F96]">Last Crawled</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Status</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Source</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Type</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Coverage</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Frequency</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-slate_ui">Last Crawled</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(src => (
-              <tr key={src.id} className="border-t border-[#D1D9E6]">
+              <tr key={src.id} className="border-t border-border_ui-cool">
                 <td className="px-4 py-3">
                   <span className="flex items-center gap-1.5 text-xs">
                     <span className="w-2 h-2 rounded-full" style={{ background: statusDot(src.status) }} />
@@ -1088,24 +1089,24 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="font-medium block text-[#0B1628]">{src.name}</span>
+                  <span className="font-medium block text-navy-deeper">{src.name}</span>
                   <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline text-navy">
                     {src.url}
                   </a>
                 </td>
-                <td className="px-4 py-3 text-xs capitalize text-[#3D5068]">{src.source_type}</td>
-                <td className="px-4 py-3 text-xs text-[#3D5068]">
+                <td className="px-4 py-3 text-xs capitalize text-navy-mid">{src.source_type}</td>
+                <td className="px-4 py-3 text-xs text-navy-mid">
                   {src.coverage === 'national' ? 'National' : (src.states_covered ?? []).join(', ')}
                 </td>
-                <td className="px-4 py-3 text-xs capitalize text-[#3D5068]">{src.crawl_frequency}</td>
-                <td className="px-4 py-3 text-xs text-[#6B7F96]">
+                <td className="px-4 py-3 text-xs capitalize text-navy-mid">{src.crawl_frequency}</td>
+                <td className="px-4 py-3 text-xs text-slate_ui">
                   {src.last_crawled_at ? formatDateShort(src.last_crawled_at) : 'Never'}
                 </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-[#6B7F96]">
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate_ui">
                   No sources match your search
                 </td>
               </tr>
@@ -1114,7 +1115,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
         </table>
       </div>
 
-      <div className="text-xs text-right text-[#6B7F96]">
+      <div className="text-xs text-right text-slate_ui">
         {sources.filter(s => s.status === 'active').length} active / {sources.length} total sources
       </div>
     </div>
@@ -1136,10 +1137,10 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
       ]} />
 
       {/* Budget bar */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-[#0B1628]">Monthly Budget ($100.00)</h3>
-          <span className="text-xs text-[#6B7F96]">{budgetPct.toFixed(1)}% used</span>
+          <h3 className="text-sm font-semibold text-navy-deeper">Monthly Budget ($100.00)</h3>
+          <span className="text-xs text-slate_ui">{budgetPct.toFixed(1)}% used</span>
         </div>
         <div className="w-full h-3 rounded-full overflow-hidden bg-[#F4F6FA]">
           <div
@@ -1150,16 +1151,16 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
             }}
           />
         </div>
-        <p className="text-xs mt-2 text-[#6B7F96]">
+        <p className="text-xs mt-2 text-slate_ui">
           Classification pauses automatically when the monthly budget is reached.
           Cost is estimated at Sonnet pricing (~$3/$15 per MTok input/output).
         </p>
       </div>
 
       {/* Cost breakdown */}
-      <div className="rounded-xl border border-[#D1D9E6] p-4 bg-white">
-        <h3 className="text-sm font-semibold mb-2 text-[#0B1628]">Cost Management</h3>
-        <ul className="space-y-2 text-xs text-[#3D5068]">
+      <div className="rounded-xl border border-border_ui-cool p-4 bg-white">
+        <h3 className="text-sm font-semibold mb-2 text-navy-deeper">Cost Management</h3>
+        <ul className="space-y-2 text-xs text-navy-mid">
           <li className="flex items-start gap-2">
             <span className="w-1.5 h-1.5 mt-1.5 rounded-full flex-shrink-0 bg-navy" />
             Pre-filter with NAICS codes and keywords before sending to AI
@@ -1232,7 +1233,7 @@ export default function RfpIntelligence() {
         <AdminBreadcrumb crumbs={[{ label: 'RFP Monitor' }]} />
       </div>
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 bg-[#0B1628]">
+      <div className="px-4 sm:px-6 py-4 bg-navy-deeper">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gold/[0.12]">
@@ -1244,18 +1245,22 @@ export default function RfpIntelligence() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
+              className="border-white/20 text-white hover:bg-white/10"
               onClick={runCrawl}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white border border-white/20 hover:bg-white/10 transition-colors"
             >
               <Play size={14} /> Run Crawl
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="border-white/20 text-white hover:bg-white/10"
               onClick={runClassify}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white border border-white/20 hover:bg-white/10 transition-colors"
             >
               <Cpu size={14} /> Classify
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -1279,7 +1284,7 @@ export default function RfpIntelligence() {
         ]} />
 
         {/* Tab bar */}
-        <div className="flex items-center gap-1 border-b border-[#D1D9E6]">
+        <div className="flex items-center gap-1 border-b border-border_ui-cool">
           {tabs.map(tab => {
             const active = activeTab === tab.key;
             return (
@@ -1287,7 +1292,7 @@ export default function RfpIntelligence() {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                  active ? 'border-navy text-navy' : 'border-transparent text-[#6B7F96]'
+                  active ? 'border-navy text-navy' : 'border-transparent text-slate_ui'
                 }`}
               >
                 <tab.icon size={14} /> {tab.label}
@@ -1299,8 +1304,8 @@ export default function RfpIntelligence() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <RefreshCw size={20} className="animate-spin text-[#6B7F96]" />
-            <span className="ml-2 text-sm text-[#6B7F96]">Loading RFP data…</span>
+            <RefreshCw size={20} className="animate-spin text-slate_ui" />
+            <span className="ml-2 text-sm text-slate_ui">Loading RFP data…</span>
           </div>
         )}
 
@@ -1312,15 +1317,15 @@ export default function RfpIntelligence() {
 
             {/* View toggle + count */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#3D5068]">
+              <span className="text-sm text-navy-mid">
                 {filteredListings.length} RFP{filteredListings.length !== 1 ? 's' : ''}
                 {filters.search || filters.relevance_tier.length > 0 ? ' (filtered)' : ''}
               </span>
-              <div className="flex items-center gap-1 border border-[#D1D9E6] rounded-xl p-0.5">
+              <div className="flex items-center gap-1 border border-border_ui-cool rounded-xl p-0.5">
                 <button
                   onClick={() => setViewMode('cards')}
                   className={`p-1.5 rounded transition-colors ${
-                    viewMode === 'cards' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-[#6B7F96]'
+                    viewMode === 'cards' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-slate_ui'
                   }`}
                 >
                   <LayoutGrid size={16} />
@@ -1328,7 +1333,7 @@ export default function RfpIntelligence() {
                 <button
                   onClick={() => setViewMode('table')}
                   className={`p-1.5 rounded transition-colors ${
-                    viewMode === 'table' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-[#6B7F96]'
+                    viewMode === 'table' ? 'bg-navy/[0.07] text-navy' : 'bg-transparent text-slate_ui'
                   }`}
                 >
                   <List size={16} />
@@ -1349,8 +1354,8 @@ export default function RfpIntelligence() {
                 ))}
                 {filteredListings.length === 0 && (
                   <div className="col-span-2 text-center py-12">
-                    <FileSearch size={32} className="mx-auto mb-3 text-[#6B7F96]" />
-                    <p className="text-sm text-[#6B7F96]">No RFPs match your current filters</p>
+                    <FileSearch size={32} className="mx-auto mb-3 text-slate_ui" />
+                    <p className="text-sm text-slate_ui">No RFPs match your current filters</p>
                     <button onClick={resetFilters} className="mt-2 text-sm hover:underline text-navy">
                       Clear all filters
                     </button>

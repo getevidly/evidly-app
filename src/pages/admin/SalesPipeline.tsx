@@ -17,6 +17,7 @@ import {
   MessageSquare, Award, AlertTriangle,
 } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import Button from '../../components/ui/Button';
 
 const PIPELINE_STAGES = ['prospect', 'tour_scheduled', 'tour_completed', 'proposal_sent', 'negotiating', 'won', 'lost'];
 const STAGE_LABELS: Record<string, string> = {
@@ -132,10 +133,10 @@ export default function SalesPipeline() {
   if (loadError) {
     return (
       <div className="text-center p-12">
-        <p className="text-[#6B7F96]">Failed to load data.</p>
-        <button onClick={loadData} className="mt-3 bg-gold text-white border-none rounded-md px-5 py-2 cursor-pointer">
+        <p className="text-slate_ui">Failed to load data.</p>
+        <Button onClick={loadData} variant="gold" size="sm" className="mt-3">
           Try again
-        </button>
+        </Button>
       </div>
     );
   }
@@ -147,17 +148,17 @@ export default function SalesPipeline() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Sales Pipeline</h1>
-          <p className="text-[13px] text-[#6B7280] mt-1 m-0 font-['Inter',sans-serif]">Track deals from prospect to close</p>
+          <p className="text-[13px] text-gray-500 mt-1 m-0 font-['Inter',sans-serif]">Track deals from prospect to close</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setViewMode('kanban')}
-            className={`p-2 rounded-xl border ${viewMode === 'kanban' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
-            <LayoutGrid className={`h-4 w-4 ${viewMode === 'kanban' ? 'text-navy' : 'text-[#9ca3af]'}`} />
-          </button>
-          <button onClick={() => setViewMode('table')}
-            className={`p-2 rounded-xl border ${viewMode === 'table' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
-            <Table2 className={`h-4 w-4 ${viewMode === 'table' ? 'text-navy' : 'text-[#9ca3af]'}`} />
-          </button>
+          <Button onClick={() => setViewMode('kanban')} variant="ghost" size="sm"
+            className={`p-2 border ${viewMode === 'kanban' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
+            <LayoutGrid className={`h-4 w-4 ${viewMode === 'kanban' ? 'text-navy' : 'text-gray-400'}`} />
+          </Button>
+          <Button onClick={() => setViewMode('table')} variant="ghost" size="sm"
+            className={`p-2 border ${viewMode === 'table' ? 'border-navy bg-blue-50' : 'border-navy/10'}`}>
+            <Table2 className={`h-4 w-4 ${viewMode === 'table' ? 'text-navy' : 'text-gray-400'}`} />
+          </Button>
         </div>
       </div>
 
@@ -247,10 +248,10 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                     {stage !== 'won' && stage !== 'lost' && (
                       <>
                         {columns.indexOf(stage) < columns.length - 2 && (
-                          <button onClick={e => { e.stopPropagation(); onStageChange(deal.id, columns[columns.indexOf(stage) + 1]); }}
-                            className="text-xs px-2 py-0.5 border border-navy/10 rounded hover:bg-cream flex items-center gap-0.5">
+                          <Button onClick={e => { e.stopPropagation(); onStageChange(deal.id, columns[columns.indexOf(stage) + 1]); }}
+                            variant="secondary" size="sm" className="px-2 py-0.5">
                             <ChevronRight className="h-3 w-3" /> Next
-                          </button>
+                          </Button>
                         )}
                       </>
                     )}
@@ -309,8 +310,8 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
                 <td className="px-3 py-2 text-xs text-navy/50">{formatDate(deal.expected_close_date)}</td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex items-center gap-1 justify-end">
-                    <button onClick={() => onCloseDate(deal.id)} className="p-1 hover:bg-navy/5 rounded" title="Set close date"><Calendar className="h-3.5 w-3.5 text-navy/30" /></button>
-                    <button onClick={() => onNotes(deal.id)} className="p-1 hover:bg-navy/5 rounded" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-navy/30" /></button>
+                    <Button onClick={() => onCloseDate(deal.id)} variant="ghost" size="sm" className="p-1" title="Set close date"><Calendar className="h-3.5 w-3.5 text-navy/30" /></Button>
+                    <Button onClick={() => onNotes(deal.id)} variant="ghost" size="sm" className="p-1" title="Notes"><MessageSquare className="h-3.5 w-3.5 text-navy/30" /></Button>
                   </div>
                 </td>
               </tr>
@@ -351,7 +352,7 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
       <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6 modal-content-enter">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-navy">{deal.org_name}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-navy/5 rounded" aria-label="Close"><X className="h-5 w-5 text-navy/30" /></button>
+          <Button onClick={onClose} variant="ghost" size="sm" className="p-1" aria-label="Close"><X className="h-5 w-5 text-navy/30" /></Button>
         </div>
 
         <div className="space-y-3 text-sm">
@@ -377,12 +378,12 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
         </div>
 
         <div className="flex gap-2 mt-4">
-          <button onClick={() => { onNotes(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-navy/10 rounded-xl hover:bg-cream font-medium">Add Notes</button>
-          <button onClick={() => { onCloseDate(deal.id); onClose(); }}
-            className="flex-1 px-3 py-2 text-xs border border-navy/10 rounded-xl hover:bg-cream font-medium">Set Close Date</button>
-          <button onClick={handleLostReason}
-            className="px-3 py-2 text-xs border border-red-200 rounded-xl hover:bg-red-50 text-red-600 font-medium">Mark Lost</button>
+          <Button onClick={() => { onNotes(deal.id); onClose(); }}
+            variant="secondary" size="sm" className="flex-1">Add Notes</Button>
+          <Button onClick={() => { onCloseDate(deal.id); onClose(); }}
+            variant="secondary" size="sm" className="flex-1">Set Close Date</Button>
+          <Button onClick={handleLostReason}
+            variant="destructive" size="sm" className="bg-transparent text-red-600 border border-red-200 hover:bg-red-50">Mark Lost</Button>
         </div>
       </div>
     </div>

@@ -31,13 +31,13 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const inputClasses = 'w-full px-3 py-2 border border-[#D1D9E6] rounded-lg text-sm text-[#0B1628] bg-white outline-none';
-const labelClasses = 'block text-[13px] font-semibold text-[#0B1628] mb-1';
-const cardClasses = 'bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
+const inputClasses = 'w-full px-3 py-2 border border-border_ui-cool rounded-lg text-sm text-navy-deeper bg-white outline-none';
+const labelClasses = 'block text-[13px] font-semibold text-navy-deeper mb-1';
+const cardClasses = 'bg-white border border-border_ui-cool rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
 function SectionTitle({ icon: Icon, title }: { icon: any; title: string }) {
   return (
-    <h2 className="flex items-center gap-2 text-base font-bold text-[#0B1628] mb-4 mt-0">
+    <h2 className="flex items-center gap-2 text-base font-bold text-navy-deeper mb-4 mt-0">
       <Icon size={18} color={NAVY} /> {title}
     </h2>
   );
@@ -277,11 +277,11 @@ export function CompanyProfilePage() {
         <div className="mb-5">
           <label className={labelClasses}>Company Logo</label>
           <div
-            className="border-2 border-dashed border-[#D1D9E6] rounded-[10px] py-8 px-5 text-center cursor-pointer bg-[#EEF1F7]"
+            className="border-2 border-dashed border-border_ui-cool rounded-[10px] py-8 px-5 text-center cursor-pointer bg-[#EEF1F7]"
             onClick={() => alert('Logo upload coming soon')}
           >
-            <Upload size={28} className="text-[#6B7F96] mx-auto mb-2" />
-            <p className="text-[#3D5068] text-[13px] m-0">
+            <Upload size={28} className="text-slate_ui mx-auto mb-2" />
+            <p className="text-navy-mid text-[13px] m-0">
               Click to upload logo (PNG, SVG, max 2MB)
             </p>
           </div>
@@ -295,7 +295,7 @@ export function CompanyProfilePage() {
               type="color"
               value={form.primaryColor}
               onChange={e => handleChange('primaryColor', e.target.value)}
-              className="w-10 h-10 border border-[#D1D9E6] rounded-lg cursor-pointer p-0.5"
+              className="w-10 h-10 border border-border_ui-cool rounded-lg cursor-pointer p-0.5"
             />
             <input
               className={`${inputClasses} !w-[140px]`}
@@ -334,7 +334,7 @@ export function CompanyProfilePage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-[#163a5f] text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
+          className={`flex items-center gap-2 py-2.5 px-6 rounded-lg border-none bg-navy-muted text-white text-sm font-semibold ${saving ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'}`}
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Saving...' : 'Save Changes'}

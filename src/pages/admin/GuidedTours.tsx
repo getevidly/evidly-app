@@ -20,6 +20,7 @@ import {
   Layers, Zap, Award, Filter,
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 type Tab = 'overview' | 'setup' | 'history' | 'templates';
 
@@ -144,9 +145,9 @@ function ModuleGroupToggles({
         const someOn = groupIds.some(id => enabled.includes(id));
 
         return (
-          <div key={group.group} className="bg-[#FAFAF8] border border-[#E5E0D8] rounded-[10px] overflow-hidden">
+          <div key={group.group} className="bg-[#FAFAF8] border border-border_ui rounded-[10px] overflow-hidden">
             {/* Group header */}
-            <div className="py-[11px] px-4 flex items-center justify-between border-b border-[#E5E0D8] bg-white">
+            <div className="py-[11px] px-4 flex items-center justify-between border-b border-border_ui bg-white">
               <div>
                 <div className="text-xs font-bold text-navy">{group.group}</div>
                 <div className="text-[10px] text-gray-400 mt-0.5">{group.description}</div>
@@ -156,8 +157,8 @@ function ModuleGroupToggles({
                 onClick={() => toggleGroup(group.modules)}
                 className={`text-[10px] font-semibold py-[3px] px-2.5 rounded-md cursor-pointer border ${
                   allOn
-                    ? 'bg-[#FAF7F2] border-gold text-gold'
-                    : 'bg-white border-[#E5E0D8] text-gray-400'
+                    ? 'bg-cream-warm border-gold text-gold'
+                    : 'bg-white border-border_ui text-gray-400'
                 }`}
               >
                 {allOn ? 'Deselect All' : 'Select All'}
@@ -261,12 +262,13 @@ export default function GuidedTours() {
           <h1 className="text-[22px] font-bold text-navy m-0 font-['Outfit',sans-serif]">Guided Tours</h1>
           <p className="text-[13px] text-gray-500 mt-1 mb-0 font-['Inter',sans-serif]">In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance categorys</p>
         </div>
-        <button
+        <Button
+          variant="primary"
           onClick={() => setActiveTab('setup')}
-          className="flex items-center gap-2 px-4 py-2 min-h-[44px] text-white rounded-lg text-sm font-medium shadow-sm bg-navy"
+          className="shadow-sm"
         >
           <Play className="h-4 w-4" /> Launch Tour
-        </button>
+        </Button>
       </div>
 
       {/* Tab bar */}
@@ -647,8 +649,8 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
             {(Object.keys(PLANS) as PlanKey[]).map(p => (
               <button key={p} type="button" onClick={() => setPlan(p)} className={`py-2.5 px-2 rounded-lg cursor-pointer text-center text-xs transition-all duration-150 ${
                 plan === p
-                  ? 'border-2 border-gold bg-[#FAF7F2] text-gold font-bold'
-                  : 'border-[1.5px] border-[#E5E0D8] bg-white text-gray-400 font-normal'
+                  ? 'border-2 border-gold bg-cream-warm text-gold font-bold'
+                  : 'border-[1.5px] border-border_ui bg-white text-gray-400 font-normal'
               }`}>
                 <div>{PLANS[p].label}</div>
                 {PLANS[p].addonLabel && (
@@ -694,14 +696,13 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                 Name each location and add the key contacts within it
               </div>
             </div>
-            <button type="button" onClick={addLocation}
-              className="text-xs font-semibold py-[7px] px-3.5 rounded-[7px] bg-navy text-white border-none cursor-pointer">
+            <Button variant="primary" size="sm" type="button" onClick={addLocation}>
               + Add Location
-            </button>
+            </Button>
           </div>
 
           {locations.map((loc, locIdx) => (
-            <div key={loc.id} className="bg-[#FAFAF8] border border-[#E5E0D8] rounded-[10px] p-[18px] mb-3">
+            <div key={loc.id} className="bg-[#FAFAF8] border border-border_ui rounded-[10px] p-[18px] mb-3">
               <div className="flex items-center justify-between mb-3.5">
                 <div className="text-xs font-bold text-navy">
                   Location {locIdx + 1}{loc.name ? ` — ${loc.name}` : ''}
@@ -737,7 +738,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                   </div>
                 )}
                 {loc.contacts.map((c, ci) => (
-                  <div key={ci} className="bg-white border border-[#E5E0D8] rounded-lg py-2.5 px-3 mb-2 grid grid-cols-[170px_1fr_1fr_1fr_28px] gap-2 items-center">
+                  <div key={ci} className="bg-white border border-border_ui rounded-lg py-2.5 px-3 mb-2 grid grid-cols-[170px_1fr_1fr_1fr_28px] gap-2 items-center">
                     <select value={c.role} onChange={e => updateContact(loc.id, ci, 'role', e.target.value)}
                       className="w-full py-2 px-3 border border-gray-300 rounded-lg text-[13px] text-navy bg-white outline-none cursor-pointer">
                       {CONTACT_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -774,7 +775,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
           {selectedTemplate && (
             <div className="mt-2.5">
-              <div className="py-3 px-3.5 bg-[#F9F8F6] border border-[#E5E0D8] rounded-lg">
+              <div className="py-3 px-3.5 bg-[#F9F8F6] border border-border_ui rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-xs font-semibold text-navy">
                     {selectedTemplate.name} {'·'} {selectedTemplate.duration_minutes} min
@@ -800,7 +801,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                       </div>
                       <div className="flex flex-wrap gap-[5px]">
                         {active.map(m => (
-                          <span key={m.id} className="text-[10px] py-0.5 px-2 rounded-[10px] bg-white border border-[#E5E0D8] text-gray-500">
+                          <span key={m.id} className="text-[10px] py-0.5 px-2 rounded-[10px] bg-white border border-border_ui text-gray-500">
                             {m.label}
                           </span>
                         ))}
@@ -854,7 +855,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
         </div>
 
         {/* ── MRR bar ── */}
-        <div className="py-3.5 px-[18px] rounded-[9px] bg-[#FAF7F2] border border-[#E8D9B8] flex items-center justify-between">
+        <div className="py-3.5 px-[18px] rounded-[9px] bg-cream-warm border border-[#E8D9B8] flex items-center justify-between">
           <div>
             <div className="text-[11px] text-gray-400">Estimated Monthly Recurring Revenue</div>
             {plan !== 'enterprise' && (
@@ -888,16 +889,18 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
         {/* ── Launch button ── */}
         <div className="flex gap-3">
-          <button
+          <Button
+            variant="primary"
             onClick={handleLaunch}
             disabled={!companyName.trim() || launching}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40 bg-navy"
+            isLoading={launching}
+            className="flex-1"
           >
             {launching ? 'Launching...' : (
               <>{scheduleType === 'now' ? <Play className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
               {scheduleType === 'now' ? 'Launch Guided Tour' : 'Schedule Tour'}</>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -979,7 +982,7 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
                   <span className="ml-2 text-xs text-amber-600 font-medium">{formatDate(s.follow_up_at)}</span>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => handleAddNote(s.id)} className="px-2 py-1 text-xs border border-navy/10 rounded text-navy/70 hover:bg-cream">Log Contact</button>
+                  <Button variant="secondary" size="sm" onClick={() => handleAddNote(s.id)}>Log Contact</Button>
                 </div>
               </div>
             ))}
@@ -990,9 +993,9 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
       <div className="bg-white rounded-xl border border-navy/10 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-navy uppercase tracking-wide">Active Tours ({activeSessions.length})</h3>
-          <button onClick={onRefresh} className="text-xs text-navy/50 hover:text-navy/80 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onRefresh}>
             <RefreshCw className="h-3 w-3" /> Refresh
-          </button>
+          </Button>
         </div>
         {activeSessions.length === 0 ? (
           <p className="text-sm text-navy/30">No active tours right now.</p>
@@ -1079,12 +1082,12 @@ function SessionRow({ session: s, updatingId, onStageUpdate, onFollowUp, onAddNo
       <td className="px-3 py-2 text-xs text-navy/50">{formatDate(s.started_at)}</td>
       <td className="px-3 py-2 text-right">
         <div className="flex items-center gap-1 justify-end">
-          <button onClick={() => onFollowUp(s.id)} className="px-2 py-1 text-xs border border-navy/10 rounded hover:bg-cream" title="Set follow-up">
+          <Button variant="secondary" size="sm" onClick={() => onFollowUp(s.id)} title="Set follow-up">
             <Calendar className="h-3 w-3" />
-          </button>
-          <button onClick={() => onAddNote(s.id)} className="px-2 py-1 text-xs border border-navy/10 rounded hover:bg-cream" title="Add note">
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => onAddNote(s.id)} title="Add note">
             <MessageSquare className="h-3 w-3" />
-          </button>
+          </Button>
         </div>
       </td>
     </tr>
@@ -1123,12 +1126,13 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-bold text-navy">{templates.length} Templates</h3>
-        <button
+        <Button
+          variant="primary"
+          size="sm"
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg bg-navy"
         >
           <Plus className="h-4 w-4" /> New Template
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1175,15 +1179,15 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-navy/10 rounded hover:bg-cream flex items-center gap-1">
+                <Button variant="secondary" size="sm" onClick={() => setEditId(t.id)}>
                   <Edit2 className="h-3 w-3" /> Edit
-                </button>
-                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-navy/10 rounded hover:bg-cream flex items-center gap-1">
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => handleDuplicate(t)}>
                   <Copy className="h-3 w-3" /> Duplicate
-                </button>
-                <button onClick={() => handleDelete(t.id)} className="px-2 py-1 text-xs border border-red-200 rounded hover:bg-red-50 text-red-600 flex items-center gap-1">
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => handleDelete(t.id)} className="!bg-transparent !text-red-600 !border !border-red-200 hover:!bg-red-50">
                   <Trash2 className="h-3 w-3" /> Delete
-                </button>
+                </Button>
               </div>
             </div>
           );
@@ -1283,11 +1287,10 @@ function TemplateModal({ template, onClose, onSave }: {
           </label>
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-navy/15 rounded-lg text-sm font-medium text-navy/80 hover:bg-cream">Cancel</button>
-          <button onClick={handleSave} disabled={!form.name.trim() || saving}
-            className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40 bg-navy">
+          <Button variant="secondary" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button variant="primary" onClick={handleSave} disabled={!form.name.trim() || saving} isLoading={saving} className="flex-1">
             {saving ? 'Saving...' : 'Save Template'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

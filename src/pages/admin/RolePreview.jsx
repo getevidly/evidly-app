@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 // ── APPROVED EXCEPTION: This is an admin-only role preview tool. ──────────────
 // PD data below is intentional sample data for the preview, gated by the
@@ -16,7 +17,7 @@ const BG={ok:{background:"#f0fdf4",color:"#166534"},wn:{background:"#fffbeb",col
 // ── PRIMITIVES ────────────────────────────────────────────────────────────────
 const Dot=({c})=><span style={{width:8,height:8,borderRadius:"50%",background:c,display:"inline-block",flexShrink:0}}/>;
 const Pill=({p,t})=><span style={{...BG[p]||BG.gy,borderRadius:20,padding:"2px 8px",fontSize:9,fontWeight:700,whiteSpace:"nowrap"}}>{t}</span>;
-const Btn=({l,d,o,s,oc})=><button onClick={oc} style={{background:d?"#DC2626":o?"white":NAVY,color:o?NAVY:"white",border:o?`1.5px solid ${NAVY}`:"none",borderRadius:6,padding:s?"4px 10px":"7px 14px",fontSize:s?10:11,fontWeight:700,cursor:"pointer",flexShrink:0,...FF}}>{l}</button>;
+const Btn=({l,d,o,s,oc})=><Button onClick={oc} variant={d?"destructive":o?"secondary":"primary"} size="sm" style={{borderRadius:6,padding:s?"4px 10px":"7px 14px",fontSize:s?10:11,flexShrink:0,height:"auto",minHeight:"auto",...FF}}>{l}</Button>;
 const Row=({bg,children})=><div style={{display:"flex",alignItems:"center",gap:9,padding:"9px 13px",borderBottom:"1px solid #f9fafb",background:bg||"white",...FF}}>{children}</div>;
 const Card=({t,a,onA,children})=><div style={{background:"white",border:"1px solid #E5E7EB",borderRadius:8,overflow:"hidden",marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"9px 13px",borderBottom:"1px solid #F3F4F6"}}><span style={{fontSize:12,fontWeight:700,color:BODY,...FF}}>{t}</span>{a&&<span onClick={()=>onA?.(a)} style={{fontSize:11,color:NAVY,fontWeight:600,cursor:"pointer",...FF}}>{a} →</span>}</div>{children}</div>;
 const SBar=({s})=><div style={{display:"grid",gridTemplateColumns:`repeat(${s.length},1fr)`,gap:8,marginBottom:10}}>{s.map(([l,v,c],i)=><div key={i} style={{background:"white",border:"1px solid #E5E7EB",borderRadius:8,padding:"12px 14px",textAlign:"center"}}><div style={{fontSize:9,fontWeight:700,color:MUTED,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:5,...FF}}>{l}</div><div style={{fontSize:20,fontWeight:900,color:c||NAVY,...FF}}>{v}</div></div>)}</div>;
@@ -51,7 +52,7 @@ function AP({cfg,onClose}){
     <div style={{position:"absolute",bottom:0,left:0,right:0,background:"white",borderRadius:"12px 12px 0 0",zIndex:51,...FF}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 14px",borderBottom:"1px solid #F3F4F6"}}>
         <span style={{fontSize:13,fontWeight:700,color:BODY,...FF}}>{cfg.t}</span>
-        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:MUTED,lineHeight:1}}>✕</button>
+        <Button onClick={onClose} variant="ghost" size="sm" style={{fontSize:16,color:MUTED,lineHeight:1,height:"auto",minHeight:"auto",padding:0}}>✕</Button>
       </div>
       <div style={{padding:"12px 14px",maxHeight:280,overflowY:"auto"}}>
         {cfg.i&&<div style={{background:"#F8FAFC",borderRadius:6,padding:"9px 11px",marginBottom:12,fontSize:11,color:MUTED,lineHeight:1.5,...FF}}>{cfg.i}</div>}
@@ -68,7 +69,7 @@ function AP({cfg,onClose}){
             <span style={{fontSize:14,flexShrink:0}}>{icon}</span>
             <div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:BODY}}>{primary}</div>{secondary&&<div style={{fontSize:10,color:MUTED}}>{secondary}</div>}</div>
             {bp&&bt&&<span style={{...BG[bp]||BG.gy,borderRadius:20,padding:"2px 8px",fontSize:9,fontWeight:700}}>{bt}</span>}
-            {r[6]&&<button onClick={onClose} style={{fontSize:10,color:NAVY,fontWeight:600,background:"none",border:"1px solid #E5E7EB",borderRadius:5,padding:"3px 9px",cursor:"pointer",...FF}}>{r[6]}</button>}
+            {r[6]&&<Button onClick={onClose} variant="secondary" size="sm" style={{fontSize:10,borderRadius:5,padding:"3px 9px",height:"auto",minHeight:"auto",...FF}}>{r[6]}</Button>}
           </div>;
         })}
       </div>
@@ -589,16 +590,16 @@ function Sidebar({role,active,onNav,collapsed}){
         if(!vis.length) return null;
         const open=exp[id]!==0;
         return <div key={id}>
-          {lbl&&!collapsed&&<button onClick={()=>setExp(e=>({...e,[id]:open?0:1}))} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 13px 2px",background:"none",border:"none",cursor:"pointer"}}>
+          {lbl&&!collapsed&&<Button onClick={()=>setExp(e=>({...e,[id]:open?0:1}))} variant="ghost" size="sm" style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 13px 2px",height:"auto",minHeight:"auto",borderRadius:0}}>
             <span style={{fontSize:9,fontWeight:700,color:"#475569",textTransform:"uppercase",letterSpacing:"0.1em",...FF}}>{lbl}</span>
             <span style={{fontSize:8,color:"#475569",transform:open?"rotate(0)":"rotate(-90deg)",transition:"0.15s"}}>▼</span>
-          </button>}
+          </Button>}
           {(open||collapsed)&&vis.map(([pid,plbl,icon])=>{
             const on=active===pid;
-            return <button key={pid} onClick={()=>onNav(pid)} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:collapsed?"7px 0":"6px 15px",background:on?"rgba(160,140,90,0.15)":"transparent",border:"none",cursor:"pointer",borderLeft:on?`3px solid ${GOLD}`:"3px solid transparent",justifyContent:collapsed?"center":"flex-start"}}>
+            return <Button key={pid} onClick={()=>onNav(pid)} variant="ghost" size="sm" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:collapsed?"7px 0":"6px 15px",background:on?"rgba(160,140,90,0.15)":"transparent",borderLeft:on?`3px solid ${GOLD}`:"3px solid transparent",justifyContent:collapsed?"center":"flex-start",height:"auto",minHeight:"auto",borderRadius:0}}>
               <span style={{fontSize:13,flexShrink:0}}>{icon}</span>
               {!collapsed&&<span style={{fontSize:11,color:on?"white":SBT,fontWeight:on?600:400,...FF,whiteSpace:"nowrap"}}>{plbl}</span>}
-            </button>;
+            </Button>;
           })}
         </div>;
       })}
@@ -614,11 +615,11 @@ function Sidebar({role,active,onNav,collapsed}){
 function BottomBar({role,active,onNav}){
   const items=MNAV[role]||MNAV.owner_operator;
   return <div style={{background:SB,borderTop:"1px solid rgba(255,255,255,0.08)",display:"flex",justifyContent:"space-around",padding:"6px 0 4px",flexShrink:0}}>
-    {items.map(([id,lbl,icon])=>{const on=active===id;return <button key={id} onClick={()=>onNav(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"2px 5px",background:"none",border:"none",cursor:"pointer",minWidth:38}}>
+    {items.map(([id,lbl,icon])=>{const on=active===id;return <Button key={id} onClick={()=>onNav(id)} variant="ghost" size="sm" style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"2px 5px",minWidth:38,height:"auto",minHeight:"auto",borderRadius:0}}>
       <span style={{fontSize:17}}>{icon}</span>
       <span style={{fontSize:9,color:on?GOLD:"#64748b",fontWeight:on?700:400,...FF}}>{lbl}</span>
       {on&&<div style={{width:3,height:3,borderRadius:"50%",background:GOLD}}/>}
-    </button>;})}
+    </Button>;})}
   </div>;
 }
 
@@ -632,7 +633,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
 
   if(mobile) return <div style={{background:"white",borderRadius:10,overflow:"hidden",boxShadow:"0 2px 18px rgba(0,0,0,0.14)",display:"flex",flexDirection:"column",height:700,width:width||360,position:"relative"}}>
     <div style={{background:SB,padding:"8px 12px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-      {!isStaff&&<button onClick={()=>setMMenu(s=>!s)} style={{background:"none",border:"none",color:"white",fontSize:17,cursor:"pointer",padding:"2px 4px"}}>☰</button>}
+      {!isStaff&&<Button onClick={()=>setMMenu(s=>!s)} variant="ghost" size="sm" style={{color:"white",fontSize:17,padding:"2px 4px",height:"auto",minHeight:"auto"}}>☰</Button>}
       <span style={{fontSize:13,fontWeight:900,...FF}}><span style={{color:GOLD}}>E</span><span style={{color:"white"}}>vid</span><span style={{color:GOLD}}>LY</span></span>
       {page!=="dashboard"&&<span style={{fontSize:10,color:"rgba(255,255,255,0.5)",...FF}}>{label}</span>}
       <div style={{marginLeft:"auto",width:24,height:24,borderRadius:"50%",background:"rgba(160,140,90,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:GOLD,...FF}}>A</div>
@@ -641,7 +642,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
       <div style={{width:256,background:SB,height:"100%",overflowY:"auto"}}>
         <div style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.07)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <span style={{fontSize:13,fontWeight:900,...FF}}><span style={{color:GOLD}}>E</span><span style={{color:"white"}}>vid</span><span style={{color:GOLD}}>LY</span></span>
-          <button onClick={()=>setMMenu(false)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.5)",fontSize:15,cursor:"pointer"}}>✕</button>
+          <Button onClick={()=>setMMenu(false)} variant="ghost" size="sm" style={{color:"rgba(255,255,255,0.5)",fontSize:15,height:"auto",minHeight:"auto",padding:0}}>✕</Button>
         </div>
         <Sidebar role={role} active={page} onNav={id=>{onNav(id);setMMenu(false);}} collapsed={false}/>
       </div>
@@ -658,7 +659,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
     {!isStaff&&<Sidebar role={role} active={page} onNav={onNav} collapsed={collapsed}/>}
     <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{background:"white",borderBottom:"2px solid #A08C5A",padding:"8px 15px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-        <button onClick={()=>onNav("dashboard")} style={{fontSize:11,color:MUTED,background:"none",border:"none",cursor:"pointer",...FF}}>Dashboard</button>
+        <Button onClick={()=>onNav("dashboard")} variant="ghost" size="sm" style={{fontSize:11,color:MUTED,height:"auto",minHeight:"auto",padding:0,...FF}}>Dashboard</Button>
         {page!=="dashboard"&&<><span style={{fontSize:11,color:MUTED}}>›</span><span style={{fontSize:11,fontWeight:700,color:BODY,...FF}}>{label}</span></>}
         <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
           {!isStaff&&<><Btn l="+ Log Temp" oc={()=>oa("+ Log Temp",{primary:"Select Unit"})}/><Btn l="Checklist" o oc={()=>onNav("checklists")}/></>}
@@ -697,7 +698,7 @@ export default function RolePreview(){
   const isStaff=role==="kitchen_staff";
   const changeRole=r=>{setRole(r);setDPage("dashboard");setMPage("dashboard");};
 
-  return <div className="bg-[#E2E8F0] min-h-screen" style={{...FF}}>
+  return <div className="bg-slate-200 min-h-screen" style={{...FF}}>
     <div className="bg-navy px-4 py-2.5">
       <div className="flex items-center gap-1.5 mb-2">
         <a href="/admin" className="text-[11px] text-white/45 no-underline font-medium">Admin Console</a>
@@ -706,12 +707,12 @@ export default function RolePreview(){
       </div>
       <div className="flex items-center gap-[5px] flex-wrap mb-2">
         <span className="text-[9px] font-extrabold text-gold uppercase tracking-[0.12em] mr-1">ROLE</span>
-        {ROLES.map(r=><button key={r.id} onClick={()=>changeRole(r.id)} className={`px-3 py-[5px] rounded-full border text-[11px] cursor-pointer whitespace-nowrap transition-colors ${role===r.id?'border-gold bg-gold text-navy font-bold':'border-white/15 bg-transparent text-[#94A3B8]'}`}>{r.lbl}</button>)}
+        {ROLES.map(r=><Button key={r.id} onClick={()=>changeRole(r.id)} variant={role===r.id?"gold":"ghost"} size="sm" className={`rounded-full whitespace-nowrap ${role===r.id?'':'border border-white/15 text-slate-400'}`}>{r.lbl}</Button>)}
         <div className="w-px h-[18px] bg-white/[0.12] mx-[3px]"/>
-        <button onClick={()=>setSample(s=>!s)} className={`px-3 py-[5px] rounded-full border text-[11px] cursor-pointer flex items-center gap-[5px] transition-colors ${sample?'border-emerald-400 bg-emerald-400/10 text-emerald-400 font-bold':'border-white/15 bg-transparent text-[#94A3B8]'}`}>
+        <Button onClick={()=>setSample(s=>!s)} variant="ghost" size="sm" className={`rounded-full border ${sample?'border-emerald-400 bg-emerald-400/10 text-emerald-400':'border-white/15 text-slate-400'}`}>
           <span>{sample?"●":"○"}</span>{sample?"Sample Data ON":"Sample Data OFF"}
-        </button>
-        {!isStaff&&<button onClick={()=>setCol(s=>!s)} className="px-2.5 py-[5px] rounded-full border border-white/[0.12] bg-transparent text-[#94A3B8] text-[11px] cursor-pointer">{col?"Expand ↔":"Collapse ↔"}</button>}
+        </Button>
+        {!isStaff&&<Button onClick={()=>setCol(s=>!s)} variant="ghost" size="sm" className="rounded-full border border-white/[0.12] text-slate-400">{col?"Expand ↔":"Collapse ↔"}</Button>}
         <div className="flex items-center gap-3 ml-2">
           <div className="flex items-center gap-1.5">
             <span className="text-[9px] text-white/45 font-bold uppercase">🖥 {dWidth}px</span>

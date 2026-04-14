@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import Button from '../../components/ui/Button';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   live:        { bg: '#ECFDF5', text: '#059669', label: 'Live' },
@@ -73,10 +74,10 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-[#E2D9C8] rounded-xl m-4">
+  <div className="text-center py-[60px] px-5 bg-cream border-2 border-dashed border-border_ui-warm rounded-xl m-4">
     <div className="text-[40px] mb-4">{icon}</div>
     <div className="text-base font-bold text-navy mb-2">{title}</div>
-    <div className="text-[13px] text-[#6B7F96] max-w-[360px] mx-auto">{subtitle}</div>
+    <div className="text-[13px] text-slate_ui max-w-[360px] mx-auto">{subtitle}</div>
   </div>
 );
 
@@ -186,10 +187,10 @@ export default function AdminCrawlMonitor() {
 
 
   const KpiCard = ({ label, value, color, sub }: { label: string; value: string | number; color?: string; sub?: string }) => (
-    <div className="bg-white border border-[#E2D9C8] rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center">
+    <div className="bg-white border border-border_ui-warm rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center">
       <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">{label}</div>
       <div className="text-[28px] font-extrabold leading-none" style={{ color: color || '#1E2D4D' }}>{value}</div>
-      {sub && <div className="text-[11px] text-[#9CA3AF] mt-1.5">{sub}</div>}
+      {sub && <div className="text-[11px] text-gray-400 mt-1.5">{sub}</div>}
     </div>
   );
 
@@ -202,49 +203,48 @@ export default function AdminCrawlMonitor() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-navy">Crawl Monitor</h1>
-          <p className="text-[13px] text-[#6B7F96] mt-1">
+          <p className="text-[13px] text-slate_ui mt-1">
             {sources.length} intelligence sources tracked
           </p>
         </div>
-        <button onClick={runCrawl} disabled={running}
-          className={`py-2 px-5 border-none rounded-lg text-[13px] font-bold ${running ? 'bg-gray-200 text-[#9CA3AF] cursor-default' : 'bg-gold text-white cursor-pointer'}`}>
+        <Button onClick={runCrawl} disabled={running} variant="gold" size="sm">
           {running ? 'Running...' : 'Run Crawl Now'}
-        </button>
+        </Button>
       </div>
 
       {/* Proactive offline notice — shows on load when crawl has never run */}
       {!loading && !crawlError && !crawlSuccess && sources.length > 0 && !latestRun && (
-        <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-md px-4 py-2.5 flex gap-2.5 items-start">
-          <span className="text-[#D97706] text-base leading-none shrink-0">&#9888;</span>
+        <div className="bg-amber-50 border border-amber-200 rounded-md px-4 py-2.5 flex gap-2.5 items-start">
+          <span className="text-amber-600 text-base leading-none shrink-0">&#9888;</span>
           <div>
-            <div className="text-[13px] font-semibold text-[#92400E]">
+            <div className="text-[13px] font-semibold text-amber-800">
               Intelligence crawl has never run — {sources.length} sources are not being monitored
             </div>
-            <div className="text-xs text-[#B45309] mt-0.5">
-              Click "Run Crawl Now" to start the first crawl, or deploy the edge function: <code className="text-[11px] bg-[#FEF3C7] px-1 py-px rounded">supabase functions deploy crawl-monitor</code>
+            <div className="text-xs text-amber-700 mt-0.5">
+              Click "Run Crawl Now" to start the first crawl, or deploy the edge function: <code className="text-[11px] bg-amber-100 px-1 py-px rounded">supabase functions deploy crawl-monitor</code>
             </div>
           </div>
         </div>
       )}
 
       {crawlError && (
-        <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-md px-4 py-2.5 flex gap-2.5 items-start">
-          <span className="text-[#DC2626] text-base leading-none shrink-0">&#9888;</span>
+        <div className="bg-red-50 border border-red-200 rounded-md px-4 py-2.5 flex gap-2.5 items-start">
+          <span className="text-red-600 text-base leading-none shrink-0">&#9888;</span>
           <div>
-            <div className="text-[13px] font-semibold text-[#991B1B]">
+            <div className="text-[13px] font-semibold text-red-800">
               Intelligence crawl is offline — {sources.length} sources are not being monitored
             </div>
-            <div className="text-xs text-[#B91C1C] mt-0.5">
+            <div className="text-xs text-red-700 mt-0.5">
               Edge Function error at crawl-monitor · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
             </div>
-            <div className="text-[11px] text-[#991B1B] mt-1 font-[DM_Mono,monospace]">
+            <div className="text-[11px] text-red-800 mt-1 font-[DM_Mono,monospace]">
               {crawlError}
             </div>
           </div>
         </div>
       )}
       {crawlSuccess && (
-        <div className="text-[13px] text-[#059669] bg-[#F0FDF4] border border-[#BBF7D0] rounded-lg px-3.5 py-2.5">
+        <div className="text-[13px] text-emerald-600 bg-green-50 border border-green-200 rounded-lg px-3.5 py-2.5">
           {crawlSuccess}
         </div>
       )}
@@ -271,25 +271,25 @@ export default function AdminCrawlMonitor() {
 
       {/* Filters */}
       <div className="flex gap-3 items-center flex-wrap">
-        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
+        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs">
           <option value="all">All Categories</option>
           {categories.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c] || c}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 bg-[#F9FAFB] border border-[#D1D5DB] rounded-md text-navy text-xs">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-navy text-xs">
           <option value="all">All Statuses</option>
           {Object.entries(STATUS_COLORS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
-        <label className="flex items-center gap-1.5 text-xs text-[#6B7F96] cursor-pointer">
+        <label className="flex items-center gap-1.5 text-xs text-slate_ui cursor-pointer">
           <input type="checkbox" checked={demoOnly} onChange={e => setDemoOnly(e.target.checked)} />
           Demo critical only
         </label>
-        <span className="text-[11px] text-[#9CA3AF] ml-auto">
+        <span className="text-[11px] text-gray-400 ml-auto">
           {filtered.length} of {sources.length} sources
         </span>
       </div>
 
       {/* Source Table */}
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {loading ? (
           <div className="p-6 flex flex-col gap-3">
             {Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -299,9 +299,9 @@ export default function AdminCrawlMonitor() {
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Source', 'Category', 'Method', 'Freq', 'Status', 'Last Crawled', 'Signals', '&#11088;'].map(h => (
-                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-[0.5px]" dangerouslySetInnerHTML={{ __html: h }} />
+                  <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase tracking-[0.5px]" dangerouslySetInnerHTML={{ __html: h }} />
                 ))}
               </tr>
             </thead>
@@ -309,7 +309,7 @@ export default function AdminCrawlMonitor() {
               {filtered.map(s => {
                 const sc = STATUS_COLORS[s.status] || STATUS_COLORS.pending;
                 return (
-                  <tr key={s.id} className="border-b border-[#E2D9C8] hover:bg-[#F9FAFB] transition-colors">
+                  <tr key={s.id} className="border-b border-border_ui-warm hover:bg-gray-50 transition-colors">
                     <td className="px-3.5 py-2.5">
                       <div className="text-navy font-semibold text-[13px]">{s.name}</div>
                       {s.url && (
@@ -319,13 +319,13 @@ export default function AdminCrawlMonitor() {
                         </a>
                       )}
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px]">
+                    <td className="px-3.5 py-2.5 text-slate_ui text-[11px]">
                       {CATEGORY_LABELS[s.category] || s.category}
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px] font-[DM_Mono,monospace]">
+                    <td className="px-3.5 py-2.5 text-slate_ui text-[11px] font-[DM_Mono,monospace]">
                       {s.fetch_method || s.crawl_method || '—'}
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#6B7F96] text-[11px]">
+                    <td className="px-3.5 py-2.5 text-slate_ui text-[11px]">
                       {s.crawl_frequency}
                     </td>
                     <td className="px-3.5 py-2.5">
@@ -333,10 +333,10 @@ export default function AdminCrawlMonitor() {
                         {sc.label}
                       </span>
                     </td>
-                    <td className="px-3.5 py-2.5 text-[#9CA3AF] text-[11px] font-[DM_Mono,monospace]">
+                    <td className="px-3.5 py-2.5 text-gray-400 text-[11px] font-[DM_Mono,monospace]">
                       {s.last_crawled_at ? new Date(s.last_crawled_at).toLocaleString() : '—'}
                     </td>
-                    <td className={`px-3.5 py-2.5 text-xs font-[DM_Mono,monospace] ${s.signal_count_30d > 0 ? 'text-navy' : 'text-[#9CA3AF]'}`}>
+                    <td className={`px-3.5 py-2.5 text-xs font-[DM_Mono,monospace] ${s.signal_count_30d > 0 ? 'text-navy' : 'text-gray-400'}`}>
                       {s.signal_count_30d || 0}
                     </td>
                     <td className="px-3.5 py-2.5 text-center">
@@ -352,28 +352,28 @@ export default function AdminCrawlMonitor() {
 
       {/* Run History */}
       <h2 className="text-lg font-bold text-navy">Run History</h2>
-      <div className="bg-white rounded-xl border border-[#E2D9C8] overflow-hidden">
+      <div className="bg-white rounded-xl border border-border_ui-warm overflow-hidden">
         {runs.length === 0 ? (
           <EmptyState icon="&#128202;" title="No crawl runs recorded" subtitle="Click 'Run Crawl Now' to start the first run." />
         ) : (
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-[#E2D9C8]">
+              <tr className="border-b border-border_ui-warm">
                 {['Started', 'Type', 'Live', 'Failed', 'Changed', 'Duration', 'Triggered By'].map(h => (
-                  <th key={h} className="text-left px-3.5 py-2.5 text-[#6B7F96] font-semibold text-[11px] uppercase tracking-[0.5px]">{h}</th>
+                  <th key={h} className="text-left px-3.5 py-2.5 text-slate_ui font-semibold text-[11px] uppercase tracking-[0.5px]">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {runs.map(r => (
-                <tr key={r.id} className="border-b border-[#E2D9C8]">
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{new Date(r.started_at).toLocaleString()}</td>
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.run_type}</td>
-                  <td className="px-3.5 py-2.5 text-[#059669] text-xs font-semibold">{r.feeds_live}</td>
-                  <td className={`px-3.5 py-2.5 text-xs font-semibold ${r.feeds_failed > 0 ? 'text-[#DC2626]' : 'text-[#6B7F96]'}`}>{r.feeds_failed}</td>
-                  <td className={`px-3.5 py-2.5 text-xs ${r.feeds_changed > 0 ? 'text-[#D97706]' : 'text-[#6B7F96]'}`}>{r.feeds_changed}</td>
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : '—'}</td>
-                  <td className="px-3.5 py-2.5 text-[#6B7F96] text-xs">{r.triggered_by}</td>
+                <tr key={r.id} className="border-b border-border_ui-warm">
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{new Date(r.started_at).toLocaleString()}</td>
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{r.run_type}</td>
+                  <td className="px-3.5 py-2.5 text-emerald-600 text-xs font-semibold">{r.feeds_live}</td>
+                  <td className={`px-3.5 py-2.5 text-xs font-semibold ${r.feeds_failed > 0 ? 'text-red-600' : 'text-slate_ui'}`}>{r.feeds_failed}</td>
+                  <td className={`px-3.5 py-2.5 text-xs ${r.feeds_changed > 0 ? 'text-amber-600' : 'text-slate_ui'}`}>{r.feeds_changed}</td>
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : '—'}</td>
+                  <td className="px-3.5 py-2.5 text-slate_ui text-xs">{r.triggered_by}</td>
                 </tr>
               ))}
             </tbody>

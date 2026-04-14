@@ -14,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import Button from '../../components/ui/Button';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 
@@ -183,9 +184,9 @@ export default function AdminAuditLog() {
   };
 
   const renderJson = (obj: any) => {
-    if (!obj) return <span className="text-[#9CA3AF] italic">null</span>;
+    if (!obj) return <span className="text-gray-400 italic">null</span>;
     return (
-      <pre className="text-xs font-mono bg-[#F8FAFC] p-2.5 rounded-md m-0 whitespace-pre-wrap break-all text-navy max-h-[200px] overflow-y-auto">
+      <pre className="text-xs font-mono bg-slate-50 p-2.5 rounded-md m-0 whitespace-pre-wrap break-all text-navy max-h-[200px] overflow-y-auto">
         {JSON.stringify(obj, null, 2)}
       </pre>
     );
@@ -210,13 +211,13 @@ export default function AdminAuditLog() {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-[22px] font-extrabold text-navy">Platform Audit Log</h1>
-          <p className="text-[13px] text-[#9CA3AF] mt-0.5">
+          <p className="text-[13px] text-gray-400 mt-0.5">
             SOX-grade immutable audit trail — all admin and security events
           </p>
         </div>
-        <button onClick={exportCsv} className="px-3.5 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer bg-gold text-white">
+        <Button variant="gold" size="sm" onClick={exportCsv}>
           Export CSV
-        </button>
+        </Button>
       </div>
 
       {/* KPI row */}
@@ -230,25 +231,25 @@ export default function AdminAuditLog() {
       {/* Filters */}
       <div className="flex gap-2.5 flex-wrap items-center">
         <input
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[160px]"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-[160px]"
           placeholder="Filter by action..."
           value={actionFilter}
           onChange={e => { setActionFilter(e.target.value); setPage(0); }}
         />
         <input
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[180px]"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-[180px]"
           placeholder="Filter by actor email..."
           value={actorFilter}
           onChange={e => { setActorFilter(e.target.value); setPage(0); }}
         />
         <input
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white w-[160px]"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-[160px]"
           placeholder="Filter by resource..."
           value={resourceFilter}
           onChange={e => { setResourceFilter(e.target.value); setPage(0); }}
         />
         <select
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white"
           value={successFilter}
           onChange={e => { setSuccessFilter(e.target.value as any); setPage(0); }}
         >
@@ -258,31 +259,31 @@ export default function AdminAuditLog() {
         </select>
         <input
           type="date"
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white"
           value={dateFrom}
           onChange={e => { setDateFrom(e.target.value); setPage(0); }}
           title="From date"
         />
         <input
           type="date"
-          className="py-[7px] px-2.5 text-[13px] border border-[#E2D9C8] rounded-md outline-none text-navy bg-white"
+          className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white"
           value={dateTo}
           onChange={e => { setDateTo(e.target.value); setPage(0); }}
           title="To date"
         />
         {hasFilters && (
-          <button onClick={clearFilters} className="px-3.5 py-1.5 text-[11px] font-semibold border-none rounded-md cursor-pointer bg-[#F0F4F8] text-[#6B7F96]">
+          <Button variant="ghost" size="sm" onClick={clearFilters}>
             Clear Filters
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Audit table */}
-      <div className="bg-white border border-[#E2D9C8] rounded-[10px] overflow-hidden">
+      <div className="bg-white border border-border_ui-warm rounded-[10px] overflow-hidden">
         {loading ? (
-          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">Loading audit log...</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">Loading audit log...</div>
         ) : entries.length === 0 ? (
-          <div className="p-10 text-center text-[#9CA3AF] text-[13px]">No audit entries match filters</div>
+          <div className="p-10 text-center text-gray-400 text-[13px]">No audit entries match filters</div>
         ) : (
           <>
             {entries.map(entry => {
@@ -291,14 +292,14 @@ export default function AdminAuditLog() {
               const hasDetail = entry.old_value || entry.new_value || entry.metadata || entry.error_message;
 
               return (
-                <div key={entry.id} className="border-b border-[#E2D9C8]">
+                <div key={entry.id} className="border-b border-border_ui-warm">
                   {/* Main row */}
                   <div
                     onClick={() => hasDetail && toggleExpand(entry.id)}
                     className={`grid grid-cols-[140px_180px_1fr_120px_100px_60px] px-4 py-2.5 items-center text-[13px] ${hasDetail ? 'cursor-pointer' : 'cursor-default'} ${isExpanded ? 'bg-[#FAFBFC]' : 'bg-transparent'}`}
                   >
                     {/* Timestamp */}
-                    <div className="text-xs text-[#6B7F96]">{formatTime(entry.created_at)}</div>
+                    <div className="text-xs text-slate_ui">{formatTime(entry.created_at)}</div>
 
                     {/* Actor */}
                     <div>
@@ -306,7 +307,7 @@ export default function AdminAuditLog() {
                         {entry.actor_email || 'System'}
                       </div>
                       {entry.actor_ip && (
-                        <div className="text-[10px] text-[#9CA3AF] font-mono">{entry.actor_ip}</div>
+                        <div className="text-[10px] text-gray-400 font-mono">{entry.actor_ip}</div>
                       )}
                     </div>
 
@@ -322,37 +323,37 @@ export default function AdminAuditLog() {
                         {entry.action.split('.').slice(1).join('.')}
                       </span>
                       {entry.resource_type && (
-                        <span className="text-[11px] text-[#9CA3AF]">
+                        <span className="text-[11px] text-gray-400">
                           on {entry.resource_type}{entry.resource_id ? `:${entry.resource_id.substring(0, 8)}` : ''}
                         </span>
                       )}
                     </div>
 
                     {/* Role */}
-                    <div className="text-[11px] text-[#9CA3AF]">
+                    <div className="text-[11px] text-gray-400">
                       {entry.actor_role || '\u2014'}
                     </div>
 
                     {/* Status */}
                     <div>
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${entry.success ? 'bg-[#ECFDF5] text-[#10B981]' : 'bg-[#FEF2F2] text-[#DC2626]'}`}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${entry.success ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-red-600'}`}>
                         {entry.success ? 'OK' : 'FAIL'}
                       </span>
                     </div>
 
                     {/* Expand indicator */}
-                    <div className="text-right text-[#9CA3AF] text-sm">
+                    <div className="text-right text-gray-400 text-sm">
                       {hasDetail ? (isExpanded ? '\u25B2' : '\u25BC') : ''}
                     </div>
                   </div>
 
                   {/* Expanded detail */}
                   {isExpanded && hasDetail && (
-                    <div className="px-4 pt-3 pb-4 bg-[#FAFBFC] border-t border-[#E2D9C8]">
+                    <div className="px-4 pt-3 pb-4 bg-[#FAFBFC] border-t border-border_ui-warm">
                       <div className="grid grid-cols-3 gap-4">
                         {entry.old_value && (
                           <div>
-                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                            <div className="text-[11px] font-bold text-gray-400 mb-1 uppercase">
                               Old Value
                             </div>
                             {renderJson(entry.old_value)}
@@ -360,7 +361,7 @@ export default function AdminAuditLog() {
                         )}
                         {entry.new_value && (
                           <div>
-                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                            <div className="text-[11px] font-bold text-gray-400 mb-1 uppercase">
                               New Value
                             </div>
                             {renderJson(entry.new_value)}
@@ -368,7 +369,7 @@ export default function AdminAuditLog() {
                         )}
                         {entry.metadata && (
                           <div>
-                            <div className="text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                            <div className="text-[11px] font-bold text-gray-400 mb-1 uppercase">
                               Metadata
                             </div>
                             {renderJson(entry.metadata)}
@@ -377,10 +378,10 @@ export default function AdminAuditLog() {
                       </div>
                       {entry.error_message && (
                         <div className="mt-2.5">
-                          <div className="text-[11px] font-bold text-[#DC2626] mb-1 uppercase">
+                          <div className="text-[11px] font-bold text-red-600 mb-1 uppercase">
                             Error
                           </div>
-                          <div className="text-xs text-[#DC2626] font-mono bg-[#FEF2F2] p-2 rounded">
+                          <div className="text-xs text-red-600 font-mono bg-red-50 p-2 rounded">
                             {entry.error_message}
                           </div>
                         </div>
@@ -393,22 +394,22 @@ export default function AdminAuditLog() {
 
             {/* Pagination */}
             {total > PAGE_SIZE && (
-              <div className="flex justify-between items-center px-4 py-3 border-t border-[#E2D9C8]">
-                <span className="text-xs text-[#9CA3AF]">
+              <div className="flex justify-between items-center px-4 py-3 border-t border-border_ui-warm">
+                <span className="text-xs text-gray-400">
                   Showing {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
                 </span>
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => setPage(p => Math.max(0, p - 1))}
                     disabled={page === 0}
-                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${page === 0 ? 'text-[#9CA3AF] opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
+                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${page === 0 ? 'text-gray-400 opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setPage(p => p + 1)}
                     disabled={(page + 1) * PAGE_SIZE >= total}
-                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${(page + 1) * PAGE_SIZE >= total ? 'text-[#9CA3AF] opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
+                    className={`px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#F0F4F8] ${(page + 1) * PAGE_SIZE >= total ? 'text-gray-400 opacity-50 cursor-default' : 'text-navy cursor-pointer'}`}
                   >
                     Next
                   </button>

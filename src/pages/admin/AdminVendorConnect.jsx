@@ -23,18 +23,18 @@ const TABS = [
 ];
 
 const APP_STATUS_COLORS = {
-  pending: { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', label: 'Pending' },
-  approved: { bg: 'bg-[#dcfce7]', text: 'text-[#166534]', label: 'Approved' },
-  rejected: { bg: 'bg-[#fee2e2]', text: 'text-[#991b1b]', label: 'Rejected' },
-  waitlisted: { bg: 'bg-[#e0e7ff]', text: 'text-[#3730a3]', label: 'Waitlisted' },
+  pending: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Pending' },
+  approved: { bg: 'bg-green-100', text: 'text-green-800', label: 'Approved' },
+  rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' },
+  waitlisted: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'Waitlisted' },
 };
 
 const LEAD_STATUS_COLORS = {
-  new: { bg: 'bg-[#dbeafe]', text: 'text-[#1d4ed8]', label: 'New' },
-  contacted: { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', label: 'Contacted' },
-  quoted: { bg: 'bg-[#e0e7ff]', text: 'text-[#3730a3]', label: 'Quoted' },
-  won: { bg: 'bg-[#dcfce7]', text: 'text-[#166534]', label: 'Won' },
-  lost: { bg: 'bg-[#fee2e2]', text: 'text-[#991b1b]', label: 'Lost' },
+  new: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'New' },
+  contacted: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Contacted' },
+  quoted: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'Quoted' },
+  won: { bg: 'bg-green-100', text: 'text-green-800', label: 'Won' },
+  lost: { bg: 'bg-red-100', text: 'text-red-800', label: 'Lost' },
 };
 
 export function AdminVendorConnect() {
@@ -372,7 +372,7 @@ export function AdminVendorConnect() {
                           <td className="px-4 py-3 text-navy/30 font-medium">{i + 1}</td>
                           <td className="px-4 py-3 text-navy font-medium">{p.company_name}</td>
                           <td className="px-4 py-3 text-navy/70">{p.primary_county || '—'}</td>
-                          <td className={`px-4 py-3 text-center font-bold ${p.performance_score >= 90 ? 'text-[#16a34a]' : 'text-[#d97706]'}`}>
+                          <td className={`px-4 py-3 text-center font-bold ${p.performance_score >= 90 ? 'text-green-600' : 'text-amber-600'}`}>
                             {p.performance_score || 0}
                           </td>
                           <td className="px-4 py-3 text-center text-navy">{p.total_jobs_completed || 0}</td>

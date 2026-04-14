@@ -10,6 +10,7 @@ import {
   Clock, Users, Building2, MapPin, RefreshCw, Search,
   ChevronDown, AlertTriangle, Globe,
 } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 // ── Production guard ────────────────────────────────────────────
 // This entire page is staging-only. Never render in production.
@@ -136,10 +137,11 @@ function CredentialsCard({ tour }) {
         ))}
       </div>
       <div className="mt-4 pt-4 border-t border-white/10 flex gap-3">
-        <button onClick={copyCredentials}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors">
+        <Button onClick={copyCredentials}
+          variant="ghost" size="sm"
+          className="text-white bg-white/10 hover:bg-white/20">
           <Copy size={14} /> Copy Credentials
-        </button>
+        </Button>
         <a href={tour.demo_url} target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-1.5 px-3 py-1.5 bg-gold hover:bg-gold-dark rounded-lg text-sm text-white transition-colors">
           <ExternalLink size={14} /> Open Demo
@@ -423,15 +425,16 @@ export default function DemoTours() {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            <Button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              variant="ghost" size="sm"
+              className={`border-b-2 rounded-none ${
                 isActive
                   ? 'border-navy text-navy'
                   : 'border-transparent text-navy/50 hover:text-navy/80'
               }`}>
               <Icon size={15} />
               {tab.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -445,10 +448,10 @@ export default function DemoTours() {
               <Users size={40} className="mx-auto mb-3 opacity-40" />
               <p className="font-medium">No active tours</p>
               <p className="text-sm mt-1">Create a new tour to get started</p>
-              <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-navy text-white rounded-lg text-sm hover:bg-navy-dark transition-all duration-150 active:scale-[0.98]">
-                <Plus size={14} className="inline mr-1" /> Create Tour
-              </button>
+              <Button onClick={() => setActiveTab('create')}
+                variant="primary" className="mt-3">
+                <Plus size={14} /> Create Tour
+              </Button>
             </div>
           )}
           {activeTours.map(tour => (
@@ -467,10 +470,11 @@ export default function DemoTours() {
                 </div>
                 <div className="flex items-center gap-2">
                   <StatusBadge status={tour.status} />
-                  <button onClick={() => handleMarkComplete(tour.id)}
-                    className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs hover:bg-green-700 transition-colors">
+                  <Button onClick={() => handleMarkComplete(tour.id)}
+                    variant="primary" size="sm"
+                    className="bg-green-600 hover:bg-green-700">
                     Mark Complete
-                  </button>
+                  </Button>
                 </div>
               </div>
               <CredentialsCard tour={tour} />
@@ -496,14 +500,15 @@ export default function DemoTours() {
                 </p>
               </div>
               <CredentialsCard tour={createdTour} />
-              <button onClick={() => { setCreatedTour(null); setForm({
+              <Button onClick={() => { setCreatedTour(null); setForm({
                 first_name: '', last_name: '', email: '', phone: '',
                 business_name: '', industry_type: 'restaurant', county: 'Los Angeles',
                 state: 'California', num_locations: 1, scheduled_for: '', notes: '',
               }); }}
-                className="text-sm text-navy underline">
+                variant="ghost" size="sm"
+                className="underline">
                 Create another tour
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-6">
@@ -604,11 +609,13 @@ export default function DemoTours() {
                 <label className="block">
                   <span className="text-xs text-navy/50">Number of Locations</span>
                   <div className="flex items-center gap-3 mt-1">
-                    <button onClick={() => updateForm('num_locations', Math.max(1, form.num_locations - 1))}
-                      className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">−</button>
+                    <Button onClick={() => updateForm('num_locations', Math.max(1, form.num_locations - 1))}
+                      variant="secondary" size="sm"
+                      className="w-8 h-8 p-0">−</Button>
                     <span className="text-lg font-bold text-navy w-8 text-center">{form.num_locations}</span>
-                    <button onClick={() => updateForm('num_locations', Math.min(9, form.num_locations + 1))}
-                      className="w-8 h-8 rounded-xl border border-navy/15 flex items-center justify-center text-navy/70 hover:bg-cream">+</button>
+                    <Button onClick={() => updateForm('num_locations', Math.min(9, form.num_locations + 1))}
+                      variant="secondary" size="sm"
+                      className="w-8 h-8 p-0">+</Button>
                   </div>
                 </label>
                 <PricingPreview numLocations={form.num_locations} />
@@ -636,8 +643,9 @@ export default function DemoTours() {
               </fieldset>
 
               {/* Submit */}
-              <button onClick={handleCreateTour} disabled={creating}
-                className="w-full py-3 bg-navy text-white rounded-xl text-sm font-semibold hover:bg-navy-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
+              <Button onClick={handleCreateTour} disabled={creating}
+                variant="primary" size="lg"
+                className="w-full">
                 {creating ? (
                   <span className="flex items-center justify-center gap-2">
                     <RefreshCw size={14} className="animate-spin" /> Creating Demo...
@@ -647,7 +655,7 @@ export default function DemoTours() {
                     <Play size={14} /> Create & Generate Demo
                   </span>
                 )}
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -676,13 +684,14 @@ export default function DemoTours() {
                 <span className="bg-cream px-2 py-0.5 rounded">11 vendors</span>
                 <span className="bg-cream px-2 py-0.5 rounded">All Superpowers</span>
               </div>
-              <button onClick={() => {
+              <Button onClick={() => {
                 updateForm('industry_type', t.industry_type);
                 setActiveTab('create');
               }}
-                className="mt-3 text-sm text-gold font-medium hover:underline">
+                variant="ghost" size="sm"
+                className="mt-3 text-gold hover:underline">
                 Use This Template →
-              </button>
+              </Button>
             </div>
           ))}
           {templates.length === 0 && (
@@ -727,10 +736,11 @@ export default function DemoTours() {
               <div className="flex items-center gap-2">
                 <StatusBadge status={tour.status} />
                 {tour.status === 'completed' && (
-                  <button onClick={() => handleManualCleanup(tour.id)}
-                    className="px-3 py-1.5 text-red-600 border border-red-200 rounded-xl text-xs hover:bg-red-50 transition-colors">
-                    <Trash2 size={12} className="inline mr-1" /> Clean Up Now
-                  </button>
+                  <Button onClick={() => handleManualCleanup(tour.id)}
+                    variant="destructive" size="sm"
+                    className="bg-white text-red-600 border border-red-200 hover:bg-red-50">
+                    <Trash2 size={12} /> Clean Up Now
+                  </Button>
                 )}
               </div>
             </div>

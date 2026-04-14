@@ -69,17 +69,17 @@ export function IntegrationsPage() {
       {/* Back link */}
       <button
         onClick={() => navigate('/settings/company')}
-        className="flex items-center gap-1.5 bg-none border-none text-[#6B7F96] text-[13px] cursor-pointer p-0 mb-4"
+        className="flex items-center gap-1.5 bg-none border-none text-slate_ui text-[13px] cursor-pointer p-0 mb-4"
       >
         <ArrowLeft size={16} /> Back to Settings
       </button>
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="flex items-center gap-2.5 text-[22px] font-bold text-[#0B1628] mb-1 mt-0">
+        <h1 className="flex items-center gap-2.5 text-[22px] font-bold text-navy-deeper mb-1 mt-0">
           <Plug size={22} color={NAVY} /> Integrations
         </h1>
-        <p className="text-[#3D5068] text-sm m-0">
+        <p className="text-navy-mid text-sm m-0">
           Connect HoodOps with your favorite tools and services.
         </p>
       </div>
@@ -92,7 +92,7 @@ export function IntegrationsPage() {
             <div
               key={def.slug}
               onClick={() => setSelectedIntegration({ ...def, connected })}
-              className={`bg-white rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-5 cursor-pointer transition-[border-color,box-shadow] duration-150 border ${connected ? 'border-[#bbf7d0]' : 'border-[#D1D9E6]'} hover:border-[#163a5f] hover:shadow-[0_2px_8px_rgba(30,77,107,0.12)]`}
+              className={`bg-white rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-5 cursor-pointer transition-[border-color,box-shadow] duration-150 border ${connected ? 'border-green-200' : 'border-border_ui-cool'} hover:border-navy-muted hover:shadow-[0_2px_8px_rgba(30,77,107,0.12)]`}
             >
               {/* Top: icon + status */}
               <div className="flex justify-between items-start mb-3.5">
@@ -100,12 +100,12 @@ export function IntegrationsPage() {
                   <def.icon size={22} color={NAVY} />
                 </div>
                 {connected ? (
-                  <div className="flex items-center gap-1 px-2.5 py-[3px] rounded-[10px] bg-[#f0fdf4]">
+                  <div className="flex items-center gap-1 px-2.5 py-[3px] rounded-[10px] bg-green-50">
                     <CheckCircle2 size={14} color="#16a34a" />
-                    <span className="text-[11px] font-bold text-[#15803d]">Connected</span>
+                    <span className="text-[11px] font-bold text-green-700">Connected</span>
                   </div>
                 ) : (
-                  <span className="text-[11px] font-semibold text-[#6B7F96] px-2.5 py-[3px] rounded-[10px] bg-[#EEF1F7]">
+                  <span className="text-[11px] font-semibold text-slate_ui px-2.5 py-[3px] rounded-[10px] bg-[#EEF1F7]">
                     Not Connected
                   </span>
                 )}
@@ -113,18 +113,18 @@ export function IntegrationsPage() {
 
               {/* Name + category */}
               <div className="mb-1.5">
-                <span className="text-[15px] font-bold text-[#0B1628]">{def.name}</span>
-                <span className="ml-2 text-[11px] text-[#6B7F96] font-semibold">{def.category}</span>
+                <span className="text-[15px] font-bold text-navy-deeper">{def.name}</span>
+                <span className="ml-2 text-[11px] text-slate_ui font-semibold">{def.category}</span>
               </div>
 
               {/* Description */}
-              <p className="text-[#3D5068] text-[13px] mt-0 mb-3.5 leading-normal">
+              <p className="text-navy-mid text-[13px] mt-0 mb-3.5 leading-normal">
                 {def.description}
               </p>
 
               {/* Action */}
               <button
-                className={`py-1.5 px-3.5 rounded-md text-[13px] font-semibold cursor-pointer ${connected ? 'border border-[#D1D9E6] bg-white text-[#0B1628]' : 'border border-[#163a5f] bg-[#163a5f] text-white'}`}
+                className={`py-1.5 px-3.5 rounded-md text-[13px] font-semibold cursor-pointer ${connected ? 'border border-border_ui-cool bg-white text-navy-deeper' : 'border border-navy-muted bg-navy-muted text-white'}`}
                 onClick={e => {
                   e.stopPropagation();
                   setSelectedIntegration({ ...def, connected });

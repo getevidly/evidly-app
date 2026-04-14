@@ -25,16 +25,16 @@ export function SettingsPage() {
   );
 
   const navLinkClasses = (isActive: boolean) =>
-    `flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm no-underline cursor-pointer transition-[background,color] duration-150 whitespace-nowrap ${isActive ? 'font-semibold text-white bg-[#163a5f]' : 'font-medium text-[#0B1628] bg-transparent'}`;
+    `flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm no-underline cursor-pointer transition-[background,color] duration-150 whitespace-nowrap ${isActive ? 'font-semibold text-white bg-navy-muted' : 'font-medium text-navy-deeper bg-transparent'}`;
 
   return (
     <div style={{ ...FONT }}>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[22px] font-bold text-[#0B1628] mb-1 mt-0">
+        <h1 className="text-[22px] font-bold text-navy-deeper mb-1 mt-0">
           Settings
         </h1>
-        <p className="text-[#3D5068] text-sm m-0">
+        <p className="text-navy-mid text-sm m-0">
           Manage your EvidLY workspace
         </p>
       </div>
@@ -46,7 +46,7 @@ export function SettingsPage() {
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `${navLinkClasses(isActive)} !py-2 !px-3.5 !text-[13px] !rounded-[20px] shrink-0 ${isActive ? 'border border-[#163a5f]' : 'border border-[#D1D9E6]'}`
+              `${navLinkClasses(isActive)} !py-2 !px-3.5 !text-[13px] !rounded-[20px] shrink-0 ${isActive ? 'border border-navy-muted' : 'border border-border_ui-cool'}`
             }
           >
             <item.icon size={16} />
@@ -58,7 +58,7 @@ export function SettingsPage() {
       {/* Desktop: 2-column layout */}
       <div className="flex gap-6 items-start">
         {/* Sidebar nav (desktop only) */}
-        <nav className="hidden lg:block w-60 shrink-0 bg-white border border-[#D1D9E6] rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-2 sticky top-20">
+        <nav className="hidden lg:block w-60 shrink-0 bg-white border border-border_ui-cool rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-2 sticky top-20">
           <div className="flex flex-col gap-0.5">
             {visibleItems.map(item => (
               <NavLink
