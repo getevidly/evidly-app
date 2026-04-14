@@ -451,6 +451,13 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Manage operator testimonials displayed on ScoreTable county pages.',
   },
 
+  // ── Baseline ──
+  featureBaseline: {
+    id: 'feature-baseline', label: 'Feature Baseline', path: '/admin/feature-baseline', icon: '📐',
+    roles: [], description: 'Complete audit of 124 features — verdicts, unlisted code, anti-patterns, and codebase health.',
+    badge: 'NEW',
+  },
+
   // ── Help ──
   help: {
     id: 'help', label: 'Help', path: '/help', icon: '❓',
@@ -509,7 +516,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.demoLauncher, I.partnerDemos, I.adminTestimonials],
+        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.demoLauncher, I.partnerDemos, I.adminTestimonials, I.featureBaseline],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.

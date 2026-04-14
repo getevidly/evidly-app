@@ -130,8 +130,8 @@ const FEATURES = [
   { id: 71, name: 'Ground Truth Missions', category: 'Billing & Growth', verdict: 'PARTIAL', route: '/operations-check', files: 'OperationsCheck.jsx, 2 edge functions', notes: '9 focus areas present. Only 2/3 expected edge functions found.' },
 
   // People Management (72-74)
-  { id: 72, name: 'Employee Management', category: 'People Management', verdict: 'CONTAMINATED', route: 'REMOVED', files: 'Employees.tsx, EmployeeDetail.tsx (ORPHANED)', notes: 'HoodOps PRO feature. Routes removed. Page files + components still exist as orphans. Hardcoded demo data.' },
-  { id: 73, name: 'Timecard Tracking', category: 'People Management', verdict: 'CONTAMINATED', route: 'REMOVED', files: 'Timecards.tsx (ORPHANED)', notes: 'HoodOps PRO feature. Routes removed. Page files + 10 components still orphaned. Hardcoded demo data.' },
+  { id: 72, name: 'Employee Management', category: 'People Management', verdict: 'CLEANED', route: 'REMOVED', files: 'DELETED in BUILD-01', notes: 'HoodOps PRO feature fully removed — pages, components, hooks, demo data all deleted.' },
+  { id: 73, name: 'Timecard Tracking', category: 'People Management', verdict: 'CLEANED', route: 'REMOVED', files: 'DELETED in BUILD-01', notes: 'HoodOps PRO feature fully removed — pages, components, hooks, demo data all deleted.' },
   { id: 74, name: 'Team Structure', category: 'People Management', verdict: 'CONFIRMED', route: '/team', files: 'Team.tsx', notes: 'Real Supabase queries (user_profiles, user_invitations), TeamInviteModal' },
 
   // Regulatory Modules (75-79)
@@ -213,17 +213,17 @@ const UNLISTED_CODE = [
   // HoodOps Contamination
   { name: 'HoodOpsReportCard.tsx', type: 'component', verdict: 'REMOVE', notes: 'HoodOps report component' },
   { name: 'JobsSummaryReport.tsx', type: 'component', verdict: 'REMOVE', notes: 'HoodOps job reporting' },
-  { name: 'TimecardSummaryReport.tsx', type: 'component', verdict: 'REMOVE', notes: 'HoodOps timecard reports' },
+  { name: 'TimecardSummaryReport.tsx', type: 'component', verdict: 'DELETED', notes: 'Removed in BUILD-01' },
   { name: 'ProfitabilityReport.tsx', type: 'component', verdict: 'REMOVE', notes: 'HoodOps profitability' },
   { name: 'components/fleet/*', type: 'directory', verdict: 'REMOVE', notes: 'VehicleFormModal, MaintenanceLogModal' },
   { name: 'components/insurance/*', type: 'directory', verdict: 'REMOVE', notes: 'InsurancePolicyModal (vehicle), RoadsideAssistanceCard' },
-  { name: 'components/timecards/*', type: 'directory', verdict: 'REMOVE', notes: '10 timecard components' },
-  { name: 'components/employees/*', type: 'directory', verdict: 'REMOVE', notes: '11 employee components' },
+  { name: 'components/timecards/*', type: 'directory', verdict: 'DELETED', notes: 'Removed in BUILD-01' },
+  { name: 'components/employees/*', type: 'directory', verdict: 'DELETED', notes: 'Removed in BUILD-01' },
   { name: 'components/inventory/*', type: 'directory', verdict: 'REMOVE', notes: 'LogUsageModal, NewInventoryRequestModal' },
   { name: 'components/availability/*', type: 'directory', verdict: 'REMOVE', notes: 'AvailabilityStatusBanner' },
   { name: 'hooks/api/useVehicles.ts', type: 'hook', verdict: 'REMOVE', notes: 'Fleet vehicle hook' },
-  { name: 'hooks/api/useTimecards.ts', type: 'hook', verdict: 'REMOVE', notes: 'Timecard hook' },
-  { name: 'hooks/api/useEmployees.ts', type: 'hook', verdict: 'REMOVE', notes: 'Employee hook with DEMO_EMPLOYEES' },
+  { name: 'hooks/api/useTimecards.ts', type: 'hook', verdict: 'DELETED', notes: 'Removed in BUILD-01' },
+  { name: 'hooks/api/useEmployees.ts', type: 'hook', verdict: 'DELETED', notes: 'Removed in BUILD-01' },
   { name: 'hooks/api/useBonuses.ts', type: 'hook', verdict: 'REMOVE', notes: 'Bonus tracking hook' },
   { name: 'hooks/api/useAvailability.ts', type: 'hook', verdict: 'REMOVE', notes: 'Staff availability hook' },
   { name: 'hooks/api/useClockReminders.ts', type: 'hook', verdict: 'REMOVE', notes: 'Clock reminder hook' },
