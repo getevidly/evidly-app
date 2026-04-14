@@ -131,7 +131,7 @@ export const InspectionBadge = forwardRef<HTMLDivElement, InspectionBadgeProps>(
             lineHeight: 1.5,
           }}
         >
-          EvidLY is a compliance intelligence platform. This badge reflects
+          EvidLY is an operational intelligence platform for commercial kitchens. This badge reflects
           that the operator used EvidLY to prepare for an inspection and does
           not constitute an official inspection result, compliance
           determination, or regulatory certification.

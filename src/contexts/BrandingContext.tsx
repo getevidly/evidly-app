@@ -46,7 +46,7 @@ interface BrandingContextType {
 
 export const DEFAULT_BRANDING: BrandingConfig = {
   brandName: 'EvidLY',
-  tagline: 'Lead with Confidence',
+  tagline: 'Answers before you ask.',
   poweredByVisible: false,
   colors: {
     primary: '#1E2D4D',

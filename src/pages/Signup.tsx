@@ -6,28 +6,13 @@ import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { trackEvent, trackConversion } from '../utils/analytics';
 import { FOUNDER_PRICING_DEADLINE } from '../lib/stripe';
 import { useCrispHide } from '../hooks/useCrisp';
-
-// ── 58 California counties ──────────────────────────────────
-const CA_COUNTIES = [
-  'Alameda', 'Alpine', 'Amador', 'Butte', 'Calaveras', 'Colusa',
-  'Contra Costa', 'Del Norte', 'El Dorado', 'Fresno', 'Glenn',
-  'Humboldt', 'Imperial', 'Inyo', 'Kern', 'Kings', 'Lake', 'Lassen',
-  'Los Angeles', 'Madera', 'Marin', 'Mariposa', 'Mendocino', 'Merced',
-  'Modoc', 'Mono', 'Monterey', 'Napa', 'Nevada', 'Orange', 'Placer',
-  'Plumas', 'Riverside', 'Sacramento', 'San Benito', 'San Bernardino',
-  'San Diego', 'San Francisco', 'San Joaquin', 'San Luis Obispo',
-  'San Mateo', 'Santa Barbara', 'Santa Clara', 'Santa Cruz', 'Shasta',
-  'Sierra', 'Siskiyou', 'Solano', 'Sonoma', 'Stanislaus', 'Sutter',
-  'Tehama', 'Trinity', 'Tulare', 'Tuolumne', 'Ventura', 'Yolo', 'Yuba',
-];
-
-// Cities with independent health departments (not covered by their county's EHD)
-const INDEPENDENT_JURISDICTIONS = [
-  { value: 'city:berkeley', label: 'City of Berkeley', county: 'Alameda' },
-  { value: 'city:long_beach', label: 'City of Long Beach', county: 'Los Angeles' },
-  { value: 'city:pasadena', label: 'City of Pasadena', county: 'Los Angeles' },
-  { value: 'city:vernon', label: 'City of Vernon', county: 'Los Angeles' },
-];
+import {
+  SUPPORTED_STATES,
+  getCountiesForState,
+  getIndependentJurisdictionsForState,
+  countyToSlug,
+  type StateAbbrev,
+} from '../data/stateCounties';
 
 const INDUSTRY_TYPES = {
   RESTAURANT: {
@@ -100,6 +85,7 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [orgName, setOrgName] = useState('');
+  const [signupState, setSignupState] = useState<StateAbbrev>('CA');
   const [jurisdiction, setJurisdiction] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [industrySubtype, setIndustrySubtype] = useState('');
@@ -201,16 +187,7 @@ export function Signup() {
         {/* Navy top bar */}
         <div className="bg-[#1E2D4D] px-6 py-4">
           <div className="max-w-4xl mx-auto flex items-center">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-              <rect width="48" height="48" rx="10.5" fill="rgba(255,255,255,0.1)"/>
-              <circle cx="24" cy="24" r="3" fill="white"/>
-              <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-              <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-              <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-              <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-              <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
-            </svg>
-            <span className="ml-2.5 text-xl font-bold">
+            <span className="text-xl font-bold" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
               <span className="text-[#A08C5A]">E</span>
               <span className="text-white">vid</span>
               <span className="text-[#A08C5A]">LY</span>
@@ -245,16 +222,7 @@ export function Signup() {
       <div className="bg-[#1E2D4D] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-              <rect width="48" height="48" rx="10.5" fill="rgba(255,255,255,0.1)"/>
-              <circle cx="24" cy="24" r="3" fill="white"/>
-              <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-              <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-              <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-              <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-              <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
-            </svg>
-            <span className="ml-2.5 text-xl font-bold">
+            <span className="text-xl font-bold" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
               <span className="text-[#A08C5A]">E</span>
               <span className="text-white">vid</span>
               <span className="text-[#A08C5A]">LY</span>
@@ -274,7 +242,7 @@ export function Signup() {
         <div className="max-w-lg w-full">
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
             <div className="mb-6">
-              <p className="text-center text-sm font-semibold text-[#1E2D4D] mb-1">Lead with Confidence</p>
+              <p className="text-center text-sm font-semibold mb-1" style={{ color: '#A08C5A' }}>Answers before you ask.</p>
               <h2 className="text-center text-2xl font-bold tracking-tight text-[#1E2D4D]">Create your account</h2>
             </div>
 
@@ -349,37 +317,57 @@ export function Signup() {
                 />
               </div>
 
-              {/* ── County / Jurisdiction dropdown ── */}
-              <div>
-                <label htmlFor="jurisdiction" className="block text-sm font-medium text-[#1E2D4D]/80">
-                  County / Jurisdiction
-                </label>
-                <select
-                  id="jurisdiction"
-                  name="jurisdiction"
-                  value={jurisdiction}
-                  onChange={(e) => setJurisdiction(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
-                >
-                  <option value="">Select county...</option>
-                  <optgroup label="California Counties">
-                    {CA_COUNTIES.map((county) => (
-                      <option key={county} value={`county:${county.toLowerCase().replace(/\s+/g, '_')}`}>
-                        {county} County
-                      </option>
+              {/* ── State + County / Jurisdiction dropdown ── */}
+              <div className="grid grid-cols-[140px_1fr] gap-3">
+                <div>
+                  <label htmlFor="signupState" className="block text-sm font-medium text-[#1E2D4D]/80">
+                    State
+                  </label>
+                  <select
+                    id="signupState"
+                    name="signupState"
+                    value={signupState}
+                    onChange={(e) => { setSignupState(e.target.value as StateAbbrev); setJurisdiction(''); }}
+                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  >
+                    {SUPPORTED_STATES.map(s => (
+                      <option key={s.abbrev} value={s.abbrev}>{s.name}</option>
                     ))}
-                  </optgroup>
-                  <optgroup label="Independent Jurisdictions">
-                    {INDEPENDENT_JURISDICTIONS.map((j) => (
-                      <option key={j.value} value={j.value}>
-                        {j.label} ({j.county} Co.)
-                      </option>
-                    ))}
-                  </optgroup>
-                </select>
-                <p className="mt-1 text-xs text-[#1E2D4D]/50">
-                  Some cities operate independent health departments separate from their county.
-                </p>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="jurisdiction" className="block text-sm font-medium text-[#1E2D4D]/80">
+                    County / Jurisdiction
+                  </label>
+                  <select
+                    id="jurisdiction"
+                    name="jurisdiction"
+                    value={jurisdiction}
+                    onChange={(e) => setJurisdiction(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  >
+                    <option value="">Select county...</option>
+                    <optgroup label={`${SUPPORTED_STATES.find(s => s.abbrev === signupState)?.name} Counties`}>
+                      {getCountiesForState(signupState).map((county) => (
+                        <option key={county} value={countyToSlug(county, signupState)}>
+                          {county} County
+                        </option>
+                      ))}
+                    </optgroup>
+                    {getIndependentJurisdictionsForState(signupState).length > 0 && (
+                      <optgroup label="Independent Jurisdictions">
+                        {getIndependentJurisdictionsForState(signupState).map((j) => (
+                          <option key={j.value} value={j.value}>
+                            {j.label} ({j.county} Co.)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </select>
+                  <p className="mt-1 text-xs text-[#1E2D4D]/50">
+                    Some cities operate independent health departments separate from their county.
+                  </p>
+                </div>
               </div>
 
               <div>

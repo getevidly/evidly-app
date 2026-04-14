@@ -209,7 +209,7 @@ export function MarketplaceLanding() {
             >
               EvidLY
             </span>
-            {' '}&mdash; Lead with Confidence &mdash; Know Where You Stand
+            {' '}&mdash; Answers before you ask.
           </p>
         </div>
       </div>

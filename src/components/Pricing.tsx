@@ -64,7 +64,7 @@ export default function Pricing() {
     annualPrice: 990,
     features: [
       'Full dual-pillar compliance intelligence',
-      'Jurisdiction Intelligence Engine (62 CA jurisdictions)',
+      'Jurisdiction Intelligence Engine (169 Counties · 5 States)',
       'AI-powered HACCP plan generation',
       'Real-time regulatory alerts',
       'Self-inspection & mock inspection tools',

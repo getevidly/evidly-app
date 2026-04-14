@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, MapPin } from 'lucide-react';
-import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
@@ -12,7 +11,7 @@ import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
 
 const TRUST_ITEMS = [
-  { value: '62', label: 'CA Counties/Cities' },
+  { value: '169', label: 'Counties · 5 States' },
   { value: 'Food Safety', label: 'Inspection' },
   { value: 'Facility Safety', label: 'Inspection' },
 ];
@@ -124,16 +123,7 @@ export function Login() {
           {/* Top: Logo + messaging */}
           <div>
             <div className="flex items-center mb-16">
-              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
-                <rect width="48" height="48" rx="10.5" fill="rgba(255,255,255,0.1)"/>
-                <circle cx="24" cy="24" r="3" fill="white"/>
-                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
-              </svg>
-              <span className="ml-3 text-2xl font-bold tracking-tight">
+              <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
                 <span className="text-[#A08C5A]">E</span>
                 <span className="text-white">vid</span>
                 <span className="text-[#A08C5A]">LY</span>
@@ -141,10 +131,10 @@ export function Login() {
             </div>
 
             <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
-              Lead with<br />Confidence
+              Answers before<br />you ask.
             </h1>
             <p className="text-lg text-white/60 mb-12 max-w-md">
-              California's compliance intelligence platform for commercial kitchens.
+              Operational Intelligence for Commercial Kitchens.
             </p>
 
             {/* Trust bar */}
@@ -179,24 +169,15 @@ export function Login() {
         <div className="max-w-md w-full">
           {/* Mobile logo (hidden on desktop where left panel shows it) */}
           <div className="lg:hidden flex justify-center mb-6">
-            <div className="flex items-center">
-              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
-                <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
-                <circle cx="24" cy="24" r="3" fill="white"/>
-                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
-              </svg>
+            <div className="text-center">
               {branding.brandName === 'EvidLY' ? (
-                <span className="ml-3 text-3xl font-bold tracking-tight">
+                <span className="text-3xl font-bold tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
                   <span style={{ color: '#A08C5A' }}>E</span>
                   <span style={{ color: '#1E2D4D' }}>vid</span>
                   <span style={{ color: '#A08C5A' }}>LY</span>
                 </span>
               ) : (
-                <span className="ml-3 text-2xl font-bold tracking-tight" style={{ color: branding.colors.primary }}>
+                <span className="text-2xl font-bold tracking-tight" style={{ color: branding.colors.primary }}>
                   {branding.brandName}
                 </span>
               )}
@@ -330,7 +311,6 @@ export function Login() {
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-xl text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >
-                <EvidlyIcon size={16} />
                 Sign in with {branding.sso.provider === 'saml' ? 'SAML SSO' : branding.sso.provider === 'oidc' ? 'OpenID Connect' : 'SSO'}
               </button>
               {branding.sso.enforce && (
@@ -359,7 +339,6 @@ export function Login() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
               >
-                <EvidlyIcon size={14} />
                 <span>Powered by <span className="font-semibold text-[#1E2D4D]/50">EvidLY</span></span>
               </a>
             </div>

@@ -184,7 +184,7 @@ export default function InsuranceRiskShared() {
                 <span className="text-white">Evid</span>
                 <span style={{ color: '#A08C5A' }}>LY</span>
               </span>
-              <p className="text-xs text-[#1E2D4D]/30 -mt-0.5">Lead with Confidence</p>
+              <p className="text-xs text-[#1E2D4D]/30 -mt-0.5">Answers before you ask.</p>
             </div>
           </div>
           <span className="text-xs text-[#1E2D4D]/30 hidden sm:block">Insurance Risk Assessment</span>
@@ -369,7 +369,7 @@ export default function InsuranceRiskShared() {
               <span style={{ color: '#A08C5A' }}>LY</span>
             </span>
           </div>
-          <p className="text-xs text-[#1E2D4D]/30">Lead with Confidence · evidly.com</p>
+          <p className="text-xs text-[#1E2D4D]/30">Answers before you ask. · evidly.com</p>
         </div>
       </div>
     </div>

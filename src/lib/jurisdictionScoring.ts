@@ -7,6 +7,7 @@
 
 import type { ScoreImpactItem } from '../data/demoData';
 import { findViolationMapping, getEffectiveSeverity, type ViolationSeverity } from '../data/violationMapping';
+import { STATE_COUNTIES, type StateAbbrev } from '../data/stateCounties';
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -686,22 +687,35 @@ export function calculateJurisdictionScore(
 }
 
 /**
- * Get all available county profiles for UI dropdowns.
+ * Get available county profiles for UI dropdowns.
+ * When state is CA (or omitted), returns detailed scoring profiles.
+ * For OR/WA/NV/AZ, returns generic county list from stateCounties.
  */
-export function getAvailableCounties(): { slug: string; name: string; systemType: InspectionSystemType }[] {
-  const seen = new Set<string>();
-  return Object.entries(COUNTY_PROFILES)
-    .filter(([slug, profile]) => {
-      // Deduplicate aliases
-      const key = profile.countySlug;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      // Only include the canonical slug
-      return slug === profile.countySlug;
-    })
-    .map(([, profile]) => ({
-      slug: profile.countySlug,
-      name: profile.countyName,
-      systemType: profile.systemType,
-    }));
+export function getAvailableCounties(state?: string): { slug: string; name: string; systemType: InspectionSystemType }[] {
+  const st = (state || 'CA').toUpperCase();
+
+  if (st === 'CA') {
+    const seen = new Set<string>();
+    return Object.entries(COUNTY_PROFILES)
+      .filter(([slug, profile]) => {
+        const key = profile.countySlug;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return slug === profile.countySlug;
+      })
+      .map(([, profile]) => ({
+        slug: profile.countySlug,
+        name: profile.countyName,
+        systemType: profile.systemType,
+      }));
+  }
+
+  const counties = STATE_COUNTIES[st as StateAbbrev];
+  if (!counties) return [];
+
+  return counties.map(name => ({
+    slug: name.toLowerCase().replace(/\s+/g, '-'),
+    name: `${name} County`,
+    systemType: 'standard' as InspectionSystemType,
+  }));
 }

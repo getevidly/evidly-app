@@ -14,18 +14,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import Button from '../../components/ui/Button';
-
-const CA_COUNTIES = [
-  'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa',
-  'Del Norte','El Dorado','Fresno','Glenn','Humboldt','Imperial','Inyo',
-  'Kern','Kings','Lake','Lassen','Los Angeles','Madera','Marin','Mariposa',
-  'Mendocino','Merced','Modoc','Mono','Monterey','Napa','Nevada','Orange',
-  'Placer','Plumas','Riverside','Sacramento','San Benito','San Bernardino',
-  'San Diego','San Francisco','San Joaquin','San Luis Obispo','San Mateo',
-  'Santa Barbara','Santa Clara','Santa Cruz','Shasta','Sierra','Siskiyou',
-  'Solano','Sonoma','Stanislaus','Sutter','Tehama','Trinity','Tulare',
-  'Tuolumne','Ventura','Yolo','Yuba',
-];
+import { SUPPORTED_STATES, getCountiesForState, type StateAbbrev } from '../../data/stateCounties';
 
 const INDUSTRIES = [
   'Independent Restaurant','Multi-Unit Restaurant','Hotel & Hospitality',
@@ -64,6 +53,7 @@ export default function DemoLauncher() {
   const [form, setForm] = useState({
     prospectName: '',
     company: '',
+    demoState: 'CA' as StateAbbrev,
     counties: [] as string[],
     industry: '',
     locationCount: '',
@@ -142,7 +132,7 @@ export default function DemoLauncher() {
 
   const resetForm = () => {
     setLaunched(false);
-    setForm({ prospectName: '', company: '', counties: [], industry: '', locationCount: '', notes: '' });
+    setForm({ prospectName: '', company: '', demoState: 'CA' as StateAbbrev, counties: [], industry: '', locationCount: '', notes: '' });
   };
 
   // Fire Demo Signal — inserts a published signal for the guided tour org
@@ -362,13 +352,29 @@ export default function DemoLauncher() {
             </div>
           </div>
 
-          {/* County selector */}
+          {/* State + County selector */}
           <div>
             <label className="block text-xs font-semibold text-navy/80 mb-2">
               Counties {form.counties.length > 0 && <span className="text-gold ml-1">({form.counties.length} selected)</span>}
             </label>
+            <div className="flex gap-1 mb-2">
+              {SUPPORTED_STATES.map(s => (
+                <button
+                  key={s.abbrev}
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, demoState: s.abbrev, counties: [] }))}
+                  className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
+                    form.demoState === s.abbrev
+                      ? 'bg-navy text-white'
+                      : 'bg-white border border-navy/10 text-navy/70 hover:border-navy/20'
+                  }`}
+                >
+                  {s.abbrev}
+                </button>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-xl bg-cream">
-              {CA_COUNTIES.map(county => (
+              {getCountiesForState(form.demoState).map(county => (
                 <button
                   key={county}
                   type="button"

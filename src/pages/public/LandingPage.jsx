@@ -116,7 +116,7 @@ function Logo({ size = "1.15rem", light = false, tagline = false }) {
       </span>
       {tagline && (
         <span style={{ fontSize: `calc(${size} * 0.26)`, fontWeight: 500, letterSpacing: "0.2em", color: tagColor, textTransform: "uppercase", lineHeight: 1, fontFamily: FF_MONO, whiteSpace: "nowrap" }}>
-          Lead with Confidence
+          Answers before you ask.
         </span>
       )}
     </span>

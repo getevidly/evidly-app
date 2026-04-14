@@ -166,12 +166,12 @@ const FEATURES = [
   { id: 95, name: 'Error Boundary & Sentry', category: 'Security', verdict: 'CONFIRMED', route: 'N/A', files: 'ErrorBoundary.tsx, sentry.ts, errorReporting.ts', notes: 'React error boundary + Sentry integration' },
 
   // SEO & Public Pages (96-101)
-  { id: 96, name: 'County Landing Pages', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/:slug', files: 'CountyLandingPage.jsx', notes: '62 CA counties, schema markup, dynamic content layers' },
+  { id: 96, name: 'County Landing Pages', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/:slug', files: 'CountyLandingPage.jsx', notes: '169 counties across 5 states, schema markup, dynamic content layers' },
   { id: 97, name: 'City Pages', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/city/:citySlug', files: 'CityPage.jsx', notes: '4 unique content layers per city' },
   { id: 98, name: 'Kitchen Check Pages', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/kitchen-check/:slug', files: 'KitchenCheckPage.jsx', notes: 'Assessment-based landing pages' },
   { id: 99, name: 'California Compliance Guides', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/compliance/california', files: 'CaliforniaCompliance.tsx, CountyCompliance.tsx', notes: 'County-specific compliance content' },
   { id: 100, name: 'Free Kitchen Checkup Assessment', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/assessment', files: 'AssessmentTool.tsx, assessment-notify edge function', notes: 'Lead capture + scoring + PDF export' },
-  { id: 101, name: 'ScoreTable — 62 CA Counties', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/scoretable', files: '6 ScoreTable pages', notes: '62 CA + 39 WA counties, multi-state system' },
+  { id: 101, name: 'ScoreTable — 169 Counties · 5 States', category: 'SEO & Public Pages', verdict: 'CONFIRMED', route: '/scoretable', files: '6 ScoreTable pages', notes: '169 counties across CA, OR, WA, NV, AZ' },
 
   // Admin Console (102-106)
   { id: 102, name: 'Command Center', category: 'Admin Console', verdict: 'CONFIRMED', route: '/admin/command-center', files: 'CommandCenter.tsx, platform-metrics-refresh', notes: 'Real Supabase queries, event feed, crawl status' },

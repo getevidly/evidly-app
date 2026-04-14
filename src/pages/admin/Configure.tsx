@@ -27,16 +27,7 @@ interface Vendor { id: string; company_name: string; service_type: string | null
   alternate_contact_name?: string | null; alternate_contact_email?: string | null; alternate_contact_phone?: string | null;
   main_phone?: string | null; website?: string | null; contact_name?: string | null; }
 
-const CA_COUNTIES = [
-  'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa','Del Norte',
-  'El Dorado','Fresno','Glenn','Humboldt','Imperial','Inyo','Kern','Kings','Lake',
-  'Lassen','Los Angeles','Madera','Marin','Mariposa','Mendocino','Merced','Modoc',
-  'Mono','Monterey','Napa','Nevada','Orange','Placer','Plumas','Riverside',
-  'Sacramento','San Benito','San Bernardino','San Diego','San Francisco','San Joaquin',
-  'San Luis Obispo','San Mateo','Santa Barbara','Santa Clara','Santa Cruz','Shasta',
-  'Sierra','Siskiyou','Solano','Sonoma','Stanislaus','Sutter','Tehama','Trinity',
-  'Tulare','Tuolumne','Ventura','Yolo','Yuba',
-];
+import { SUPPORTED_STATES, getCountiesForState, type StateAbbrev } from '../../data/stateCounties';
 
 const ROLES = ['owner_operator','executive','kitchen_manager','compliance_manager','chef','facilities_manager','kitchen_staff','platform_admin'];
 const SERVICE_TYPES = ['Hood Cleaning','Fire Suppression','Pest Control','Grease Disposal','Oil Management','Equipment Repair','HVAC','Plumbing','Electrical','Other'];
@@ -308,6 +299,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   const { isDemoMode } = useDemo();
   const [name, setName] = useState('');
   const [type, setType] = useState('restaurant');
+  const [orgState, setOrgState] = useState<StateAbbrev>('CA');
   const [county, setCounty] = useState('');
   const [plan, setPlan] = useState('founder');
   const [status, setStatus] = useState('pending');
@@ -348,10 +340,15 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
               {['restaurant','healthcare','hospitality','institutional','k12_education','other'].map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
             </select>
           </div>
+          <div><label className={labelCls}>State</label>
+            <select className={`${inputCls} cursor-pointer`} value={orgState} onChange={e => { setOrgState(e.target.value as StateAbbrev); setCounty(''); }}>
+              {SUPPORTED_STATES.map(s => <option key={s.abbrev} value={s.abbrev}>{s.name}</option>)}
+            </select>
+          </div>
           <div><label className={labelCls}>Primary County</label>
             <select className={`${inputCls} cursor-pointer`} value={county} onChange={e => setCounty(e.target.value)}>
               <option value="">Select county...</option>
-              {CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}
+              {getCountiesForState(orgState).map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div><label className={labelCls}>Plan</label>
@@ -407,6 +404,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   const [selectedOrg, setSelectedOrg] = useState<OrgOption | null>(null);
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [locState, setLocState] = useState<StateAbbrev>('CA');
   const [county, setCounty] = useState('');
   const [zip, setZip] = useState('');
   const [status, setStatus] = useState('pending');
@@ -430,7 +428,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
     }
     const { error } = await supabase.from('locations').insert({
       name: name.trim(), organization_id: orgId, address: address || null,
-      city: city || null, state: 'CA', zip: zip || null, county: county || null, status,
+      city: city || null, state: locState, zip: zip || null, county: county || null, status,
       site_contact_name: scName || null, site_contact_email: scEmail || null, site_contact_phone: scPhone || null,
       site_phone: sitePhone || null, manager_name: mgrName || null, manager_phone: mgrPhone || null,
     });
@@ -447,10 +445,15 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
         <div className="grid grid-cols-2 gap-3">
           <div><label className={labelCls}>Address</label><input className={inputCls} value={address} onChange={e => setAddress(e.target.value)} placeholder="123 Main St" /></div>
           <div><label className={labelCls}>City</label><input className={inputCls} value={city} onChange={e => setCity(e.target.value)} placeholder="Fresno" /></div>
+          <div><label className={labelCls}>State</label>
+            <select className={`${inputCls} cursor-pointer`} value={locState} onChange={e => { setLocState(e.target.value as StateAbbrev); setCounty(''); }}>
+              {SUPPORTED_STATES.map(s => <option key={s.abbrev} value={s.abbrev}>{s.name}</option>)}
+            </select>
+          </div>
           <div><label className={labelCls}>County</label>
             <select className={`${inputCls} cursor-pointer`} value={county} onChange={e => setCounty(e.target.value)}>
               <option value="">Select county...</option>
-              {CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}
+              {getCountiesForState(locState).map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div><label className={labelCls}>ZIP</label><input className={inputCls} value={zip} onChange={e => setZip(e.target.value)} placeholder="93721" /></div>
@@ -537,6 +540,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
   const [serviceType, setServiceType] = useState('Hood Cleaning');
   const [website, setWebsite] = useState('');
   const [mainPhone, setMainPhone] = useState('');
+  const [vendorState, setVendorState] = useState<StateAbbrev>('CA');
   const [counties, setCounties] = useState<string[]>([]);
   const [certs, setCerts] = useState<string[]>([]);
   const [isPartner, setIsPartner] = useState(false);
@@ -619,8 +623,16 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
         </div>
 
         <div><label className={labelCls}>Counties Served</label>
+          <div className="flex gap-1 mb-2">
+            {SUPPORTED_STATES.map(s => (
+              <button key={s.abbrev} type="button" onClick={() => setVendorState(s.abbrev)}
+                className={`px-2 py-[2px] rounded-xl text-[10px] font-semibold cursor-pointer ${
+                  vendorState === s.abbrev ? 'border border-navy bg-navy text-white' : 'border border-border_ui bg-white text-gray-400'
+                }`}>{s.abbrev}</button>
+            ))}
+          </div>
           <div className="flex flex-wrap gap-1 max-h-[100px] overflow-y-auto p-2 border border-border_ui-warm rounded-lg">
-            {['Fresno','Los Angeles','Merced','Sacramento','San Diego','San Francisco','Stanislaus'].map(c => (
+            {getCountiesForState(vendorState).map(c => (
               <button key={c} type="button" onClick={() => toggleCounty(c)}
                 className={`px-2 py-[2px] rounded-xl text-[10px] font-semibold cursor-pointer ${
                   counties.includes(c) ? 'border border-gold bg-cream-warm text-gold' : 'border border-border_ui bg-white text-gray-400'

@@ -186,7 +186,7 @@ export function VendorRegister() {
             </div>
           </div>
 
-          <p className="text-center text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Lead with Confidence</p>
+          <p className="text-center text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Answers before you ask.</p>
           <h2 className="text-center text-xl font-bold text-[#1E2D4D] mb-6">Vendor Marketplace - Register</h2>
 
           {error && (

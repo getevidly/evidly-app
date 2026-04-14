@@ -127,7 +127,7 @@ export function EnterpriseLanding() {
             <span className="font-semibold cursor-pointer hover:underline" style={{ color: '#1E2D4D' }} onClick={() => navigate('/')}>
               EvidLY
             </span>
-            {' '}&mdash; Lead with Confidence &mdash; Know Where You Stand
+            {' '}&mdash; Answers before you ask.
           </p>
         </div>
       </div>

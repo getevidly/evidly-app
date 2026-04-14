@@ -31,7 +31,7 @@ export function Logo({ s = "1.2rem", light = false, tagline = false }) {
         <span style={{ color: light ? E.w : E.navy }}>vid</span>
         <span style={{ color: E.gold }}>LY</span>
       </span>
-      {tagline && <span style={{ fontSize: `calc(${s} * 0.3)`, fontWeight: 700, letterSpacing: "0.2em", color: light ? "rgba(255,255,255,0.55)" : "rgba(37,57,107,0.6)", textTransform: "uppercase", lineHeight: 1, fontFamily: ff, whiteSpace: "nowrap" }}>Lead with Confidence</span>}
+      {tagline && <span style={{ fontSize: `calc(${s} * 0.3)`, fontWeight: 700, letterSpacing: "0.2em", color: light ? "rgba(255,255,255,0.55)" : "rgba(37,57,107,0.6)", textTransform: "uppercase", lineHeight: 1, fontFamily: ff, whiteSpace: "nowrap" }}>Answers before you ask.</span>}
     </span>
   );
 }

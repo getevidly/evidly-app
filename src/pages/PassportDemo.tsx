@@ -165,7 +165,7 @@ export default function PassportDemo() {
       <footer className="bg-[#FAF7F0] border-t border-[#1E2D4D]/10 py-8 px-6 mt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-[#1E2D4D]/70 font-medium mb-2">
-            Powered by EvidLY — Lead with Confidence
+            Powered by EvidLY — Answers before you ask.
           </p>
           <a
             href="https://getevidly.com"

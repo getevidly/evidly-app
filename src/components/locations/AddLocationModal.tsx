@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalShell, FormField, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from '../temp-logs/shared';
 import {
   DAY_LABELS,
@@ -45,8 +45,13 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
   const [openTime, setOpenTime] = useState('06:00');
   const [closeTime, setCloseTime] = useState('22:00');
 
-  const counties = getAvailableCounties();
+  const counties = getAvailableCounties(state);
   const openingTimes = generateOpeningTimes();
+
+  // Reset jurisdiction when state changes
+  useEffect(() => {
+    setJurisdictionSlug('');
+  }, [state]);
   const closingTimes = generateClosingTimes();
 
   const codeConflict = code.length > 0 && existingCodes.includes(code.toUpperCase());

@@ -139,7 +139,7 @@ export const StandingCard = forwardRef<HTMLDivElement, StandingCardProps>(
             lineHeight: 1.5,
           }}
         >
-          EvidLY is a compliance intelligence platform. This card reflects
+          EvidLY is an operational intelligence platform for commercial kitchens. This card reflects
           operational activity tracked in EvidLY and does not constitute an
           official inspection result, compliance determination, or regulatory
           certification.
