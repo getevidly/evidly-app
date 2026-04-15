@@ -119,7 +119,7 @@ export function Upgrade() {
                 <p className="text-lg font-bold text-white">EvidLY Standard</p>
                 <p className="text-sm text-[#1E2D4D]/30">$99/mo</p>
               </div>
-              <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Founder pricing — locked through July 4, 2026</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Founder pricing — locked through August 7, 2026</p>
             </div>
             <div className="px-5 py-4 space-y-3">
               <p className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
@@ -170,7 +170,7 @@ export function Upgrade() {
           <div>
             <p className="text-sm font-medium text-[#1E2D4D]/90">What is Founder pricing?</p>
             <p className="text-xs text-[#1E2D4D]/50 mt-1">
-              Early adopters lock in $99/mo. This rate is guaranteed through July 4, 2026 — the price goes up after that.
+              Early adopters lock in $99/mo. This rate is guaranteed through August 7, 2026 — the price goes up after that.
             </p>
           </div>
         </div>

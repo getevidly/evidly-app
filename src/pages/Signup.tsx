@@ -69,7 +69,7 @@ function FounderBanner() {
 
   return (
     <div className="bg-gradient-to-r from-[#A08C5A] to-[#A08C5A] text-white text-center py-2.5 px-4 text-sm font-medium">
-      Founder pricing locked until July 4, 2026 — <span className="font-bold">{timeLeft} remaining</span>
+      Founder pricing locked until August 7, 2026 — <span className="font-bold">{timeLeft} remaining</span>
     </div>
   );
 }

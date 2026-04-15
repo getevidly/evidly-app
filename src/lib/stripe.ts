@@ -28,7 +28,7 @@ export interface Plan {
   features: string[];
 }
 
-export const FOUNDER_PRICING_DEADLINE = new Date('2026-07-04T23:59:59-07:00');
+export const FOUNDER_PRICING_DEADLINE = new Date('2026-08-07T23:59:59-07:00');
 
 export const PLANS: Plan[] = [
   {

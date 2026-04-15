@@ -134,7 +134,7 @@ function Eyebrow({ children, light = false }) {
 // ─────────────────────────────────────────────
 // FOUNDER URGENCY COUNTDOWN
 // ─────────────────────────────────────────────
-function FounderUrgency({ deadline = "2026-07-04" }) {
+function FounderUrgency({ deadline = "2026-08-07" }) {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -163,7 +163,7 @@ function FounderUrgency({ deadline = "2026-07-04" }) {
       ) : (
         <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Expires July 4, 2026</div>
+            <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Expires August 7, 2026</div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
               {[[dd, "Days"], [hh, "Hrs"], [mm, "Min"], [ss, "Sec"]].map(([val, label]) => (
                 <div key={label} style={{ textAlign: "center" }}>
@@ -176,7 +176,7 @@ function FounderUrgency({ deadline = "2026-07-04" }) {
         </div>
       )}
       <p style={{ textAlign: "center", fontSize: "0.7rem", color: "rgba(255,255,255,0.22)", marginTop: 10, marginBottom: 0, fontFamily: FF_SANS }}>
-        $99/mo first location + $49/mo per additional (up to 10), locked for life. After July 4 — standard rates apply.
+        $99/mo first location + $49/mo per additional (up to 10), locked for life. After August 7 — standard rates apply.
       </p>
     </div>
   );

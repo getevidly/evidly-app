@@ -62,7 +62,7 @@ function PricingPreview({ numLocations }) {
         additional location{numLocations > 2 ? 's' : ''}
       </p>
       <p className="text-xs text-gold mt-1">
-        ${annual.toLocaleString()}/yr — locked for life before July 4, 2026
+        ${annual.toLocaleString()}/yr — locked for life before August 7, 2026
       </p>
     </div>
   );

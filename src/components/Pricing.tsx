@@ -32,7 +32,7 @@ function DeadlineCountdown() {
   return (
     <div className="bg-gradient-to-r from-[#A08C5A]/10 to-[#A08C5A]/5 border border-[#A08C5A]/30 rounded-xl p-4">
       <p className="text-sm font-bold text-[#1E2D4D] text-center mb-3">
-        Founder pricing locks in forever &mdash; offer ends July 4, 2026
+        Founder pricing locks in forever &mdash; offer ends August 7, 2026
       </p>
       <div className="flex gap-3 justify-center">
         {[
@@ -111,7 +111,7 @@ export default function Pricing() {
             Lock in founder pricing today
           </h2>
           <p className="text-[#1E2D4D]/70 mt-3 max-w-lg mx-auto">
-            Founder pricing available through July 4, 2026. Price locked forever when you sign up.
+            Founder pricing available through August 7, 2026. Price locked forever when you sign up.
           </p>
         </div>
 
