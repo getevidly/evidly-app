@@ -7,8 +7,9 @@ import {
   Mail,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { typography } from '../lib/designSystem';
 
-const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
+const F: React.CSSProperties = { fontFamily: typography.family.body };
 
 export function CarrierPartnership() {
   return (

@@ -12,6 +12,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { typography } from '../lib/designSystem';
 
 // ── Types ──────────────────────────────────────────────────────────
 type AlertSeverity = 'high' | 'medium' | 'low';
@@ -37,7 +38,7 @@ interface PredictiveAlert {
 }
 
 // ── Font ───────────────────────────────────────────────────────────
-const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
+const F: React.CSSProperties = { fontFamily: typography.family.body };
 // Brand color mapping for inline styles
 const CLR = {
   navy: '#1E2D4D',

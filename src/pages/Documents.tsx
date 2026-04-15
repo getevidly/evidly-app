@@ -473,7 +473,7 @@ export function Documents() {
               maxPhotos={3}
               documentMode
             />
-            <p className="text-xs text-[#1E2D4D]/30 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <p className="text-xs text-[#1E2D4D]/30 mt-1">
               {t('pages.documents.photoHint')}
             </p>
             {docPhotos.length > 0 && (

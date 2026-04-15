@@ -104,7 +104,6 @@ export function DemoTalkingPoints() {
         right: 16,
         zIndex: 9999,
         maxWidth: 320,
-        fontFamily: "'DM Sans', sans-serif",
       }}
     >
       {expanded ? (

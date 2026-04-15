@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DollarSign, Download, X, Check, AlertTriangle } from 'lucide-react';
+import { typography } from '../../lib/designSystem';
 import {
   useBonusSummary,
   useQuarterlyMetrics,
@@ -15,7 +16,7 @@ const CARD_BORDER = '#D1D9E6';
 const CARD_SHADOW = '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)';
 const TEXT_TERTIARY = '#6B7F96';
 const MUTED = '#3D5068';
-const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
+const FONT: React.CSSProperties = { fontFamily: typography.family.body };
 
 // ── Helpers ───────────────────────────────────────────────────
 const currentYear = new Date().getFullYear();

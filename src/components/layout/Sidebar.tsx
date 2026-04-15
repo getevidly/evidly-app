@@ -28,6 +28,7 @@ import {
   type SidebarSection,
 } from '../../config/sidebarConfig';
 import { useUnreadSignals } from '../../hooks/useUnreadSignals';
+import { colors, typography } from '../../lib/designSystem';
 
 // ── Emoji → Lucide Icon Map ─────────────────────────────
 // Maps sidebar emoji strings to lucide-react components for a professional look.
@@ -256,14 +257,14 @@ const SectionTooltip: React.FC<{
       onMouseLeave={onMouseLeave}
     >
       <p style={{
-        color: '#A08C5A', fontSize: 12, fontWeight: 800,
-        margin: '0 0 6px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px',
+        color: colors.gold, fontSize: 12, fontWeight: 800,
+        margin: '0 0 6px', fontFamily: typography.family.body, textTransform: 'uppercase', letterSpacing: '0.5px',
       }}>
         {title}
       </p>
       <p style={{
-        color: '#94a3b8', fontSize: 11, margin: '0 0 10px',
-        fontFamily: 'system-ui', lineHeight: 1.5,
+        color: colors.textMuted, fontSize: 11, margin: '0 0 10px',
+        fontFamily: typography.family.body, lineHeight: 1.5,
       }}>
         {description}
       </p>
@@ -279,10 +280,10 @@ const SectionTooltip: React.FC<{
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#243d5e'; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
           >
-            <p style={{ color: '#ffffff', fontSize: 11, fontWeight: 600, margin: '0 0 1px', fontFamily: 'system-ui' }}>
+            <p style={{ color: '#ffffff', fontSize: 11, fontWeight: 600, margin: '0 0 1px', fontFamily: typography.family.body }}>
               {item.label}
             </p>
-            <p style={{ color: '#7a8ba3', fontSize: 10, margin: 0, fontFamily: 'system-ui', lineHeight: 1.4 }}>
+            <p style={{ color: '#7a8ba3', fontSize: 10, margin: 0, fontFamily: typography.family.body, lineHeight: 1.4 }}>
               {item.description}
             </p>
           </div>
@@ -315,10 +316,10 @@ const ItemTooltip: React.FC<{
       pointerEvents: 'none',
       boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
     }}>
-      <p style={{ color: '#ffffff', fontSize: 12, fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>
+      <p style={{ color: '#ffffff', fontSize: 12, fontWeight: 700, margin: '0 0 4px', fontFamily: typography.family.body }}>
         {label}
       </p>
-      <p style={{ color: '#94a3b8', fontSize: 11, margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>
+      <p style={{ color: colors.textMuted, fontSize: 11, margin: 0, lineHeight: 1.5, fontFamily: typography.family.body }}>
         {description}
       </p>
     </div>
@@ -371,7 +372,7 @@ const SidebarNavItem: React.FC<{
           cursor: 'pointer',
           textAlign: 'left' as const,
           transition: 'background 0.1s',
-          fontFamily: 'system-ui',
+          fontFamily: typography.family.body,
         }}
         {...(testId ? { 'data-testid': testId } : {})}
       >
@@ -383,7 +384,7 @@ const SidebarNavItem: React.FC<{
           color: isActive ? '#ffffff' : '#94a3b8',
           fontSize: 12,
           fontWeight: isActive ? 600 : 400,
-          fontFamily: 'system-ui',
+          fontFamily: typography.family.body,
         }}>
           {displayLabel}
         </span>
@@ -391,9 +392,9 @@ const SidebarNavItem: React.FC<{
           <span style={{
             fontSize: 9,
             fontWeight: 700,
-            fontFamily: 'system-ui',
+            fontFamily: typography.family.body,
             color: '#ffffff',
-            backgroundColor: '#A08C5A',
+            backgroundColor: colors.gold,
             padding: '1px 6px',
             borderRadius: 9,
             lineHeight: '16px',
@@ -583,8 +584,8 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex-shrink-0 px-6 py-5">
           {branding.brandName === 'EvidLY' ? (
-            <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
-              <span style={{ color: '#A08C5A' }}>E</span><span style={{ color: '#FFFFFF' }}>vid</span><span style={{ color: '#A08C5A' }}>LY</span>
+            <span style={{ fontFamily: typography.family.logo, fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
+              <span style={{ color: colors.gold }}>E</span><span style={{ color: colors.white }}>vid</span><span style={{ color: colors.gold }}>LY</span>
             </span>
           ) : (
             <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
@@ -598,7 +599,7 @@ export function Sidebar() {
           <button
             onClick={togglePresenterMode}
             className="mx-3 mb-2 px-2 py-1.5 rounded-md text-xs font-bold text-center transition-opacity hover:opacity-80 cursor-pointer"
-            style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+            style={{ backgroundColor: colors.gold, color: colors.navy }}
             title="Click to deactivate presenter mode"
           >
             PRESENTER MODE
@@ -669,10 +670,10 @@ export function Sidebar() {
                       style={{ background: 'none', border: 'none' }}
                     >
                       <span style={{
-                        color: location.pathname === section.path ? '#ffffff' : '#A08C5A',
+                        color: location.pathname === section.path ? '#ffffff' : colors.gold,
                         fontSize: 9, fontWeight: 800,
                         textTransform: 'uppercase' as const,
-                        letterSpacing: '1.2px', fontFamily: 'system-ui',
+                        letterSpacing: '1.2px', fontFamily: typography.family.body,
                       }}>
                         {section.label}
                       </span>
@@ -685,10 +686,10 @@ export function Sidebar() {
                         onClick={() => navigate(section.path!)}
                         style={{
                           background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                          color: hasActiveChild ? '#ffffff' : '#A08C5A',
+                          color: hasActiveChild ? '#ffffff' : colors.gold,
                           fontSize: 9, fontWeight: 800,
                           textTransform: 'uppercase' as const,
-                          letterSpacing: '1.2px', fontFamily: 'system-ui',
+                          letterSpacing: '1.2px', fontFamily: typography.family.body,
                         }}
                       >
                         {section.label}
@@ -698,7 +699,7 @@ export function Sidebar() {
                         onClick={(e) => { e.stopPropagation(); toggleSection(section.id); }}
                         style={{
                           background: 'none', border: 'none', padding: '2px 0 2px 8px',
-                          cursor: 'pointer', color: '#A08C5A', fontSize: 10,
+                          cursor: 'pointer', color: colors.gold, fontSize: 10,
                           display: 'inline-block',
                           transition: 'transform 0.15s ease',
                           transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
@@ -716,15 +717,15 @@ export function Sidebar() {
                       style={{ background: 'none', border: 'none' }}
                     >
                       <span style={{
-                        color: hasActiveChild ? '#ffffff' : '#A08C5A',
+                        color: hasActiveChild ? '#ffffff' : colors.gold,
                         fontSize: 9, fontWeight: 800,
                         textTransform: 'uppercase' as const,
-                        letterSpacing: '1.2px', fontFamily: 'system-ui',
+                        letterSpacing: '1.2px', fontFamily: typography.family.body,
                       }}>
                         {section.label}
                       </span>
                       <span style={{
-                        color: '#A08C5A', fontSize: 10,
+                        color: colors.gold, fontSize: 10,
                         display: 'inline-block',
                         transition: 'transform 0.15s ease',
                         transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
@@ -804,8 +805,8 @@ export function Sidebar() {
             <span style={{
               fontSize: 10,
               fontWeight: 600,
-              fontFamily: 'system-ui, sans-serif',
-              color: '#94a3b8',
+              fontFamily: typography.family.body,
+              color: colors.textMuted,
               backgroundColor: 'rgba(148, 163, 184, 0.1)',
               padding: '2px 8px',
               borderRadius: 10,

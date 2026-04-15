@@ -6,6 +6,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { typography } from '../lib/designSystem';
 import {
   type AiMessage,
   type ComplianceContext,
@@ -172,7 +173,7 @@ const STARTER_CARDS = [ // demo
 
 const TEAM_MEMBERS = ['Maria Rodriguez', 'Maria Lopez', 'Sarah Chen', 'Michael Torres', 'Alex Kim', 'David Park'];
 
-const F = { fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" };
+const F = { fontFamily: typography.family.body };
 
 function uid(): string { return Math.random().toString(36).slice(2, 10); }
 

@@ -1110,7 +1110,7 @@ export function Settings() {
             <div className="space-y-6">
               {/* Security Navigation Cards */}
               <div>
-                <h3 className="text-xl font-bold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
+                <h3 className="text-xl font-bold text-[#1E2D4D]">Security & Access</h3>
                 <p className="text-sm text-[#1E2D4D]/70 mt-1">Manage access control, audit trails, and compliance reporting.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -1149,7 +1149,7 @@ export function Settings() {
                       <card.icon className="h-5 w-5 text-[#1E2D4D]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
+                      <h4 className="text-sm font-semibold text-[#1E2D4D]">{card.title}</h4>
                       <p className="text-xs text-[#1E2D4D]/50 mt-1">{card.description}</p>
                     </div>
                     <span className="text-xs font-medium text-[#1E2D4D] group-hover:text-[#2A3F6B] transition-colors mt-auto">

@@ -6,6 +6,7 @@ import { checkPermission } from '../../hooks/usePermission';
 import { useDemo } from '../../contexts/DemoContext';
 import { useMobile } from '../../hooks/useMobile';
 import { QuickTempSheet } from '../temp-logs/QuickTempSheet';
+import { colors } from '../../lib/designSystem';
 
 interface QuickAction {
   emoji: string;
@@ -113,7 +114,7 @@ export function QuickActionsBar() {
               <span className="text-lg leading-none">{action.emoji}</span>
               <span
                 className="text-[11px] font-bold leading-tight"
-                style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
+                style={{ color: isActive ? colors.navy : colors.textSecondary }}
               >
                 {action.label}
               </span>
@@ -153,7 +154,7 @@ export function QuickActionsBar() {
                 <span className="text-base leading-none">{action.emoji}</span>
                 <span
                   className="text-[11px] font-bold"
-                  style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
+                  style={{ color: isActive ? colors.navy : colors.textSecondary }}
                 >
                   {action.label}
                 </span>

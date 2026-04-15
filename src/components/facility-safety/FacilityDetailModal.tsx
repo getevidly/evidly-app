@@ -79,7 +79,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter" onClick={onClose}>
       <div
         className="bg-white rounded-xl w-full max-w-xl max-h-[85vh] flex flex-col relative modal-content-enter"
-        style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}
+        style={{}}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}

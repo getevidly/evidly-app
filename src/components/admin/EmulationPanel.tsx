@@ -12,9 +12,10 @@ import { useEmulation, type EmulatedUser } from '../../contexts/EmulationContext
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole, type UserRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
+import { typography } from '../../lib/designSystem';
 
 const BRAND = '#1E2D4D';
-const F = { fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" };
+const F = { fontFamily: typography.family.body };
 
 const ROLE_LABELS: Record<string, string> = {
   platform_admin: 'Platform Admin',

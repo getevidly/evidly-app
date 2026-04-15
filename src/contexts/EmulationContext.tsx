@@ -232,7 +232,6 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
-            fontFamily: "'DM Sans', sans-serif",
             fontSize: '14px',
             fontWeight: 600,
             boxShadow: '0 4px 12px rgba(30, 45, 77, 0.4)',
@@ -308,7 +307,6 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
               width: '100%',
               margin: '16px',
               boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-              fontFamily: "'DM Sans', sans-serif",
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
