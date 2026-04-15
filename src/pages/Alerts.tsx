@@ -12,6 +12,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
 
 interface Alert {
   id: string;
@@ -456,24 +457,24 @@ export function Alerts() {
     <>
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.alerts.title') }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
+        <div style={{ background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`, borderRadius: radius.xl, boxShadow: shadows.md }} className="p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
-            <Bell className="h-8 w-8 text-[#A08C5A]" />
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">{t('pages.alerts.complianceAlerts')}</h2>
+            <Bell className="h-8 w-8" style={{ color: colors.gold }} />
+            <h2 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em' }}>{t('pages.alerts.complianceAlerts')}</h2>
           </div>
-          <p className="text-[#1E2D4D]/30">{t('pages.alerts.subtitle')}</p>
+          <p className="text-white/45">{t('pages.alerts.subtitle')}</p>
           <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Bell className="h-4 w-4 text-[#A08C5A]" />
-                <span className="text-sm text-[#1E2D4D]/30 font-medium">{t('pages.alerts.activeAlerts')}</span>
+                <Bell className="h-4 w-4" style={{ color: colors.gold }} />
+                <span className="text-sm text-white/45 font-medium">{t('pages.alerts.activeAlerts')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold tracking-tight text-white text-center">{activeCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
-                <span className="text-sm text-[#1E2D4D]/30 font-medium">{t('pages.alerts.critical')}</span>
+                <span className="text-sm text-white/45 font-medium">{t('pages.alerts.critical')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-400 text-center">{urgentCount}</div>
             </div>

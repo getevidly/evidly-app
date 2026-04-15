@@ -44,7 +44,9 @@ import { exportCorrectiveActionsPdf } from '../lib/correctiveActionPdf';
 
 // ── Constants ────────────────────────────────────────────────
 
-const NAVY = '#1E2D4D';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
+
+const NAVY = colors.navy;
 
 const STATUS_ICON_MAP: Record<CAStatus, typeof Clock> = {
   reported: FileText,

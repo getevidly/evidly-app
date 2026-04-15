@@ -27,6 +27,7 @@ import {
   documentNeedsAttention,
 } from '../data/documentAiDemoData';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
 
 type ScanStatus = 'scanning' | 'available' | 'quarantined';
 

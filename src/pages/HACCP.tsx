@@ -17,6 +17,7 @@ import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 import { exportHACCPPlanPdf } from '../lib/haccpPdf';
 import type { ParsedCCP } from '../lib/haccpParser';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
 
 // ── Types ──────────────────────────────────────────────────────────
 

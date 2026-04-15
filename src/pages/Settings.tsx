@@ -23,6 +23,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useMobile } from '../hooks/useMobile';
 import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
