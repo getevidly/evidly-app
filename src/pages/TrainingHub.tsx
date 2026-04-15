@@ -15,6 +15,7 @@ import {
   Target, Send, CreditCard, Check, X, Printer,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 import {
   trainingCourses, trainingModules, trainingEnrollments, trainingCertificates,
   trainingSB476Log, trainingQuizAttempts,
@@ -83,12 +84,12 @@ function CourseCatalogTab() {
           { label: 'Completed', value: trainingEnrollments.filter(e => e.status === 'completed').length, icon: CheckCircle2, color: '#A08C5A' },
           { label: 'Certificates Issued', value: trainingCertificates.length, icon: Award, color: '#7c3aed' },
         ].map(s => (
-          <div key={s.label} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb' }}>
+          <div key={s.label} style={{ background: colors.white, borderRadius: radius.lg, padding: 16, border: `1px solid ${colors.borderLight}`, boxShadow: shadows.sm }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <s.icon size={18} color={s.color} />
-              <span style={{ fontSize: 13, color: '#6b7280' }}>{s.label}</span>
+              <span style={{ fontSize: typography.size.sm, color: colors.textSecondary }}>{s.label}</span>
             </div>
-            <span style={{ fontSize: 28, fontWeight: 700, color: '#111827' }}>{s.value}</span>
+            <span style={{ fontSize: 28, fontWeight: typography.weight.bold, color: colors.navy }}>{s.value}</span>
           </div>
         ))}
       </div>
@@ -100,13 +101,13 @@ function CourseCatalogTab() {
           <input
             value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search courses..."
-            style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}
+            style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: typography.family.body }}
           />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Filter size={14} color="#6b7280" />
           <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: typography.family.body }}>
             <option value="all">All Categories</option>
             {categories.map(([key, cfg]) => <option key={key} value={key}>{cfg.label}</option>)}
           </select>
@@ -114,7 +115,7 @@ function CourseCatalogTab() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Globe size={14} color="#6b7280" />
           <select value={langFilter} onChange={e => setLangFilter(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: typography.family.body }}>
             <option value="all">All Languages</option>
             <option value="en">English</option>
             <option value="es">Español</option>
@@ -128,10 +129,10 @@ function CourseCatalogTab() {
           const cat = CATEGORY_CONFIG[course.category];
           const modules = trainingModules.filter(m => m.courseId === course.id);
           return (
-            <div key={course.id} style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden', transition: 'box-shadow 0.15s', cursor: 'pointer' }}
+            <div key={course.id} style={{ background: colors.white, borderRadius: radius.lg, border: `1px solid ${colors.borderLight}`, overflow: 'hidden', transition: `box-shadow ${transitions.fast}, transform ${transitions.fast}`, cursor: 'pointer', boxShadow: shadows.sm }}
               onClick={() => navigate(`/training/course/${course.id}`)}
-              onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
-              onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = shadows.md; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = shadows.sm; e.currentTarget.style.transform = 'translateY(0)'; }}>
               {/* Color Banner */}
               <div style={{ height: 8, background: course.thumbnailColor }} />
               <div style={{ padding: 16 }}>
@@ -150,8 +151,8 @@ function CourseCatalogTab() {
                   )}
                 </div>
                 {/* Title + Description */}
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>{course.title}</h3>
-                <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <h3 style={{ fontSize: 16, fontWeight: typography.weight.bold, color: colors.navy, margin: '0 0 8px' }}>{course.title}</h3>
+                <p style={{ fontSize: 13, color: colors.textSecondary, margin: '0 0 16px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {course.description}
                 </p>
                 {/* Stats Row */}
@@ -184,7 +185,7 @@ function CourseCatalogTab() {
                   <span style={{ fontSize: 12, color: '#9ca3af' }}>Pass: {course.passingScorePercent}%</span>
                   <button
                     onClick={e => { e.stopPropagation(); guardAction('enroll', 'Training Hub', () => toast.success(`Enrolled in "${course.title}"`)); }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
                     <Play size={14} /> Enroll
                   </button>
                 </div>
@@ -253,7 +254,7 @@ function MyLearningTab() {
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: typography.family.body }}>
           <option value="all">All Statuses</option>
           <option value="in_progress">In Progress</option>
           <option value="not_started">Not Started</option>
@@ -261,7 +262,7 @@ function MyLearningTab() {
           <option value="expired">Expired</option>
         </select>
         <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: typography.family.body }}>
           <option value="all">All Locations</option>
           {locations.map(l => <option key={l} value={trainingEnrollments.find(e => e.locationName === l)?.locationId}>{l}</option>)}
         </select>
@@ -301,7 +302,7 @@ function MyLearningTab() {
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1E2D4D', minWidth: 36 }}>{e.progressPercent}%</span>
                     <button onClick={ev => { ev.stopPropagation(); guardAction('resume', 'Training Hub', () => toast.info('Resume learning (demo)')); }}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
                       <Play size={12} /> Resume
                     </button>
                   </div>
@@ -337,7 +338,7 @@ function MyLearningTab() {
                       </span>
                     )}
                     <button onClick={() => guardAction('start', 'Training Hub', () => toast.info(`Start "${e.courseTitle}" (demo)`))}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
                       <Play size={12} /> Start
                     </button>
                   </div>
@@ -444,7 +445,7 @@ function CertificationsTab() {
       {/* Filter + Stats */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: typography.family.body }}>
           <option value="all">All Types</option>
           <option value="food_handler">Food Handler</option>
           <option value="food_manager_prep">Food Manager (CFPM)</option>
@@ -630,7 +631,7 @@ function SB476TrackerTab() {
       {/* Export Button */}
       <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
         <button onClick={() => guardAction('export', 'Training Reports', () => toast.info('Export SB 476 report as CSV (demo)'))}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
           <Download size={14} /> Export Report
         </button>
       </div>
@@ -672,19 +673,19 @@ function AdminTab() {
       {/* Admin Actions */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         <button onClick={() => setShowAssignModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
           <Send size={16} /> Assign Training
         </button>
         <button onClick={() => guardAction('enroll', 'Training Hub', () => toast.info('Bulk enroll employees (demo)'))}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
           <Plus size={16} /> Bulk Enroll
         </button>
         <button onClick={() => navigate('/training/courses/builder')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
           <BookOpen size={16} /> Create Course
         </button>
         <button onClick={() => guardAction('download', 'Training Records', () => toast.info('Download all training records (demo)'))}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body, minHeight: 44 }}>
           <Download size={16} /> Export Records
         </button>
       </div>
@@ -899,7 +900,7 @@ function PricingTab() {
                 ))}
               </div>
               <button onClick={() => toast.info(`Contact sales for ${tier.name} plan`)}
-                style={{ width: '100%', padding: '10px 16px', borderRadius: 8, border: tier.popular ? 'none' : `1px solid ${tier.color}`, background: tier.popular ? tier.color : '#fff', color: tier.popular ? '#fff' : tier.color, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 20, fontFamily: "'DM Sans', sans-serif" }}>
+                style={{ width: '100%', padding: '10px 16px', borderRadius: 8, border: tier.popular ? 'none' : `1px solid ${tier.color}`, background: tier.popular ? tier.color : '#fff', color: tier.popular ? '#fff' : tier.color, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 20, fontFamily: typography.family.body }}>
                 {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
               </button>
             </div>
@@ -992,7 +993,7 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Course</label>
           <select value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: typography.family.body }}>
             <option value="">Select a course...</option>
             {trainingCourses.filter(c => c.isActive).map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
           </select>
@@ -1001,7 +1002,7 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Due Date</label>
           <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }} />
+            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: typography.family.body }} />
         </div>
         {/* Employee Selection */}
         <div style={{ marginBottom: 16 }}>
@@ -1026,11 +1027,11 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
         {/* Actions */}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
           <button onClick={onClose}
-            style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body }}>
             Cancel
           </button>
           <button onClick={() => guardAction('assign', 'Training Hub', () => { toast.success(`Assigned training to ${selected.size} employees`); onClose(); })}
-            style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body }}>
             <Send size={14} style={{ marginRight: 6 }} /> Assign
           </button>
         </div>
@@ -1152,7 +1153,7 @@ function RequirementsTab() {
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Certification Requirements</div>
           <button onClick={() => guardAction('customize', 'Training Hub', () => toast.info('Custom requirements available in full version'))}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: typography.family.body }}>
             <Plus size={14} /> Add Requirement
           </button>
         </div>
@@ -1417,29 +1418,29 @@ export function TrainingHub() {
 
   if (!isDemoMode) {
     return (
-      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Training & Certification</h1>
-        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
-          <GraduationCap size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>Training Hub</h2>
-          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Set up training courses and track employee certifications.</p>
+      <div style={{ fontFamily: typography.family.body }}>
+        <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, color: colors.navy, margin: '0 0 24px' }}>Training & Certification</h1>
+        <div style={{ background: colors.white, borderRadius: radius.xl, border: `1px solid ${colors.borderLight}`, padding: 48, textAlign: 'center', boxShadow: shadows.sm }}>
+          <GraduationCap size={40} color={colors.textMuted} style={{ marginBottom: 12 }} />
+          <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.semibold, color: colors.navy, margin: '0 0 8px' }}>Training Hub</h2>
+          <p style={{ fontSize: 14, color: colors.textSecondary, margin: 0 }}>Set up training courses and track employee certifications.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ fontFamily: typography.family.body }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Training & Certification</h1>
-            <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
+            <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, color: colors.navy, margin: '0 0 4px' }}>Training & Certification</h1>
+            <p style={{ fontSize: 14, color: colors.textSecondary, margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => guardAction('chat', 'AI Study Companion', () => toast.info('AI Study Companion (Demo)'))}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: typography.family.body }}>
               <Brain size={14} /> AI Study Companion
             </button>
           </div>
@@ -1447,17 +1448,17 @@ export function TrainingHub() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: '2px solid #e5e7eb', marginBottom: 24, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ display: 'flex', gap: 4, borderBottom: `2px solid ${colors.borderLight}`, marginBottom: 24, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {TABS.map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6, padding: '10px 14px',
-                background: 'none', border: 'none', borderBottom: isActive ? '2px solid #1E2D4D' : '2px solid transparent',
-                marginBottom: -2, color: isActive ? '#1E2D4D' : '#6b7280',
-                fontWeight: isActive ? 700 : 500, fontSize: 14, cursor: 'pointer',
-                fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
+                background: 'none', border: 'none', borderBottom: isActive ? `2px solid ${colors.navy}` : '2px solid transparent',
+                marginBottom: -2, color: isActive ? colors.navy : colors.textSecondary,
+                fontWeight: isActive ? typography.weight.bold : typography.weight.medium, fontSize: 14, cursor: 'pointer',
+                fontFamily: typography.family.body, transition: transitions.fast,
                 whiteSpace: 'nowrap', minHeight: 44,
               }}>
               <tab.icon size={16} /> {tab.label}

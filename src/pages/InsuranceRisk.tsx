@@ -44,8 +44,9 @@ import { useInsuranceRisk } from '../hooks/useInsuranceRisk';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { ErrorState } from '../components/shared/PageStates';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
-const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
+const F: React.CSSProperties = { fontFamily: typography.family.body };
 
 const CATEGORY_ICONS: Record<string, typeof Flame> = {
   fire: Flame,
@@ -495,22 +496,22 @@ export function InsuranceRisk() {
       {/* Page Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: colors.infoSoft }}>
             <EvidlyIcon size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Insurance Risk Score</h1>
-            <p className="text-sm text-[#1E2D4D]/50">Kitchen risk assessment designed to support insurance conversations</p>
+            <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, color: colors.navy, margin: 0, letterSpacing: '-0.01em' }}>Insurance Risk Score</h1>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, margin: '2px 0 0' }}>Kitchen risk assessment designed to support insurance conversations</p>
           </div>
         </div>
       </div>
 
       {/* Empty state for live mode */}
       {!isDemoMode && (
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Your insurance risk profile builds as you use EvidLY</h2>
-          <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-6">
+        <div style={{ background: colors.white, borderRadius: radius.xl, border: `1px solid ${colors.borderLight}`, boxShadow: shadows.sm, padding: 48, textAlign: 'center' }}>
+          <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: colors.textMuted }} />
+          <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.semibold, color: colors.navy, marginBottom: 8, letterSpacing: '-0.01em' }}>Your insurance risk profile builds as you use EvidLY</h2>
+          <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, maxWidth: '28rem', margin: '0 auto 24px' }}>
             Add your service records and compliance documents to see how carriers evaluate your operations. EvidLY tracks fire suppression, hood cleaning, and food safety documentation to identify coverage gaps before they become claim denials.
           </p>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>

@@ -23,15 +23,16 @@ import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState } from '../components/shared/PageStates';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1E2D4D';
-const NAVY_HOVER = '#141E33';
-const GOLD = '#A08C5A';
+const NAVY = colors.navy;
+const NAVY_HOVER = colors.navyHover;
+const GOLD = colors.gold;
 const LIGHT_BLUE_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
 
-const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
+const F: React.CSSProperties = { fontFamily: typography.family.body };
 
 // ── Authority source display labels ───────────────────────────────
 const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
@@ -242,12 +243,12 @@ export function FacilitySafety() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fef2f2' }}>
-            <Flame size={22} color="#dc2626" />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: colors.dangerSoft }}>
+            <Flame size={22} color={colors.danger} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1E2D4D]">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other fire safety compliance." /></h1>
-            <p className="text-sm text-[#1E2D4D]/50">
+            <h1 style={{ fontSize: typography.size.h2, fontWeight: typography.weight.bold, color: colors.navy, margin: 0 }}>{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other fire safety compliance." /></h1>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, margin: '2px 0 0' }}>
               {ahjLabel ? `${ahjLabel} — ` : ''}
               {codeLabel ? `${codeLabel} · ` : ''}NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101
             </p>
@@ -308,7 +309,7 @@ export function FacilitySafety() {
         ] : [];
 
         return (
-          <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}>
+          <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER, boxShadow: shadows.sm }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="text-center">
