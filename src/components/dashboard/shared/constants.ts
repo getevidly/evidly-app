@@ -6,20 +6,21 @@
  */
 
 import type React from 'react';
+import { colors, shadows, typography } from '../../../lib/designSystem';
 
-// ── Brand colors ──────────────────────────────────────────
-export const GOLD = '#C49A2B';
-export const NAVY = '#163a5f';
-export const PAGE_BG = '#F4F6FA';
-export const MUTED = '#3D5068';
-export const BODY_TEXT = '#0B1628';
-export const CARD_BG = '#FFFFFF';
-export const CARD_BORDER = '#D1D9E6';
-export const CARD_SHADOW = '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)';
+// ── Brand colors (aligned with designSystem.ts) ──────────
+export const GOLD = colors.gold;
+export const NAVY = colors.navy;
+export const PAGE_BG = colors.cream;
+export const MUTED = colors.textSecondary;
+export const BODY_TEXT = colors.textPrimary;
+export const CARD_BG = colors.white;
+export const CARD_BORDER = colors.border;
+export const CARD_SHADOW = shadows.sm;
 export const PANEL_BG = '#EEF1F7';
-export const BORDER_SUBTLE = '#E8EDF5';
-export const TEXT_TERTIARY = '#6B7F96';
-export const STEEL_SLATE_GRADIENT = 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)';
+export const BORDER_SUBTLE = colors.borderLight;
+export const TEXT_TERTIARY = colors.textSecondary;
+export const STEEL_SLATE_GRADIENT = `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`;
 
 // ── CIC Five-Pillar canonical colors (derived from src/lib/cicPillars.ts) ──
 // This is a convenience re-export for dashboard components. The canonical
@@ -33,7 +34,7 @@ export const CIC_PILLAR_COLORS = {
 } as const;
 
 // ── Typography ────────────────────────────────────────────
-export const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
+export const FONT: React.CSSProperties = { fontFamily: typography.family.body };
 
 // ── JIE location ID mapping ──────────────────────────────
 export const JIE_LOC_MAP: Record<string, string> = {

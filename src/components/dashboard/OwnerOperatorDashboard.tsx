@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
 import { useEmulation, type EmulatedUser } from '../../contexts/EmulationContext';
 import { GOLD, NAVY, BODY_TEXT, MUTED, FONT, DEMO_ROLE_NAMES } from './shared/constants';
+import { colors, shadows, radius, typography, transitions } from '../../lib/designSystem';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -52,19 +53,27 @@ import { DashboardGreeting } from './DashboardGreeting';
 function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-lg"
-      style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '12px 16px', borderRadius: radius.lg,
+        background: colors.dangerSoft, border: `1px solid ${colors.danger}30`,
+      }}
     >
-      <AlertTriangle size={18} className="text-red-500 shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-red-800">Dashboard data could not be loaded</p>
-        <p className="text-xs text-red-600">{message}</p>
+      <AlertTriangle size={18} style={{ color: colors.danger, flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.danger, margin: 0 }}>
+          Dashboard data could not be loaded
+        </p>
+        <p style={{ fontSize: typography.size.xs, color: colors.danger, margin: '2px 0 0', opacity: 0.8 }}>{message}</p>
       </div>
       <button
-        type="button"
-        onClick={onRetry}
-        className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0"
-        style={{ backgroundColor: '#dc2626' }}
+        type="button" onClick={onRetry}
+        style={{
+          fontSize: typography.size.xs, fontWeight: typography.weight.semibold,
+          padding: '6px 12px', borderRadius: radius.md,
+          color: colors.white, background: colors.danger,
+          border: 'none', cursor: 'pointer', flexShrink: 0,
+        }}
       >
         Retry
       </button>
@@ -200,10 +209,10 @@ export default function OwnerOperatorDashboard() {
 
       {/* Welcome greeting + date */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">
-        <h2 style={{ color: '#1E2D4D', fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
+        <h2 style={{ color: colors.navy, fontSize: typography.size.h1, fontWeight: typography.weight.bold, lineHeight: 1.3, margin: 0 }}>
           {greetingText}
         </h2>
-        <p style={{ color: '#6B7F96', fontSize: '0.875rem', marginTop: '4px' }}>
+        <p style={{ color: colors.textSecondary, fontSize: typography.size.sm, marginTop: 4 }}>
           {todayStr}
         </p>
       </div>
@@ -212,31 +221,41 @@ export default function OwnerOperatorDashboard() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         {locations.length === 0 && criticalCAs === 0 && (vendorSummary?.overdue ?? 0) === 0 && (vendorSummary?.totalAnnualSpend ?? 0) === 0 && !isDemoMode ? (
           <div
-            className="rounded-xl text-center"
             style={{
-              background: '#F5F0E8',
-              border: '0.5px solid #A08C5A',
+              background: colors.goldGlow,
+              border: `1px solid ${colors.gold}40`,
+              borderRadius: radius.xl,
               padding: '20px 24px',
+              textAlign: 'center',
             }}
           >
-            <p style={{ fontSize: 15, fontWeight: 500, color: '#1E2D4D', margin: '0 0 8px' }}>
+            <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.medium, color: colors.navy, margin: '0 0 8px' }}>
               Your compliance picture builds as you use EvidLY
             </p>
-            <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 16px' }}>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, margin: '0 0 16px' }}>
               Log your first temperature, complete a checklist, or add a vendor to see your standing update in real time.
             </p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link
                 to="/temp-logs"
-                className="inline-block rounded-lg text-sm font-semibold transition-colors"
-                style={{ padding: '8px 16px', backgroundColor: '#A08C5A', color: '#FFFFFF' }}
+                style={{
+                  display: 'inline-block', borderRadius: radius.md,
+                  fontSize: typography.size.sm, fontWeight: typography.weight.semibold,
+                  padding: '8px 16px', background: colors.gold, color: colors.white,
+                  textDecoration: 'none', transition: `background ${transitions.fast}`,
+                }}
               >
                 Log a temperature
               </Link>
               <Link
                 to="/checklists"
-                className="inline-block rounded-lg text-sm font-semibold transition-colors"
-                style={{ padding: '8px 16px', backgroundColor: '#FFFFFF', color: '#1E2D4D', border: '1px solid #D1D9E6' }}
+                style={{
+                  display: 'inline-block', borderRadius: radius.md,
+                  fontSize: typography.size.sm, fontWeight: typography.weight.semibold,
+                  padding: '8px 16px', background: colors.white, color: colors.navy,
+                  border: `1px solid ${colors.border}`, textDecoration: 'none',
+                  transition: `background ${transitions.fast}`,
+                }}
               >
                 Start a checklist
               </Link>
@@ -255,16 +274,27 @@ export default function OwnerOperatorDashboard() {
       {/* Tab Bar (owner_operator + executive only) */}
       {showInsightsTab && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-3">
-          <div className="flex items-center gap-1 p-1 rounded-lg" style={{ backgroundColor: '#EEF1F7' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            padding: 4, borderRadius: radius.lg,
+            background: colors.borderLight,
+          }}>
             {(['overview', 'insights'] as const).map(tab => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className="flex-1 py-1.5 text-xs font-semibold rounded-md transition-all"
                 style={{
-                  backgroundColor: activeTab === tab ? '#1E2D4D' : 'transparent',
-                  color: activeTab === tab ? '#ffffff' : '#3D5068',
+                  flex: 1, padding: '6px 0',
+                  fontSize: typography.size.xs,
+                  fontWeight: typography.weight.semibold,
+                  fontFamily: typography.family.body,
+                  borderRadius: radius.md,
+                  border: 'none', cursor: 'pointer',
+                  background: activeTab === tab ? colors.navy : 'transparent',
+                  color: activeTab === tab ? colors.white : colors.textSecondary,
+                  boxShadow: activeTab === tab ? shadows.sm : 'none',
+                  transition: `background ${transitions.fast}, color ${transitions.fast}, box-shadow ${transitions.fast}`,
                 }}
               >
                 {tab === 'overview' ? 'Overview' : 'Strategic Insights'}
@@ -317,20 +347,21 @@ export default function OwnerOperatorDashboard() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         {todaysTasks.length === 0 && !isDemoMode ? (
           <div
-            className="bg-white rounded-xl"
-            style={{ border: '1px solid #e5e7eb', padding: '16px 20px', textAlign: 'center' }}
+            style={{
+              background: colors.white, borderRadius: radius.xl,
+              border: `1px solid ${colors.border}`, boxShadow: shadows.sm,
+              padding: '16px 20px', textAlign: 'center',
+            }}
           >
-            <p style={{ fontSize: 13, fontWeight: 500, color: '#0B1628', margin: '0 0 4px' }}>
+            <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.navy, margin: '0 0 4px' }}>
               No tasks assigned yet
             </p>
-            <p style={{ fontSize: 12, color: '#6B7F96', margin: '0 0 12px' }}>
+            <p style={{ fontSize: typography.size.xs, color: colors.textSecondary, margin: '0 0 12px' }}>
               Invite your team and assign roles to see their daily task completion here.
             </p>
             <button
-              type="button"
-              onClick={() => navigate('/team')}
-              className="text-xs font-semibold"
-              style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              type="button" onClick={() => navigate('/team')}
+              style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.gold, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               Invite team →
             </button>
@@ -409,37 +440,40 @@ export default function OwnerOperatorDashboard() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '12px 16px',
-            background: '#FFFFFF',
-            border: '1px solid #D1D9E6',
-            borderRadius: 10,
-            boxShadow: '0 1px 3px rgba(11,22,40,.06)',
+            background: colors.white,
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.lg,
+            boxShadow: shadows.sm,
           }}
         >
-          <span style={{ fontSize: 13, color: '#3D5068', fontFamily: "'DM Sans', sans-serif" }}>
+          <span style={{ fontSize: typography.size.sm, color: colors.textSecondary }}>
             Know another kitchen operator in California?
           </span>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               onClick={() => setShowStandingCard(true)}
               style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: '#fff',
-                background: '#1E2D4D',
+                fontSize: typography.size.xs,
+                fontWeight: typography.weight.semibold,
+                color: colors.white,
+                background: colors.navy,
                 border: 'none',
-                borderRadius: 6,
+                borderRadius: radius.sm,
                 padding: '6px 14px',
                 cursor: 'pointer',
+                transition: `background ${transitions.fast}`,
               }}
+              onMouseEnter={e => { e.currentTarget.style.background = colors.navyHover; }}
+              onMouseLeave={e => { e.currentTarget.style.background = colors.navy; }}
             >
               Share My Standing
             </button>
             <Link
               to="/referrals"
               style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: '#A08C5A',
+                fontSize: typography.size.xs,
+                fontWeight: typography.weight.semibold,
+                color: colors.gold,
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',

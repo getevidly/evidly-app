@@ -1,4 +1,4 @@
-import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, TEXT_TERTIARY } from './constants';
+import { colors, shadows, radius, typography, transitions } from '../../../lib/designSystem';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -27,31 +27,52 @@ export function MetricCardRow({ cards }: MetricCardRowProps) {
           type="button"
           onClick={card.onClick}
           disabled={!card.onClick}
-          className="rounded-lg px-3 py-3 text-center transition-colors"
           style={{
-            backgroundColor: CARD_BG,
-            border: `1px solid ${CARD_BORDER}`,
-            boxShadow: CARD_SHADOW,
+            background: colors.white,
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.lg,
+            boxShadow: shadows.sm,
+            padding: '12px',
+            textAlign: 'center',
             cursor: card.onClick ? 'pointer' : 'default',
+            transition: `box-shadow ${transitions.fast}, transform ${transitions.fast}`,
+          }}
+          onMouseEnter={e => {
+            if (card.onClick) {
+              e.currentTarget.style.boxShadow = shadows.md;
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.boxShadow = shadows.sm;
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <p
-            className="text-xl font-bold leading-tight"
-            style={{ color: card.color || BODY_TEXT }}
-          >
+          <p style={{
+            fontSize: typography.size.h2,
+            fontWeight: typography.weight.bold,
+            lineHeight: 1.2,
+            color: card.color || colors.textPrimary,
+            margin: 0,
+          }}>
             {card.value ?? '\u2014'}
           </p>
-          <p
-            className="text-xs font-medium mt-1 leading-tight"
-            style={{ color: TEXT_TERTIARY }}
-          >
+          <p style={{
+            fontSize: typography.size.xs,
+            fontWeight: typography.weight.medium,
+            color: colors.textSecondary,
+            marginTop: 4,
+            lineHeight: 1.2,
+          }}>
             {card.label}
           </p>
           {card.detail && (
-            <p
-              className="text-xs mt-0.5 leading-tight"
-              style={{ color: TEXT_TERTIARY }}
-            >
+            <p style={{
+              fontSize: typography.size.xs,
+              color: colors.textSecondary,
+              marginTop: 2,
+              lineHeight: 1.2,
+            }}>
               {card.detail}
             </p>
           )}
