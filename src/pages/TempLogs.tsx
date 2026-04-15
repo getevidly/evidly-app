@@ -31,6 +31,7 @@ import { TempIntelligenceCard } from '../components/temp-logs/TempIntelligenceCa
 import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
 import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
 interface TemperatureEquipment {
   id: string;
@@ -1648,7 +1649,7 @@ export function TempLogs() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('tempLogs.title')}</h1>
+              <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em', color: colors.navy }}>{t('tempLogs.title')}</h1>
               {/* Sensor Ready badge — shows when user has equipment but no active IoT sensors */}
               {isDemoMode && equipment.length > 0 && (
                 <button
@@ -1660,12 +1661,20 @@ export function TempLogs() {
                 </button>
               )}
             </div>
-            <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('tempLogs.subtitle')}</p>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4 }}>{t('tempLogs.subtitle')}</p>
           </div>
           <button
             onClick={() => navigate('/temp-logs/scan')}
-            className="flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: '#1E2D4D' }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 16px', fontSize: typography.size.sm,
+              fontWeight: typography.weight.semibold, fontFamily: typography.family.body,
+              color: colors.white, background: colors.navy,
+              border: 'none', borderRadius: radius.md, cursor: 'pointer',
+              boxShadow: shadows.sm, transition: `background ${transitions.fast}`,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = colors.navyHover; }}
+            onMouseLeave={e => { e.currentTarget.style.background = colors.navy; }}
           >
             <QrCode className="h-4 w-4" />
             Scan QR Code
@@ -1676,91 +1685,51 @@ export function TempLogs() {
         {!isDemoMode && <TempIntelligenceCard />}
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto -mx-1 border-b border-[#1E2D4D]/10">
-          <button
-            onClick={() => setActiveTab('equipment')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
-              activeTab === 'equipment'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            {t('tempLogs.currentReadings')}
-          </button>
-          <button
-            onClick={() => setActiveTab('receiving')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
-              activeTab === 'receiving'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            {t('tempLogs.receiving')}
-          </button>
-          <button
-            onClick={() => setActiveTab('holding')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'holding'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            <Thermometer className="h-3.5 w-3.5" />
-            Hot/Cold Holding
-          </button>
-          <button
-            onClick={() => setActiveTab('cooldown')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
-              activeTab === 'cooldown'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            {t('tempLogs.cooldown')}
-          </button>
-          <button
-            onClick={() => setActiveTab('iot')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'iot'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            <Radio className="h-3.5 w-3.5" />
-            IoT Live View
-          </button>
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'analytics'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            <BarChart3 className="h-3.5 w-3.5" />
-            Analytics
-          </button>
-          <button
-            onClick={() => setActiveTab('history')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
-              activeTab === 'history'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
-                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
-            }`}
-          >
-            {t('tempLogs.history')}
-          </button>
+        <div style={{ display: 'flex', overflowX: 'auto', borderBottom: `1px solid ${colors.borderLight}`, margin: '0 -4px' }}>
+          {([
+            { key: 'equipment', label: t('tempLogs.currentReadings') },
+            { key: 'receiving', label: t('tempLogs.receiving') },
+            { key: 'holding', label: 'Hot/Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
+            { key: 'cooldown', label: t('tempLogs.cooldown') },
+            { key: 'iot', label: 'IoT Live View', icon: <Radio className="h-3.5 w-3.5" /> },
+            { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" /> },
+            { key: 'history', label: t('tempLogs.history') },
+          ] as { key: string; label: string; icon?: React.ReactNode }[]).map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              style={{
+                padding: '8px 16px',
+                fontWeight: activeTab === tab.key ? typography.weight.semibold : typography.weight.medium,
+                fontSize: typography.size.sm,
+                fontFamily: typography.family.body,
+                whiteSpace: 'nowrap',
+                display: 'flex', alignItems: 'center', gap: 6,
+                color: activeTab === tab.key ? colors.navy : colors.textSecondary,
+                borderBottom: activeTab === tab.key ? `2px solid ${colors.gold}` : '2px solid transparent',
+                background: 'none', border: 'none',
+                borderBottomWidth: 2,
+                borderBottomStyle: 'solid',
+                borderBottomColor: activeTab === tab.key ? colors.gold : 'transparent',
+                cursor: 'pointer',
+                transition: `color ${transitions.fast}, border-color ${transitions.fast}`,
+              }}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Equipment Tab */}
         {activeTab === 'equipment' && (
           <div className="space-y-6">
             <div className="flex items-center gap-1">
-              <h2 className="text-lg font-bold text-[#1E2D4D]">Current Readings</h2>
+              <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.navy }}>Current Readings</h2>
               <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
             </div>
             {/* Filters Section */}
-            <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+            <div data-demo-allow style={{ background: colors.white, borderRadius: radius.xl, border: `1px solid ${colors.borderLight}`, boxShadow: shadows.sm, padding: 16 }}>
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
