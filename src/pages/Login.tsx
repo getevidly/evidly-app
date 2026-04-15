@@ -119,13 +119,13 @@ export function Login() {
   const inputStyle: React.CSSProperties = {
     display: 'block',
     width: '100%',
-    padding: '10px 12px',
+    padding: '12px 14px',
     border: `1.5px solid ${colors.border}`,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     fontSize: typography.size.body,
     fontFamily: typography.family.body,
     color: colors.textPrimary,
-    background: colors.white,
+    backgroundColor: colors.white,
     transition: `border-color ${transitions.fast}, box-shadow ${transitions.fast}`,
     outline: 'none',
   };
@@ -133,10 +133,12 @@ export function Login() {
   const inputFocusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
     e.currentTarget.style.borderColor = colors.gold;
     e.currentTarget.style.boxShadow = shadows.goldGlow;
+    e.currentTarget.style.backgroundColor = colors.white;
   };
   const inputBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
     e.currentTarget.style.borderColor = colors.border;
     e.currentTarget.style.boxShadow = 'none';
+    e.currentTarget.style.backgroundColor = colors.white;
   };
 
   return (
@@ -232,8 +234,49 @@ export function Login() {
             </div>
           </div>
 
-          {/* Bottom: Detected jurisdiction */}
+          {/* Bottom: Social proof + jurisdiction */}
           <div>
+            {/* Social proof text to fill dead space */}
+            <div style={{
+              borderTop: '1px solid rgba(255,255,255,0.06)',
+              paddingTop: 24,
+              marginBottom: 24,
+            }}>
+              <p style={{
+                fontFamily: typography.family.body,
+                fontSize: 14,
+                fontWeight: typography.weight.regular,
+                color: 'rgba(255,255,255,0.3)',
+                lineHeight: 1.6,
+              }}>
+                Built by a team that services 300+ commercial kitchens annually across California, Oregon, Washington, Nevada, and Arizona.
+              </p>
+            </div>
+
+            {/* Animated brand dots */}
+            <div style={{ opacity: 0.15, marginBottom: 16 }}>
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="6" fill="white" opacity="0.8">
+                  <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="35" cy="30" r="5" fill={colors.gold} opacity="0.6">
+                  <animate attributeName="opacity" values="0.6;0.3;0.6" dur="3s" begin="0.3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="85" cy="25" r="4" fill={colors.gold} opacity="0.5">
+                  <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" begin="0.6s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="90" cy="70" r="5" fill={colors.gold} opacity="0.6">
+                  <animate attributeName="opacity" values="0.6;0.3;0.6" dur="3s" begin="0.9s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="30" cy="80" r="4" fill={colors.gold} opacity="0.5">
+                  <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" begin="1.2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="65" cy="95" r="4.5" fill={colors.gold} opacity="0.55">
+                  <animate attributeName="opacity" values="0.55;0.25;0.55" dur="3s" begin="1.5s" repeatCount="indefinite" />
+                </circle>
+              </svg>
+            </div>
+
             {detectedJurisdiction && (
               <div style={{
                 display: 'flex',
@@ -283,11 +326,12 @@ export function Login() {
             maxWidth: 440,
             width: '100%',
             background: colors.white,
-            borderRadius: radius.xl,
+            borderRadius: '16px',
             padding: '40px 36px',
-            boxShadow: shadows.lg,
+            boxShadow: '0 12px 36px rgba(30,45,77,0.12), 0 4px 12px rgba(30,45,77,0.06)',
+            border: '1px solid rgba(240, 237, 230, 0.5)',
             opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
             transition: `opacity 500ms ease 100ms, transform 500ms ease 100ms`,
           }}
         >
@@ -315,49 +359,15 @@ export function Login() {
             )}
           </div>
 
-          {/* Mobile trust bar (hidden on desktop) */}
-          <div className="lg:hidden" style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 24,
-            marginBottom: 20,
-            paddingBottom: 20,
-            borderBottom: `1px solid ${colors.borderLight}`,
-          }}>
-            {TRUST_ITEMS.map((item) => (
-              <div key={item.value} style={{ textAlign: 'center' }}>
-                <p style={{
-                  fontSize: typography.size.body,
-                  fontWeight: typography.weight.bold,
-                  color: colors.navy,
-                }}>{item.value}</p>
-                <p style={{
-                  fontSize: typography.size.xs,
-                  color: colors.textMuted,
-                  fontWeight: typography.weight.medium,
-                  marginTop: 2,
-                }}>{item.label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Heading */}
+          {/* Heading — "Sign in to your account" only, no tagline duplicate */}
           <div style={{ marginBottom: 28 }}>
-            <p className="lg:text-left" style={{
-              textAlign: 'center',
-              fontSize: typography.size.sm,
-              fontWeight: typography.weight.semibold,
-              color: colors.gold,
-              marginBottom: 4,
-            }}>
-              {branding.tagline}
-            </p>
             <h2 className="lg:text-left" style={{
               textAlign: 'center',
               fontSize: typography.size.h2,
               fontWeight: typography.weight.bold,
               letterSpacing: '-0.02em',
               color: colors.navy,
+              margin: 0,
             }}>
               Sign in to your account
             </h2>
@@ -477,11 +487,14 @@ export function Login() {
 
               <Link to="/forgot-password" style={{
                 fontSize: typography.size.sm,
-                fontWeight: typography.weight.semibold,
-                color: colors.navy,
+                fontWeight: typography.weight.medium,
+                color: colors.gold,
                 textDecoration: 'none',
                 transition: `color ${transitions.fast}`,
-              }}>
+              }}
+                onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; }}
+                onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; }}
+              >
                 Forgot password?
               </Link>
             </div>
@@ -504,28 +517,28 @@ export function Login() {
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-                padding: '12px 16px',
+                padding: '14px 16px',
                 border: 'none',
-                borderRadius: radius.lg,
+                borderRadius: radius.md,
                 boxShadow: shadows.sm,
                 fontSize: typography.size.body,
                 fontWeight: typography.weight.semibold,
                 fontFamily: typography.family.body,
                 color: colors.white,
-                background: colors.navy,
+                background: `linear-gradient(135deg, ${colors.navy}, ${colors.navyDark})`,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 opacity: loading ? 0.5 : 1,
-                transition: `background ${transitions.fast}, box-shadow ${transitions.fast}, transform ${transitions.fast}`,
+                transition: `box-shadow ${transitions.normal}, transform ${transitions.normal}`,
               }}
               onMouseEnter={e => {
                 if (!loading) {
-                  e.currentTarget.style.background = colors.navyHover;
                   e.currentTarget.style.boxShadow = shadows.md;
+                  e.currentTarget.style.transform = 'translateY(-1px)';
                 }
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = colors.navy;
                 e.currentTarget.style.boxShadow = shadows.sm;
+                e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               {loading ? 'Signing in...' : 'Sign in'}

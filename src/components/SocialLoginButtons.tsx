@@ -58,7 +58,14 @@ export function SocialLoginButtons({ mode }: Props) {
         type="button"
         onClick={handleGoogleAuth}
         disabled={googleLoading}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-[#1E2D4D]/15 rounded-xl bg-white text-[#1E2D4D]/90 font-medium text-sm hover:bg-[#FAF7F0] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus:ring-[#A08C5A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus:ring-[#A08C5A] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        style={{
+          background: '#FFFFFF',
+          border: '1.5px solid #E5E0D8',
+          color: '#1E2D4D',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = '#FAF7F0'; e.currentTarget.style.borderColor = '#A08C5A'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.borderColor = '#E5E0D8'; }}
       >
         {googleLoading ? (
           <Loader2 className="h-5 w-5 animate-spin text-[#1E2D4D]/50" />
