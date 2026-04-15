@@ -9,6 +9,7 @@ import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useBranding } from '../contexts/BrandingContext';
 import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
+import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
 const TRUST_ITEMS = [
   { value: '169', label: 'Counties · 5 States' },
@@ -26,10 +27,13 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [detectedJurisdiction, setDetectedJurisdiction] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { branding } = useBranding();
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (user) {
@@ -112,37 +116,117 @@ export function Login() {
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    display: 'block',
+    width: '100%',
+    padding: '10px 12px',
+    border: `1.5px solid ${colors.border}`,
+    borderRadius: radius.lg,
+    fontSize: typography.size.body,
+    fontFamily: typography.family.body,
+    color: colors.textPrimary,
+    background: colors.white,
+    transition: `border-color ${transitions.fast}, box-shadow ${transitions.fast}`,
+    outline: 'none',
+  };
+
+  const inputFocusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = colors.gold;
+    e.currentTarget.style.boxShadow = shadows.goldGlow;
+  };
+  const inputBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = colors.border;
+    e.currentTarget.style.boxShadow = 'none';
+  };
+
   return (
-    <div className="min-h-screen flex">
+    <div style={{ minHeight: '100vh', display: 'flex' }}>
       {/* ── Left Panel — Navy brand panel (desktop only) ── */}
       <div
-        className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1E2D4D 0%, #0B1628 100%)' }}
+        className="hidden lg:flex lg:w-1/2"
+        style={{
+          background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
       >
-        <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            width: '100%',
+            padding: '48px',
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
+            transition: `opacity 600ms ease, transform 600ms ease`,
+          }}
+        >
           {/* Top: Logo + messaging */}
           <div>
-            <div className="flex items-center mb-16">
-              <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
-                <span className="text-[#A08C5A]">E</span>
-                <span className="text-white">vid</span>
-                <span className="text-[#A08C5A]">LY</span>
+            <div style={{ marginBottom: 64 }}>
+              <span style={{
+                fontFamily: typography.family.logo,
+                fontSize: 24,
+                fontWeight: typography.weight.extrabold,
+                letterSpacing: '-0.02em',
+              }}>
+                <span style={{ color: colors.gold }}>E</span>
+                <span style={{ color: colors.white }}>vid</span>
+                <span style={{ color: colors.gold }}>LY</span>
               </span>
             </div>
 
-            <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
+            <h1 style={{
+              fontSize: '2.75rem',
+              fontWeight: typography.weight.bold,
+              color: colors.white,
+              lineHeight: 1.15,
+              marginBottom: 16,
+              fontFamily: typography.family.body,
+            }}>
               Answers before<br />you ask.
             </h1>
-            <p className="text-lg text-white/60 mb-12 max-w-md">
+            <p style={{
+              fontSize: typography.size.h3,
+              color: 'rgba(255,255,255,0.55)',
+              marginBottom: 48,
+              maxWidth: 400,
+              lineHeight: 1.5,
+              fontWeight: typography.weight.regular,
+            }}>
               Operational Intelligence for Commercial Kitchens.
             </p>
 
-            {/* Trust bar */}
-            <div className="flex gap-8">
-              {TRUST_ITEMS.map((item) => (
-                <div key={item.value}>
-                  <p className="text-2xl font-bold tracking-tight text-white">{item.value}</p>
-                  <p className="text-xs text-white/50 font-medium mt-0.5">{item.label}</p>
+            {/* Trust bar with gold dividers */}
+            <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
+              {TRUST_ITEMS.map((item, i) => (
+                <div key={item.value} style={{ display: 'flex', alignItems: 'stretch' }}>
+                  {i > 0 && (
+                    <div style={{
+                      width: 1,
+                      background: `linear-gradient(180deg, transparent, ${colors.gold}40, transparent)`,
+                      margin: '0 24px',
+                      alignSelf: 'stretch',
+                    }} />
+                  )}
+                  <div>
+                    <p style={{
+                      fontSize: 22,
+                      fontWeight: typography.weight.bold,
+                      letterSpacing: '-0.02em',
+                      color: colors.white,
+                      lineHeight: 1.2,
+                    }}>{item.value}</p>
+                    <p style={{
+                      fontSize: typography.size.xs,
+                      color: 'rgba(255,255,255,0.45)',
+                      fontWeight: typography.weight.medium,
+                      marginTop: 4,
+                    }}>{item.label}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -151,7 +235,13 @@ export function Login() {
           {/* Bottom: Detected jurisdiction */}
           <div>
             {detectedJurisdiction && (
-              <div className="flex items-center gap-2 text-white/40 text-sm">
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                color: 'rgba(255,255,255,0.35)',
+                fontSize: typography.size.sm,
+              }}>
                 <MapPin size={14} />
                 <span>Detected: {detectedJurisdiction} County, CA</span>
               </div>
@@ -160,61 +250,144 @@ export function Login() {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-[#A08C5A]/5" />
-        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/[0.02]" />
+        <div style={{
+          position: 'absolute', bottom: -96, right: -96,
+          width: 256, height: 256, borderRadius: '50%',
+          background: `${colors.gold}08`,
+        }} />
+        <div style={{
+          position: 'absolute', top: -64, right: -64,
+          width: 192, height: 192, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.02)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '30%', left: -40,
+          width: 80, height: 80, borderRadius: '50%',
+          border: `1px solid ${colors.gold}15`,
+        }} />
       </div>
 
       {/* ── Right Panel — Login form ── */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 bg-white">
-        <div className="max-w-md w-full">
+      <div
+        className="w-full lg:w-1/2"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          background: colors.cream,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 440,
+            width: '100%',
+            background: colors.white,
+            borderRadius: radius.xl,
+            padding: '40px 36px',
+            boxShadow: shadows.lg,
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transition: `opacity 500ms ease 100ms, transform 500ms ease 100ms`,
+          }}
+        >
           {/* Mobile logo (hidden on desktop where left panel shows it) */}
-          <div className="lg:hidden flex justify-center mb-6">
-            <div className="text-center">
-              {branding.brandName === 'EvidLY' ? (
-                <span className="text-3xl font-bold tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
-                  <span style={{ color: '#A08C5A' }}>E</span>
-                  <span style={{ color: '#1E2D4D' }}>vid</span>
-                  <span style={{ color: '#A08C5A' }}>LY</span>
-                </span>
-              ) : (
-                <span className="text-2xl font-bold tracking-tight" style={{ color: branding.colors.primary }}>
-                  {branding.brandName}
-                </span>
-              )}
-            </div>
+          <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: 20 }}>
+            {branding.brandName === 'EvidLY' ? (
+              <span style={{
+                fontFamily: typography.family.logo,
+                fontSize: 28,
+                fontWeight: typography.weight.extrabold,
+                letterSpacing: '-0.02em',
+              }}>
+                <span style={{ color: colors.gold }}>E</span>
+                <span style={{ color: colors.navy }}>vid</span>
+                <span style={{ color: colors.gold }}>LY</span>
+              </span>
+            ) : (
+              <span style={{
+                fontSize: 22,
+                fontWeight: typography.weight.bold,
+                color: branding.colors.primary,
+              }}>
+                {branding.brandName}
+              </span>
+            )}
           </div>
 
           {/* Mobile trust bar (hidden on desktop) */}
-          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-[#1E2D4D]/5">
+          <div className="lg:hidden" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 24,
+            marginBottom: 20,
+            paddingBottom: 20,
+            borderBottom: `1px solid ${colors.borderLight}`,
+          }}>
             {TRUST_ITEMS.map((item) => (
-              <div key={item.value} className="text-center">
-                <p className="text-base font-bold text-[#1E2D4D]">{item.value}</p>
-                <p className="text-xs text-[#1E2D4D]/50 font-medium mt-0.5">{item.label}</p>
+              <div key={item.value} style={{ textAlign: 'center' }}>
+                <p style={{
+                  fontSize: typography.size.body,
+                  fontWeight: typography.weight.bold,
+                  color: colors.navy,
+                }}>{item.value}</p>
+                <p style={{
+                  fontSize: typography.size.xs,
+                  color: colors.textMuted,
+                  fontWeight: typography.weight.medium,
+                  marginTop: 2,
+                }}>{item.label}</p>
               </div>
             ))}
           </div>
 
           {/* Heading */}
-          <div className="mb-8">
-            <p className="text-center lg:text-left text-sm font-semibold mb-1" style={{ color: '#A08C5A' }}>
+          <div style={{ marginBottom: 28 }}>
+            <p className="lg:text-left" style={{
+              textAlign: 'center',
+              fontSize: typography.size.sm,
+              fontWeight: typography.weight.semibold,
+              color: colors.gold,
+              marginBottom: 4,
+            }}>
               {branding.tagline}
             </p>
-            <h2 className="text-center lg:text-left text-2xl font-bold tracking-tight text-[#1E2D4D]">
+            <h2 className="lg:text-left" style={{
+              textAlign: 'center',
+              fontSize: typography.size.h2,
+              fontWeight: typography.weight.bold,
+              letterSpacing: '-0.02em',
+              color: colors.navy,
+            }}>
               Sign in to your account
             </h2>
           </div>
 
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div style={{
+              marginBottom: 16,
+              background: colors.dangerSoft,
+              border: `1px solid ${colors.danger}30`,
+              color: colors.danger,
+              padding: '10px 14px',
+              borderRadius: radius.md,
+              fontSize: typography.size.sm,
+            }}>
               {error}
             </div>
           )}
 
           <SocialLoginButtons mode="login" />
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="email" style={{
+                display: 'block',
+                fontSize: typography.size.sm,
+                fontWeight: typography.weight.medium,
+                color: colors.textSecondary,
+                marginBottom: 6,
+              }}>
                 Email address
               </label>
               <input
@@ -225,15 +398,23 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                onFocus={inputFocusHandler}
+                onBlur={inputBlurHandler}
+                style={inputStyle}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="password" style={{
+                display: 'block',
+                fontSize: typography.size.sm,
+                fontWeight: typography.weight.medium,
+                color: colors.textSecondary,
+                marginBottom: 6,
+              }}>
                 Password
               </label>
-              <div className="relative mt-1">
+              <div style={{ position: 'relative' }}>
                 <input
                   id="password"
                   name="password"
@@ -242,45 +423,71 @@ export function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  onFocus={inputFocusHandler}
+                  onBlur={inputBlurHandler}
+                  style={{ ...inputStyle, paddingRight: 40 }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: 12,
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    color: colors.textMuted,
+                    transition: `color ${transitions.fast}`,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = colors.textSecondary; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = colors.textMuted; }}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
-                  )}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
+                  style={{
+                    width: 16, height: 16,
+                    accentColor: colors.gold,
+                    borderRadius: radius.sm,
+                    cursor: 'pointer',
+                  }}
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-[#1E2D4D]/70">
+                <label htmlFor="remember-me" style={{
+                  fontSize: typography.size.sm,
+                  color: colors.textSecondary,
+                  cursor: 'pointer',
+                }}>
                   Remember me
                 </label>
               </div>
 
-              <Link to="/forgot-password" className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B]">
+              <Link to="/forgot-password" style={{
+                fontSize: typography.size.sm,
+                fontWeight: typography.weight.semibold,
+                color: colors.navy,
+                textDecoration: 'none',
+                transition: `color ${transitions.fast}`,
+              }}>
                 Forgot password?
               </Link>
             </div>
 
             {captchaEnabled && (
-              <div className="flex justify-center">
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <ReCAPTCHA
                   ref={recaptchaRef}
                   sitekey={recaptchaKey}
@@ -293,7 +500,33 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '12px 16px',
+                border: 'none',
+                borderRadius: radius.lg,
+                boxShadow: shadows.sm,
+                fontSize: typography.size.body,
+                fontWeight: typography.weight.semibold,
+                fontFamily: typography.family.body,
+                color: colors.white,
+                background: colors.navy,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
+                transition: `background ${transitions.fast}, box-shadow ${transitions.fast}, transform ${transitions.fast}`,
+              }}
+              onMouseEnter={e => {
+                if (!loading) {
+                  e.currentTarget.style.background = colors.navyHover;
+                  e.currentTarget.style.boxShadow = shadows.md;
+                }
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = colors.navy;
+                e.currentTarget.style.boxShadow = shadows.sm;
+              }}
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -301,30 +534,66 @@ export function Login() {
 
           {/* SSO / SAML login button (enterprise white-label) */}
           {branding.sso.enabled && (
-            <div className="mt-4">
-              <div className="relative mb-4">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#1E2D4D]/10" /></div>
-                <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-[#1E2D4D]/50">or</span></div>
+            <div style={{ marginTop: 16 }}>
+              <div style={{ position: 'relative', marginBottom: 16 }}>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: '100%', height: 1, background: colors.borderLight }} />
+                </div>
+                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+                  <span style={{
+                    background: colors.white,
+                    padding: '0 12px',
+                    fontSize: typography.size.sm,
+                    color: colors.textMuted,
+                  }}>or</span>
+                </div>
               </div>
               <button
                 onClick={() => toast.info('SSO login is a demo placeholder. In production, this redirects to your identity provider.')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-xl text-sm font-semibold transition-colors"
-                style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '10px 16px',
+                  border: `2px solid ${branding.colors.primary}`,
+                  borderRadius: radius.lg,
+                  fontSize: typography.size.sm,
+                  fontWeight: typography.weight.semibold,
+                  fontFamily: typography.family.body,
+                  color: branding.colors.primary,
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  transition: `background ${transitions.fast}`,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = `${branding.colors.primary}08`; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
               >
                 Sign in with {branding.sso.provider === 'saml' ? 'SAML SSO' : branding.sso.provider === 'oidc' ? 'OpenID Connect' : 'SSO'}
               </button>
               {branding.sso.enforce && (
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">
+                <p style={{
+                  fontSize: typography.size.xs,
+                  textAlign: 'center',
+                  color: colors.textMuted,
+                  marginTop: 8,
+                }}>
                   Your organization requires SSO sign-in
                 </p>
               )}
             </div>
           )}
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-[#1E2D4D]/70">
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary }}>
               Don't have an account?{' '}
-              <Link to="/signup" className="font-semibold text-[#1E2D4D] hover:text-[#2A3F6B]">
+              <Link to="/signup" style={{
+                fontWeight: typography.weight.semibold,
+                color: colors.navy,
+                textDecoration: 'none',
+                transition: `color ${transitions.fast}`,
+              }}>
                 Sign up
               </Link>
             </p>
@@ -332,21 +601,37 @@ export function Login() {
 
           {/* Powered by EvidLY badge for white-label */}
           {branding.poweredByVisible && (
-            <div className="mt-6 flex justify-center">
+            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center' }}>
               <a
                 href="https://evidly.com?ref=powered-by"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: typography.size.xs,
+                  color: colors.textMuted,
+                  textDecoration: 'none',
+                  transition: `color ${transitions.fast}`,
+                }}
               >
-                <span>Powered by <span className="font-semibold text-[#1E2D4D]/50">EvidLY</span></span>
+                <span>Powered by <span style={{ fontWeight: typography.weight.semibold, color: colors.textSecondary }}>EvidLY</span></span>
               </a>
             </div>
           )}
 
           {/* Mobile jurisdiction detection */}
           {detectedJurisdiction && (
-            <div className="lg:hidden mt-6 flex items-center justify-center gap-2 text-[#1E2D4D]/30 text-xs">
+            <div className="lg:hidden" style={{
+              marginTop: 24,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              color: colors.textMuted,
+              fontSize: typography.size.xs,
+            }}>
               <MapPin size={12} />
               <span>{detectedJurisdiction} County, CA</span>
             </div>
