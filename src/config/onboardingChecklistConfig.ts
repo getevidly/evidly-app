@@ -5,7 +5,7 @@
 
 import type { UserRole } from '../contexts/RoleContext';
 
-// Industry codes match Signup.tsx INDUSTRY_TYPES keys
+// Industry codes used for onboarding step visibility filtering
 export type IndustryCode =
   | 'RESTAURANT'
   | 'HEALTHCARE'

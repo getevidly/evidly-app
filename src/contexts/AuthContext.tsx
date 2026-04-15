@@ -174,7 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string }) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string; jurisdiction_selection?: string | null }) => {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -193,23 +193,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: authError };
     }
 
-    const { data: orgData, error: orgError } = await supabase
+    // Try full insert with all columns; fall back without k12 columns if schema cache is stale
+    let orgData: { id: string } | null = null;
+    const fullOrgRow = {
+      name: orgName,
+      industry_type: industryType || null,
+      industry_subtype: industrySubtype || null,
+      org_type: qualificationFlags?.org_type || 'standard',
+      k12_enrolled: qualificationFlags?.k12_enrolled || false,
+      k12_enrolled_at: qualificationFlags?.k12_enrolled_at || null,
+      sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
+      sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
+      jurisdiction_selection: qualificationFlags?.jurisdiction_selection || null,
+    };
+
+    const { data: orgResult, error: orgError } = await supabase
       .from('organizations')
-      .insert([{
-        name: orgName,
-        industry_type: industryType || null,
-        industry_subtype: industrySubtype || null,
-        org_type: qualificationFlags?.org_type || 'standard',
-        k12_enrolled: qualificationFlags?.k12_enrolled || false,
-        k12_enrolled_at: qualificationFlags?.k12_enrolled_at || null,
-        sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
-        sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
-      }])
+      .insert([fullOrgRow])
       .select()
       .single();
 
     if (orgError) {
-      return { error: orgError };
+      // Schema cache may not have k12/jurisdiction columns yet — retry without them
+      console.warn('[signUp] org insert failed, retrying without k12/jurisdiction columns:', orgError.message);
+      const { data: fallbackResult, error: fallbackError } = await supabase
+        .from('organizations')
+        .insert([{
+          name: orgName,
+          industry_type: industryType || null,
+          industry_subtype: industrySubtype || null,
+          org_type: qualificationFlags?.org_type || 'standard',
+          sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
+          sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
+        }])
+        .select()
+        .single();
+
+      if (fallbackError) {
+        return { error: fallbackError };
+      }
+      console.info('[signUp] fallback org insert succeeded — schema cache may need reload');
+      orgData = fallbackResult;
+    } else {
+      orgData = orgResult;
+    }
+
+    if (!orgData) {
+      return { error: { message: 'Failed to create organization' } };
     }
 
     const { error: profileError } = await supabase

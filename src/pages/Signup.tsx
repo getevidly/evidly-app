@@ -14,38 +14,22 @@ import {
   type StateAbbrev,
 } from '../data/stateCounties';
 
-const INDUSTRY_TYPES = {
-  RESTAURANT: {
-    code: 'RESTAURANT',
-    label: 'Restaurant',
-    subtypes: ['Restaurant', 'Hotel Restaurant', 'Casino Restaurant', 'Bar / Lounge', 'Ghost Kitchen', 'Catering Company', 'Corporate Cafeteria', 'Other'],
-    weights: { foodSafety: 60, facilitySafety: 40 }
-  },
-  HEALTHCARE: {
-    code: 'HEALTHCARE',
-    label: 'Healthcare',
-    subtypes: ['Hospital', 'Medical Center'],
-    weights: { foodSafety: 60, facilitySafety: 40 }
-  },
-  SENIOR_LIVING: {
-    code: 'SENIOR_LIVING',
-    label: 'Senior Living',
-    subtypes: ['Assisted Living', 'Nursing Home / Skilled Nursing', 'Memory Care', 'Independent Living'],
-    weights: { foodSafety: 60, facilitySafety: 40 }
-  },
-  K12_EDUCATION: {
-    code: 'K12_EDUCATION',
-    label: 'K-12 Education',
-    subtypes: ['School District', 'Private School', 'Charter School'],
-    weights: { foodSafety: 65, facilitySafety: 35 }
-  },
-  HIGHER_EDUCATION: {
-    code: 'HIGHER_EDUCATION',
-    label: 'Higher Education',
-    subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'],
-    weights: { foodSafety: 60, facilitySafety: 40 }
-  }
-};
+const KITCHEN_TYPES = [
+  'Restaurant',
+  'Hotel/Resort',
+  'Healthcare Facility',
+  'Senior Living',
+  'K-12 School',
+  'Higher Education',
+  'Corporate Cafeteria',
+  'Food Truck',
+  'Catering',
+  'Ghost Kitchen',
+  'Bar/Nightclub',
+  'Convention Center',
+  'Sports Venue',
+  'Casino',
+];
 
 // ── Founder pricing countdown banner ────────────────────────
 function FounderBanner() {
@@ -87,8 +71,7 @@ export function Signup() {
   const [orgName, setOrgName] = useState('');
   const [signupState, setSignupState] = useState<StateAbbrev>('CA');
   const [jurisdiction, setJurisdiction] = useState('');
-  const [industryType, setIndustryType] = useState('');
-  const [industrySubtype, setIndustrySubtype] = useState('');
+  const [kitchenType, setKitchenType] = useState('');
   const [sb1383Qualified, setSb1383Qualified] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
@@ -130,8 +113,6 @@ export function Signup() {
   };
 
   const strength = getPasswordStrength();
-  const selectedIndustry = industryType ? INDUSTRY_TYPES[industryType as keyof typeof INDUSTRY_TYPES] : null;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -146,8 +127,8 @@ export function Signup() {
       return;
     }
 
-    if (!industryType || !industrySubtype) {
-      setError('Please select your industry type');
+    if (!kitchenType) {
+      setError('Please select your commercial kitchen type');
       return;
     }
 
@@ -159,8 +140,8 @@ export function Signup() {
     setLoading(true);
     trackEvent('signup_start', { method: 'email' });
 
-    const isK12 = industryType === 'K12_EDUCATION';
-    const { error } = await signUp(email, password, fullName, phone, orgName, industryType, industrySubtype, {
+    const isK12 = kitchenType === 'K-12 School';
+    const { error } = await signUp(email, password, fullName, phone, orgName, kitchenType, kitchenType, {
       k12_enrolled: isK12,
       k12_enrolled_at: isK12 ? new Date().toISOString() : null,
       sb1383_enrolled: sb1383Qualified || isK12,
@@ -371,51 +352,28 @@ export function Signup() {
               </div>
 
               <div>
-                <label htmlFor="industryType" className="block text-sm font-medium text-[#1E2D4D]/80">
-                  Industry Type
+                <label htmlFor="kitchenType" className="block text-sm font-medium text-[#1E2D4D]/80">
+                  Commercial Kitchen Type
                 </label>
                 <select
-                  id="industryType"
-                  name="industryType"
+                  id="kitchenType"
+                  name="kitchenType"
                   required
-                  value={industryType}
+                  value={kitchenType}
                   onChange={(e) => {
-                    const code = e.target.value;
-                    setIndustryType(code);
-                    setIndustrySubtype('');
-                    setSb1383Qualified(code === 'K12_EDUCATION');
+                    setKitchenType(e.target.value);
+                    setSb1383Qualified(e.target.value === 'K-12 School');
                   }}
                   className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 >
-                  <option value="">Select industry...</option>
-                  {Object.entries(INDUSTRY_TYPES).map(([key, industry]) => (
-                    <option key={key} value={key}>{industry.label}</option>
+                  <option value="">Select type...</option>
+                  {KITCHEN_TYPES.map((type) => (
+                    <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
               </div>
 
-              {selectedIndustry && (
-                <div>
-                  <label htmlFor="industrySubtype" className="block text-sm font-medium text-[#1E2D4D]/80">
-                    {selectedIndustry.label} Type
-                  </label>
-                  <select
-                    id="industrySubtype"
-                    name="industrySubtype"
-                    required
-                    value={industrySubtype}
-                    onChange={(e) => setIndustrySubtype(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
-                  >
-                    <option value="">Select type...</option>
-                    {selectedIndustry.subtypes.map((subtype) => (
-                      <option key={subtype} value={subtype}>{subtype}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {industryType && industryType !== 'K12_EDUCATION' && (
+              {kitchenType && kitchenType !== 'K-12 School' && (
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                     Does your operation generate organic waste (food scraps, food-soiled paper) for disposal or recovery?
@@ -604,7 +562,7 @@ export function Signup() {
 
               <button
                 type="submit"
-                disabled={loading || !allRequirementsMet || !passwordsMatch || !industryType || !industrySubtype || !termsAccepted}
+                disabled={loading || !allRequirementsMet || !passwordsMatch || !kitchenType || !termsAccepted}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#162340] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Creating account...' : 'Sign up'}
