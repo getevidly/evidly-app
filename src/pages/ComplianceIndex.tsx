@@ -13,6 +13,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { colors, shadows, radius, typography } from '../lib/designSystem';
 
 // ── Q4 2025 Demo Report Data ──────────────────────────────────────────
 
@@ -170,10 +171,10 @@ function SeverityBadge({ severity }: { severity: string }) {
 
 function SectionHeader({ icon: Icon, title, number, children }: { icon: any; title: string; number: number; children?: React.ReactNode }) {
   return (
-    <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5 flex items-center justify-between flex-wrap gap-2">
-      <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-        <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: '#1E2D4D' }}>{number}</span>
-        <Icon className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+    <div style={{ padding: '16px 24px', borderBottom: `1px solid ${colors.borderLight}` }} className="flex items-center justify-between flex-wrap gap-2">
+      <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.navy }} className="flex items-center gap-2">
+        <span style={{ width: 28, height: 28, borderRadius: radius.full, background: colors.navy, color: colors.white, fontSize: typography.size.xs, fontWeight: typography.weight.bold }} className="flex items-center justify-center">{number}</span>
+        <Icon className="h-5 w-5" style={{ color: colors.navy }} />
         {title}
       </h2>
       {children}
@@ -248,22 +249,22 @@ export function ComplianceIndex() {
 
       <div className="space-y-6">
         {/* Report Header */}
-        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-8 text-white">
+        <div style={{ background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`, borderRadius: radius.xl }} className="p-4 sm:p-8 text-white">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <EvidlyIcon size={40} />
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight">EvidLY Compliance Index</h1>
-                  <p className="text-sm text-[#1E2D4D]/20">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
+                  <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em' }}>EvidLY Compliance Index</h1>
+                  <p className="text-sm text-white/40">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
                 </div>
               </div>
-              <p className="text-sm text-[#1E2D4D]/30 max-w-xl">
+              <p className="text-sm text-white/50 max-w-xl">
                 The definitive quarterly benchmark of commercial kitchen compliance across California.
                 Based on anonymized, aggregated data from {REPORT.totalLocations.toLocaleString()} locations
                 across {REPORT.counties} counties.
               </p>
-              <p className="text-xs text-[#1E2D4D]/30 mt-2">Published {REPORT.published} | All data fully anonymized | Minimum 50 data points per segment</p>
+              <p className="text-xs text-white/35 mt-2">Published {REPORT.published} | All data fully anonymized | Minimum 50 data points per segment</p>
             </div>
             <div className="flex flex-col gap-2">
               <button
@@ -286,29 +287,29 @@ export function ComplianceIndex() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-xl sm:text-3xl font-bold tracking-tight">{REPORT.industryIndex}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Industry Index</div>
+              <div className="text-xs text-white/40">Industry Index</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.quarterChange}</div>
-              <div className="text-xs text-[#1E2D4D]/30">vs Q{REPORT.quarter - 1 || 4} {REPORT.quarter === 1 ? REPORT.year - 1 : REPORT.year}</div>
+              <div className="text-xs text-white/40">vs Q{REPORT.quarter - 1 || 4} {REPORT.quarter === 1 ? REPORT.year - 1 : REPORT.year}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.yearChange}</div>
-              <div className="text-xs text-[#1E2D4D]/30">vs Q{REPORT.quarter} {REPORT.year - 1}</div>
+              <div className="text-xs text-white/40">vs Q{REPORT.quarter} {REPORT.year - 1}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Kitchens Sampled</div>
+              <div className="text-xs text-white/40">Kitchens Sampled</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Counties Covered</div>
+              <div className="text-xs text-white/40">Counties Covered</div>
             </div>
           </div>
         </div>
 
         {/* ── 1. Executive Summary ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={FileText} title="Executive Summary" number={1} />
           <div className="p-4 sm:p-6">
             <div className="prose prose-sm max-w-none">
@@ -336,7 +337,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 2. Overall Industry Score ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={BarChart3} title="Overall Industry Score" number={2} />
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-4 sm:gap-8 mb-6 flex-wrap">
@@ -385,7 +386,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 3. Score by Vertical ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={Building2} title="Score by Vertical" number={3} />
           <div className="p-4 sm:p-6">
             <div className="overflow-x-auto">
@@ -425,7 +426,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 4. Score by State & County ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={MapPin} title="Score by State — California County Breakdown" number={4} />
           <div className="p-4 sm:p-6">
             <p className="text-sm text-[#1E2D4D]/70 mb-4">
@@ -471,7 +472,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 5. Score by Category ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={BarChart3} title="Score by Category" number={5} />
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -502,7 +503,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 6. Trending Up/Down ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={TrendingUp} title="Trending Up / Down" number={6} />
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -545,7 +546,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 7. Top Violations ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={AlertTriangle} title="Top 10 Compliance Gaps" number={7} />
           <div className="p-4 sm:p-6">
             <p className="text-sm text-[#1E2D4D]/70 mb-4">
@@ -579,7 +580,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 8. Seasonal Insights ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={Calendar} title="Seasonal Insights" number={8} />
           <div className="p-4 sm:p-6">
             <QuarterlyTrendChart data={SEASONAL_DATA} />
@@ -605,7 +606,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 9. Regulatory Impact ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={Scale} title="Regulatory Impact" number={9} />
           <div className="p-6 space-y-4">
             <p className="text-sm text-[#1E2D4D]/70 mb-2">
@@ -644,7 +645,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 10. Predictions ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <SectionHeader icon={Sparkles} title="Q1 2026 Predictions" number={10} />
           <div className="p-4 sm:p-6">
             <p className="text-sm text-[#1E2D4D]/70 mb-4">
@@ -691,7 +692,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Blog Content Ideas ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <BookOpen className="h-5 w-5" style={{ color: '#A08C5A' }} />
@@ -722,7 +723,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Data Integrity & Anonymization ── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <EvidlyIcon size={20} />
@@ -771,27 +772,27 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Distribution & Network Effect ── */}
-        <div className="rounded-xl p-4 sm:p-8 text-center" style={{ background: 'linear-gradient(135deg, #1E2D4D 0%, #2c5f7f 100%)' }}>
+        <div className="rounded-xl p-4 sm:p-8 text-center" style={{ background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)` }}>
           <Users className="h-10 w-10 mx-auto mb-3 text-white" />
           <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
             Based on data from {REPORT.totalLocations.toLocaleString()}+ commercial kitchens
           </h3>
-          <p className="text-sm text-[#1E2D4D]/30 max-w-lg mx-auto mb-4">
+          <p className="text-sm text-white/45 max-w-lg mx-auto mb-4">
             The EvidLY Compliance Index grows more accurate with every kitchen that joins.
             As our network expands, benchmarks become the industry standard.
           </p>
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalOrganizations}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Organizations</div>
+              <div className="text-xs text-white/40">Organizations</div>
             </div>
             <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Locations</div>
+              <div className="text-xs text-white/40">Locations</div>
             </div>
             <div className="bg-white/10 rounded-xl px-4 py-2 text-white">
               <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
-              <div className="text-xs text-[#1E2D4D]/30">Counties</div>
+              <div className="text-xs text-white/40">Counties</div>
             </div>
           </div>
 
@@ -811,7 +812,7 @@ export function ComplianceIndex() {
             </button>
           </div>
 
-          <div className="mt-6 text-xs text-[#1E2D4D]/30">
+          <div className="mt-6 text-xs text-white/30">
             Available for media to reference and cite. Contact press@evidly.com for interviews and data requests.
           </div>
         </div>
