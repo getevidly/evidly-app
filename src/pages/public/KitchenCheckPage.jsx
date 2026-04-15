@@ -611,7 +611,7 @@ export default function KitchenCheckPage({county: countyProp}){
     <div style={{maxWidth:680,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:12}}>
         {[
-          {href:"/"+c.landingSlug,label:"EvidLY for "+c.name+" County",desc:"Track your score daily. Food safety + facility safety. Configured for "+c.agencyShort+".",cta:"Learn More →",color:E.navy},
+          {href:"/"+c.landingSlug,label:"EvidLY for "+c.name+" County",desc:"Track your score daily. Food safety + fire safety. Configured for "+c.agencyShort+".",cta:"Learn More →",color:E.navy},
           {href:"/scoretable/"+c.stSlug,label:"ScoreTable — "+c.name+" County",desc:"Full "+c.agencyShort+" inspection methodology — scoring weights, thresholds, and what the numbers mean.",cta:"View Methodology →",color:S.grn},
           {href:"/kitchen-to-community",label:"Kitchen to Community",desc:"Every EvidLY subscription funds ~100 meals per location per month.",cta:"Learn More →",color:E.gold},
         ].map(function(link){return(

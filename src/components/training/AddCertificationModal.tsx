@@ -26,7 +26,7 @@ const CERT_TYPES = [
   { value: 'allergen_awareness', label: 'Allergen Awareness' },
   { value: 'first_aid_cpr', label: 'First Aid / CPR' },
   { value: 'food_safety_other', label: 'Other Food Safety' },
-  { value: 'facility_safety_other', label: 'Other Facility Safety' },
+  { value: 'facility_safety_other', label: 'Other Fire Safety' },
 ];
 
 const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white';

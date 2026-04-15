@@ -536,7 +536,7 @@ export function Benchmarks() {
                     <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">#</th>
                     <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Location</th>
                     <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Food Safety</th>
-                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Facility Safety</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Fire Safety</th>
                     <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Industry Pct</th>
                     <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 hidden sm:table-cell">Badge</th>
                   </tr>

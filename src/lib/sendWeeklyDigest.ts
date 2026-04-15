@@ -190,7 +190,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
       <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.facilitySafetyScore >= 90 ? '#22c55e' : data.facilitySafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
         <span style="font-size:28px;font-weight:800;color:#1E2D4D;">${data.facilitySafetyScore}</span>
       </div>
-      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Facility Safety</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Fire Safety</div>
     </td>
     <td style="padding:20px 24px;">
       <div style="font-size:16px;font-weight:600;color:#1E2D4D;">Compliance Scores</div>

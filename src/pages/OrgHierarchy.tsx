@@ -85,7 +85,7 @@ const INITIAL_ORG_TREE: OrgTreeNode = {
   ],
 };
 
-// Facility safety equipment data per location
+// Fire safety equipment data per location
 const FIRE_EQUIPMENT: Record<string, { permit: boolean; hood: boolean; ext: boolean; ansul: boolean }> = {
   'downtown-kitchen': { permit: true, hood: true, ext: true, ansul: true },
   'airport-cafe':     { permit: true, hood: false, ext: true, ansul: false },
@@ -263,10 +263,10 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
         )}
       </div>
 
-      {/* Facility Safety */}
+      {/* Fire Safety */}
       <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Facility Safety</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Fire Safety</span>
         </div>
         <div className="flex items-center justify-between">
           <p className="text-[#1E2D4D]/50 text-xs">{node.facilitySafetyAhj}</p>

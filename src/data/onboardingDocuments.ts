@@ -21,7 +21,7 @@ export const PILLAR_META: Record<
   OnboardingDocument['pillar'],
   { label: string; icon: string }
 > = {
-  facility_safety: { label: 'Facility Safety', icon: '🔥' },
+  facility_safety: { label: 'Fire Safety', icon: '🔥' },
   food_safety: { label: 'Food Safety', icon: '🍽️' },
   vendor: { label: 'Vendor Documents', icon: '👥' },
   facility: { label: 'Facility Documents', icon: '🏢' },
@@ -32,7 +32,7 @@ export const PILLAR_META: Record<
 // ---------------------------------------------------------------------------
 
 export const BASE_DOCUMENTS: OnboardingDocument[] = [
-  // ── Facility Safety (6) ─────────────────────────────────────────────────────
+  // ── Fire Safety (6) ─────────────────────────────────────────────────────
   {
     id: 'hood_cleaning_cert',
     name: 'Hood Cleaning Certificate',
@@ -64,7 +64,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
     required: true,
     description:
       'Current inspection tags on all portable fire extinguishers showing they have been serviced and are in working order.',
-    whoProvides: 'Facility safety vendor',
+    whoProvides: 'Fire safety vendor',
     renewalFrequency: 'Annual',
     helpText:
       'Take a clear photo of each extinguisher tag after the annual service visit. Monthly visual checks should also be logged internally.',
@@ -106,7 +106,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
       'Exhaust fan maintenance is often included in hood cleaning contracts. Ask your vendor to document fan condition each visit.',
   },
 
-  // ── Facility Safety — Elevator (3) ─────────────────────────────────────
+  // ── Fire Safety — Elevator (3) ─────────────────────────────────────
   {
     id: 'elevator_inspection_cert',
     name: 'Elevator Inspection Certificate',
@@ -144,7 +144,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
       'Must be posted in the elevator cab. Renew before expiration — an expired permit can result in a shutdown order.',
   },
 
-  // ── Facility Safety — Pest Control (2 additional) ────────────────────
+  // ── Fire Safety — Pest Control (2 additional) ────────────────────
   {
     id: 'pest_control_contract',
     name: 'Pest Control Service Contract',
@@ -170,7 +170,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
       'Log any pest activity between vendor visits. This helps your pest control operator target problem areas and satisfies inspector questions.',
   },
 
-  // ── Facility Safety — Grease Trap / FOG Compliance (4) ──────────────────
+  // ── Fire Safety — Grease Trap / FOG Compliance (4) ──────────────────
   {
     id: 'grease_trap_pumping_receipt',
     name: 'Grease Trap Pumping Receipt / Manifest',
@@ -220,7 +220,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
       'Some sewer districts require periodic FOG compliance reports. EvidLY can generate a downloadable report from your grease trap service history.',
   },
 
-  // ── Facility Safety — Backflow Prevention (2 additional) ───────────────
+  // ── Fire Safety — Backflow Prevention (2 additional) ───────────────
   {
     id: 'backflow_preventer_certification',
     name: 'Backflow Preventer Certification',
@@ -377,7 +377,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
     pillar: 'facility',
     required: false,
     description:
-      'Document issued by the building department certifying that the premises meets zoning, building code, and facility safety requirements for its intended use.',
+      'Document issued by the building department certifying that the premises meets zoning, building code, and fire safety requirements for its intended use.',
     whoProvides: 'Building department',
     renewalFrequency: 'One-time',
     helpText:
@@ -519,7 +519,7 @@ export const DEMO_CHECKLIST_STATUS: Record<
     expiresAt?: string;
   }
 > = {
-  // ── Facility Safety ─────────────────────────────────────────────────────────
+  // ── Fire Safety ─────────────────────────────────────────────────────────
   hood_cleaning_cert: {
     status: 'uploaded',
     uploadedAt: '2025-11-14',
@@ -564,7 +564,7 @@ export const DEMO_CHECKLIST_STATUS: Record<
     status: 'pending',
   },
 
-  // ── Facility Safety — Grease Trap / FOG ─────────────────────────────────
+  // ── Fire Safety — Grease Trap / FOG ─────────────────────────────────
   grease_trap_pumping_receipt: {
     status: 'uploaded',
     uploadedAt: '2026-01-25',
@@ -580,7 +580,7 @@ export const DEMO_CHECKLIST_STATUS: Record<
     status: 'pending',
   },
 
-  // ── Facility Safety — Backflow Prevention ──────────────────────────────
+  // ── Fire Safety — Backflow Prevention ──────────────────────────────
   backflow_preventer_certification: {
     status: 'pending',
   },

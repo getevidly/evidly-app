@@ -107,15 +107,15 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
   },
   {
     id: 'facility-safety',
-    label: 'Facility Safety',
+    label: 'Fire Safety',
     icon: '🔥',
-    description: 'Facility safety documents, inspections, and equipment',
+    description: 'Fire safety documents, inspections, and equipment',
     permissions: [
-      { key: 'sidebar.facility-safety', label: 'View Facility Safety', description: 'Access facility safety section' },
+      { key: 'sidebar.facility-safety', label: 'View Fire Safety', description: 'Access fire safety section' },
       { key: 'sidebar.hood-exhaust', label: 'Hood & Exhaust', description: 'Access hood/exhaust records' },
       { key: 'sidebar.hvac', label: 'HVAC', description: 'Access HVAC maintenance' },
       { key: 'sidebar.suppression-systems', label: 'Suppression Systems', description: 'Access suppression systems' },
-      { key: 'bottom.facility-safety', label: 'Mobile: Facility Safety', description: 'Facility Safety in mobile bottom bar' },
+      { key: 'bottom.facility-safety', label: 'Mobile: Fire Safety', description: 'Fire Safety in mobile bottom bar' },
     ],
   },
   {

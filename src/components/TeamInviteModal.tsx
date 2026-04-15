@@ -21,7 +21,7 @@ const ROLE_OPTIONS: { value: string; label: string; description: string }[] = [
   { value: 'kitchen_staff', label: 'Kitchen Staff', description: 'Daily operations — checklists, temp logs' },
   { value: 'chef', label: 'Chef', description: 'Kitchen leadership — recipes, training' },
   { value: 'kitchen_manager', label: 'Kitchen Manager', description: 'Full kitchen oversight — compliance, team' },
-  { value: 'facilities_manager', label: 'Facilities Manager', description: 'Equipment, vendors, facility safety' },
+  { value: 'facilities_manager', label: 'Facilities Manager', description: 'Equipment, vendors, fire safety' },
   { value: 'compliance_manager', label: 'Compliance Officer', description: 'Regulatory compliance, audits, reports' },
   { value: 'executive', label: 'Executive', description: 'Organization-wide access, analytics' },
   { value: 'owner_operator', label: 'Owner / Operator', description: 'Full access including billing & settings' },

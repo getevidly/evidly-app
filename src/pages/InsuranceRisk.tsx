@@ -248,9 +248,9 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
   y += 2;
 
   // ============================================
-  // FACILITY SAFETY COMPLIANCE SUMMARY
+  // FIRE SAFETY COMPLIANCE SUMMARY
   // ============================================
-  sectionTitle('Facility Safety Compliance Summary');
+  sectionTitle('Fire Safety Compliance Summary');
 
   const fireCat = result.categories.find(c => c.key === 'fire');
   if (fireCat) {
@@ -630,7 +630,7 @@ export function InsuranceRisk() {
                 ? 'A solid foundation with some areas for improvement. Addressing the action items below is designed to strengthen your position for carrier conversations.'
                 : riskResult.overall >= 60
                 ? 'Several risk factors need attention. Prioritizing the critical items below can meaningfully improve your risk profile for insurance purposes.'
-                : 'Multiple high-risk factors identified. Immediate action on facility safety and documentation gaps is essential for maintaining adequate coverage.'}
+                : 'Multiple high-risk factors identified. Immediate action on fire safety and documentation gaps is essential for maintaining adequate coverage.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {riskResult.categories.map(cat => {
@@ -744,7 +744,7 @@ export function InsuranceRisk() {
                 <tr className="text-xs text-[#1E2D4D]/30 uppercase tracking-wider border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                   <th className="text-left py-2 font-semibold">Location</th>
                   <th className="text-center py-2 font-semibold">Overall</th>
-                  <th className="text-center py-2 font-semibold">Facility Safety</th>
+                  <th className="text-center py-2 font-semibold">Fire Safety</th>
                   <th className="text-center py-2 font-semibold">Food Safety</th>
                   <th className="text-center py-2 font-semibold hidden sm:table-cell">Documentation</th>
                   <th className="text-center py-2 font-semibold hidden sm:table-cell">Operational</th>
@@ -1092,7 +1092,7 @@ export function InsuranceRisk() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Score Methodology</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'Facility Safety', weight: '40%', desc: '9 factors mapped to NFPA standards (2025 Edition)', color: '#ef4444' },
+            { label: 'Fire Safety', weight: '40%', desc: '9 factors mapped to NFPA standards (2025 Edition)', color: '#ef4444' },
             { label: 'Food Safety', weight: '30%', desc: '9 factors mapped to FDA Food Code', color: '#3b82f6' },
             { label: 'Documentation', weight: '20%', desc: '7 factors covering permits & certs', color: '#8b5cf6' },
             { label: 'Operational', weight: '10%', desc: '5 factors measuring consistency', color: '#06b6d4' },

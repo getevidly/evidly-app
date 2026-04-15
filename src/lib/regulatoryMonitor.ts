@@ -131,7 +131,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Ensure your EvidLY account is set up to export records on demand for inspectors',
       'Keep paper logs as backup if desired, but digital must be the primary record',
     ],
-    affectedAreas: ['Facility Safety'],
+    affectedAreas: ['Fire Safety'],
     affectedLocations: ['Location 1'], // demo
     autoActions: [
       { text: 'Your EvidLY digital temperature logs already meet this requirement', completed: true },
@@ -157,7 +157,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Update your vendor service calendar to reflect any frequency changes',
       'Document your daily meal counts to justify your cleaning frequency during inspections',
     ],
-    affectedAreas: ['Facility Safety'],
+    affectedAreas: ['Fire Safety'],
     affectedLocations: ['Location 1', 'Location 3'], // demo
     autoActions: [
       { text: 'Vendor service calendar flagged for review', completed: true },
@@ -233,7 +233,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Ensure your EvidLY equipment tracking includes monthly visual inspection records',
       'Inform your fire protection vendor that digital records are now standard-approved',
     ],
-    affectedAreas: ['Facility Safety'],
+    affectedAreas: ['Fire Safety'],
     affectedLocations: ['Location 1', 'Location 2', 'Location 3'], // demo
     autoActions: [
       { text: 'Equipment tracking module already supports digital fire extinguisher records', completed: true },
@@ -262,11 +262,11 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Review fire suppression system service reports — semi-annual professional service required',
       'Verify manual pull station is accessible within 10-20 ft travel distance of egress path',
     ],
-    affectedAreas: ['Facility Safety'],
+    affectedAreas: ['Fire Safety'],
     affectedLocations: ['Location 1', 'Location 2', 'Location 3'], // demo
     autoActions: [
       { text: 'CFC requirements added to jurisdiction compliance engine', completed: true },
-      { text: 'Facility safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },
+      { text: 'Fire safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },
       { text: 'Fire equipment service schedules added to equipment lifecycle tracking', completed: true },
       { text: 'NFPA 96 compliance items weighted as CRITICAL in scoring engine', completed: true },
       { text: 'Review fire prevention permit status for each location', completed: false, actionType: 'link', linkTo: '/documents' },

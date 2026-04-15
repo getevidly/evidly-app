@@ -43,7 +43,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
     let y = drawReportHeader(doc, 'Location Comparison', 'Side-by-side scores and metrics', 'All Locations', 'Current');
     y = drawSectionHeading(doc, 'Comparison Table', y);
     drawTable(doc,
-      ['Location', 'Food Safety', 'Facility Safety', 'Checklists', 'Temperature Readings', 'Open Items'],
+      ['Location', 'Food Safety', 'Fire Safety', 'Checklists', 'Temperature Readings', 'Open Items'],
       data.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
       y,
     );
@@ -86,7 +86,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
               <Tooltip />
               <Legend />
               <Bar dataKey="foodSafety" name="Food Safety" fill={NAVY} radius={[0, 4, 4, 0]} />
-              <Bar dataKey="facilitySafety" name="Facility Safety" fill="#d97706" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="facilitySafety" name="Fire Safety" fill="#d97706" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -99,7 +99,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `2px solid ${CARD_BORDER}` }}>
-                {['Location', 'Food Safety', 'Facility Safety', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
+                {['Location', 'Food Safety', 'Fire Safety', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-xs font-semibold" style={{ color: MUTED }}>{h}</th>
                 ))}
               </tr>

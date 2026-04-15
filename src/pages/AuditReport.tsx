@@ -195,7 +195,7 @@ function generateVendorRecords(location: string | null) {
 
 function generateDocuments(location: string | null) {
   const docNames = [
-    'Food Service License', 'Business License', 'Health Permit', 'Facility Safety Certificate',
+    'Food Service License', 'Business License', 'Health Permit', 'Fire Safety Certificate',
     'Liquor License', 'General Liability Insurance', 'Workers Comp Insurance',
     'Food Handler Certificate — Sarah Chen', 'Food Handler Certificate — Maria Garcia',
     'Food Handler Certificate — John Smith', 'ServSafe Manager Cert — Emily Rogers',
@@ -428,7 +428,7 @@ export function AuditReport() {
 
   const reportTitle = reportType === 'full' ? 'Full Compliance Report'
     : reportType === 'food_safety' ? 'Food Safety Report'
-    : reportType === 'facility_safety' ? 'Facility Safety Report'
+    : reportType === 'facility_safety' ? 'Fire Safety Report'
     : reportType === 'vendor_docs' ? 'Vendor Documentation Report'
     : 'Custom Inspection Report';
 
@@ -621,7 +621,7 @@ export function AuditReport() {
                 >
                   <option value="full">Full Compliance Report</option>
                   <option value="food_safety">Food Safety Report</option>
-                  <option value="facility_safety">Facility Safety Report</option>
+                  <option value="facility_safety">Fire Safety Report</option>
                   <option value="vendor_docs">Vendor Documentation Report</option>
                   <option value="custom">Custom</option>
                 </select>
@@ -779,7 +779,7 @@ export function AuditReport() {
                         </div>
                         <div>
                           <h4 className="font-bold text-lg text-[#1E2D4D]">Overall Compliance Score</h4>
-                          <p className="text-sm text-[#1E2D4D]/70">Food Safety Score + Facility Safety Score</p>
+                          <p className="text-sm text-[#1E2D4D]/70">Food Safety Score + Fire Safety Score</p>
                           <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
                             {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
                           </p>

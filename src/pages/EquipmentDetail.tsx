@@ -123,9 +123,9 @@ export function EquipmentDetail() {
               <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{equipment.make} {equipment.model} · S/N: {equipment.serial}</p>
               <div className="flex gap-2 mt-3 flex-wrap">
                 <span style={badge(st.label, st.color, st.bg)}>{st.label}</span>
-                <span style={{ ...badge(isFire ? 'Facility Safety' : 'Food Safety', isFire ? '#b91c1c' : '#166534', isFire ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <span style={{ ...badge(isFire ? 'Fire Safety' : 'Food Safety', isFire ? '#b91c1c' : '#166534', isFire ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                   {isFire ? <Flame size={10} /> : <UtensilsCrossed size={10} />}
-                  {isFire ? 'Facility Safety' : 'Food Safety'}
+                  {isFire ? 'Fire Safety' : 'Food Safety'}
                 </span>
                 <span style={badge(equipment.condition, conditionColor(equipment.condition), conditionBg(equipment.condition))}>{equipment.condition}</span>
                 <span style={badge(`Warranty: ${w.label}`, w.color, w.bg)}>Warranty: {w.label}</span>

@@ -207,8 +207,8 @@ function buildDemoImpact(): ImpactItem[] {
 
   // Other (non-temp) impact items — always included
   items.push(
-    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Location 2', pillar: 'Facility Safety', severity: 'critical', route: '/vendors' }, // demo
-    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'Location 3', pillar: 'Facility Safety', severity: 'critical', route: '/documents' }, // demo
+    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Location 2', pillar: 'Fire Safety', severity: 'critical', route: '/vendors' }, // demo
+    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'Location 3', pillar: 'Fire Safety', severity: 'critical', route: '/documents' }, // demo
     { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'Location 3', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' }, // demo
     { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Location 1', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' }, // demo
   );
@@ -219,7 +219,7 @@ function buildDemoImpact(): ImpactItem[] {
 const DEMO_ALERTS: AlertItem[] = [ // demo
   { id: 'a1', severity: 'critical', message: 'Location 3 score dropped below 70 — would fail inspection', location: 'Location 3', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' }, // demo
   { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Location 2', pillar: 'Food Safety', actionLabel: 'View Temperature Readings', route: '/temp-logs?location=airport' }, // demo
-  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Location 2', pillar: 'Facility Safety', actionLabel: 'Schedule', route: '/equipment' }, // demo
+  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Location 2', pillar: 'Fire Safety', actionLabel: 'Schedule', route: '/equipment' }, // demo
   // Intelligence-sourced alerts (critical/high insights)
   ...DEMO_INTELLIGENCE_INSIGHTS
     .filter(i => i.impact_level === 'critical' || i.impact_level === 'high')
@@ -249,7 +249,7 @@ const DEMO_MODULE_STATUSES: ModuleStatus[] = [
   { id: 'mod-equipment', label: 'Equipment', metric: '2 overdue', status: 'critical', route: '/equipment' },
   { id: 'mod-haccp', label: 'HACCP', metric: '6 plans active', status: 'good', route: '/haccp' },
   { id: 'mod-training', label: 'Training', metric: '89% compliant', status: 'good', route: '/training' },
-  { id: 'mod-fire', label: 'Facility Safety', metric: '3 alerts', status: 'critical', route: '/facility-safety' },
+  { id: 'mod-fire', label: 'Fire Safety', metric: '3 alerts', status: 'critical', route: '/facility-safety' },
 ];
 
 function buildDemoPayload(): DashboardPayload {

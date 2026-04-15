@@ -147,7 +147,7 @@ export function FacilitySafety() {
   const { t } = useTranslation();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-  usePageTitle('Facility Safety');
+  usePageTitle('Fire Safety');
   const [pageError, setPageError] = useState<string | null>(null);
 
   if (pageError) {
@@ -246,7 +246,7 @@ export function FacilitySafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1E2D4D]">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
+            <h1 className="text-xl font-bold text-[#1E2D4D]">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other fire safety compliance." /></h1>
             <p className="text-sm text-[#1E2D4D]/50">
               {ahjLabel ? `${ahjLabel} — ` : ''}
               {codeLabel ? `${codeLabel} · ` : ''}NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101
@@ -276,8 +276,8 @@ export function FacilitySafety() {
       {locations.length === 0 && !isDemoMode && (
         <div className="text-center py-12 text-[var(--text-secondary)]">
           <Flame size={32} className="mx-auto mb-3 text-[#1E2D4D]/30" />
-          <p className="font-medium text-lg">Add a location to begin facility safety tracking.</p>
-          <p className="text-sm mt-1 mb-5">Once you add a location, your facility safety checklists and status will appear here.</p>
+          <p className="font-medium text-lg">Add a location to begin fire safety tracking.</p>
+          <p className="text-sm mt-1 mb-5">Once you add a location, your fire safety checklists and status will appear here.</p>
           <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
@@ -286,7 +286,7 @@ export function FacilitySafety() {
 
       {/* Main content — only render when locations exist */}
       {locations.length > 0 && (<>
-      {/* Facility Safety Status Card */}
+      {/* Fire Safety Status Card */}
       {(() => {
         const noData = completedCount === 0 && passCount === 0 && failCount === 0;
         const badgeText = noData ? 'No Status' : fireGrade;
@@ -620,7 +620,7 @@ export function FacilitySafety() {
               </button>
             ) : (
               <button
-                onClick={() => guardAction('submit', 'Facility Safety Checklists', handleSubmit)}
+                onClick={() => guardAction('submit', 'Fire Safety Checklists', handleSubmit)}
                 disabled={!canSubmit || submitting}
                 className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: canSubmit ? NAVY : '#9ca3af' }}
@@ -710,7 +710,7 @@ export function FacilitySafety() {
           onClose={() => setDetailModal(null)}
           data={getFacilityDetail(jieLocKey, detailModal.category, detailModal.status)}
           onAction={(action, category) => {
-            guardAction(action, `Facility Safety — ${category}`, () => {
+            guardAction(action, `Fire Safety — ${category}`, () => {
               setDetailModal(null);
               if (action === 'schedule') {
                 navigate('/calendar');

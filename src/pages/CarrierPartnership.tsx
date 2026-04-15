@@ -40,7 +40,7 @@ export function CarrierPartnership() {
             {[
               { icon: EvidlyIcon as any, title: 'Authenticated API Access', desc: 'Real-time risk scores via RESTful API with X-API-Key authentication and rate limiting' },
               { icon: TrendingUp, title: '12-Month Trend Analysis', desc: 'Monthly score snapshots showing consistency and improvement trajectory' },
-              { icon: Flame, title: 'Facility Safety Verification', desc: 'NFPA 96/17A/10/72 (2025 Edition) compliance status with service dates and vendor documentation' },
+              { icon: Flame, title: 'Fire Safety Verification', desc: 'NFPA 96/17A/10/72 (2025 Edition) compliance status with service dates and vendor documentation' },
               { icon: BarChart3, title: 'Anonymized Incident Metrics', desc: 'Aggregated incident counts by severity and category — no employee PII or raw reports' },
             ].map(item => (
               <div key={item.title} className="flex items-start gap-3 p-4 rounded-xl bg-[#FAF7F0]">

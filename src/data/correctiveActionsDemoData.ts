@@ -186,7 +186,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
     regulation_reference: 'FDA Food Code 2-301.11', recommended_timeframe_days: 1,
     is_system: true, is_active: true,
   },
-  // Facility Safety (10)
+  // Fire Safety (10)
   {
     id: 'tpl-fac-01', title: 'Fire Suppression System Inspection Overdue',
     description: 'Annual fire suppression system inspection certificate has expired. Schedule re-inspection with certified vendor immediately.',
@@ -310,7 +310,7 @@ export function getTemplateById(id: string): CATemplate | undefined {
 
 export const CATEGORY_LABELS: Record<CACategory, string> = {
   food_safety: 'Food Safety',
-  facility_safety: 'Facility Safety',
+  facility_safety: 'Fire Safety',
   operational: 'Operational',
 };
 

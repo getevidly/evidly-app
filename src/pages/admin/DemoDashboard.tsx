@@ -96,7 +96,7 @@ export default function DemoDashboard() {
               <div className="text-2xl font-bold text-navy">{DEMO_ORG_SCORES.foodSafety}</div>
             </div>
             <div>
-              <div className="text-[11px] text-gray-500">Facility Safety Avg</div>
+              <div className="text-[11px] text-gray-500">Fire Safety Avg</div>
               <div className="text-2xl font-bold text-navy">{DEMO_ORG_SCORES.facilitySafety}</div>
             </div>
           </div>
@@ -267,7 +267,7 @@ export default function DemoDashboard() {
               <span className="text-green-600 font-semibold">Food Safety</span>: {DEMO_TREND_DATA[0].foodSafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].foodSafety}
             </div>
             <div className="text-xs">
-              <span className="text-blue-600 font-semibold">Facility Safety</span>: {DEMO_TREND_DATA[0].facilitySafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].facilitySafety}
+              <span className="text-blue-600 font-semibold">Fire Safety</span>: {DEMO_TREND_DATA[0].facilitySafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].facilitySafety}
             </div>
           </div>
           <div className="flex items-end gap-0.5 h-20">

@@ -1918,7 +1918,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
 // DUAL-AUTHORITY JURISDICTION DATA PER DEMO LOCATION
 // Each location has TWO independent authorities:
 //   1. Food Safety (county health dept / CalCode)
-//   2. Facility Safety (city fire dept / NFPA 96)
+//   2. Fire Safety (city fire dept / NFPA 96)
 // These CANNOT be combined into a single score.
 // ═══════════════════════════════════════════════════════════
 

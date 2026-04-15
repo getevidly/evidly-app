@@ -251,7 +251,7 @@ function generateVendorRecords(location: string | null) {
 
 function generateDocuments(location: string | null) {
   const names = [
-    'Food Service License', 'Health Permit', 'Facility Safety Certificate', 'General Liability Insurance',
+    'Food Service License', 'Health Permit', 'Fire Safety Certificate', 'General Liability Insurance',
     'Food Handler Certificate — Sarah Chen', 'Hood Cleaning Certificate', 'Fire Suppression Inspection',
     'Pest Control Service Log', 'Building Safety Inspection', 'ServSafe Manager Cert',
   ];
@@ -402,7 +402,7 @@ export function AuditTrail() {
     { id: 'equipment', label: 'Equipment', icon: Wrench, enabled: true, description: 'Equipment condition, warranty, service history' },
     { id: 'vendors', label: 'Vendor Services', icon: Truck, enabled: true, description: 'Service records and certifications' },
     { id: 'documents', label: 'Documents', icon: FileText, enabled: true, description: 'Licenses, permits, certifications' },
-    { id: 'compliance', label: 'Compliance Scores', icon: EvidlyIcon as any, enabled: true, description: 'Food safety and facility safety scores' },
+    { id: 'compliance', label: 'Compliance Scores', icon: EvidlyIcon as any, enabled: true, description: 'Food safety and fire safety scores' },
     { id: 'audit_activity', label: 'Inspection Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
     { id: 'photos', label: 'Photo Evidence', icon: Camera, enabled: false, description: 'Photographic documentation' },
     { id: 'training', label: 'Training Records', icon: GraduationCap, enabled: false, description: 'Staff certifications and course completions' },
@@ -1276,7 +1276,7 @@ export function AuditTrail() {
                           <tr style={{ backgroundColor: '#f9fafb' }}>
                             <th style={thStyle}>Location</th>
                             <th style={thStyle}>Food Safety</th>
-                            <th style={thStyle}>Facility Safety</th>
+                            <th style={thStyle}>Fire Safety</th>
                             <th style={thStyle}>Trend</th>
                             <th style={thStyle}>Last Updated</th>
                           </tr>

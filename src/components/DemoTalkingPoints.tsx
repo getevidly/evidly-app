@@ -50,7 +50,7 @@ const ROUTE_HINTS: Record<string, TalkingPoint[]> = {
     { hint: 'CalCode self-audit covers 41+ items', detail: 'Say: "This is the same checklist your inspector uses."' },
   ],
   '/facility-safety': [
-    { hint: 'Facility Safety tracks fire suppression, hood cleaning, extinguishers', detail: 'Say: "Your fire marshal checks the same things — now you have proof."' },
+    { hint: 'Fire Safety tracks fire suppression, hood cleaning, extinguishers', detail: 'Say: "Your fire marshal checks the same things — now you have proof."' },
   ],
 };
 

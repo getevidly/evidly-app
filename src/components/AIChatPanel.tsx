@@ -50,7 +50,7 @@ function getDemoResponse(question: string): { text: string; suggestions: string[
     suggestions = ['Send renewal reminders', 'Which vendors are critical?', 'View all vendors'];
   } else {
     const ctx = getDemoContext();
-    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• ${loc1}: Food Safety 94% ✅ · Facility Safety 88% ✅\n• ${loc2}: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• ${loc3}: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew ${loc3} health permit\n2. Complete missed temp checks at ${loc2}\n3. Schedule overdue fire suppression inspection\n\nAsk me about food safety, facility safety, temperatures, vendors, inspections, or corrective actions.`; // demo
+    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• ${loc1}: Food Safety 94% ✅ · Fire Safety 88% ✅\n• ${loc2}: Food Safety 72% ⚠️ · Fire Safety 62% 🔴\n• ${loc3}: Food Safety 62% 🔴 · Fire Safety 55% 🔴\n\n**Top priorities:**\n1. Renew ${loc3} health permit\n2. Complete missed temp checks at ${loc2}\n3. Schedule overdue fire suppression inspection\n\nAsk me about food safety, fire safety, temperatures, vendors, inspections, or corrective actions.`; // demo
     suggestions = [`What changed at ${loc2} this week?`, 'Am I inspection ready?', 'What actions are overdue?'];
   }
 

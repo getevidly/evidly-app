@@ -100,7 +100,7 @@ function buildDemoStandings(): LocationStanding[] {
       }
     }
 
-    // Derive facility safety standing
+    // Derive fire safety standing
     let facilitySafety: StandingLevel = 'unknown';
     let facilityReason: string | null = null;
     if (jurisdictionStatus) {
@@ -108,7 +108,7 @@ function buildDemoStandings(): LocationStanding[] {
         facilitySafety = 'ok';
       } else {
         facilitySafety = 'action';
-        facilityReason = 'Facility safety non-compliant';
+        facilityReason = 'Fire safety non-compliant';
       }
     }
 
@@ -237,7 +237,7 @@ async function fetchLiveStandings(orgId: string): Promise<LocationStanding[]> {
       .select('location_id, severity')
       .in('type', ['temperature_violation', 'checklist_failure', 'health_citation', 'customer_complaint'])
       .in('status', ['reported', 'assigned', 'in_progress']),
-    // Open facility safety incidents
+    // Open fire safety incidents
     supabase
       .from('incidents')
       .select('location_id, severity')
@@ -291,7 +291,7 @@ async function fetchLiveStandings(orgId: string): Promise<LocationStanding[]> {
       }
     }
 
-    // Facility Safety standing
+    // Fire Safety standing
     const locFacilityEquip = (facilityEquipment || []).filter(e => e.location_id === loc.id);
     const locFacilityIncidents = (openFacilityIncidents || []).filter(i => i.location_id === loc.id);
 

@@ -101,9 +101,9 @@ export default function Passport() {
   }
 
   if (jurisdictionStatus.facilitySafety.status === 'passing') {
-    recentActivity.push({ icon: CheckCircle2, text: `Facility Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'success' });
+    recentActivity.push({ icon: CheckCircle2, text: `Fire Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'success' });
   } else {
-    recentActivity.push({ icon: AlertCircle, text: `Facility Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'warning' });
+    recentActivity.push({ icon: AlertCircle, text: `Fire Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'warning' });
   }
 
   // Static activity items per location
@@ -262,7 +262,7 @@ export default function Passport() {
                 </div>
                 <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Food Safety</div>
               </div>
-              {/* Facility Safety Ring */}
+              {/* Fire Safety Ring */}
               <div className="flex flex-col items-center">
                 <div className="relative w-40 h-40">
                   <svg className="w-full h-full transform -rotate-90">
@@ -280,7 +280,7 @@ export default function Passport() {
                     <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</div>
                   </div>
                 </div>
-                <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Facility Safety</div>
+                <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Fire Safety</div>
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function Passport() {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-[#1E2D4D]/80">Facility Safety</span>
+                  <span className="font-semibold text-[#1E2D4D]/80">Fire Safety</span>
                   <span className="font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</span>
                 </div>
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">

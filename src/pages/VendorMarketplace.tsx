@@ -493,7 +493,7 @@ function ProductionMarketplace() {
                     className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
                   >
                     <option value="">Select category...</option>
-                    <option value="Facility Safety">Facility Safety</option>
+                    <option value="Fire Safety">Fire Safety</option>
                     <option value="Food Safety">Food Safety</option>
                     <option value="Equipment">Equipment</option>
                     <option value="Compliance">Compliance</option>
@@ -1047,7 +1047,7 @@ export function VendorMarketplace() {
                 <h3 className="text-lg font-bold text-white">Are you a service provider?</h3>
               </div>
               <p className="text-sm text-white/80 max-w-lg">
-                List your business on EvidLY Marketplace. Reach commercial kitchens looking for hood cleaning, facility safety, pest control, and more. Free listing available — upgrade anytime.
+                List your business on EvidLY Marketplace. Reach commercial kitchens looking for hood cleaning, fire safety, pest control, and more. Free listing available — upgrade anytime.
               </p>
             </div>
             <button

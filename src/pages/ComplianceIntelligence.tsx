@@ -230,7 +230,7 @@ function CommandCenterTab() {
           </div>
           <div className="h-12 w-px bg-[#1E2D4D]/8 hidden md:block" />
           {[
-            { label: 'Facility Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
+            { label: 'Fire Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
             { label: 'Food Safety', score: FOOD_SCORE, trend: FOOD_TREND, icon: UtensilsCrossed, status: FOOD_SCORE >= 90 ? 'green' : FOOD_SCORE >= 80 ? 'yellow' : 'red' },
           ].map(cat => (
             <div key={cat.label} className="flex items-center gap-2">
@@ -340,7 +340,7 @@ function CommandCenterTab() {
             <ReferenceLine x="Jul" stroke="#A08C5A" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#A08C5A', fontWeight: 600 } }} />
             <ReferenceLine x="Nov" stroke="#6b21a8" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'FDA Update', position: 'top', style: { fontSize: 9, fill: '#6b21a8', fontWeight: 600 } }} />
             <Line type="monotone" dataKey="compositeScore" name="Composite" stroke="#1E2D4D" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="fire" name="Facility Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
+            <Line type="monotone" dataKey="fire" name="Fire Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="food" name="Food Safety" stroke="#22c55e" strokeWidth={1.5} dot={false} />
           </LineChart>
         </ResponsiveContainer>

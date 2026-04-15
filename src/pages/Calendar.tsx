@@ -51,7 +51,7 @@ const FACILITY_SAFETY_CATEGORIES = [
   'Grease Trap Service',
   'Elevator Inspection',
   'Backflow Prevention Test',
-  'General Facility Safety',
+  'General Fire Safety',
   'Other',
 ];
 
@@ -1559,7 +1559,7 @@ export function Calendar() {
             style={{ color: '#1E2D4D' }}
           >
             <ChevronLeft size={14} />
-            Back to Facility Safety
+            Back to Fire Safety
           </button>
         </div>
       )}
@@ -2012,7 +2012,7 @@ export function Calendar() {
               <div style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0 }}>
-                    {editingEvent ? 'Edit Event' : 'Add Facility Safety Event'}
+                    {editingEvent ? 'Edit Event' : 'Add Fire Safety Event'}
                   </h3>
                   <button
                     onClick={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }}

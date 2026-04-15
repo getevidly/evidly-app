@@ -255,14 +255,14 @@ export function formatPayloadForPrompt(payload: LocationContextPayload): string 
   // Scores
   lines.push('CURRENT SCORES:');
   lines.push(`  Food Safety: ${payload.currentScores.foodSafety} (30d ago: ${payload.priorScores.foodSafety}, delta: ${payload.scoreDelta.foodSafety >= 0 ? '+' : ''}${payload.scoreDelta.foodSafety})`);
-  lines.push(`  Facility Safety: ${payload.currentScores.facilitySafety} (30d ago: ${payload.priorScores.facilitySafety}, delta: ${payload.scoreDelta.facilitySafety >= 0 ? '+' : ''}${payload.scoreDelta.facilitySafety})`);
+  lines.push(`  Fire Safety: ${payload.currentScores.facilitySafety} (30d ago: ${payload.priorScores.facilitySafety}, delta: ${payload.scoreDelta.facilitySafety >= 0 ? '+' : ''}${payload.scoreDelta.facilitySafety})`);
   lines.push(`  Score trend: ${payload.scoreTrend.direction}`);
   lines.push('');
 
   // Jurisdiction
   lines.push('JURISDICTION STATUS:');
   lines.push(`  Food Safety: ${payload.jurisdictionStatus.foodSafety.gradeDisplay} (${payload.jurisdictionStatus.foodSafety.status}) — ${payload.jurisdictionStatus.foodSafety.authority}, ${payload.jurisdictionStatus.foodSafety.scoring_type}`);
-  lines.push(`  Facility Safety: ${payload.jurisdictionStatus.facilitySafety.gradeDisplay} (${payload.jurisdictionStatus.facilitySafety.status}) — ${payload.jurisdictionStatus.facilitySafety.authority}`);
+  lines.push(`  Fire Safety: ${payload.jurisdictionStatus.facilitySafety.gradeDisplay} (${payload.jurisdictionStatus.facilitySafety.status}) — ${payload.jurisdictionStatus.facilitySafety.authority}`);
   lines.push('');
 
   // Last inspection
@@ -308,7 +308,7 @@ export function formatPayloadForPrompt(payload: LocationContextPayload): string 
     const je = payload.jurisdictionEnforcement;
     lines.push(`JURISDICTION ENFORCEMENT FOCUS (${je.ehdName}):`);
     lines.push(`  Food Code: ${je.foodCodeVersion}`);
-    lines.push(`  AHJ (facility safety): ${je.ahjName}`);
+    lines.push(`  AHJ (fire safety): ${je.ahjName}`);
     je.enforcementFocus.forEach(f => {
       lines.push(`  - [${f.priority.toUpperCase()}] ${f.description} (${f.codeSection})`);
     });

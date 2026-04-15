@@ -401,14 +401,14 @@ export function getConfidenceIcon(confidence: number): string {
 // ---------------------------------------------------------------------------
 
 export const PILLAR_OPTIONS = [
-  { value: 'facility_safety', label: 'Facility Safety', icon: '🔥' },
+  { value: 'facility_safety', label: 'Fire Safety', icon: '🔥' },
   { value: 'food_safety', label: 'Food Safety', icon: '🍽️' },
   { value: 'vendor', label: 'Vendor', icon: '🤝' },
   { value: 'facility', label: 'Facility & General', icon: '🏢' },
 ] as const;
 
 export const DOCUMENT_TYPE_OPTIONS = [
-  // Facility Safety
+  // Fire Safety
   { value: 'hood_cleaning_cert', label: 'Hood Cleaning Certificate', pillar: 'facility_safety' },
   { value: 'fire_suppression_report', label: 'Fire Suppression Report', pillar: 'facility_safety' },
   { value: 'fire_extinguisher_tag', label: 'Fire Extinguisher Tag', pillar: 'facility_safety' },

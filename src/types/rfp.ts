@@ -162,7 +162,7 @@ export const EVIDLY_NAICS_CODES: Record<string, string> = {
 
 export const MODULE_LABELS: Record<string, string> = {
   food_safety: 'Food Safety',
-  facility_safety: 'Facility Safety',
+  facility_safety: 'Fire Safety',
   sb1383: 'SB 1383',
   k12_production: 'K-12 Production',
   compliance_intelligence: 'Compliance Intelligence',

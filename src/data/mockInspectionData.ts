@@ -35,7 +35,7 @@ export const INSPECTOR_INTROS: MockInspectorIntro[] = [
   {
     difficulty: 'routine',
     greeting: "Good morning. I'm here for your routine health inspection.",
-    context: "I'll be walking through the standard checklist — temperature controls, employee hygiene, food storage, equipment condition, and facility safety. This should take about 45 minutes. Let's start in the kitchen.",
+    context: "I'll be walking through the standard checklist — temperature controls, employee hygiene, food storage, equipment condition, and fire safety. This should take about 45 minutes. Let's start in the kitchen.",
   },
   {
     difficulty: 'focused',

@@ -23,7 +23,7 @@ const DEMO_PROVIDERS: Record<string, { name: string; services: string[]; service
 };
 
 const BENEFITS = [
-  { icon: Shield, title: 'All compliance records in one place', description: 'Food safety + facility safety tracking with real-time scoring' },
+  { icon: Shield, title: 'All compliance records in one place', description: 'Food safety + fire safety tracking with real-time scoring' },
   { icon: Calendar, title: 'Automated service scheduling', description: 'Your hood cleaning schedule, reminders, and service reports — always up to date' },
   { icon: FileText, title: 'Documents on file automatically', description: 'COI, certifications, and service reports shared instantly — no more email requests' },
   { icon: BarChart3, title: 'Inspection-ready compliance score', description: 'Know exactly where you stand before any health or fire inspector walks in' },
@@ -138,7 +138,7 @@ export function VendorInviteLanding() {
         <div className="text-center bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-2">Ready to get started?</h2>
           <p className="text-sm text-[#1E2D4D]/50 mb-4">
-            Your compliance records, vendor management, and facility safety — all in one place.
+            Your compliance records, vendor management, and fire safety — all in one place.
           </p>
           <button
             onClick={() => navigate(`/signup?invite=${code}`)}

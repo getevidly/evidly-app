@@ -26,7 +26,7 @@ const PATH_LABELS: Record<string, string> = {
   '/temp-logs': 'Temperature Logs',
   '/checklists': 'Checklists',
   '/dashboard/training': 'Training Records',
-  '/facility-safety': 'Facility Safety',
+  '/facility-safety': 'Fire Safety',
   '/vendors': 'Vendors',
 };
 
@@ -60,7 +60,7 @@ export default function Progress() {
           </h2>
           <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.6, margin: 0 }}>
             The Operations Check is a free self-assessment that identifies gaps in your food safety
-            and facility safety documentation. When you complete one, your results will appear here.
+            and fire safety documentation. When you complete one, your results will appear here.
           </p>
         </div>
       </RoleGuard>
@@ -73,7 +73,7 @@ export default function Progress() {
   });
 
   const foodQuestions = IRR_QUESTIONS.filter(q => q.group === 'Food Safety');
-  const facilityQuestions = IRR_QUESTIONS.filter(q => q.group === 'Facility Safety');
+  const facilityQuestions = IRR_QUESTIONS.filter(q => q.group === 'Fire Safety');
 
   return (
     <RoleGuard
@@ -123,9 +123,9 @@ export default function Progress() {
           navigate={navigate}
         />
 
-        {/* Facility Safety section */}
+        {/* Fire Safety section */}
         <SectionGroup
-          title="Facility Safety"
+          title="Fire Safety"
           questions={facilityQuestions}
           submission={submission}
           navigate={navigate}

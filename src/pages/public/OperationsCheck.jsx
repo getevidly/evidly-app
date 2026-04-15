@@ -110,7 +110,7 @@ const GROUPS = [
     ],
   },
   {
-    key: "fire", label: "Fire & Facility Safety", icon: "\u{1F525}", color: C.blue,
+    key: "fire", label: "Fire & Fire Safety", icon: "\u{1F525}", color: C.blue,
     questions: [
       {
         cardLabel: "Hood Cleaning Schedule",
@@ -267,7 +267,7 @@ function IntakeForm({ onSubmit }) {
           <div style={{ marginTop: 14 }}>
             <div style={{ fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, marginBottom: 6, fontFamily: FF_MONO }}>Free Operations Check</div>
             <div style={{ fontWeight: 800, fontSize: "1.15rem", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em", lineHeight: 1.25 }}>Know where your operation stands — before it costs you.</div>
-            <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", marginTop: 6, fontFamily: FF, lineHeight: 1.5 }}>11 questions across Food Safety and Fire &amp; Facility Safety. Your full risk report generated instantly.</div>
+            <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", marginTop: 6, fontFamily: FF, lineHeight: 1.5 }}>11 questions across Food Safety and Fire &amp; Fire Safety. Your full risk report generated instantly.</div>
           </div>
         </div>
       </div>
@@ -505,7 +505,7 @@ function Report({ form, answers, onBookTour, magicLinkSent }) {
           <div style={{ fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, marginBottom: 8, fontFamily: FF_MONO }}>Executive Summary</div>
           <p style={{ fontSize: "0.82rem", color: C.g8, margin: 0, lineHeight: 1.7, fontFamily: FF }}>
             {posture === "strong"
-              ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County is well positioned across both food safety and facility safety. ${yesCount} of ${TOTAL} operational areas are documented and current. Continue maintaining your current practices and ensure records remain accessible for your next unannounced inspection.`
+              ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County is well positioned across both food safety and fire safety. ${yesCount} of ${TOTAL} operational areas are documented and current. Continue maintaining your current practices and ensure records remain accessible for your next unannounced inspection.`
               : posture === "moderate"
               ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County has ${gapCount} area${gapCount > 1 ? "s" : ""} that need attention. ${noCount > 0 ? `${noCount} area${noCount > 1 ? "s" : ""} currently lack${noCount === 1 ? "s" : ""} documentation or compliance \u2014 each representing a potential citation. ` : ""}${partialCount > 0 ? `${partialCount} area${partialCount > 1 ? "s" : ""} ha${partialCount > 1 ? "ve" : "s"} partial gaps that should be closed before your next inspection. ` : ""}Addressing these gaps proactively is significantly less costly than addressing them after an inspector documents them.`
               : posture === "high"

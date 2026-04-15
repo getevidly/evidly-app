@@ -76,7 +76,7 @@ export const LOADING_MESSAGES: Record<string, string[]> = {
   facilities_manager: [
     'Checking your safeguards...',
     'Loading your service records...',
-    'Reviewing your facility safety status...',
+    'Reviewing your fire safety status...',
   ],
   chef: [
     'Getting your kitchen ready...',

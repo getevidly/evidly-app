@@ -1439,7 +1439,7 @@ export function JurisdictionSettings() {
                             </div>
                           )}
 
-                          {/* E) NFPA Adoption (facility safety) */}
+                          {/* E) NFPA Adoption (fire safety) */}
                           {jData.fire?.nfpaAdoption && (
                             <div className="p-3 rounded-lg bg-orange-50 border border-orange-200">
                               <p className="text-xs text-[#1E2D4D]/80">

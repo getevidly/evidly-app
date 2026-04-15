@@ -167,7 +167,7 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   {
     id: 'upload_documents',
     label: 'Upload Key Documents',
-    description: 'Add health permits, facility safety certificates, insurance docs, and vendor contracts.',
+    description: 'Add health permits, fire safety certificates, insurance docs, and vendor contracts.',
     hint: 'Keeps everything in one place for inspections',
     route: '/documents',
     actionLabel: 'Upload Documents',

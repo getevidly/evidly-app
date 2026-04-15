@@ -20,7 +20,7 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
 
   const rows = [
     { category: 'Food Safety', yours: scores.foodSafety, verticalAvg: vertical.avgFoodSafety, industryAvg: 76, percentile: pct.foodSafety },
-    { category: 'Facility Safety', yours: scores.facilitySafety, verticalAvg: vertical.avgFacilitySafety, industryAvg: 70, percentile: pct.facilitySafety },
+    { category: 'Fire Safety', yours: scores.facilitySafety, verticalAvg: vertical.avgFacilitySafety, industryAvg: 70, percentile: pct.facilitySafety },
   ];
 
   return (

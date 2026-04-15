@@ -387,8 +387,8 @@ export function getAlertCountBySeverity(alerts: ReScoreAlert[]): { critical: num
 export function getPillarLabel(pillar: AlertPillar): string {
   switch (pillar) {
     case 'food': return 'Food Safety';
-    case 'fire': return 'Facility Safety';
-    case 'both': return 'Food & Facility Safety';
+    case 'fire': return 'Fire Safety';
+    case 'both': return 'Food & Fire Safety';
   }
 }
 

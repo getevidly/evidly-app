@@ -1,7 +1,7 @@
 // ============================================================
 // Compliance Model — Jurisdiction-Status Based (Two Pillars)
 // ============================================================
-// Food Safety + Facility Safety only. NO Vendor Compliance pillar.
+// Food Safety + Fire Safety only. NO Vendor Compliance pillar.
 // NO aggregate numeric scores. Status labels only.
 // ============================================================
 
@@ -133,7 +133,7 @@ export function getHoodCleaningFrequencyDays(cookingType: string): number {
   return COOKING_TYPE_FREQUENCIES[cookingType]?.frequencyDays ?? 90;
 }
 
-// --------------- Facility Safety Item Interfaces ---------------
+// --------------- Fire Safety Item Interfaces ---------------
 
 export interface FacilitySafetyItem {
   name: string;
@@ -156,7 +156,7 @@ export function calculateFacilitySafetyScore(items: FacilitySafetyItem[]): numbe
   return Math.round(Math.max(0, Math.min(100, totalScore)));
 }
 
-// --------------- Facility Safety Item Builders ---------------
+// --------------- Fire Safety Item Builders ---------------
 
 export interface FacilitySafetyInputs {
   hoodCleaningDaysUntilDue: number;
@@ -172,7 +172,7 @@ export function buildFacilitySafetyItems(inputs: FacilitySafetyInputs): Facility
     { name: 'Hood Cleaning Certification', weight: 0.30, daysUntilDue: inputs.hoodCleaningDaysUntilDue },
     { name: 'Ansul / Suppression Service', weight: 0.25, daysUntilDue: inputs.ansulServiceDaysUntilDue },
     { name: 'Fire Extinguisher Inspection', weight: 0.15, daysUntilDue: inputs.extinguisherDaysUntilDue },
-    { name: 'Daily Facility Safety Checks', weight: 0.15, daysUntilDue: Infinity, conditionScore: inputs.dailyCheckCompletionRate },
+    { name: 'Daily Fire Safety Checks', weight: 0.15, daysUntilDue: Infinity, conditionScore: inputs.dailyCheckCompletionRate },
     { name: 'Weekly/Monthly Fire Checks', weight: 0.10, daysUntilDue: Infinity, conditionScore: inputs.weeklyMonthlyCompletionRate },
     { name: 'Grease Trap Service', weight: 0.05, daysUntilDue: inputs.greaseTrapDaysUntilDue },
   ];

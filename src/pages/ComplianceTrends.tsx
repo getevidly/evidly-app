@@ -14,7 +14,7 @@ const CATEGORY_CONFIGS = [
   { key: 'haccpMonitoring' as const, label: 'HACCP Monitoring', color: '#8b5cf6', unit: '%' },
   { key: 'incidentResolution' as const, label: 'Incident Resolution', color: '#f59e0b', unit: 'h', invertDirection: true },
   { key: 'documentCurrency' as const, label: 'Document Currency', color: '#06b6d4', unit: '%' },
-  { key: 'facilitySafetyOps' as const, label: 'Facility Safety Ops', color: '#A08C5A', unit: '%' },
+  { key: 'facilitySafetyOps' as const, label: 'Fire Safety Ops', color: '#A08C5A', unit: '%' },
 ] as const;
 
 export function ComplianceTrends() {
@@ -80,14 +80,14 @@ export function ComplianceTrends() {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <TrendSummaryCard label="Food Safety" analysis={orgTrend.foodSafety} color="#22c55e" />
-            <TrendSummaryCard label="Facility Safety" analysis={orgTrend.facilitySafety} color="#A08C5A" />
+            <TrendSummaryCard label="Fire Safety" analysis={orgTrend.facilitySafety} color="#A08C5A" />
           </div>
 
           {/* Overall Trend Chart */}
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Compliance Score Trajectory</h3>
             <p className="text-sm text-[#1E2D4D]/50 mb-4">
-              Overall, Food Safety, and Facility Safety scores over the selected period
+              Overall, Food Safety, and Fire Safety scores over the selected period
             </p>
             <OverallTrendChart data={chartData} />
           </div>

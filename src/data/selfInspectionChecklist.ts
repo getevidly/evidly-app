@@ -279,7 +279,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     category: 'food_safety',
   },
 
-  // ── Section 5: Facility Safety & Suppression ────────────────
+  // ── Section 5: Fire Safety & Suppression ────────────────
   'facility-001': {
     id: 'facility-001',
     text: 'Hood suppression system inspection current',
@@ -564,7 +564,7 @@ export const INSPECTION_SECTIONS: InspectionSectionDef[] = [
   },
   {
     id: 'facility-safety',
-    name: 'Facility Safety & Suppression',
+    name: 'Fire Safety & Suppression',
     defaultCitation: 'NFPA 96 \u00A712.4',
     iconName: 'Flame',
     category: 'facility_safety',

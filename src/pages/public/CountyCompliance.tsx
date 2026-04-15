@@ -291,11 +291,11 @@ export function CountyCompliance() {
     <>
       <Helmet>
         <title>{j.county} County Food Safety Requirements | EvidLY</title>
-        <meta name="description" content={`Food safety inspection grading, scoring methodology, and facility safety AHJ for ${j.county} County, California. ${j.agency_name}.`} />
+        <meta name="description" content={`Food safety inspection grading, scoring methodology, and fire safety AHJ for ${j.county} County, California. ${j.agency_name}.`} />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={`https://evidly.com/compliance/california/${slug}`} />
         <meta property="og:title" content={`${j.county} County Food Safety Requirements | EvidLY`} />
-        <meta property="og:description" content={`Grading system, scoring methodology, and facility safety authority for ${j.county} County, CA.`} />
+        <meta property="og:description" content={`Grading system, scoring methodology, and fire safety authority for ${j.county} County, CA.`} />
         <meta property="og:url" content={`https://evidly.com/compliance/california/${slug}`} />
       </Helmet>
 
@@ -386,12 +386,12 @@ export function CountyCompliance() {
               )}
             </section>
 
-            {/* Facility Safety AHJ */}
+            {/* Fire Safety AHJ */}
             {j.fire_ahj_name && (
               <section className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
                 <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] flex items-center gap-2 mb-3">
                   <Flame className="w-5 h-5 text-orange-500" />
-                  Facility Safety Authority (AHJ)
+                  Fire Safety Authority (AHJ)
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
@@ -490,7 +490,7 @@ export function CountyCompliance() {
             </h2>
             <p className="text-white/70 mb-6 max-w-lg mx-auto text-sm">
               EvidLY automatically applies {j.county} County's {GRADING_TYPE_LABELS[j.grading_type] || j.grading_type} system
-              to your daily operations — checklists, temp logs, and facility safety docs.
+              to your daily operations — checklists, temp logs, and fire safety docs.
             </p>
             <div className="flex justify-center gap-3">
               <Link

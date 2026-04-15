@@ -13,7 +13,7 @@ import { useCrispHide } from '../hooks/useCrisp';
 const TRUST_ITEMS = [
   { value: '169', label: 'Counties · 5 States' },
   { value: 'Food Safety', label: 'Inspection' },
-  { value: 'Facility Safety', label: 'Inspection' },
+  { value: 'Fire Safety', label: 'Inspection' },
 ];
 
 export function Login() {

@@ -163,7 +163,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'help_access',
   ],
 
-  // ── Facilities Manager — equipment, vendors, facility safety ─────
+  // ── Facilities Manager — equipment, vendors, fire safety ─────
   facilities_manager: [
     'sidebar.dashboard',
     'sidebar.facility-safety',

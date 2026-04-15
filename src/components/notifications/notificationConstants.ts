@@ -61,7 +61,7 @@ export const NOTIFICATION_CATEGORIES: CategoryConfig[] = [
   {
     key: 'safety',
     label: 'Safety',
-    description: 'Temperature excursions, facility safety, intelligence signals',
+    description: 'Temperature excursions, fire safety, intelligence signals',
     color: CATEGORY_COLORS.safety.color,
     bg: CATEGORY_COLORS.safety.bg,
     icon: CATEGORY_COLORS.safety.icon,

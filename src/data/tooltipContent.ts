@@ -45,7 +45,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Your location\'s current food safety score. Completing daily checklists and addressing flagged items moves this number in real time.',
     facilities_manager:
-      'Food safety score for each location. This is independent of facility safety — both pillars must be managed separately.',
+      'Food safety score for each location. This is independent of fire safety — both pillars must be managed separately.',
     kitchen_manager:
       'Your location\'s current food safety score. Completing daily checklists and addressing flagged items moves this number in real time.',
     kitchen_staff:
@@ -57,7 +57,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     owner_operator:
       'Pass/Fail status per NFPA 96 for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     executive:
-      'Facility safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
+      'Fire safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
     compliance_manager:
       'Verified against NFPA 96 Table 12.4. Each AHJ is mapped to your specific location — no generic defaults.',
     chef:
@@ -67,7 +67,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     kitchen_manager:
       'All four systems must show green for your location to pass fire inspection. Contact your Facilities Manager if any bar is red.',
     kitchen_staff:
-      'Green means your kitchen\'s facility safety systems are current. If you see red, tell your manager immediately.',
+      'Green means your kitchen\'s fire safety systems are current. If you see red, tell your manager immediately.',
   },
   urgentItems: {
     platform_admin:
@@ -138,7 +138,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Your kitchen\'s current compliance score. Completing daily checklists and addressing flagged items improves this in real time.',
     facilities_manager:
-      'Facility safety systems contribute directly to this score. All four \u2014 Permit, Hood, Ext, Ansul \u2014 must pass.',
+      'Fire safety systems contribute directly to this score. All four \u2014 Permit, Hood, Ext, Ansul \u2014 must pass.',
     kitchen_manager:
       'Your location\'s compliance score. Tap to see what\'s driving it and what tasks will move it.',
     kitchen_staff:
@@ -186,9 +186,9 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     owner_operator:
       'Equipment assets across all locations with maintenance status. Overdue service on fire suppression or hood systems creates compliance risk.',
     executive:
-      'Asset health summary by location. Deferred maintenance on critical equipment is a liability and a facility safety compliance issue.',
+      'Asset health summary by location. Deferred maintenance on critical equipment is a liability and a fire safety compliance issue.',
     compliance_manager:
-      'Equipment service records are reviewed during facility safety and health inspections. Ensure all service dates are current and documented.',
+      'Equipment service records are reviewed during fire safety and health inspections. Ensure all service dates are current and documented.',
     chef:
       'Kitchen equipment assigned to your location. Flag anything that needs repair \u2014 overdue equipment affects inspection scores.',
     facilities_manager:
@@ -206,7 +206,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     executive:
       'Vendor relationships and contract status by location. Lapsed service contracts are a compliance exposure.',
     compliance_manager:
-      'Vendor service certificates and dates are required documentation for facility safety inspections. Verify all are current.',
+      'Vendor service certificates and dates are required documentation for fire safety inspections. Verify all are current.',
     chef:
       'The service vendors scheduled for your location. You\'ll be notified before scheduled visits.',
     facilities_manager:
@@ -228,7 +228,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Reports for your location are available here. Your manager controls what you can view and export.',
     facilities_manager:
-      'Facility safety service reports, equipment maintenance logs, and AHJ correspondence \u2014 all exportable for inspection prep.',
+      'Fire safety service reports, equipment maintenance logs, and AHJ correspondence \u2014 all exportable for inspection prep.',
     kitchen_manager:
       'Location-level compliance reports. Export inspection history or checklist completion records as needed.',
     kitchen_staff:
@@ -246,7 +246,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'This shows which county health department and fire department oversees your kitchen.',
     facilities_manager:
-      'Your fire AHJ details \u2014 the authority that issues your operational permit and conducts facility safety inspections.',
+      'Your fire AHJ details \u2014 the authority that issues your operational permit and conducts fire safety inspections.',
     kitchen_manager:
       'The regulatory agencies that inspect your location and what they look for.',
     kitchen_staff:
@@ -343,7 +343,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Scheduled events that may affect your shift \u2014 vendor visits and equipment maintenance.',
   },
 
-  // ── TOOLTIPS-3 (HACCP, Facility Safety status, Equipment, Calendar) ──
+  // ── TOOLTIPS-3 (HACCP, Fire Safety status, Equipment, Calendar) ──
 
   haccpActivePlans: {
     platform_admin: 'Number of HACCP plans currently configured and monitored across all locations.',
@@ -390,7 +390,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     owner_operator: 'Service or inspection is up to date and compliant. No action required.',
     executive: 'This category is current \u2014 service records and inspections are within required intervals.',
     compliance_manager: 'Verified current \u2014 service date, inspection record, or certification is within the required interval.',
-    chef: 'This facility safety item is up to date. No action needed.',
+    chef: 'This fire safety item is up to date. No action needed.',
     facilities_manager: 'Service or inspection is current and documented. Next due date is tracked automatically.',
     kitchen_manager: 'This item is compliant \u2014 no action needed at this time.',
     kitchen_staff: 'This safety check is current. Everything is good.',
@@ -456,8 +456,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     kitchen_staff: 'Equipment that needs maintenance. Let your manager know.',
   },
   calendarSubtitle: {
-    platform_admin: 'Schedule and track facility safety events, inspections, vendor services, and compliance deadlines across all locations.',
-    owner_operator: 'Schedule and track facility safety events, inspections, vendor services, and compliance deadlines across all locations.',
+    platform_admin: 'Schedule and track fire safety events, inspections, vendor services, and compliance deadlines across all locations.',
+    owner_operator: 'Schedule and track fire safety events, inspections, vendor services, and compliance deadlines across all locations.',
     executive: 'Portfolio calendar for inspections, renewals, and strategic compliance milestones.',
     compliance_manager: 'Compliance calendar \u2014 inspections, permit renewals, self-inspections, and regulatory deadlines.',
     chef: 'Your kitchen\'s upcoming schedule \u2014 vendor visits, equipment maintenance, and inspections.',
@@ -905,7 +905,7 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'temperatures':     { label: 'Temperatures',        description: 'Manual, QR Code, or Internet of Things-based temperature recording for receiving, storage, and cooking.' },
   'log-temp':         { label: 'Log Temp',            description: 'Quick-log a temperature reading for your station.' },
   'iot-monitoring':   { label: 'Internet of Things Monitoring',      description: 'Live sensor data from connected temperature probes and equipment monitors.' },
-  'facility-safety':      { label: 'Facility Safety',         description: 'NFPA 96 compliance status \u2014 permits, hood cleaning, extinguishers, and suppression systems.' },
+  'facility-safety':      { label: 'Fire Safety',         description: 'NFPA 96 compliance status \u2014 permits, hood cleaning, extinguishers, and suppression systems.' },
   'incidents':        { label: 'Incidents',           description: 'Log and track safety or compliance incidents. Each entry creates a timestamped compliance record.' },
 
   // Records & Assets
@@ -917,7 +917,7 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'training':         { label: 'Training',            description: 'Staff training courses, certifications, and compliance education tracking.' },
 
   // Compliance & Insights
-  'compliance':       { label: 'Compliance Overview',  description: 'Jurisdiction-verified scoring breakdown for food safety and facility safety across all locations.' },
+  'compliance':       { label: 'Compliance Overview',  description: 'Jurisdiction-verified scoring breakdown for food safety and fire safety across all locations.' },
   'self-inspection':  { label: 'Self-Inspection',     description: 'Run a self-inspection using the same criteria your health department or fire AHJ applies.' },
   'inspector':        { label: 'Inspector View',      description: 'See your location through an inspector\'s eyes \u2014 the same view they use during walkthroughs.' },
   'ai-copilot':       { label: 'Artificial Intelligence Copilot',          description: 'Artificial Intelligence-powered compliance assistant for answering questions and generating action plans.' },

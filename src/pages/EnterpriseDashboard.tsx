@@ -393,7 +393,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
               {[
                 { label: 'Current', value: latestTrend.foodSafety, color: '#1E2D4D' },
                 { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
-                { label: 'Facility Safety', value: latestTrend.facilitySafety, color: '#A08C5A' },
+                { label: 'Fire Safety', value: latestTrend.facilitySafety, color: '#A08C5A' },
               ].map(m => (
                 <div key={m.label} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
@@ -848,7 +848,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                   <h4 className="text-xs font-semibold text-[#1E2D4D]/80">Pillar Breakdown</h4>
                   {[
                     { label: 'Food Safety', value: selectedNode.foodSafety, trend: nodeTrend(selectedNode.id + '-op') },
-                    { label: 'Facility Safety', value: selectedNode.facilitySafety, trend: nodeTrend(selectedNode.id + '-eq') },
+                    { label: 'Fire Safety', value: selectedNode.facilitySafety, trend: nodeTrend(selectedNode.id + '-eq') },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="flex items-center justify-between mb-1">

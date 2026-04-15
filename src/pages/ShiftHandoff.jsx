@@ -77,7 +77,7 @@ export function ShiftHandoff() {
     if (!isDemoMode) return [];
     return [
       'Walk-in cooler check at 6pm',
-      'Facility safety cert due in 7 days',
+      'Fire safety cert due in 7 days',
     ];
   }, [isDemoMode]);
 

@@ -39,7 +39,7 @@ const PERMISSION_DISPLAY_NAMES: Record<string, string> = {
   'sidebar.cooling-logs': 'Cooling Logs',
   'sidebar.receiving-log': 'Receiving Log',
   'sidebar.allergen-tracking': 'Allergen Tracking',
-  'sidebar.facility-safety': 'Facility Safety',
+  'sidebar.facility-safety': 'Fire Safety',
   'sidebar.hood-exhaust': 'Hood & Exhaust',
   'sidebar.hvac': 'HVAC',
   'sidebar.suppression-systems': 'Suppression Systems',

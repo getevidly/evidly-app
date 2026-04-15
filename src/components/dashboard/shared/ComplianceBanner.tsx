@@ -31,14 +31,14 @@ const DEMO_COMPLIANCE_ALERTS: ComplianceAlert[] = [
   {
     id: 'cb-airport-fire',
     locationName: 'Location 2', // demo
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     score: 69,
     severity: 'critical',
   },
   {
     id: 'cb-university-fire',
     locationName: 'Location 3', // demo
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     score: 56,
     severity: 'critical',
   },

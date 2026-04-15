@@ -63,7 +63,7 @@ const COUNTY_SCORES = [
 
 const CATEGORY_SCORES = [
   { category: 'Food Safety (Operational)', score: 79, prev: 77, change: +2, weakest: false },
-  { category: 'Facility Safety (Equipment)', score: 76, prev: 74, change: +2, weakest: true },
+  { category: 'Fire Safety (Equipment)', score: 76, prev: 74, change: +2, weakest: true },
 ];
 
 const TRENDING_AREAS = {
@@ -365,7 +365,7 @@ export function ComplianceIndex() {
             </div>
             <div className="p-4 rounded-xl bg-[#FAF7F0] text-sm text-[#1E2D4D]/70">
               <strong>Methodology:</strong> The overall industry readiness index is based on two compliance categorys
-              — Food Safety and Facility Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
+              — Food Safety and Fire Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
               locations on the EvidLY platform. All data is anonymized before aggregation.
             </div>
             {/* Touchpoint 2: Referral nudge — help raise the industry score */}

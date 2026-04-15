@@ -6,7 +6,7 @@
 //    - VendorSecureUpload (token-based): PDF, JPG, PNG, HEIC, DOC, DOCX (25MB max)
 //    - SmartUploadModal (in-app AI classify): PDF, DOCX, XLSX, JPG, PNG, CSV (10MB max)
 //    - AI classifier recognizes 20+ types across 4 pillars:
-//      * Facility Safety: hood_cleaning_cert, fire_suppression_report, fire_extinguisher_tag,
+//      * Fire Safety: hood_cleaning_cert, fire_suppression_report, fire_extinguisher_tag,
 //        ansul_cert, exhaust_fan_service, building_fire_inspection
 //      * Food Safety: health_permit, food_handler_cert, food_manager_cert, haccp_plan,
 //        allergen_training, pest_control_report

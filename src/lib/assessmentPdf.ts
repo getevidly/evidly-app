@@ -122,7 +122,7 @@ export function generateAssessmentPdf(
   doc.text('CATEGORY RISK SCORES', MARGIN, y);
   y += 8;
 
-  drawBar(doc, MARGIN, y, CONTENT_W - 30, 5, scores.facilitySafety, 'Facility Safety');
+  drawBar(doc, MARGIN, y, CONTENT_W - 30, 5, scores.facilitySafety, 'Fire Safety');
   y += 14;
   drawBar(doc, MARGIN, y, CONTENT_W - 30, 5, scores.foodSafety, 'Food Safety');
   y += 14;

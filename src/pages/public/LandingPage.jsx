@@ -431,7 +431,7 @@ function HeroSection({ onTour, onIRR }) {
             <span style={{ color: C.gold }}>Before anyone else does.</span>
           </h1>
           <p className="hero-animate hero-animate-d2" style={{ fontSize: "1.02rem", color: "rgba(255,255,255,0.5)", maxWidth: 480, margin: "0 0 36px", lineHeight: 1.8, fontFamily: FF_SANS, letterSpacing: "-0.01em" }}>
-            Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk.
+            Food safety and fire safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk.
           </p>
           <div className="hero-animate hero-animate-d3 hero-ctas" style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
             <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "15px 32px", fontSize: "0.97rem", borderRadius: 10 }}>Free Operations Check →</button>
@@ -635,14 +635,14 @@ function HowItWorksSection({ onTour }) {
 function CoverageSection() {
   const pillars = [
     { label: "Food Safety", icon: "🌡️", color: C.navy, items: ["Temperature monitoring — receiving, holding, cooling, all tracked", "HACCP documentation built automatically from daily logs", "Food handler cards and ServSafe certs — always current", "Morning and closing checklists mapped to CalCode conditions", "Receiving logs with vendor history and rejection tracking"] },
-    { label: "Facility Safety", icon: "🔥", color: C.gold, items: ["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies", "Fire suppression inspection records and due-date alerts", "Extinguisher documentation and service history", "Vendor compliance — certs, insurance, service records", "Equipment calibration logs and maintenance tracking"] },
+    { label: "Fire Safety", icon: "🔥", color: C.gold, items: ["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies", "Fire suppression inspection records and due-date alerts", "Extinguisher documentation and service history", "Vendor compliance — certs, insurance, service records", "Equipment calibration logs and maintenance tracking"] },
   ];
   return (
     <section id="coverage" style={{ padding: "96px 24px", background: C.cream }}>
       <div className="reveal" style={{ maxWidth: 920, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 52 }}>
           <Eyebrow>What's Covered</Eyebrow>
-          <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Food safety and facility safety.<br />One platform.</h2>
+          <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Food safety and fire safety.<br />One platform.</h2>
           <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 460, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>EvidLY shows you what your county expects for food safety and fire safety. Both authorities. Mapped to your specific county. So the ordinary is handled — and you're free to build as high as you want.</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
@@ -820,7 +820,7 @@ function PricingSection({ onTour, onIRR }) {
   const founderFeatures = [
     "1–10 locations, all on one dashboard",
     "Each location scored against its own county",
-    "Food safety and facility safety in one place",
+    "Food safety and fire safety in one place",
     "Your whole team included, no per-seat cost",
     "Know how your operation stands — every day",
     "This price is yours forever — never increases",
@@ -897,7 +897,7 @@ function IRRSection({ onIRR }) {
         <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.white, margin: "0 0 16px", lineHeight: 1.12, letterSpacing: "-0.03em", fontFamily: FF_HEAD }}>
           Your operation, scored.<br /><span style={{ color: C.gold }}>Every risk, in dollars.</span>
         </h2>
-        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.48)", maxWidth: 440, margin: "0 auto 32px", lineHeight: 1.8, fontFamily: FF_SANS }}>11 questions across food safety and facility safety. See where your operation stands — and what it's costing you — in 2 minutes.</p>
+        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.48)", maxWidth: 440, margin: "0 auto 32px", lineHeight: 1.8, fontFamily: FF_SANS }}>11 questions across food safety and fire safety. See where your operation stands — and what it's costing you — in 2 minutes.</p>
         <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "15px 36px", fontSize: "0.97rem", borderRadius: 10 }}>Get My Free Operations Check →</button>
         <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.18)", marginTop: 16, fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year</p>
       </div>
@@ -937,7 +937,7 @@ function Footer() {
         <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 32, marginBottom: 40 }}>
           <div>
             <Logo size="1.1rem" light tagline />
-            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.25)", marginTop: 14, lineHeight: 1.75, fontFamily: FF_SANS, maxWidth: 260 }}>Operations intelligence for California commercial kitchens. Food safety and facility safety in one platform.</p>
+            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.25)", marginTop: 14, lineHeight: 1.75, fontFamily: FF_SANS, maxWidth: 260 }}>Operations intelligence for California commercial kitchens. Food safety and fire safety in one platform.</p>
             <div style={{ marginTop: 16 }}>
               <a href="mailto:founders@getevidly.com" style={{ ...col, color: "rgba(255,255,255,0.38)" }}>founders@getevidly.com</a>
               <a href="tel:8553843591" style={{ ...col, color: "rgba(255,255,255,0.38)" }}>(855) EVIDLY1</a>

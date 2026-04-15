@@ -319,11 +319,11 @@ export const IRR_QUESTIONS = [
   { key: 'q4_checklists_haccp',   label: 'Daily Checklists & HACCP',   group: 'Food Safety',     path: '/checklists' },
   { key: 'q5_food_handler_cards', label: 'Food Handler Cards & CFPM',  group: 'Food Safety',     path: '/dashboard/training' },
   { key: 'q6_staff_cert_tracking',label: 'Staff Cert Tracking',        group: 'Food Safety',     path: '/dashboard/training' },
-  { key: 'q7_hood_cleaning',      label: 'Hood Cleaning Schedule',     group: 'Facility Safety', path: '/facility-safety' },
-  { key: 'q8_fire_suppression',   label: 'Fire Suppression System',    group: 'Facility Safety', path: '/facility-safety' },
-  { key: 'q9_vendor_performance', label: 'Vendor Performance',         group: 'Facility Safety', path: '/vendors' },
-  { key: 'q10_vendor_records',    label: 'Vendor Performance Records', group: 'Facility Safety', path: '/vendors' },
-  { key: 'q11_vendor_coi',        label: 'Vendor COI & Licensing',     group: 'Facility Safety', path: '/vendors' },
+  { key: 'q7_hood_cleaning',      label: 'Hood Cleaning Schedule',     group: 'Fire Safety', path: '/facility-safety' },
+  { key: 'q8_fire_suppression',   label: 'Fire Suppression System',    group: 'Fire Safety', path: '/facility-safety' },
+  { key: 'q9_vendor_performance', label: 'Vendor Performance',         group: 'Fire Safety', path: '/vendors' },
+  { key: 'q10_vendor_records',    label: 'Vendor Performance Records', group: 'Fire Safety', path: '/vendors' },
+  { key: 'q11_vendor_coi',        label: 'Vendor COI & Licensing',     group: 'Fire Safety', path: '/vendors' },
 ] as const;
 
 /** Posture display labels — matches OperationsCheck.jsx */

@@ -111,7 +111,7 @@ export const EXECUTIVE_EVENTS: CalendarEvent[] = [
   { date: d(0), type: 'meeting', title: 'Quarterly Board Meeting', location: 'Corporate', priority: 'high' },
   { date: d(3), type: 'review', title: 'Q1 Compliance Review', location: 'All Locations', priority: 'high' },
   { date: d(5), type: 'certification', title: 'ServSafe Certification Renewal', location: 'Location 1', priority: 'medium' },
-  { date: d(7), type: 'inspection', title: 'Facility Safety Audit', location: 'Location 1', priority: 'high' },
+  { date: d(7), type: 'inspection', title: 'Fire Safety Audit', location: 'Location 1', priority: 'high' },
   { date: d(10), type: 'certification', title: 'Health Permit Renewal', location: 'Location 2', priority: 'critical' },
   { date: d(14), type: 'review', title: 'Insurance Risk Assessment', location: 'All Locations', priority: 'high' },
   { date: d(21), type: 'meeting', title: 'Monthly Executive Sync', location: 'Corporate', priority: 'medium' },
@@ -146,7 +146,7 @@ export const FACILITIES_EVENTS: CalendarEvent[] = [
   { date: d(6), type: 'vendor', title: 'Ansul Inspection — Location 2', location: 'Location 2', priority: 'high' },
   { date: d(10), type: 'permit', title: 'Operational Permit Renewal — Location 3', location: 'Location 3', priority: 'critical' },
   { date: d(15), type: 'vendor', title: 'Grease Trap Service — Location 1', location: 'Location 1', priority: 'medium' },
-  { date: d(22), type: 'inspection', title: 'Facility Safety Self-Inspection — Location 2', location: 'Location 2', priority: 'medium' },
+  { date: d(22), type: 'inspection', title: 'Fire Safety Self-Inspection — Location 2', location: 'Location 2', priority: 'medium' },
   { date: d(28), type: 'maintenance', title: 'Extinguisher Annual Inspection', location: 'All Locations', priority: 'high' },
   { date: d(-3), type: 'vendor', title: 'Fire Extinguisher Service', location: 'Location 1', priority: 'medium' },
 ];

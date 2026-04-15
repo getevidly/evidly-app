@@ -3,7 +3,7 @@
  *
  * Dual-Authority Jurisdiction Summary used inside DashboardHero by
  * Owner/Operator, Executive, and Compliance Manager dashboards.
- * Shows Food Safety and Facility Safety panels side-by-side with
+ * Shows Food Safety and Fire Safety panels side-by-side with
  * per-location grades, statuses, and FireStatusBars.
  */
 
@@ -102,7 +102,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
         </div>
       </div>
 
-      {/* Facility Safety — 4 bars per location */}
+      {/* Fire Safety — 4 bars per location */}
       <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: '#e2e8f0' }} />

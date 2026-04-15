@@ -433,7 +433,7 @@ export function getServiceProviderInviteMessage(
 This is ${senderName} from ${senderBusiness}. We're rolling out a new system to make our service relationship smoother \u2014 EvidLY.
 
 With EvidLY, you'll have:
-\u2022 All your compliance records in one place (food safety + facility safety)
+\u2022 All your compliance records in one place (food safety + fire safety)
 \u2022 Your hood cleaning schedule, service reports, and our COI \u2014 always up to date
 \u2022 Automatic reminders when services are due or documents are expiring
 \u2022 A real-time compliance score so you know where you stand before any inspection
@@ -462,7 +462,7 @@ ${senderBusiness}`;
     default:
       return `Hey ${name},
 
-This is ${senderName} from ${senderBusiness}. We're setting up on EvidLY \u2014 a platform that tracks food safety and facility safety for commercial kitchens.
+This is ${senderName} from ${senderBusiness}. We're setting up on EvidLY \u2014 a platform that tracks food safety and fire safety for commercial kitchens.
 
 For you, it means our hood cleaning reports, COI, and service schedule will all be in one place alongside your other compliance records. No more filing paper reports.
 

@@ -10,7 +10,7 @@ import {
 export { getScoreColor, getScoreStatus, getScoreInfo, getGraduatedPenalty };
 export type { IndustryVertical };
 
-// Pillar weights REMOVED — Food Safety and Facility Safety are independent scores
+// Pillar weights REMOVED — Food Safety and Fire Safety are independent scores
 
 // Backwards-compatible wrapper — delegates to scoring engine
 export const getGrade = (score: number) => getScoreInfo(score);
@@ -45,7 +45,7 @@ export const demoReferral = {
 // ============================================================
 // Status comes from jurisdiction-verified data only.
 // Food Safety: county health dept grade/status
-// Facility Safety: NFPA 96 pass/fail
+// Fire Safety: NFPA 96 pass/fail
 // NO numeric overall scores. NO Vendor Compliance pillar.
 // ============================================================
 
@@ -129,7 +129,7 @@ export const locations: Location[] = [
 //
 // TWO PILLARS ONLY:
 //   Food Safety = Ops + Docs (weight set by jurisdiction)
-//   Facility Safety = Ops + Docs (weight set by jurisdiction)
+//   Fire Safety = Ops + Docs (weight set by jurisdiction)
 //
 // Documentation is INSIDE each pillar, NOT a separate pillar.
 // Vendor credentials fold into the pillar they serve.
@@ -585,13 +585,13 @@ export interface ScoreImpactItem {
   impact: string;
   action: string | null;
   actionLink: string | null;
-  pillar: 'Food Safety' | 'Facility Safety';
+  pillar: 'Food Safety' | 'Fire Safety';
   locationId: string;
 }
 
 // Line-item status tracking per pillar per location
 // Food Safety: Temp checks, Checklists, Incidents, HACCP + Documentation items
-// Facility Safety: Hood cleaning, Fire suppression, Fire extinguisher, Equip maintenance, Equip condition
+// Fire Safety: Hood cleaning, Fire suppression, Fire extinguisher, Equip maintenance, Equip condition
 
 export const scoreImpactData: ScoreImpactItem[] = [
   // ─── Location 1 ─── Operational (94/100)
@@ -601,11 +601,11 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
 
   // ─── Location 1 ─── Equipment (88/100)
-  { status: 'current', label: 'Hood Cleaning', impact: '+30 of 30', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
-  { status: 'due_soon', label: 'Fire Suppression (due in 15 days, −3.75 graduated)', impact: '+21 of 25', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '1' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
-  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
-  { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
+  { status: 'current', label: 'Hood Cleaning', impact: '+30 of 30', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
+  { status: 'due_soon', label: 'Fire Suppression (due in 15 days, −3.75 graduated)', impact: '+21 of 25', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '1' },
+  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
+  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
+  { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
 
   // ─── Location 1 ─── Documentation (folds into Food Safety)
   { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
@@ -621,11 +621,11 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
 
   // ─── Location 2 ─── Equipment (62/100)
-  { status: 'overdue', label: 'Hood Cleaning 5 DAYS OVERDUE (−30 full penalty)', impact: '0 of 30', action: 'Contact ABC Fire', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '2' },
-  { status: 'current', label: 'Fire Suppression Inspection', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
-  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
-  { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
+  { status: 'overdue', label: 'Hood Cleaning 5 DAYS OVERDUE (−30 full penalty)', impact: '0 of 30', action: 'Contact ABC Fire', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '2' },
+  { status: 'current', label: 'Fire Suppression Inspection', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
+  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
+  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
+  { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
 
   // ─── Location 2 ─── Documentation (folds into Food Safety)
   { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
@@ -641,11 +641,11 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'overdue', label: 'HACCP Monitoring Not Done This Month', impact: '0 of 15', action: 'Start HACCP Review', actionLink: '/haccp', pillar: 'Food Safety', locationId: '3' },
 
   // ─── Location 3 ─── Equipment (55/100)
-  { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days (−15 graduated)', impact: '+15 of 30', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
-  { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+15 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '3' },
-  { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
-  { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '3' },
+  { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days (−15 graduated)', impact: '+15 of 30', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
+  { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
+  { status: 'current', label: 'Fire Extinguisher', impact: '+15 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '3' },
+  { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
+  { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '3' },
 
   // ─── Location 3 ─── Documentation (folds into Food Safety)
   { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Food Safety', locationId: '3' },
@@ -708,7 +708,7 @@ export interface MarketplaceReview {
 }
 
 export const marketplaceCategories: MarketplaceCategory[] = [
-  { id: 'facility-safety', name: 'Facility Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems', 'Elevator Inspection', 'Pest Control', 'Grease Trap / FOG', 'Backflow Prevention'] },
+  { id: 'facility-safety', name: 'Fire Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems', 'Elevator Inspection', 'Pest Control', 'Grease Trap / FOG', 'Backflow Prevention'] },
   { id: 'food-safety', name: 'Food Safety', icon: 'ShieldCheck', subcategories: ['Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
   { id: 'equipment', name: 'Equipment', icon: 'Cog', subcategories: ['HVAC Service', 'Refrigeration', 'Kitchen Equipment Repair', 'Ice Machine', 'Plumbing'] },
   { id: 'compliance', name: 'Compliance', icon: 'ClipboardCheck', subcategories: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development', 'Insurance Brokers'] },
@@ -721,7 +721,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     description: 'Full-service commercial kitchen fire protection specialists. IKECA-certified hood cleaning with NFPA 96 compliance documentation provided after every service. Serving the Central Valley since 2008.',
     tier: 'certified', rating: 4.6, reviewCount: 23, yearsInBusiness: 16,
     serviceArea: ['Fresno', 'Clovis', 'Madera', 'Visalia'],
-    responseTimeHours: 6, categories: ['Facility Safety'], subcategories: ['Hood Cleaning', 'Fire Extinguisher'],
+    responseTimeHours: 6, categories: ['Fire Safety'], subcategories: ['Hood Cleaning', 'Fire Extinguisher'],
     languages: ['English', 'Spanish'], kitchensServed: 85, totalServices: 342, onTimeRate: 94, docUploadRate: 91,
     certifications: [
       { name: 'IKECA Certified', verified: true, expirationDate: '2027-03-15' },
@@ -764,7 +764,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     description: 'Authorized dealer for Ansul and Amerex fire suppression systems. Factory-trained technicians provide semi-annual inspections per NFPA 17A (2025) with full documentation.',
     tier: 'certified', rating: 4.5, reviewCount: 18, yearsInBusiness: 14,
     serviceArea: ['Fresno', 'Clovis', 'Visalia', 'Hanford'],
-    responseTimeHours: 8, categories: ['Facility Safety'], subcategories: ['Fire Suppression', 'Kitchen Fire Systems'],
+    responseTimeHours: 8, categories: ['Fire Safety'], subcategories: ['Fire Suppression', 'Kitchen Fire Systems'],
     languages: ['English'], kitchensServed: 65, totalServices: 210, onTimeRate: 91, docUploadRate: 88,
     certifications: [
       { name: 'Ansul Authorized Distributor', verified: true },
@@ -826,7 +826,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     description: 'Premium hood cleaning with IKECA Master Certified technicians. Known for exceptional documentation and before/after photo packages. Preferred vendor for major restaurant groups across the Central Valley.',
     tier: 'preferred', rating: 4.9, reviewCount: 52, yearsInBusiness: 18,
     serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Bakersfield'],
-    responseTimeHours: 3, categories: ['Facility Safety'], subcategories: ['Hood Cleaning', 'Fire Extinguisher'],
+    responseTimeHours: 3, categories: ['Fire Safety'], subcategories: ['Hood Cleaning', 'Fire Extinguisher'],
     languages: ['English', 'Spanish'], kitchensServed: 150, totalServices: 720, onTimeRate: 98, docUploadRate: 99,
     certifications: [
       { name: 'IKECA Master Certified', verified: true, expirationDate: '2027-05-20' },
@@ -870,7 +870,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     description: 'Fire protection services for commercial kitchens including suppression system testing, alarm inspection, and emergency lighting. NICET-certified technicians.',
     tier: 'verified', rating: 4.4, reviewCount: 15, yearsInBusiness: 6,
     serviceArea: ['Fresno', 'Clovis', 'Madera'],
-    responseTimeHours: 12, categories: ['Facility Safety'], subcategories: ['Fire Suppression', 'Kitchen Fire Systems'],
+    responseTimeHours: 12, categories: ['Fire Safety'], subcategories: ['Fire Suppression', 'Kitchen Fire Systems'],
     languages: ['English'], kitchensServed: 40, totalServices: 128, onTimeRate: 89, docUploadRate: 84,
     certifications: [
       { name: 'NICET Level II Fire Protection', verified: true },
@@ -1086,7 +1086,7 @@ export const cleaningProsPlus: MarketplaceVendor = {
   description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including major food service operations and national park hospitality. Specializing in NFPA 96 compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
   tier: 'preferred', rating: 4.8, reviewCount: 34, yearsInBusiness: 18,
   serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Tulare', 'Stanislaus', 'Mariposa'],
-  responseTimeHours: 2, categories: ['Facility Safety'], subcategories: ['Hood Cleaning'],
+  responseTimeHours: 2, categories: ['Fire Safety'], subcategories: ['Hood Cleaning'],
   languages: ['English', 'Spanish'], kitchensServed: 92, totalServices: 1450, onTimeRate: 99, docUploadRate: 98,
   certifications: [
     { name: 'IKECA Master Certified', verified: true, expirationDate: '2027-06-30' },
@@ -2474,7 +2474,7 @@ export interface TrainingCourse {
 export const trainingCourses: TrainingCourse[] = [
   { id: 'tc-01', organizationId: null, title: 'California Food Handler Card', description: 'Complete food handler training to satisfy CA SB 476 requirements. Covers personal hygiene, time & temperature, cross-contamination, cleaning & sanitizing, food storage, foodborne illness, receiving, and allergen awareness.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'en', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 38, completedCount: 29, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-02', organizationId: null, title: 'ServSafe Manager Exam Prep', description: 'Comprehensive CFPM preparation covering HACCP, active managerial control, FDA Food Code, temperature management, and crisis response. Prepares employees to pass the ServSafe Manager certification exam.', category: 'food_safety_manager', categoryLabel: 'Food Safety – Manager', language: 'en', estimatedDurationMin: 480, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#1E2D4D', moduleCount: 9, enrolledCount: 8, completedCount: 3, createdAt: '2025-08-01T00:00:00Z' },
-  { id: 'tc-03', organizationId: null, title: 'Kitchen Facility Safety & Equipment', description: 'Fire extinguisher types, PASS technique, commercial hood systems, NFPA 96 compliance, fire suppression activation, grease fire response, and emergency evacuation.', category: 'facility_safety', categoryLabel: 'Facility Safety', language: 'en', estimatedDurationMin: 95, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#dc2626', moduleCount: 7, enrolledCount: 42, completedCount: 35, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-03', organizationId: null, title: 'Kitchen Fire Safety & Equipment', description: 'Fire extinguisher types, PASS technique, commercial hood systems, NFPA 96 compliance, fire suppression activation, grease fire response, and emergency evacuation.', category: 'facility_safety', categoryLabel: 'Fire Safety', language: 'en', estimatedDurationMin: 95, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#dc2626', moduleCount: 7, enrolledCount: 42, completedCount: 35, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-04', organizationId: null, title: 'EvidLY Compliance Operations', description: 'Learn how to use EvidLY effectively: daily checklists, temperature logging, corrective actions, vendor verification, compliance scoring, and QR Passport.', category: 'compliance_ops', categoryLabel: 'Compliance Ops', language: 'en', estimatedDurationMin: 55, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 0, isSystemCourse: true, isActive: true, thumbnailColor: '#d4af37', moduleCount: 6, enrolledCount: 52, completedCount: 48, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-05', organizationId: null, title: 'Tarjeta de Manipulador de Alimentos de California', description: 'Entrenamiento completo de manipulación de alimentos para cumplir con los requisitos de CA SB 476. En español.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'es', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 12, completedCount: 8, createdAt: '2025-09-15T00:00:00Z' },
   { id: 'tc-06', organizationId: 'org-demo', title: 'New Hire Orientation — EvidLY Demo', description: 'Custom onboarding training for new employees. Covers company policies, kitchen layout, emergency contacts, and first-day procedures.', category: 'custom', categoryLabel: 'Custom', language: 'en', estimatedDurationMin: 30, passingScorePercent: 80, maxAttempts: 3, cooldownHours: 0, isSystemCourse: false, isActive: true, thumbnailColor: '#7c3aed', moduleCount: 3, enrolledCount: 14, completedCount: 12, createdAt: '2025-11-01T00:00:00Z' },
@@ -2501,7 +2501,7 @@ export const trainingModules: TrainingModule[] = [
   { id: 'tm-06', courseId: 'tc-01', title: 'Foodborne Illness Prevention', description: 'Big 6 pathogens, high-risk populations, symptoms requiring exclusion, outbreak response', sortOrder: 6, estimatedDurationMin: 20, lessonCount: 5, questionCount: 25 },
   { id: 'tm-07', courseId: 'tc-01', title: 'Receiving & Inspecting Deliveries', description: 'Temperature checks on receipt, checking for damage, rejecting unsafe deliveries, documentation', sortOrder: 7, estimatedDurationMin: 10, lessonCount: 3, questionCount: 15 },
   { id: 'tm-08', courseId: 'tc-01', title: 'Allergen Awareness', description: 'Big 9 allergens, cross-contact prevention, communication with customers, allergen-free prep', sortOrder: 8, estimatedDurationMin: 15, lessonCount: 4, questionCount: 20 },
-  // Facility Safety modules (tc-03)
+  // Fire Safety modules (tc-03)
   { id: 'tm-09', courseId: 'tc-03', title: 'Fire Extinguisher Types & PASS Technique', description: 'Class A/B/C/K extinguishers, PASS technique, when to fight vs. evacuate', sortOrder: 1, estimatedDurationMin: 15, lessonCount: 4, questionCount: 15 },
   { id: 'tm-10', courseId: 'tc-03', title: 'Commercial Hood System Basics', description: 'How hood systems work, filters, cleaning requirements, inspection schedules', sortOrder: 2, estimatedDurationMin: 15, lessonCount: 3, questionCount: 12 },
   { id: 'tm-11', courseId: 'tc-03', title: 'NFPA 96-2024 Compliance for Kitchen Staff', description: 'Key requirements every kitchen worker should know about hood and duct cleaning standards', sortOrder: 3, estimatedDurationMin: 15, lessonCount: 3, questionCount: 12 },
@@ -2540,9 +2540,9 @@ export const trainingEnrollments: TrainingEnrollment[] = [
   { id: 'te-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'not_started', enrolledAt: '2026-02-05T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-03-07T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
   // CFPM Prep — Location 1 manager
   { id: 'te-05', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-02', courseTitle: 'ServSafe Manager Exam Prep', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'manager', enrollmentReason: 'manager_assigned', status: 'in_progress', enrolledAt: '2026-01-05T00:00:00Z', startedAt: '2026-01-08T09:00:00Z', completedAt: null, expiresAt: null, progressPercent: 45, currentModuleId: 'tm-cfpm-05', currentLessonId: null, scorePercent: null },
-  // Facility Safety — Location 2
-  { id: 'te-06', employeeId: 'emp-05', employeeName: 'Sarah Lee', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'completed', enrolledAt: '2025-12-01T00:00:00Z', startedAt: '2025-12-03T10:00:00Z', completedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 92 },
-  { id: 'te-07', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-02-01T00:00:00Z', startedAt: '2026-02-03T08:00:00Z', completedAt: null, expiresAt: '2026-03-03T00:00:00Z', progressPercent: 38, currentModuleId: 'tm-11', currentLessonId: null, scorePercent: null },
+  // Fire Safety — Location 2
+  { id: 'te-06', employeeId: 'emp-05', employeeName: 'Sarah Lee', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'completed', enrolledAt: '2025-12-01T00:00:00Z', startedAt: '2025-12-03T10:00:00Z', completedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 92 },
+  { id: 'te-07', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-02-01T00:00:00Z', startedAt: '2026-02-03T08:00:00Z', completedAt: null, expiresAt: '2026-03-03T00:00:00Z', progressPercent: 38, currentModuleId: 'tm-11', currentLessonId: null, scorePercent: null },
   // Compliance Ops — Location 3
   { id: 'te-08', employeeId: 'emp-07', employeeName: 'Alex Johnson', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'Location 3', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-15T00:00:00Z', startedAt: '2025-10-15T14:00:00Z', completedAt: '2025-10-16T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 95 },
   // New hires needing training
@@ -2572,7 +2572,7 @@ export interface TrainingCertificate {
 export const trainingCertificates: TrainingCertificate[] = [
   { id: 'tcert-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00142', issuedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', scorePercent: 88 },
   { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
-  { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', certificateType: 'facility_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
+  { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', certificateType: 'facility_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
   { id: 'tcert-04', employeeId: 'emp-07', employeeName: 'Alex Johnson', enrollmentId: 'te-08', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'Location 3', certificateType: 'custom', certificateNumber: 'EVD-CO-2025-00201', issuedAt: '2025-10-16T10:00:00Z', expiresAt: null, scorePercent: 95 },
   { id: 'tcert-05', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-11', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'custom', certificateNumber: 'EVD-CU-2026-00015', issuedAt: '2026-02-05T10:00:00Z', expiresAt: null, scorePercent: 90 },
   { id: 'tcert-06', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Location 2', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00285', issuedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', scorePercent: 76 },
@@ -3558,7 +3558,7 @@ export const copilotInsights: CopilotInsight[] = [
     insightType: 'alert',
     severity: 'warning',
     title: 'Hood cleaning overdue by 5 days',
-    message: 'Commercial kitchen hood exhaust cleaning was due on Feb 8, 2026. Per NFPA 96, grease-laden hoods must be cleaned on a regular schedule based on cooking volume. This affects your facility safety score and may void your fire suppression warranty.',
+    message: 'Commercial kitchen hood exhaust cleaning was due on Feb 8, 2026. Per NFPA 96, grease-laden hoods must be cleaned on a regular schedule based on cooking volume. This affects your fire safety score and may void your fire suppression warranty.',
     sourceModule: 'equipment',
     actionType: 'notify_vendor',
     actionLabel: 'Contact Vendor',
@@ -4149,8 +4149,8 @@ export const demoIntelligence = {
     {
       id: 'threat_2',
       severity: 'high' as const,
-      title: 'Location 2 Facility Safety Fail \u2014 hood cleaning certificate expires in 18 days',
-      description: 'Certificate expiration will compound existing Facility Safety Fail status.',
+      title: 'Location 2 Fire Safety Fail \u2014 hood cleaning certificate expires in 18 days',
+      description: 'Certificate expiration will compound existing Fire Safety Fail status.',
       daysToImpact: 18,
       location: 'Location 2',
       regulatoryBasis: 'NFPA 96 Table 12.4',

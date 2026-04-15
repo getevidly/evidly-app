@@ -267,9 +267,9 @@ export function ScoringBreakdown() {
           </div>
         </CollapsibleSection>
 
-        {/* Facility Safety */}
+        {/* Fire Safety */}
         <CollapsibleSection
-          title="Facility Safety"
+          title="Fire Safety"
           icon={<span className="text-lg">&#128293;</span>}
           badge={
             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${fireStatus.bg} ${fireStatus.text} ${fireStatus.border}`}>

@@ -256,7 +256,7 @@ describe('complianceEngine', () => {
       for (const item of items) {
         expect(item.status).toBeTruthy();
         expect(item.label).toBeTruthy();
-        expect(item.pillar).toMatch(/^(Food Safety|Facility Safety)$/);
+        expect(item.pillar).toMatch(/^(Food Safety|Fire Safety)$/);
         expect(item.locationId).toBe('1'); // downtown → numeric '1'
       }
     });

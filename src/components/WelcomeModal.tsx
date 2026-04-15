@@ -78,7 +78,7 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
           </p>
           <p className="mb-5 font-medium text-[#1E2D4D]">Not anymore.</p>
           <p className="mb-6">
-            EvidLY gives you one place to manage facility safety, food safety, and vendor compliance — with
+            EvidLY gives you one place to manage fire safety, food safety, and vendor compliance — with
             real-time scoring, photo evidence, and reports you can hand to any inspector in 10 seconds.
           </p>
 

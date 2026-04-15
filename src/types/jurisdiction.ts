@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // src/types/jurisdiction.ts
 // Dual-authority model: every location has a food safety authority
-// (county health dept / CalCode) AND a facility safety authority (AHJ / CFC).
+// (county health dept / CalCode) AND a fire safety authority (AHJ / CFC).
 // These are completely different agencies with different grading systems.
 // They CANNOT be combined into a single score.
 // ═══════════════════════════════════════════════════════════════════
@@ -92,7 +92,7 @@ export interface FireJurisdictionConfig {
   } | null;
 }
 
-// A single authority (either food safety or facility safety)
+// A single authority (either food safety or fire safety)
 export interface AuthorityRecord {
   id: string;
   pillar: 'food_safety' | 'facility_safety';

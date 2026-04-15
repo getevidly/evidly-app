@@ -82,7 +82,7 @@ export default function PassportDemo() {
               </div>
               <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Food Safety</div>
             </div>
-            {/* Facility Safety Ring */}
+            {/* Fire Safety Ring */}
             <div className="flex flex-col items-center">
               <div className="relative w-40 h-40">
                 <svg className="w-full h-full transform -rotate-90">
@@ -96,7 +96,7 @@ export default function PassportDemo() {
                   <div className="text-4xl font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</div>
                 </div>
               </div>
-              <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Facility Safety</div>
+              <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Fire Safety</div>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function PassportDemo() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-[#1E2D4D]/80">Facility Safety</span>
+                <span className="font-semibold text-[#1E2D4D]/80">Fire Safety</span>
                 <span className="font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</span>
               </div>
               <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">

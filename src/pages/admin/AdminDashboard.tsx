@@ -424,7 +424,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
                   : 'bg-slate-100 text-navy-mid'
               }`}
             >
-              {p === 'all' ? 'All' : p === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
+              {p === 'all' ? 'All' : p === 'food_safety' ? 'Food Safety' : 'Fire Safety'}
             </button>
           ))}
         </div>

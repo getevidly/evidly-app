@@ -476,7 +476,7 @@ export default function MockInspection() {
                     color: q.category === 'food_safety' ? '#166534' : '#991b1b',
                   }}
                 >
-                  {q.category === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
+                  {q.category === 'food_safety' ? 'Food Safety' : 'Fire Safety'}
                 </span>
                 <span
                   className="text-xs font-semibold px-2 py-0.5 rounded-full border"
@@ -709,7 +709,7 @@ export default function MockInspection() {
                   title: v.question.violationType,
                   description: v.question.followUpOnFail,
                   severity: v.question.severity,
-                  section: v.question.category === 'food_safety' ? 'Food Safety' : 'Facility Safety',
+                  section: v.question.category === 'food_safety' ? 'Food Safety' : 'Fire Safety',
                   citation: v.question.citation,
                   notes: v.notes,
                 }));

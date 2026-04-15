@@ -1,7 +1,7 @@
 // ============================================================
 // Inspection Readiness Scoring Engine
 // ============================================================
-// Two-Pillar Model: Food Safety + Facility Safety (independent scores)
+// Two-Pillar Model: Food Safety + Fire Safety (independent scores)
 // Vendor credentials fold into the pillar they serve.
 // ============================================================
 
@@ -50,8 +50,8 @@ export function getReadinessStatus(score: number): string {
 export function calculateInspectionReadiness(
   foodOps: number,     // 0-100 aggregate food safety operations score
   foodDocs: number,    // 0-100 aggregate food safety documentation score
-  fireOps: number,     // 0-100 aggregate facility safety operations score
-  fireDocs: number,    // 0-100 aggregate facility safety documentation score
+  fireOps: number,     // 0-100 aggregate fire safety operations score
+  fireDocs: number,    // 0-100 aggregate fire safety documentation score
   jurisdiction?: string,
 ): InspectionReadinessScore {
   const foodScore = (foodOps * COMPONENT_WEIGHTS.operations) + (foodDocs * COMPONENT_WEIGHTS.documentation);

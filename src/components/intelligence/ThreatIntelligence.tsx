@@ -17,7 +17,7 @@ export const ThreatIntelligence: React.FC<{ data: any }> = ({ data }) => {
     if (loc.facilitySafetyVerdict === 'Fail') {
       threats.push({
         severity: 'high',
-        title: 'Facility Safety Inspection Failure',
+        title: 'Fire Safety Inspection Failure',
         location: loc.locationName,
         action: 'Schedule remediation with AHJ. Re-inspection required per NFPA 96.',
       });

@@ -88,7 +88,7 @@ export function SharedReport() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F4F2EE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#FAF7F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: 40, height: 40, border: '3px solid #E5E7EB', borderTopColor: GOLD,
@@ -103,7 +103,7 @@ export function SharedReport() {
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F4F2EE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#FAF7F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           background: '#fff', borderRadius: 16, padding: '48px 40px', maxWidth: 440,
           textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
@@ -128,7 +128,7 @@ export function SharedReport() {
   const typeLabel = TYPE_LABELS[report.report_type] || report.report_type;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F4F2EE' }}>
+    <div style={{ minHeight: '100vh', background: '#FAF7F0' }}>
       {/* Header */}
       <div style={{
         background: NAVY, padding: '20px 40px', display: 'flex',

@@ -171,7 +171,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
     'cross_contamination_risk',
   ],
   compliance_priorities: [
-    'Facility safety NFPA 96 compliance',
+    'Fire safety NFPA 96 compliance',
     'Food handler certification management',
     'Temperature monitoring consistency',
     'Hood cleaning schedule adherence',

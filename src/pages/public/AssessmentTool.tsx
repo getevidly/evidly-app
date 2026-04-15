@@ -493,7 +493,7 @@ export function AssessmentTool() {
                 {/* Category Gauges */}
                 <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Category Risk Scores</h3>
                 <div className="flex justify-around mb-8">
-                  <ScoreGauge score={scores.facilitySafety} label="Facility Safety" />
+                  <ScoreGauge score={scores.facilitySafety} label="Fire Safety" />
                   <ScoreGauge score={scores.foodSafety} label="Food Safety" />
                   <ScoreGauge score={scores.documentation} label="Documentation" />
                 </div>

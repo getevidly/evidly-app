@@ -124,7 +124,7 @@ export function calculateFireRiskV2(
     { name: 'Automatic fuel/electric shutoff tested', score: shutoffScore, weight: 0.10, status: factorStatus(shutoffScore), detail: shutoffScore >= 80 ? 'Shutoff systems tested and documented' : 'Shutoff testing overdue or undocumented', reference: 'NFPA 96 Chapter 10' },
     { name: 'Manual pull station accessible and tested', score: pullStationScore, weight: 0.08, status: factorStatus(pullStationScore), detail: pullStationScore >= 80 ? 'Pull station accessible and tested' : 'Pull station testing needed', reference: 'NFPA 17A-2025' },
     { name: 'Fire alarm system current', score: alarmScore, weight: 0.08, status: factorStatus(alarmScore), detail: alarmScore >= 80 ? 'Fire alarm monitoring current' : 'Fire alarm inspection needed', reference: 'NFPA 72-2025' },
-    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All facility safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96 Chapter 14' },
+    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All fire safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96 Chapter 14' },
   ];
 
   const score = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0));

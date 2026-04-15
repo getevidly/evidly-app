@@ -62,7 +62,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: 'tour-section-compliance',
     title: 'Compliance',
-    content: 'Track your compliance status across Food Safety and Facility Safety requirements.',
+    content: 'Track your compliance status across Food Safety and Fire Safety requirements.',
     placement: 'right',
   },
   {

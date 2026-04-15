@@ -8,7 +8,7 @@ import { FONT } from './constants';
 
 export function DashboardSkeleton() {
   return (
-    <div style={{ ...FONT, backgroundColor: '#F5F6F8', minHeight: '100vh' }}>
+    <div style={{ ...FONT, backgroundColor: '#FAF7F0', minHeight: '100vh' }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 space-y-4">
         {/* Hero skeleton */}
         <div className="rounded-xl animate-pulse" style={{ background: '#263d56', height: 120 }} />

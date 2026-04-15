@@ -6,7 +6,7 @@
 //
 // Data flow:
 //   ComplianceDataSnapshot → Engine → ComplianceEngineResult
-//     ├─ EvidLY Internal Scores (Food Safety + Facility Safety)
+//     ├─ EvidLY Internal Scores (Food Safety + Fire Safety)
 //     ├─ Jurisdiction Overlay (county-specific grade)
 //     └─ Dynamic ScoreImpactItems (replaces static demoData)
 // ============================================================
@@ -69,8 +69,8 @@ const FS_OPS_WEIGHTS = {
  *
  * 1. Compute Food Safety Ops from temp + checklists + HACCP + incidents
  * 2. Compute Food Safety Docs from document currency rate
- * 3. Compute Facility Safety Ops from calculateFacilitySafetyScore()
- * 4. Compute Facility Safety Docs from facility doc currency
+ * 3. Compute Fire Safety Ops from calculateFacilitySafetyScore()
+ * 4. Compute Fire Safety Docs from facility doc currency
  * 5. Blend ops + docs into pillar scores (simple average)
  * 6. Derive ScoreImpactItems for jurisdiction scoring
  * 7. Feed through calculateJurisdictionScore() for jurisdiction overlay
@@ -86,11 +86,11 @@ export function computeComplianceSnapshot(
   // ── 2. Food Safety Docs Score ──
   const fsDocs = snapshot.documents.overallDocCurrencyRate;
 
-  // ── 3. Facility Safety Ops Score ──
+  // ── 3. Fire Safety Ops Score ──
   const facilityItems = buildFacilitySafetyItems(snapshot.facilitySafety);
   const facOps = calculateFacilitySafetyScore(facilityItems);
 
-  // ── 4. Facility Safety Docs Score ──
+  // ── 4. Fire Safety Docs Score ──
   const facDocs = snapshot.facilityDocs.overallDocCurrencyRate;
 
   // ── 5. Pillar Scores (simple average of ops + docs) ──
@@ -328,7 +328,7 @@ export function deriveScoreImpactItems(
     locationId: numericLocId,
   });
 
-  // ── Facility Safety Items ──
+  // ── Fire Safety Items ──
 
   // Hood Cleaning
   const hoodStatus = daysToStatus(snapshot.facilitySafety.hoodCleaningDaysUntilDue);
@@ -340,7 +340,7 @@ export function deriveScoreImpactItems(
     impact: hoodStatus === 'current' ? 'On Schedule' : 'Action Required',
     action: hoodStatus !== 'current' ? 'Schedule Service' : null,
     actionLink: hoodStatus !== 'current' ? '/vendors' : null,
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     locationId: numericLocId,
   });
 
@@ -354,7 +354,7 @@ export function deriveScoreImpactItems(
     impact: ansulStatus === 'current' ? 'On Schedule' : 'Action Required',
     action: ansulStatus !== 'current' ? 'Schedule Inspection' : null,
     actionLink: ansulStatus !== 'current' ? '/vendors' : null,
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     locationId: numericLocId,
   });
 
@@ -371,7 +371,7 @@ export function deriveScoreImpactItems(
     impact: `${Math.round(snapshot.facilitySafety.dailyCheckCompletionRate)}% daily completion`,
     action: equipStatus !== 'current' ? 'Review Schedule' : null,
     actionLink: equipStatus !== 'current' ? '/equipment' : null,
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     locationId: numericLocId,
   });
 
@@ -385,7 +385,7 @@ export function deriveScoreImpactItems(
     impact: gtStatus === 'current' ? 'On Schedule' : 'Action Required',
     action: gtStatus !== 'current' ? 'Schedule Service' : null,
     actionLink: gtStatus !== 'current' ? '/vendors' : null,
-    pillar: 'Facility Safety',
+    pillar: 'Fire Safety',
     locationId: numericLocId,
   });
 

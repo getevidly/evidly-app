@@ -75,7 +75,7 @@ function generateDemoText(fieldLabel: string, ctx: Record<string, any>): string 
       return 'Gap identified in exterior wall near receiving dock allowing pest entry. Sanitation schedule for the area had lapsed due to staffing changes.';
     }
     if (title.includes('hood') || title.includes('fire') || title.includes('suppression')) {
-      return 'Annual inspection not scheduled due to vendor contract lapse. No automated reminder system in place for facility safety certifications.';
+      return 'Annual inspection not scheduled due to vendor contract lapse. No automated reminder system in place for fire safety certifications.';
     }
     if (title.includes('handwash') || title.includes('soap')) {
       return 'Closing crew did not complete restocking checklist. Soap dispenser supply not included in weekly inventory count.';

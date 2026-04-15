@@ -921,7 +921,7 @@ export function Analysis() {
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
                         <td className="px-4 sm:px-6 py-4 text-sm text-[#1E2D4D]">{action.action}</td>
                         <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Facility Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1E2D4D' : action.pillar === 'Facility Safety' ? '#166534' : '#92400e' }}>
+                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Fire Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1E2D4D' : action.pillar === 'Fire Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
                           </span>
                         </td>
@@ -961,7 +961,7 @@ export function Analysis() {
                     </p>
                   </div>
                   <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 sm:p-4">
-                    <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Facility Safety</h3>
+                    <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Fire Safety</h3>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={currentTrends.facilitySafety}>
                         <CartesianGrid strokeDasharray="3 3" />

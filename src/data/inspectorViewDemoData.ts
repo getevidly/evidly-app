@@ -295,7 +295,7 @@ const scenarioA: InspectorScenarioData = {
       ],
     },
     {
-      key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
+      key: 'fire', title: 'Ventilation & Fire Safety', iconKey: 'flame',
       calCode: 'NFPA 96',
       items: [
         { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'pass',
@@ -465,7 +465,7 @@ const scenarioB: InspectorScenarioData = {
       ],
     },
     {
-      key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
+      key: 'fire', title: 'Ventilation & Fire Safety', iconKey: 'flame',
       calCode: 'NFPA 96',
       items: [
         { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'fail',
@@ -611,7 +611,7 @@ const scenarioC: InspectorScenarioData = {
       ],
     },
     {
-      key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
+      key: 'fire', title: 'Ventilation & Fire Safety', iconKey: 'flame',
       calCode: 'NFPA 96',
       items: [
         { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'pass',

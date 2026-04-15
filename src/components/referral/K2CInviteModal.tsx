@@ -44,7 +44,7 @@ function getRoleMessage(
     case 'Owner/Operator':
       return `Hey ${name},
 
-I've been using EvidLY to manage both food safety and facility safety across my kitchen operations, and it's completely changed how I run things — I know exactly where I stand before an inspector walks through the door, every vendor is tracked, and my compliance score updates in real time.
+I've been using EvidLY to manage both food safety and fire safety across my kitchen operations, and it's completely changed how I run things — I know exactly where I stand before an inspector walks through the door, every vendor is tracked, and my compliance score updates in real time.
 
 As a fellow owner, I think you'd appreciate having everything in one place instead of juggling spreadsheets, binders, and hoping your team is on top of things.
 
@@ -88,7 +88,7 @@ ${senderBusiness}`;
     case 'Facilities Manager':
       return `Hey ${name},
 
-I wanted to share something that's really helped me stay on top of facility safety — EvidLY tracks all my vendor services (hood cleaning, fire suppression, extinguishers, pest control, grease traps) in one place with automatic scheduling reminders and compliance scoring.
+I wanted to share something that's really helped me stay on top of fire safety — EvidLY tracks all my vendor services (hood cleaning, fire suppression, extinguishers, pest control, grease traps) in one place with automatic scheduling reminders and compliance scoring.
 
 No more wondering if your hood cleaning is overdue or scrambling for records before a fire marshal visit. Everything is documented and inspection-ready.
 
@@ -102,7 +102,7 @@ ${senderBusiness}`;
     case 'Compliance Officer':
       return `Hey ${name},
 
-If you're managing compliance for commercial kitchens, you need to check out EvidLY. It's the only platform I've found that covers both food safety AND facility safety with jurisdiction-specific scoring. Gap analysis, corrective action workflows, inspection readiness — it's built for people like us who need to know exactly where things stand.
+If you're managing compliance for commercial kitchens, you need to check out EvidLY. It's the only platform I've found that covers both food safety AND fire safety with jurisdiction-specific scoring. Gap analysis, corrective action workflows, inspection readiness — it's built for people like us who need to know exactly where things stand.
 
 For every kitchen that joins through this link, EvidLY donates 12 meals to No Kid Hungry through their K2C program. Learn more: ${K2C_PAGE_URL}
 
@@ -114,7 +114,7 @@ ${senderBusiness}`;
     default: // 'Other' or empty
       return `Hey ${name},
 
-I've been using EvidLY to manage food safety and facility safety at my kitchen, and it's been a game changer — I know exactly where I stand before an inspector walks through the door.
+I've been using EvidLY to manage food safety and fire safety at my kitchen, and it's been a game changer — I know exactly where I stand before an inspector walks through the door.
 
 I think it could really help you too. Plus, for every kitchen that joins through my referral, 12 meals are donated to No Kid Hungry. Learn more: ${K2C_PAGE_URL}
 

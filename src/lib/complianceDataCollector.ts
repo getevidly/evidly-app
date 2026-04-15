@@ -2,7 +2,7 @@
 // Compliance Data Collector — Aggregates operational data
 // ============================================================
 // Collects temp logs, checklists, corrective actions, vendor
-// services, documents, and facility safety data into a single
+// services, documents, and fire safety data into a single
 // ComplianceDataSnapshot for the engine to score.
 //
 // Demo mode: reads from existing demo data files
@@ -98,8 +98,8 @@ const LOCATION_COUNTY_MAP: Record<string, string> = {
 // Food Safety Ops = f(temp, checklists, haccp, incidents) with
 //   renormalized weights: temp=0.333, check=0.278, haccp=0.222, incident=0.167
 // Food Safety Docs = documents.overallDocCurrencyRate
-// Facility Safety Ops = calculateFacilitySafetyScore(facilitySafety inputs)
-// Facility Safety Docs = facilityDocs.overallDocCurrencyRate
+// Fire Safety Ops = calculateFacilitySafetyScore(facilitySafety inputs)
+// Fire Safety Docs = facilityDocs.overallDocCurrencyRate
 
 const DEMO_SNAPSHOTS: Record<string, Omit<ComplianceDataSnapshot, 'collectedAt'>> = {
   // ── Downtown (Location 1, Fresno County) ──

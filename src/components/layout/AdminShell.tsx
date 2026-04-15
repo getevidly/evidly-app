@@ -3,7 +3,7 @@
  *
  * Replaces the tenant Layout for platform_admin users.
  * Dark sidebar (220px), sectioned nav, logo (E gold, vid white, LY gold), sign out.
- * Content area: warm off-white (#F4F2EE).
+ * Content area: cream (#FAF7F0).
  */
 import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -139,7 +139,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     .filter(section => section.items.length > 0);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#F4F2EE' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF7F0' }}>
       {/* Sidebar */}
       <aside
         style={{

@@ -170,7 +170,7 @@ describe('computePillarBenchmarks', () => {
     const result = computePillarBenchmarks(92, 86, pop);
     expect(result).toHaveLength(2);
     expect(result[0].pillar).toBe('Food Safety');
-    expect(result[1].pillar).toBe('Facility Safety');
+    expect(result[1].pillar).toBe('Fire Safety');
   });
 
   it('high food safety score yields high percentile', () => {

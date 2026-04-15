@@ -259,7 +259,7 @@ function buildFaq(j, stateInfo, gc, fc) {
   // Q5: EvidLY pitch
   faq.push({
     q: "How can EvidLY help my " + county + " restaurant stay compliant?",
-    a: "EvidLY applies " + county + "'s exact inspection methodology to your daily operations — including checklists, temperature logs, and facility safety documentation. You see your projected score in real time, before an inspector arrives.",
+    a: "EvidLY applies " + county + "'s exact inspection methodology to your daily operations — including checklists, temperature logs, and fire safety documentation. You see your projected score in real time, before an inspector arrives.",
   });
 
   return faq;

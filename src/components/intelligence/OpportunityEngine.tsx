@@ -10,12 +10,12 @@ export const OpportunityEngine: React.FC<Props> = ({ data }) => {
     if (loc.facilitySafetyVerdict === 'Fail') {
       opportunities.push({
         priority: 1,
-        title: 'Resolve Facility Safety Failure',
+        title: 'Resolve Fire Safety Failure',
         location: loc.locationName,
         investmentRange: '$2,000 – $8,000',
         roiEstimate: `$${Math.round(loc.estimatedRiskExposure * 0.4).toLocaleString()} risk reduction`,
-        impact: 'Eliminates facility safety closure risk and insurance carrier dispute grounds',
-        category: 'Facility Safety',
+        impact: 'Eliminates fire safety closure risk and insurance carrier dispute grounds',
+        category: 'Fire Safety',
       });
     }
     if (loc.foodSafetyStatus === 'Action Required') {

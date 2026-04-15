@@ -30,7 +30,7 @@ export const ALL_MODULES = [
     ],
   },
   {
-    group: 'Facility Safety',
+    group: 'Fire Safety',
     description: 'Fire safety, equipment, and physical plant compliance',
     modules: [
       { id: 'fire_safety', label: 'Fire Safety', description: 'Hood cleaning schedule, NFPA 96 compliance, AHJ info, fire suppression' },

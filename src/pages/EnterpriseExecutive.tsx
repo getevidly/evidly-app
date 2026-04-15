@@ -294,7 +294,7 @@ export function EnterpriseExecutive() {
                 <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety) }}>
                   {drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety}%
                 </p>
-                <p className="text-xs text-[#1E2D4D]/30">Facility Safety</p>
+                <p className="text-xs text-[#1E2D4D]/30">Fire Safety</p>
               </div>
             </div>
           </div>

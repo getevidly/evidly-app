@@ -1,7 +1,7 @@
 // ============================================================
 // ComplianceOverview — Dual-Pillar Compliance Status Page
 // ============================================================
-// GAP-14: Food Safety + Facility Safety displayed side by side.
+// GAP-14: Food Safety + Fire Safety displayed side by side.
 // GAP-12: Multi-AHJ support — primary + federal overlay cards
 //         with worst-case compliance resolution.
 //
@@ -10,7 +10,7 @@
 //
 // Data sources:
 //   Food Safety  → useComplianceEngine → jurisdictionResult
-//   Facility Safety → JURISDICTION_DATABASE + DEMO_LOCATION_GRADE_OVERRIDES
+//   Fire Safety → JURISDICTION_DATABASE + DEMO_LOCATION_GRADE_OVERRIDES
 //   Inspection dates → demoIntelligence.complianceMatrix
 //   Yosemite (multi-AHJ) → DEMO_LOCATIONS + demoLocationJurisdictions
 //
@@ -172,7 +172,7 @@ function formatInspectionDate(dateStr: string | undefined): string {
 
 function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' }) {
   const Icon = pillar === 'food_safety' ? UtensilsCrossed : Flame;
-  const label = pillar === 'food_safety' ? 'Food Safety' : 'Facility Safety';
+  const label = pillar === 'food_safety' ? 'Food Safety' : 'Fire Safety';
   return (
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden animate-pulse">
       <div className="px-4 sm:px-5 py-4 border-b border-[#1E2D4D]/5 flex items-center gap-3">
@@ -281,7 +281,7 @@ function PillarPanel({
 }: PillarPanelProps) {
   const isFoodSafety = pillar === 'food_safety';
   const Icon = isFoodSafety ? UtensilsCrossed : Flame;
-  const label = isFoodSafety ? 'Food Safety' : 'Facility Safety';
+  const label = isFoodSafety ? 'Food Safety' : 'Fire Safety';
   const hasScore = score !== null && score !== undefined && score > 0;
   const scoreColor = hasScore ? getReadinessColor(score!) : '#94a3b8';
   const opsColor = opsScore && opsScore > 0 ? getReadinessColor(opsScore) : '#94a3b8';
@@ -421,7 +421,7 @@ function PillarPanel({
           </div>
         </div>
 
-        {/* ── Section 3: Fire Equipment Status (Facility Safety only) ── */}
+        {/* ── Section 3: Fire Equipment Status (Fire Safety only) ── */}
         {facilityStatusBars && (
           <div>
             <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
@@ -576,7 +576,7 @@ export function ComplianceOverview() {
     };
   }, [hasFoodOverlay, jurisdictionData, gradeData]);
 
-  // ── Facility safety jurisdiction ──────────────────────────
+  // ── Fire safety jurisdiction ──────────────────────────
   const facilityJurisdiction = useMemo(() => {
     const jEntry = getJurisdictionEntry(county, 'facility_safety');
     const fs = gradeData.facilitySafety;
@@ -596,7 +596,7 @@ export function ComplianceOverview() {
     };
   }, [gradeData, county, jurisdictionData]);
 
-  // ── Facility safety federal overlay (GAP-12) ──────────────
+  // ── Fire safety federal overlay (GAP-12) ──────────────
   const facilityFederalOverlay = useMemo((): FederalOverlayData | undefined => {
     if (!hasFireOverlay || !jurisdictionData?.federalFireOverlay) return undefined;
     const overlay = jurisdictionData.federalFireOverlay;
@@ -629,7 +629,7 @@ export function ComplianceOverview() {
 
   const facilityItems = useMemo(() => {
     if (!engineResult) return [];
-    return engineResult.scoreImpactItems.filter(i => i.pillar === 'Facility Safety');
+    return engineResult.scoreImpactItems.filter(i => i.pillar === 'Fire Safety');
   }, [engineResult]);
 
   // Equipment click handler
@@ -713,7 +713,7 @@ export function ComplianceOverview() {
           <PillarSkeleton pillar="food_safety" />
         )}
 
-        {/* Facility Safety */}
+        {/* Fire Safety */}
         {dataReady ? (
           <PillarPanel
             pillar="facility_safety"

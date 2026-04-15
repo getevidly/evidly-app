@@ -303,7 +303,7 @@ function AssessmentLeadsPage() {
                         <div>
                           <p className="text-xs text-navy/30 mb-1">Category Scores</p>
                           {[
-                            { label: 'Facility Safety', val: lead.facility_safety_score },
+                            { label: 'Fire Safety', val: lead.facility_safety_score },
                             { label: 'Food Safety', val: lead.food_safety_score },
                             { label: 'Documentation', val: lead.documentation_score },
                           ].map(s => (

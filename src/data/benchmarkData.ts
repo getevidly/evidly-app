@@ -33,7 +33,7 @@ export interface SizeBenchmark {
 export interface SubcategoryBenchmark {
   key: string;
   label: string;
-  pillar: 'Food Safety' | 'Facility Safety';
+  pillar: 'Food Safety' | 'Fire Safety';
   industryAvg: number;
   verticalAvg: number;
 }
@@ -136,8 +136,8 @@ export const SUBCATEGORY_BENCHMARKS: SubcategoryBenchmark[] = [
   { key: 'temp_compliance', label: 'Temperature Compliance', pillar: 'Food Safety', industryAvg: 82, verticalAvg: 79 },
   { key: 'checklist_completion', label: 'Checklist Completion Rate', pillar: 'Food Safety', industryAvg: 76, verticalAvg: 74 },
   { key: 'cooling_log', label: 'Cooling Log Compliance', pillar: 'Food Safety', industryAvg: 74, verticalAvg: 71 },
-  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Facility Safety', industryAvg: 71, verticalAvg: 68 },
-  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Facility Safety', industryAvg: 84, verticalAvg: 82 },
+  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Fire Safety', industryAvg: 71, verticalAvg: 68 },
+  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Fire Safety', industryAvg: 84, verticalAvg: 82 },
   { key: 'food_handler_cert', label: 'Food Handler Cert Currency', pillar: 'Food Safety', industryAvg: 85, verticalAvg: 83 },
   { key: 'vendor_coi', label: 'Vendor COI Completeness', pillar: 'Food Safety', industryAvg: 78, verticalAvg: 75 },
   { key: 'corrective_action', label: 'Corrective Action Response Time', pillar: 'Food Safety', industryAvg: 72, verticalAvg: 70 },
@@ -246,7 +246,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = { // demo
     percentile: 89,
     categoryRankings: [
       { category: 'Food Safety', percentile: 91 },
-      { category: 'Facility Safety', percentile: 85 },
+      { category: 'Fire Safety', percentile: 85 },
     ],
   },
   'airport-cafe': {
@@ -259,7 +259,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = { // demo
     percentile: 52,
     categoryRankings: [
       { category: 'Food Safety', percentile: 55 },
-      { category: 'Facility Safety', percentile: 44 },
+      { category: 'Fire Safety', percentile: 44 },
     ],
   },
   'university-dining': {
@@ -272,7 +272,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = { // demo
     percentile: 18,
     categoryRankings: [
       { category: 'Food Safety', percentile: 22 },
-      { category: 'Facility Safety', percentile: 15 },
+      { category: 'Fire Safety', percentile: 15 },
     ],
   },
 };

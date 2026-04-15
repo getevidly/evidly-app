@@ -11,7 +11,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
 
   // ── Category hubs (parent = dashboard) ──
   '/food-safety': { label: 'Food Safety', parent: '/dashboard' },
-  '/facility-safety': { label: 'Facility Safety', parent: '/dashboard' },
+  '/facility-safety': { label: 'Fire Safety', parent: '/dashboard' },
   '/compliance': { label: 'Compliance', parent: '/dashboard' },
   '/insights': { label: 'Insights', parent: '/dashboard' },
   '/tools': { label: 'Tools', parent: '/dashboard' },

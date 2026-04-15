@@ -71,7 +71,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     internalTraining: [
       { id: 'it-1', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'System', enrolledAt: '2024-02-01', completedAt: '2024-02-15', score: 96, progressPercent: 100 },
       { id: 'it-2', courseId: 'course-2', courseTitle: 'ServSafe Manager Prep', category: 'food_safety_manager', status: 'completed', assignedBy: 'System', enrolledAt: '2024-03-01', completedAt: '2024-04-10', score: 92, progressPercent: 100 },
-      { id: 'it-3', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'System', enrolledAt: '2025-01-10', completedAt: '2025-02-05', score: 88, progressPercent: 100 },
+      { id: 'it-3', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'System', enrolledAt: '2025-01-10', completedAt: '2025-02-05', score: 88, progressPercent: 100 },
       { id: 'it-4', courseId: 'course-4', courseTitle: 'Compliance Operations', category: 'compliance_ops', status: 'completed', assignedBy: 'System', enrolledAt: '2025-06-01', completedAt: '2025-06-20', score: 94, progressPercent: 100 },
     ],
     trainingHistory: [
@@ -80,7 +80,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
       { id: 'th-3', date: '2025-06-15', action: 'Cert uploaded', details: 'California Food Handler Card renewed (FH-2025-4481)', recordedBy: 'Marcus Johnson' },
       { id: 'th-4', date: '2025-05-20', action: 'Cert uploaded', details: 'HACCP Principles Training certificate uploaded', recordedBy: 'Marcus Johnson' },
       { id: 'th-5', date: '2025-03-10', action: 'Cert uploaded', details: 'ServSafe Manager Certification uploaded (SM-2025-7721)', recordedBy: 'Marcus Johnson' },
-      { id: 'th-6', date: '2025-02-05', action: 'Training completed', details: 'Facility Safety Fundamentals — Score: 88%', recordedBy: 'System' },
+      { id: 'th-6', date: '2025-02-05', action: 'Training completed', details: 'Fire Safety Fundamentals — Score: 88%', recordedBy: 'System' },
       { id: 'th-7', date: '2024-04-10', action: 'Training completed', details: 'ServSafe Manager Prep — Score: 92%', recordedBy: 'System' },
       { id: 'th-8', date: '2024-02-15', action: 'Training completed', details: 'Food Handler Essentials — Score: 96%', recordedBy: 'System' },
     ],
@@ -97,12 +97,12 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     internalTraining: [
       { id: 'it-5', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'Marcus Johnson', enrolledAt: '2024-04-01', completedAt: '2024-04-20', score: 90, progressPercent: 100 },
       { id: 'it-6', courseId: 'course-2', courseTitle: 'ServSafe Manager Prep', category: 'food_safety_manager', status: 'completed', assignedBy: 'Marcus Johnson', enrolledAt: '2024-05-01', completedAt: '2024-06-15', score: 88, progressPercent: 100 },
-      { id: 'it-7', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Marcus Johnson', enrolledAt: '2025-03-01', completedAt: '2025-03-25', score: 85, progressPercent: 100 },
+      { id: 'it-7', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Marcus Johnson', enrolledAt: '2025-03-01', completedAt: '2025-03-25', score: 85, progressPercent: 100 },
     ],
     trainingHistory: [
       { id: 'th-9', date: '2025-08-20', action: 'Cert uploaded', details: 'California Food Handler Card renewed (FH-2025-5502)', recordedBy: 'Sarah Chen' },
       { id: 'th-10', date: '2025-04-05', action: 'Cert uploaded', details: 'ServSafe Manager Certification uploaded (SM-2025-8832)', recordedBy: 'Sarah Chen' },
-      { id: 'th-11', date: '2025-03-25', action: 'Training completed', details: 'Facility Safety Fundamentals — Score: 85%', recordedBy: 'System' },
+      { id: 'th-11', date: '2025-03-25', action: 'Training completed', details: 'Fire Safety Fundamentals — Score: 85%', recordedBy: 'System' },
       { id: 'th-12', date: '2024-06-15', action: 'Training completed', details: 'ServSafe Manager Prep — Score: 88%', recordedBy: 'System' },
       { id: 'th-13', date: '2024-04-20', action: 'Training completed', details: 'Food Handler Essentials — Score: 90%', recordedBy: 'System' },
     ],
@@ -137,12 +137,12 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
     internalTraining: [
       { id: 'it-11', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'Marcus Johnson', enrolledAt: '2024-04-10', completedAt: '2024-05-01', score: 82, progressPercent: 100 },
-      { id: 'it-12', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'in_progress', assignedBy: 'Marcus Johnson', enrolledAt: '2025-11-15', completedAt: null, score: null, progressPercent: 40 },
+      { id: 'it-12', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'in_progress', assignedBy: 'Marcus Johnson', enrolledAt: '2025-11-15', completedAt: null, score: null, progressPercent: 40 },
       { id: 'it-13', courseId: 'course-5', courseTitle: 'Allergen Awareness', category: 'food_safety_handler', status: 'not_started', assignedBy: 'Marcus Johnson', enrolledAt: '2026-01-15', completedAt: null, score: null, progressPercent: 0 },
     ],
     trainingHistory: [
       { id: 'th-19', date: '2026-01-15', action: 'Training assigned', details: 'Allergen Awareness assigned by Marcus Johnson', recordedBy: 'Marcus Johnson' },
-      { id: 'th-20', date: '2025-11-15', action: 'Training assigned', details: 'Facility Safety Fundamentals assigned by Marcus Johnson', recordedBy: 'Marcus Johnson' },
+      { id: 'th-20', date: '2025-11-15', action: 'Training assigned', details: 'Fire Safety Fundamentals assigned by Marcus Johnson', recordedBy: 'Marcus Johnson' },
       { id: 'th-21', date: '2024-05-01', action: 'Training completed', details: 'Food Handler Essentials — Score: 82%', recordedBy: 'System' },
       { id: 'th-22', date: '2024-04-02', action: 'Cert uploaded', details: 'California Food Handler Card uploaded (FH-2024-2201)', recordedBy: 'David Park' },
     ],
@@ -157,10 +157,10 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
     internalTraining: [
       { id: 'it-14', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'Maria Garcia', enrolledAt: '2023-03-10', completedAt: '2023-04-01', score: 78, progressPercent: 100 },
-      { id: 'it-15', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Maria Garcia', enrolledAt: '2024-09-01', completedAt: '2024-10-05', score: 80, progressPercent: 100 },
+      { id: 'it-15', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Maria Garcia', enrolledAt: '2024-09-01', completedAt: '2024-10-05', score: 80, progressPercent: 100 },
     ],
     trainingHistory: [
-      { id: 'th-23', date: '2024-10-05', action: 'Training completed', details: 'Facility Safety Fundamentals — Score: 80%', recordedBy: 'System' },
+      { id: 'th-23', date: '2024-10-05', action: 'Training completed', details: 'Fire Safety Fundamentals — Score: 80%', recordedBy: 'System' },
       { id: 'th-24', date: '2023-04-01', action: 'Training completed', details: 'Food Handler Essentials — Score: 78%', recordedBy: 'System' },
       { id: 'th-25', date: '2023-02-26', action: 'Cert uploaded', details: 'California Food Handler Card uploaded (FH-2023-1188)', recordedBy: 'Michael Torres' },
     ],
@@ -175,11 +175,11 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
     internalTraining: [
       { id: 'it-16', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'Sarah Chen', enrolledAt: '2025-07-15', completedAt: '2025-07-28', score: 92, progressPercent: 100 },
-      { id: 'it-17', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Sarah Chen', enrolledAt: '2025-08-01', completedAt: '2025-08-20', score: 86, progressPercent: 100 },
+      { id: 'it-17', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'completed', assignedBy: 'Sarah Chen', enrolledAt: '2025-08-01', completedAt: '2025-08-20', score: 86, progressPercent: 100 },
       { id: 'it-18', courseId: 'course-5', courseTitle: 'Allergen Awareness', category: 'food_safety_handler', status: 'completed', assignedBy: 'Sarah Chen', enrolledAt: '2025-07-12', completedAt: '2025-07-25', score: 95, progressPercent: 100 },
     ],
     trainingHistory: [
-      { id: 'th-26', date: '2025-08-20', action: 'Training completed', details: 'Facility Safety Fundamentals — Score: 86%', recordedBy: 'System' },
+      { id: 'th-26', date: '2025-08-20', action: 'Training completed', details: 'Fire Safety Fundamentals — Score: 86%', recordedBy: 'System' },
       { id: 'th-27', date: '2025-07-28', action: 'Training completed', details: 'Food Handler Essentials — Score: 92%', recordedBy: 'System' },
       { id: 'th-28', date: '2025-07-25', action: 'Training completed', details: 'Allergen Awareness — Score: 95%', recordedBy: 'System' },
       { id: 'th-29', date: '2025-07-12', action: 'Cert uploaded', details: 'Allergen Awareness Training certificate uploaded (AA-2025-445)', recordedBy: 'Emma Rodriguez' },
@@ -195,10 +195,10 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
     internalTraining: [
       { id: 'it-19', courseId: 'course-1', courseTitle: 'Food Handler Essentials', category: 'food_safety_handler', status: 'completed', assignedBy: 'Sarah Chen', enrolledAt: '2024-12-15', completedAt: '2025-01-08', score: 84, progressPercent: 100 },
-      { id: 'it-20', courseId: 'course-3', courseTitle: 'Facility Safety Fundamentals', category: 'facility_safety', status: 'in_progress', assignedBy: 'Sarah Chen', enrolledAt: '2025-12-01', completedAt: null, score: null, progressPercent: 55 },
+      { id: 'it-20', courseId: 'course-3', courseTitle: 'Fire Safety Fundamentals', category: 'facility_safety', status: 'in_progress', assignedBy: 'Sarah Chen', enrolledAt: '2025-12-01', completedAt: null, score: null, progressPercent: 55 },
     ],
     trainingHistory: [
-      { id: 'th-31', date: '2025-12-01', action: 'Training assigned', details: 'Facility Safety Fundamentals assigned by Sarah Chen', recordedBy: 'Sarah Chen' },
+      { id: 'th-31', date: '2025-12-01', action: 'Training assigned', details: 'Fire Safety Fundamentals assigned by Sarah Chen', recordedBy: 'Sarah Chen' },
       { id: 'th-32', date: '2025-01-08', action: 'Training completed', details: 'Food Handler Essentials — Score: 84%', recordedBy: 'System' },
       { id: 'th-33', date: '2024-12-10', action: 'Cert uploaded', details: 'California Food Handler Card uploaded (FH-2024-8834)', recordedBy: 'Alex Thompson' },
     ],
@@ -267,7 +267,7 @@ export const TRAINING_CATALOG: TrainingCatalogItem[] = [
   { id: 'cat-09', orgId: null, name: 'Personal Hygiene & Illness Policy', category: 'food_safety', description: 'Employee health policies, reportable illnesses (Big 5), exclusion/restriction criteria, and return-to-work procedures.', isSystem: true, isRequired: true, requiredBy: 'CalCode §113949.5', renewalPeriodMonths: 12, appliesTo: ['all'], createdAt: '2025-01-01T00:00:00Z' },
   { id: 'cat-10', orgId: null, name: 'Norovirus & Foodborne Illness Awareness', category: 'food_safety', description: 'Understanding norovirus transmission, symptoms, prevention strategies, and proper response to suspected foodborne illness outbreaks.', isSystem: true, isRequired: false, requiredBy: 'FDA Food Code §2-201.11', renewalPeriodMonths: 12, appliesTo: ['all'], createdAt: '2025-01-01T00:00:00Z' },
 
-  // ── Facility Safety (7 system items) ──
+  // ── Fire Safety (7 system items) ──
   { id: 'cat-11', orgId: null, name: 'Fire Extinguisher Use & Training', category: 'facility_safety', description: 'Annual portable extinguisher training — types (ABC, K-Class), PASS technique, inspection procedures, and placement requirements.', isSystem: true, isRequired: true, requiredBy: 'NFPA 10 §7.1', renewalPeriodMonths: 12, appliesTo: ['all'], createdAt: '2025-01-01T00:00:00Z' },
   { id: 'cat-12', orgId: null, name: 'Kitchen Fire Suppression System Activation', category: 'facility_safety', description: 'Manual pull station location, activation procedure, gas shut-off, and post-activation steps for commercial hood suppression systems.', isSystem: true, isRequired: true, requiredBy: 'NFPA 96 §12.1', renewalPeriodMonths: 12, appliesTo: ['chef', 'kitchen_staff', 'kitchen_manager'], createdAt: '2025-01-01T00:00:00Z' },
   { id: 'cat-13', orgId: null, name: 'Emergency Evacuation Procedures', category: 'facility_safety', description: 'Emergency action plan, evacuation routes, assembly points, head counts, and coordination with emergency services.', isSystem: true, isRequired: true, requiredBy: 'OSHA 29 CFR 1910.38', renewalPeriodMonths: 12, appliesTo: ['all'], createdAt: '2025-01-01T00:00:00Z' },
@@ -297,7 +297,7 @@ export function getDemoCatalog(): TrainingCatalogItem[] {
 export function getCatalogCategories(): { value: string; label: string }[] {
   return [
     { value: 'food_safety', label: 'Food Safety' },
-    { value: 'facility_safety', label: 'Facility Safety' },
+    { value: 'facility_safety', label: 'Fire Safety' },
     { value: 'workplace_safety', label: 'Workplace Safety' },
   ];
 }

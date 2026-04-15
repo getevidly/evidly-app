@@ -84,7 +84,7 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
                     <FallbackPill pillar="" level={s.foodSafety} reason={s.foodSafetyReason} />
                   )}
                 </div>
-                {/* Facility Safety — pass/fail badge */}
+                {/* Fire Safety — pass/fail badge */}
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
                     Facility

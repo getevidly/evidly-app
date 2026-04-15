@@ -19,7 +19,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   owner_operator: [
     { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
-    { emoji: '🔥', label: 'Facility Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
+    { emoji: '🔥', label: 'Fire Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
     { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
     { emoji: '🔍', label: 'Inspector', route: '/inspector-mode', permission: 'bottom.corrective-actions' },
   ],
@@ -45,7 +45,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '⚠️', label: 'Incidents', route: '/incidents', permission: 'bottom.incidents' },
   ],
   facilities_manager: [
-    { emoji: '🔥', label: 'Facility Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
+    { emoji: '🔥', label: 'Fire Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
     { emoji: '🔧', label: 'Equipment', route: '/equipment', permission: 'bottom.equipment' },
     { emoji: '📝', label: 'Request Svc', route: '/vendors?tab=requests', permission: 'bottom.schedule' },
     { emoji: '👷', label: 'Vendors', route: '/vendors', permission: 'bottom.vendors' },

@@ -188,7 +188,7 @@ const PD={
     ],
   ],
   "facility-safety":[
-    {type:"n",h:"Facility Safety",s:"Main Kitchen · Fresno, CA"},
+    {type:"n",h:"Fire Safety",s:"Main Kitchen · Fresno, CA"},
     [["Hood System","1"],["Status","Current","#16a34a"],["Last Service","Feb 8"],["Next Service","Mar 16","#92400e"]],
     ["Hood Cleaning","Schedule",
       ["d","🟢","Main Kitchen","Cleaning Pros Plus · Last: Feb 8 · Next: Mar 16","ok","Current"],
@@ -319,7 +319,7 @@ const PD={
     ["Available Reports","Generate",
       ["d","📊","Monthly Compliance Summary","Food Safety · PDF · Last: Mar 1",null,null,"Download"],
       ["d","📊","Temperature Log Export","Food Safety · CSV · Last: Mar 10",null,null,"Download"],
-      ["d","📊","Vendor Service History","Facility Safety · PDF · Last: Feb 28",null,null,"Download"],
+      ["d","📊","Vendor Service History","Fire Safety · PDF · Last: Feb 28",null,null,"Download"],
       ["d","📊","Annual Hood Cleaning Record","Fire Safety · PDF · Last: Jan 31",null,null,"Download"],
     ],
   ],
@@ -518,7 +518,7 @@ function Dashboard({role,sample,oa}){
       {renderRow(["t","Evening checklist","pend","Due 10:00 PM"],3,oa)}
     </Card>}
     {role==="compliance_manager"&&<Card t="Open Alerts" onA={cta=>oa?.(cta,{})}>
-      {renderRow(["!","w","Fire suppression service due in 5 days","Main Kitchen · Facility Safety"],0,oa)}
+      {renderRow(["!","w","Fire suppression service due in 5 days","Main Kitchen · Fire Safety"],0,oa)}
       {renderRow(["!","w","Prep cooler temp log overdue","Main Kitchen · Food Safety"],1,oa)}
     </Card>}
     {role==="facilities"&&<Card t="Services Due Soon" onA={cta=>oa?.(cta,{})}>
@@ -548,7 +548,7 @@ function PageContent({pageId,role,sample,oa}){
 const NAV=[
   {id:"top",lbl:null,items:[["dashboard","Dashboard","⊞"],["calendar","Calendar","📅"]]},
   {id:"food",lbl:"FOOD SAFETY",items:[["checklists","Checklists","✅"],["temperatures","Temperature Readings","🌡️"],["haccp","HACCP","🔬"],["corrective","Corrective Actions","🔧"],["incidents","Incidents","⚠️"]]},
-  {id:"fire",lbl:"FACILITY SAFETY",items:[["facility-safety","Facility Safety","🔥"],["services","Vendor Services","🛠️"]]},
+  {id:"fire",lbl:"FIRE SAFETY",items:[["facility-safety","Fire Safety","🔥"],["services","Vendor Services","🛠️"]]},
   {id:"comp",lbl:"COMPLIANCE",items:[["documents","Documents","📄"],["self-inspection","Self-Inspection","🔍"],["training","Training Records","🎓"]]},
   {id:"ins",lbl:"INSIGHTS",items:[["ai-insights","AI Insights","🤖"],["alerts","Alerts","🔔"],["analytics","Analytics","📊"],["intelligence","Operations Intelligence","🧠"],["jurisdiction-intel","Jurisdiction Intelligence","⚖️"],["regulatory","Regulatory Updates","📰"],["insurance-risk","Insurance Risk","🛡️"],["leaderboard","Leaderboard","🏆"],["reporting","Reporting","📈"],["iot-monitoring","IoT Monitoring","📡"],["benchmarks","Benchmarks","📐"]]},
   {id:"tls",lbl:"TOOLS",items:[["inspector-view","Inspector View","👁️"],["photo-evidence","Photos","📷"],["marketplace","Vendor Marketplace","🛒"],["self-diagnosis","Self-Diagnosis","🔬"]]},

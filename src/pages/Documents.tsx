@@ -74,7 +74,7 @@ const SAMPLE_DOCUMENTS: Document[] = [
   { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Location 2' }, // demo
   { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Location 1' }, // demo
   { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'Location 3' }, // demo
-  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Location 1' }, // demo
+  { id: '10', title: 'Fire Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Location 1' }, // demo
 
   // === Certificates ===
   { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Location 1' }, // demo
@@ -108,14 +108,14 @@ const SAMPLE_DOCUMENTS: Document[] = [
 const SHARED_ITEMS: SharedItem[] = [
   { id: '1', document: 'Health Department Permit', recipient: 'inspector@healthdept.gov', recipientType: 'Health Inspector', date: '2026-02-05', status: 'viewed' },
   { id: '2', document: 'General Liability Insurance', recipient: 'claims@insurance.com', recipientType: 'Insurance Company', date: '2026-02-03', status: 'downloaded' },
-  { id: '3', document: 'Facility Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
+  { id: '3', document: 'Fire Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
 // Equipment/vendor documents — visible to Facilities + Management/Executive
 const FACILITIES_DOC_CATEGORIES = new Set(['Other']); // Hood cleaning, HVAC, fire suppression, pest control, grease trap, etc.
 const FACILITIES_DOC_TITLES = new Set([
   'Ansul System Certification',
-  'Facility Safety Inspection Report',
+  'Fire Safety Inspection Report',
 ]);
 
 // Operational documents — visible to Kitchen Staff + Management/Executive

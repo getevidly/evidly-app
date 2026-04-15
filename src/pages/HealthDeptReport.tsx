@@ -398,7 +398,7 @@ export function HealthDeptReport() {
                   <SectionToggle label="Facility Information" enabled={sections.facilityInfo} onChange={() => toggleSection('facilityInfo')} />
                   <SectionToggle label="Food Safety Summary" enabled={sections.foodSafety} onChange={() => toggleSection('foodSafety')} locked={!isPaidTier} />
                   <SectionToggle label="Employee Certifications" enabled={sections.employeeCerts} onChange={() => toggleSection('employeeCerts')} locked={!isPaidTier} />
-                  <SectionToggle label="Facility Safety & Equipment" enabled={sections.facilitySafety} onChange={() => toggleSection('facilitySafety')} locked={!isPaidTier} />
+                  <SectionToggle label="Fire Safety & Equipment" enabled={sections.facilitySafety} onChange={() => toggleSection('facilitySafety')} locked={!isPaidTier} />
                   <SectionToggle label="Vendor Documentation" enabled={sections.vendorDocs} onChange={() => toggleSection('vendorDocs')} locked={!isPaidTier} />
                   <SectionToggle label="Corrective Actions" enabled={sections.correctiveActions} onChange={() => toggleSection('correctiveActions')} locked={!isPaidTier} />
                   <SectionToggle label="Compliance Score & Trends" enabled={sections.complianceScore} onChange={() => toggleSection('complianceScore')} />
@@ -409,7 +409,7 @@ export function HealthDeptReport() {
                     <Lock className="h-5 w-5 text-[#A08C5A]" />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>Free Tier — Limited Report</div>
-                      <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Facility Safety, Vendor Docs, and Corrective Actions sections.</div>
+                      <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Fire Safety, Vendor Docs, and Corrective Actions sections.</div>
                     </div>
                     <button
                       onClick={() => setIsPaidTier(true)}
@@ -465,7 +465,7 @@ export function HealthDeptReport() {
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', textAlign: 'center' }}>Compliance Score</div>
                 {[
                   { label: 'Food Safety', framework: template.name, score: scores.foodSafety },
-                  { label: 'Facility Safety', framework: 'NFPA 96 / CA Fire Code', score: scores.facilitySafety },
+                  { label: 'Fire Safety', framework: 'NFPA 96 / CA Fire Code', score: scores.facilitySafety },
                 ].map(p => {
                   const statusLabel = p.score >= 90 ? 'Compliant' : p.score >= 70 ? 'Needs Attention' : 'Critical';
                   const statusColor = p.score >= 90 ? '#22c55e' : p.score >= 70 ? '#eab308' : '#ef4444';
@@ -605,7 +605,7 @@ export function HealthDeptReport() {
                       <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.facilitySafety), lineHeight: 1 }}>
                         {generatedReport.complianceScore.facilitySafety}
                       </div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>Facility Safety</div>
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>Fire Safety</div>
                     </div>
                     <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
                     <div>
@@ -732,10 +732,10 @@ export function HealthDeptReport() {
                   </CollapsibleSection>
                 )}
 
-                {/* Section 4: Facility Safety */}
+                {/* Section 4: Fire Safety */}
                 {generatedReport.config.sections.facilitySafety && (
                   <CollapsibleSection
-                    title="Facility Safety & Equipment"
+                    title="Fire Safety & Equipment"
                     icon={<Flame className="h-5 w-5 text-[#1E2D4D]" />}
                     badge={<CountBadge count={generatedReport.facilitySafety.filter(f => f.status === 'overdue').length} color="red" />}
                   >
@@ -874,7 +874,7 @@ export function HealthDeptReport() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {[
                           { label: 'Food Safety', value: generatedReport.complianceScore.foodSafety },
-                          { label: 'Facility Safety', value: generatedReport.complianceScore.facilitySafety },
+                          { label: 'Fire Safety', value: generatedReport.complianceScore.facilitySafety },
                         ].map(p => (
                           <div key={p.label} style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
                             <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 75 ? '#eab308' : p.value >= 60 ? '#f59e0b' : '#ef4444' }}>

@@ -93,7 +93,7 @@ describe('insuranceScoringProfiles', () => {
 // ── Category Score Calculators ───────────────────────────────
 
 describe('category calculators', () => {
-  it('fire risk: downtown scores high (good facility safety data)', () => {
+  it('fire risk: downtown scores high (good fire safety data)', () => {
     const snapshot = collectComplianceData('downtown', { isDemoMode: true });
     const result = calculateFireRiskV2(snapshot, { facilitySafety: 92 });
     expect(result.score).toBeGreaterThanOrEqual(70);

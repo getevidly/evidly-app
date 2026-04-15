@@ -715,7 +715,7 @@ function AddTrainingModal({
           >
             <option value="">Select category</option>
             <option value="food_safety">Food Safety</option>
-            <option value="facility_safety">Facility Safety</option>
+            <option value="facility_safety">Fire Safety</option>
             <option value="workplace_safety">Workplace Safety</option>
           </select>
         </div>

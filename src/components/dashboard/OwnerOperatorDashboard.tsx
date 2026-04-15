@@ -184,7 +184,7 @@ export default function OwnerOperatorDashboard() {
   if (loading) return <DashboardSkeleton />;
 
   return (
-    <div style={{ ...FONT, backgroundColor: '#F5F6F8', minHeight: '100vh', paddingBottom: 80 }}>
+    <div style={{ ...FONT, backgroundColor: '#FAF7F0', minHeight: '100vh', paddingBottom: 80 }}>
 
       {/* Error state */}
       {error && (

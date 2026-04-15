@@ -38,7 +38,7 @@ export interface NormalizedBenchmark {
 }
 
 export interface PillarBenchmark {
-  pillar: 'Food Safety' | 'Facility Safety';
+  pillar: 'Food Safety' | 'Fire Safety';
   yourScore: number;
   peerMean: number;
   percentile: number;
@@ -48,7 +48,7 @@ export interface PillarBenchmark {
 export interface SubcategoryBenchmarkResult {
   key: string;
   label: string;
-  pillar: 'Food Safety' | 'Facility Safety';
+  pillar: 'Food Safety' | 'Fire Safety';
   yourScore: number;
   peerMean: number;
   percentile: number;
@@ -170,7 +170,7 @@ export function computeNormalizedBenchmark(
 // ── Pillar Benchmarks ────────────────────────────────────────
 
 /**
- * Compute per-pillar benchmarks (Food Safety + Facility Safety).
+ * Compute per-pillar benchmarks (Food Safety + Fire Safety).
  */
 export function computePillarBenchmarks(
   foodSafety: number,
@@ -191,7 +191,7 @@ export function computePillarBenchmarks(
       gap: Math.round(foodSafety - fsMean),
     },
     {
-      pillar: 'Facility Safety',
+      pillar: 'Fire Safety',
       yourScore: facilitySafety,
       peerMean: Math.round(facMean),
       percentile: facRank.percentile,

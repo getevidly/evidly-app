@@ -46,7 +46,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
 
     y = drawSectionHeading(doc, 'Compliance Scores by Location', y);
     drawTable(doc,
-      ['Location', 'Food Safety', 'Status', 'Facility Safety', 'Status'],
+      ['Location', 'Food Safety', 'Status', 'Fire Safety', 'Status'],
       data.locationScores.map(l => [l.location, String(l.foodSafety), l.foodStatus, String(l.facilitySafety), l.facilityStatus]),
       y,
     );
@@ -64,7 +64,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {[
           { label: 'Food Safety', score: data.orgScores.foodSafety },
-          { label: 'Facility Safety', score: data.orgScores.facilitySafety },
+          { label: 'Fire Safety', score: data.orgScores.facilitySafety },
         ].map(s => (
           <div key={s.label} className="rounded-xl p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <p className="text-xs font-medium mb-1" style={{ color: MUTED }}>{s.label}</p>
@@ -86,7 +86,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="foodSafety" name="Food Safety" stroke={NAVY} strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="facilitySafety" name="Facility Safety" stroke="#d97706" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="facilitySafety" name="Fire Safety" stroke="#d97706" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -99,7 +99,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `2px solid ${CARD_BORDER}` }}>
-                {['Location', 'Food Safety', 'Status', 'Facility Safety', 'Status'].map(h => (
+                {['Location', 'Food Safety', 'Status', 'Fire Safety', 'Status'].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-xs font-semibold" style={{ color: MUTED }}>{h}</th>
                 ))}
               </tr>

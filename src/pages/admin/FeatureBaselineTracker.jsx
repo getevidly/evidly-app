@@ -60,7 +60,7 @@ const FEATURES = [
   { id: 15, name: 'Vendor Cost Intelligence', category: 'Vendor & Document Intelligence', verdict: 'CONFIRMED', route: 'N/A', files: 'ServiceCostSection.tsx, CostOfInactionEngine.tsx', notes: 'Annual spend rollup, risk/deferral cost calculation' },
 
   // Compliance & Scoring (16-28)
-  { id: 16, name: 'Dual-Pillar Compliance Scoring', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: 'N/A', files: 'complianceScoring.ts, complianceEngine.ts', notes: 'Food safety (5 states) + facility safety (Pass/Fail) independent pillars' },
+  { id: 16, name: 'Dual-Pillar Compliance Scoring', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: 'N/A', files: 'complianceScoring.ts, complianceEngine.ts', notes: 'Food safety (5 states) + fire safety (Pass/Fail) independent pillars' },
   { id: 17, name: 'Jurisdiction Intelligence Engine (JIE)', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: 'N/A', files: 'jurisdictionEngine.ts (606 lines)', notes: '7+ states, auto-detect by ZIP, hierarchical jurisdiction chains' },
   { id: 18, name: 'Insurance Risk Engine', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/insurance-risk', files: 'insuranceRiskScoreV2.ts, InsuranceRisk.tsx', notes: '7 edge functions, carrier API, daily recalculation' },
   { id: 19, name: 'Self-Inspection', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/self-audit', files: 'SelfAudit.tsx, selfInspectionScoring.ts, selfInspectionPdf.ts', notes: 'Jurisdiction-aware criteria, severity-based penalty system' },

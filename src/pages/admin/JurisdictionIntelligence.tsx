@@ -2,7 +2,7 @@
  * JurisdictionIntelligence — Standalone admin page
  *
  * Route: /admin/jurisdiction-intelligence
- * Shows jurisdiction-specific food safety and facility safety regulatory changes.
+ * Shows jurisdiction-specific food safety and fire safety regulatory changes.
  * Queries jurisdiction_intel_updates table.
  */
 import { useState, useEffect } from 'react';

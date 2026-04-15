@@ -40,7 +40,7 @@ const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
 const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof EvidlyIcon; color: string; bg: string }> = {
   food_safety_handler: { label: 'Food Safety – Handler', icon: EvidlyIcon, color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1E2D4D', bg: '#e0f2fe' },
-  facility_safety: { label: 'Facility Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
+  facility_safety: { label: 'Fire Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
   compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#A08C5A', bg: '#fef3c7' },
   custom: { label: 'Custom', icon: Brain, color: '#7c3aed', bg: '#ede9fe' },
 };
@@ -448,7 +448,7 @@ function CertificationsTab() {
           <option value="all">All Types</option>
           <option value="food_handler">Food Handler</option>
           <option value="food_manager_prep">Food Manager (CFPM)</option>
-          <option value="facility_safety">Facility Safety</option>
+          <option value="facility_safety">Fire Safety</option>
           <option value="custom">Custom</option>
         </select>
         <span style={{ fontSize: 13, color: '#6b7280' }}>{filtered.length} certificate{filtered.length !== 1 ? 's' : ''}</span>
@@ -807,7 +807,7 @@ const PRICING_TIERS = [
     period: '/mo per location',
     color: '#6b7280',
     features: [
-      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Up to 10 employees' },
+      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Up to 10 employees' },
       { name: 'CFPM prep modules', included: false },
       { name: 'Custom course builder', included: false },
       { name: 'AI study companion', included: false },
@@ -826,7 +826,7 @@ const PRICING_TIERS = [
     color: '#1E2D4D',
     popular: true,
     features: [
-      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Up to 50 employees' },
+      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Up to 50 employees' },
       { name: 'CFPM prep modules', included: true },
       { name: 'Custom course builder', included: true, note: 'Up to 5 courses' },
       { name: 'AI study companion', included: true, note: '50 questions/mo' },
@@ -844,7 +844,7 @@ const PRICING_TIERS = [
     period: 'per location',
     color: '#A08C5A',
     features: [
-      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Unlimited' },
+      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Unlimited' },
       { name: 'CFPM prep modules', included: true },
       { name: 'Custom course builder', included: true, note: 'Unlimited' },
       { name: 'AI study companion', included: true, note: 'Unlimited' },

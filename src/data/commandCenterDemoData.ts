@@ -247,7 +247,7 @@ const AI_TRIAGE: Record<string, AiTriageAssessment> = {
     confidence_breakdown: { relevance: 0.92, severity: 0.78, urgency: 0.80 },
     reasoning: 'Enforcement surge confirmed via county data. 47% citation increase is significant. Fresno County clients need proactive hood cleaning verification.',
     affected_client_count: 23,
-    suggested_game_plan: 'Notify Fresno clients, update facility safety checklist with hood verification, consider scoring weight adjustment.',
+    suggested_game_plan: 'Notify Fresno clients, update fire safety checklist with hood verification, consider scoring weight adjustment.',
   },
   'sig-004': {
     recommended_action: 'defer',
@@ -373,12 +373,12 @@ const DEMO_GAME_PLANS: GamePlan[] = [
     id: 'gp-003',
     signal_id: 'sig-003',
     title: 'Fresno Hood Cleaning Enforcement Response',
-    description: 'Update facility safety checklists and scoring for Fresno County clients in response to the enforcement surge.',
+    description: 'Update fire safety checklists and scoring for Fresno County clients in response to the enforcement surge.',
     priority: 'medium',
     status: 'draft',
     tasks: [
       { id: 'gp-003-t1', title: 'Review current hood cleaning checklist items for Fresno jurisdiction', status: 'pending', assignee: null, due_date: daysAgo(-3), completed_at: null },
-      { id: 'gp-003-t2', title: 'Increase facility safety weight for Fresno County scoring', status: 'pending', assignee: null, due_date: daysAgo(-5), completed_at: null },
+      { id: 'gp-003-t2', title: 'Increase fire safety weight for Fresno County scoring', status: 'pending', assignee: null, due_date: daysAgo(-5), completed_at: null },
       { id: 'gp-003-t3', title: 'Send advisory to Fresno County clients', status: 'pending', assignee: null, due_date: daysAgo(-7), completed_at: null },
     ],
     task_status: { total: 3, completed: 0, in_progress: 0 },
@@ -415,8 +415,8 @@ const DEMO_PLATFORM_UPDATES: PlatformUpdate[] = [
   {
     id: 'pu-001',
     signal_id: 'sig-005',
-    title: 'Update Fresno County Scoring: Facility Safety Weight Adjustment',
-    description: 'Increase facility safety weight from 35% to 40% for Fresno County jurisdiction based on enforcement surge data.',
+    title: 'Update Fresno County Scoring: Fire Safety Weight Adjustment',
+    description: 'Increase fire safety weight from 35% to 40% for Fresno County jurisdiction based on enforcement surge data.',
     update_type: 'scoring_rule',
     target_entity: 'jurisdiction:fresno_county',
     changes_preview: {
@@ -513,7 +513,7 @@ const DEMO_NOTIFICATIONS: ClientNotification[] = [
   {
     id: 'cn-003',
     signal_id: 'sig-003',
-    title: 'Facility Safety Alert: Fresno County Enforcement Increase',
+    title: 'Fire Safety Alert: Fresno County Enforcement Increase',
     body: 'Fresno County has increased hood cleaning enforcement by 47%. Please verify your hood cleaning schedule is current and all documentation is uploaded to EvidLY. Three facilities have been closed in the last 30 days for exhaust system violations.',
     notification_type: 'alert',
     severity: 'high',

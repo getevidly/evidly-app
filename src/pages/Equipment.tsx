@@ -827,7 +827,7 @@ export function Equipment() {
           style={{ color: '#1E2D4D' }}
         >
           <ChevronDown size={14} className="rotate-90" />
-          Back to Facility Safety
+          Back to Fire Safety
         </button>
       )}
 

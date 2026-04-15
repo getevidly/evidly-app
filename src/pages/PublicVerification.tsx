@@ -136,7 +136,7 @@ export default function PublicVerification() {
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Category Rankings</h3>
             <div className="space-y-3">
               <PercentileBar label="Food Safety" value={data.foodSafetyPercentile} />
-              <PercentileBar label="Facility Safety" value={data.facilitySafetyPercentile} />
+              <PercentileBar label="Fire Safety" value={data.facilitySafetyPercentile} />
             </div>
           </div>
 

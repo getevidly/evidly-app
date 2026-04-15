@@ -31,7 +31,7 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
         <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-              {['Location', 'Score', 'Food Safety', 'Facility Safety', 'Last Inspection', 'Status'].map(h => (
+              {['Location', 'Score', 'Food Safety', 'Fire Safety', 'Last Inspection', 'Status'].map(h => (
                 <th key={h} className="text-left px-3 py-2 text-xs font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{h}</th>
               ))}
             </tr>

@@ -30,7 +30,7 @@ const pages: QuickItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', type: 'page', icon: LayoutDashboard },
   { id: 'calendar', label: 'Calendar', href: '/calendar', type: 'page', icon: CalendarDays },
   { id: 'food-safety', label: 'Food Safety', href: '/food-safety', type: 'page', icon: ShieldCheck },
-  { id: 'facility-safety', label: 'Facility Safety', href: '/facility-safety', type: 'page', icon: Building2 },
+  { id: 'facility-safety', label: 'Fire Safety', href: '/facility-safety', type: 'page', icon: Building2 },
   { id: 'compliance', label: 'Compliance', href: '/compliance', type: 'page', icon: FileText },
   { id: 'insights', label: 'Insights', href: '/insights', type: 'page', icon: Brain },
   { id: 'tools', label: 'Tools', href: '/tools', type: 'page', icon: Wrench },

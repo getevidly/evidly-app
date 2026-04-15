@@ -162,13 +162,13 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     { value: 'prefer_not', label: 'Prefer not to say' },
   ] },
 
-  // Section B — Facility Safety
-  { id: 'B1', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have a commercial kitchen exhaust hood system?', options: [
+  // Section B — Fire Safety
+  { id: 'B1', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have a commercial kitchen exhaust hood system?', options: [
     { value: 'yes', label: 'Yes' },
     { value: 'no', label: 'No' },
     { value: 'not_sure', label: 'Not sure' },
   ] },
-  { id: 'B2', section: 'facility', sectionLabel: 'Facility Safety', label: 'When was your last hood cleaning?', options: [
+  { id: 'B2', section: 'facility', sectionLabel: 'Fire Safety', label: 'When was your last hood cleaning?', options: [
     { value: 'within_month', label: 'Within the last month' },
     { value: '1_3_months', label: '1–3 months ago' },
     { value: '3_6_months', label: '3–6 months ago' },
@@ -176,71 +176,71 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     { value: 'over_year', label: 'Over a year ago' },
     { value: 'never', label: 'Never / don\'t know' },
   ], skipIf: a => a.B1 === 'no' },
-  { id: 'B3', section: 'facility', sectionLabel: 'Facility Safety', label: 'What type of cooking do you primarily do?', options: [
+  { id: 'B3', section: 'facility', sectionLabel: 'Fire Safety', label: 'What type of cooking do you primarily do?', options: [
     { value: 'solid_fuel', label: 'Solid-fuel (wood-fired, charcoal, smoker) — monthly cleaning required' },
     { value: 'high_volume', label: 'High-volume (charbroiling, wok, deep frying) — quarterly cleaning' },
     { value: 'moderate', label: 'Moderate-volume (grilling, sauteing, general) — semi-annual cleaning' },
     { value: 'low_volume', label: 'Low-volume (steam, baking, light cooking) — annual cleaning' },
     { value: 'not_sure', label: 'Not sure' },
   ], skipIf: a => a.B1 === 'no' },
-  { id: 'B4', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have a current hood cleaning certificate on file?', options: [
+  { id: 'B4', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have a current hood cleaning certificate on file?', options: [
     { value: 'yes_current', label: 'Yes, and it\'s current' },
     { value: 'yes_expired', label: 'Yes, but it may be expired' },
     { value: 'no', label: 'No' },
     { value: 'dont_know', label: 'Don\'t know' },
   ], skipIf: a => a.B1 === 'no' },
-  { id: 'B5', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have a fire suppression system (Ansul/wet chemical)?', options: [
+  { id: 'B5', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have a fire suppression system (Ansul/wet chemical)?', options: [
     { value: 'yes_inspected', label: 'Yes, inspected within 6 months' },
     { value: 'yes_not_recent', label: 'Yes, but not recently inspected' },
     { value: 'yes_unknown', label: 'Yes, don\'t know last inspection' },
     { value: 'no', label: 'No' },
     { value: 'not_sure', label: 'Not sure' },
   ], skipIf: a => a.B1 === 'no' },
-  { id: 'B6', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have current fire extinguisher inspections?', options: [
+  { id: 'B6', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have current fire extinguisher inspections?', options: [
     { value: 'yes_all', label: 'Yes, all inspected within 12 months' },
     { value: 'some', label: 'Some are current, some may be expired' },
     { value: 'no', label: 'No / don\'t know' },
   ], skipIf: a => a.B1 === 'no' },
-  { id: 'B7', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you operate any solid-fuel cooking equipment? (wood-fired oven, charcoal grill, smoker)', options: [
+  { id: 'B7', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you operate any solid-fuel cooking equipment? (wood-fired oven, charcoal grill, smoker)', options: [
     { value: 'yes_dedicated', label: 'Yes, with dedicated exhaust system' },
     { value: 'yes_shared', label: 'Yes, shared exhaust with standard hood (code violation)' },
     { value: 'no', label: 'No solid-fuel cooking' },
     { value: 'not_sure', label: 'Not sure' },
   ], skipIf: a => a.B1 === 'no' || a.B3 === 'solid_fuel' },
-  { id: 'B8', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have an elevator on premises?', options: [
+  { id: 'B8', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have an elevator on premises?', options: [
     { value: 'yes_inspected', label: 'Yes, inspected within 12 months' },
     { value: 'yes_not_recent', label: 'Yes, not recently inspected' },
     { value: 'no', label: 'No' },
   ], skipIf: a => !isMultiStory(a.A1) },
-  { id: 'B9', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have a current pest control contract?', options: [
+  { id: 'B9', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have a current pest control contract?', options: [
     { value: 'yes_monthly', label: 'Yes, monthly service' },
     { value: 'yes_quarterly', label: 'Yes, quarterly service' },
     { value: 'informal', label: 'No contract / informal' },
     { value: 'none', label: 'No pest control' },
   ] },
-  { id: 'B10', section: 'facility', sectionLabel: 'Facility Safety', label: 'When was your grease trap/interceptor last pumped?', options: [
+  { id: 'B10', section: 'facility', sectionLabel: 'Fire Safety', label: 'When was your grease trap/interceptor last pumped?', options: [
     { value: 'within_month', label: 'Within the last month' },
     { value: '1_3_months', label: '1–3 months ago' },
     { value: '3_6_months', label: '3–6 months ago' },
     { value: 'over_6_months', label: 'Over 6 months ago' },
     { value: 'dont_have', label: 'Don\'t have one / don\'t know' },
   ] },
-  { id: 'B11', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you have current grease trap pumping receipts/manifests on file?', options: [
+  { id: 'B11', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you have current grease trap pumping receipts/manifests on file?', options: [
     { value: 'yes_all', label: 'Yes, all current' },
     { value: 'some', label: 'Some on file, not organized' },
     { value: 'no', label: 'No' },
   ] },
-  { id: 'B12', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you know how many gallons your grease trap collects per pumping?', options: [
+  { id: 'B12', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you know how many gallons your grease trap collects per pumping?', options: [
     { value: 'yes_track', label: 'Yes, we track volume on every service' },
     { value: 'receipt_only', label: 'The hauler gives us a receipt but we don\'t track volume' },
     { value: 'no', label: 'No idea' },
   ] },
-  { id: 'B13', section: 'facility', sectionLabel: 'Facility Safety', label: 'Do you know where your collected grease is disposed?', options: [
+  { id: 'B13', section: 'facility', sectionLabel: 'Fire Safety', label: 'Do you know where your collected grease is disposed?', options: [
     { value: 'yes_manifests', label: 'Yes, we have manifests showing the receiving facility' },
     { value: 'hauler_handles', label: 'The hauler takes care of it, we don\'t track where' },
     { value: 'no', label: 'No idea' },
   ] },
-  { id: 'B14', section: 'facility', sectionLabel: 'Facility Safety', label: 'When was your last backflow preventer test?', options: [
+  { id: 'B14', section: 'facility', sectionLabel: 'Fire Safety', label: 'When was your last backflow preventer test?', options: [
     { value: 'within_12', label: 'Within the past 12 months (current)' },
     { value: 'over_12', label: 'Over 12 months ago' },
     { value: 'never', label: 'Never tested / don\'t know' },
@@ -339,7 +339,7 @@ export function computeAssessmentScores(
     }
   }
 
-  // ── FACILITY SAFETY SCORING ──────────────────────────────────────────────
+  // ── FIRE SAFETY SCORING ──────────────────────────────────────────────
 
   // Hood cleaning overdue
   if (a.B1 !== 'no') {

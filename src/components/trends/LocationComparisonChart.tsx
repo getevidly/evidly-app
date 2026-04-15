@@ -19,7 +19,7 @@ type Metric = 'foodSafety' | 'facilitySafety';
 
 const METRIC_LABELS: Record<Metric, string> = {
   foodSafety: 'Food Safety',
-  facilitySafety: 'Facility Safety',
+  facilitySafety: 'Fire Safety',
 };
 
 const LOCATION_COLORS: Record<string, string> = {
