@@ -2,7 +2,7 @@ import {
   ClipboardList, Wrench, AlertTriangle, CheckSquare, BarChart3,
   DollarSign, PieChart, TrendingDown, Receipt, Timer,
   Shield, FileCheck, CalendarClock, Flame, Clock,
-  Users, AlarmClock, UserCheck, Award, Target,
+  Users, Award, Target,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -193,31 +193,7 @@ export const REPORT_DEFINITIONS: ReportDefinition[] = [
     parameters: [LOCATION_FILTER],
   },
 
-  // ── Team (5) ──────────────────────────────────
-  {
-    slug: 'timecard-summary',
-    title: 'Timecard Summary',
-    description: 'Hours by employee and pay period with OT breakdown.',
-    category: 'team',
-    icon: Users,
-    parameters: [DATE_RANGE, EMPLOYEE_FILTER],
-  },
-  {
-    slug: 'overtime',
-    title: 'Overtime Report',
-    description: 'OT hours and estimated cost by employee.',
-    category: 'team',
-    icon: AlarmClock,
-    parameters: [DATE_RANGE, EMPLOYEE_FILTER],
-  },
-  {
-    slug: 'attendance',
-    title: 'Attendance Report',
-    description: 'Clock in/out patterns and punctuality metrics.',
-    category: 'team',
-    icon: UserCheck,
-    parameters: [DATE_RANGE, EMPLOYEE_FILTER],
-  },
+  // ── Team (2) ──────────────────────────────────
   {
     slug: 'cert-expiry',
     title: 'Certification Expiry',

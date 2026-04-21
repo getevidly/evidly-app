@@ -32,7 +32,6 @@ export interface PerformanceMetrics {
   deficiencyDocumentationRate: number | null;
   photoComplianceRate: number | null;
   averageCustomerRating: number | null;
-  timecardAccuracyRate: number | null;
   availabilitySubmissionRate: number | null;
   equipmentDamageCount: number;
   equipmentLossCount: number;
@@ -144,7 +143,6 @@ export const BONUS_MULTIPLIER_METRICS = [
   { key: 'deficiencyDocumentationRate', label: 'Deficiency Documentation', target: 100, bonus: 0.05 },
   { key: 'photoComplianceRate', label: 'Photo Compliance', target: 100, bonus: 0.05 },
   { key: 'averageCustomerRating', label: 'Customer Rating', target: 4.5, bonus: 0.10 },
-  { key: 'timecardAccuracyRate', label: 'Timecard Accuracy', target: 100, bonus: 0.05 },
   { key: 'availabilitySubmissionRate', label: 'Availability Submitted', target: 100, bonus: 0.05 },
   { key: 'equipmentCare', label: 'Equipment Care', target: 0, bonus: 0.05 },
   { key: 'inventoryVarianceRate', label: 'Inventory Accuracy', target: 2, bonus: 0.05 },

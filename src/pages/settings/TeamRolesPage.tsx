@@ -18,7 +18,6 @@ const DEFAULT_PERMISSIONS: RolePermissionRow[] = [
   { permission: 'edit_jobs', label: 'Edit Jobs', roles: { owner: true, admin: true, supervisor: true, technician: false, office: false } },
   { permission: 'view_customers', label: 'View Customers', roles: { owner: true, admin: true, supervisor: true, technician: false, office: true } },
   { permission: 'edit_customers', label: 'Edit Customers', roles: { owner: true, admin: true, supervisor: false, technician: false, office: false } },
-  { permission: 'approve_timecards', label: 'Approve Timecards', roles: { owner: true, admin: true, supervisor: true, technician: false, office: false } },
   { permission: 'view_reports', label: 'View Reports', roles: { owner: true, admin: true, supervisor: true, technician: false, office: true } },
   { permission: 'manage_team', label: 'Manage Team', roles: { owner: true, admin: true, supervisor: false, technician: false, office: false } },
   { permission: 'billing_access', label: 'Billing Access', roles: { owner: true, admin: false, supervisor: false, technician: false, office: false } },
