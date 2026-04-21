@@ -139,18 +139,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_signals_updated_at ON intelligence_signals;
 CREATE TRIGGER trg_signals_updated_at
   BEFORE UPDATE ON intelligence_signals
   FOR EACH ROW EXECUTE FUNCTION update_command_center_updated_at();
 
+DROP TRIGGER IF EXISTS trg_game_plans_updated_at ON intelligence_game_plans;
 CREATE TRIGGER trg_game_plans_updated_at
   BEFORE UPDATE ON intelligence_game_plans
   FOR EACH ROW EXECUTE FUNCTION update_command_center_updated_at();
 
+DROP TRIGGER IF EXISTS trg_platform_updates_updated_at ON platform_updates;
 CREATE TRIGGER trg_platform_updates_updated_at
   BEFORE UPDATE ON platform_updates
   FOR EACH ROW EXECUTE FUNCTION update_command_center_updated_at();
 
+DROP TRIGGER IF EXISTS trg_client_notifications_updated_at ON client_notifications;
 CREATE TRIGGER trg_client_notifications_updated_at
   BEFORE UPDATE ON client_notifications
   FOR EACH ROW EXECUTE FUNCTION update_command_center_updated_at();
@@ -189,11 +193,17 @@ END $$;
 
 -- Service role bypass (for edge functions)
 DO $$ BEGIN
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON intelligence_signals';
   EXECUTE 'CREATE POLICY service_role_all ON intelligence_signals FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON intelligence_game_plans';
   EXECUTE 'CREATE POLICY service_role_all ON intelligence_game_plans FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON platform_updates';
   EXECUTE 'CREATE POLICY service_role_all ON platform_updates FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON platform_update_log';
   EXECUTE 'CREATE POLICY service_role_all ON platform_update_log FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON client_notifications';
   EXECUTE 'CREATE POLICY service_role_all ON client_notifications FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON crawl_execution_log';
   EXECUTE 'CREATE POLICY service_role_all ON crawl_execution_log FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;

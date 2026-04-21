@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS platform_settings (
 ALTER TABLE platform_settings ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS ps_admin_all ON platform_settings;
   CREATE POLICY ps_admin_all ON platform_settings
     FOR ALL TO authenticated
     USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
@@ -73,6 +74,7 @@ EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS ps_service ON platform_settings;
   CREATE POLICY ps_service ON platform_settings
     FOR ALL TO service_role
     USING (true);
@@ -103,6 +105,7 @@ CREATE TABLE IF NOT EXISTS intelligence_auto_publish_log (
 ALTER TABLE intelligence_auto_publish_log ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS iapl_admin ON intelligence_auto_publish_log;
   CREATE POLICY iapl_admin ON intelligence_auto_publish_log
     FOR ALL TO authenticated
     USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
@@ -110,6 +113,7 @@ EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS iapl_service ON intelligence_auto_publish_log;
   CREATE POLICY iapl_service ON intelligence_auto_publish_log
     FOR ALL TO service_role
     USING (true);

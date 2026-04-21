@@ -49,10 +49,12 @@ ON CONFLICT (version) DO NOTHING;
 -- RLS
 ALTER TABLE score_model_versions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "smv_read_all" ON score_model_versions;
 CREATE POLICY "smv_read_all" ON score_model_versions
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "smv_service_write" ON score_model_versions;
 CREATE POLICY "smv_service_write" ON score_model_versions
   FOR ALL TO service_role
   USING (true);

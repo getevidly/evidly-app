@@ -11,8 +11,9 @@ CREATE TABLE IF NOT EXISTS signal_reads (
 
 ALTER TABLE signal_reads ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_manage_own_reads" ON signal_reads;
 CREATE POLICY "users_manage_own_reads" ON signal_reads
   FOR ALL USING (user_id = auth.uid());
 
-CREATE INDEX idx_signal_reads_user ON signal_reads(user_id);
-CREATE INDEX idx_signal_reads_signal ON signal_reads(signal_id);
+CREATE INDEX IF NOT EXISTS idx_signal_reads_user ON signal_reads(user_id);
+CREATE INDEX IF NOT EXISTS idx_signal_reads_signal ON signal_reads(signal_id);

@@ -177,39 +177,47 @@ ALTER TABLE vendor_connect_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vendor_connect_leads ENABLE ROW LEVEL SECURITY;
 
 -- vendor_connect_profiles: public read (active only), service_role full access
+DROP POLICY IF EXISTS "Anyone can view active vendor connect profiles" ON vendor_connect_profiles;
 CREATE POLICY "Anyone can view active vendor connect profiles"
   ON vendor_connect_profiles FOR SELECT TO anon, authenticated
   USING (is_active = true);
 
+DROP POLICY IF EXISTS "Service role full access vendor connect profiles" ON vendor_connect_profiles;
 CREATE POLICY "Service role full access vendor connect profiles"
   ON vendor_connect_profiles FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
 -- vendor_connect_spots: public read, service_role write
+DROP POLICY IF EXISTS "Anyone can view vendor connect spots" ON vendor_connect_spots;
 CREATE POLICY "Anyone can view vendor connect spots"
   ON vendor_connect_spots FOR SELECT TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role full access vendor connect spots" ON vendor_connect_spots;
 CREATE POLICY "Service role full access vendor connect spots"
   ON vendor_connect_spots FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
 -- vendor_connect_applications: anon can insert (public form), service_role manages
+DROP POLICY IF EXISTS "Anyone can submit vendor connect applications" ON vendor_connect_applications;
 CREATE POLICY "Anyone can submit vendor connect applications"
   ON vendor_connect_applications FOR INSERT TO anon, authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role full access vendor connect applications" ON vendor_connect_applications;
 CREATE POLICY "Service role full access vendor connect applications"
   ON vendor_connect_applications FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
 -- vendor_connect_leads: org-scoped read, service_role full access
+DROP POLICY IF EXISTS "Users can view own org vendor connect leads" ON vendor_connect_leads;
 CREATE POLICY "Users can view own org vendor connect leads"
   ON vendor_connect_leads FOR SELECT TO authenticated
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access vendor connect leads" ON vendor_connect_leads;
 CREATE POLICY "Service role full access vendor connect leads"
   ON vendor_connect_leads FOR ALL TO service_role
   USING (true) WITH CHECK (true);

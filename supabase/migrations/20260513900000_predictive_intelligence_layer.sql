@@ -74,6 +74,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_lrp_latest_per_location
   ON location_risk_predictions(location_id, model_version);
 
 -- Auto-update updated_at
+DROP TRIGGER IF EXISTS trg_lrp_updated_at ON location_risk_predictions;
 CREATE TRIGGER trg_lrp_updated_at
   BEFORE UPDATE ON location_risk_predictions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -81,6 +82,7 @@ CREATE TRIGGER trg_lrp_updated_at
 -- RLS: org-scoped, read-only for tenants
 ALTER TABLE location_risk_predictions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "lrp_org_read" ON location_risk_predictions;
 CREATE POLICY "lrp_org_read" ON location_risk_predictions
   FOR SELECT USING (
     organization_id IN (
@@ -88,6 +90,7 @@ CREATE POLICY "lrp_org_read" ON location_risk_predictions
     )
   );
 
+DROP POLICY IF EXISTS "lrp_service_write" ON location_risk_predictions;
 CREATE POLICY "lrp_service_write" ON location_risk_predictions
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -125,5 +128,6 @@ CREATE TABLE IF NOT EXISTS prediction_accuracy_log (
 -- RLS: admin / service_role only
 ALTER TABLE prediction_accuracy_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "pal_admin_only" ON prediction_accuracy_log;
 CREATE POLICY "pal_admin_only" ON prediction_accuracy_log
   FOR ALL USING (auth.role() = 'service_role');

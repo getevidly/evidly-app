@@ -87,19 +87,23 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
 
 ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users see own preferences" ON notification_preferences;
 CREATE POLICY "Users see own preferences"
   ON notification_preferences FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users update own preferences" ON notification_preferences;
 CREATE POLICY "Users update own preferences"
   ON notification_preferences FOR UPDATE
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users insert own preferences" ON notification_preferences;
 CREATE POLICY "Users insert own preferences"
   ON notification_preferences FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users delete own preferences" ON notification_preferences;
 CREATE POLICY "Users delete own preferences"
   ON notification_preferences FOR DELETE
   USING (user_id = auth.uid());

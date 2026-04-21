@@ -43,6 +43,7 @@ CREATE INDEX IF NOT EXISTS idx_playbooks_status     ON playbooks (status);
 CREATE INDEX IF NOT EXISTS idx_playbooks_category   ON playbooks (category);
 CREATE INDEX IF NOT EXISTS idx_playbooks_created_by ON playbooks (created_by);
 
+DROP TRIGGER IF EXISTS trg_playbooks_updated_at ON playbooks;
 CREATE TRIGGER trg_playbooks_updated_at
   BEFORE UPDATE ON playbooks
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -111,6 +112,7 @@ CREATE INDEX IF NOT EXISTS idx_activations_location    ON playbook_activations (
 CREATE INDEX IF NOT EXISTS idx_activations_status      ON playbook_activations (status);
 CREATE INDEX IF NOT EXISTS idx_activations_initiated   ON playbook_activations (initiated_by);
 
+DROP TRIGGER IF EXISTS trg_playbook_activations_updated_at ON playbook_activations;
 CREATE TRIGGER trg_playbook_activations_updated_at
   BEFORE UPDATE ON playbook_activations
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();

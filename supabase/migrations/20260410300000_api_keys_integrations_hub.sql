@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS public.api_keys (
 
 ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "api_keys_admin_all" ON public.api_keys;
 CREATE POLICY "api_keys_admin_all" ON public.api_keys
   FOR ALL USING (
     EXISTS (
@@ -34,8 +35,8 @@ CREATE POLICY "api_keys_admin_all" ON public.api_keys
     )
   );
 
-CREATE INDEX idx_api_keys_org ON public.api_keys(org_id);
-CREATE INDEX idx_api_keys_hash ON public.api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_api_keys_org ON public.api_keys(org_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON public.api_keys(key_hash);
 
 -- ── 2. api_request_log ──────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.api_request_log (
@@ -53,6 +54,7 @@ ALTER TABLE public.api_request_log ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'api_request_log' AND column_name = 'api_key_id') THEN
+    DROP POLICY IF EXISTS "api_request_log_admin_read" ON public.api_request_log;
     CREATE POLICY "api_request_log_admin_read" ON public.api_request_log
       FOR SELECT USING (
         EXISTS (
@@ -89,11 +91,13 @@ ALTER TABLE public.integrations ENABLE ROW LEVEL SECURITY;
 
 -- Everyone can read integrations (it's a catalog)
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "integrations_public_read" ON public.integrations;
   CREATE POLICY "integrations_public_read" ON public.integrations FOR SELECT USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Only platform_admin can manage
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "integrations_admin_write" ON public.integrations;
   CREATE POLICY "integrations_admin_write" ON public.integrations
     FOR ALL USING (
       EXISTS (
@@ -128,6 +132,7 @@ CREATE TABLE IF NOT EXISTS public.integration_connections (
 
 ALTER TABLE public.integration_connections ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "integration_connections_org_access" ON public.integration_connections;
 CREATE POLICY "integration_connections_org_access" ON public.integration_connections
   FOR ALL USING (
     EXISTS (
@@ -138,7 +143,7 @@ CREATE POLICY "integration_connections_org_access" ON public.integration_connect
     )
   );
 
-CREATE INDEX idx_integration_connections_org ON public.integration_connections(org_id);
+CREATE INDEX IF NOT EXISTS idx_integration_connections_org ON public.integration_connections(org_id);
 
 -- ── 5. Seed 25 integrations (only if category column exists) ──
 DO $$ BEGIN

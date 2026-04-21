@@ -51,6 +51,7 @@ CREATE INDEX IF NOT EXISTS idx_ca_resolved_at ON corrective_actions(resolved_at)
 
 ALTER TABLE corrective_action_history ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "org_read_ca_history" ON corrective_action_history;
 CREATE POLICY "org_read_ca_history" ON corrective_action_history
   FOR SELECT USING (
     corrective_action_id IN (
@@ -59,6 +60,7 @@ CREATE POLICY "org_read_ca_history" ON corrective_action_history
     )
   );
 
+DROP POLICY IF EXISTS "org_insert_ca_history" ON corrective_action_history;
 CREATE POLICY "org_insert_ca_history" ON corrective_action_history
   FOR INSERT WITH CHECK (
     corrective_action_id IN (

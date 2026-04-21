@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS report_subscriptions (
 
 ALTER TABLE report_subscriptions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view report subscriptions in their organization" ON report_subscriptions;
 CREATE POLICY "Users can view report subscriptions in their organization"
   ON report_subscriptions FOR SELECT
   TO authenticated
@@ -56,6 +57,7 @@ CREATE POLICY "Users can view report subscriptions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert report subscriptions in their organization" ON report_subscriptions;
 CREATE POLICY "Users can insert report subscriptions in their organization"
   ON report_subscriptions FOR INSERT
   TO authenticated
@@ -65,6 +67,7 @@ CREATE POLICY "Users can insert report subscriptions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update report subscriptions in their organization" ON report_subscriptions;
 CREATE POLICY "Users can update report subscriptions in their organization"
   ON report_subscriptions FOR UPDATE
   TO authenticated
@@ -79,6 +82,7 @@ CREATE POLICY "Users can update report subscriptions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete report subscriptions in their organization" ON report_subscriptions;
 CREATE POLICY "Users can delete report subscriptions in their organization"
   ON report_subscriptions FOR DELETE
   TO authenticated

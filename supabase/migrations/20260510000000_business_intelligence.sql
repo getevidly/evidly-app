@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS risk_plans (
 ALTER TABLE risk_plans ENABLE ROW LEVEL SECURITY;
 
 -- RLS: Org members can manage their own risk plans
+DROP POLICY IF EXISTS "Org members can manage risk plans" ON risk_plans;
 CREATE POLICY "Org members can manage risk plans"
   ON risk_plans FOR ALL
   USING (org_id IN (
@@ -61,6 +62,7 @@ CREATE POLICY "Org members can manage risk plans"
   ));
 
 -- RLS: Service role full access
+DROP POLICY IF EXISTS "Service role full access to risk plans" ON risk_plans;
 CREATE POLICY "Service role full access to risk plans"
   ON risk_plans FOR ALL
   USING (auth.role() = 'service_role');
@@ -79,6 +81,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS risk_plans_updated_at ON risk_plans;
 CREATE TRIGGER risk_plans_updated_at
   BEFORE UPDATE ON risk_plans
   FOR EACH ROW EXECUTE FUNCTION update_risk_plans_updated_at();

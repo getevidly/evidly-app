@@ -21,14 +21,15 @@ CREATE TABLE ai_insights (
   expires_at timestamptz
 );
 
-CREATE INDEX idx_ai_insights_org ON ai_insights(organization_id);
-CREATE INDEX idx_ai_insights_location ON ai_insights(location_id);
-CREATE INDEX idx_ai_insights_status ON ai_insights(status);
-CREATE INDEX idx_ai_insights_severity ON ai_insights(severity);
-CREATE INDEX idx_ai_insights_created ON ai_insights(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_insights_org ON ai_insights(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ai_insights_location ON ai_insights(location_id);
+CREATE INDEX IF NOT EXISTS idx_ai_insights_status ON ai_insights(status);
+CREATE INDEX IF NOT EXISTS idx_ai_insights_severity ON ai_insights(severity);
+CREATE INDEX IF NOT EXISTS idx_ai_insights_created ON ai_insights(created_at DESC);
 
 ALTER TABLE ai_insights ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read insights for their organization" ON ai_insights;
 CREATE POLICY "Users can read insights for their organization"
   ON ai_insights FOR SELECT
   TO authenticated
@@ -38,6 +39,7 @@ CREATE POLICY "Users can read insights for their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update insight status for their organization" ON ai_insights;
 CREATE POLICY "Users can update insight status for their organization"
   ON ai_insights FOR UPDATE
   TO authenticated
@@ -52,6 +54,7 @@ CREATE POLICY "Users can update insight status for their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Service role can manage all insights" ON ai_insights;
 CREATE POLICY "Service role can manage all insights"
   ON ai_insights FOR ALL
   TO service_role
@@ -74,12 +77,13 @@ CREATE TABLE ai_corrective_actions (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_ai_corrective_location ON ai_corrective_actions(location_id);
-CREATE INDEX idx_ai_corrective_status ON ai_corrective_actions(status);
-CREATE INDEX idx_ai_corrective_created ON ai_corrective_actions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_corrective_location ON ai_corrective_actions(location_id);
+CREATE INDEX IF NOT EXISTS idx_ai_corrective_status ON ai_corrective_actions(status);
+CREATE INDEX IF NOT EXISTS idx_ai_corrective_created ON ai_corrective_actions(created_at DESC);
 
 ALTER TABLE ai_corrective_actions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read corrective actions for their org locations" ON ai_corrective_actions;
 CREATE POLICY "Users can read corrective actions for their org locations"
   ON ai_corrective_actions FOR SELECT
   TO authenticated
@@ -91,6 +95,7 @@ CREATE POLICY "Users can read corrective actions for their org locations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update corrective actions for their org locations" ON ai_corrective_actions;
 CREATE POLICY "Users can update corrective actions for their org locations"
   ON ai_corrective_actions FOR UPDATE
   TO authenticated
@@ -109,6 +114,7 @@ CREATE POLICY "Users can update corrective actions for their org locations"
     )
   );
 
+DROP POLICY IF EXISTS "Service role can manage all corrective actions" ON ai_corrective_actions;
 CREATE POLICY "Service role can manage all corrective actions"
   ON ai_corrective_actions FOR ALL
   TO service_role
@@ -133,17 +139,19 @@ CREATE TABLE ai_weekly_digests (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_ai_digests_org ON ai_weekly_digests(organization_id);
-CREATE INDEX idx_ai_digests_user ON ai_weekly_digests(user_id);
-CREATE INDEX idx_ai_digests_period ON ai_weekly_digests(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_ai_digests_org ON ai_weekly_digests(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ai_digests_user ON ai_weekly_digests(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_digests_period ON ai_weekly_digests(period_start, period_end);
 
 ALTER TABLE ai_weekly_digests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read their own digests" ON ai_weekly_digests;
 CREATE POLICY "Users can read their own digests"
   ON ai_weekly_digests FOR SELECT
   TO authenticated
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Service role can manage all digests" ON ai_weekly_digests;
 CREATE POLICY "Service role can manage all digests"
   ON ai_weekly_digests FOR ALL
   TO service_role
@@ -168,28 +176,32 @@ CREATE TABLE ai_interaction_logs (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_ai_logs_user ON ai_interaction_logs(user_id);
-CREATE INDEX idx_ai_logs_type ON ai_interaction_logs(interaction_type);
-CREATE INDEX idx_ai_logs_created ON ai_interaction_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_logs_user ON ai_interaction_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_logs_type ON ai_interaction_logs(interaction_type);
+CREATE INDEX IF NOT EXISTS idx_ai_logs_created ON ai_interaction_logs(created_at DESC);
 
 ALTER TABLE ai_interaction_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read their own interaction logs" ON ai_interaction_logs;
 CREATE POLICY "Users can read their own interaction logs"
   ON ai_interaction_logs FOR SELECT
   TO authenticated
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert their own interaction logs" ON ai_interaction_logs;
 CREATE POLICY "Users can insert their own interaction logs"
   ON ai_interaction_logs FOR INSERT
   TO authenticated
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update feedback on their own logs" ON ai_interaction_logs;
 CREATE POLICY "Users can update feedback on their own logs"
   ON ai_interaction_logs FOR UPDATE
   TO authenticated
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Service role can manage all interaction logs" ON ai_interaction_logs;
 CREATE POLICY "Service role can manage all interaction logs"
   ON ai_interaction_logs FOR ALL
   TO service_role

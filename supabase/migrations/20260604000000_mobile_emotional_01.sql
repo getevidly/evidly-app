@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
 -- RLS
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users manage own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users manage own push subscriptions"
   ON push_subscriptions
   FOR ALL
@@ -40,6 +41,7 @@ CREATE TABLE IF NOT EXISTS shift_handoffs (
 -- RLS
 ALTER TABLE shift_handoffs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users in org can read shift handoffs" ON shift_handoffs;
 CREATE POLICY "Users in org can read shift handoffs"
   ON shift_handoffs
   FOR SELECT
@@ -51,6 +53,7 @@ CREATE POLICY "Users in org can read shift handoffs"
     )
   );
 
+DROP POLICY IF EXISTS "Users can create shift handoffs" ON shift_handoffs;
 CREATE POLICY "Users can create shift handoffs"
   ON shift_handoffs
   FOR INSERT

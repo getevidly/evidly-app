@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS benchmark_snapshots (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_bench_snap_date ON benchmark_snapshots(snapshot_date);
-CREATE INDEX idx_bench_snap_vertical ON benchmark_snapshots(vertical, snapshot_date);
-CREATE INDEX idx_bench_snap_metric ON benchmark_snapshots(metric_name, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_bench_snap_date ON benchmark_snapshots(snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_bench_snap_vertical ON benchmark_snapshots(vertical, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_bench_snap_metric ON benchmark_snapshots(metric_name, snapshot_date);
 
 -- 2. location_benchmark_ranks — individual location rankings
 CREATE TABLE IF NOT EXISTS location_benchmark_ranks (
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS location_benchmark_ranks (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_bench_rank_loc ON location_benchmark_ranks(location_id, snapshot_date);
-CREATE INDEX idx_bench_rank_date ON location_benchmark_ranks(snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_bench_rank_loc ON location_benchmark_ranks(location_id, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_bench_rank_date ON location_benchmark_ranks(snapshot_date);
 
 -- 3. benchmark_badges — earned compliance badges
 CREATE TABLE IF NOT EXISTS benchmark_badges (
@@ -58,9 +58,9 @@ CREATE TABLE IF NOT EXISTS benchmark_badges (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_bench_badge_loc ON benchmark_badges(location_id);
-CREATE INDEX idx_bench_badge_code ON benchmark_badges(verification_code);
-CREATE INDEX idx_bench_badge_status ON benchmark_badges(status);
+CREATE INDEX IF NOT EXISTS idx_bench_badge_loc ON benchmark_badges(location_id);
+CREATE INDEX IF NOT EXISTS idx_bench_badge_code ON benchmark_badges(verification_code);
+CREATE INDEX IF NOT EXISTS idx_bench_badge_status ON benchmark_badges(status);
 
 -- 4. benchmark_index_reports — quarterly public index reports
 CREATE TABLE IF NOT EXISTS benchmark_index_reports (
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS benchmark_index_reports (
   UNIQUE (quarter, year)
 );
 
-CREATE INDEX idx_bench_report_qy ON benchmark_index_reports(year, quarter);
+CREATE INDEX IF NOT EXISTS idx_bench_report_qy ON benchmark_index_reports(year, quarter);
 
 -- =====================================================
 -- Row Level Security
@@ -87,12 +87,14 @@ ALTER TABLE benchmark_badges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE benchmark_index_reports ENABLE ROW LEVEL SECURITY;
 
 -- benchmark_snapshots: readable by all authenticated (aggregated, anonymous data)
+DROP POLICY IF EXISTS "Authenticated users can read benchmark snapshots" ON benchmark_snapshots;
 CREATE POLICY "Authenticated users can read benchmark snapshots"
   ON benchmark_snapshots FOR SELECT
   TO authenticated
   USING (true);
 
 -- location_benchmark_ranks: users can read ranks for their org's locations
+DROP POLICY IF EXISTS "Users can read own location ranks" ON location_benchmark_ranks;
 CREATE POLICY "Users can read own location ranks"
   ON location_benchmark_ranks FOR SELECT
   TO authenticated
@@ -105,6 +107,7 @@ CREATE POLICY "Users can read own location ranks"
   );
 
 -- benchmark_badges: users can read their org's badges + public verification
+DROP POLICY IF EXISTS "Users can read own location badges" ON benchmark_badges;
 CREATE POLICY "Users can read own location badges"
   ON benchmark_badges FOR SELECT
   TO authenticated
@@ -117,17 +120,20 @@ CREATE POLICY "Users can read own location badges"
   );
 
 -- Public read for badge verification by code (anon)
+DROP POLICY IF EXISTS "Anyone can verify badges by code" ON benchmark_badges;
 CREATE POLICY "Anyone can verify badges by code"
   ON benchmark_badges FOR SELECT
   TO anon
   USING (status = 'active');
 
 -- benchmark_index_reports: readable by all (public reports)
+DROP POLICY IF EXISTS "Anyone can read published index reports" ON benchmark_index_reports;
 CREATE POLICY "Anyone can read published index reports"
   ON benchmark_index_reports FOR SELECT
   TO authenticated
   USING (published_at IS NOT NULL);
 
+DROP POLICY IF EXISTS "Anon can read published index reports" ON benchmark_index_reports;
 CREATE POLICY "Anon can read published index reports"
   ON benchmark_index_reports FOR SELECT
   TO anon

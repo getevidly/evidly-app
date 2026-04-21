@@ -21,10 +21,12 @@ CREATE TABLE IF NOT EXISTS self_inspection_sessions (
 
 ALTER TABLE self_inspection_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org sessions" ON self_inspection_sessions;
 CREATE POLICY "Users can view own org sessions"
   ON self_inspection_sessions FOR SELECT
   USING (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can insert own org sessions" ON self_inspection_sessions;
 CREATE POLICY "Users can insert own org sessions"
   ON self_inspection_sessions FOR INSERT
   WITH CHECK (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
@@ -48,16 +50,18 @@ CREATE TABLE IF NOT EXISTS mock_inspection_sessions (
 
 ALTER TABLE mock_inspection_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org mock sessions" ON mock_inspection_sessions;
 CREATE POLICY "Users can view own org mock sessions"
   ON mock_inspection_sessions FOR SELECT
   USING (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can insert own org mock sessions" ON mock_inspection_sessions;
 CREATE POLICY "Users can insert own org mock sessions"
   ON mock_inspection_sessions FOR INSERT
   WITH CHECK (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 -- ── Indexes ───────────────────────────────────────────────────────
-CREATE INDEX idx_self_inspection_sessions_org ON self_inspection_sessions(org_id);
-CREATE INDEX idx_self_inspection_sessions_location ON self_inspection_sessions(location_id);
-CREATE INDEX idx_mock_inspection_sessions_org ON mock_inspection_sessions(org_id);
-CREATE INDEX idx_mock_inspection_sessions_location ON mock_inspection_sessions(location_id);
+CREATE INDEX IF NOT EXISTS idx_self_inspection_sessions_org ON self_inspection_sessions(org_id);
+CREATE INDEX IF NOT EXISTS idx_self_inspection_sessions_location ON self_inspection_sessions(location_id);
+CREATE INDEX IF NOT EXISTS idx_mock_inspection_sessions_org ON mock_inspection_sessions(org_id);
+CREATE INDEX IF NOT EXISTS idx_mock_inspection_sessions_location ON mock_inspection_sessions(location_id);

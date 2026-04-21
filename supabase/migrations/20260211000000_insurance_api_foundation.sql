@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS insurance_risk_factors (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_factors_loc ON insurance_risk_factors(location_id, factor_category);
-CREATE INDEX idx_ins_factors_score ON insurance_risk_factors(risk_score_id);
+CREATE INDEX IF NOT EXISTS idx_ins_factors_loc ON insurance_risk_factors(location_id, factor_category);
+CREATE INDEX IF NOT EXISTS idx_ins_factors_score ON insurance_risk_factors(risk_score_id);
 
 -- 2. insurance_score_history — monthly score snapshots for trend API
 CREATE TABLE IF NOT EXISTS insurance_score_history (
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS insurance_score_history (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_history_loc ON insurance_score_history(location_id, score_date DESC);
-CREATE INDEX idx_ins_history_org ON insurance_score_history(organization_id);
-CREATE UNIQUE INDEX idx_ins_history_unique ON insurance_score_history(location_id, score_date);
+CREATE INDEX IF NOT EXISTS idx_ins_history_loc ON insurance_score_history(location_id, score_date DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_history_org ON insurance_score_history(organization_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ins_history_unique ON insurance_score_history(location_id, score_date);
 
 -- 3. insurance_consent — operator consent per carrier partner
 CREATE TABLE IF NOT EXISTS insurance_consent (
@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS insurance_consent (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_consent_org ON insurance_consent(organization_id);
-CREATE UNIQUE INDEX idx_ins_consent_unique ON insurance_consent(location_id, partner_name);
-CREATE INDEX idx_ins_consent_active ON insurance_consent(consent_granted) WHERE revoked_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_ins_consent_org ON insurance_consent(organization_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ins_consent_unique ON insurance_consent(location_id, partner_name);
+CREATE INDEX IF NOT EXISTS idx_ins_consent_active ON insurance_consent(consent_granted) WHERE revoked_at IS NULL;
 
 -- 4. insurance_api_logs — detailed API audit trail
 CREATE TABLE IF NOT EXISTS insurance_api_logs (
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS insurance_api_logs (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_api_logs_key ON insurance_api_logs(api_key_id, created_at DESC);
-CREATE INDEX idx_ins_api_logs_endpoint ON insurance_api_logs(endpoint, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_api_logs_key ON insurance_api_logs(api_key_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_api_logs_endpoint ON insurance_api_logs(endpoint, created_at DESC);
 
 -- 5. insurance_reports — tracks generated PDF reports
 CREATE TABLE IF NOT EXISTS insurance_reports (
@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS insurance_reports (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_reports_org ON insurance_reports(organization_id, generated_at DESC);
-CREATE INDEX idx_ins_reports_loc ON insurance_reports(location_id);
+CREATE INDEX IF NOT EXISTS idx_ins_reports_org ON insurance_reports(organization_id, generated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_reports_loc ON insurance_reports(location_id);
 
 -- =====================================================
 -- Row Level Security
@@ -111,6 +111,7 @@ ALTER TABLE insurance_api_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE insurance_reports ENABLE ROW LEVEL SECURITY;
 
 -- insurance_risk_factors: read via org membership (join through risk_score_id → insurance_risk_scores → organization_id)
+DROP POLICY IF EXISTS "Users can read own org risk factors" ON insurance_risk_factors;
 CREATE POLICY "Users can read own org risk factors"
   ON insurance_risk_factors FOR SELECT
   TO authenticated
@@ -124,6 +125,7 @@ CREATE POLICY "Users can read own org risk factors"
   );
 
 -- insurance_score_history: read via org membership
+DROP POLICY IF EXISTS "Users can read own org score history" ON insurance_score_history;
 CREATE POLICY "Users can read own org score history"
   ON insurance_score_history FOR SELECT
   TO authenticated
@@ -134,6 +136,7 @@ CREATE POLICY "Users can read own org score history"
   );
 
 -- insurance_consent: read/manage via org membership
+DROP POLICY IF EXISTS "Users can read own org consent records" ON insurance_consent;
 CREATE POLICY "Users can read own org consent records"
   ON insurance_consent FOR SELECT
   TO authenticated
@@ -143,6 +146,7 @@ CREATE POLICY "Users can read own org consent records"
     )
   );
 
+DROP POLICY IF EXISTS "Users can manage own org consent" ON insurance_consent;
 CREATE POLICY "Users can manage own org consent"
   ON insurance_consent FOR INSERT
   TO authenticated
@@ -152,6 +156,7 @@ CREATE POLICY "Users can manage own org consent"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own org consent" ON insurance_consent;
 CREATE POLICY "Users can update own org consent"
   ON insurance_consent FOR UPDATE
   TO authenticated
@@ -162,6 +167,7 @@ CREATE POLICY "Users can update own org consent"
   );
 
 -- insurance_api_logs: read via org's API keys
+DROP POLICY IF EXISTS "Users can read own org API logs" ON insurance_api_logs;
 CREATE POLICY "Users can read own org API logs"
   ON insurance_api_logs FOR SELECT
   TO authenticated
@@ -175,6 +181,7 @@ CREATE POLICY "Users can read own org API logs"
   );
 
 -- insurance_reports: read/create via org membership
+DROP POLICY IF EXISTS "Users can read own org reports" ON insurance_reports;
 CREATE POLICY "Users can read own org reports"
   ON insurance_reports FOR SELECT
   TO authenticated
@@ -184,6 +191,7 @@ CREATE POLICY "Users can read own org reports"
     )
   );
 
+DROP POLICY IF EXISTS "Users can create own org reports" ON insurance_reports;
 CREATE POLICY "Users can create own org reports"
   ON insurance_reports FOR INSERT
   TO authenticated

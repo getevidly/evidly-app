@@ -74,6 +74,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS jurisdictions_updated_at ON jurisdictions;
 CREATE TRIGGER jurisdictions_updated_at
   BEFORE UPDATE ON jurisdictions
   FOR EACH ROW EXECUTE FUNCTION update_jurisdictions_updated_at();
@@ -285,11 +286,13 @@ ALTER TABLE external_inspections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE external_violations ENABLE ROW LEVEL SECURITY;
 
 -- Jurisdictions and calcode_violation_map are public reference data (read-only for all authenticated)
+DROP POLICY IF EXISTS "Jurisdictions readable by all authenticated" ON jurisdictions;
 CREATE POLICY "Jurisdictions readable by all authenticated"
   ON jurisdictions FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "CalCode map readable by all authenticated" ON calcode_violation_map;
 CREATE POLICY "CalCode map readable by all authenticated"
   ON calcode_violation_map FOR SELECT
   TO authenticated

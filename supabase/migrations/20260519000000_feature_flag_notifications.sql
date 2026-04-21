@@ -13,11 +13,13 @@ CREATE TABLE IF NOT EXISTS feature_flag_notifications (
 ALTER TABLE feature_flag_notifications ENABLE ROW LEVEL SECURITY;
 
 -- Users can manage their own notification preferences
+DROP POLICY IF EXISTS "users_manage_own_notifications" ON feature_flag_notifications;
 CREATE POLICY "users_manage_own_notifications"
   ON feature_flag_notifications FOR ALL
   USING (user_id = auth.uid());
 
 -- Admins can manage all notification preferences
+DROP POLICY IF EXISTS "admin_manage_all_notifications" ON feature_flag_notifications;
 CREATE POLICY "admin_manage_all_notifications"
   ON feature_flag_notifications FOR ALL
   USING (
@@ -27,5 +29,5 @@ CREATE POLICY "admin_manage_all_notifications"
     )
   );
 
-CREATE INDEX idx_ffn_flag_key ON feature_flag_notifications(flag_key);
-CREATE INDEX idx_ffn_user_id ON feature_flag_notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_ffn_flag_key ON feature_flag_notifications(flag_key);
+CREATE INDEX IF NOT EXISTS idx_ffn_user_id ON feature_flag_notifications(user_id);

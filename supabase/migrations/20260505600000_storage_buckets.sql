@@ -108,30 +108,35 @@ DO $$ BEGIN
 END $$;
 
 -- Vault — all authenticated users (admin guards in app layer)
+DROP POLICY IF EXISTS "vault_all" ON storage.objects;
 CREATE POLICY "vault_all" ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'vault')
   WITH CHECK (bucket_id = 'vault');
 
 -- Compliance photos — all authenticated users
+DROP POLICY IF EXISTS "compliance_photos_all" ON storage.objects;
 CREATE POLICY "compliance_photos_all" ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'compliance-photos')
   WITH CHECK (bucket_id = 'compliance-photos');
 
 -- Documents — all authenticated users
+DROP POLICY IF EXISTS "documents_all" ON storage.objects;
 CREATE POLICY "documents_all" ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'documents')
   WITH CHECK (bucket_id = 'documents');
 
 -- Reports — all authenticated users
+DROP POLICY IF EXISTS "reports_all" ON storage.objects;
 CREATE POLICY "reports_all" ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'reports')
   WITH CHECK (bucket_id = 'reports');
 
 -- Uploads — all authenticated users
+DROP POLICY IF EXISTS "uploads_all" ON storage.objects;
 CREATE POLICY "uploads_all" ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'uploads')

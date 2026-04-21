@@ -5,30 +5,36 @@
 -- ────────────────────────────────────────────────────────
 -- 1. Enable extensions (idempotent)
 -- ────────────────────────────────────────────────────────
-CREATE EXTENSION IF NOT EXISTS pg_cron;
 CREATE EXTENSION IF NOT EXISTS pg_net;
+-- pg_cron may not be available on all environments
+DO $$ BEGIN
+  CREATE EXTENSION IF NOT EXISTS pg_cron;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
 -- ────────────────────────────────────────────────────────
 -- 2. Daily cron job — 6 AM UTC
 --    Calls generate-alerts for each active organization.
 --    Uses Supabase app settings for URL and service_role_key.
 -- ────────────────────────────────────────────────────────
-SELECT cron.schedule(
-  'generate-predictive-alerts',
-  '0 6 * * *',
-  $$
-    SELECT net.http_post(
-      url := current_setting('app.settings.supabase_url') || '/functions/v1/generate-alerts',
-      headers := jsonb_build_object(
-        'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
-        'Content-Type', 'application/json'
-      ),
-      body := jsonb_build_object('organization_id', org.id)
-    )
-    FROM organizations org
-    WHERE org.is_active = true;
-  $$
-);
+DO $outer$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'generate-predictive-alerts',
+      '0 6 * * *',
+      $$SELECT net.http_post(
+        url := current_setting('app.settings.supabase_url') || '/functions/v1/generate-alerts',
+        headers := jsonb_build_object(
+          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
+          'Content-Type', 'application/json'
+        ),
+        body := jsonb_build_object('organization_id', org.id)
+      )
+      FROM organizations org
+      WHERE org.is_active = true;$$
+    );
+  END IF;
+END $outer$;
 
 -- ────────────────────────────────────────────────────────
 -- 3. Trigger: fire generate-alerts on new location creation

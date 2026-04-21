@@ -64,6 +64,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_audit_trail_reports_updated_at ON audit_trail_reports;
 CREATE TRIGGER trg_audit_trail_reports_updated_at
   BEFORE UPDATE ON audit_trail_reports
   FOR EACH ROW
@@ -74,18 +75,21 @@ ALTER TABLE audit_trail_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_trail_access_log ENABLE ROW LEVEL SECURITY;
 
 -- Reports: users can view/manage their org's reports
+DROP POLICY IF EXISTS "Users can view own org reports" ON audit_trail_reports;
 CREATE POLICY "Users can view own org reports"
   ON audit_trail_reports FOR SELECT TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can create own org reports" ON audit_trail_reports;
 CREATE POLICY "Users can create own org reports"
   ON audit_trail_reports FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can update own org reports" ON audit_trail_reports;
 CREATE POLICY "Users can update own org reports"
   ON audit_trail_reports FOR UPDATE TO authenticated
   USING (organization_id IN (
@@ -93,6 +97,7 @@ CREATE POLICY "Users can update own org reports"
   ));
 
 -- Public access via share token (for shared reports)
+DROP POLICY IF EXISTS "Public can view shared reports" ON audit_trail_reports;
 CREATE POLICY "Public can view shared reports"
   ON audit_trail_reports FOR SELECT TO anon
   USING (
@@ -102,6 +107,7 @@ CREATE POLICY "Public can view shared reports"
   );
 
 -- Access log: users can view their org's access log
+DROP POLICY IF EXISTS "Users can view own org access log" ON audit_trail_access_log;
 CREATE POLICY "Users can view own org access log"
   ON audit_trail_access_log FOR SELECT TO authenticated
   USING (report_id IN (
@@ -110,6 +116,7 @@ CREATE POLICY "Users can view own org access log"
     )
   ));
 
+DROP POLICY IF EXISTS "Users can insert access log entries" ON audit_trail_access_log;
 CREATE POLICY "Users can insert access log entries"
   ON audit_trail_access_log FOR INSERT TO authenticated
   WITH CHECK (report_id IN (
@@ -119,8 +126,10 @@ CREATE POLICY "Users can insert access log entries"
   ));
 
 -- Service role full access
+DROP POLICY IF EXISTS "Service role full access audit reports" ON audit_trail_reports;
 CREATE POLICY "Service role full access audit reports"
   ON audit_trail_reports FOR ALL TO service_role USING (true);
 
+DROP POLICY IF EXISTS "Service role full access access log" ON audit_trail_access_log;
 CREATE POLICY "Service role full access access log"
   ON audit_trail_access_log FOR ALL TO service_role USING (true);

@@ -34,6 +34,7 @@ ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Users can only read their own stripe_customers row
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Users can view own stripe customer" ON stripe_customers;
   CREATE POLICY "Users can view own stripe customer"
     ON stripe_customers FOR SELECT USING (auth.uid() = user_id);
 EXCEPTION WHEN duplicate_object THEN NULL;
@@ -41,6 +42,7 @@ END $$;
 
 -- Users can only read their own subscriptions
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Users can view own subscriptions" ON subscriptions;
   CREATE POLICY "Users can view own subscriptions"
     ON subscriptions FOR SELECT USING (auth.uid() = user_id);
 EXCEPTION WHEN duplicate_object THEN NULL;

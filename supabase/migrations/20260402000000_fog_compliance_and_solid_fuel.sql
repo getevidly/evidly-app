@@ -54,6 +54,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE tablename = 'grease_trap_services' AND policyname = 'org_member_select'
   ) THEN
+    DROP POLICY IF EXISTS org_member_select ON grease_trap_services;
     CREATE POLICY org_member_select ON grease_trap_services FOR SELECT
       USING (organization_id IN (
         SELECT organization_id FROM user_profiles WHERE id = auth.uid()
@@ -63,6 +64,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE tablename = 'grease_trap_services' AND policyname = 'org_member_insert'
   ) THEN
+    DROP POLICY IF EXISTS org_member_insert ON grease_trap_services;
     CREATE POLICY org_member_insert ON grease_trap_services FOR INSERT
       WITH CHECK (organization_id IN (
         SELECT organization_id FROM user_profiles WHERE id = auth.uid()
@@ -72,6 +74,7 @@ DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE tablename = 'grease_trap_services' AND policyname = 'org_member_update'
   ) THEN
+    DROP POLICY IF EXISTS org_member_update ON grease_trap_services;
     CREATE POLICY org_member_update ON grease_trap_services FOR UPDATE
       USING (organization_id IN (
         SELECT organization_id FROM user_profiles WHERE id = auth.uid()

@@ -86,20 +86,24 @@ ALTER TABLE regulatory_changes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE regulatory_change_reads ENABLE ROW LEVEL SECURITY;
 
 -- Sources are readable by all authenticated users
+DROP POLICY IF EXISTS "regulatory_sources_read" ON regulatory_sources;
 CREATE POLICY "regulatory_sources_read" ON regulatory_sources
   FOR SELECT TO authenticated USING (true);
 
 -- Published changes are readable by all; unpublished only by admin
+DROP POLICY IF EXISTS "regulatory_changes_read" ON regulatory_changes;
 CREATE POLICY "regulatory_changes_read" ON regulatory_changes
   FOR SELECT TO authenticated
   USING (published = true OR auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
 -- Only admin can insert/update changes
+DROP POLICY IF EXISTS "regulatory_changes_admin_write" ON regulatory_changes;
 CREATE POLICY "regulatory_changes_admin_write" ON regulatory_changes
   FOR ALL TO authenticated
   USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
 -- Users can read and create their own acknowledgments
+DROP POLICY IF EXISTS "regulatory_change_reads_user" ON regulatory_change_reads;
 CREATE POLICY "regulatory_change_reads_user" ON regulatory_change_reads
   FOR ALL TO authenticated
   USING (user_id = auth.uid());

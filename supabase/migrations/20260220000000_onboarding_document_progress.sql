@@ -39,14 +39,17 @@ CREATE INDEX IF NOT EXISTS idx_onboarding_doc_progress_status
 -- Row-Level Security
 ALTER TABLE onboarding_document_progress ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own onboarding progress" ON onboarding_document_progress;
 CREATE POLICY "Users can view own onboarding progress"
   ON onboarding_document_progress FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own onboarding progress" ON onboarding_document_progress;
 CREATE POLICY "Users can insert own onboarding progress"
   ON onboarding_document_progress FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own onboarding progress" ON onboarding_document_progress;
 CREATE POLICY "Users can update own onboarding progress"
   ON onboarding_document_progress FOR UPDATE
   USING (auth.uid() = user_id);
@@ -69,6 +72,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS set_onboarding_doc_progress_updated_at ON onboarding_document_progress;
 CREATE TRIGGER set_onboarding_doc_progress_updated_at
   BEFORE UPDATE ON onboarding_document_progress
   FOR EACH ROW

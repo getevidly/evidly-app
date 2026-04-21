@@ -37,6 +37,7 @@ CREATE INDEX IF NOT EXISTS idx_demo_sessions_auth_user
 -- ── 3. RLS: Admin full access for demo pipeline management ──
 -- Admins already have SELECT via existing policy "Admins see all demos"
 -- Add admin DELETE policy for cleanup
+DROP POLICY IF EXISTS "Admins can delete demos" ON demo_sessions;
 CREATE POLICY "Admins can delete demos" ON demo_sessions
   FOR DELETE USING (
     EXISTS (

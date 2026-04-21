@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS nslp_claim_periods (
 
 ALTER TABLE nslp_claim_periods ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "org_access_nslp" ON nslp_claim_periods;
 CREATE POLICY "org_access_nslp" ON nslp_claim_periods
   FOR ALL USING (
     organization_id IN (

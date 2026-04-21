@@ -30,9 +30,11 @@ CREATE TABLE IF NOT EXISTS jurisdiction_violation_patterns (
 -- 4. RLS
 ALTER TABLE jurisdiction_violation_patterns ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Anyone can read violation patterns" ON jurisdiction_violation_patterns;
 CREATE POLICY "Anyone can read violation patterns"
   ON jurisdiction_violation_patterns FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Service role manages violation patterns" ON jurisdiction_violation_patterns;
 CREATE POLICY "Service role manages violation patterns"
   ON jurisdiction_violation_patterns FOR ALL USING (auth.role() = 'service_role');
 

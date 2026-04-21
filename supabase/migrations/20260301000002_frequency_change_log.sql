@@ -23,19 +23,22 @@ CREATE TABLE IF NOT EXISTS frequency_change_log (
   compliance_notified BOOLEAN DEFAULT false
 );
 
-CREATE INDEX idx_fcl_org ON frequency_change_log(organization_id, changed_at DESC);
-CREATE INDEX idx_fcl_category ON frequency_change_log(category);
+CREATE INDEX IF NOT EXISTS idx_fcl_org ON frequency_change_log(organization_id, changed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fcl_category ON frequency_change_log(category);
 
 ALTER TABLE frequency_change_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org frequency changes" ON frequency_change_log;
 CREATE POLICY "Users can view own org frequency changes"
   ON frequency_change_log FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can insert own org frequency changes" ON frequency_change_log;
 CREATE POLICY "Users can insert own org frequency changes"
   ON frequency_change_log FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access frequency change log" ON frequency_change_log;
 CREATE POLICY "Service role full access frequency change log"
   ON frequency_change_log FOR ALL TO service_role
   USING (true) WITH CHECK (true);

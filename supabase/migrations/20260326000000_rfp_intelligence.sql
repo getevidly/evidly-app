@@ -101,33 +101,41 @@ ALTER TABLE rfp_actions ENABLE ROW LEVEL SECURITY;
 
 -- rfp_sources policies
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_sources_select_authenticated" ON rfp_sources;
   CREATE POLICY "rfp_sources_select_authenticated" ON rfp_sources FOR SELECT TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_sources_service_role_all" ON rfp_sources;
   CREATE POLICY "rfp_sources_service_role_all" ON rfp_sources FOR ALL TO service_role USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_listings policies
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_listings_select_authenticated" ON rfp_listings;
   CREATE POLICY "rfp_listings_select_authenticated" ON rfp_listings FOR SELECT TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_listings_service_role_all" ON rfp_listings;
   CREATE POLICY "rfp_listings_service_role_all" ON rfp_listings FOR ALL TO service_role USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_classifications policies
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_classifications_select_authenticated" ON rfp_classifications;
   CREATE POLICY "rfp_classifications_select_authenticated" ON rfp_classifications FOR SELECT TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_classifications_service_role_all" ON rfp_classifications;
   CREATE POLICY "rfp_classifications_service_role_all" ON rfp_classifications FOR ALL TO service_role USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_actions policies
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_actions_select_authenticated" ON rfp_actions;
   CREATE POLICY "rfp_actions_select_authenticated" ON rfp_actions FOR SELECT TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "rfp_actions_service_role_all" ON rfp_actions;
   CREATE POLICY "rfp_actions_service_role_all" ON rfp_actions FOR ALL TO service_role USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -178,6 +186,7 @@ BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $$ LANGUAGE plpgsql;
 
 DO $$ BEGIN
+  DROP TRIGGER IF EXISTS trg_rfp_actions_updated ON rfp_actions;
   CREATE TRIGGER trg_rfp_actions_updated
     BEFORE UPDATE ON rfp_actions
     FOR EACH ROW EXECUTE FUNCTION update_rfp_updated_at();

@@ -7,67 +7,55 @@
 -- ────────────────────────────────────────────────────────────
 -- 1. Add risk notes + publish fields to intelligence_signals
 -- ────────────────────────────────────────────────────────────
-DO $$ BEGIN
-  ALTER TABLE intelligence_signals
-    ADD COLUMN revenue_risk_note     TEXT,
-    ADD COLUMN liability_risk_note   TEXT,
-    ADD COLUMN cost_risk_note        TEXT,
-    ADD COLUMN operational_risk_note TEXT,
-    ADD COLUMN recommended_action    TEXT,
-    ADD COLUMN action_deadline       DATE,
-    ADD COLUMN is_published          BOOLEAN DEFAULT false,
-    ADD COLUMN published_at          TIMESTAMPTZ,
-    ADD COLUMN published_by          TEXT;
-EXCEPTION WHEN duplicate_column THEN NULL;
-END $$;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS revenue_risk_note TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS liability_risk_note TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS cost_risk_note TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS operational_risk_note TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS recommended_action TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS action_deadline DATE;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT false;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS published_by TEXT;
 
 -- ────────────────────────────────────────────────────────────
 -- 2. Add risk notes + publish fields to regulatory_updates
 -- ────────────────────────────────────────────────────────────
-DO $$ BEGIN
-  ALTER TABLE regulatory_updates
-    ADD COLUMN revenue_risk_note     TEXT,
-    ADD COLUMN liability_risk_note   TEXT,
-    ADD COLUMN cost_risk_note        TEXT,
-    ADD COLUMN operational_risk_note TEXT,
-    ADD COLUMN recommended_action    TEXT,
-    ADD COLUMN action_deadline       DATE,
-    ADD COLUMN is_published          BOOLEAN DEFAULT true;
-EXCEPTION WHEN duplicate_column THEN NULL;
-END $$;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS revenue_risk_note TEXT;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS liability_risk_note TEXT;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS cost_risk_note TEXT;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS operational_risk_note TEXT;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS recommended_action TEXT;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS action_deadline DATE;
+ALTER TABLE regulatory_updates ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true;
 
 -- ────────────────────────────────────────────────────────────
 -- 3. Add per-dimension risk levels + notes + priority to
 --    client_intelligence_feed
 -- ────────────────────────────────────────────────────────────
-DO $$ BEGIN
-  ALTER TABLE client_intelligence_feed
-    ADD COLUMN revenue_risk_level     TEXT CHECK (revenue_risk_level IN ('critical','high','moderate','low','none','n/a')),
-    ADD COLUMN liability_risk_level   TEXT CHECK (liability_risk_level IN ('critical','high','moderate','low','none','n/a')),
-    ADD COLUMN cost_risk_level        TEXT CHECK (cost_risk_level IN ('critical','high','moderate','low','none','n/a')),
-    ADD COLUMN operational_risk_level TEXT CHECK (operational_risk_level IN ('critical','high','moderate','low','none','n/a')),
-    ADD COLUMN revenue_risk_note      TEXT,
-    ADD COLUMN liability_risk_note    TEXT,
-    ADD COLUMN cost_risk_note         TEXT,
-    ADD COLUMN operational_risk_note  TEXT,
-    ADD COLUMN recommended_action     TEXT,
-    ADD COLUMN action_deadline        DATE,
-    ADD COLUMN action_url             TEXT,
-    ADD COLUMN location_id            UUID,
-    ADD COLUMN jurisdiction_id        TEXT,
-    ADD COLUMN intelligence_signal_id UUID,
-    ADD COLUMN regulatory_update_id   UUID,
-    ADD COLUMN source_name            TEXT,
-    ADD COLUMN signal_type            TEXT,
-    ADD COLUMN category               TEXT,
-    ADD COLUMN priority               TEXT DEFAULT 'normal' CHECK (priority IN ('critical','high','normal','low')),
-    ADD COLUMN published_at           TIMESTAMPTZ DEFAULT now(),
-    ADD COLUMN expires_at             TIMESTAMPTZ,
-    ADD COLUMN notification_sent      BOOLEAN DEFAULT false,
-    ADD COLUMN notification_sent_at   TIMESTAMPTZ,
-    ADD COLUMN notification_channel   TEXT;
-EXCEPTION WHEN duplicate_column THEN NULL;
-END $$;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS revenue_risk_level TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS liability_risk_level TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS cost_risk_level TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS operational_risk_level TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS revenue_risk_note TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS liability_risk_note TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS cost_risk_note TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS operational_risk_note TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS recommended_action TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS action_deadline DATE;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS action_url TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS location_id UUID;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS jurisdiction_id TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS intelligence_signal_id UUID;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS regulatory_update_id UUID;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS source_name TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS signal_type TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'normal';
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ DEFAULT now();
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS notification_sent BOOLEAN DEFAULT false;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS notification_sent_at TIMESTAMPTZ;
+ALTER TABLE client_intelligence_feed ADD COLUMN IF NOT EXISTS notification_channel TEXT;
 
 CREATE INDEX IF NOT EXISTS cif_priority_idx ON client_intelligence_feed (organization_id, priority, published_at DESC);
 CREATE INDEX IF NOT EXISTS cif_loc_idx      ON client_intelligence_feed (location_id);

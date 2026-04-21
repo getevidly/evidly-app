@@ -31,17 +31,20 @@ CREATE TABLE IF NOT EXISTS client_advisories (
 
 ALTER TABLE client_advisories ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS admin_only_advisories ON client_advisories;
 CREATE POLICY admin_only_advisories ON client_advisories
   FOR ALL USING (
     auth.jwt() ->> 'email' LIKE '%@getevidly.com'
   );
 
+DROP POLICY IF EXISTS service_role_advisories ON client_advisories;
 CREATE POLICY service_role_advisories ON client_advisories
   FOR ALL USING (
     auth.role() = 'service_role'
   );
 
 -- Tenants can read advisories for their org
+DROP POLICY IF EXISTS tenant_read_advisories ON client_advisories;
 CREATE POLICY tenant_read_advisories ON client_advisories
   FOR SELECT USING (
     org_id IN (
@@ -61,9 +64,11 @@ CREATE TABLE IF NOT EXISTS client_advisory_reads (
 
 ALTER TABLE client_advisory_reads ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS own_reads ON client_advisory_reads;
 CREATE POLICY own_reads ON client_advisory_reads
   FOR ALL USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS service_role_reads ON client_advisory_reads;
 CREATE POLICY service_role_reads ON client_advisory_reads
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -88,11 +93,13 @@ CREATE TABLE IF NOT EXISTS assessment_intelligence_events (
 
 ALTER TABLE assessment_intelligence_events ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS admin_only_aie ON assessment_intelligence_events;
 CREATE POLICY admin_only_aie ON assessment_intelligence_events
   FOR ALL USING (
     auth.jwt() ->> 'email' LIKE '%@getevidly.com'
   );
 
+DROP POLICY IF EXISTS service_role_aie ON assessment_intelligence_events;
 CREATE POLICY service_role_aie ON assessment_intelligence_events
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -114,15 +121,18 @@ CREATE TABLE IF NOT EXISTS scoretable_views (
 
 ALTER TABLE scoretable_views ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS admin_only_sv ON scoretable_views;
 CREATE POLICY admin_only_sv ON scoretable_views
   FOR ALL USING (
     auth.jwt() ->> 'email' LIKE '%@getevidly.com'
   );
 
+DROP POLICY IF EXISTS service_role_sv ON scoretable_views;
 CREATE POLICY service_role_sv ON scoretable_views
   FOR ALL USING (auth.role() = 'service_role');
 
 -- Public insert for anonymous tracking
+DROP POLICY IF EXISTS public_insert_sv ON scoretable_views;
 CREATE POLICY public_insert_sv ON scoretable_views
   FOR INSERT WITH CHECK (true);
 
@@ -155,15 +165,18 @@ CREATE TABLE IF NOT EXISTS internal_reports (
 
 ALTER TABLE internal_reports ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS admin_only_reports ON internal_reports;
 CREATE POLICY admin_only_reports ON internal_reports
   FOR ALL USING (
     auth.jwt() ->> 'email' LIKE '%@getevidly.com'
   );
 
+DROP POLICY IF EXISTS service_role_reports ON internal_reports;
 CREATE POLICY service_role_reports ON internal_reports
   FOR ALL USING (auth.role() = 'service_role');
 
 -- Tenants can read reports shared with their org
+DROP POLICY IF EXISTS tenant_read_reports ON internal_reports;
 CREATE POLICY tenant_read_reports ON internal_reports
   FOR SELECT USING (
     org_id IN (
@@ -172,6 +185,7 @@ CREATE POLICY tenant_read_reports ON internal_reports
   );
 
 -- Public access via share token
+DROP POLICY IF EXISTS public_share_reports ON internal_reports;
 CREATE POLICY public_share_reports ON internal_reports
   FOR SELECT USING (
     share_token IS NOT NULL

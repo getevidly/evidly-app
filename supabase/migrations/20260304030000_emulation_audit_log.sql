@@ -24,18 +24,22 @@ CREATE INDEX IF NOT EXISTS idx_emulation_audit_active ON emulation_audit_log(adm
 -- RLS: only the admin who initiated the session can view their own logs
 ALTER TABLE emulation_audit_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins can view own emulation logs" ON emulation_audit_log;
 CREATE POLICY "Admins can view own emulation logs"
   ON emulation_audit_log FOR SELECT
   USING (auth.uid() = admin_id);
 
+DROP POLICY IF EXISTS "Admins can insert emulation logs" ON emulation_audit_log;
 CREATE POLICY "Admins can insert emulation logs"
   ON emulation_audit_log FOR INSERT
   WITH CHECK (auth.uid() = admin_id);
 
+DROP POLICY IF EXISTS "Admins can update own emulation logs" ON emulation_audit_log;
 CREATE POLICY "Admins can update own emulation logs"
   ON emulation_audit_log FOR UPDATE
   USING (auth.uid() = admin_id);
 
+DROP POLICY IF EXISTS "Service role has full access" ON emulation_audit_log;
 CREATE POLICY "Service role has full access"
   ON emulation_audit_log FOR ALL
   USING (auth.role() = 'service_role');

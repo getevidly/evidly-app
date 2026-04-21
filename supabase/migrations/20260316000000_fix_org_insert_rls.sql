@@ -16,6 +16,7 @@
 */
 
 -- Allow authenticated users to insert organizations (needed during sign-up)
+DROP POLICY IF EXISTS "Authenticated users can create organizations" ON organizations;
 CREATE POLICY "Authenticated users can create organizations"
   ON organizations FOR INSERT
   TO authenticated
@@ -30,6 +31,7 @@ BEGIN
       AND policyname = 'Users can insert their own profile'
   ) THEN
     EXECUTE $policy$
+      DROP POLICY IF EXISTS "Users can insert their own profile" ON user_profiles;
       CREATE POLICY "Users can insert their own profile"
         ON user_profiles FOR INSERT
         TO authenticated
@@ -47,6 +49,7 @@ BEGIN
       AND policyname = 'Users can insert their own access'
   ) THEN
     EXECUTE $policy$
+      DROP POLICY IF EXISTS "Users can insert their own access" ON user_location_access;
       CREATE POLICY "Users can insert their own access"
         ON user_location_access FOR INSERT
         TO authenticated

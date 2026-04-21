@@ -20,7 +20,7 @@ DO $$ BEGIN
     WHERE table_name = 'user_profiles' AND column_name = 'linked_vendor_id'
   ) THEN
     ALTER TABLE user_profiles ADD COLUMN linked_vendor_id UUID REFERENCES vendors(id) ON DELETE SET NULL;
-    CREATE INDEX idx_user_profiles_linked_vendor ON user_profiles(linked_vendor_id) WHERE linked_vendor_id IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_user_profiles_linked_vendor ON user_profiles(linked_vendor_id) WHERE linked_vendor_id IS NOT NULL;
     RAISE NOTICE 'Added linked_vendor_id to user_profiles';
   END IF;
 END $$;
@@ -36,6 +36,7 @@ DO $$ BEGIN
     -- Step 2: Replace vendor_documents SELECT policy
     EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_select ON vendor_documents';
     EXECUTE '
+      DROP POLICY IF EXISTS vendor_documents_org_select ON vendor_documents;
       CREATE POLICY vendor_documents_org_select ON vendor_documents
         FOR SELECT USING (
           (EXISTS (
@@ -57,6 +58,7 @@ DO $$ BEGIN
     -- Step 3: Replace vendor_documents INSERT policy
     EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_insert ON vendor_documents';
     EXECUTE '
+      DROP POLICY IF EXISTS vendor_documents_org_insert ON vendor_documents;
       CREATE POLICY vendor_documents_org_insert ON vendor_documents
         FOR INSERT WITH CHECK (
           (EXISTS (
@@ -78,6 +80,7 @@ DO $$ BEGIN
     -- Step 4: Replace vendor_documents UPDATE policy
     EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_update ON vendor_documents';
     EXECUTE '
+      DROP POLICY IF EXISTS vendor_documents_org_update ON vendor_documents;
       CREATE POLICY vendor_documents_org_update ON vendor_documents
         FOR UPDATE USING (
           (EXISTS (
@@ -109,6 +112,7 @@ DO $$ BEGIN
     EXECUTE 'DROP POLICY IF EXISTS vendor_doc_notifications_org_select ON vendor_document_notifications';
     EXECUTE 'DROP POLICY IF EXISTS vendor_document_notifications_select ON vendor_document_notifications';
     EXECUTE '
+      DROP POLICY IF EXISTS vendor_doc_notifications_vendor_scoped ON vendor_document_notifications;
       CREATE POLICY vendor_doc_notifications_vendor_scoped ON vendor_document_notifications
         FOR SELECT USING (
           (EXISTS (

@@ -67,8 +67,14 @@ COMMENT ON TABLE drift_alert_log IS
 -- ── TABLE 3: support_tickets ───────────────────────────────
 -- Auto-generated tickets for drift events. Also usable for manual tickets.
 
-CREATE TYPE ticket_status AS ENUM ('open', 'investigating', 'resolved', 'false_alarm');
-CREATE TYPE ticket_priority AS ENUM ('critical', 'high', 'medium', 'low');
+DO $$ BEGIN
+  CREATE TYPE ticket_status AS ENUM ('open', 'investigating', 'resolved', 'false_alarm');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE ticket_priority AS ENUM ('critical', 'high', 'medium', 'low');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE TABLE IF NOT EXISTS support_tickets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -88,10 +94,39 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   resolution_notes TEXT
 );
 
-CREATE INDEX idx_support_tickets_status ON support_tickets(status);
-CREATE INDEX idx_support_tickets_category ON support_tickets(category);
-CREATE INDEX idx_support_tickets_created ON support_tickets(created_at DESC);
-CREATE INDEX idx_support_tickets_jurisdiction ON support_tickets(related_jurisdiction_id);
+-- Reconcile support_tickets schema (table may exist from earlier migration with different schema)
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS related_jurisdiction_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS related_drift_alert_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS resolved_by TEXT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS resolution_notes TEXT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+-- Relax NOT NULL on subject/description (old schema) since new schema uses title instead
+DO $$ BEGIN
+  ALTER TABLE support_tickets ALTER COLUMN subject DROP NOT NULL;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+DO $$ BEGIN
+  ALTER TABLE support_tickets ALTER COLUMN description DROP NOT NULL;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+-- Widen CHECK constraints to accept both old and new enum values
+ALTER TABLE support_tickets DROP CONSTRAINT IF EXISTS support_tickets_category_check;
+ALTER TABLE support_tickets ADD CONSTRAINT support_tickets_category_check
+  CHECK (category IN ('billing','technical','account','data','feature_request','bug','onboarding','inspection_question','other','jurisdiction_drift'));
+ALTER TABLE support_tickets DROP CONSTRAINT IF EXISTS support_tickets_priority_check;
+ALTER TABLE support_tickets ADD CONSTRAINT support_tickets_priority_check
+  CHECK (priority IN ('low','normal','medium','high','critical'));
+ALTER TABLE support_tickets DROP CONSTRAINT IF EXISTS support_tickets_status_check;
+ALTER TABLE support_tickets ADD CONSTRAINT support_tickets_status_check
+  CHECK (status IN ('open','in_progress','waiting_customer','resolved','closed','escalated','investigating','false_alarm'));
+
+CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_category ON support_tickets(category);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_jurisdiction ON support_tickets(related_jurisdiction_id);
 
 COMMENT ON TABLE support_tickets IS
   'Auto-generated and manual support tickets. Jurisdiction drift tickets are auto-created by the drift monitor — never delete, only resolve.';
@@ -108,6 +143,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_ticket_number ON support_tickets;
 CREATE TRIGGER trg_ticket_number
   BEFORE INSERT ON support_tickets
   FOR EACH ROW
@@ -122,6 +158,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_ticket_updated ON support_tickets;
 CREATE TRIGGER trg_ticket_updated
   BEFORE UPDATE ON support_tickets
   FOR EACH ROW
@@ -149,9 +186,9 @@ CREATE TABLE IF NOT EXISTS drift_monitor_executions (
   changed_by TEXT
 );
 
-CREATE INDEX idx_drift_executions_at ON drift_monitor_executions(executed_at DESC);
-CREATE INDEX idx_drift_executions_jurisdiction ON drift_monitor_executions(jurisdiction_id);
-CREATE INDEX idx_drift_executions_drift ON drift_monitor_executions(drift_detected) WHERE drift_detected = true;
+CREATE INDEX IF NOT EXISTS idx_drift_executions_at ON drift_monitor_executions(executed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_drift_executions_jurisdiction ON drift_monitor_executions(jurisdiction_id);
+CREATE INDEX IF NOT EXISTS idx_drift_executions_drift ON drift_monitor_executions(drift_detected) WHERE drift_detected = true;
 
 COMMENT ON TABLE drift_monitor_executions IS
   'Complete execution log of every drift monitor trigger fire. Proves the monitor ran even when no drift was found. Never delete rows.';
@@ -238,22 +275,24 @@ BEGIN
       )
     ) RETURNING id INTO ticket_id;
 
-    -- Fire Edge Function
-    PERFORM net.http_post(
-      url := current_setting('app.settings.drift_alert_url', true),
-      body := jsonb_build_object(
-        'alert_id', alert_id,
-        'ticket_id', ticket_id,
-        'jurisdiction_name', NEW.agency_name,
-        'alert_type', 'NO_BASELINE',
-        'changed_by', changer,
-        'message', 'Jurisdiction has no audit baseline — may be newly added or missed by audit'
-      ),
-      headers := jsonb_build_object(
-        'Content-Type', 'application/json',
-        'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
-      )
-    );
+    -- Fire Edge Function (skip if URL not configured)
+    IF current_setting('app.settings.drift_alert_url', true) IS NOT NULL THEN
+      PERFORM net.http_post(
+        url := current_setting('app.settings.drift_alert_url', true),
+        body := jsonb_build_object(
+          'alert_id', alert_id,
+          'ticket_id', ticket_id,
+          'jurisdiction_name', NEW.agency_name,
+          'alert_type', 'NO_BASELINE',
+          'changed_by', changer,
+          'message', 'Jurisdiction has no audit baseline — may be newly added or missed by audit'
+        ),
+        headers := jsonb_build_object(
+          'Content-Type', 'application/json',
+          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
+        )
+      );
+    END IF;
 
     RETURN NEW;
   END IF;
@@ -339,10 +378,11 @@ BEGIN
     true, alert_id, ticket_id, exec_duration, changer
   );
 
-  -- Fire Edge Function for email alert
-  PERFORM net.http_post(
-    url := current_setting('app.settings.drift_alert_url', true),
-    body := jsonb_build_object(
+  -- Fire Edge Function for email alert (skip if URL not configured)
+  IF current_setting('app.settings.drift_alert_url', true) IS NOT NULL THEN
+    PERFORM net.http_post(
+      url := current_setting('app.settings.drift_alert_url', true),
+      body := jsonb_build_object(
       'alert_id', alert_id,
       'ticket_id', ticket_id,
       'ticket_number', (SELECT ticket_number FROM support_tickets WHERE id = ticket_id),
@@ -353,12 +393,13 @@ BEGIN
       'old_hash', CASE WHEN grading_changed THEN baseline.grading_config_hash ELSE baseline.fire_config_hash END,
       'new_hash', CASE WHEN grading_changed THEN new_grading_hash ELSE new_fire_hash END,
       'detected_at', now()
-    ),
-    headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
-    )
-  );
+      ),
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
+      )
+    );
+  END IF;
 
   RETURN NEW;
 END;
@@ -370,6 +411,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trg_jurisdiction_config_drift ON jurisdictions;
 
+DROP TRIGGER IF EXISTS trg_jurisdiction_config_drift ON jurisdictions;
 CREATE TRIGGER trg_jurisdiction_config_drift
   AFTER UPDATE OF grading_config, fire_jurisdiction_config ON jurisdictions
   FOR EACH ROW

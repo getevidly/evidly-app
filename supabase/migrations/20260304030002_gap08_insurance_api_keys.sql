@@ -32,19 +32,21 @@ IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'insur
   );
 
   -- Indexes
-  CREATE INDEX idx_insurance_api_keys_org ON insurance_api_keys(org_id);
-  CREATE INDEX idx_insurance_api_keys_hash ON insurance_api_keys(key_hash);
-  CREATE INDEX idx_insurance_api_keys_active ON insurance_api_keys(org_id) WHERE revoked_at IS NULL;
+  CREATE INDEX IF NOT EXISTS idx_insurance_api_keys_org ON insurance_api_keys(org_id);
+  CREATE INDEX IF NOT EXISTS idx_insurance_api_keys_hash ON insurance_api_keys(key_hash);
+  CREATE INDEX IF NOT EXISTS idx_insurance_api_keys_active ON insurance_api_keys(org_id) WHERE revoked_at IS NULL;
 
   -- RLS
   ALTER TABLE insurance_api_keys ENABLE ROW LEVEL SECURITY;
 
+  DROP POLICY IF EXISTS insurance_api_keys_org_read ON insurance_api_keys;
   CREATE POLICY insurance_api_keys_org_read ON insurance_api_keys
     FOR SELECT USING (org_id IN (
       SELECT organization_id FROM user_profiles WHERE id = auth.uid()
     ));
 
   -- Only platform_admin can write (enforced at app level; RLS allows org members to insert)
+  DROP POLICY IF EXISTS insurance_api_keys_org_write ON insurance_api_keys;
   CREATE POLICY insurance_api_keys_org_write ON insurance_api_keys
     FOR ALL USING (org_id IN (
       SELECT organization_id FROM user_profiles WHERE id = auth.uid()

@@ -64,9 +64,9 @@ CREATE TABLE IF NOT EXISTS sensor_readings (
   created_at        timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_sensor_readings_device_ts ON sensor_readings (device_id, timestamp DESC);
-CREATE INDEX idx_sensor_readings_location_ts ON sensor_readings (location_id, timestamp DESC);
-CREATE INDEX idx_sensor_readings_compliance ON sensor_readings (compliance_status, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_readings_device_ts ON sensor_readings (device_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_readings_location_ts ON sensor_readings (location_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_readings_compliance ON sensor_readings (compliance_status, timestamp DESC);
 
 -- ── Sensor Alerts ───────────────────────────────────────────
 
@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS sensor_alerts (
   escalation_history  jsonb DEFAULT '[]'
 );
 
-CREATE INDEX idx_sensor_alerts_device ON sensor_alerts (device_id, triggered_at DESC);
-CREATE INDEX idx_sensor_alerts_unresolved ON sensor_alerts (resolved_at) WHERE resolved_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_sensor_alerts_device ON sensor_alerts (device_id, triggered_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_alerts_unresolved ON sensor_alerts (resolved_at) WHERE resolved_at IS NULL;
 
 -- ── Sensor → Incident Link ──────────────────────────────────
 
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS sensor_door_events (
   created_at           timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_door_events_device ON sensor_door_events (device_id, opened_at DESC);
+CREATE INDEX IF NOT EXISTS idx_door_events_device ON sensor_door_events (device_id, opened_at DESC);
 
 -- ── Defrost Schedules ───────────────────────────────────────
 
@@ -206,14 +206,25 @@ ALTER TABLE sensor_defrost_schedules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sensor_cooling_logs ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies: organization-scoped access
+DROP POLICY IF EXISTS "sensor_integrations_org" ON sensor_integrations;
 CREATE POLICY "sensor_integrations_org" ON sensor_integrations FOR ALL USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+DROP POLICY IF EXISTS "sensor_devices_org" ON sensor_devices;
 CREATE POLICY "sensor_devices_org" ON sensor_devices FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_readings_org" ON sensor_readings;
 CREATE POLICY "sensor_readings_org" ON sensor_readings FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_alerts_org" ON sensor_alerts;
 CREATE POLICY "sensor_alerts_org" ON sensor_alerts FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_incidents_org" ON sensor_incidents;
 CREATE POLICY "sensor_incidents_org" ON sensor_incidents FOR ALL USING (true);
+DROP POLICY IF EXISTS "sensor_webhooks_org" ON sensor_webhooks;
 CREATE POLICY "sensor_webhooks_org" ON sensor_webhooks FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_csv_imports_org" ON sensor_csv_imports;
 CREATE POLICY "sensor_csv_imports_org" ON sensor_csv_imports FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_calibration_org" ON sensor_calibration_log;
 CREATE POLICY "sensor_calibration_org" ON sensor_calibration_log FOR ALL USING (device_id IN (SELECT id FROM sensor_devices WHERE location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))));
+DROP POLICY IF EXISTS "sensor_door_events_org" ON sensor_door_events;
 CREATE POLICY "sensor_door_events_org" ON sensor_door_events FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "sensor_defrost_org" ON sensor_defrost_schedules;
 CREATE POLICY "sensor_defrost_org" ON sensor_defrost_schedules FOR ALL USING (device_id IN (SELECT id FROM sensor_devices WHERE location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))));
+DROP POLICY IF EXISTS "sensor_cooling_org" ON sensor_cooling_logs;
 CREATE POLICY "sensor_cooling_org" ON sensor_cooling_logs FOR ALL USING (location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));

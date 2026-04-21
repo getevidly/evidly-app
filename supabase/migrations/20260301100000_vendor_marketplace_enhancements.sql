@@ -47,11 +47,13 @@ CREATE INDEX IF NOT EXISTS idx_mp_documents_type ON marketplace_documents(docume
 -- 4. RLS for marketplace_documents
 ALTER TABLE marketplace_documents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can read marketplace documents" ON marketplace_documents;
 CREATE POLICY "Authenticated users can read marketplace documents"
   ON marketplace_documents FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can upload marketplace documents" ON marketplace_documents;
 CREATE POLICY "Authenticated users can upload marketplace documents"
   ON marketplace_documents FOR INSERT
   TO authenticated
@@ -59,12 +61,14 @@ CREATE POLICY "Authenticated users can upload marketplace documents"
 
 -- 5. Admin write policies for marketplace_vendors (invite + approve)
 -- Allow authenticated users to insert new vendor invitations
+DROP POLICY IF EXISTS "Authenticated users can invite vendors" ON marketplace_vendors;
 CREATE POLICY "Authenticated users can invite vendors"
   ON marketplace_vendors FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Allow admins (owner/executive/platform_admin) to update vendor status
+DROP POLICY IF EXISTS "Admins can update marketplace vendors" ON marketplace_vendors;
 CREATE POLICY "Admins can update marketplace vendors"
   ON marketplace_vendors FOR UPDATE
   TO authenticated
@@ -84,6 +88,7 @@ CREATE POLICY "Admins can update marketplace vendors"
   );
 
 -- Allow reading pending vendors for admin approval queue
+DROP POLICY IF EXISTS "Admins can read pending marketplace vendors" ON marketplace_vendors;
 CREATE POLICY "Admins can read pending marketplace vendors"
   ON marketplace_vendors FOR SELECT
   TO authenticated

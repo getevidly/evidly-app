@@ -75,6 +75,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS intelligence_insights_updated_at ON intelligence_insights;
 CREATE TRIGGER intelligence_insights_updated_at
   BEFORE UPDATE ON intelligence_insights
   FOR EACH ROW EXECUTE FUNCTION update_intelligence_insights_updated_at();
@@ -133,6 +134,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS intelligence_subscriptions_updated_at ON intelligence_subscriptions;
 CREATE TRIGGER intelligence_subscriptions_updated_at
   BEFORE UPDATE ON intelligence_subscriptions
   FOR EACH ROW EXECUTE FUNCTION update_intelligence_subscriptions_updated_at();
@@ -147,6 +149,7 @@ ALTER TABLE executive_snapshots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE intelligence_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- intelligence_insights: anon + authenticated can read published demo-eligible rows
+DROP POLICY IF EXISTS "Anyone can read published demo-eligible insights" ON intelligence_insights;
 CREATE POLICY "Anyone can read published demo-eligible insights"
   ON intelligence_insights FOR SELECT
   TO anon, authenticated
@@ -156,6 +159,7 @@ CREATE POLICY "Anyone can read published demo-eligible insights"
   );
 
 -- intelligence_insights: authenticated users can read their org's published insights
+DROP POLICY IF EXISTS "Users can read their org published insights" ON intelligence_insights;
 CREATE POLICY "Users can read their org published insights"
   ON intelligence_insights FOR SELECT
   TO authenticated
@@ -167,6 +171,7 @@ CREATE POLICY "Users can read their org published insights"
   );
 
 -- intelligence_insights: service role bypass
+DROP POLICY IF EXISTS "Service role manages all insights" ON intelligence_insights;
 CREATE POLICY "Service role manages all insights"
   ON intelligence_insights FOR ALL
   TO service_role
@@ -174,6 +179,7 @@ CREATE POLICY "Service role manages all insights"
   WITH CHECK (true);
 
 -- executive_snapshots: anon + authenticated can read published demo-eligible
+DROP POLICY IF EXISTS "Anyone can read published demo-eligible snapshots" ON executive_snapshots;
 CREATE POLICY "Anyone can read published demo-eligible snapshots"
   ON executive_snapshots FOR SELECT
   TO anon, authenticated
@@ -183,6 +189,7 @@ CREATE POLICY "Anyone can read published demo-eligible snapshots"
   );
 
 -- executive_snapshots: authenticated users can read their org's snapshots
+DROP POLICY IF EXISTS "Users can read their org snapshots" ON executive_snapshots;
 CREATE POLICY "Users can read their org snapshots"
   ON executive_snapshots FOR SELECT
   TO authenticated
@@ -193,6 +200,7 @@ CREATE POLICY "Users can read their org snapshots"
   );
 
 -- executive_snapshots: service role bypass
+DROP POLICY IF EXISTS "Service role manages all snapshots" ON executive_snapshots;
 CREATE POLICY "Service role manages all snapshots"
   ON executive_snapshots FOR ALL
   TO service_role
@@ -200,6 +208,7 @@ CREATE POLICY "Service role manages all snapshots"
   WITH CHECK (true);
 
 -- intelligence_subscriptions: users can manage their org's subscription
+DROP POLICY IF EXISTS "Users can read their org subscription" ON intelligence_subscriptions;
 CREATE POLICY "Users can read their org subscription"
   ON intelligence_subscriptions FOR SELECT
   TO authenticated
@@ -209,6 +218,7 @@ CREATE POLICY "Users can read their org subscription"
     )
   );
 
+DROP POLICY IF EXISTS "Users can upsert their org subscription" ON intelligence_subscriptions;
 CREATE POLICY "Users can upsert their org subscription"
   ON intelligence_subscriptions FOR INSERT
   TO authenticated
@@ -218,6 +228,7 @@ CREATE POLICY "Users can upsert their org subscription"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update their org subscription" ON intelligence_subscriptions;
 CREATE POLICY "Users can update their org subscription"
   ON intelligence_subscriptions FOR UPDATE
   TO authenticated
@@ -233,6 +244,7 @@ CREATE POLICY "Users can update their org subscription"
   );
 
 -- intelligence_subscriptions: service role bypass
+DROP POLICY IF EXISTS "Service role manages all subscriptions" ON intelligence_subscriptions;
 CREATE POLICY "Service role manages all subscriptions"
   ON intelligence_subscriptions FOR ALL
   TO service_role

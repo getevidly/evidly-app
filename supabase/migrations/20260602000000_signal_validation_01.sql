@@ -49,6 +49,7 @@ ALTER TABLE signal_review_log ENABLE ROW LEVEL SECURITY;
 
 -- Admin-only access (matches platform_audit_log pattern)
 DO $$ BEGIN
+  DROP POLICY IF EXISTS srl_admin_all ON signal_review_log;
   CREATE POLICY srl_admin_all ON signal_review_log
     FOR ALL TO authenticated
     USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
@@ -56,6 +57,7 @@ EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS srl_service ON signal_review_log;
   CREATE POLICY srl_service ON signal_review_log
     FOR ALL TO service_role
     USING (true);

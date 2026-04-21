@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS api_tokens (
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_api_tokens_app ON api_tokens (application_id, created_at DESC);
-CREATE INDEX idx_api_tokens_hash ON api_tokens (token_hash) WHERE revoked_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_api_tokens_app ON api_tokens (application_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_api_tokens_hash ON api_tokens (token_hash) WHERE revoked_at IS NULL;
 
 -- ── API Request Log ───────────────────────────────────────────
 
@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS api_request_log (
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_api_request_log_app ON api_request_log (application_id, created_at DESC);
-CREATE INDEX idx_api_request_log_time ON api_request_log (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_api_request_log_app ON api_request_log (application_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_api_request_log_time ON api_request_log (created_at DESC);
 
 -- ── API Webhook Subscriptions ─────────────────────────────────
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS api_webhook_deliveries (
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_webhook_deliveries_sub ON api_webhook_deliveries (subscription_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_sub ON api_webhook_deliveries (subscription_id, created_at DESC);
 
 -- ── API Sandbox Keys ──────────────────────────────────────────
 
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS integrations (
   disconnected_at       timestamptz
 );
 
-CREATE INDEX idx_integrations_org ON integrations (organization_id, platform);
+CREATE INDEX IF NOT EXISTS idx_integrations_org ON integrations (organization_id, platform);
 
 -- ── Sync Operations Log ───────────────────────────────────────
 
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS integration_sync_log (
   status            text DEFAULT 'running' CHECK (status IN ('running','completed','partial','failed'))
 );
 
-CREATE INDEX idx_sync_log_integration ON integration_sync_log (integration_id, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sync_log_integration ON integration_sync_log (integration_id, started_at DESC);
 
 -- ── Entity Mapping (links EvidLY records to partner platform records) ──
 
@@ -208,14 +208,25 @@ ALTER TABLE integration_webhook_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE api_marketplace_listings ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies: organization-scoped access
+DROP POLICY IF EXISTS "api_apps_org" ON api_applications;
 CREATE POLICY "api_apps_org" ON api_applications FOR ALL USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+DROP POLICY IF EXISTS "api_tokens_org" ON api_tokens;
 CREATE POLICY "api_tokens_org" ON api_tokens FOR ALL USING (application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "api_request_log_org" ON api_request_log;
 CREATE POLICY "api_request_log_org" ON api_request_log FOR ALL USING (application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "api_webhook_subs_org" ON api_webhook_subscriptions;
 CREATE POLICY "api_webhook_subs_org" ON api_webhook_subscriptions FOR ALL USING (application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "api_webhook_del_org" ON api_webhook_deliveries;
 CREATE POLICY "api_webhook_del_org" ON api_webhook_deliveries FOR ALL USING (subscription_id IN (SELECT id FROM api_webhook_subscriptions WHERE application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))));
+DROP POLICY IF EXISTS "api_sandbox_org" ON api_sandbox_keys;
 CREATE POLICY "api_sandbox_org" ON api_sandbox_keys FOR ALL USING (application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "integrations_org" ON integrations;
 CREATE POLICY "integrations_org" ON integrations FOR ALL USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+DROP POLICY IF EXISTS "sync_log_org" ON integration_sync_log;
 CREATE POLICY "sync_log_org" ON integration_sync_log FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "entity_map_org" ON integration_entity_map;
 CREATE POLICY "entity_map_org" ON integration_entity_map FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "webhook_config_org" ON integration_webhook_config;
 CREATE POLICY "webhook_config_org" ON integration_webhook_config FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+DROP POLICY IF EXISTS "marketplace_public" ON api_marketplace_listings;
 CREATE POLICY "marketplace_public" ON api_marketplace_listings FOR SELECT USING (true);

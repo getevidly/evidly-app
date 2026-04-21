@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS vendor_changes (
 
 ALTER TABLE vendor_changes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage vendor changes in their org" ON vendor_changes;
 CREATE POLICY "Users can manage vendor changes in their org" ON vendor_changes
   FOR ALL USING (
     organization_id IN (
@@ -31,4 +32,4 @@ CREATE POLICY "Users can manage vendor changes in their org" ON vendor_changes
     )
   );
 
-CREATE INDEX idx_vendor_changes_org ON vendor_changes(organization_id, changed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_vendor_changes_org ON vendor_changes(organization_id, changed_at DESC);

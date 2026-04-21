@@ -29,15 +29,16 @@ CREATE TABLE IF NOT EXISTS workforce_risk_signals (
 
 ALTER TABLE workforce_risk_signals ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Org members can view workforce signals" ON workforce_risk_signals;
 CREATE POLICY "Org members can view workforce signals"
 ON workforce_risk_signals FOR SELECT
 USING (organization_id IN (
   SELECT organization_id FROM user_profiles WHERE id = auth.uid()
 ));
 
-CREATE INDEX idx_workforce_signals_org
+CREATE INDEX IF NOT EXISTS idx_workforce_signals_org
 ON workforce_risk_signals (organization_id, created_at DESC);
 
-CREATE INDEX idx_workforce_signals_unresolved
+CREATE INDEX IF NOT EXISTS idx_workforce_signals_unresolved
 ON workforce_risk_signals (organization_id)
 WHERE resolved_at IS NULL;

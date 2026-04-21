@@ -53,6 +53,7 @@ CREATE INDEX IF NOT EXISTS idx_risk_assessments_org
 -- RLS
 ALTER TABLE risk_assessments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ra_org_read" ON risk_assessments;
 CREATE POLICY "ra_org_read" ON risk_assessments
   FOR SELECT TO authenticated
   USING (
@@ -61,6 +62,7 @@ CREATE POLICY "ra_org_read" ON risk_assessments
     )
   );
 
+DROP POLICY IF EXISTS "ra_service_write" ON risk_assessments;
 CREATE POLICY "ra_service_write" ON risk_assessments
   FOR ALL TO service_role
   USING (true);

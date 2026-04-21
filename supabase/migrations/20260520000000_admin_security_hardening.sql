@@ -56,12 +56,14 @@ CREATE INDEX IF NOT EXISTS idx_pal_created  ON platform_audit_log(created_at DES
 ALTER TABLE platform_audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Only platform_admin can read. Nobody can update or delete.
+DROP POLICY IF EXISTS "admin_read_audit_log" ON platform_audit_log;
 CREATE POLICY "admin_read_audit_log" ON platform_audit_log
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
   );
 
 -- Service role can insert (edge functions). Revoke insert from authenticated users.
+DROP POLICY IF EXISTS "service_role_insert_audit" ON platform_audit_log;
 CREATE POLICY "service_role_insert_audit" ON platform_audit_log
   FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
@@ -90,14 +92,17 @@ CREATE INDEX IF NOT EXISTS idx_sessions_token ON user_sessions(session_token);
 
 ALTER TABLE user_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_read_own_sessions" ON user_sessions;
 CREATE POLICY "users_read_own_sessions" ON user_sessions
   FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "admin_manage_sessions" ON user_sessions;
 CREATE POLICY "admin_manage_sessions" ON user_sessions
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
   );
 
+DROP POLICY IF EXISTS "service_role_manage_sessions" ON user_sessions;
 CREATE POLICY "service_role_manage_sessions" ON user_sessions
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -123,9 +128,11 @@ CREATE TABLE IF NOT EXISTS user_mfa_config (
 
 ALTER TABLE user_mfa_config ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_manage_own_mfa" ON user_mfa_config;
 CREATE POLICY "users_manage_own_mfa" ON user_mfa_config
   FOR ALL USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "admin_read_all_mfa" ON user_mfa_config;
 CREATE POLICY "admin_read_all_mfa" ON user_mfa_config
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
@@ -152,11 +159,13 @@ ON CONFLICT (role) DO NOTHING;
 
 ALTER TABLE mfa_policy ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_manage_mfa_policy" ON mfa_policy;
 CREATE POLICY "admin_manage_mfa_policy" ON mfa_policy
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
   );
 
+DROP POLICY IF EXISTS "authenticated_read_mfa_policy" ON mfa_policy;
 CREATE POLICY "authenticated_read_mfa_policy" ON mfa_policy
   FOR SELECT USING (auth.role() = 'authenticated');
 
@@ -199,11 +208,13 @@ ON CONFLICT (role) DO NOTHING;
 
 ALTER TABLE session_policy ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_manage_session_policy" ON session_policy;
 CREATE POLICY "admin_manage_session_policy" ON session_policy
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
   );
 
+DROP POLICY IF EXISTS "authenticated_read_session_policy" ON session_policy;
 CREATE POLICY "authenticated_read_session_policy" ON session_policy
   FOR SELECT USING (auth.role() = 'authenticated');
 
@@ -224,6 +235,7 @@ CREATE INDEX IF NOT EXISTS idx_rate_limit_expires ON rate_limit_buckets(expires_
 ALTER TABLE rate_limit_buckets ENABLE ROW LEVEL SECURITY;
 
 -- Only service role manages rate limits (edge functions)
+DROP POLICY IF EXISTS "service_role_manage_rate_limits" ON rate_limit_buckets;
 CREATE POLICY "service_role_manage_rate_limits" ON rate_limit_buckets
   FOR ALL USING (auth.role() = 'service_role');
 

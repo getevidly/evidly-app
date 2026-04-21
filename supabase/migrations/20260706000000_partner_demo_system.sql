@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS partner_demo_templates (
 
 ALTER TABLE partner_demo_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Platform admin manages partner demo templates" ON partner_demo_templates;
 CREATE POLICY "Platform admin manages partner demo templates"
   ON partner_demo_templates FOR ALL
   USING (
@@ -29,6 +30,7 @@ CREATE POLICY "Platform admin manages partner demo templates"
     )
   );
 
+DROP POLICY IF EXISTS "service_role_partner_demo_templates" ON partner_demo_templates;
 CREATE POLICY "service_role_partner_demo_templates"
   ON partner_demo_templates FOR ALL
   USING (auth.role() = 'service_role');
@@ -104,6 +106,7 @@ CREATE TABLE IF NOT EXISTS partner_demos (
 
 ALTER TABLE partner_demos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Platform admin manages partner demos" ON partner_demos;
 CREATE POLICY "Platform admin manages partner demos"
   ON partner_demos FOR ALL
   USING (
@@ -113,6 +116,7 @@ CREATE POLICY "Platform admin manages partner demos"
     )
   );
 
+DROP POLICY IF EXISTS "service_role_partner_demos" ON partner_demos;
 CREATE POLICY "service_role_partner_demos"
   ON partner_demos FOR ALL
   USING (auth.role() = 'service_role');
@@ -165,6 +169,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_partner_demos_updated_at ON partner_demos;
 CREATE TRIGGER trg_partner_demos_updated_at
   BEFORE UPDATE ON partner_demos
   FOR EACH ROW

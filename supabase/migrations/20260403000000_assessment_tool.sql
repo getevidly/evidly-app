@@ -34,6 +34,7 @@ ALTER TABLE assessment_leads ENABLE ROW LEVEL SECURITY;
 -- Anon can insert (lead capture form is public)
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_leads' AND policyname = 'assessment_leads_anon_insert') THEN
+    DROP POLICY IF EXISTS assessment_leads_anon_insert ON assessment_leads;
     CREATE POLICY assessment_leads_anon_insert ON assessment_leads FOR INSERT TO anon WITH CHECK (true);
   END IF;
 END $$;
@@ -41,6 +42,7 @@ END $$;
 -- Authenticated users can read (admin dashboard)
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_leads' AND policyname = 'assessment_leads_auth_read') THEN
+    DROP POLICY IF EXISTS assessment_leads_auth_read ON assessment_leads;
     CREATE POLICY assessment_leads_auth_read ON assessment_leads FOR SELECT TO authenticated USING (true);
   END IF;
 END $$;
@@ -48,6 +50,7 @@ END $$;
 -- Service role has full access (edge functions)
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_leads' AND policyname = 'assessment_leads_service_all') THEN
+    DROP POLICY IF EXISTS assessment_leads_service_all ON assessment_leads;
     CREATE POLICY assessment_leads_service_all ON assessment_leads FOR ALL TO service_role USING (true) WITH CHECK (true);
   END IF;
 END $$;
@@ -70,18 +73,21 @@ ALTER TABLE assessment_responses ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_responses' AND policyname = 'assessment_responses_anon_insert') THEN
+    DROP POLICY IF EXISTS assessment_responses_anon_insert ON assessment_responses;
     CREATE POLICY assessment_responses_anon_insert ON assessment_responses FOR INSERT TO anon WITH CHECK (true);
   END IF;
 END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_responses' AND policyname = 'assessment_responses_auth_read') THEN
+    DROP POLICY IF EXISTS assessment_responses_auth_read ON assessment_responses;
     CREATE POLICY assessment_responses_auth_read ON assessment_responses FOR SELECT TO authenticated USING (true);
   END IF;
 END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_responses' AND policyname = 'assessment_responses_service_all') THEN
+    DROP POLICY IF EXISTS assessment_responses_service_all ON assessment_responses;
     CREATE POLICY assessment_responses_service_all ON assessment_responses FOR ALL TO service_role USING (true) WITH CHECK (true);
   END IF;
 END $$;
@@ -118,18 +124,21 @@ ALTER TABLE assessment_results ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_results' AND policyname = 'assessment_results_anon_insert') THEN
+    DROP POLICY IF EXISTS assessment_results_anon_insert ON assessment_results;
     CREATE POLICY assessment_results_anon_insert ON assessment_results FOR INSERT TO anon WITH CHECK (true);
   END IF;
 END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_results' AND policyname = 'assessment_results_auth_read') THEN
+    DROP POLICY IF EXISTS assessment_results_auth_read ON assessment_results;
     CREATE POLICY assessment_results_auth_read ON assessment_results FOR SELECT TO authenticated USING (true);
   END IF;
 END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'assessment_results' AND policyname = 'assessment_results_service_all') THEN
+    DROP POLICY IF EXISTS assessment_results_service_all ON assessment_results;
     CREATE POLICY assessment_results_service_all ON assessment_results FOR ALL TO service_role USING (true) WITH CHECK (true);
   END IF;
 END $$;

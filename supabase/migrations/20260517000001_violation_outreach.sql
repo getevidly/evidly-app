@@ -122,12 +122,15 @@ ALTER TABLE violation_prospects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE outreach_touches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE inspection_crawl_sources ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_only_prospects" ON violation_prospects;
 CREATE POLICY "admin_only_prospects" ON violation_prospects FOR ALL USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );
+DROP POLICY IF EXISTS "admin_only_touches" ON outreach_touches;
 CREATE POLICY "admin_only_touches" ON outreach_touches FOR ALL USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );
+DROP POLICY IF EXISTS "admin_only_crawl_sources" ON inspection_crawl_sources;
 CREATE POLICY "admin_only_crawl_sources" ON inspection_crawl_sources FOR ALL USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );

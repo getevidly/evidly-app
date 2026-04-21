@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS employee_certifications (
 
 ALTER TABLE employee_certifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view certifications in their organization" ON employee_certifications;
 CREATE POLICY "Users can view certifications in their organization"
   ON employee_certifications FOR SELECT
   TO authenticated
@@ -89,6 +90,7 @@ CREATE POLICY "Users can view certifications in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert certifications in their organization" ON employee_certifications;
 CREATE POLICY "Users can insert certifications in their organization"
   ON employee_certifications FOR INSERT
   TO authenticated
@@ -98,6 +100,7 @@ CREATE POLICY "Users can insert certifications in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update certifications in their organization" ON employee_certifications;
 CREATE POLICY "Users can update certifications in their organization"
   ON employee_certifications FOR UPDATE
   TO authenticated
@@ -134,6 +137,7 @@ CREATE TABLE IF NOT EXISTS cooldown_logs (
 
 ALTER TABLE cooldown_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view cooldown logs in their organization" ON cooldown_logs;
 CREATE POLICY "Users can view cooldown logs in their organization"
   ON cooldown_logs FOR SELECT
   TO authenticated
@@ -143,6 +147,7 @@ CREATE POLICY "Users can view cooldown logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert cooldown logs in their organization" ON cooldown_logs;
 CREATE POLICY "Users can insert cooldown logs in their organization"
   ON cooldown_logs FOR INSERT
   TO authenticated
@@ -152,6 +157,7 @@ CREATE POLICY "Users can insert cooldown logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update cooldown logs in their organization" ON cooldown_logs;
 CREATE POLICY "Users can update cooldown logs in their organization"
   ON cooldown_logs FOR UPDATE
   TO authenticated
@@ -178,6 +184,7 @@ CREATE TABLE IF NOT EXISTS cooldown_temp_checks (
 
 ALTER TABLE cooldown_temp_checks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view cooldown checks for their organization" ON cooldown_temp_checks;
 CREATE POLICY "Users can view cooldown checks for their organization"
   ON cooldown_temp_checks FOR SELECT
   TO authenticated
@@ -190,6 +197,7 @@ CREATE POLICY "Users can view cooldown checks for their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert cooldown checks for their organization" ON cooldown_temp_checks;
 CREATE POLICY "Users can insert cooldown checks for their organization"
   ON cooldown_temp_checks FOR INSERT
   TO authenticated

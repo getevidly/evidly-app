@@ -102,41 +102,41 @@ CREATE TABLE IF NOT EXISTS vendor_analytics (
 -- =====================================================
 
 -- vendor_certification_status indexes
-CREATE INDEX idx_vcs_vendor ON vendor_certification_status(vendor_id);
-CREATE INDEX idx_vcs_tier ON vendor_certification_status(tier);
-CREATE INDEX idx_vcs_next_eval ON vendor_certification_status(next_evaluation);
+CREATE INDEX IF NOT EXISTS idx_vcs_vendor ON vendor_certification_status(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vcs_tier ON vendor_certification_status(tier);
+CREATE INDEX IF NOT EXISTS idx_vcs_next_eval ON vendor_certification_status(next_evaluation);
 
 -- vendor_subscriptions indexes
-CREATE INDEX idx_vsub_vendor ON vendor_subscriptions(vendor_id);
-CREATE INDEX idx_vsub_status ON vendor_subscriptions(status);
-CREATE INDEX idx_vsub_stripe ON vendor_subscriptions(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_vsub_vendor ON vendor_subscriptions(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vsub_status ON vendor_subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_vsub_stripe ON vendor_subscriptions(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
 
 -- service_quotes indexes
-CREATE INDEX idx_sq_service_request ON service_quotes(service_request_id);
-CREATE INDEX idx_sq_vendor ON service_quotes(vendor_id);
-CREATE INDEX idx_sq_status ON service_quotes(status);
+CREATE INDEX IF NOT EXISTS idx_sq_service_request ON service_quotes(service_request_id);
+CREATE INDEX IF NOT EXISTS idx_sq_vendor ON service_quotes(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_sq_status ON service_quotes(status);
 
 -- service_completions indexes
-CREATE INDEX idx_sc_service_request ON service_completions(service_request_id);
-CREATE INDEX idx_sc_vendor ON service_completions(vendor_id);
-CREATE INDEX idx_sc_location ON service_completions(location_id);
-CREATE INDEX idx_sc_status ON service_completions(status);
-CREATE INDEX idx_sc_service_date ON service_completions(service_date);
+CREATE INDEX IF NOT EXISTS idx_sc_service_request ON service_completions(service_request_id);
+CREATE INDEX IF NOT EXISTS idx_sc_vendor ON service_completions(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_sc_location ON service_completions(location_id);
+CREATE INDEX IF NOT EXISTS idx_sc_status ON service_completions(status);
+CREATE INDEX IF NOT EXISTS idx_sc_service_date ON service_completions(service_date);
 
 -- vendor_messages indexes
-CREATE INDEX idx_vm_conversation ON vendor_messages(conversation_id, created_at);
-CREATE INDEX idx_vm_sender ON vendor_messages(sender_id);
-CREATE INDEX idx_vm_unread ON vendor_messages(conversation_id) WHERE read_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_vm_conversation ON vendor_messages(conversation_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_vm_sender ON vendor_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_vm_unread ON vendor_messages(conversation_id) WHERE read_at IS NULL;
 
 -- vendor_leads indexes
-CREATE INDEX idx_vl_vendor ON vendor_leads(vendor_id);
-CREATE INDEX idx_vl_service_request ON vendor_leads(service_request_id);
-CREATE INDEX idx_vl_fee_status ON vendor_leads(fee_status);
+CREATE INDEX IF NOT EXISTS idx_vl_vendor ON vendor_leads(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vl_service_request ON vendor_leads(service_request_id);
+CREATE INDEX IF NOT EXISTS idx_vl_fee_status ON vendor_leads(fee_status);
 
 -- vendor_analytics indexes
-CREATE INDEX idx_va_vendor ON vendor_analytics(vendor_id);
-CREATE INDEX idx_va_date ON vendor_analytics(date);
-CREATE INDEX idx_va_vendor_date ON vendor_analytics(vendor_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_va_vendor ON vendor_analytics(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_va_date ON vendor_analytics(date);
+CREATE INDEX IF NOT EXISTS idx_va_vendor_date ON vendor_analytics(vendor_id, date DESC);
 
 -- =====================================================
 -- Row Level Security
@@ -154,36 +154,43 @@ ALTER TABLE vendor_analytics ENABLE ROW LEVEL SECURITY;
 -- RLS Policies: authenticated SELECT for all tables
 -- =====================================================
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor certification status" ON vendor_certification_status;
 CREATE POLICY "Authenticated users can read vendor certification status"
   ON vendor_certification_status FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor subscriptions" ON vendor_subscriptions;
 CREATE POLICY "Authenticated users can read vendor subscriptions"
   ON vendor_subscriptions FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read service quotes" ON service_quotes;
 CREATE POLICY "Authenticated users can read service quotes"
   ON service_quotes FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read service completions" ON service_completions;
 CREATE POLICY "Authenticated users can read service completions"
   ON service_completions FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor messages" ON vendor_messages;
 CREATE POLICY "Authenticated users can read vendor messages"
   ON vendor_messages FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor leads" ON vendor_leads;
 CREATE POLICY "Authenticated users can read vendor leads"
   ON vendor_leads FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor analytics" ON vendor_analytics;
 CREATE POLICY "Authenticated users can read vendor analytics"
   ON vendor_analytics FOR SELECT
   TO authenticated
@@ -193,42 +200,49 @@ CREATE POLICY "Authenticated users can read vendor analytics"
 -- RLS Policies: service_role full access for all tables
 -- =====================================================
 
+DROP POLICY IF EXISTS "Service role has full access to vendor certification status" ON vendor_certification_status;
 CREATE POLICY "Service role has full access to vendor certification status"
   ON vendor_certification_status FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to vendor subscriptions" ON vendor_subscriptions;
 CREATE POLICY "Service role has full access to vendor subscriptions"
   ON vendor_subscriptions FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to service quotes" ON service_quotes;
 CREATE POLICY "Service role has full access to service quotes"
   ON service_quotes FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to service completions" ON service_completions;
 CREATE POLICY "Service role has full access to service completions"
   ON service_completions FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to vendor messages" ON vendor_messages;
 CREATE POLICY "Service role has full access to vendor messages"
   ON vendor_messages FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to vendor leads" ON vendor_leads;
 CREATE POLICY "Service role has full access to vendor leads"
   ON vendor_leads FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role has full access to vendor analytics" ON vendor_analytics;
 CREATE POLICY "Service role has full access to vendor analytics"
   ON vendor_analytics FOR ALL
   TO service_role
@@ -239,11 +253,13 @@ CREATE POLICY "Service role has full access to vendor analytics"
 -- RLS Policies: INSERT for vendor_messages and service_quotes
 -- =====================================================
 
+DROP POLICY IF EXISTS "Authenticated users can insert service quotes" ON service_quotes;
 CREATE POLICY "Authenticated users can insert service quotes"
   ON service_quotes FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Authenticated users can insert vendor messages" ON vendor_messages;
 CREATE POLICY "Authenticated users can insert vendor messages"
   ON vendor_messages FOR INSERT
   TO authenticated

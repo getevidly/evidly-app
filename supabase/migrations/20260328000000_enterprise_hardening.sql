@@ -43,6 +43,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'compliance_score_snapshots') THEN
     BEGIN
+      DROP TRIGGER IF EXISTS enforce_snapshot_immutability ON compliance_score_snapshots;
       CREATE TRIGGER enforce_snapshot_immutability
         BEFORE UPDATE ON compliance_score_snapshots
         FOR EACH ROW EXECUTE FUNCTION prevent_snapshot_score_update();

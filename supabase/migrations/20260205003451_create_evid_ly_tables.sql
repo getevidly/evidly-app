@@ -155,6 +155,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
 
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view profiles in their organization" ON user_profiles;
 CREATE POLICY "Users can view profiles in their organization"
   ON user_profiles FOR SELECT
   TO authenticated
@@ -164,12 +165,14 @@ CREATE POLICY "Users can view profiles in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON user_profiles;
 CREATE POLICY "Users can update their own profile"
   ON user_profiles FOR UPDATE
   TO authenticated
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert their own profile" ON user_profiles;
 CREATE POLICY "Users can insert their own profile"
   ON user_profiles FOR INSERT
   TO authenticated
@@ -192,6 +195,7 @@ CREATE TABLE IF NOT EXISTS temp_logs (
 
 ALTER TABLE temp_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view temp logs in their organization" ON temp_logs;
 CREATE POLICY "Users can view temp logs in their organization"
   ON temp_logs FOR SELECT
   TO authenticated
@@ -201,6 +205,7 @@ CREATE POLICY "Users can view temp logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert temp logs in their organization" ON temp_logs;
 CREATE POLICY "Users can insert temp logs in their organization"
   ON temp_logs FOR INSERT
   TO authenticated
@@ -210,6 +215,7 @@ CREATE POLICY "Users can insert temp logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update temp logs in their organization" ON temp_logs;
 CREATE POLICY "Users can update temp logs in their organization"
   ON temp_logs FOR UPDATE
   TO authenticated
@@ -240,6 +246,7 @@ CREATE TABLE IF NOT EXISTS checklists (
 
 ALTER TABLE checklists ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklists in their organization" ON checklists;
 CREATE POLICY "Users can view checklists in their organization"
   ON checklists FOR SELECT
   TO authenticated
@@ -249,6 +256,7 @@ CREATE POLICY "Users can view checklists in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklists in their organization" ON checklists;
 CREATE POLICY "Users can insert checklists in their organization"
   ON checklists FOR INSERT
   TO authenticated
@@ -258,6 +266,7 @@ CREATE POLICY "Users can insert checklists in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update checklists in their organization" ON checklists;
 CREATE POLICY "Users can update checklists in their organization"
   ON checklists FOR UPDATE
   TO authenticated
@@ -272,6 +281,7 @@ CREATE POLICY "Users can update checklists in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete checklists in their organization" ON checklists;
 CREATE POLICY "Users can delete checklists in their organization"
   ON checklists FOR DELETE
   TO authenticated
@@ -294,6 +304,7 @@ CREATE TABLE IF NOT EXISTS checklist_items (
 
 ALTER TABLE checklist_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklist items if they can view the checklist" ON checklist_items;
 CREATE POLICY "Users can view checklist items if they can view the checklist"
   ON checklist_items FOR SELECT
   TO authenticated
@@ -305,6 +316,7 @@ CREATE POLICY "Users can view checklist items if they can view the checklist"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklist items if they can access the checklist" ON checklist_items;
 CREATE POLICY "Users can insert checklist items if they can access the checklist"
   ON checklist_items FOR INSERT
   TO authenticated
@@ -316,6 +328,7 @@ CREATE POLICY "Users can insert checklist items if they can access the checklist
     )
   );
 
+DROP POLICY IF EXISTS "Users can update checklist items if they can access the checklist" ON checklist_items;
 CREATE POLICY "Users can update checklist items if they can access the checklist"
   ON checklist_items FOR UPDATE
   TO authenticated
@@ -334,6 +347,7 @@ CREATE POLICY "Users can update checklist items if they can access the checklist
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete checklist items if they can access the checklist" ON checklist_items;
 CREATE POLICY "Users can delete checklist items if they can access the checklist"
   ON checklist_items FOR DELETE
   TO authenticated
@@ -357,6 +371,7 @@ CREATE TABLE IF NOT EXISTS checklist_assignments (
 
 ALTER TABLE checklist_assignments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view assignments in their organization" ON checklist_assignments;
 CREATE POLICY "Users can view assignments in their organization"
   ON checklist_assignments FOR SELECT
   TO authenticated
@@ -368,6 +383,7 @@ CREATE POLICY "Users can view assignments in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert assignments in their organization" ON checklist_assignments;
 CREATE POLICY "Users can insert assignments in their organization"
   ON checklist_assignments FOR INSERT
   TO authenticated
@@ -379,6 +395,7 @@ CREATE POLICY "Users can insert assignments in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update assignments in their organization" ON checklist_assignments;
 CREATE POLICY "Users can update assignments in their organization"
   ON checklist_assignments FOR UPDATE
   TO authenticated
@@ -397,6 +414,7 @@ CREATE POLICY "Users can update assignments in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete assignments in their organization" ON checklist_assignments;
 CREATE POLICY "Users can delete assignments in their organization"
   ON checklist_assignments FOR DELETE
   TO authenticated
@@ -422,6 +440,7 @@ CREATE TABLE IF NOT EXISTS checklist_completions (
 
 ALTER TABLE checklist_completions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view completions in their organization" ON checklist_completions;
 CREATE POLICY "Users can view completions in their organization"
   ON checklist_completions FOR SELECT
   TO authenticated
@@ -433,6 +452,7 @@ CREATE POLICY "Users can view completions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert completions in their organization" ON checklist_completions;
 CREATE POLICY "Users can insert completions in their organization"
   ON checklist_completions FOR INSERT
   TO authenticated
@@ -464,6 +484,7 @@ CREATE TABLE IF NOT EXISTS documents (
 
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view documents in their organization" ON documents;
 CREATE POLICY "Users can view documents in their organization"
   ON documents FOR SELECT
   TO authenticated
@@ -473,6 +494,7 @@ CREATE POLICY "Users can view documents in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert documents in their organization" ON documents;
 CREATE POLICY "Users can insert documents in their organization"
   ON documents FOR INSERT
   TO authenticated
@@ -482,6 +504,7 @@ CREATE POLICY "Users can insert documents in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update documents in their organization" ON documents;
 CREATE POLICY "Users can update documents in their organization"
   ON documents FOR UPDATE
   TO authenticated
@@ -496,6 +519,7 @@ CREATE POLICY "Users can update documents in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete documents in their organization" ON documents;
 CREATE POLICY "Users can delete documents in their organization"
   ON documents FOR DELETE
   TO authenticated
@@ -525,6 +549,7 @@ CREATE TABLE IF NOT EXISTS vendors (
 
 ALTER TABLE vendors ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view vendors in their organization" ON vendors;
 CREATE POLICY "Users can view vendors in their organization"
   ON vendors FOR SELECT
   TO authenticated
@@ -534,6 +559,7 @@ CREATE POLICY "Users can view vendors in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert vendors in their organization" ON vendors;
 CREATE POLICY "Users can insert vendors in their organization"
   ON vendors FOR INSERT
   TO authenticated
@@ -543,6 +569,7 @@ CREATE POLICY "Users can insert vendors in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update vendors in their organization" ON vendors;
 CREATE POLICY "Users can update vendors in their organization"
   ON vendors FOR UPDATE
   TO authenticated
@@ -557,6 +584,7 @@ CREATE POLICY "Users can update vendors in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete vendors in their organization" ON vendors;
 CREATE POLICY "Users can delete vendors in their organization"
   ON vendors FOR DELETE
   TO authenticated
@@ -583,6 +611,7 @@ CREATE TABLE IF NOT EXISTS compliance_requirements (
 
 ALTER TABLE compliance_requirements ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view compliance requirements in their organization" ON compliance_requirements;
 CREATE POLICY "Users can view compliance requirements in their organization"
   ON compliance_requirements FOR SELECT
   TO authenticated
@@ -592,6 +621,7 @@ CREATE POLICY "Users can view compliance requirements in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert compliance requirements in their organization" ON compliance_requirements;
 CREATE POLICY "Users can insert compliance requirements in their organization"
   ON compliance_requirements FOR INSERT
   TO authenticated
@@ -601,6 +631,7 @@ CREATE POLICY "Users can insert compliance requirements in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update compliance requirements in their organization" ON compliance_requirements;
 CREATE POLICY "Users can update compliance requirements in their organization"
   ON compliance_requirements FOR UPDATE
   TO authenticated
@@ -615,6 +646,7 @@ CREATE POLICY "Users can update compliance requirements in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete compliance requirements in their organization" ON compliance_requirements;
 CREATE POLICY "Users can delete compliance requirements in their organization"
   ON compliance_requirements FOR DELETE
   TO authenticated
@@ -643,6 +675,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view tasks in their organization" ON tasks;
 CREATE POLICY "Users can view tasks in their organization"
   ON tasks FOR SELECT
   TO authenticated
@@ -652,6 +685,7 @@ CREATE POLICY "Users can view tasks in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert tasks in their organization" ON tasks;
 CREATE POLICY "Users can insert tasks in their organization"
   ON tasks FOR INSERT
   TO authenticated
@@ -661,6 +695,7 @@ CREATE POLICY "Users can insert tasks in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update tasks in their organization" ON tasks;
 CREATE POLICY "Users can update tasks in their organization"
   ON tasks FOR UPDATE
   TO authenticated
@@ -675,6 +710,7 @@ CREATE POLICY "Users can update tasks in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete tasks in their organization" ON tasks;
 CREATE POLICY "Users can delete tasks in their organization"
   ON tasks FOR DELETE
   TO authenticated
@@ -699,6 +735,7 @@ CREATE TABLE IF NOT EXISTS activity_logs (
 
 ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view activity logs in their organization" ON activity_logs;
 CREATE POLICY "Users can view activity logs in their organization"
   ON activity_logs FOR SELECT
   TO authenticated
@@ -708,6 +745,7 @@ CREATE POLICY "Users can view activity logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert activity logs in their organization" ON activity_logs;
 CREATE POLICY "Users can insert activity logs in their organization"
   ON activity_logs FOR INSERT
   TO authenticated

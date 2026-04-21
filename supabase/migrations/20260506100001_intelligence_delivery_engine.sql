@@ -70,14 +70,17 @@ CREATE INDEX IF NOT EXISTS idx_cif_unread     ON client_intelligence_feed(organi
 -- RLS
 ALTER TABLE client_intelligence_feed ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS cif_admin_all ON client_intelligence_feed;
 CREATE POLICY cif_admin_all ON client_intelligence_feed
   FOR ALL TO authenticated
   USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
+DROP POLICY IF EXISTS cif_service ON client_intelligence_feed;
 CREATE POLICY cif_service ON client_intelligence_feed
   FOR ALL TO service_role
   USING (true);
 
+DROP POLICY IF EXISTS cif_tenant_read ON client_intelligence_feed;
 CREATE POLICY cif_tenant_read ON client_intelligence_feed
   FOR SELECT TO authenticated
   USING (
@@ -126,14 +129,17 @@ CREATE INDEX IF NOT EXISTS idx_jiu_published    ON jurisdiction_intel_updates(pu
 
 ALTER TABLE jurisdiction_intel_updates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS jiu_admin_all ON jurisdiction_intel_updates;
 CREATE POLICY jiu_admin_all ON jurisdiction_intel_updates
   FOR ALL TO authenticated
   USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
+DROP POLICY IF EXISTS jiu_service ON jurisdiction_intel_updates;
 CREATE POLICY jiu_service ON jurisdiction_intel_updates
   FOR ALL TO service_role
   USING (true);
 
+DROP POLICY IF EXISTS jiu_public_read ON jurisdiction_intel_updates;
 CREATE POLICY jiu_public_read ON jurisdiction_intel_updates
   FOR SELECT TO authenticated
   USING (published = true);

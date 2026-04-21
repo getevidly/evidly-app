@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
   license_plate TEXT,
   license_state TEXT,
   status TEXT DEFAULT 'active' CHECK (status IN ('active','maintenance','out_of_service','sold')),
-  assigned_employee_id UUID REFERENCES employees(id),
+  assigned_employee_id UUID,
   current_odometer INTEGER,
   odometer_updated_at TIMESTAMPTZ,
   purchase_date DATE,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS vehicle_maintenance (
   next_service_date DATE,
   next_service_odometer INTEGER,
   receipt_url TEXT,
-  logged_by UUID REFERENCES employees(id),
+  logged_by UUID ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS vehicle_incidents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
   vehicle_id UUID NOT NULL REFERENCES vehicles(id),
-  employee_id UUID REFERENCES employees(id),
+  employee_id UUID ,
   incident_type TEXT NOT NULL CHECK (incident_type IN ('accident','breakdown','theft','vandalism','citation')),
   incident_date DATE NOT NULL,
   incident_time TIME,

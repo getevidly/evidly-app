@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS leads (
   expected_close_date DATE,
   
   -- Assignment
-  assigned_to UUID REFERENCES employees(id),
+  assigned_to UUID,
   
   -- Tracking
   last_contact_at TIMESTAMPTZ,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS leads (
   
   -- If converted
   organization_id UUID REFERENCES organizations(id),
-  first_job_id UUID REFERENCES jobs(id),
+  first_job_id UUID,
   converted_at TIMESTAMPTZ,
   
   -- If lost
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS leads (
   lost_at TIMESTAMPTZ,
   
   -- Source tracking
-  referral_id UUID REFERENCES referrals(id),
-  service_request_id UUID REFERENCES service_requests(id),
+  referral_id UUID,
+  service_request_id UUID,
   campaign_id UUID,
   utm_source TEXT,
   utm_medium TEXT,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS lead_activities (
   meeting_date TIMESTAMPTZ,
   meeting_location TEXT,
   
-  performed_by UUID REFERENCES employees(id),
+  performed_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -104,7 +104,7 @@ CREATE INDEX IF NOT EXISTS idx_lead_activities_lead ON lead_activities(lead_id);
 CREATE TABLE IF NOT EXISTS sales_goals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  employee_id UUID REFERENCES employees(id),
+  employee_id UUID,
   
   period_type TEXT NOT NULL,
   period_start DATE NOT NULL,
@@ -131,25 +131,25 @@ CREATE TABLE IF NOT EXISTS sales_goals (
 CREATE TABLE IF NOT EXISTS marketing_campaigns (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  
+
   name TEXT NOT NULL,
   description TEXT,
   campaign_type TEXT NOT NULL,
-  
+
   target_audience TEXT,
   target_criteria JSONB,
-  
+
   status TEXT DEFAULT 'draft',
   starts_at TIMESTAMPTZ,
   ends_at TIMESTAMPTZ,
-  
+
   subject_line TEXT,
   message_body TEXT,
   template_id UUID,
-  
+
   budget DECIMAL(10,2),
   spent DECIMAL(10,2) DEFAULT 0,
-  
+
   sent_count INTEGER DEFAULT 0,
   delivered_count INTEGER DEFAULT 0,
   opened_count INTEGER DEFAULT 0,
@@ -157,11 +157,34 @@ CREATE TABLE IF NOT EXISTS marketing_campaigns (
   responded_count INTEGER DEFAULT 0,
   leads_generated INTEGER DEFAULT 0,
   revenue_attributed DECIMAL(12,2) DEFAULT 0,
-  
-  created_by UUID REFERENCES employees(id),
+
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Reconcile marketing_campaigns schema (table may exist from earlier migration)
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS vendor_id UUID;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS campaign_type TEXT;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS target_audience TEXT;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS target_criteria JSONB;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS starts_at TIMESTAMPTZ;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS ends_at TIMESTAMPTZ;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS subject_line TEXT;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS message_body TEXT;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS template_id UUID;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS budget DECIMAL(10,2);
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS spent DECIMAL(10,2) DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS sent_count INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS delivered_count INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS opened_count INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS clicked_count INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS responded_count INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS leads_generated INTEGER DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS revenue_attributed DECIMAL(12,2) DEFAULT 0;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS created_by UUID;
+ALTER TABLE marketing_campaigns ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 CREATE INDEX IF NOT EXISTS idx_campaigns_vendor ON marketing_campaigns(vendor_id);
 CREATE INDEX IF NOT EXISTS idx_campaigns_status ON marketing_campaigns(status);
@@ -339,7 +362,7 @@ CREATE TABLE IF NOT EXISTS service_agreements (
   renewed_to_id UUID REFERENCES service_agreements(id),
   renewal_reminder_sent BOOLEAN DEFAULT false,
   
-  created_by UUID REFERENCES employees(id),
+  created_by UUID,
   notes TEXT,
   
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -361,7 +384,7 @@ CREATE TABLE IF NOT EXISTS agreement_activities (
   
   activity_type TEXT NOT NULL,
   description TEXT,
-  performed_by UUID REFERENCES employees(id),
+  performed_by UUID,
   ip_address TEXT,
   
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -386,16 +409,27 @@ ALTER TABLE service_agreements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE agreement_activities ENABLE ROW LEVEL SECURITY;
 
 -- Service role policies
+DROP POLICY IF EXISTS leads_service ON leads;
 CREATE POLICY leads_service ON leads FOR ALL USING (true);
+DROP POLICY IF EXISTS lead_activities_service ON lead_activities;
 CREATE POLICY lead_activities_service ON lead_activities FOR ALL USING (true);
+DROP POLICY IF EXISTS sales_goals_service ON sales_goals;
 CREATE POLICY sales_goals_service ON sales_goals FOR ALL USING (true);
+DROP POLICY IF EXISTS campaigns_service ON marketing_campaigns;
 CREATE POLICY campaigns_service ON marketing_campaigns FOR ALL USING (true);
+DROP POLICY IF EXISTS violation_outreach_service ON violation_outreach;
 CREATE POLICY violation_outreach_service ON violation_outreach FOR ALL USING (true);
+DROP POLICY IF EXISTS sequences_service ON outreach_sequences;
 CREATE POLICY sequences_service ON outreach_sequences FOR ALL USING (true);
+DROP POLICY IF EXISTS sequence_steps_service ON outreach_sequence_steps;
 CREATE POLICY sequence_steps_service ON outreach_sequence_steps FOR ALL USING (true);
+DROP POLICY IF EXISTS enrollments_service ON outreach_enrollments;
 CREATE POLICY enrollments_service ON outreach_enrollments FOR ALL USING (true);
+DROP POLICY IF EXISTS agreement_templates_service ON agreement_templates;
 CREATE POLICY agreement_templates_service ON agreement_templates FOR ALL USING (true);
+DROP POLICY IF EXISTS agreements_service ON service_agreements;
 CREATE POLICY agreements_service ON service_agreements FOR ALL USING (true);
+DROP POLICY IF EXISTS agreement_activities_service ON agreement_activities;
 CREATE POLICY agreement_activities_service ON agreement_activities FOR ALL USING (true);
 
 -- =============================================
@@ -410,9 +444,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_leads_updated_at ON leads;
 CREATE TRIGGER update_leads_updated_at BEFORE UPDATE ON leads FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_campaigns_updated_at ON marketing_campaigns;
 CREATE TRIGGER update_campaigns_updated_at BEFORE UPDATE ON marketing_campaigns FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_violation_outreach_updated_at ON violation_outreach;
 CREATE TRIGGER update_violation_outreach_updated_at BEFORE UPDATE ON violation_outreach FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_agreement_templates_updated_at ON agreement_templates;
 CREATE TRIGGER update_agreement_templates_updated_at BEFORE UPDATE ON agreement_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_agreements_updated_at ON service_agreements;
 CREATE TRIGGER update_agreements_updated_at BEFORE UPDATE ON service_agreements FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_sales_goals_updated_at ON sales_goals;
 CREATE TRIGGER update_sales_goals_updated_at BEFORE UPDATE ON sales_goals FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

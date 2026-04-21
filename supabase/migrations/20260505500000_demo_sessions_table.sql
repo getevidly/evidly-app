@@ -16,5 +16,6 @@ CREATE TABLE IF NOT EXISTS demo_sessions (
 
 ALTER TABLE demo_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "demo_sessions_staff" ON demo_sessions;
 CREATE POLICY "demo_sessions_staff" ON demo_sessions FOR ALL
   USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com' OR auth.role() = 'service_role');

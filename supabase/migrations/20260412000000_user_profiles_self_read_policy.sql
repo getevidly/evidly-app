@@ -4,6 +4,7 @@
 -- the user can't read their own profile through RLS.
 
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Users can view their own profile" ON user_profiles;
   CREATE POLICY "Users can view their own profile"
     ON user_profiles FOR SELECT TO authenticated
     USING (id = auth.uid());

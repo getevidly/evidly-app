@@ -23,14 +23,17 @@ CREATE INDEX IF NOT EXISTS idx_user_milestones_org
 
 ALTER TABLE public.user_milestones ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own milestones" ON public.user_milestones;
 CREATE POLICY "Users can view own milestones"
   ON public.user_milestones FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert own milestones" ON public.user_milestones;
 CREATE POLICY "Users can insert own milestones"
   ON public.user_milestones FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own milestones" ON public.user_milestones;
 CREATE POLICY "Users can update own milestones"
   ON public.user_milestones FOR UPDATE
   USING (user_id = auth.uid());

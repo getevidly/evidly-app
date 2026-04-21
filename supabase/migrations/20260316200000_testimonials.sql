@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.testimonials (
 );
 
 -- Index for ScoreTable county-filtered queries
-CREATE INDEX idx_testimonials_county_approved
+CREATE INDEX IF NOT EXISTS idx_testimonials_county_approved
   ON public.testimonials (county, approved)
   WHERE approved = true;
 
@@ -27,16 +27,19 @@ CREATE INDEX idx_testimonials_county_approved
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
 
 -- Users can insert their own testimonials
+DROP POLICY IF EXISTS testimonials_insert_own ON public.testimonials;
 CREATE POLICY testimonials_insert_own ON public.testimonials
   FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
 -- Anyone can read approved testimonials (public ScoreTable pages)
+DROP POLICY IF EXISTS testimonials_select_approved ON public.testimonials;
 CREATE POLICY testimonials_select_approved ON public.testimonials
   FOR SELECT TO anon, authenticated
   USING (approved = true);
 
 -- Platform admins can read all testimonials
+DROP POLICY IF EXISTS testimonials_select_admin ON public.testimonials;
 CREATE POLICY testimonials_select_admin ON public.testimonials
   FOR SELECT TO authenticated
   USING (
@@ -48,6 +51,7 @@ CREATE POLICY testimonials_select_admin ON public.testimonials
   );
 
 -- Platform admins can update testimonials (approve/reject/feature)
+DROP POLICY IF EXISTS testimonials_update_admin ON public.testimonials;
 CREATE POLICY testimonials_update_admin ON public.testimonials
   FOR UPDATE TO authenticated
   USING (
@@ -59,6 +63,7 @@ CREATE POLICY testimonials_update_admin ON public.testimonials
   );
 
 -- Platform admins can delete testimonials
+DROP POLICY IF EXISTS testimonials_delete_admin ON public.testimonials;
 CREATE POLICY testimonials_delete_admin ON public.testimonials
   FOR DELETE TO authenticated
   USING (

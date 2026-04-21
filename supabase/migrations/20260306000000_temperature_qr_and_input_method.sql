@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS equipment_qr_codes (
 
 ALTER TABLE equipment_qr_codes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view equipment QR codes in their organization" ON equipment_qr_codes;
 CREATE POLICY "Users can view equipment QR codes in their organization"
   ON equipment_qr_codes FOR SELECT
   TO authenticated
@@ -27,6 +28,7 @@ CREATE POLICY "Users can view equipment QR codes in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert equipment QR codes in their organization" ON equipment_qr_codes;
 CREATE POLICY "Users can insert equipment QR codes in their organization"
   ON equipment_qr_codes FOR INSERT
   TO authenticated
@@ -36,6 +38,7 @@ CREATE POLICY "Users can insert equipment QR codes in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update equipment QR codes in their organization" ON equipment_qr_codes;
 CREATE POLICY "Users can update equipment QR codes in their organization"
   ON equipment_qr_codes FOR UPDATE
   TO authenticated

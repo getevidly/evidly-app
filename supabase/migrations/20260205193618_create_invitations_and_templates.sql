@@ -62,6 +62,7 @@ ALTER TABLE user_invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE onboarding_checklist_items ENABLE ROW LEVEL SECURITY;
 
 -- Policies for user_invitations
+DROP POLICY IF EXISTS "Admins can view invitations for their org" ON user_invitations;
 CREATE POLICY "Admins can view invitations for their org"
   ON user_invitations FOR SELECT
   TO authenticated
@@ -72,6 +73,7 @@ CREATE POLICY "Admins can view invitations for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can create invitations" ON user_invitations;
 CREATE POLICY "Admins can create invitations"
   ON user_invitations FOR INSERT
   TO authenticated
@@ -82,6 +84,7 @@ CREATE POLICY "Admins can create invitations"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can update invitations" ON user_invitations;
 CREATE POLICY "Admins can update invitations"
   ON user_invitations FOR UPDATE
   TO authenticated
@@ -99,6 +102,7 @@ CREATE POLICY "Admins can update invitations"
   );
 
 -- Policies for onboarding_checklist_items
+DROP POLICY IF EXISTS "Users can view checklist items for their org" ON onboarding_checklist_items;
 CREATE POLICY "Users can view checklist items for their org"
   ON onboarding_checklist_items FOR SELECT
   TO authenticated
@@ -108,6 +112,7 @@ CREATE POLICY "Users can view checklist items for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can create checklist items for their org" ON onboarding_checklist_items;
 CREATE POLICY "Users can create checklist items for their org"
   ON onboarding_checklist_items FOR INSERT
   TO authenticated
@@ -117,6 +122,7 @@ CREATE POLICY "Users can create checklist items for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update checklist items for their org" ON onboarding_checklist_items;
 CREATE POLICY "Users can update checklist items for their org"
   ON onboarding_checklist_items FOR UPDATE
   TO authenticated

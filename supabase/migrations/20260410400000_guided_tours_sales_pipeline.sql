@@ -115,16 +115,26 @@ ALTER TABLE marketing_campaigns    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE marketing_touchpoints  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sales_pipeline         ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_only" ON guided_tour_templates;
 CREATE POLICY "admin_only" ON guided_tour_templates  FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON tour_engagement_events;
 CREATE POLICY "admin_only" ON tour_engagement_events FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON marketing_campaigns;
 CREATE POLICY "admin_only" ON marketing_campaigns    FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON marketing_touchpoints;
 CREATE POLICY "admin_only" ON marketing_touchpoints  FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON sales_pipeline;
 CREATE POLICY "admin_only" ON sales_pipeline         FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
+DROP POLICY IF EXISTS "service_role_all" ON guided_tour_templates;
 CREATE POLICY "service_role_all" ON guided_tour_templates  FOR ALL USING (auth.role() = 'service_role');
+DROP POLICY IF EXISTS "service_role_all" ON tour_engagement_events;
 CREATE POLICY "service_role_all" ON tour_engagement_events FOR ALL USING (auth.role() = 'service_role');
+DROP POLICY IF EXISTS "service_role_all" ON marketing_campaigns;
 CREATE POLICY "service_role_all" ON marketing_campaigns    FOR ALL USING (auth.role() = 'service_role');
+DROP POLICY IF EXISTS "service_role_all" ON marketing_touchpoints;
 CREATE POLICY "service_role_all" ON marketing_touchpoints  FOR ALL USING (auth.role() = 'service_role');
+DROP POLICY IF EXISTS "service_role_all" ON sales_pipeline;
 CREATE POLICY "service_role_all" ON sales_pipeline         FOR ALL USING (auth.role() = 'service_role');
 
 -- ── Indexes ────────────────────────────────────────────────

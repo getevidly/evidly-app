@@ -63,11 +63,13 @@ CREATE INDEX IF NOT EXISTS idx_benchmark_subcategory_stats_lookup
 
 ALTER TABLE benchmark_subcategory_stats ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can read benchmark stats" ON benchmark_subcategory_stats;
 CREATE POLICY "Authenticated users can read benchmark stats"
   ON benchmark_subcategory_stats FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role can manage benchmark stats" ON benchmark_subcategory_stats;
 CREATE POLICY "Service role can manage benchmark stats"
   ON benchmark_subcategory_stats FOR ALL
   TO service_role

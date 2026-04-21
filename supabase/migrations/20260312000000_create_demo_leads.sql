@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS demo_leads (
 ALTER TABLE demo_leads ENABLE ROW LEVEL SECURITY;
 
 -- Allow anonymous users to insert leads (public demo form)
+DROP POLICY IF EXISTS "anon_insert_demo_leads" ON demo_leads;
 CREATE POLICY "anon_insert_demo_leads"
   ON demo_leads
   FOR INSERT
@@ -24,6 +25,7 @@ CREATE POLICY "anon_insert_demo_leads"
   WITH CHECK (true);
 
 -- Only service_role can read leads (admin/backend only)
+DROP POLICY IF EXISTS "service_role_select_demo_leads" ON demo_leads;
 CREATE POLICY "service_role_select_demo_leads"
   ON demo_leads
   FOR SELECT

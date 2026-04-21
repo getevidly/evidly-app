@@ -84,6 +84,7 @@ ALTER TABLE compliance_score_snapshots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE benchmark_aggregates ENABLE ROW LEVEL SECURITY;
 
 -- Users can read/write their own organization's score snapshots
+DROP POLICY IF EXISTS "css_org_access" ON compliance_score_snapshots;
 CREATE POLICY "css_org_access" ON compliance_score_snapshots
   FOR ALL TO authenticated
   USING (
@@ -93,16 +94,19 @@ CREATE POLICY "css_org_access" ON compliance_score_snapshots
   );
 
 -- Service role can write score snapshots (for edge functions)
+DROP POLICY IF EXISTS "css_service_write" ON compliance_score_snapshots;
 CREATE POLICY "css_service_write" ON compliance_score_snapshots
   FOR ALL TO service_role
   USING (true);
 
 -- Benchmark aggregates are readable by all authenticated (anonymized data)
+DROP POLICY IF EXISTS "bench_agg_read" ON benchmark_aggregates;
 CREATE POLICY "bench_agg_read" ON benchmark_aggregates
   FOR SELECT TO authenticated
   USING (true);
 
 -- Service role can write benchmark aggregates
+DROP POLICY IF EXISTS "bench_agg_service_write" ON benchmark_aggregates;
 CREATE POLICY "bench_agg_service_write" ON benchmark_aggregates
   FOR ALL TO service_role
   USING (true);

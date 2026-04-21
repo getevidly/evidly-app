@@ -61,6 +61,7 @@ ALTER TABLE locations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_location_access ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for organizations
+DROP POLICY IF EXISTS "Users can view their organization" ON organizations;
 CREATE POLICY "Users can view their organization"
   ON organizations FOR SELECT
   TO authenticated
@@ -70,6 +71,7 @@ CREATE POLICY "Users can view their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update their organization" ON organizations;
 CREATE POLICY "Users can update their organization"
   ON organizations FOR UPDATE
   TO authenticated
@@ -85,6 +87,7 @@ CREATE POLICY "Users can update their organization"
   );
 
 -- RLS Policies for locations
+DROP POLICY IF EXISTS "Users can view locations in their organization" ON locations;
 CREATE POLICY "Users can view locations in their organization"
   ON locations FOR SELECT
   TO authenticated
@@ -94,6 +97,7 @@ CREATE POLICY "Users can view locations in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert locations in their organization" ON locations;
 CREATE POLICY "Users can insert locations in their organization"
   ON locations FOR INSERT
   TO authenticated
@@ -103,6 +107,7 @@ CREATE POLICY "Users can insert locations in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update locations in their organization" ON locations;
 CREATE POLICY "Users can update locations in their organization"
   ON locations FOR UPDATE
   TO authenticated
@@ -117,6 +122,7 @@ CREATE POLICY "Users can update locations in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete locations in their organization" ON locations;
 CREATE POLICY "Users can delete locations in their organization"
   ON locations FOR DELETE
   TO authenticated
@@ -127,6 +133,7 @@ CREATE POLICY "Users can delete locations in their organization"
   );
 
 -- RLS Policies for user_location_access
+DROP POLICY IF EXISTS "Users can view their own access" ON user_location_access;
 CREATE POLICY "Users can view their own access"
   ON user_location_access FOR SELECT
   TO authenticated

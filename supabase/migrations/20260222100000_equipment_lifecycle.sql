@@ -34,29 +34,34 @@ CREATE INDEX IF NOT EXISTS idx_equipment_vendor_links_vendor
 -- ── Row Level Security ──────────────────────────────────────────────
 ALTER TABLE equipment_vendor_links ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org vendor links" ON equipment_vendor_links;
 CREATE POLICY "Users can view own org vendor links"
   ON equipment_vendor_links FOR SELECT TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can insert own org vendor links" ON equipment_vendor_links;
 CREATE POLICY "Users can insert own org vendor links"
   ON equipment_vendor_links FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can update own org vendor links" ON equipment_vendor_links;
 CREATE POLICY "Users can update own org vendor links"
   ON equipment_vendor_links FOR UPDATE TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can delete own org vendor links" ON equipment_vendor_links;
 CREATE POLICY "Users can delete own org vendor links"
   ON equipment_vendor_links FOR DELETE TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access vendor links" ON equipment_vendor_links;
 CREATE POLICY "Service role full access vendor links"
   ON equipment_vendor_links FOR ALL TO service_role USING (true);

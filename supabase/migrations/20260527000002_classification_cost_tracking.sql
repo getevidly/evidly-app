@@ -36,6 +36,7 @@ CREATE INDEX IF NOT EXISTS idx_classif_log_signal ON intelligence_classification
 CREATE INDEX IF NOT EXISTS idx_classif_log_model ON intelligence_classification_log(model, created_at DESC);
 
 ALTER TABLE intelligence_classification_log ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "admin_read_classif_log" ON intelligence_classification_log;
 CREATE POLICY "admin_read_classif_log" ON intelligence_classification_log
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
@@ -57,6 +58,7 @@ VALUES (10.00, 100.00, 80)
 ON CONFLICT DO NOTHING;
 
 ALTER TABLE ai_budget_config ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "admin_manage_budget" ON ai_budget_config;
 CREATE POLICY "admin_manage_budget" ON ai_budget_config
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')

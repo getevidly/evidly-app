@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS insurance_risk_scores (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_risk_org ON insurance_risk_scores(organization_id);
-CREATE INDEX idx_ins_risk_loc ON insurance_risk_scores(location_id, calculated_at DESC);
-CREATE INDEX idx_ins_risk_date ON insurance_risk_scores(calculated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_risk_org ON insurance_risk_scores(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ins_risk_loc ON insurance_risk_scores(location_id, calculated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_risk_date ON insurance_risk_scores(calculated_at DESC);
 
 -- 2. insurance_api_keys — carrier API access credentials
 CREATE TABLE IF NOT EXISTS insurance_api_keys (
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS insurance_api_keys (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_api_key ON insurance_api_keys(api_key) WHERE active = true;
-CREATE INDEX idx_ins_api_org ON insurance_api_keys(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ins_api_key ON insurance_api_keys(api_key) WHERE active = true;
+CREATE INDEX IF NOT EXISTS idx_ins_api_org ON insurance_api_keys(organization_id);
 
 -- 3. insurance_api_requests — request log for rate limiting and analytics
 CREATE TABLE IF NOT EXISTS insurance_api_requests (
@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS insurance_api_requests (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_ins_api_req_key ON insurance_api_requests(api_key_id, created_at DESC);
-CREATE INDEX idx_ins_api_req_org ON insurance_api_requests(organization_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_api_req_key ON insurance_api_requests(api_key_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ins_api_req_org ON insurance_api_requests(organization_id, created_at DESC);
 
 -- =====================================================
 -- Row Level Security
@@ -66,6 +66,7 @@ ALTER TABLE insurance_api_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE insurance_api_requests ENABLE ROW LEVEL SECURITY;
 
 -- insurance_risk_scores: users can read their org's scores
+DROP POLICY IF EXISTS "Users can read own org risk scores" ON insurance_risk_scores;
 CREATE POLICY "Users can read own org risk scores"
   ON insurance_risk_scores FOR SELECT
   TO authenticated
@@ -76,6 +77,7 @@ CREATE POLICY "Users can read own org risk scores"
   );
 
 -- insurance_api_keys: org admins can read/manage their keys
+DROP POLICY IF EXISTS "Users can read own org API keys" ON insurance_api_keys;
 CREATE POLICY "Users can read own org API keys"
   ON insurance_api_keys FOR SELECT
   TO authenticated
@@ -85,6 +87,7 @@ CREATE POLICY "Users can read own org API keys"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert own org API keys" ON insurance_api_keys;
 CREATE POLICY "Users can insert own org API keys"
   ON insurance_api_keys FOR INSERT
   TO authenticated
@@ -95,6 +98,7 @@ CREATE POLICY "Users can insert own org API keys"
   );
 
 -- insurance_api_requests: readable by org members for usage analytics
+DROP POLICY IF EXISTS "Users can read own org API requests" ON insurance_api_requests;
 CREATE POLICY "Users can read own org API requests"
   ON insurance_api_requests FOR SELECT
   TO authenticated

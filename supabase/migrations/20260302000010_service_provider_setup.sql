@@ -26,6 +26,7 @@ CREATE INDEX IF NOT EXISTS idx_sp_profiles_vendor ON service_provider_profiles(v
 
 ALTER TABLE service_provider_profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "sp_profiles_select" ON service_provider_profiles;
 CREATE POLICY "sp_profiles_select" ON service_provider_profiles
   FOR SELECT USING (
     vendor_id IN (
@@ -33,6 +34,7 @@ CREATE POLICY "sp_profiles_select" ON service_provider_profiles
     )
   );
 
+DROP POLICY IF EXISTS "sp_profiles_insert" ON service_provider_profiles;
 CREATE POLICY "sp_profiles_insert" ON service_provider_profiles
   FOR INSERT WITH CHECK (
     vendor_id IN (
@@ -41,6 +43,7 @@ CREATE POLICY "sp_profiles_insert" ON service_provider_profiles
     )
   );
 
+DROP POLICY IF EXISTS "sp_profiles_update" ON service_provider_profiles;
 CREATE POLICY "sp_profiles_update" ON service_provider_profiles
   FOR UPDATE USING (
     vendor_id IN (
@@ -80,6 +83,7 @@ ALTER TABLE service_provider_documents ENABLE ROW LEVEL SECURITY;
 
 -- NOTE: sp_docs_select policy deferred until after service_provider_client_links is created (see below)
 
+DROP POLICY IF EXISTS "sp_docs_insert" ON service_provider_documents;
 CREATE POLICY "sp_docs_insert" ON service_provider_documents
   FOR INSERT WITH CHECK (
     vendor_id IN (
@@ -87,6 +91,7 @@ CREATE POLICY "sp_docs_insert" ON service_provider_documents
     )
   );
 
+DROP POLICY IF EXISTS "sp_docs_update" ON service_provider_documents;
 CREATE POLICY "sp_docs_update" ON service_provider_documents
   FOR UPDATE USING (
     vendor_id IN (
@@ -128,6 +133,7 @@ CREATE INDEX IF NOT EXISTS idx_client_inv_status ON client_invitations(status);
 
 ALTER TABLE client_invitations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "client_inv_select" ON client_invitations;
 CREATE POLICY "client_inv_select" ON client_invitations
   FOR SELECT USING (
     vendor_id IN (
@@ -135,6 +141,7 @@ CREATE POLICY "client_inv_select" ON client_invitations
     )
   );
 
+DROP POLICY IF EXISTS "client_inv_insert" ON client_invitations;
 CREATE POLICY "client_inv_insert" ON client_invitations
   FOR INSERT WITH CHECK (
     vendor_id IN (
@@ -142,6 +149,7 @@ CREATE POLICY "client_inv_insert" ON client_invitations
     )
   );
 
+DROP POLICY IF EXISTS "client_inv_update" ON client_invitations;
 CREATE POLICY "client_inv_update" ON client_invitations
   FOR UPDATE USING (
     vendor_id IN (
@@ -168,6 +176,7 @@ CREATE INDEX IF NOT EXISTS idx_sp_links_org ON service_provider_client_links(org
 
 ALTER TABLE service_provider_client_links ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "sp_links_select" ON service_provider_client_links;
 CREATE POLICY "sp_links_select" ON service_provider_client_links
   FOR SELECT USING (
     vendor_id IN (
@@ -178,6 +187,7 @@ CREATE POLICY "sp_links_select" ON service_provider_client_links
     )
   );
 
+DROP POLICY IF EXISTS "sp_links_insert" ON service_provider_client_links;
 CREATE POLICY "sp_links_insert" ON service_provider_client_links
   FOR INSERT WITH CHECK (
     vendor_id IN (
@@ -186,6 +196,7 @@ CREATE POLICY "sp_links_insert" ON service_provider_client_links
   );
 
 -- Deferred policy: sp_docs_select (needs service_provider_client_links)
+DROP POLICY IF EXISTS "sp_docs_select" ON service_provider_documents;
 CREATE POLICY "sp_docs_select" ON service_provider_documents
   FOR SELECT USING (
     vendor_id IN (

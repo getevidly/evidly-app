@@ -21,6 +21,7 @@ ALTER TABLE training_assignments ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'training_assignments_read_own_org') THEN
+    DROP POLICY IF EXISTS training_assignments_read_own_org ON training_assignments;
     CREATE POLICY training_assignments_read_own_org ON training_assignments
       FOR SELECT USING (
         organization_id IN (
@@ -32,6 +33,7 @@ END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'training_assignments_write_managers') THEN
+    DROP POLICY IF EXISTS training_assignments_write_managers ON training_assignments;
     CREATE POLICY training_assignments_write_managers ON training_assignments
       FOR ALL USING (
         organization_id IN (
@@ -72,6 +74,7 @@ ALTER TABLE certification_reminders ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'cert_reminders_read_own_org') THEN
+    DROP POLICY IF EXISTS cert_reminders_read_own_org ON certification_reminders;
     CREATE POLICY cert_reminders_read_own_org ON certification_reminders
       FOR SELECT USING (
         organization_id IN (
@@ -83,6 +86,7 @@ END $$;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'cert_reminders_write_service') THEN
+    DROP POLICY IF EXISTS cert_reminders_write_service ON certification_reminders;
     CREATE POLICY cert_reminders_write_service ON certification_reminders
       FOR ALL USING (
         auth.uid() IS NOT NULL

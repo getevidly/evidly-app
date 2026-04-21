@@ -46,10 +46,12 @@ CREATE TABLE IF NOT EXISTS document_expiration_alerts (
 -- RLS for expiration alerts
 ALTER TABLE document_expiration_alerts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their org alerts" ON document_expiration_alerts;
 CREATE POLICY "Users can view their org alerts"
   ON document_expiration_alerts FOR SELECT
   USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role manages alerts" ON document_expiration_alerts;
 CREATE POLICY "Service role manages alerts"
   ON document_expiration_alerts FOR ALL
   USING (true)

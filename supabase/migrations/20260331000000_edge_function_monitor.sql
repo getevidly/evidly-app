@@ -56,6 +56,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_efr_updated_at ON edge_function_registry;
 CREATE TRIGGER trg_efr_updated_at
   BEFORE UPDATE ON edge_function_registry
   FOR EACH ROW EXECUTE FUNCTION update_efr_updated_at();
@@ -77,7 +78,9 @@ END $$;
 
 -- Service role bypass (for edge functions writing invocation logs)
 DO $$ BEGIN
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON edge_function_registry';
   EXECUTE 'CREATE POLICY service_role_all ON edge_function_registry FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
+  EXECUTE 'DROP POLICY IF EXISTS service_role_all ON edge_function_invocations';
   EXECUTE 'CREATE POLICY service_role_all ON edge_function_invocations FOR ALL USING (auth.role() = ''service_role'') WITH CHECK (auth.role() = ''service_role'')';
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;

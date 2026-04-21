@@ -26,10 +26,12 @@ CREATE INDEX IF NOT EXISTS idx_security_events_scan_result ON security_events(sc
 -- RLS: only org admins and the user themselves can see their events
 ALTER TABLE security_events ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own security events" ON security_events;
 CREATE POLICY "Users can view own security events"
   ON security_events FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role has full access to security events" ON security_events;
 CREATE POLICY "Service role has full access to security events"
   ON security_events FOR ALL
   USING (auth.role() = 'service_role');
@@ -67,6 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_admin_notifications_unread ON admin_notifications
 
 ALTER TABLE admin_notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Service role has full access to admin notifications" ON admin_notifications;
 CREATE POLICY "Service role has full access to admin notifications"
   ON admin_notifications FOR ALL
   USING (auth.role() = 'service_role');

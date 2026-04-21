@@ -160,6 +160,7 @@ ALTER TABLE temperature_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cooling_logs ENABLE ROW LEVEL SECURITY;
 
 -- Org-member read access
+DROP POLICY IF EXISTS "temperature_logs_select" ON temperature_logs;
 CREATE POLICY "temperature_logs_select"
   ON temperature_logs FOR SELECT
   USING (
@@ -170,6 +171,7 @@ CREATE POLICY "temperature_logs_select"
     )
   );
 
+DROP POLICY IF EXISTS "temperature_logs_insert" ON temperature_logs;
 CREATE POLICY "temperature_logs_insert"
   ON temperature_logs FOR INSERT
   WITH CHECK (
@@ -180,6 +182,7 @@ CREATE POLICY "temperature_logs_insert"
     )
   );
 
+DROP POLICY IF EXISTS "cooling_logs_select" ON cooling_logs;
 CREATE POLICY "cooling_logs_select"
   ON cooling_logs FOR SELECT
   USING (
@@ -190,6 +193,7 @@ CREATE POLICY "cooling_logs_select"
     )
   );
 
+DROP POLICY IF EXISTS "cooling_logs_insert" ON cooling_logs;
 CREATE POLICY "cooling_logs_insert"
   ON cooling_logs FOR INSERT
   WITH CHECK (
@@ -201,11 +205,13 @@ CREATE POLICY "cooling_logs_insert"
   );
 
 -- Service role bypass for Edge Functions (IoT auto-logging)
+DROP POLICY IF EXISTS "temperature_logs_service_insert" ON temperature_logs;
 CREATE POLICY "temperature_logs_service_insert"
   ON temperature_logs FOR INSERT
   TO service_role
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "cooling_logs_service_insert" ON cooling_logs;
 CREATE POLICY "cooling_logs_service_insert"
   ON cooling_logs FOR INSERT
   TO service_role

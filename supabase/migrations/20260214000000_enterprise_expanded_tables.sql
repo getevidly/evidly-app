@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS enterprise_hierarchy_config (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_hierarchy_config_tenant ON enterprise_hierarchy_config(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_hierarchy_config_tenant ON enterprise_hierarchy_config(tenant_id);
 
 -- 2. enterprise_location_assignments
 CREATE TABLE IF NOT EXISTS enterprise_location_assignments (
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS enterprise_location_assignments (
   assigned_by UUID
 );
 
-CREATE INDEX idx_enterprise_loc_assign_tenant ON enterprise_location_assignments(tenant_id);
-CREATE INDEX idx_enterprise_loc_assign_node ON enterprise_location_assignments(hierarchy_node_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_loc_assign_tenant ON enterprise_location_assignments(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_loc_assign_node ON enterprise_location_assignments(hierarchy_node_id);
 
 -- 3. enterprise_api_keys
 CREATE TABLE IF NOT EXISTS enterprise_api_keys (
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS enterprise_api_keys (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_api_keys_tenant ON enterprise_api_keys(tenant_id);
-CREATE INDEX idx_enterprise_api_keys_hash ON enterprise_api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_enterprise_api_keys_tenant ON enterprise_api_keys(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_api_keys_hash ON enterprise_api_keys(key_hash);
 
 -- 4. enterprise_report_schedules
 CREATE TABLE IF NOT EXISTS enterprise_report_schedules (
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS enterprise_report_schedules (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_report_sched_tenant ON enterprise_report_schedules(tenant_id);
-CREATE INDEX idx_enterprise_report_sched_template ON enterprise_report_schedules(template_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_report_sched_tenant ON enterprise_report_schedules(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_report_sched_template ON enterprise_report_schedules(template_id);
 
 -- 5. enterprise_rollup_scores
 CREATE TABLE IF NOT EXISTS enterprise_rollup_scores (
@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS enterprise_rollup_scores (
   UNIQUE(node_id, period_date)
 );
 
-CREATE INDEX idx_enterprise_rollup_tenant ON enterprise_rollup_scores(tenant_id);
-CREATE INDEX idx_enterprise_rollup_node ON enterprise_rollup_scores(node_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_rollup_tenant ON enterprise_rollup_scores(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_rollup_node ON enterprise_rollup_scores(node_id);
 
 -- 6. enterprise_integration_config
 CREATE TABLE IF NOT EXISTS enterprise_integration_config (
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS enterprise_integration_config (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_integration_tenant ON enterprise_integration_config(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_integration_tenant ON enterprise_integration_config(tenant_id);
 
 -- 7. enterprise_bulk_operations
 CREATE TABLE IF NOT EXISTS enterprise_bulk_operations (
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS enterprise_bulk_operations (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_bulk_ops_tenant ON enterprise_bulk_operations(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_bulk_ops_tenant ON enterprise_bulk_operations(tenant_id);
 
 -- RLS
 ALTER TABLE enterprise_hierarchy_config ENABLE ROW LEVEL SECURITY;
@@ -125,32 +125,46 @@ ALTER TABLE enterprise_integration_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE enterprise_bulk_operations ENABLE ROW LEVEL SECURITY;
 
 -- Service role full access
+DROP POLICY IF EXISTS enterprise_hierarchy_config_service ON enterprise_hierarchy_config;
 CREATE POLICY enterprise_hierarchy_config_service ON enterprise_hierarchy_config FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_loc_assign_service ON enterprise_location_assignments;
 CREATE POLICY enterprise_loc_assign_service ON enterprise_location_assignments FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_api_keys_service ON enterprise_api_keys;
 CREATE POLICY enterprise_api_keys_service ON enterprise_api_keys FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_report_sched_service ON enterprise_report_schedules;
 CREATE POLICY enterprise_report_sched_service ON enterprise_report_schedules FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_rollup_scores_service ON enterprise_rollup_scores;
 CREATE POLICY enterprise_rollup_scores_service ON enterprise_rollup_scores FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_integration_service ON enterprise_integration_config;
 CREATE POLICY enterprise_integration_service ON enterprise_integration_config FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_bulk_ops_service ON enterprise_bulk_operations;
 CREATE POLICY enterprise_bulk_ops_service ON enterprise_bulk_operations FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- Tenant-scoped read access for authenticated users
+DROP POLICY IF EXISTS enterprise_hierarchy_config_read ON enterprise_hierarchy_config;
 CREATE POLICY enterprise_hierarchy_config_read ON enterprise_hierarchy_config FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_loc_assign_read ON enterprise_location_assignments;
 CREATE POLICY enterprise_loc_assign_read ON enterprise_location_assignments FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_api_keys_read ON enterprise_api_keys;
 CREATE POLICY enterprise_api_keys_read ON enterprise_api_keys FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_report_sched_read ON enterprise_report_schedules;
 CREATE POLICY enterprise_report_sched_read ON enterprise_report_schedules FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_rollup_scores_read ON enterprise_rollup_scores;
 CREATE POLICY enterprise_rollup_scores_read ON enterprise_rollup_scores FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_integration_read ON enterprise_integration_config;
 CREATE POLICY enterprise_integration_read ON enterprise_integration_config FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_bulk_ops_read ON enterprise_bulk_operations;
 CREATE POLICY enterprise_bulk_ops_read ON enterprise_bulk_operations FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));

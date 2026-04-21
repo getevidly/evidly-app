@@ -42,38 +42,42 @@ CREATE TABLE IF NOT EXISTS service_reschedule_requests (
 );
 
 -- 2. Indexes
-CREATE INDEX idx_srr_org_status
+CREATE INDEX IF NOT EXISTS idx_srr_org_status
   ON service_reschedule_requests(organization_id, status);
 
-CREATE INDEX idx_srr_location_service
+CREATE INDEX IF NOT EXISTS idx_srr_location_service
   ON service_reschedule_requests(location_id, service_type_code);
 
 -- Prevent duplicate pending reschedules for same service at same location
-CREATE UNIQUE INDEX idx_srr_one_pending_per_service
+CREATE UNIQUE INDEX IF NOT EXISTS idx_srr_one_pending_per_service
   ON service_reschedule_requests(organization_id, location_id, service_type_code)
   WHERE status = 'pending';
 
 -- 3. RLS
 ALTER TABLE service_reschedule_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org reschedule requests" ON service_reschedule_requests;
 CREATE POLICY "Users can view own org reschedule requests"
   ON service_reschedule_requests FOR SELECT TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can create reschedule requests in own org" ON service_reschedule_requests;
 CREATE POLICY "Users can create reschedule requests in own org"
   ON service_reschedule_requests FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can update own org reschedule requests" ON service_reschedule_requests;
 CREATE POLICY "Users can update own org reschedule requests"
   ON service_reschedule_requests FOR UPDATE TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access reschedule requests" ON service_reschedule_requests;
 CREATE POLICY "Service role full access reschedule requests"
   ON service_reschedule_requests FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -84,6 +88,7 @@ RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_reschedule_requests_updated_at ON service_reschedule_requests;
 CREATE TRIGGER trg_reschedule_requests_updated_at
   BEFORE UPDATE ON service_reschedule_requests
   FOR EACH ROW EXECUTE FUNCTION update_reschedule_requests_updated_at();

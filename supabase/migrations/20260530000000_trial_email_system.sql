@@ -53,6 +53,11 @@ CREATE TABLE IF NOT EXISTS trial_email_log (
   UNIQUE(user_id, email_key)
 );
 
+-- Reconcile trial_email_log schema (table may exist from earlier migration)
+ALTER TABLE trial_email_log ADD COLUMN IF NOT EXISTS organization_id UUID;
+ALTER TABLE trial_email_log ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE trial_email_log ADD COLUMN IF NOT EXISTS email_key TEXT;
+
 ALTER TABLE trial_email_log ENABLE ROW LEVEL SECURITY;
 
 -- Service role inserts only (edge functions use service_role key)

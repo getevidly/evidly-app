@@ -19,24 +19,27 @@ CREATE TABLE IF NOT EXISTS vendor_service_tokens (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_vst_token ON vendor_service_tokens(token);
-CREATE INDEX idx_vst_service_record ON vendor_service_tokens(service_record_id);
-CREATE INDEX idx_vst_org ON vendor_service_tokens(organization_id);
-CREATE INDEX idx_vst_vendor ON vendor_service_tokens(vendor_id);
-CREATE INDEX idx_vst_expires ON vendor_service_tokens(expires_at) WHERE used_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_vst_token ON vendor_service_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_vst_service_record ON vendor_service_tokens(service_record_id);
+CREATE INDEX IF NOT EXISTS idx_vst_org ON vendor_service_tokens(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vst_vendor ON vendor_service_tokens(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vst_expires ON vendor_service_tokens(expires_at) WHERE used_at IS NULL;
 
 ALTER TABLE vendor_service_tokens ENABLE ROW LEVEL SECURITY;
 
 -- Public can validate tokens (read-only by token value)
+DROP POLICY IF EXISTS "Anyone can validate service tokens" ON vendor_service_tokens;
 CREATE POLICY "Anyone can validate service tokens"
   ON vendor_service_tokens FOR SELECT TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can manage own org tokens" ON vendor_service_tokens;
 CREATE POLICY "Authenticated users can manage own org tokens"
   ON vendor_service_tokens FOR ALL TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access vendor service tokens" ON vendor_service_tokens;
 CREATE POLICY "Service role full access vendor service tokens"
   ON vendor_service_tokens FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -60,22 +63,25 @@ CREATE TABLE IF NOT EXISTS vendor_service_updates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_vsu_service_record ON vendor_service_updates(service_record_id);
-CREATE INDEX idx_vsu_org ON vendor_service_updates(organization_id);
-CREATE INDEX idx_vsu_vendor ON vendor_service_updates(vendor_id);
-CREATE INDEX idx_vsu_type ON vendor_service_updates(update_type);
+CREATE INDEX IF NOT EXISTS idx_vsu_service_record ON vendor_service_updates(service_record_id);
+CREATE INDEX IF NOT EXISTS idx_vsu_org ON vendor_service_updates(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vsu_vendor ON vendor_service_updates(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vsu_type ON vendor_service_updates(update_type);
 
 ALTER TABLE vendor_service_updates ENABLE ROW LEVEL SECURITY;
 
 -- Anon can insert (vendor submitting via token)
+DROP POLICY IF EXISTS "Anyone can submit service updates via token" ON vendor_service_updates;
 CREATE POLICY "Anyone can submit service updates via token"
   ON vendor_service_updates FOR INSERT TO anon, authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Authenticated users can view own org updates" ON vendor_service_updates;
 CREATE POLICY "Authenticated users can view own org updates"
   ON vendor_service_updates FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access vendor service updates" ON vendor_service_updates;
 CREATE POLICY "Service role full access vendor service updates"
   ON vendor_service_updates FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -95,25 +101,29 @@ CREATE TABLE IF NOT EXISTS vendor_service_verifications (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_vsv_service_record ON vendor_service_verifications(service_record_id);
-CREATE INDEX idx_vsv_update ON vendor_service_verifications(update_id);
-CREATE INDEX idx_vsv_org ON vendor_service_verifications(organization_id);
-CREATE INDEX idx_vsv_status ON vendor_service_verifications(verification_status);
+CREATE INDEX IF NOT EXISTS idx_vsv_service_record ON vendor_service_verifications(service_record_id);
+CREATE INDEX IF NOT EXISTS idx_vsv_update ON vendor_service_verifications(update_id);
+CREATE INDEX IF NOT EXISTS idx_vsv_org ON vendor_service_verifications(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vsv_status ON vendor_service_verifications(verification_status);
 
 ALTER TABLE vendor_service_verifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can view own org verifications" ON vendor_service_verifications;
 CREATE POLICY "Authenticated users can view own org verifications"
   ON vendor_service_verifications FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Authenticated users can manage own org verifications" ON vendor_service_verifications;
 CREATE POLICY "Authenticated users can manage own org verifications"
   ON vendor_service_verifications FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Authenticated users can update own org verifications" ON vendor_service_verifications;
 CREATE POLICY "Authenticated users can update own org verifications"
   ON vendor_service_verifications FOR UPDATE TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access vendor service verifications" ON vendor_service_verifications;
 CREATE POLICY "Service role full access vendor service verifications"
   ON vendor_service_verifications FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -137,21 +147,24 @@ CREATE TABLE IF NOT EXISTS vendor_scorecard_metrics (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_vsm_org ON vendor_scorecard_metrics(organization_id);
-CREATE INDEX idx_vsm_vendor ON vendor_scorecard_metrics(vendor_id);
-CREATE INDEX idx_vsm_period ON vendor_scorecard_metrics(period_start, period_end);
-CREATE UNIQUE INDEX idx_vsm_unique_period ON vendor_scorecard_metrics(organization_id, vendor_id, period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_vsm_org ON vendor_scorecard_metrics(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vsm_vendor ON vendor_scorecard_metrics(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vsm_period ON vendor_scorecard_metrics(period_start, period_end);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_vsm_unique_period ON vendor_scorecard_metrics(organization_id, vendor_id, period_start, period_end);
 
 ALTER TABLE vendor_scorecard_metrics ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can view own org scorecard metrics" ON vendor_scorecard_metrics;
 CREATE POLICY "Authenticated users can view own org scorecard metrics"
   ON vendor_scorecard_metrics FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Authenticated users can manage own org scorecard metrics" ON vendor_scorecard_metrics;
 CREATE POLICY "Authenticated users can manage own org scorecard metrics"
   ON vendor_scorecard_metrics FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access vendor scorecard metrics" ON vendor_scorecard_metrics;
 CREATE POLICY "Service role full access vendor scorecard metrics"
   ON vendor_scorecard_metrics FOR ALL TO service_role
   USING (true) WITH CHECK (true);

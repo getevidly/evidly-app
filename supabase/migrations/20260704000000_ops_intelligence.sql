@@ -48,18 +48,21 @@ CREATE INDEX IF NOT EXISTS idx_ops_intel_expires
 
 ALTER TABLE ops_intelligence_insights ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org ops insights" ON ops_intelligence_insights;
 CREATE POLICY "Users can view own org ops insights"
   ON ops_intelligence_insights FOR SELECT
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can update own org ops insights" ON ops_intelligence_insights;
 CREATE POLICY "Users can update own org ops insights"
   ON ops_intelligence_insights FOR UPDATE
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access on ops_intelligence_insights" ON ops_intelligence_insights;
 CREATE POLICY "Service role full access on ops_intelligence_insights"
   ON ops_intelligence_insights FOR ALL
   USING (auth.role() = 'service_role');

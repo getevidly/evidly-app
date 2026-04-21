@@ -36,20 +36,22 @@ IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'resco
   );
 
   -- Indexes for common queries
-  CREATE INDEX idx_rescore_alerts_org_status ON rescore_alerts(org_id, status);
-  CREATE INDEX idx_rescore_alerts_facility ON rescore_alerts(facility_id, status);
-  CREATE INDEX idx_rescore_alerts_severity ON rescore_alerts(org_id, severity, status);
-  CREATE INDEX idx_rescore_alerts_trigger ON rescore_alerts(trigger_record_type, trigger_record_id);
-  CREATE INDEX idx_rescore_alerts_created ON rescore_alerts(created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_rescore_alerts_org_status ON rescore_alerts(org_id, status);
+  CREATE INDEX IF NOT EXISTS idx_rescore_alerts_facility ON rescore_alerts(facility_id, status);
+  CREATE INDEX IF NOT EXISTS idx_rescore_alerts_severity ON rescore_alerts(org_id, severity, status);
+  CREATE INDEX IF NOT EXISTS idx_rescore_alerts_trigger ON rescore_alerts(trigger_record_type, trigger_record_id);
+  CREATE INDEX IF NOT EXISTS idx_rescore_alerts_created ON rescore_alerts(created_at DESC);
 
   -- RLS
   ALTER TABLE rescore_alerts ENABLE ROW LEVEL SECURITY;
 
+  DROP POLICY IF EXISTS rescore_alerts_org_read ON rescore_alerts;
   CREATE POLICY rescore_alerts_org_read ON rescore_alerts
     FOR SELECT USING (org_id = auth.uid()::UUID OR EXISTS (
       SELECT 1 FROM user_profiles WHERE id = auth.uid() AND organization_id = rescore_alerts.org_id
     ));
 
+  DROP POLICY IF EXISTS rescore_alerts_org_write ON rescore_alerts;
   CREATE POLICY rescore_alerts_org_write ON rescore_alerts
     FOR ALL USING (org_id IN (
       SELECT organization_id FROM user_profiles WHERE id = auth.uid()

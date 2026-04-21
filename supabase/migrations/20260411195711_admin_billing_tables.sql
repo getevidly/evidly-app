@@ -32,12 +32,14 @@ CREATE TABLE IF NOT EXISTS billing_invoices (
 ALTER TABLE billing_subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE billing_invoices ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_read_billing_subscriptions" ON billing_subscriptions;
 CREATE POLICY "admin_read_billing_subscriptions"
   ON billing_subscriptions FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin'
   ));
 
+DROP POLICY IF EXISTS "admin_read_billing_invoices" ON billing_invoices;
 CREATE POLICY "admin_read_billing_invoices"
   ON billing_invoices FOR SELECT
   USING (EXISTS (

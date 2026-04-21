@@ -18,6 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_insurance_share_links_token ON insurance_share_li
 ALTER TABLE insurance_share_links ENABLE ROW LEVEL SECURITY;
 
 -- Org members can create and view their own share links
+DROP POLICY IF EXISTS "org_members_manage_share_links" ON insurance_share_links;
 CREATE POLICY "org_members_manage_share_links" ON insurance_share_links
   FOR ALL USING (
     organization_id IN (
@@ -26,6 +27,7 @@ CREATE POLICY "org_members_manage_share_links" ON insurance_share_links
   );
 
 -- Anonymous users can read a share link if token is valid and not expired
+DROP POLICY IF EXISTS "anon_read_valid_share_links" ON insurance_share_links;
 CREATE POLICY "anon_read_valid_share_links" ON insurance_share_links
   FOR SELECT USING (
     expires_at > now()

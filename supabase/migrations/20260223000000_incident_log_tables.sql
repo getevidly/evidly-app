@@ -31,23 +31,27 @@ CREATE TABLE IF NOT EXISTS incidents (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_incidents_org ON incidents(organization_id);
-CREATE INDEX idx_incidents_org_status ON incidents(organization_id, status);
-CREATE INDEX idx_incidents_location ON incidents(location_id);
+CREATE INDEX IF NOT EXISTS idx_incidents_org ON incidents(organization_id);
+CREATE INDEX IF NOT EXISTS idx_incidents_org_status ON incidents(organization_id, status);
+CREATE INDEX IF NOT EXISTS idx_incidents_location ON incidents(location_id);
 ALTER TABLE incidents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org incidents" ON incidents;
 CREATE POLICY "Users can view own org incidents"
   ON incidents FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can insert own org incidents" ON incidents;
 CREATE POLICY "Users can insert own org incidents"
   ON incidents FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can update own org incidents" ON incidents;
 CREATE POLICY "Users can update own org incidents"
   ON incidents FOR UPDATE TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access incidents" ON incidents;
 CREATE POLICY "Service role full access incidents"
   ON incidents FOR ALL TO service_role USING (true);
 
@@ -63,9 +67,10 @@ CREATE TABLE IF NOT EXISTS incident_timeline (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_incident_timeline_incident ON incident_timeline(incident_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_incident_timeline_incident ON incident_timeline(incident_id, created_at DESC);
 ALTER TABLE incident_timeline ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view timeline via incident org" ON incident_timeline;
 CREATE POLICY "Users can view timeline via incident org"
   ON incident_timeline FOR SELECT TO authenticated
   USING (incident_id IN (
@@ -74,6 +79,7 @@ CREATE POLICY "Users can view timeline via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Users can insert timeline via incident org" ON incident_timeline;
 CREATE POLICY "Users can insert timeline via incident org"
   ON incident_timeline FOR INSERT TO authenticated
   WITH CHECK (incident_id IN (
@@ -82,6 +88,7 @@ CREATE POLICY "Users can insert timeline via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Users can update timeline via incident org" ON incident_timeline;
 CREATE POLICY "Users can update timeline via incident org"
   ON incident_timeline FOR UPDATE TO authenticated
   USING (incident_id IN (
@@ -90,6 +97,7 @@ CREATE POLICY "Users can update timeline via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Service role full access incident timeline" ON incident_timeline;
 CREATE POLICY "Service role full access incident timeline"
   ON incident_timeline FOR ALL TO service_role USING (true);
 
@@ -102,9 +110,10 @@ CREATE TABLE IF NOT EXISTS incident_comments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_incident_comments_incident ON incident_comments(incident_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_incident_comments_incident ON incident_comments(incident_id, created_at DESC);
 ALTER TABLE incident_comments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view comments via incident org" ON incident_comments;
 CREATE POLICY "Users can view comments via incident org"
   ON incident_comments FOR SELECT TO authenticated
   USING (incident_id IN (
@@ -113,6 +122,7 @@ CREATE POLICY "Users can view comments via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Users can insert comments via incident org" ON incident_comments;
 CREATE POLICY "Users can insert comments via incident org"
   ON incident_comments FOR INSERT TO authenticated
   WITH CHECK (incident_id IN (
@@ -121,6 +131,7 @@ CREATE POLICY "Users can insert comments via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Users can update comments via incident org" ON incident_comments;
 CREATE POLICY "Users can update comments via incident org"
   ON incident_comments FOR UPDATE TO authenticated
   USING (incident_id IN (
@@ -129,6 +140,7 @@ CREATE POLICY "Users can update comments via incident org"
     )
   ));
 
+DROP POLICY IF EXISTS "Service role full access incident comments" ON incident_comments;
 CREATE POLICY "Service role full access incident comments"
   ON incident_comments FOR ALL TO service_role USING (true);
 
@@ -141,6 +153,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS incidents_updated_at ON incidents;
 CREATE TRIGGER incidents_updated_at
   BEFORE UPDATE ON incidents
   FOR EACH ROW EXECUTE FUNCTION update_incidents_updated_at();

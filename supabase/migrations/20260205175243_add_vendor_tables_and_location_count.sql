@@ -102,6 +102,7 @@ ALTER TABLE vendor_client_relationships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vendor_upload_requests ENABLE ROW LEVEL SECURITY;
 
 -- Vendors RLS Policies
+DROP POLICY IF EXISTS "Vendors can view their own company" ON vendors;
 CREATE POLICY "Vendors can view their own company"
   ON vendors FOR SELECT
   TO authenticated
@@ -111,6 +112,7 @@ CREATE POLICY "Vendors can view their own company"
     )
   );
 
+DROP POLICY IF EXISTS "Vendors can update their own company" ON vendors;
 CREATE POLICY "Vendors can update their own company"
   ON vendors FOR UPDATE
   TO authenticated
@@ -126,12 +128,14 @@ CREATE POLICY "Vendors can update their own company"
   );
 
 -- Vendor Users RLS Policies
+DROP POLICY IF EXISTS "Vendor users can view their associations" ON vendor_users;
 CREATE POLICY "Vendor users can view their associations"
   ON vendor_users FOR SELECT
   TO authenticated
   USING (auth.uid() = user_id);
 
 -- Vendor Client Relationships RLS Policies
+DROP POLICY IF EXISTS "Vendors can view their clients" ON vendor_client_relationships;
 CREATE POLICY "Vendors can view their clients"
   ON vendor_client_relationships FOR SELECT
   TO authenticated
@@ -141,6 +145,7 @@ CREATE POLICY "Vendors can view their clients"
     )
   );
 
+DROP POLICY IF EXISTS "Clients can view their vendors" ON vendor_client_relationships;
 CREATE POLICY "Clients can view their vendors"
   ON vendor_client_relationships FOR SELECT
   TO authenticated
@@ -151,6 +156,7 @@ CREATE POLICY "Clients can view their vendors"
   );
 
 -- Vendor Upload Requests RLS Policies
+DROP POLICY IF EXISTS "Vendors can view their upload requests" ON vendor_upload_requests;
 CREATE POLICY "Vendors can view their upload requests"
   ON vendor_upload_requests FOR SELECT
   TO authenticated
@@ -160,6 +166,7 @@ CREATE POLICY "Vendors can view their upload requests"
     )
   );
 
+DROP POLICY IF EXISTS "Vendors can update their upload requests" ON vendor_upload_requests;
 CREATE POLICY "Vendors can update their upload requests"
   ON vendor_upload_requests FOR UPDATE
   TO authenticated
@@ -174,6 +181,7 @@ CREATE POLICY "Vendors can update their upload requests"
     )
   );
 
+DROP POLICY IF EXISTS "Organizations can view their requests" ON vendor_upload_requests;
 CREATE POLICY "Organizations can view their requests"
   ON vendor_upload_requests FOR SELECT
   TO authenticated
@@ -183,6 +191,7 @@ CREATE POLICY "Organizations can view their requests"
     )
   );
 
+DROP POLICY IF EXISTS "Organizations can create upload requests" ON vendor_upload_requests;
 CREATE POLICY "Organizations can create upload requests"
   ON vendor_upload_requests FOR INSERT
   TO authenticated

@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS enterprise_tenants (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_tenants_slug ON enterprise_tenants(slug);
-CREATE INDEX idx_enterprise_tenants_status ON enterprise_tenants(status);
+CREATE INDEX IF NOT EXISTS idx_enterprise_tenants_slug ON enterprise_tenants(slug);
+CREATE INDEX IF NOT EXISTS idx_enterprise_tenants_status ON enterprise_tenants(status);
 
 -- 2. enterprise_sso_configs
 CREATE TABLE IF NOT EXISTS enterprise_sso_configs (
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS enterprise_sso_configs (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_sso_tenant ON enterprise_sso_configs(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_sso_tenant ON enterprise_sso_configs(tenant_id);
 
 -- 3. enterprise_scim_tokens
 CREATE TABLE IF NOT EXISTS enterprise_scim_tokens (
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS enterprise_scim_tokens (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_scim_tenant ON enterprise_scim_tokens(tenant_id);
-CREATE INDEX idx_enterprise_scim_hash ON enterprise_scim_tokens(token_hash);
+CREATE INDEX IF NOT EXISTS idx_enterprise_scim_tenant ON enterprise_scim_tokens(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_scim_hash ON enterprise_scim_tokens(token_hash);
 
 -- 4. enterprise_hierarchy_nodes
 CREATE TABLE IF NOT EXISTS enterprise_hierarchy_nodes (
@@ -76,9 +76,9 @@ CREATE TABLE IF NOT EXISTS enterprise_hierarchy_nodes (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_hierarchy_tenant ON enterprise_hierarchy_nodes(tenant_id);
-CREATE INDEX idx_enterprise_hierarchy_parent ON enterprise_hierarchy_nodes(parent_id);
-CREATE INDEX idx_enterprise_hierarchy_level ON enterprise_hierarchy_nodes(level);
+CREATE INDEX IF NOT EXISTS idx_enterprise_hierarchy_tenant ON enterprise_hierarchy_nodes(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_hierarchy_parent ON enterprise_hierarchy_nodes(parent_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_hierarchy_level ON enterprise_hierarchy_nodes(level);
 
 -- 5. enterprise_user_mappings
 CREATE TABLE IF NOT EXISTS enterprise_user_mappings (
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS enterprise_user_mappings (
   UNIQUE(tenant_id, user_id)
 );
 
-CREATE INDEX idx_enterprise_user_tenant ON enterprise_user_mappings(tenant_id);
-CREATE INDEX idx_enterprise_user_ext ON enterprise_user_mappings(external_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_user_tenant ON enterprise_user_mappings(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_user_ext ON enterprise_user_mappings(external_id);
 
 -- 6. enterprise_report_templates
 CREATE TABLE IF NOT EXISTS enterprise_report_templates (
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS enterprise_report_templates (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_report_tenant ON enterprise_report_templates(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_report_tenant ON enterprise_report_templates(tenant_id);
 
 -- 7. enterprise_audit_log
 CREATE TABLE IF NOT EXISTS enterprise_audit_log (
@@ -126,9 +126,9 @@ CREATE TABLE IF NOT EXISTS enterprise_audit_log (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_enterprise_audit_tenant ON enterprise_audit_log(tenant_id);
-CREATE INDEX idx_enterprise_audit_action ON enterprise_audit_log(action);
-CREATE INDEX idx_enterprise_audit_created ON enterprise_audit_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_enterprise_audit_tenant ON enterprise_audit_log(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_enterprise_audit_action ON enterprise_audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_enterprise_audit_created ON enterprise_audit_log(created_at DESC);
 
 -- RLS
 ALTER TABLE enterprise_tenants ENABLE ROW LEVEL SECURITY;
@@ -140,29 +140,42 @@ ALTER TABLE enterprise_report_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE enterprise_audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Service role full access
+DROP POLICY IF EXISTS enterprise_tenants_service ON enterprise_tenants;
 CREATE POLICY enterprise_tenants_service ON enterprise_tenants FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_sso_service ON enterprise_sso_configs;
 CREATE POLICY enterprise_sso_service ON enterprise_sso_configs FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_scim_service ON enterprise_scim_tokens;
 CREATE POLICY enterprise_scim_service ON enterprise_scim_tokens FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_hierarchy_service ON enterprise_hierarchy_nodes;
 CREATE POLICY enterprise_hierarchy_service ON enterprise_hierarchy_nodes FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_users_service ON enterprise_user_mappings;
 CREATE POLICY enterprise_users_service ON enterprise_user_mappings FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_reports_service ON enterprise_report_templates;
 CREATE POLICY enterprise_reports_service ON enterprise_report_templates FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS enterprise_audit_service ON enterprise_audit_log;
 CREATE POLICY enterprise_audit_service ON enterprise_audit_log FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- Tenant-scoped read access for authenticated users
+DROP POLICY IF EXISTS enterprise_tenants_read ON enterprise_tenants;
 CREATE POLICY enterprise_tenants_read ON enterprise_tenants FOR SELECT TO authenticated
   USING (id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_sso_read ON enterprise_sso_configs;
 CREATE POLICY enterprise_sso_read ON enterprise_sso_configs FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_hierarchy_read ON enterprise_hierarchy_nodes;
 CREATE POLICY enterprise_hierarchy_read ON enterprise_hierarchy_nodes FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_users_read ON enterprise_user_mappings;
 CREATE POLICY enterprise_users_read ON enterprise_user_mappings FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_reports_read ON enterprise_report_templates;
 CREATE POLICY enterprise_reports_read ON enterprise_report_templates FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS enterprise_audit_read ON enterprise_audit_log;
 CREATE POLICY enterprise_audit_read ON enterprise_audit_log FOR SELECT TO authenticated
   USING (tenant_id IN (SELECT tenant_id FROM enterprise_user_mappings WHERE user_id = auth.uid()));

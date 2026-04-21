@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS marketplace_vendors (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_vendors_slug ON marketplace_vendors(slug);
-CREATE INDEX idx_mp_vendors_tier ON marketplace_vendors(tier) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_mp_vendors_slug ON marketplace_vendors(slug);
+CREATE INDEX IF NOT EXISTS idx_mp_vendors_tier ON marketplace_vendors(tier) WHERE is_active = true;
 
 -- 2. marketplace_services — services offered by marketplace vendors
 CREATE TABLE IF NOT EXISTS marketplace_services (
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS marketplace_services (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_services_vendor ON marketplace_services(marketplace_vendor_id);
-CREATE INDEX idx_mp_services_category ON marketplace_services(category);
+CREATE INDEX IF NOT EXISTS idx_mp_services_vendor ON marketplace_services(marketplace_vendor_id);
+CREATE INDEX IF NOT EXISTS idx_mp_services_category ON marketplace_services(category);
 
 -- 3. marketplace_reviews — operator reviews of marketplace vendors
 CREATE TABLE IF NOT EXISTS marketplace_reviews (
@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS marketplace_reviews (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_reviews_vendor ON marketplace_reviews(marketplace_vendor_id);
-CREATE INDEX idx_mp_reviews_rating ON marketplace_reviews(rating);
+CREATE INDEX IF NOT EXISTS idx_mp_reviews_vendor ON marketplace_reviews(marketplace_vendor_id);
+CREATE INDEX IF NOT EXISTS idx_mp_reviews_rating ON marketplace_reviews(rating);
 
 -- 4. marketplace_credentials — verified vendor credentials
 CREATE TABLE IF NOT EXISTS marketplace_credentials (
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS marketplace_credentials (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_credentials_vendor ON marketplace_credentials(marketplace_vendor_id);
+CREATE INDEX IF NOT EXISTS idx_mp_credentials_vendor ON marketplace_credentials(marketplace_vendor_id);
 
 -- 5. marketplace_service_requests — quote/booking requests
 CREATE TABLE IF NOT EXISTS marketplace_service_requests (
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS marketplace_service_requests (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_requests_vendor_status ON marketplace_service_requests(marketplace_vendor_id, status);
-CREATE INDEX idx_mp_requests_org ON marketplace_service_requests(requesting_org_id);
+CREATE INDEX IF NOT EXISTS idx_mp_requests_vendor_status ON marketplace_service_requests(marketplace_vendor_id, status);
+CREATE INDEX IF NOT EXISTS idx_mp_requests_org ON marketplace_service_requests(requesting_org_id);
 
 -- 6. marketplace_vendor_metrics — cached performance metrics
 CREATE TABLE IF NOT EXISTS marketplace_vendor_metrics (
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS marketplace_vendor_metrics (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_mp_metrics_vendor ON marketplace_vendor_metrics(marketplace_vendor_id);
+CREATE INDEX IF NOT EXISTS idx_mp_metrics_vendor ON marketplace_vendor_metrics(marketplace_vendor_id);
 
 -- =====================================================
 -- Row Level Security
@@ -126,48 +126,56 @@ ALTER TABLE marketplace_service_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE marketplace_vendor_metrics ENABLE ROW LEVEL SECURITY;
 
 -- marketplace_vendors: authenticated users can read active vendors
+DROP POLICY IF EXISTS "Authenticated users can read active marketplace vendors" ON marketplace_vendors;
 CREATE POLICY "Authenticated users can read active marketplace vendors"
   ON marketplace_vendors FOR SELECT
   TO authenticated
   USING (is_active = true);
 
 -- marketplace_services: authenticated users can read active services
+DROP POLICY IF EXISTS "Authenticated users can read active marketplace services" ON marketplace_services;
 CREATE POLICY "Authenticated users can read active marketplace services"
   ON marketplace_services FOR SELECT
   TO authenticated
   USING (is_active = true);
 
 -- marketplace_reviews: authenticated users can read all reviews
+DROP POLICY IF EXISTS "Authenticated users can read marketplace reviews" ON marketplace_reviews;
 CREATE POLICY "Authenticated users can read marketplace reviews"
   ON marketplace_reviews FOR SELECT
   TO authenticated
   USING (true);
 
 -- marketplace_reviews: authenticated users can insert reviews
+DROP POLICY IF EXISTS "Authenticated users can create marketplace reviews" ON marketplace_reviews;
 CREATE POLICY "Authenticated users can create marketplace reviews"
   ON marketplace_reviews FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- marketplace_credentials: authenticated users can read all credentials
+DROP POLICY IF EXISTS "Authenticated users can read marketplace credentials" ON marketplace_credentials;
 CREATE POLICY "Authenticated users can read marketplace credentials"
   ON marketplace_credentials FOR SELECT
   TO authenticated
   USING (true);
 
 -- marketplace_service_requests: authenticated users can create requests
+DROP POLICY IF EXISTS "Authenticated users can create service requests" ON marketplace_service_requests;
 CREATE POLICY "Authenticated users can create service requests"
   ON marketplace_service_requests FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- marketplace_service_requests: users can read their own requests
+DROP POLICY IF EXISTS "Users can read own service requests" ON marketplace_service_requests;
 CREATE POLICY "Users can read own service requests"
   ON marketplace_service_requests FOR SELECT
   TO authenticated
   USING (requesting_user_id = auth.uid());
 
 -- marketplace_vendor_metrics: authenticated users can read all metrics
+DROP POLICY IF EXISTS "Authenticated users can read vendor metrics" ON marketplace_vendor_metrics;
 CREATE POLICY "Authenticated users can read vendor metrics"
   ON marketplace_vendor_metrics FOR SELECT
   TO authenticated

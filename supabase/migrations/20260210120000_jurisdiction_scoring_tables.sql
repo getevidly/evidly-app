@@ -20,11 +20,13 @@ CREATE TABLE jurisdiction_scoring_profiles (
 
 ALTER TABLE jurisdiction_scoring_profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can read jurisdiction profiles" ON jurisdiction_scoring_profiles;
 CREATE POLICY "Authenticated users can read jurisdiction profiles"
   ON jurisdiction_scoring_profiles FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role can manage jurisdiction profiles" ON jurisdiction_scoring_profiles;
 CREATE POLICY "Service role can manage jurisdiction profiles"
   ON jurisdiction_scoring_profiles FOR ALL
   TO service_role
@@ -48,11 +50,13 @@ CREATE TABLE violation_code_mappings (
 
 ALTER TABLE violation_code_mappings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can read violation mappings" ON violation_code_mappings;
 CREATE POLICY "Authenticated users can read violation mappings"
   ON violation_code_mappings FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role can manage violation mappings" ON violation_code_mappings;
 CREATE POLICY "Service role can manage violation mappings"
   ON violation_code_mappings FOR ALL
   TO service_role
@@ -75,11 +79,12 @@ CREATE TABLE location_jurisdiction_scores (
   violation_details jsonb NOT NULL DEFAULT '[]'
 );
 
-CREATE INDEX idx_loc_jurisdiction_scores_location ON location_jurisdiction_scores(location_id);
-CREATE INDEX idx_loc_jurisdiction_scores_calc ON location_jurisdiction_scores(calculated_at);
+CREATE INDEX IF NOT EXISTS idx_loc_jurisdiction_scores_location ON location_jurisdiction_scores(location_id);
+CREATE INDEX IF NOT EXISTS idx_loc_jurisdiction_scores_calc ON location_jurisdiction_scores(calculated_at);
 
 ALTER TABLE location_jurisdiction_scores ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read scores for their organization locations" ON location_jurisdiction_scores;
 CREATE POLICY "Users can read scores for their organization locations"
   ON location_jurisdiction_scores FOR SELECT
   TO authenticated
@@ -91,6 +96,7 @@ CREATE POLICY "Users can read scores for their organization locations"
     )
   );
 
+DROP POLICY IF EXISTS "Service role can manage jurisdiction scores" ON location_jurisdiction_scores;
 CREATE POLICY "Service role can manage jurisdiction scores"
   ON location_jurisdiction_scores FOR ALL
   TO service_role
@@ -108,6 +114,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_jurisdiction_profile_updated ON jurisdiction_scoring_profiles;
 CREATE TRIGGER trg_jurisdiction_profile_updated
   BEFORE UPDATE ON jurisdiction_scoring_profiles
   FOR EACH ROW

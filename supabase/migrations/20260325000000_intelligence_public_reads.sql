@@ -24,6 +24,7 @@ DROP POLICY IF EXISTS "Anyone can read published demo-eligible insights" ON inte
 
 -- Replace with: anyone can read unowned insights (any status)
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Anyone can read unowned intelligence insights" ON intelligence_insights;
   CREATE POLICY "Anyone can read unowned intelligence insights"
     ON intelligence_insights FOR SELECT
     TO anon, authenticated

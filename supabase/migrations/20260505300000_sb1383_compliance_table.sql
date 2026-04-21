@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS sb1383_compliance (
 
 ALTER TABLE sb1383_compliance ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "org_access_sb1383" ON sb1383_compliance;
 CREATE POLICY "org_access_sb1383" ON sb1383_compliance
   FOR ALL USING (
     organization_id IN (

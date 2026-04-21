@@ -353,6 +353,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_update_verification_status ON content_verification_log;
 CREATE TRIGGER trg_update_verification_status
   AFTER INSERT ON content_verification_log
   FOR EACH ROW EXECUTE FUNCTION update_verification_status();
@@ -384,10 +385,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS enforce_verification_intelligence_signals ON intelligence_signals;
 CREATE TRIGGER enforce_verification_intelligence_signals
   BEFORE UPDATE ON intelligence_signals
   FOR EACH ROW EXECUTE FUNCTION enforce_verification_on_publish();
 
+DROP TRIGGER IF EXISTS enforce_verification_regulatory_changes ON regulatory_changes;
 CREATE TRIGGER enforce_verification_regulatory_changes
   BEFORE UPDATE ON regulatory_changes
   FOR EACH ROW EXECUTE FUNCTION enforce_verification_on_publish();
@@ -412,11 +415,17 @@ ALTER TABLE content_verification_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE content_verification_status ENABLE ROW LEVEL SECURITY;
 ALTER TABLE verification_gate_definitions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow authenticated read on cvl" ON content_verification_log;
 CREATE POLICY "Allow authenticated read on cvl" ON content_verification_log FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "Allow authenticated insert on cvl" ON content_verification_log;
 CREATE POLICY "Allow authenticated insert on cvl" ON content_verification_log FOR INSERT TO authenticated WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow authenticated read on cvs" ON content_verification_status;
 CREATE POLICY "Allow authenticated read on cvs" ON content_verification_status FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "Allow authenticated update on cvs" ON content_verification_status;
 CREATE POLICY "Allow authenticated update on cvs" ON content_verification_status FOR UPDATE TO authenticated USING (true);
+DROP POLICY IF EXISTS "Allow authenticated insert on cvs" ON content_verification_status;
 CREATE POLICY "Allow authenticated insert on cvs" ON content_verification_status FOR INSERT TO authenticated WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow authenticated read on vgd" ON verification_gate_definitions;
 CREATE POLICY "Allow authenticated read on vgd" ON verification_gate_definitions FOR SELECT TO authenticated USING (true);

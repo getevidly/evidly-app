@@ -70,5 +70,6 @@ CREATE INDEX IF NOT EXISTS idx_email_queue_template ON email_queue(template);
 
 ALTER TABLE email_queue ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS email_queue_service ON email_queue;
 CREATE POLICY email_queue_service ON email_queue
   FOR ALL USING (true);

@@ -30,6 +30,31 @@ CREATE TABLE IF NOT EXISTS intelligence_sources (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- ── Reconcile intelligence_sources schema (table may exist from earlier migration with different columns)
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS source_key TEXT;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'intelligence_sources_source_key_key') THEN
+    BEGIN ALTER TABLE intelligence_sources ADD CONSTRAINT intelligence_sources_source_key_key UNIQUE (source_key); EXCEPTION WHEN duplicate_table THEN NULL; END;
+  END IF;
+END $$;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS subcategory TEXT;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS crawl_method TEXT;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS last_signal_at TIMESTAMPTZ;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS signal_count_total INT DEFAULT 0;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS signal_count_30d INT DEFAULT 0;
+ALTER TABLE intelligence_sources ADD COLUMN IF NOT EXISTS is_demo_critical BOOLEAN DEFAULT false;
+-- Widen category CHECK to accept both old and new values
+ALTER TABLE intelligence_sources DROP CONSTRAINT IF EXISTS intelligence_sources_category_check;
+ALTER TABLE intelligence_sources ADD CONSTRAINT intelligence_sources_category_check CHECK (category IN (
+  'food_safety','fire_safety','regulatory','fda_recalls','labor','legislative','environmental','competitive','rfp','weather',
+  'jurisdiction_food','jurisdiction_fire','state_agency','federal_agency','industry','insurance','news'
+));
+-- Widen status CHECK
+ALTER TABLE intelligence_sources DROP CONSTRAINT IF EXISTS intelligence_sources_status_check;
+ALTER TABLE intelligence_sources ADD CONSTRAINT intelligence_sources_status_check CHECK (status IN (
+  'active','paused','waf_blocked','broken','pending','live','degraded','timeout','disabled','error'
+));
+
 -- ── Intelligence Signals ─────────────────────────────────
 CREATE TABLE IF NOT EXISTS intelligence_signals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -70,6 +95,49 @@ CREATE TABLE IF NOT EXISTS intelligence_signals (
   dismissed_reason TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- ── Reconcile intelligence_signals schema (table may exist from earlier migration with different columns)
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS source_key TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS summary TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS full_content TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS source_url TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS published_date DATE;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS discovered_at TIMESTAMPTZ DEFAULT now();
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'statewide';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS affected_jurisdictions TEXT[] DEFAULT '{}';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS affected_counties TEXT[] DEFAULT '{}';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS affected_industries TEXT[] DEFAULT '{}';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS affected_modules TEXT[] DEFAULT '{}';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_summary TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_impact_score INT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_urgency TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_client_impact TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_platform_impact TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_confidence INT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS ai_analyzed_at TIMESTAMPTZ;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'new';
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS reviewed_by TEXT;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ;
+ALTER TABLE intelligence_signals ADD COLUMN IF NOT EXISTS dismissed_reason TEXT;
+-- Widen signal_type CHECK to accept both old and new values
+ALTER TABLE intelligence_signals DROP CONSTRAINT IF EXISTS intelligence_signals_signal_type_check;
+ALTER TABLE intelligence_signals ADD CONSTRAINT intelligence_signals_signal_type_check CHECK (signal_type IN (
+  'recall','regulatory_change','inspection_result','enforcement_action',
+  'weather_alert','rfp_detected','legislative_update','competitive_intel',
+  'fire_safety_update','outbreak','inspection_methodology','legislation',
+  'nfpa_update','fire_inspection_change','competitor_activity','industry_trend',
+  'osfm_update','calfire_update','permit_change'
+));
+-- Add scope CHECK (safe even if column was just created without CHECK)
+ALTER TABLE intelligence_signals DROP CONSTRAINT IF EXISTS intelligence_signals_scope_check;
+ALTER TABLE intelligence_signals ADD CONSTRAINT intelligence_signals_scope_check CHECK (scope IN (
+  'federal','statewide','multi_county','county','city','local'
+));
+-- Add status CHECK
+ALTER TABLE intelligence_signals DROP CONSTRAINT IF EXISTS intelligence_signals_status_check;
+ALTER TABLE intelligence_signals ADD CONSTRAINT intelligence_signals_status_check CHECK (status IN (
+  'new','analyzing','analyzed','reviewed','published','dismissed','archived'
+));
 
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'status') THEN
@@ -151,7 +219,9 @@ BEGIN FOR t IN SELECT unnest(ARRAY[
   'intelligence_sources','intelligence_signals',
   'intelligence_correlations','jie_updates'
 ]) LOOP
+  EXECUTE format('DROP POLICY IF EXISTS "admin_only" ON %I', t);
   EXECUTE format('CREATE POLICY "admin_only" ON %I FOR ALL USING (EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = ''platform_admin''))', t);
+  EXECUTE format('DROP POLICY IF EXISTS "service_role_all" ON %I', t);
   EXECUTE format('CREATE POLICY "service_role_all" ON %I FOR ALL USING (auth.role() = ''service_role'')', t);
 END LOOP; END $$;
 

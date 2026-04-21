@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS training_courses (
   updated_at            timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_training_courses_org ON training_courses (organization_id, category);
-CREATE INDEX idx_training_courses_active ON training_courses (is_active, category);
+CREATE INDEX IF NOT EXISTS idx_training_courses_org ON training_courses (organization_id, category);
+CREATE INDEX IF NOT EXISTS idx_training_courses_active ON training_courses (is_active, category);
 
 -- ── Training Modules ─────────────────────────────────────────
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS training_modules (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_training_modules_course ON training_modules (course_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_training_modules_course ON training_modules (course_id, sort_order);
 
 -- ── Training Lessons ─────────────────────────────────────────
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS training_lessons (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_training_lessons_module ON training_lessons (module_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_training_lessons_module ON training_lessons (module_id, sort_order);
 
 -- ── Training Questions (Question Bank) ───────────────────────
 
@@ -79,8 +79,8 @@ CREATE TABLE IF NOT EXISTS training_questions (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_training_questions_module ON training_questions (module_id) WHERE is_active;
-CREATE INDEX idx_training_questions_course ON training_questions (course_id) WHERE is_active;
+CREATE INDEX IF NOT EXISTS idx_training_questions_module ON training_questions (module_id) WHERE is_active;
+CREATE INDEX IF NOT EXISTS idx_training_questions_course ON training_questions (course_id) WHERE is_active;
 
 -- ── Training Enrollments ─────────────────────────────────────
 
@@ -104,9 +104,9 @@ CREATE TABLE IF NOT EXISTS training_enrollments (
   UNIQUE(employee_id, course_id, enrolled_at)
 );
 
-CREATE INDEX idx_training_enrollments_employee ON training_enrollments (employee_id, status);
-CREATE INDEX idx_training_enrollments_course ON training_enrollments (course_id, status);
-CREATE INDEX idx_training_enrollments_location ON training_enrollments (location_id, status);
+CREATE INDEX IF NOT EXISTS idx_training_enrollments_employee ON training_enrollments (employee_id, status);
+CREATE INDEX IF NOT EXISTS idx_training_enrollments_course ON training_enrollments (course_id, status);
+CREATE INDEX IF NOT EXISTS idx_training_enrollments_location ON training_enrollments (location_id, status);
 
 -- ── Training Progress (per lesson) ──────────────────────────
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS training_progress (
   UNIQUE(enrollment_id, lesson_id)
 );
 
-CREATE INDEX idx_training_progress_enrollment ON training_progress (enrollment_id);
+CREATE INDEX IF NOT EXISTS idx_training_progress_enrollment ON training_progress (enrollment_id);
 
 -- ── Training Quiz Attempts ───────────────────────────────────
 
@@ -141,8 +141,8 @@ CREATE TABLE IF NOT EXISTS training_quiz_attempts (
   completed_at          timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_quiz_attempts_enrollment ON training_quiz_attempts (enrollment_id, completed_at DESC);
-CREATE INDEX idx_quiz_attempts_module ON training_quiz_attempts (module_id, completed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_quiz_attempts_enrollment ON training_quiz_attempts (enrollment_id, completed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_quiz_attempts_module ON training_quiz_attempts (module_id, completed_at DESC);
 
 -- ── Training Certificates ────────────────────────────────────
 
@@ -162,9 +162,9 @@ CREATE TABLE IF NOT EXISTS training_certificates (
   revoked_reason        text
 );
 
-CREATE INDEX idx_training_certs_employee ON training_certificates (employee_id, certificate_type);
-CREATE INDEX idx_training_certs_number ON training_certificates (certificate_number);
-CREATE INDEX idx_training_certs_expiry ON training_certificates (expires_at) WHERE revoked_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_training_certs_employee ON training_certificates (employee_id, certificate_type);
+CREATE INDEX IF NOT EXISTS idx_training_certs_number ON training_certificates (certificate_number);
+CREATE INDEX IF NOT EXISTS idx_training_certs_expiry ON training_certificates (expires_at) WHERE revoked_at IS NULL;
 
 -- ── SB 476 Compliance Log ────────────────────────────────────
 
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS training_sb476_log (
   UNIQUE(enrollment_id)
 );
 
-CREATE INDEX idx_sb476_location ON training_sb476_log (location_id, completed_within_30_days);
+CREATE INDEX IF NOT EXISTS idx_sb476_location ON training_sb476_log (location_id, completed_within_30_days);
 
 -- ── AI Study Interactions ────────────────────────────────────
 
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS training_ai_interactions (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_ai_interactions_enrollment ON training_ai_interactions (enrollment_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_interactions_enrollment ON training_ai_interactions (enrollment_id, created_at DESC);
 
 -- ── Row-Level Security ───────────────────────────────────────
 
@@ -218,43 +218,54 @@ ALTER TABLE training_sb476_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE training_ai_interactions ENABLE ROW LEVEL SECURITY;
 
 -- System courses are readable by all; custom courses scoped to org
+DROP POLICY IF EXISTS "training_courses_read" ON training_courses;
 CREATE POLICY "training_courses_read" ON training_courses FOR SELECT USING (
   is_system_course OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
 );
+DROP POLICY IF EXISTS "training_courses_write" ON training_courses;
 CREATE POLICY "training_courses_write" ON training_courses FOR ALL USING (
   organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
 );
 
 -- Modules/lessons/questions inherit course access
+DROP POLICY IF EXISTS "training_modules_read" ON training_modules;
 CREATE POLICY "training_modules_read" ON training_modules FOR SELECT USING (
   course_id IN (SELECT id FROM training_courses WHERE is_system_course OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
 );
+DROP POLICY IF EXISTS "training_lessons_read" ON training_lessons;
 CREATE POLICY "training_lessons_read" ON training_lessons FOR SELECT USING (
   module_id IN (SELECT id FROM training_modules WHERE course_id IN (SELECT id FROM training_courses WHERE is_system_course OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())))
 );
+DROP POLICY IF EXISTS "training_questions_read" ON training_questions;
 CREATE POLICY "training_questions_read" ON training_questions FOR SELECT USING (
   module_id IN (SELECT id FROM training_modules WHERE course_id IN (SELECT id FROM training_courses WHERE is_system_course OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())))
   OR course_id IN (SELECT id FROM training_courses WHERE is_system_course OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
 );
 
 -- Enrollment-scoped tables: user sees their own or org-mates see all
+DROP POLICY IF EXISTS "training_enrollments_org" ON training_enrollments;
 CREATE POLICY "training_enrollments_org" ON training_enrollments FOR ALL USING (
   employee_id = auth.uid()
   OR location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
 );
+DROP POLICY IF EXISTS "training_progress_org" ON training_progress;
 CREATE POLICY "training_progress_org" ON training_progress FOR ALL USING (
   enrollment_id IN (SELECT id FROM training_enrollments WHERE employee_id = auth.uid() OR location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())))
 );
+DROP POLICY IF EXISTS "training_quiz_org" ON training_quiz_attempts;
 CREATE POLICY "training_quiz_org" ON training_quiz_attempts FOR ALL USING (
   enrollment_id IN (SELECT id FROM training_enrollments WHERE employee_id = auth.uid() OR location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())))
 );
+DROP POLICY IF EXISTS "training_certs_org" ON training_certificates;
 CREATE POLICY "training_certs_org" ON training_certificates FOR ALL USING (
   employee_id = auth.uid()
   OR location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
 );
+DROP POLICY IF EXISTS "training_sb476_org" ON training_sb476_log;
 CREATE POLICY "training_sb476_org" ON training_sb476_log FOR ALL USING (
   location_id IN (SELECT id FROM locations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
 );
+DROP POLICY IF EXISTS "training_ai_org" ON training_ai_interactions;
 CREATE POLICY "training_ai_org" ON training_ai_interactions FOR ALL USING (
   enrollment_id IN (SELECT id FROM training_enrollments WHERE employee_id = auth.uid())
 );

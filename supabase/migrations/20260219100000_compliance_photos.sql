@@ -50,15 +50,16 @@ CREATE TABLE IF NOT EXISTS compliance_photos (
 );
 
 -- ── Indexes ─────────────────────────────────────────────────
-CREATE INDEX idx_photos_org ON compliance_photos(organization_id);
-CREATE INDEX idx_photos_location ON compliance_photos(location_id);
-CREATE INDEX idx_photos_record ON compliance_photos(record_type, record_id);
-CREATE INDEX idx_photos_captured ON compliance_photos(captured_at DESC);
-CREATE INDEX idx_photos_uploaded_by ON compliance_photos(uploaded_by);
+CREATE INDEX IF NOT EXISTS idx_photos_org ON compliance_photos(organization_id);
+CREATE INDEX IF NOT EXISTS idx_photos_location ON compliance_photos(location_id);
+CREATE INDEX IF NOT EXISTS idx_photos_record ON compliance_photos(record_type, record_id);
+CREATE INDEX IF NOT EXISTS idx_photos_captured ON compliance_photos(captured_at DESC);
+CREATE INDEX IF NOT EXISTS idx_photos_uploaded_by ON compliance_photos(uploaded_by);
 
 -- ── RLS ─────────────────────────────────────────────────────
 ALTER TABLE compliance_photos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view photos in their org" ON compliance_photos;
 CREATE POLICY "Users can view photos in their org"
   ON compliance_photos FOR SELECT
   USING (
@@ -67,6 +68,7 @@ CREATE POLICY "Users can view photos in their org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert photos in their org" ON compliance_photos;
 CREATE POLICY "Users can insert photos in their org"
   ON compliance_photos FOR INSERT
   WITH CHECK (
@@ -75,6 +77,7 @@ CREATE POLICY "Users can insert photos in their org"
     )
   );
 
+DROP POLICY IF EXISTS "Managers can update photos in their org" ON compliance_photos;
 CREATE POLICY "Managers can update photos in their org"
   ON compliance_photos FOR UPDATE
   USING (
@@ -84,6 +87,7 @@ CREATE POLICY "Managers can update photos in their org"
     )
   );
 
+DROP POLICY IF EXISTS "Managers can delete photos in their org" ON compliance_photos;
 CREATE POLICY "Managers can delete photos in their org"
   ON compliance_photos FOR DELETE
   USING (
@@ -102,6 +106,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_compliance_photos_updated_at ON compliance_photos;
 CREATE TRIGGER trg_compliance_photos_updated_at
   BEFORE UPDATE ON compliance_photos
   FOR EACH ROW

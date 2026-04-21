@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS calendar_events (
 
 ALTER TABLE calendar_events ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage calendar events in their org" ON calendar_events;
 CREATE POLICY "Users can manage calendar events in their org" ON calendar_events
   FOR ALL USING (
     organization_id IN (
@@ -24,4 +25,4 @@ CREATE POLICY "Users can manage calendar events in their org" ON calendar_events
     )
   );
 
-CREATE INDEX idx_calendar_events_org_date ON calendar_events(organization_id, date);
+CREATE INDEX IF NOT EXISTS idx_calendar_events_org_date ON calendar_events(organization_id, date);

@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS service_record_reviews (
 
 ALTER TABLE service_record_reviews ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS service_record_reviews_read_own_org ON service_record_reviews;
 CREATE POLICY service_record_reviews_read_own_org ON service_record_reviews
   FOR SELECT USING (
     organization_id IN (
@@ -51,6 +52,7 @@ CREATE POLICY service_record_reviews_read_own_org ON service_record_reviews
     )
   );
 
+DROP POLICY IF EXISTS service_record_reviews_write_managers ON service_record_reviews;
 CREATE POLICY service_record_reviews_write_managers ON service_record_reviews
   FOR ALL USING (
     organization_id IN (
@@ -86,6 +88,7 @@ CREATE TABLE IF NOT EXISTS service_record_photos (
 
 ALTER TABLE service_record_photos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS service_record_photos_read_own_org ON service_record_photos;
 CREATE POLICY service_record_photos_read_own_org ON service_record_photos
   FOR SELECT USING (
     organization_id IN (
@@ -93,6 +96,7 @@ CREATE POLICY service_record_photos_read_own_org ON service_record_photos
     )
   );
 
+DROP POLICY IF EXISTS service_record_photos_write_own_org ON service_record_photos;
 CREATE POLICY service_record_photos_write_own_org ON service_record_photos
   FOR ALL USING (
     organization_id IN (

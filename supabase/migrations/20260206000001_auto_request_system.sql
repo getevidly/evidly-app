@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS auto_request_settings (
 
 ALTER TABLE auto_request_settings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Org members can view auto request settings" ON auto_request_settings;
 CREATE POLICY "Org members can view auto request settings"
   ON auto_request_settings FOR SELECT
   TO authenticated
@@ -43,6 +44,7 @@ CREATE POLICY "Org members can view auto request settings"
     )
   );
 
+DROP POLICY IF EXISTS "Org admins can manage auto request settings" ON auto_request_settings;
 CREATE POLICY "Org admins can manage auto request settings"
   ON auto_request_settings FOR ALL
   TO authenticated
@@ -74,17 +76,20 @@ CREATE TABLE IF NOT EXISTS vendor_secure_tokens (
 ALTER TABLE vendor_secure_tokens ENABLE ROW LEVEL SECURITY;
 
 -- Vendors can read their own tokens (for upload page)
+DROP POLICY IF EXISTS "Anyone can read valid tokens" ON vendor_secure_tokens;
 CREATE POLICY "Anyone can read valid tokens"
   ON vendor_secure_tokens FOR SELECT
   TO anon, authenticated
   USING (true);
 
 -- Only system (service role) creates tokens
+DROP POLICY IF EXISTS "Service role creates tokens" ON vendor_secure_tokens;
 CREATE POLICY "Service role creates tokens"
   ON vendor_secure_tokens FOR INSERT
   TO service_role
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Org members can view their tokens" ON vendor_secure_tokens;
 CREATE POLICY "Org members can view their tokens"
   ON vendor_secure_tokens FOR SELECT
   TO authenticated
@@ -112,6 +117,7 @@ CREATE TABLE IF NOT EXISTS vendor_contact_log (
 
 ALTER TABLE vendor_contact_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Org members can view contact log" ON vendor_contact_log;
 CREATE POLICY "Org members can view contact log"
   ON vendor_contact_log FOR SELECT
   TO authenticated
@@ -121,6 +127,7 @@ CREATE POLICY "Org members can view contact log"
     )
   );
 
+DROP POLICY IF EXISTS "Org members can create contact entries" ON vendor_contact_log;
 CREATE POLICY "Org members can create contact entries"
   ON vendor_contact_log FOR INSERT
   TO authenticated
@@ -148,6 +155,7 @@ CREATE TABLE IF NOT EXISTS auto_request_log (
 
 ALTER TABLE auto_request_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Org members can view auto request log" ON auto_request_log;
 CREATE POLICY "Org members can view auto request log"
   ON auto_request_log FOR SELECT
   TO authenticated

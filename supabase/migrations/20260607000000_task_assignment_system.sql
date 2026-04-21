@@ -123,36 +123,43 @@ ALTER TABLE task_definitions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_instances ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_notification_prefs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "task_definitions_select" ON task_definitions;
 CREATE POLICY "task_definitions_select" ON task_definitions FOR SELECT
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_definitions_insert" ON task_definitions;
 CREATE POLICY "task_definitions_insert" ON task_definitions FOR INSERT
   WITH CHECK (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_definitions_update" ON task_definitions;
 CREATE POLICY "task_definitions_update" ON task_definitions FOR UPDATE
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_instances_select" ON task_instances;
 CREATE POLICY "task_instances_select" ON task_instances FOR SELECT
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_instances_insert" ON task_instances;
 CREATE POLICY "task_instances_insert" ON task_instances FOR INSERT
   WITH CHECK (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_instances_update" ON task_instances;
 CREATE POLICY "task_instances_update" ON task_instances FOR UPDATE
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "task_prefs_own" ON task_notification_prefs;
 CREATE POLICY "task_prefs_own" ON task_notification_prefs FOR ALL
   USING (user_id = auth.uid());
 
@@ -164,30 +171,34 @@ ALTER PUBLICATION supabase_realtime ADD TABLE task_instances;
 -- ══════════════════════════════════════════════════════════════
 -- 7. pg_cron schedules
 -- ══════════════════════════════════════════════════════════════
--- Generate task instances daily at 5 AM UTC (9 PM PT previous day)
-SELECT cron.schedule(
-  'generate-task-instances-daily',
-  '0 5 * * *',
-  $$SELECT net.http_post(
-    url := 'https://irxgmhxhmxtzfwuieblc.supabase.co/functions/v1/generate-task-instances',
-    headers := jsonb_build_object(
-      'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
-      'Content-Type', 'application/json'
-    ),
-    body := '{}'::jsonb
-  )$$
-);
+DO $outer$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    -- Generate task instances daily at 5 AM UTC (9 PM PT previous day)
+    PERFORM cron.schedule(
+      'generate-task-instances-daily',
+      '0 5 * * *',
+      $$SELECT net.http_post(
+        url := 'https://irxgmhxhmxtzfwuieblc.supabase.co/functions/v1/generate-task-instances',
+        headers := jsonb_build_object(
+          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
+          'Content-Type', 'application/json'
+        ),
+        body := '{}'::jsonb
+      )$$
+    );
 
--- Check task notifications every 5 minutes
-SELECT cron.schedule(
-  'task-notifications-check',
-  '*/5 * * * *',
-  $$SELECT net.http_post(
-    url := 'https://irxgmhxhmxtzfwuieblc.supabase.co/functions/v1/task-notifications',
-    headers := jsonb_build_object(
-      'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
-      'Content-Type', 'application/json'
-    ),
-    body := '{}'::jsonb
-  )$$
-);
+    -- Check task notifications every 5 minutes
+    PERFORM cron.schedule(
+      'task-notifications-check',
+      '*/5 * * * *',
+      $$SELECT net.http_post(
+        url := 'https://irxgmhxhmxtzfwuieblc.supabase.co/functions/v1/task-notifications',
+        headers := jsonb_build_object(
+          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key'),
+          'Content-Type', 'application/json'
+        ),
+        body := '{}'::jsonb
+      )$$
+    );
+  END IF;
+END $outer$;

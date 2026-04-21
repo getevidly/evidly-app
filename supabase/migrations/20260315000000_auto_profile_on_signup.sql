@@ -11,11 +11,13 @@
 */
 
 -- RLS INSERT policies required for the trigger to work
+DROP POLICY IF EXISTS "Service role can insert organizations" ON organizations;
 CREATE POLICY "Service role can insert organizations"
   ON organizations FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Users can insert their own access" ON user_location_access;
 CREATE POLICY "Users can insert their own access"
   ON user_location_access FOR INSERT
   TO authenticated

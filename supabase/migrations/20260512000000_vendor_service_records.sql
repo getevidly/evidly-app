@@ -27,8 +27,24 @@ CREATE TABLE IF NOT EXISTS vendor_service_records (
   updated_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Reconcile: table may exist from 20260308000000 with different schema
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS safeguard_type TEXT;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS vendor_name TEXT;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS cert_number TEXT;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS service_date DATE;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS next_due_date DATE;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS interval_label TEXT;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS notes TEXT;
+ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS is_sample BOOLEAN DEFAULT FALSE;
+-- Relax NOT NULL constraints from earlier migration (new schema allows NULLs)
+ALTER TABLE vendor_service_records ALTER COLUMN location_id DROP NOT NULL;
+ALTER TABLE vendor_service_records ALTER COLUMN vendor_id DROP NOT NULL;
+ALTER TABLE vendor_service_records ALTER COLUMN service_type DROP NOT NULL;
+ALTER TABLE vendor_service_records ALTER COLUMN service_due_date DROP NOT NULL;
+
 ALTER TABLE vendor_service_records ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Org members manage service records" ON vendor_service_records;
 CREATE POLICY "Org members manage service records"
   ON vendor_service_records FOR ALL
   USING (organization_id IN (
@@ -51,27 +67,24 @@ CREATE TRIGGER trg_vendor_service_records_updated_at
 
 -- ── Guided Tour sample data ──────────────────────────────────────
 -- is_sample=true, location_id=NULL (applies to all demo locations)
--- Hood Cleaning: current (~37 days remaining from March 2026)
--- Fire Suppression: due soon (~26 days remaining)
--- Fire Alarm: overdue (past due as of March 12, 2026)
--- Sprinklers: no record (null dates)
-
-INSERT INTO vendor_service_records
-  (organization_id, location_id, safeguard_type, vendor_name, cert_number,
-   service_date, next_due_date, interval_label, is_sample)
-VALUES
-  ('3df66b3b-0000-0000-0000-000000000000', NULL,
-   'hood_cleaning', 'Cleaning Pros Plus', 'IKECA CECS #CPP-2024-0042',
-   '2026-01-14', '2026-04-14', 'Quarterly — high volume fryer', TRUE),
-
-  ('3df66b3b-0000-0000-0000-000000000000', NULL,
-   'fire_suppression', 'Pacific Fire Protection', 'CA C-16 #892441',
-   '2025-10-03', '2026-04-03', 'Semi-annual', TRUE),
-
-  ('3df66b3b-0000-0000-0000-000000000000', NULL,
-   'fire_alarm', 'Valley Alarm Systems', 'CA C-10 #441892',
-   '2025-03-10', '2026-03-10', 'Annual', TRUE),
-
-  ('3df66b3b-0000-0000-0000-000000000000', NULL,
-   'sprinklers', NULL, NULL,
-   NULL, NULL, 'Annual', TRUE);
+-- Only insert when the demo org exists (it's created at runtime, not by migrations)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM organizations WHERE id = '3df66b3b-0000-0000-0000-000000000000') THEN
+    INSERT INTO vendor_service_records
+      (organization_id, location_id, safeguard_type, vendor_name, cert_number,
+       service_date, next_due_date, interval_label, is_sample)
+    VALUES
+      ('3df66b3b-0000-0000-0000-000000000000', NULL,
+       'hood_cleaning', 'Cleaning Pros Plus', 'IKECA CECS #CPP-2024-0042',
+       '2026-01-14', '2026-04-14', 'Quarterly — high volume fryer', TRUE),
+      ('3df66b3b-0000-0000-0000-000000000000', NULL,
+       'fire_suppression', 'Pacific Fire Protection', 'CA C-16 #892441',
+       '2025-10-03', '2026-04-03', 'Semi-annual', TRUE),
+      ('3df66b3b-0000-0000-0000-000000000000', NULL,
+       'fire_alarm', 'Valley Alarm Systems', 'CA C-10 #441892',
+       '2025-03-10', '2026-03-10', 'Annual', TRUE),
+      ('3df66b3b-0000-0000-0000-000000000000', NULL,
+       'sprinklers', NULL, NULL,
+       NULL, NULL, 'Annual', TRUE);
+  END IF;
+END $$;

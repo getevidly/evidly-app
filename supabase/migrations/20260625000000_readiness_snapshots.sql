@@ -30,12 +30,14 @@ CREATE INDEX IF NOT EXISTS idx_readiness_snapshots_location_date
 -- RLS
 ALTER TABLE readiness_snapshots ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org snapshots" ON readiness_snapshots;
 CREATE POLICY "Users can view own org snapshots"
   ON readiness_snapshots FOR SELECT
   USING (org_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access on readiness_snapshots" ON readiness_snapshots;
 CREATE POLICY "Service role full access on readiness_snapshots"
   ON readiness_snapshots FOR ALL
   USING (auth.role() = 'service_role');

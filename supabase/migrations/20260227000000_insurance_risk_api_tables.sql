@@ -85,11 +85,13 @@ ALTER TABLE api_access_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE insurance_risk_scores ENABLE ROW LEVEL SECURITY;
 
 -- API partners: service role only
+DROP POLICY IF EXISTS "ap_service_access" ON api_partners;
 CREATE POLICY "ap_service_access" ON api_partners
   FOR ALL TO service_role
   USING (true);
 
 -- Risk score shares: users manage their org's shares
+DROP POLICY IF EXISTS "rss_org_access" ON risk_score_shares;
 CREATE POLICY "rss_org_access" ON risk_score_shares
   FOR ALL TO authenticated
   USING (
@@ -99,15 +101,18 @@ CREATE POLICY "rss_org_access" ON risk_score_shares
   );
 
 -- Service role can read shares (for public insurer view endpoint)
+DROP POLICY IF EXISTS "rss_service_read" ON risk_score_shares;
 CREATE POLICY "rss_service_read" ON risk_score_shares
   FOR SELECT TO service_role
   USING (true);
 
 -- API access log: service role writes, org users read their data
+DROP POLICY IF EXISTS "aal_service_write" ON api_access_log;
 CREATE POLICY "aal_service_write" ON api_access_log
   FOR ALL TO service_role
   USING (true);
 
+DROP POLICY IF EXISTS "aal_org_read" ON api_access_log;
 CREATE POLICY "aal_org_read" ON api_access_log
   FOR SELECT TO authenticated
   USING (
@@ -119,6 +124,7 @@ CREATE POLICY "aal_org_read" ON api_access_log
   );
 
 -- Cached risk scores: org users read, service role writes
+DROP POLICY IF EXISTS "irs_org_read" ON insurance_risk_scores;
 CREATE POLICY "irs_org_read" ON insurance_risk_scores
   FOR SELECT TO authenticated
   USING (
@@ -127,6 +133,7 @@ CREATE POLICY "irs_org_read" ON insurance_risk_scores
     )
   );
 
+DROP POLICY IF EXISTS "irs_service_write" ON insurance_risk_scores;
 CREATE POLICY "irs_service_write" ON insurance_risk_scores
   FOR ALL TO service_role
   USING (true);

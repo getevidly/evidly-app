@@ -24,6 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_role_permissions_org_role
 
 ALTER TABLE public.role_permissions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own org role_permissions" ON public.role_permissions;
 CREATE POLICY "Users can read own org role_permissions"
   ON public.role_permissions FOR SELECT
   USING (
@@ -32,6 +33,7 @@ CREATE POLICY "Users can read own org role_permissions"
     )
   );
 
+DROP POLICY IF EXISTS "Owner/exec can manage role_permissions" ON public.role_permissions;
 CREATE POLICY "Owner/exec can manage role_permissions"
   ON public.role_permissions FOR ALL
   USING (
@@ -61,6 +63,7 @@ CREATE INDEX IF NOT EXISTS idx_user_overrides_org_user
 
 ALTER TABLE public.user_permission_overrides ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own org user_permission_overrides" ON public.user_permission_overrides;
 CREATE POLICY "Users can read own org user_permission_overrides"
   ON public.user_permission_overrides FOR SELECT
   USING (
@@ -69,6 +72,7 @@ CREATE POLICY "Users can read own org user_permission_overrides"
     )
   );
 
+DROP POLICY IF EXISTS "Owner/exec can manage user_permission_overrides" ON public.user_permission_overrides;
 CREATE POLICY "Owner/exec can manage user_permission_overrides"
   ON public.user_permission_overrides FOR ALL
   USING (
@@ -99,6 +103,7 @@ CREATE INDEX IF NOT EXISTS idx_permission_audit_org_time
 
 ALTER TABLE public.permission_audit_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own org permission_audit_log" ON public.permission_audit_log;
 CREATE POLICY "Users can read own org permission_audit_log"
   ON public.permission_audit_log FOR SELECT
   USING (
@@ -107,6 +112,7 @@ CREATE POLICY "Users can read own org permission_audit_log"
     )
   );
 
+DROP POLICY IF EXISTS "Owner/exec can insert permission_audit_log" ON public.permission_audit_log;
 CREATE POLICY "Owner/exec can insert permission_audit_log"
   ON public.permission_audit_log FOR INSERT
   WITH CHECK (

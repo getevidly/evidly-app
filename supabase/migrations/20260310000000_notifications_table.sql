@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- RLS
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users see own org notifications" ON notifications;
 CREATE POLICY "Users see own org notifications"
   ON notifications FOR SELECT
   USING (
@@ -28,6 +29,7 @@ CREATE POLICY "Users see own org notifications"
     )
   );
 
+DROP POLICY IF EXISTS "Users can mark own notifications read" ON notifications;
 CREATE POLICY "Users can mark own notifications read"
   ON notifications FOR UPDATE
   USING (

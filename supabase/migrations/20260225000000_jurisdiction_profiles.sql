@@ -67,6 +67,7 @@ ALTER TABLE location_jurisdiction_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jurisdiction_change_log ENABLE ROW LEVEL SECURITY;
 
 -- Users can read/write their own organization's jurisdiction profiles
+DROP POLICY IF EXISTS "ljp_org_access" ON location_jurisdiction_profiles;
 CREATE POLICY "ljp_org_access" ON location_jurisdiction_profiles
   FOR ALL TO authenticated
   USING (
@@ -76,6 +77,7 @@ CREATE POLICY "ljp_org_access" ON location_jurisdiction_profiles
   );
 
 -- Users can read their own organization's change log
+DROP POLICY IF EXISTS "jcl_org_read" ON jurisdiction_change_log;
 CREATE POLICY "jcl_org_read" ON jurisdiction_change_log
   FOR SELECT TO authenticated
   USING (
@@ -96,6 +98,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS ljp_updated_at_trigger ON location_jurisdiction_profiles;
 CREATE TRIGGER ljp_updated_at_trigger
   BEFORE UPDATE ON location_jurisdiction_profiles
   FOR EACH ROW EXECUTE FUNCTION update_ljp_updated_at();

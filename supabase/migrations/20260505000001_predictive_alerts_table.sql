@@ -34,6 +34,7 @@ ALTER TABLE predictive_alerts ENABLE ROW LEVEL SECURITY;
 
 -- Users can view alerts for their own organization
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Users can view own org alerts" ON predictive_alerts;
   CREATE POLICY "Users can view own org alerts"
     ON predictive_alerts FOR SELECT
     USING (
@@ -46,6 +47,7 @@ END $$;
 
 -- Users can update (dismiss/snooze/resolve) alerts for their own organization
 DO $$ BEGIN
+  DROP POLICY IF EXISTS "Users can update own org alerts" ON predictive_alerts;
   CREATE POLICY "Users can update own org alerts"
     ON predictive_alerts FOR UPDATE
     USING (

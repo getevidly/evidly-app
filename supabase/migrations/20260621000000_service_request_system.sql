@@ -57,31 +57,35 @@ CREATE TABLE IF NOT EXISTS service_requests (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_sr_org_status ON service_requests(organization_id, status);
-CREATE INDEX idx_sr_vendor ON service_requests(vendor_id);
-CREATE INDEX idx_sr_location ON service_requests(location_id);
-CREATE INDEX idx_sr_requested_by ON service_requests(requested_by);
+CREATE INDEX IF NOT EXISTS idx_sr_org_status ON service_requests(organization_id, status);
+CREATE INDEX IF NOT EXISTS idx_sr_vendor ON service_requests(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_sr_location ON service_requests(location_id);
+CREATE INDEX IF NOT EXISTS idx_sr_requested_by ON service_requests(requested_by);
 
 ALTER TABLE service_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org service requests" ON service_requests;
 CREATE POLICY "Users can view own org service requests"
   ON service_requests FOR SELECT TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can create service requests in own org" ON service_requests;
 CREATE POLICY "Users can create service requests in own org"
   ON service_requests FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Users can update own org service requests" ON service_requests;
 CREATE POLICY "Users can update own org service requests"
   ON service_requests FOR UPDATE TO authenticated
   USING (organization_id IN (
     SELECT organization_id FROM user_profiles WHERE id = auth.uid()
   ));
 
+DROP POLICY IF EXISTS "Service role full access service requests" ON service_requests;
 CREATE POLICY "Service role full access service requests"
   ON service_requests FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -100,15 +104,17 @@ CREATE TABLE IF NOT EXISTS cpp_availability_slots (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_cas_vendor_type ON cpp_availability_slots(vendor_id, service_type);
-CREATE INDEX idx_cas_slot ON cpp_availability_slots(slot_datetime) WHERE is_available = true;
+CREATE INDEX IF NOT EXISTS idx_cas_vendor_type ON cpp_availability_slots(vendor_id, service_type);
+CREATE INDEX IF NOT EXISTS idx_cas_slot ON cpp_availability_slots(slot_datetime) WHERE is_available = true;
 
 ALTER TABLE cpp_availability_slots ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view CPP slots for their org vendors" ON cpp_availability_slots;
 CREATE POLICY "Users can view CPP slots for their org vendors"
   ON cpp_availability_slots FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role full access CPP availability slots" ON cpp_availability_slots;
 CREATE POLICY "Service role full access CPP availability slots"
   ON cpp_availability_slots FOR ALL TO service_role
   USING (true) WITH CHECK (true);

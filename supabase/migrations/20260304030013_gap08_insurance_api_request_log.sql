@@ -25,14 +25,15 @@ IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'insur
   );
 
   -- Indexes for log queries
-  CREATE INDEX idx_api_request_log_key ON insurance_api_request_log(api_key_id, created_at DESC);
-  CREATE INDEX idx_api_request_log_created ON insurance_api_request_log(created_at DESC);
-  CREATE INDEX idx_api_request_log_status ON insurance_api_request_log(status_code) WHERE status_code >= 400;
+  CREATE INDEX IF NOT EXISTS idx_api_request_log_key ON insurance_api_request_log(api_key_id, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_api_request_log_created ON insurance_api_request_log(created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_api_request_log_status ON insurance_api_request_log(status_code) WHERE status_code >= 400;
 
   -- RLS — service role only (edge function uses service role key)
   ALTER TABLE insurance_api_request_log ENABLE ROW LEVEL SECURITY;
 
   -- Allow authenticated users to read logs for their org's keys
+  DROP POLICY IF EXISTS api_request_log_read ON insurance_api_request_log;
   CREATE POLICY api_request_log_read ON insurance_api_request_log
     FOR SELECT USING (api_key_id IN (
       SELECT id FROM insurance_api_keys WHERE organization_id IN (
@@ -41,6 +42,7 @@ IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'insur
     ));
 
   -- Insert allowed for service role (edge function)
+  DROP POLICY IF EXISTS api_request_log_insert ON insurance_api_request_log;
   CREATE POLICY api_request_log_insert ON insurance_api_request_log
     FOR INSERT WITH CHECK (true);
 

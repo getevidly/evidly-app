@@ -42,11 +42,13 @@ CREATE TABLE IF NOT EXISTS irr_submissions (
 
 -- RLS: public insert, service-role read
 ALTER TABLE irr_submissions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can insert irr_submissions" ON irr_submissions;
 CREATE POLICY "Anyone can insert irr_submissions"
   ON irr_submissions FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Service role reads irr_submissions" ON irr_submissions;
 CREATE POLICY "Service role reads irr_submissions"
   ON irr_submissions FOR SELECT USING (auth.role() = 'service_role');
 
 -- Indexes for admin queries
-CREATE INDEX idx_irr_submissions_email   ON irr_submissions (email);
-CREATE INDEX idx_irr_submissions_created ON irr_submissions (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_irr_submissions_email   ON irr_submissions (email);
+CREATE INDEX IF NOT EXISTS idx_irr_submissions_created ON irr_submissions (created_at DESC);

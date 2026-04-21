@@ -120,6 +120,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Drop if exists to avoid duplicate trigger
 DROP TRIGGER IF EXISTS trg_log_haccp_from_checklist ON checklist_responses;
 
+DROP TRIGGER IF EXISTS trg_log_haccp_from_checklist ON checklist_responses;
 CREATE TRIGGER trg_log_haccp_from_checklist
   AFTER INSERT ON checklist_responses
   FOR EACH ROW

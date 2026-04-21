@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS pos_employee_mappings (
 
 ALTER TABLE pos_employee_mappings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "pos_employees_org_access" ON pos_employee_mappings;
 CREATE POLICY "pos_employees_org_access" ON pos_employee_mappings
   FOR ALL USING (
     EXISTS (
@@ -35,8 +36,8 @@ CREATE POLICY "pos_employees_org_access" ON pos_employee_mappings
     )
   );
 
-CREATE INDEX idx_pos_employee_org ON pos_employee_mappings(organization_id);
-CREATE INDEX idx_pos_employee_conn ON pos_employee_mappings(pos_connection_id);
+CREATE INDEX IF NOT EXISTS idx_pos_employee_org ON pos_employee_mappings(organization_id);
+CREATE INDEX IF NOT EXISTS idx_pos_employee_conn ON pos_employee_mappings(pos_connection_id);
 
 -- ── 2. Add missing POS systems to integrations catalog ──────────
 -- Only if the integrations table has the expected schema

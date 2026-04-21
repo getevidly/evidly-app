@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS temperature_equipment (
 
 ALTER TABLE temperature_equipment ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view temperature equipment in their organization" ON temperature_equipment;
 CREATE POLICY "Users can view temperature equipment in their organization"
   ON temperature_equipment FOR SELECT
   TO authenticated
@@ -41,6 +42,7 @@ CREATE POLICY "Users can view temperature equipment in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert temperature equipment in their organization" ON temperature_equipment;
 CREATE POLICY "Users can insert temperature equipment in their organization"
   ON temperature_equipment FOR INSERT
   TO authenticated
@@ -50,6 +52,7 @@ CREATE POLICY "Users can insert temperature equipment in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update temperature equipment in their organization" ON temperature_equipment;
 CREATE POLICY "Users can update temperature equipment in their organization"
   ON temperature_equipment FOR UPDATE
   TO authenticated
@@ -64,6 +67,7 @@ CREATE POLICY "Users can update temperature equipment in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete temperature equipment in their organization" ON temperature_equipment;
 CREATE POLICY "Users can delete temperature equipment in their organization"
   ON temperature_equipment FOR DELETE
   TO authenticated
@@ -89,6 +93,7 @@ CREATE TABLE IF NOT EXISTS temp_check_completions (
 
 ALTER TABLE temp_check_completions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view temp check completions in their organization" ON temp_check_completions;
 CREATE POLICY "Users can view temp check completions in their organization"
   ON temp_check_completions FOR SELECT
   TO authenticated
@@ -98,6 +103,7 @@ CREATE POLICY "Users can view temp check completions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert temp check completions in their organization" ON temp_check_completions;
 CREATE POLICY "Users can insert temp check completions in their organization"
   ON temp_check_completions FOR INSERT
   TO authenticated
@@ -123,6 +129,7 @@ CREATE TABLE IF NOT EXISTS receiving_temp_logs (
 
 ALTER TABLE receiving_temp_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view receiving temp logs in their organization" ON receiving_temp_logs;
 CREATE POLICY "Users can view receiving temp logs in their organization"
   ON receiving_temp_logs FOR SELECT
   TO authenticated
@@ -132,6 +139,7 @@ CREATE POLICY "Users can view receiving temp logs in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert receiving temp logs in their organization" ON receiving_temp_logs;
 CREATE POLICY "Users can insert receiving temp logs in their organization"
   ON receiving_temp_logs FOR INSERT
   TO authenticated
@@ -155,6 +163,7 @@ CREATE TABLE IF NOT EXISTS checklist_templates (
 
 ALTER TABLE checklist_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklist templates in their organization" ON checklist_templates;
 CREATE POLICY "Users can view checklist templates in their organization"
   ON checklist_templates FOR SELECT
   TO authenticated
@@ -164,6 +173,7 @@ CREATE POLICY "Users can view checklist templates in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklist templates in their organization" ON checklist_templates;
 CREATE POLICY "Users can insert checklist templates in their organization"
   ON checklist_templates FOR INSERT
   TO authenticated
@@ -173,6 +183,7 @@ CREATE POLICY "Users can insert checklist templates in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update checklist templates in their organization" ON checklist_templates;
 CREATE POLICY "Users can update checklist templates in their organization"
   ON checklist_templates FOR UPDATE
   TO authenticated
@@ -187,6 +198,7 @@ CREATE POLICY "Users can update checklist templates in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete checklist templates in their organization" ON checklist_templates;
 CREATE POLICY "Users can delete checklist templates in their organization"
   ON checklist_templates FOR DELETE
   TO authenticated
@@ -209,6 +221,7 @@ CREATE TABLE IF NOT EXISTS checklist_template_items (
 
 ALTER TABLE checklist_template_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklist template items if they can view the template" ON checklist_template_items;
 CREATE POLICY "Users can view checklist template items if they can view the template"
   ON checklist_template_items FOR SELECT
   TO authenticated
@@ -220,6 +233,7 @@ CREATE POLICY "Users can view checklist template items if they can view the temp
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklist template items if they can access the template" ON checklist_template_items;
 CREATE POLICY "Users can insert checklist template items if they can access the template"
   ON checklist_template_items FOR INSERT
   TO authenticated
@@ -231,6 +245,7 @@ CREATE POLICY "Users can insert checklist template items if they can access the 
     )
   );
 
+DROP POLICY IF EXISTS "Users can update checklist template items if they can access the template" ON checklist_template_items;
 CREATE POLICY "Users can update checklist template items if they can access the template"
   ON checklist_template_items FOR UPDATE
   TO authenticated
@@ -249,6 +264,7 @@ CREATE POLICY "Users can update checklist template items if they can access the 
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete checklist template items if they can access the template" ON checklist_template_items;
 CREATE POLICY "Users can delete checklist template items if they can access the template"
   ON checklist_template_items FOR DELETE
   TO authenticated
@@ -275,6 +291,7 @@ CREATE TABLE IF NOT EXISTS checklist_template_completions (
 
 ALTER TABLE checklist_template_completions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklist completions in their organization" ON checklist_template_completions;
 CREATE POLICY "Users can view checklist completions in their organization"
   ON checklist_template_completions FOR SELECT
   TO authenticated
@@ -284,6 +301,7 @@ CREATE POLICY "Users can view checklist completions in their organization"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklist completions in their organization" ON checklist_template_completions;
 CREATE POLICY "Users can insert checklist completions in their organization"
   ON checklist_template_completions FOR INSERT
   TO authenticated
@@ -307,6 +325,7 @@ CREATE TABLE IF NOT EXISTS checklist_responses (
 
 ALTER TABLE checklist_responses ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view checklist responses for completions they can view" ON checklist_responses;
 CREATE POLICY "Users can view checklist responses for completions they can view"
   ON checklist_responses FOR SELECT
   TO authenticated
@@ -318,6 +337,7 @@ CREATE POLICY "Users can view checklist responses for completions they can view"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert checklist responses for completions they can access" ON checklist_responses;
 CREATE POLICY "Users can insert checklist responses for completions they can access"
   ON checklist_responses FOR INSERT
   TO authenticated

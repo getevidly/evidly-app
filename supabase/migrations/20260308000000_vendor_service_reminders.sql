@@ -37,28 +37,32 @@ CREATE TABLE IF NOT EXISTS vendor_service_records (
 );
 
 -- Indexes
-CREATE INDEX idx_vsr_org ON vendor_service_records(organization_id);
-CREATE INDEX idx_vsr_vendor ON vendor_service_records(vendor_id);
-CREATE INDEX idx_vsr_due_date ON vendor_service_records(service_due_date) WHERE status = 'upcoming';
-CREATE INDEX idx_vsr_status ON vendor_service_records(status);
-CREATE INDEX idx_vsr_location ON vendor_service_records(location_id);
-CREATE INDEX idx_vsr_equipment ON vendor_service_records(equipment_id) WHERE equipment_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_vsr_org ON vendor_service_records(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vsr_vendor ON vendor_service_records(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vsr_due_date ON vendor_service_records(service_due_date) WHERE status = 'upcoming';
+CREATE INDEX IF NOT EXISTS idx_vsr_status ON vendor_service_records(status);
+CREATE INDEX IF NOT EXISTS idx_vsr_location ON vendor_service_records(location_id);
+CREATE INDEX IF NOT EXISTS idx_vsr_equipment ON vendor_service_records(equipment_id) WHERE equipment_id IS NOT NULL;
 
 -- RLS
 ALTER TABLE vendor_service_records ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org vendor service records" ON vendor_service_records;
 CREATE POLICY "Users can view own org vendor service records"
   ON vendor_service_records FOR SELECT TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can insert own org vendor service records" ON vendor_service_records;
 CREATE POLICY "Users can insert own org vendor service records"
   ON vendor_service_records FOR INSERT TO authenticated
   WITH CHECK (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can update own org vendor service records" ON vendor_service_records;
 CREATE POLICY "Users can update own org vendor service records"
   ON vendor_service_records FOR UPDATE TO authenticated
   USING (organization_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role full access vendor service records" ON vendor_service_records;
 CREATE POLICY "Service role full access vendor service records"
   ON vendor_service_records FOR ALL TO service_role
   USING (true) WITH CHECK (true);
@@ -77,16 +81,18 @@ CREATE TABLE IF NOT EXISTS vendor_service_reminder_log (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_vsrl_service ON vendor_service_reminder_log(service_record_id);
-CREATE INDEX idx_vsrl_org ON vendor_service_reminder_log(organization_id);
-CREATE INDEX idx_vsrl_vendor ON vendor_service_reminder_log(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_vsrl_service ON vendor_service_reminder_log(service_record_id);
+CREATE INDEX IF NOT EXISTS idx_vsrl_org ON vendor_service_reminder_log(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vsrl_vendor ON vendor_service_reminder_log(vendor_id);
 
 ALTER TABLE vendor_service_reminder_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can read vendor service reminder log" ON vendor_service_reminder_log;
 CREATE POLICY "Authenticated users can read vendor service reminder log"
   ON vendor_service_reminder_log FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role full access vendor service reminder log" ON vendor_service_reminder_log;
 CREATE POLICY "Service role full access vendor service reminder log"
   ON vendor_service_reminder_log FOR ALL TO service_role
   USING (true) WITH CHECK (true);

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS iot_sensor_providers (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_iot_provider_status ON iot_sensor_providers(status);
+CREATE INDEX IF NOT EXISTS idx_iot_provider_status ON iot_sensor_providers(status);
 
 -- =====================================================
 -- Table 2: iot_sensors
@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS iot_sensors (
   UNIQUE(organization_id, mac_address)
 );
 
-CREATE INDEX idx_iot_sensors_org ON iot_sensors(organization_id);
-CREATE INDEX idx_iot_sensors_location ON iot_sensors(location_id);
-CREATE INDEX idx_iot_sensors_provider ON iot_sensors(provider_slug);
-CREATE INDEX idx_iot_sensors_status ON iot_sensors(status);
-CREATE INDEX idx_iot_sensors_equipment ON iot_sensors(equipment_id);
+CREATE INDEX IF NOT EXISTS idx_iot_sensors_org ON iot_sensors(organization_id);
+CREATE INDEX IF NOT EXISTS idx_iot_sensors_location ON iot_sensors(location_id);
+CREATE INDEX IF NOT EXISTS idx_iot_sensors_provider ON iot_sensors(provider_slug);
+CREATE INDEX IF NOT EXISTS idx_iot_sensors_status ON iot_sensors(status);
+CREATE INDEX IF NOT EXISTS idx_iot_sensors_equipment ON iot_sensors(equipment_id);
 
 -- =====================================================
 -- Table 3: iot_sensor_readings
@@ -64,9 +64,9 @@ CREATE TABLE IF NOT EXISTS iot_sensor_readings (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_iot_readings_sensor_time ON iot_sensor_readings(sensor_id, recorded_at DESC);
-CREATE INDEX idx_iot_readings_recorded_at ON iot_sensor_readings(recorded_at DESC);
-CREATE INDEX idx_iot_readings_anomaly ON iot_sensor_readings(is_anomaly) WHERE is_anomaly = true;
+CREATE INDEX IF NOT EXISTS idx_iot_readings_sensor_time ON iot_sensor_readings(sensor_id, recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_iot_readings_recorded_at ON iot_sensor_readings(recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_iot_readings_anomaly ON iot_sensor_readings(is_anomaly) WHERE is_anomaly = true;
 
 -- =====================================================
 -- Table 4: iot_sensor_alerts
@@ -86,10 +86,10 @@ CREATE TABLE IF NOT EXISTS iot_sensor_alerts (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_iot_alerts_sensor ON iot_sensor_alerts(sensor_id);
-CREATE INDEX idx_iot_alerts_severity ON iot_sensor_alerts(severity);
-CREATE INDEX idx_iot_alerts_unack ON iot_sensor_alerts(acknowledged) WHERE acknowledged = false;
-CREATE INDEX idx_iot_alerts_created ON iot_sensor_alerts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_iot_alerts_sensor ON iot_sensor_alerts(sensor_id);
+CREATE INDEX IF NOT EXISTS idx_iot_alerts_severity ON iot_sensor_alerts(severity);
+CREATE INDEX IF NOT EXISTS idx_iot_alerts_unack ON iot_sensor_alerts(acknowledged) WHERE acknowledged = false;
+CREATE INDEX IF NOT EXISTS idx_iot_alerts_created ON iot_sensor_alerts(created_at DESC);
 
 -- =====================================================
 -- Table 5: iot_integration_configs
@@ -110,8 +110,8 @@ CREATE TABLE IF NOT EXISTS iot_integration_configs (
   UNIQUE(organization_id, provider_slug)
 );
 
-CREATE INDEX idx_iot_config_org ON iot_integration_configs(organization_id);
-CREATE INDEX idx_iot_config_enabled ON iot_integration_configs(enabled) WHERE enabled = true;
+CREATE INDEX IF NOT EXISTS idx_iot_config_org ON iot_integration_configs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_iot_config_enabled ON iot_integration_configs(enabled) WHERE enabled = true;
 
 -- =====================================================
 -- Table 6: iot_ingestion_log
@@ -130,10 +130,10 @@ CREATE TABLE IF NOT EXISTS iot_ingestion_log (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_iot_log_org ON iot_ingestion_log(organization_id);
-CREATE INDEX idx_iot_log_provider ON iot_ingestion_log(provider_slug);
-CREATE INDEX idx_iot_log_status ON iot_ingestion_log(status);
-CREATE INDEX idx_iot_log_created ON iot_ingestion_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_iot_log_org ON iot_ingestion_log(organization_id);
+CREATE INDEX IF NOT EXISTS idx_iot_log_provider ON iot_ingestion_log(provider_slug);
+CREATE INDEX IF NOT EXISTS idx_iot_log_status ON iot_ingestion_log(status);
+CREATE INDEX IF NOT EXISTS idx_iot_log_created ON iot_ingestion_log(created_at DESC);
 
 -- =====================================================
 -- Row Level Security
@@ -147,12 +147,14 @@ ALTER TABLE iot_integration_configs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE iot_ingestion_log ENABLE ROW LEVEL SECURITY;
 
 -- iot_sensor_providers: public read access (lookup table)
+DROP POLICY IF EXISTS "Anyone can read sensor providers" ON iot_sensor_providers;
 CREATE POLICY "Anyone can read sensor providers"
   ON iot_sensor_providers FOR SELECT
   TO authenticated
   USING (true);
 
 -- iot_sensors: users can read sensors for their org's locations
+DROP POLICY IF EXISTS "Users can read sensors for their org locations" ON iot_sensors;
 CREATE POLICY "Users can read sensors for their org locations"
   ON iot_sensors FOR SELECT
   TO authenticated
@@ -162,6 +164,7 @@ CREATE POLICY "Users can read sensors for their org locations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert sensors for their org locations" ON iot_sensors;
 CREATE POLICY "Users can insert sensors for their org locations"
   ON iot_sensors FOR INSERT
   TO authenticated
@@ -171,6 +174,7 @@ CREATE POLICY "Users can insert sensors for their org locations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update sensors for their org locations" ON iot_sensors;
 CREATE POLICY "Users can update sensors for their org locations"
   ON iot_sensors FOR UPDATE
   TO authenticated
@@ -186,6 +190,7 @@ CREATE POLICY "Users can update sensors for their org locations"
   );
 
 -- iot_sensor_readings: users can read readings for their org's sensors
+DROP POLICY IF EXISTS "Users can read readings for their org sensors" ON iot_sensor_readings;
 CREATE POLICY "Users can read readings for their org sensors"
   ON iot_sensor_readings FOR SELECT
   TO authenticated
@@ -197,6 +202,7 @@ CREATE POLICY "Users can read readings for their org sensors"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert readings for their org sensors" ON iot_sensor_readings;
 CREATE POLICY "Users can insert readings for their org sensors"
   ON iot_sensor_readings FOR INSERT
   TO authenticated
@@ -209,6 +215,7 @@ CREATE POLICY "Users can insert readings for their org sensors"
   );
 
 -- iot_sensor_alerts: users can read/update alerts for their org's sensors
+DROP POLICY IF EXISTS "Users can read alerts for their org sensors" ON iot_sensor_alerts;
 CREATE POLICY "Users can read alerts for their org sensors"
   ON iot_sensor_alerts FOR SELECT
   TO authenticated
@@ -220,6 +227,7 @@ CREATE POLICY "Users can read alerts for their org sensors"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update alerts for their org sensors" ON iot_sensor_alerts;
 CREATE POLICY "Users can update alerts for their org sensors"
   ON iot_sensor_alerts FOR UPDATE
   TO authenticated
@@ -239,6 +247,7 @@ CREATE POLICY "Users can update alerts for their org sensors"
   );
 
 -- iot_integration_configs: users can read/manage configs for their org
+DROP POLICY IF EXISTS "Users can read integration configs for their org" ON iot_integration_configs;
 CREATE POLICY "Users can read integration configs for their org"
   ON iot_integration_configs FOR SELECT
   TO authenticated
@@ -248,6 +257,7 @@ CREATE POLICY "Users can read integration configs for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert integration configs for their org" ON iot_integration_configs;
 CREATE POLICY "Users can insert integration configs for their org"
   ON iot_integration_configs FOR INSERT
   TO authenticated
@@ -257,6 +267,7 @@ CREATE POLICY "Users can insert integration configs for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update integration configs for their org" ON iot_integration_configs;
 CREATE POLICY "Users can update integration configs for their org"
   ON iot_integration_configs FOR UPDATE
   TO authenticated
@@ -272,6 +283,7 @@ CREATE POLICY "Users can update integration configs for their org"
   );
 
 -- iot_ingestion_log: users can read ingestion logs for their org
+DROP POLICY IF EXISTS "Users can read ingestion logs for their org" ON iot_ingestion_log;
 CREATE POLICY "Users can read ingestion logs for their org"
   ON iot_ingestion_log FOR SELECT
   TO authenticated
@@ -282,36 +294,42 @@ CREATE POLICY "Users can read ingestion logs for their org"
   );
 
 -- Service role gets full access on all tables
+DROP POLICY IF EXISTS "Service role can manage all sensor providers" ON iot_sensor_providers;
 CREATE POLICY "Service role can manage all sensor providers"
   ON iot_sensor_providers FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage all sensors" ON iot_sensors;
 CREATE POLICY "Service role can manage all sensors"
   ON iot_sensors FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage all sensor readings" ON iot_sensor_readings;
 CREATE POLICY "Service role can manage all sensor readings"
   ON iot_sensor_readings FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage all sensor alerts" ON iot_sensor_alerts;
 CREATE POLICY "Service role can manage all sensor alerts"
   ON iot_sensor_alerts FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage all integration configs" ON iot_integration_configs;
 CREATE POLICY "Service role can manage all integration configs"
   ON iot_integration_configs FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage all ingestion logs" ON iot_ingestion_log;
 CREATE POLICY "Service role can manage all ingestion logs"
   ON iot_ingestion_log FOR ALL
   TO service_role

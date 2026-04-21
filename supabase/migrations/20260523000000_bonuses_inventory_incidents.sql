@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS bonus_configurations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  employee_id UUID REFERENCES employees(id),
+  employee_id UUID,
   role TEXT,
   bonus_rate DECIMAL(5,4) NOT NULL DEFAULT 0.01,
   is_active BOOLEAN DEFAULT true,
@@ -21,7 +21,7 @@ ALTER TABLE bonus_configurations ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS performance_metrics (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  employee_id UUID NOT NULL REFERENCES employees(id),
+  employee_id UUID NOT NULL,
   quarter TEXT NOT NULL,
   jobs_completed INTEGER DEFAULT 0,
   employee_job_revenue DECIMAL(12,2) DEFAULT 0,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS job_callbacks (
   vendor_id UUID NOT NULL REFERENCES vendors(id),
   original_job_id UUID NOT NULL,
   callback_job_id UUID,
-  employee_id UUID NOT NULL REFERENCES employees(id),
+  employee_id UUID NOT NULL,
   reason TEXT NOT NULL,
   description TEXT,
   customer_reported BOOLEAN DEFAULT false,
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS job_callbacks (
   resolved_at TIMESTAMPTZ
 );
 ALTER TABLE job_callbacks ENABLE ROW LEVEL SECURITY;
-CREATE INDEX idx_job_callbacks_employee ON job_callbacks(employee_id);
-CREATE INDEX idx_job_callbacks_vendor ON job_callbacks(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_job_callbacks_employee ON job_callbacks(employee_id);
+CREATE INDEX IF NOT EXISTS idx_job_callbacks_vendor ON job_callbacks(vendor_id);
 
 -- ── 4. Inventory items ──────────────────────────────────────
 CREATE TABLE IF NOT EXISTS inventory_items (
@@ -90,15 +90,15 @@ CREATE TABLE IF NOT EXISTS inventory_items (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE inventory_items ENABLE ROW LEVEL SECURITY;
-CREATE INDEX idx_inventory_items_vendor ON inventory_items(vendor_id);
-CREATE INDEX idx_inventory_items_category ON inventory_items(category);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_vendor ON inventory_items(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_category ON inventory_items(category);
 
 -- ── 5. Inventory transactions ───────────────────────────────
 CREATE TABLE IF NOT EXISTS inventory_transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
   item_id UUID NOT NULL REFERENCES inventory_items(id),
-  employee_id UUID NOT NULL REFERENCES employees(id),
+  employee_id UUID NOT NULL,
   transaction_type TEXT NOT NULL CHECK (transaction_type IN ('use','restock','adjustment','transfer','damage','loss')),
   quantity INTEGER NOT NULL,
   job_id UUID,
@@ -106,18 +106,18 @@ CREATE TABLE IF NOT EXISTS inventory_transactions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE inventory_transactions ENABLE ROW LEVEL SECURITY;
-CREATE INDEX idx_inventory_txn_item ON inventory_transactions(item_id);
-CREATE INDEX idx_inventory_txn_employee ON inventory_transactions(employee_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_txn_item ON inventory_transactions(item_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_txn_employee ON inventory_transactions(employee_id);
 
 -- ── 6. Inventory requests ───────────────────────────────────
 CREATE TABLE IF NOT EXISTS inventory_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  employee_id UUID NOT NULL REFERENCES employees(id),
+  employee_id UUID NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','denied','ordered','received')),
   priority TEXT DEFAULT 'normal' CHECK (priority IN ('low','normal','high','urgent')),
   notes TEXT,
-  approved_by UUID REFERENCES employees(id),
+  approved_by UUID,
   approved_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -139,7 +139,7 @@ ALTER TABLE inventory_request_items ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS equipment_incidents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  employee_id UUID NOT NULL REFERENCES employees(id),
+  employee_id UUID NOT NULL,
   incident_type TEXT NOT NULL CHECK (incident_type IN ('damage','loss','theft','malfunction')),
   equipment_name TEXT NOT NULL,
   equipment_id UUID REFERENCES inventory_items(id),
@@ -156,20 +156,20 @@ CREATE TABLE IF NOT EXISTS equipment_incidents (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE equipment_incidents ENABLE ROW LEVEL SECURITY;
-CREATE INDEX idx_equipment_incidents_employee ON equipment_incidents(employee_id);
+CREATE INDEX IF NOT EXISTS idx_equipment_incidents_employee ON equipment_incidents(employee_id);
 
 -- ── 8. Incident reports (safety / injury) ───────────────────
 CREATE TABLE IF NOT EXISTS incident_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES vendors(id),
-  reported_by UUID NOT NULL REFERENCES employees(id),
+  reported_by UUID NOT NULL,
   incident_type TEXT NOT NULL CHECK (incident_type IN ('injury','near_miss','property_damage','vehicle_accident','chemical_exposure')),
   severity TEXT NOT NULL CHECK (severity IN ('minor','moderate','serious','critical')),
   incident_date DATE NOT NULL,
   incident_time TIME,
   location TEXT NOT NULL,
   job_id UUID,
-  injured_employee_id UUID REFERENCES employees(id),
+  injured_employee_id UUID,
   third_party_involved BOOLEAN DEFAULT false,
   third_party_name TEXT,
   description TEXT NOT NULL,
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS incident_reports (
   workers_comp_claim_number TEXT,
   root_cause TEXT,
   preventive_measures TEXT,
-  investigated_by UUID REFERENCES employees(id),
+  investigated_by UUID,
   investigated_at TIMESTAMPTZ,
   status TEXT DEFAULT 'reported' CHECK (status IN ('reported','investigating','resolved','closed')),
   caused_by_negligence BOOLEAN DEFAULT false,
@@ -190,5 +190,5 @@ CREATE TABLE IF NOT EXISTS incident_reports (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE incident_reports ENABLE ROW LEVEL SECURITY;
-CREATE INDEX idx_incident_reports_vendor ON incident_reports(vendor_id);
-CREATE INDEX idx_incident_reports_status ON incident_reports(status);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_vendor ON incident_reports(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_status ON incident_reports(status);

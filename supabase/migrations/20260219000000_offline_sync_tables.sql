@@ -25,10 +25,10 @@ CREATE TABLE device_registrations (
     updated_at      TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_device_registrations_user_id
+CREATE INDEX IF NOT EXISTS idx_device_registrations_user_id
     ON device_registrations (user_id);
 
-CREATE INDEX idx_device_registrations_user_active
+CREATE INDEX IF NOT EXISTS idx_device_registrations_user_active
     ON device_registrations (user_id, is_active);
 
 ALTER TABLE device_registrations ENABLE ROW LEVEL SECURITY;
@@ -57,16 +57,16 @@ CREATE TABLE sync_queue (
     completed_at    TIMESTAMPTZ
 );
 
-CREATE INDEX idx_sync_queue_device_id
+CREATE INDEX IF NOT EXISTS idx_sync_queue_device_id
     ON sync_queue (device_id);
 
-CREATE INDEX idx_sync_queue_status
+CREATE INDEX IF NOT EXISTS idx_sync_queue_status
     ON sync_queue (status);
 
-CREATE INDEX idx_sync_queue_device_status
+CREATE INDEX IF NOT EXISTS idx_sync_queue_device_status
     ON sync_queue (device_id, status);
 
-CREATE INDEX idx_sync_queue_status_priority_created
+CREATE INDEX IF NOT EXISTS idx_sync_queue_status_priority_created
     ON sync_queue (status, priority DESC, created_at ASC);
 
 ALTER TABLE sync_queue ENABLE ROW LEVEL SECURITY;
@@ -94,13 +94,13 @@ CREATE TABLE sync_conflicts (
     created_at        TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_sync_conflicts_device_id
+CREATE INDEX IF NOT EXISTS idx_sync_conflicts_device_id
     ON sync_conflicts (device_id);
 
-CREATE INDEX idx_sync_conflicts_device_resolution
+CREATE INDEX IF NOT EXISTS idx_sync_conflicts_device_resolution
     ON sync_conflicts (device_id, resolution);
 
-CREATE INDEX idx_sync_conflicts_table_record
+CREATE INDEX IF NOT EXISTS idx_sync_conflicts_table_record
     ON sync_conflicts (table_name, record_id);
 
 ALTER TABLE sync_conflicts ENABLE ROW LEVEL SECURITY;
@@ -120,10 +120,10 @@ CREATE TABLE sync_snapshots (
     created_at        TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_sync_snapshots_device_id
+CREATE INDEX IF NOT EXISTS idx_sync_snapshots_device_id
     ON sync_snapshots (device_id);
 
-CREATE INDEX idx_sync_snapshots_device_table
+CREATE INDEX IF NOT EXISTS idx_sync_snapshots_device_table
     ON sync_snapshots (device_id, table_name);
 
 ALTER TABLE sync_snapshots ENABLE ROW LEVEL SECURITY;
@@ -140,6 +140,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_device_registrations_updated_at ON device_registrations;
 CREATE TRIGGER trg_device_registrations_updated_at
     BEFORE UPDATE ON device_registrations
     FOR EACH ROW

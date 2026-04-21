@@ -71,10 +71,12 @@ CREATE TABLE IF NOT EXISTS location_service_schedules (
 
 ALTER TABLE location_service_schedules ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own org schedules" ON location_service_schedules;
 CREATE POLICY "Users can view own org schedules"
   ON location_service_schedules FOR SELECT
   USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Users can manage own org schedules" ON location_service_schedules;
 CREATE POLICY "Users can manage own org schedules"
   ON location_service_schedules FOR ALL
   USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));

@@ -101,6 +101,7 @@ ALTER TABLE notification_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_alerts ENABLE ROW LEVEL SECURITY;
 
 -- Policies for onboarding_reminders
+DROP POLICY IF EXISTS "Admins can view onboarding reminders for their org" ON onboarding_reminders;
 CREATE POLICY "Admins can view onboarding reminders for their org"
   ON onboarding_reminders FOR SELECT
   TO authenticated
@@ -111,6 +112,7 @@ CREATE POLICY "Admins can view onboarding reminders for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can manage onboarding reminders" ON onboarding_reminders;
 CREATE POLICY "Admins can manage onboarding reminders"
   ON onboarding_reminders FOR ALL
   TO authenticated
@@ -122,6 +124,7 @@ CREATE POLICY "Admins can manage onboarding reminders"
   );
 
 -- Policies for document_reminders
+DROP POLICY IF EXISTS "Users can view document reminders for their org" ON document_reminders;
 CREATE POLICY "Users can view document reminders for their org"
   ON document_reminders FOR SELECT
   TO authenticated
@@ -131,6 +134,7 @@ CREATE POLICY "Users can view document reminders for their org"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can manage document reminders" ON document_reminders;
 CREATE POLICY "Admins can manage document reminders"
   ON document_reminders FOR ALL
   TO authenticated
@@ -142,23 +146,27 @@ CREATE POLICY "Admins can manage document reminders"
   );
 
 -- Policies for notification_settings
+DROP POLICY IF EXISTS "Users can view their own notification settings" ON notification_settings;
 CREATE POLICY "Users can view their own notification settings"
   ON notification_settings FOR SELECT
   TO authenticated
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own notification settings" ON notification_settings;
 CREATE POLICY "Users can update their own notification settings"
   ON notification_settings FOR UPDATE
   TO authenticated
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own notification settings" ON notification_settings;
 CREATE POLICY "Users can insert their own notification settings"
   ON notification_settings FOR INSERT
   TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
 -- Policies for document_alerts
+DROP POLICY IF EXISTS "Users can view document alerts for their org" ON document_alerts;
 CREATE POLICY "Users can view document alerts for their org"
   ON document_alerts FOR SELECT
   TO authenticated
@@ -168,6 +176,7 @@ CREATE POLICY "Users can view document alerts for their org"
     )
   );
 
+DROP POLICY IF EXISTS "System can manage document alerts" ON document_alerts;
 CREATE POLICY "System can manage document alerts"
   ON document_alerts FOR ALL
   TO authenticated

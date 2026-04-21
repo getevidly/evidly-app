@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS demo_templates (
 
 ALTER TABLE demo_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Platform admin manages demo templates" ON demo_templates;
 CREATE POLICY "Platform admin manages demo templates"
   ON demo_templates FOR ALL
   USING (
@@ -29,6 +30,7 @@ CREATE POLICY "Platform admin manages demo templates"
     )
   );
 
+DROP POLICY IF EXISTS "service_role_demo_templates" ON demo_templates;
 CREATE POLICY "service_role_demo_templates"
   ON demo_templates FOR ALL
   USING (auth.role() = 'service_role');
@@ -92,6 +94,7 @@ CREATE TABLE IF NOT EXISTS demo_tours (
 
 ALTER TABLE demo_tours ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Platform admin manages demo tours" ON demo_tours;
 CREATE POLICY "Platform admin manages demo tours"
   ON demo_tours FOR ALL
   USING (
@@ -101,6 +104,7 @@ CREATE POLICY "Platform admin manages demo tours"
     )
   );
 
+DROP POLICY IF EXISTS "service_role_demo_tours" ON demo_tours;
 CREATE POLICY "service_role_demo_tours"
   ON demo_tours FOR ALL
   USING (auth.role() = 'service_role');
@@ -140,6 +144,7 @@ CREATE TABLE IF NOT EXISTS demo_vendor_profiles (
 
 ALTER TABLE demo_vendor_profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Platform admin manages demo vendor profiles" ON demo_vendor_profiles;
 CREATE POLICY "Platform admin manages demo vendor profiles"
   ON demo_vendor_profiles FOR ALL
   USING (
@@ -149,6 +154,7 @@ CREATE POLICY "Platform admin manages demo vendor profiles"
     )
   );
 
+DROP POLICY IF EXISTS "service_role_demo_vendor_profiles" ON demo_vendor_profiles;
 CREATE POLICY "service_role_demo_vendor_profiles"
   ON demo_vendor_profiles FOR ALL
   USING (auth.role() = 'service_role');

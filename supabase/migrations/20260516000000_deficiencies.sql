@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS deficiencies (
 
 ALTER TABLE deficiencies ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS deficiencies_read_own_org ON deficiencies;
 CREATE POLICY deficiencies_read_own_org ON deficiencies
   FOR SELECT USING (
     organization_id IN (
@@ -50,6 +51,7 @@ CREATE POLICY deficiencies_read_own_org ON deficiencies
     )
   );
 
+DROP POLICY IF EXISTS deficiencies_write_own_org ON deficiencies;
 CREATE POLICY deficiencies_write_own_org ON deficiencies
   FOR ALL USING (
     organization_id IN (
@@ -81,6 +83,7 @@ CREATE TABLE IF NOT EXISTS deficiency_timeline (
 
 ALTER TABLE deficiency_timeline ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS deficiency_timeline_read ON deficiency_timeline;
 CREATE POLICY deficiency_timeline_read ON deficiency_timeline
   FOR SELECT USING (
     deficiency_id IN (
@@ -90,6 +93,7 @@ CREATE POLICY deficiency_timeline_read ON deficiency_timeline
     )
   );
 
+DROP POLICY IF EXISTS deficiency_timeline_write ON deficiency_timeline;
 CREATE POLICY deficiency_timeline_write ON deficiency_timeline
   FOR ALL USING (
     deficiency_id IN (
@@ -119,6 +123,7 @@ CREATE TABLE IF NOT EXISTS deficiency_photos (
 
 ALTER TABLE deficiency_photos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS deficiency_photos_read ON deficiency_photos;
 CREATE POLICY deficiency_photos_read ON deficiency_photos
   FOR SELECT USING (
     organization_id IN (
@@ -126,6 +131,7 @@ CREATE POLICY deficiency_photos_read ON deficiency_photos
     )
   );
 
+DROP POLICY IF EXISTS deficiency_photos_write ON deficiency_photos;
 CREATE POLICY deficiency_photos_write ON deficiency_photos
   FOR ALL USING (
     organization_id IN (

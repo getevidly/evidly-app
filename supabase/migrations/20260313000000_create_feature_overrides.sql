@@ -16,9 +16,11 @@ CREATE TABLE IF NOT EXISTS feature_overrides (
 
 ALTER TABLE feature_overrides ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Orgs can read own overrides" ON feature_overrides;
 CREATE POLICY "Orgs can read own overrides" ON feature_overrides
   FOR SELECT USING (org_id = (SELECT org_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Service role manages overrides" ON feature_overrides;
 CREATE POLICY "Service role manages overrides" ON feature_overrides
   FOR ALL TO service_role USING (true);
 

@@ -121,16 +121,21 @@ ALTER TABLE feature_flags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feature_flag_unlocks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feature_flag_audit ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_manage_flags" ON feature_flags;
 CREATE POLICY "admin_manage_flags" ON feature_flags FOR ALL USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );
+DROP POLICY IF EXISTS "users_read_flags" ON feature_flags;
 CREATE POLICY "users_read_flags" ON feature_flags FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "admin_manage_unlocks" ON feature_flag_unlocks;
 CREATE POLICY "admin_manage_unlocks" ON feature_flag_unlocks FOR ALL USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );
+DROP POLICY IF EXISTS "users_read_own_unlocks" ON feature_flag_unlocks;
 CREATE POLICY "users_read_own_unlocks" ON feature_flag_unlocks FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "admin_read_audit" ON feature_flag_audit;
 CREATE POLICY "admin_read_audit" ON feature_flag_audit FOR SELECT USING (
   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
 );

@@ -40,6 +40,7 @@ CREATE INDEX IF NOT EXISTS idx_doc_classifications_created ON document_classific
 ALTER TABLE document_classifications ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies: users can view and insert classifications for their organization
+DROP POLICY IF EXISTS "Users can view own org classifications" ON document_classifications;
 CREATE POLICY "Users can view own org classifications"
   ON document_classifications FOR SELECT
   USING (
@@ -48,6 +49,7 @@ CREATE POLICY "Users can view own org classifications"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert classifications for own org" ON document_classifications;
 CREATE POLICY "Users can insert classifications for own org"
   ON document_classifications FOR INSERT
   WITH CHECK (
@@ -56,6 +58,7 @@ CREATE POLICY "Users can insert classifications for own org"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own org classifications" ON document_classifications;
 CREATE POLICY "Users can update own org classifications"
   ON document_classifications FOR UPDATE
   USING (
@@ -73,6 +76,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS set_doc_classifications_updated_at ON document_classifications;
 CREATE TRIGGER set_doc_classifications_updated_at
   BEFORE UPDATE ON document_classifications
   FOR EACH ROW
