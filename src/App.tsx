@@ -477,8 +477,10 @@ function ProtectedLayout() {
     }
   }
 
-  // ── Admin shell: platform_admin (not emulating, not demo) gets AdminShell ──
-  const useAdminShell = isAdmin && !isEmulating && !effectiveDemoMode;
+  // ── Admin shell: /admin/* routes ALWAYS get AdminShell for admin users ──
+  // Non-admin routes: AdminShell only when not emulating and not in demo mode
+  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+  const useAdminShell = isAdmin && (isAdminRoute || (!isEmulating && !effectiveDemoMode));
 
   const content = (
     <ErrorBoundary level="page" resetKey={location.pathname}>
