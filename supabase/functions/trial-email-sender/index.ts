@@ -21,6 +21,7 @@ let corsHeaders = getCorsHeaders(null);
 const APP_URL = "https://app.getevidly.com";
 const REPLY_TO = "founders@getevidly.com";
 const MAX_RUNTIME_MS = 50_000;
+const FOUNDER_DEADLINE_DISPLAY = "August 7, 2026";
 
 // ── Role sets ────────────────────────────────────────────────────
 const SERIES_1_ROLES = new Set([
@@ -275,7 +276,7 @@ function series1(day: number, firstName: string, county: string): EmailContent |
           <li>Vendors on file</li>
         </ul>
         <p>This is your compliance foundation. It doesn't disappear when your trial ends — but to keep building on it, you'll need to continue your subscription.</p>
-        <p><strong>Founder pricing is $99/month for your first location.</strong><br/>Locked for life if you subscribe before July 4, 2026.</p>
+        <p><strong>Founder pricing is $99/month for your first location.</strong><br/>Locked for life if you subscribe before ${FOUNDER_DEADLINE_DISPLAY}.</p>
         <p>Questions? Reply to this email or call me directly:<br/>Arthur · (209) 600-7675</p>
         ${ARTHUR_SHORT}
       `,
@@ -463,7 +464,7 @@ function series2(day: number, firstName: string, county: string): EmailContent |
           <p style="font-style:italic;color:#334155;margin:0;">"I wasn't nervous. I was ready."</p>
         </div>
         <p>That's what we're building toward.</p>
-        <p><strong>Founder pricing: $99/month · First location.</strong><br/>Locked for life through July 4, 2026.</p>
+        <p><strong>Founder pricing: $99/month · First location.</strong><br/>Locked for life through ${FOUNDER_DEADLINE_DISPLAY}.</p>
         ${ARTHUR_SIG}
       `,
       ctaText: "Continue with EvidLY →",
