@@ -421,6 +421,18 @@ function ProtectedLayout() {
     if (!user) {
       return <Navigate to="/login" replace />;
     }
+    // Wait for profile to load before rendering layout — prevents isAdmin flicker
+    // that causes admin routes to briefly render inside user Layout then re-mount
+    if (!profile) {
+      return (
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
+            <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
+          </div>
+        </div>
+      );
+    }
     // AUDIT-FIX-05 / A-1: Double-check suspension at layout level
     if (profile?.is_suspended) {
       return <Navigate to="/suspended" replace />;
