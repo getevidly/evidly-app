@@ -477,10 +477,8 @@ function ProtectedLayout() {
     }
   }
 
-  // ── Admin shell: /admin/* routes ALWAYS get AdminShell for admin users ──
-  // Non-admin routes: AdminShell only when not emulating and not in demo mode
-  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
-  const useAdminShell = isAdmin && (isAdminRoute || (!isEmulating && !effectiveDemoMode));
+  // ── Admin shell: platform_admin (not emulating, not demo) gets AdminShell ──
+  const useAdminShell = isAdmin && !isEmulating && !effectiveDemoMode;
 
   const content = (
     <ErrorBoundary level="page" resetKey={location.pathname}>
@@ -618,6 +616,8 @@ function AppRoutes() {
           <Route path="/compliance" element={<ComplianceHub />} />
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
+          <Route path="/admin" element={<AdminRoute />} />
+          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
@@ -687,8 +687,6 @@ function AppRoutes() {
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
-          <Route path="/admin" element={<AdminRoute />} />
-          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
           <Route path="/iot-platform" element={<IoTSensorPlatform />} />

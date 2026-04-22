@@ -140,11 +140,6 @@ export function Dashboard() {
     return <KitchenStaffTaskList />;
   }
 
-  // platform_admin redirects to admin console — skip user dashboard chrome entirely
-  if (userRole === 'platform_admin') {
-    return <Navigate to="/admin" replace />;
-  }
-
   return (
     <div>
       {showWelcome && (

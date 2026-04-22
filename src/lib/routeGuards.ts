@@ -68,7 +68,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/admin/demos',           []],
   ['/partner/',              []],
 
-  ['/admin/',                []],
+  ['/admin/',                ['owner_operator', 'executive']],
 
   // Enterprise — owner/exec only
   ['/enterprise/',           ['owner_operator', 'executive']],
