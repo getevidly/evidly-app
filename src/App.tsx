@@ -407,6 +407,34 @@ function ProtectedLayout() {
     try { return sessionStorage.getItem('evidly_demo_mode') === 'true'; } catch { return false; }
   })();
 
+  // MFA enforcement hooks — must be above all conditional returns (Rules of Hooks)
+  const [mfaChecked, setMfaChecked] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  useEffect(() => {
+    if (effectiveDemoMode || !user?.id || !profile?.role) { setMfaChecked(true); return; }
+    (async () => {
+      const { data: policy } = await supabase
+        .from('mfa_policy')
+        .select('mfa_required, grace_period_days')
+        .eq('role', profile.role)
+        .maybeSingle();
+      if (!policy?.mfa_required) { setMfaChecked(true); return; }
+      const { data: config } = await supabase
+        .from('user_mfa_config')
+        .select('mfa_enabled')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (config?.mfa_enabled) { setMfaChecked(true); return; }
+      // Check grace period
+      const graceDays = policy.grace_period_days || 0;
+      const createdAt = profile.created_at ? new Date(profile.created_at) : new Date();
+      const accountAgeDays = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
+      if (accountAgeDays < graceDays) { setMfaChecked(true); return; }
+      setMfaRequired(true);
+      setMfaChecked(true);
+    })();
+  }, [effectiveDemoMode, user?.id, profile?.role]);
+
   if (!effectiveDemoMode) {
     if (loading) {
       return (
@@ -443,34 +471,6 @@ function ProtectedLayout() {
   if (isAuthenticatedDemo && isDemoExpired && location.pathname !== '/demo-expired') {
     return <Navigate to="/demo-expired" replace />;
   }
-
-  // MFA enforcement — check if user's role requires MFA but user hasn't enrolled
-  const [mfaChecked, setMfaChecked] = useState(false);
-  const [mfaRequired, setMfaRequired] = useState(false);
-  useEffect(() => {
-    if (effectiveDemoMode || !user?.id || !profile?.role) { setMfaChecked(true); return; }
-    (async () => {
-      const { data: policy } = await supabase
-        .from('mfa_policy')
-        .select('mfa_required, grace_period_days')
-        .eq('role', profile.role)
-        .maybeSingle();
-      if (!policy?.mfa_required) { setMfaChecked(true); return; }
-      const { data: config } = await supabase
-        .from('user_mfa_config')
-        .select('mfa_enabled')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (config?.mfa_enabled) { setMfaChecked(true); return; }
-      // Check grace period
-      const graceDays = policy.grace_period_days || 0;
-      const createdAt = profile.created_at ? new Date(profile.created_at) : new Date();
-      const accountAgeDays = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
-      if (accountAgeDays < graceDays) { setMfaChecked(true); return; }
-      setMfaRequired(true);
-      setMfaChecked(true);
-    })();
-  }, [effectiveDemoMode, user?.id, profile?.role]);
 
   if (!effectiveDemoMode && mfaRequired && location.pathname !== '/setup-mfa') {
     return <Navigate to="/setup-mfa" replace />;
