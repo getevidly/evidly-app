@@ -10,13 +10,17 @@ initSentry();
 // Unregister all service workers — prevents stale cache serving
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(registrations => {
-    registrations.forEach(registration => registration.unregister());
+    if (registrations.length > 0) {
+      registrations.forEach(registration => registration.unregister());
+      if ('caches' in window) {
+        caches.keys().then(cacheNames => {
+          cacheNames
+            .filter(name => name.startsWith('workbox-') || name.startsWith('sw-'))
+            .forEach(cacheName => caches.delete(cacheName));
+        });
+      }
+    }
   });
-  if ('caches' in window) {
-    caches.keys().then(cacheNames => {
-      cacheNames.forEach(cacheName => caches.delete(cacheName));
-    });
-  }
 }
 
 // Handle chunk loading errors after deploys (stale JS bundles)
