@@ -87,8 +87,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
   },
   taskManager: {
-    id: 'task-manager', label: 'Task Manager', path: '/tasks', icon: '📝', badge: 'NEW',
-    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
+    id: 'task-manager', label: 'Task Manager', path: '/tasks', icon: '📝',    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
   },
   correctiveActions: {
     id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
@@ -120,13 +119,11 @@ const I: Record<string, NavItem> = {
   intelligence: {
     id: 'intelligence', label: 'Compliance Intelligence', path: '/intelligence', icon: '🧠',
     roles: [], description: 'EvidLY Intelligence — cross-location pattern detection, predictive risk scoring, and proactive compliance recommendations.',
-    badge: 'NEW',
-  },
+     },
   rfpIntelligence: {
     id: 'rfp-intelligence', label: 'RFP Monitor', path: '/admin/rfp-intelligence', icon: '📋',
     roles: [], description: 'Government RFP and procurement opportunity monitoring with AI-powered relevance classification.',
-    badge: 'NEW',
-  },
+     },
   aiInsights: {
     id: 'ai-insights', label: 'Artificial Intelligence Insights', path: '/ai-advisor', icon: '🤖',
     roles: [], description: 'Artificial Intelligence-powered compliance advisor — ask questions, get recommendations, and analyze trends.',
@@ -134,8 +131,7 @@ const I: Record<string, NavItem> = {
   copilotInsights: {
     id: 'copilot-insights', label: 'Copilot Insights', path: '/copilot', icon: '🤖',
     roles: [], description: 'Proactive AI-generated insights — anomaly detection, predictive alerts, and compliance recommendations.',
-    badge: 'NEW',
-  },
+     },
   analytics: {
     id: 'analytics', label: 'Predictive Analytics', path: '/analysis', icon: '📈',
     roles: [], description: 'Trend data for compliance scores, incident frequency, and checklist completion across locations and time.',
@@ -159,13 +155,11 @@ const I: Record<string, NavItem> = {
   clientIntelligence: {
     id: 'client-intelligence', label: 'Business Intelligence', path: '/insights/intelligence', icon: '📡',
     roles: [], description: 'Actionable intelligence from 80+ regulatory, legislative, and industry sources — filtered to your jurisdictions.',
-    badge: 'NEW',
-  },
+     },
   clientReports: {
     id: 'client-reports', label: 'Reports', path: '/insights/reports', icon: '📋',
     roles: [], description: 'Compliance, insurance, and operational reports generated for your organization.',
-    badge: 'NEW',
-  },
+     },
   predictions: {
     id: 'predictions', label: 'Predictive Analysis', path: '/insights/predictions', icon: '🔮',
     roles: [], description: 'Risk predictions by location — rules-based scoring from checklist rate, temp compliance, service recency, and open corrective actions.',
@@ -173,38 +167,31 @@ const I: Record<string, NavItem> = {
   inspectionForecast: {
     id: 'inspection-forecast', label: 'Inspection Forecast', path: '/insights/inspection-forecast', icon: '📅',
     roles: [], description: 'Predict your next inspection window based on county patterns and historical frequency.',
-    badge: 'NEW',
-  },
+     },
   violationRadar: {
     id: 'violation-radar', label: 'Violation Risk Radar', path: '/insights/violation-radar', icon: '🎯',
     roles: [], description: 'See what an inspector would find right now — ranked risks with probability estimates.',
-    badge: 'NEW',
-  },
+     },
   complianceTrajectory: {
     id: 'compliance-trajectory', label: 'Compliance Trajectory', path: '/insights/trajectory', icon: '📈',
     roles: [], description: '30/60/90 day readiness score trend with projected trajectory.',
-    badge: 'NEW',
-  },
+     },
   vendorPerformance: {
     id: 'vendor-performance', label: 'Vendor Performance', path: '/insights/vendor-performance', icon: '🏆',
     roles: [], description: 'Grade your vendors A-F on timeliness, certs, and reliability.',
-    badge: 'NEW',
-  },
+     },
   jurisdictionSignals: {
     id: 'jurisdiction-signals', label: 'Jurisdiction Signals', path: '/insights/signals', icon: '📡',
     roles: [], description: 'Real-time regulatory signals for your county from 80+ sources.',
-    badge: 'NEW',
-  },
+     },
   teamLeaderboard: {
     id: 'team-leaderboard', label: 'Team Leaderboard', path: '/insights/leaderboard', icon: '🏅',
     roles: [], description: 'Staff ranked by compliance task performance — checklists, temp logs, and corrective actions.',
-    badge: 'NEW',
-  },
+     },
   operationsIntelligence: {
     id: 'operations-intelligence', label: 'Ops Intelligence', path: '/insights/operations-intelligence', icon: '✨',
     roles: [], description: 'Proactive insights from all your data sources — answers before you ask.',
-    badge: 'NEW',
-  },
+     },
   jurisdictionIntelligence: {
     id: 'jurisdiction-intelligence', label: 'Know Your Inspector', path: '/jurisdiction', icon: '⚖️',
     roles: [], description: "Your jurisdiction's scoring system, inspector priorities, and violation patterns.",
@@ -230,8 +217,7 @@ const I: Record<string, NavItem> = {
   connectSensors: {
     id: 'connect-sensors', label: 'Connect Sensors', path: '/iot/platform', icon: '📶',
     roles: [], description: 'Hardware-agnostic sensor platform — connect any WiFi, Bluetooth, LoRaWAN, or MQTT sensor to EvidLY.',
-    badge: 'NEW',
-  },
+     },
   importData: {
     id: 'import-data', label: 'Import Data', path: '/migrate', icon: '📥',
     roles: [], description: 'Import temperature logs and compliance data from Zenput, Squadle, ComplianceMate, or CSV exports.',
@@ -269,8 +255,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Service providers on file — hood cleaning, Heating Ventilation and Air Conditioning, pest, plumbing, roofing, and fire suppression.',
   },
   vendorDocReview: {
-    id: 'vendor-doc-review', label: 'Document Review', path: '/vendors/review', icon: '📄', badge: 'NEW',
-    roles: [], description: 'Review and approve vendor-uploaded documents with AI-powered validation.',
+    id: 'vendor-doc-review', label: 'Document Review', path: '/vendors/review', icon: '📄',    roles: [], description: 'Review and approve vendor-uploaded documents with AI-powered validation.',
   },
   vendorMarketplace: {
     id: 'vendor-marketplace', label: 'Vendor Marketplace', path: '/marketplace', icon: '🏪',
@@ -279,8 +264,7 @@ const I: Record<string, NavItem> = {
   vendorConnect: {
     id: 'vendor-connect', label: 'Vendor Connect', path: '/vendor-connect', icon: '🤝',
     roles: [], description: 'CPP-vetted service providers — invitation-only partner marketplace with verified vendors.',
-    badge: 'NEW',
-  },
+     },
   upgrade: {
     id: 'upgrade', label: 'Upgrade', path: '/upgrade', icon: '⭐',
     roles: [], description: 'Compare plans and upgrade to EvidLY Standard for full compliance coverage.',
@@ -290,25 +274,21 @@ const I: Record<string, NavItem> = {
   foodRecovery: {
     id: 'food-recovery', label: 'Food Recovery', path: '/food-recovery', icon: '♻️',
     roles: [], description: 'SB 1383 organic waste diversion tracking, food recovery agreements, and CalRecycle compliance.',
-    badge: 'NEW',
-  },
+     },
   sb1383: {
     id: 'sb1383', label: 'SB 1383 Compliance', path: '/sb1383', icon: '♻️',
     roles: [], description: 'Full SB 1383 organic waste reduction module — log entries, hauler records, annual reports.',
-    badge: 'NEW',
-  },
+     },
 
   // ── K-12 Food Safety ──
   k12Compliance: {
     id: 'k12-compliance', label: 'K-12 Food Safety', path: '/k12', icon: '🏫',
     roles: [], description: 'Audit readiness dashboard — USDA + County EH dual authority, meal metrics, NSLP claims.',
-    badge: 'NEW',
-  },
+     },
   usdaProductionRecords: {
     id: 'usda-production-records', label: 'USDA Production Records', path: '/usda/production-records', icon: '🏫',
     roles: [], description: 'USDA Child Nutrition Program meal production records, meal pattern compliance, and CN label tracking.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Insurance ──
   insuranceRisk: {
@@ -367,46 +347,39 @@ const I: Record<string, NavItem> = {
   commandCenter: {
     id: 'command-center', label: 'Command Center', path: '/admin/command-center', icon: '🎛️',
     roles: [], description: 'Platform operations health — live events, crawl status, open tickets, and system diagnostics.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Demo Generator (Admin) ──
   demoGenerator: {
     id: 'demo-generator', label: 'Demo Generator', path: '/admin/demo-generator', icon: '✨',
     roles: [], description: 'Generate personalized, jurisdiction-accurate demo environments for sales prospects.',
-    badge: 'NEW',
-  },
+     },
   demoPipeline: {
     id: 'demo-pipeline', label: 'Demo Pipeline', path: '/admin/demos', icon: '🎯',
     roles: [], description: 'Manage prospect demo pipeline — scheduling, generation, live demos, and conversion.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Email & Trial (Admin) ──
   emailSequences: {
     id: 'email-sequences', label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧',
     roles: [], description: 'Manage trial email sequences, vendor outreach pipeline, and referral tracking.',
-    badge: 'NEW',
-  },
+     },
   trialHealth: {
     id: 'trial-health', label: 'Trial Health', path: '/admin/trial-health', icon: '💊',
     roles: [], description: 'Trial cohort analytics, email funnel metrics, and expiring trial management.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Assessment (Admin) ──
   assessmentLeads: {
     id: 'assessment-leads', label: 'Leads', path: '/admin/assessments', icon: '📊',
     roles: [], description: 'View and analyze compliance assessment leads, risk scores, and business impact estimates.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Insurance API Keys (Admin) ──
   apiKeys: {
     id: 'api-keys', label: 'API Keys', path: '/admin/api-keys', icon: '🔑',
     roles: [], description: 'Manage insurance partner API keys, view request logs, and configure data export permissions.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Integrations Hub ──
   integrations: {
@@ -418,8 +391,7 @@ const I: Record<string, NavItem> = {
   edgeFunctions: {
     id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
     roles: [], description: 'Health monitoring, invocation timeline, error logs, and manual invoke for all 18 Supabase Edge Functions.',
-    badge: 'NEW',
-  },
+     },
   crawlMonitor: {
     id: 'crawl-monitor', label: 'Crawl Monitor', path: '/admin/intelligence', icon: '🕷️',
     roles: [], description: 'Intelligence crawl health, source uptime, and execution logs from the Command Center.',
@@ -427,8 +399,7 @@ const I: Record<string, NavItem> = {
   adminDashboard: {
     id: 'admin-dashboard', label: 'Admin Dashboard', path: '/admin/dashboard', icon: '📊',
     roles: [], description: 'Platform admin dashboard — crawl monitor, event log, API keys, leads, demo sessions, K2C tracking, and usage analytics.',
-    badge: 'NEW',
-  },
+     },
 
   verification: {
     id: 'verification', label: 'Verification', path: '/admin/verification', icon: '🛡️',
@@ -455,8 +426,7 @@ const I: Record<string, NavItem> = {
   featureBaseline: {
     id: 'feature-baseline', label: 'Feature Baseline', path: '/admin/feature-baseline', icon: '📐',
     roles: [], description: 'Complete audit of 124 features — verdicts, unlisted code, anti-patterns, and codebase health.',
-    badge: 'NEW',
-  },
+     },
 
   // ── Help ──
   help: {
