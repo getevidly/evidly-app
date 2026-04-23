@@ -68,10 +68,11 @@ function useValueStats(): ValueStats {
 /* ── Section 3: Cost Calculator ────────────────────────── */
 
 function CostCalculator() {
-  const [units, setUnits] = useState(9);
-  const [checksPerDay, setChecksPerDay] = useState(6);
-  const [minsPerCheck, setMinsPerCheck] = useState(2);
+  const [units, setUnits] = useState(0);
+  const [checksPerDay, setChecksPerDay] = useState(0);
+  const [minsPerCheck, setMinsPerCheck] = useState(0);
 
+  const hasInput = units > 0 && checksPerDay > 0 && minsPerCheck > 0;
   const totalMinsDay = units * checksPerDay * minsPerCheck;
   const hoursWeek = ((totalMinsDay * 7) / 60).toFixed(0);
   const daysYear = ((totalMinsDay * 365) / 60 / 8).toFixed(0);
@@ -92,39 +93,48 @@ function CostCalculator() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Equipment units</label>
-          <input type="number" value={units} onChange={e => setUnits(Math.max(1, +e.target.value || 1))}
+          <input type="number" value={units || ''} onChange={e => setUnits(Math.max(0, +e.target.value || 0))}
+            placeholder="0"
             className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Checks per unit/day</label>
-          <input type="number" value={checksPerDay} onChange={e => setChecksPerDay(Math.max(1, +e.target.value || 1))}
+          <input type="number" value={checksPerDay || ''} onChange={e => setChecksPerDay(Math.max(0, +e.target.value || 0))}
+            placeholder="0"
             className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1">Minutes per check</label>
-          <input type="number" value={minsPerCheck} onChange={e => setMinsPerCheck(Math.max(1, +e.target.value || 1))}
+          <input type="number" value={minsPerCheck || ''} onChange={e => setMinsPerCheck(Math.max(0, +e.target.value || 0))}
+            placeholder="0"
             className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-xl bg-amber-50 text-center">
-          <div className="text-2xl font-bold tracking-tight text-amber-700">{totalMinsDay}</div>
-          <div className="text-xs text-amber-600 font-medium">minutes/day</div>
+      {hasInput ? (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-4 rounded-xl bg-amber-50 text-center">
+            <div className="text-2xl font-bold tracking-tight text-amber-700">{totalMinsDay}</div>
+            <div className="text-xs text-amber-600 font-medium">minutes/day</div>
+          </div>
+          <div className="p-4 rounded-xl bg-amber-50 text-center">
+            <div className="text-2xl font-bold tracking-tight text-amber-700">{hoursWeek}</div>
+            <div className="text-xs text-amber-600 font-medium">hours/week</div>
+          </div>
+          <div className="p-4 rounded-xl bg-amber-50 text-center">
+            <div className="text-2xl font-bold tracking-tight text-amber-700">{daysYear}</div>
+            <div className="text-xs text-amber-600 font-medium">work days/year</div>
+          </div>
+          <div className="p-4 rounded-xl bg-red-50 text-center">
+            <div className="text-2xl font-bold tracking-tight text-red-600">${Number(costYear).toLocaleString()}</div>
+            <div className="text-xs text-red-500 font-medium">labor cost/year</div>
+          </div>
         </div>
-        <div className="p-4 rounded-xl bg-amber-50 text-center">
-          <div className="text-2xl font-bold tracking-tight text-amber-700">{hoursWeek}</div>
-          <div className="text-xs text-amber-600 font-medium">hours/week</div>
+      ) : (
+        <div className="p-6 rounded-xl bg-[#FAF7F0] text-center">
+          <p className="text-sm text-[#1E2D4D]/50">Enter your values above to see how much manual monitoring costs your team.</p>
         </div>
-        <div className="p-4 rounded-xl bg-amber-50 text-center">
-          <div className="text-2xl font-bold tracking-tight text-amber-700">{daysYear}</div>
-          <div className="text-xs text-amber-600 font-medium">work days/year</div>
-        </div>
-        <div className="p-4 rounded-xl bg-red-50 text-center">
-          <div className="text-2xl font-bold tracking-tight text-red-600">${Number(costYear).toLocaleString()}</div>
-          <div className="text-xs text-red-500 font-medium">labor cost/year</div>
-        </div>
-      </div>
+      )}
 
       <p className="text-sm text-[#1E2D4D]/50 mt-4 text-center">
         Sensors eliminate 90% of this. EvidLY's AI handles the rest.

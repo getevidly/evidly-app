@@ -139,7 +139,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.companyName}
               onChange={e => handleChange('companyName', e.target.value)}
-              placeholder="HoodOps"
+              placeholder="Your Company Name"
             />
           </div>
           <div>
@@ -148,7 +148,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.phone}
               onChange={e => handleChange('phone', e.target.value)}
-              placeholder="(555) 123-4567"
+              placeholder="(555) 000-0000"
             />
           </div>
           <div>
@@ -158,7 +158,7 @@ export function CompanyProfilePage() {
               type="email"
               value={form.email}
               onChange={e => handleChange('email', e.target.value)}
-              placeholder="info@hoodops.com"
+              placeholder="you@company.com"
             />
           </div>
           <div>
@@ -167,7 +167,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.website}
               onChange={e => handleChange('website', e.target.value)}
-              placeholder="https://hoodops.com"
+              placeholder="https://yourcompany.com"
             />
           </div>
         </div>
@@ -178,7 +178,7 @@ export function CompanyProfilePage() {
             className={inputClasses}
             value={form.street}
             onChange={e => handleChange('street', e.target.value)}
-            placeholder="123 Main St"
+            placeholder="Street Address"
           />
         </div>
 
@@ -189,7 +189,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.city}
               onChange={e => handleChange('city', e.target.value)}
-              placeholder="Fresno"
+              placeholder="City"
             />
           </div>
           <div>
@@ -198,7 +198,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.state}
               onChange={e => handleChange('state', e.target.value)}
-              placeholder="CA"
+              placeholder="ST"
               maxLength={2}
             />
           </div>
@@ -208,7 +208,7 @@ export function CompanyProfilePage() {
               className={inputClasses}
               value={form.zip}
               onChange={e => handleChange('zip', e.target.value)}
-              placeholder="93721"
+              placeholder="ZIP Code"
             />
           </div>
         </div>

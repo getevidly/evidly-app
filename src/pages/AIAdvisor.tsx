@@ -23,7 +23,7 @@ import {
 } from '../lib/aiAdvisorLocationContext';
 import { locations as demoLocations } from '../data/demoData';
 
-// Display names for AI context — richer than generic demoData names
+// Display names for AI context — used only in demo mode
 const LOCATION_DISPLAY: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Dining' };
 const loc1 = LOCATION_DISPLAY[demoLocations[0]?.urlId] ?? demoLocations[0]?.name ?? 'my primary location';
 const loc2 = LOCATION_DISPLAY[demoLocations[1]?.urlId] ?? demoLocations[1]?.name ?? 'my second location';
@@ -160,7 +160,20 @@ const DEMO_PAST_CONVERSATIONS: Conversation[] = [ // demo
   },
 ];
 
-const STARTER_CARDS = [ // demo
+// Generic starter cards — no fake location names for production users
+const STARTER_CARDS_GENERIC = [
+  'What are my biggest compliance risks right now?',
+  'Which vendor documents expire this month?',
+  'Am I ready for a health inspection?',
+  'What corrective actions are overdue?',
+  'Show me my temperature trends',
+  'Compare compliance across all my locations',
+  'Which team members have expiring certifications?',
+  'Give me a compliance summary',
+];
+
+// Demo-only starter cards with enriched location names
+const STARTER_CARDS_DEMO = [
   `What are the biggest risks at ${loc3}?`, // demo — enriched
   `What changed at ${loc2} this week?`, // demo — enriched
   'Which vendor documents expire this month?',
@@ -676,7 +689,7 @@ export function AIAdvisor() {
                   <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 8px', ...F }}>How can I help you today?</h3>
                   <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 24px', ...F }}>Ask about compliance, food safety, or your data.</p>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', maxWidth: '600px', width: '100%' }}>
-                    {STARTER_CARDS.map((card, i) => (
+                    {(isDemoMode ? STARTER_CARDS_DEMO : STARTER_CARDS_GENERIC).map((card, i) => (
                       <button
                         key={i}
                         onClick={() => sendMessage(card)}
@@ -808,7 +821,7 @@ export function AIAdvisor() {
               {/* Location selector pills — chat mode only */}
               {mode === 'chat' && (
                 <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                  {[{ id: null as string | null, label: 'All Locations' }, ...demoLocations.map(l => ({ id: l.urlId, label: l.name }))].map((loc) => (
+                  {[{ id: null as string | null, label: 'All Locations' }, ...(isDemoMode ? demoLocations.map(l => ({ id: l.urlId, label: LOCATION_DISPLAY[l.urlId] ?? l.name })) : [])].map((loc) => (
                     <button
                       key={loc.id ?? 'all'}
                       type="button"
@@ -1086,7 +1099,7 @@ export function AIAdvisor() {
                           <div>
                             <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Location</label>
                             <select style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '12px', ...F }}>
-                              {demoLocations.map(l => <option key={l.id}>{LOCATION_DISPLAY[l.urlId] ?? l.name}</option>)}{/* demo */}
+                              {isDemoMode ? demoLocations.map(l => <option key={l.id}>{LOCATION_DISPLAY[l.urlId] ?? l.name}</option>) : <option>Select location...</option>}
                             </select>
                           </div>
                         </div>

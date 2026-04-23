@@ -41,9 +41,16 @@ export function ViolationRadar() {
         const overdueCA = caRes.data?.filter(ca => ca.due_date && new Date(ca.due_date) < new Date()).length || 0;
         const tempFailures = tempRes.data?.filter(t => !t.temp_pass).length || 0;
 
-        // Days without temp log
+        // If org has zero data across all sources, show empty state — not fabricated risks
+        const totalData = (caRes.data?.length || 0) + (tempRes.data?.length || 0) + (docRes.data?.length || 0) + (serviceRes.data?.length || 0);
+        if (totalData === 0) {
+          setRisks([]);
+          return;
+        }
+
+        // Days without temp log — only compute if org has logged temps before
         const latestTemp = tempRes.data?.sort((a, b) => new Date(b.reading_time).getTime() - new Date(a.reading_time).getTime())[0];
-        const daysWithoutTemp = latestTemp ? Math.floor((Date.now() - new Date(latestTemp.reading_time).getTime()) / 86400000) : 7;
+        const daysWithoutTemp = latestTemp ? Math.floor((Date.now() - new Date(latestTemp.reading_time).getTime()) / 86400000) : 0;
 
         const result = computeViolationRisks({
           openCorrectiveActions: openCA,

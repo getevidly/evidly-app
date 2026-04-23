@@ -61,7 +61,7 @@ export function Deficiencies() {
   const [pageError, setPageError] = useState<string | null>(null);
   const [localRecords, setLocalRecords] = useState<DeficiencyItem[]>(() => {
     try {
-      return DEMO_DEFICIENCIES;
+      return isDemoMode ? DEMO_DEFICIENCIES : [];
     } catch (err) {
       setPageError(err instanceof Error ? err.message : 'Failed to load deficiencies data');
       return [];
@@ -119,7 +119,7 @@ export function Deficiencies() {
     severity: DefSeverity; estimatedCost: number | null;
   }) => {
     guardAction('create', 'Deficiencies', () => {
-      const loc = { downtown: 'Downtown Kitchen', airport: 'Airport Concourse B', university: 'University Dining Hall' }[data.locationId] || data.locationId;
+      const loc = data.locationId;
       const newDef: DeficiencyItem = {
         id: `def-new-${Date.now()}`,
         code: data.code,
@@ -158,7 +158,7 @@ export function Deficiencies() {
   };
 
   if (pageError) {
-    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setLocalRecords(DEMO_DEFICIENCIES); }} />;
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setLocalRecords(isDemoMode ? DEMO_DEFICIENCIES : []); }} />;
   }
 
   // ── Stats Card ────────────────────────────────────────────
@@ -191,6 +191,15 @@ export function Deficiencies() {
         </button>
       </div>
 
+      {/* Empty state for non-demo users with no data */}
+      {!isDemoMode && localRecords.length === 0 && (
+        <PageEmptyState
+          title="No deficiencies recorded"
+          description="Deficiencies found during inspections and service visits will appear here."
+        />
+      )}
+
+      {localRecords.length > 0 && <>
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label="Open" value={stats.open} sub={stats.critOpen > 0 ? `${stats.critOpen} critical` : undefined} accent="#dc2626" />
@@ -376,6 +385,8 @@ export function Deficiencies() {
           />
         )}
       </div>
+
+      </>}
 
       {/* Modals */}
       {showAddModal && (

@@ -2,11 +2,8 @@ import { useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import type { DefSeverity } from '../../data/deficienciesDemoData';
 
-const LOCATIONS = [
-  { id: 'downtown', name: 'Downtown Kitchen' },
-  { id: 'airport', name: 'Airport Concourse B' },
-  { id: 'university', name: 'University Dining Hall' },
-];
+// Locations are populated dynamically from org data — empty for now
+const LOCATIONS: { id: string; name: string }[] = [];
 
 const SEVERITIES: { value: DefSeverity; label: string }[] = [
   { value: 'critical', label: 'Critical' },
