@@ -26,7 +26,7 @@ interface AuthContextType {
   isEvidlyAdmin: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string }) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   /** Override profile.organization_id during emulation */
@@ -174,17 +174,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string; jurisdiction_selection?: string | null }) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string) => {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/email-confirmed`,
         data: {
-          user_type: 'restaurant',
           full_name: fullName,
-          industry_type: industryType,
-          industry_subtype: industrySubtype,
+          kitchen_type: kitchenType,
         },
       },
     });
@@ -193,53 +191,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: authError };
     }
 
-    // Try full insert with all columns; fall back without k12 columns if schema cache is stale
-    let orgData: { id: string } | null = null;
-    const fullOrgRow = {
-      name: orgName,
-      industry_type: industryType || null,
-      industry_subtype: industrySubtype || null,
-      org_type: qualificationFlags?.org_type || 'standard',
-      k12_enrolled: qualificationFlags?.k12_enrolled || false,
-      k12_enrolled_at: qualificationFlags?.k12_enrolled_at || null,
-      sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
-      sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
-      jurisdiction_selection: qualificationFlags?.jurisdiction_selection || null,
+    // Generate slug: lowercase org name + 6-char random suffix
+    const generateSlug = (name: string) => {
+      const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let suffix = '';
+      for (let i = 0; i < 6; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+      return `${base}-${suffix}`;
     };
 
-    const { data: orgResult, error: orgError } = await supabase
-      .from('organizations')
-      .insert([fullOrgRow])
-      .select()
-      .single();
-
-    if (orgError) {
-      // Schema cache may not have k12/jurisdiction columns yet — retry without them
-      console.warn('[signUp] org insert failed, retrying without k12/jurisdiction columns:', orgError.message);
-      const { data: fallbackResult, error: fallbackError } = await supabase
+    // Insert org with slug — retry up to 3x on unique violation (23505)
+    let orgData: { id: string } | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const slug = generateSlug(orgName);
+      const { data: orgResult, error: orgError } = await supabase
         .from('organizations')
-        .insert([{
-          name: orgName,
-          industry_type: industryType || null,
-          industry_subtype: industrySubtype || null,
-          org_type: qualificationFlags?.org_type || 'standard',
-          sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
-          sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
-        }])
+        .insert([{ name: orgName, slug, state }])
         .select()
         .single();
 
-      if (fallbackError) {
-        return { error: fallbackError };
+      if (!orgError) {
+        orgData = orgResult;
+        break;
       }
-      console.info('[signUp] fallback org insert succeeded — schema cache may need reload');
-      orgData = fallbackResult;
-    } else {
-      orgData = orgResult;
+      if (orgError.code !== '23505' || !orgError.message?.includes('slug')) {
+        return { error: orgError };
+      }
+      // Slug collision — retry with fresh suffix
     }
 
     if (!orgData) {
-      return { error: { message: 'Failed to create organization' } };
+      return { error: { message: 'Failed to create organization — please try again' } };
     }
 
     const { error: profileError } = await supabase
@@ -248,9 +230,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         {
           id: authData.user.id,
           full_name: fullName,
-          phone: phone || null,
+          phone,
           organization_id: orgData.id,
-          role: 'admin',
+          role: 'owner_operator',
+          terms_accepted_at: new Date().toISOString(),
         },
       ]);
 
@@ -264,7 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         {
           user_id: authData.user.id,
           organization_id: orgData.id,
-          role: 'admin',
+          role: 'owner',
         },
       ]);
 

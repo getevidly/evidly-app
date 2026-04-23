@@ -1,25 +1,25 @@
 /**
- * PHASE-0-S1 — Org Industry Type Hook
+ * Kitchen Type Hook — reads locations.kitchen_type for the current org.
  *
- * Returns the current organization's industry type.
  * Demo mode: reads from sessionStorage `evidly_demo_lead`.
- * Auth mode: queries `organizations.industry_type` via Supabase.
+ * Auth mode: queries `locations.kitchen_type` for org's first location.
  */
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import type { KitchenType } from '../config/kitchenTypes';
 
 const DEMO_LEAD_KEY = 'evidly_demo_lead';
 
-export function useOrgType(): { orgType: string | null; loading: boolean } {
+export function useKitchenType(): { kitchenType: KitchenType | null; loading: boolean } {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const isDemo = isDemoMode || !profile?.organization_id;
   const orgId = profile?.organization_id || '';
 
-  const [orgType, setOrgType] = useState<string | null>(null);
+  const [kitchenType, setKitchenType] = useState<KitchenType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export function useOrgType(): { orgType: string | null; loading: boolean } {
         const raw = sessionStorage.getItem(DEMO_LEAD_KEY);
         if (raw) {
           const lead = JSON.parse(raw);
-          setOrgType(lead.industry || lead.businessType || null);
+          setKitchenType(lead.kitchenType || lead.industry || lead.businessType || null);
         }
       } catch { /* ignore */ }
       setLoading(false);
@@ -38,18 +38,19 @@ export function useOrgType(): { orgType: string | null; loading: boolean } {
     (async () => {
       try {
         const { data } = await supabase
-          .from('organizations')
-          .select('industry_type')
-          .eq('id', orgId)
+          .from('locations')
+          .select('kitchen_type')
+          .eq('organization_id', orgId)
+          .limit(1)
           .maybeSingle();
 
         if (data) {
-          setOrgType(data.industry_type || null);
+          setKitchenType(data.kitchen_type || null);
         }
       } catch { /* ignore */ }
       setLoading(false);
     })();
   }, [isDemo, orgId]);
 
-  return { orgType, loading };
+  return { kitchenType, loading };
 }

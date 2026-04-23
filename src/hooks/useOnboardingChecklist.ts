@@ -26,9 +26,9 @@ function authDismissedKey(orgId: string) {
   return `evidly_onboarding_dismissed_${orgId}`;
 }
 
-// ── Demo defaults (Pacific Coast Dining = RESTAURANT, 3 locations) ──
+// ── Demo defaults (Pacific Coast Dining = restaurant, 3 locations) ──
 const DEMO_DEFAULTS = {
-  industry_type: 'RESTAURANT' as string | null,
+  industry_type: 'restaurant' as string | null,
   planned_location_count: 3,
 };
 

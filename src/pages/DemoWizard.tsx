@@ -9,11 +9,11 @@ import {
 } from 'lucide-react';
 
 const INDUSTRIES = [
-  { code: 'RESTAURANT', label: 'Restaurant', icon: '🍽️', subtypes: ['Full-Service', 'Quick-Service', 'Bar / Lounge', 'Ghost Kitchen', 'Catering', 'Hotel Restaurant', 'Casino Restaurant', 'Corporate Cafeteria'] },
-  { code: 'HEALTHCARE', label: 'Healthcare', icon: '🏥', subtypes: ['Hospital', 'Medical Center'] },
-  { code: 'SENIOR_LIVING', label: 'Senior Living', icon: '🏡', subtypes: ['Assisted Living', 'Nursing Home / Skilled Nursing', 'Memory Care', 'Independent Living'] },
-  { code: 'K12_EDUCATION', label: 'K-12 Education', icon: '🏫', subtypes: ['School District', 'Private School', 'Charter School'] },
-  { code: 'HIGHER_EDUCATION', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
+  { code: 'restaurant', label: 'Restaurant', icon: '🍽️', subtypes: ['Full-Service', 'Quick-Service', 'Bar / Lounge', 'Ghost Kitchen', 'Catering', 'Hotel Restaurant', 'Casino Restaurant', 'Corporate Cafeteria'] },
+  { code: 'healthcare_facility', label: 'Healthcare', icon: '🏥', subtypes: ['Hospital', 'Medical Center'] },
+  { code: 'senior_living', label: 'Senior Living', icon: '🏡', subtypes: ['Assisted Living', 'Nursing Home / Skilled Nursing', 'Memory Care', 'Independent Living'] },
+  { code: 'k12_school', label: 'K-12 Education', icon: '🏫', subtypes: ['School District', 'Private School', 'Charter School'] },
+  { code: 'higher_education', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
 ];
 
 // Pillar weights removed — Food Safety and Fire Safety are independent scores

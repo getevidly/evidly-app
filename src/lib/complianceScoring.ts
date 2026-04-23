@@ -30,11 +30,11 @@ export interface LocationCompliance {
 // --------------- Industry Vertical (retained for benchmark engine) ---------------
 
 export type IndustryVertical =
-  | 'RESTAURANT'
-  | 'HEALTHCARE'
-  | 'SENIOR_LIVING'
-  | 'K12_EDUCATION'
-  | 'HIGHER_EDUCATION';
+  | 'restaurant'
+  | 'healthcare_facility'
+  | 'senior_living'
+  | 'k12_school'
+  | 'higher_education';
 
 // --------------- Color Thresholds (4-Tier) ---------------
 // Retained for UI components that need color-coding

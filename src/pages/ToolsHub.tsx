@@ -6,7 +6,7 @@
  */
 
 import { useRole } from '../contexts/RoleContext';
-import { useOrgType } from '../hooks/useOrgType';
+import { useKitchenType } from '../hooks/useKitchenType';
 import { getRoleConfig } from '../config/sidebarConfig';
 import { HubCard } from '../components/hub/HubCard';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -14,8 +14,8 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 export function ToolsHub() {
   useDemoGuard();
   const { userRole } = useRole();
-  const { orgType } = useOrgType();
-  const config = getRoleConfig(userRole, orgType);
+  const { kitchenType } = useKitchenType();
+  const config = getRoleConfig(userRole, kitchenType);
   const section = config.sections.find(s => s.id === 'tools');
   const items = section?.items || [];
 

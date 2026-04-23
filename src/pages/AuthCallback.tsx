@@ -52,16 +52,39 @@ export function AuthCallback() {
           const avatarUrl = authUser.user_metadata?.avatar_url || null;
           const provider = authUser.app_metadata?.provider || 'email';
 
-          // Create a default organization
-          const { data: orgData, error: orgError } = await supabase
-            .from('organizations')
-            .insert([{ name: `${fullName}'s Organization` }])
-            .select()
-            .single();
+          // Generate slug: lowercase org name + 6-char random suffix
+          const orgName = `${fullName}'s Organization`;
+          const generateSlug = (name: string) => {
+            const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let suffix = '';
+            for (let i = 0; i < 6; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+            return `${base}-${suffix}`;
+          };
 
-          if (orgError) {
-            console.error('Org creation error:', orgError);
-            // Still route to dashboard — profile creation will be handled on first access
+          // Create organization with slug — retry up to 3x on unique violation
+          let orgData: { id: string } | null = null;
+          for (let attempt = 0; attempt < 3; attempt++) {
+            const slug = generateSlug(orgName);
+            const { data: orgResult, error: orgError } = await supabase
+              .from('organizations')
+              .insert([{ name: orgName, slug }])
+              .select()
+              .single();
+
+            if (!orgError) {
+              orgData = orgResult;
+              break;
+            }
+            if (orgError.code !== '23505' || !orgError.message?.includes('slug')) {
+              console.error('Org creation error:', orgError);
+              navigate('/dashboard', { replace: true });
+              return;
+            }
+          }
+
+          if (!orgData) {
+            console.error('Failed to create org after 3 slug retries');
             navigate('/dashboard', { replace: true });
             return;
           }
@@ -73,16 +96,17 @@ export function AuthCallback() {
             full_name: fullName,
             organization_id: orgData.id,
             avatar_url: avatarUrl,
-            role: 'admin',
+            role: 'owner_operator',
             first_login_at: now,
             last_login_at: now,
+            terms_accepted_at: now,
           }]);
 
           // Create user location access
           await supabase.from('user_location_access').insert([{
             user_id: authUser.id,
             organization_id: orgData.id,
-            role: 'admin',
+            role: 'owner',
           }]);
 
           // New user — could route to onboarding or dashboard

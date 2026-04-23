@@ -10,8 +10,8 @@ export interface FeatureDefinition {
   upgradeTier: PlanTier;       // The tier they need to upgrade TO
   upgradePrice: string;         // e.g., "$149/mo"
   upgradeLabel: string;         // e.g., "Professional"
-  /** If set, feature is only available to these org industry types. Omit for all. */
-  requiredOrgTypes?: string[];
+  /** If set, feature is only available to these kitchen types. Omit for all. */
+  requiredKitchenTypes?: string[];
 }
 
 const TIER_LEVEL: Record<PlanTier, number> = {
@@ -29,17 +29,17 @@ export function hasAccess(
   orgType?: string | null,
 ): boolean {
   if (featureId && !isFeatureEnabled(featureId)) return false;
-  if (featureId && orgType !== undefined && !hasOrgTypeAccess(featureId, orgType)) return false;
+  if (featureId && orgType !== undefined && !hasKitchenTypeAccess(featureId, orgType)) return false;
   return TIER_LEVEL[userTier] >= TIER_LEVEL[requiredTier];
 }
 
-/** Check if a feature is available for a given org industry type. */
-export function hasOrgTypeAccess(featureId: string, orgType: string | null): boolean {
+/** Check if a feature is available for a given kitchen type. */
+export function hasKitchenTypeAccess(featureId: string, kitchenType: string | null): boolean {
   const feature = FEATURES[featureId];
   if (!feature) return false;
-  if (!feature.requiredOrgTypes) return true;
-  if (!orgType) return false;
-  return feature.requiredOrgTypes.includes(orgType);
+  if (!feature.requiredKitchenTypes) return true;
+  if (!kitchenType) return false;
+  return feature.requiredKitchenTypes.includes(kitchenType);
 }
 
 export function getTierLevel(tier: PlanTier): number {
@@ -185,7 +185,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
     upgradeLabel: 'Founder',
-    requiredOrgTypes: ['RESTAURANT', 'HEALTHCARE', 'SENIOR_LIVING', 'K12_EDUCATION', 'HIGHER_EDUCATION'],
+    requiredKitchenTypes: ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
   },
   'usda-k12-module': {
     id: 'usda-k12-module',
@@ -197,7 +197,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
     upgradeLabel: 'Founder',
-    requiredOrgTypes: ['K12_EDUCATION'],
+    requiredKitchenTypes: ['k12_school'],
   },
   'mock-inspection': {
     id: 'mock-inspection',
@@ -216,26 +216,30 @@ export function getFeatureDefinition(id: string): FeatureDefinition | undefined 
   return FEATURES[id];
 }
 
-/** Check if SB 1383 module is enabled for a given organization. */
+/** Check if SB 1383 module is enabled for any location in the given org. */
 export async function isSB1383Enabled(organizationId: string): Promise<boolean> {
   const { supabase } = await import('./supabase');
   const { data } = await supabase
-    .from('organizations')
-    .select('sb1383_enrolled')
-    .eq('id', organizationId)
-    .single();
-  return data?.sb1383_enrolled === true;
+    .from('locations')
+    .select('sb1383_tier')
+    .eq('organization_id', organizationId)
+    .not('sb1383_tier', 'is', null)
+    .limit(1)
+    .maybeSingle();
+  return data !== null;
 }
 
-/** Check if K-12 module is enabled for a given organization. */
+/** Check if K-12 module is enabled for any location in the given org. */
 export async function isK12Enabled(organizationId: string): Promise<boolean> {
   const { supabase } = await import('./supabase');
   const { data } = await supabase
-    .from('organizations')
-    .select('k12_enrolled, org_type')
-    .eq('id', organizationId)
-    .single();
-  return data?.k12_enrolled === true || data?.org_type === 'k12';
+    .from('locations')
+    .select('k12_program')
+    .eq('organization_id', organizationId)
+    .eq('k12_program', true)
+    .limit(1)
+    .maybeSingle();
+  return data !== null;
 }
 
 // Get badge type for sidebar. Returns null if user has access.

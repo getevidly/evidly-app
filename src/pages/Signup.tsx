@@ -14,23 +14,7 @@ import {
   countyToSlug,
   type StateAbbrev,
 } from '../data/stateCounties';
-
-const KITCHEN_TYPES = [
-  'Restaurant',
-  'Hotel/Resort',
-  'Healthcare Facility',
-  'Senior Living',
-  'K-12 School',
-  'Higher Education',
-  'Corporate Cafeteria',
-  'Food Truck',
-  'Catering',
-  'Ghost Kitchen',
-  'Bar/Nightclub',
-  'Convention Center',
-  'Sports Venue',
-  'Casino',
-];
+import { KITCHEN_TYPES, labelToKitchenType } from '../config/kitchenTypes';
 
 const INPUT_STYLE: React.CSSProperties = {
   display: 'block',
@@ -109,13 +93,13 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [orgName, setOrgName] = useState('');
-  const [signupState, setSignupState] = useState<StateAbbrev>('CA');
+  const [signupState, setSignupState] = useState<StateAbbrev | ''>('');
   const [jurisdiction, setJurisdiction] = useState('');
   const [kitchenType, setKitchenType] = useState('');
-  const [sb1383Qualified, setSb1383Qualified] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [emailSent, setEmailSent] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { signUp } = useAuth();
@@ -156,42 +140,66 @@ export function Signup() {
   };
 
   const strength = getPasswordStrength();
+  const validateField = (name: string): string => {
+    switch (name) {
+      case 'fullName': return fullName.trim().length < 2 ? 'Full name is required (min 2 characters)' : '';
+      case 'email': return !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Valid email is required' : '';
+      case 'phone': {
+        const digits = phone.replace(/\D/g, '');
+        return digits.length < 10 ? 'Phone number is required (10 digits)' : '';
+      }
+      case 'orgName': return orgName.trim().length < 2 ? 'Organization name is required (min 2 characters)' : '';
+      case 'signupState': return !signupState ? 'State is required' : '';
+      case 'kitchenType': return !kitchenType ? 'Kitchen type is required' : '';
+      default: return '';
+    }
+  };
+
+  const handleBlur = (name: string) => {
+    const err = validateField(name);
+    setFieldErrors(prev => ({ ...prev, [name]: err }));
+  };
+
+  const allFieldsValid = fullName.trim().length >= 2
+    && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    && phone.replace(/\D/g, '').length >= 10
+    && orgName.trim().length >= 2
+    && !!signupState
+    && !!kitchenType
+    && allRequirementsMet
+    && passwordsMatch
+    && termsAccepted;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!allRequirementsMet) {
-      setError('Please meet all password requirements');
+    // Validate all fields
+    const errors: Record<string, string> = {};
+    for (const name of ['fullName', 'email', 'phone', 'orgName', 'signupState', 'kitchenType']) {
+      const err = validateField(name);
+      if (err) errors[name] = err;
+    }
+    if (!allRequirementsMet) errors.password = 'Please meet all password requirements';
+    if (!passwordsMatch) errors.confirmPassword = 'Passwords do not match';
+    if (!termsAccepted) errors.terms = 'You must accept the Terms of Service and Privacy Policy';
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setError('Please fix the errors above');
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (!kitchenType) {
-      setError('Please select your commercial kitchen type');
-      return;
-    }
-
-    if (!termsAccepted) {
-      setError('You must accept the Terms of Service and Privacy Policy');
+    const dbKitchenType = labelToKitchenType(kitchenType);
+    if (!dbKitchenType) {
+      setError('Invalid kitchen type selected');
       return;
     }
 
     setLoading(true);
     trackEvent('signup_start', { method: 'email' });
 
-    const isK12 = kitchenType === 'K-12 School';
-    const { error } = await signUp(email, password, fullName, phone, orgName, kitchenType, kitchenType, {
-      k12_enrolled: isK12,
-      k12_enrolled_at: isK12 ? new Date().toISOString() : null,
-      sb1383_enrolled: sb1383Qualified || isK12,
-      sb1383_enrolled_at: (sb1383Qualified || isK12) ? new Date().toISOString() : null,
-      org_type: isK12 ? 'k12' : 'standard',
-      jurisdiction_selection: jurisdiction || null,
-    });
+    const { error } = await signUp(email, password, fullName.trim(), phone, orgName.trim(), signupState, dbKitchenType);
 
     if (error) {
       setError(error.message);
@@ -350,13 +358,14 @@ export function Signup() {
               </div>
 
               <div>
-                <label htmlFor="phone" style={LABEL_STYLE}>Phone</label>
+                <label htmlFor="phone" style={LABEL_STYLE}>Phone <span style={{ color: colors.danger }}>*</span></label>
                 <input
-                  id="phone" name="phone" type="tel" autoComplete="tel"
+                  id="phone" name="phone" type="tel" autoComplete="tel" required
                   value={phone} onChange={handlePhoneChange} placeholder="(555) 555-5555"
-                  onFocus={focusIn} onBlur={focusOut}
-                  style={INPUT_STYLE}
+                  onFocus={focusIn} onBlur={(e) => { focusOut(e); handleBlur('phone'); }}
+                  style={{ ...INPUT_STYLE, ...(fieldErrors.phone ? { borderColor: colors.danger } : {}) }}
                 />
+                {fieldErrors.phone && <p style={{ marginTop: 4, fontSize: typography.size.xs, color: colors.danger }}>{fieldErrors.phone}</p>}
               </div>
 
               <div>
@@ -372,18 +381,20 @@ export function Signup() {
               {/* ── State + County / Jurisdiction dropdown ── */}
               <div className="grid grid-cols-[140px_1fr] gap-3">
                 <div>
-                  <label htmlFor="signupState" style={LABEL_STYLE}>State</label>
+                  <label htmlFor="signupState" style={LABEL_STYLE}>State <span style={{ color: colors.danger }}>*</span></label>
                   <select
-                    id="signupState" name="signupState"
+                    id="signupState" name="signupState" required
                     value={signupState}
                     onChange={(e) => { setSignupState(e.target.value as StateAbbrev); setJurisdiction(''); }}
-                    onFocus={focusIn} onBlur={focusOut}
-                    style={{ ...INPUT_STYLE, cursor: 'pointer' }}
+                    onFocus={focusIn} onBlur={(e) => { focusOut(e); handleBlur('signupState'); }}
+                    style={{ ...INPUT_STYLE, cursor: 'pointer', ...(fieldErrors.signupState ? { borderColor: colors.danger } : {}) }}
                   >
+                    <option value="">Select state...</option>
                     {SUPPORTED_STATES.map(s => (
                       <option key={s.abbrev} value={s.abbrev}>{s.name}</option>
                     ))}
                   </select>
+                  {fieldErrors.signupState && <p style={{ marginTop: 4, fontSize: typography.size.xs, color: colors.danger }}>{fieldErrors.signupState}</p>}
                 </div>
                 <div>
                   <label htmlFor="jurisdiction" style={LABEL_STYLE}>County / Jurisdiction</label>
@@ -419,68 +430,21 @@ export function Signup() {
               </div>
 
               <div>
-                <label htmlFor="kitchenType" style={LABEL_STYLE}>Commercial Kitchen Type</label>
+                <label htmlFor="kitchenType" style={LABEL_STYLE}>Commercial Kitchen Type <span style={{ color: colors.danger }}>*</span></label>
                 <select
                   id="kitchenType" name="kitchenType" required
                   value={kitchenType}
-                  onChange={(e) => {
-                    setKitchenType(e.target.value);
-                    setSb1383Qualified(e.target.value === 'K-12 School');
-                  }}
-                  onFocus={focusIn} onBlur={focusOut}
-                  style={{ ...INPUT_STYLE, cursor: 'pointer' }}
+                  onChange={(e) => setKitchenType(e.target.value)}
+                  onFocus={focusIn} onBlur={(e) => { focusOut(e); handleBlur('kitchenType'); }}
+                  style={{ ...INPUT_STYLE, cursor: 'pointer', ...(fieldErrors.kitchenType ? { borderColor: colors.danger } : {}) }}
                 >
                   <option value="">Select type...</option>
-                  {KITCHEN_TYPES.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                  {KITCHEN_TYPES.map((t) => (
+                    <option key={t.value} value={t.label}>{t.label}</option>
                   ))}
                 </select>
+                {fieldErrors.kitchenType && <p style={{ marginTop: 4, fontSize: typography.size.xs, color: colors.danger }}>{fieldErrors.kitchenType}</p>}
               </div>
-
-              {kitchenType && kitchenType !== 'K-12 School' && (
-                <div>
-                  <label style={{ ...LABEL_STYLE, marginBottom: 8 }}>
-                    Does your operation generate organic waste (food scraps, food-soiled paper) for disposal or recovery?
-                  </label>
-                  <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginBottom: 12 }}>
-                    California SB 1383 applies to most commercial food generators. Selecting yes enables the SB 1383 compliance module.
-                  </p>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <button
-                      type="button"
-                      onClick={() => setSb1383Qualified(true)}
-                      style={{
-                        flex: 1, padding: '10px 12px', borderRadius: radius.md,
-                        fontSize: typography.size.sm, fontWeight: typography.weight.semibold,
-                        fontFamily: typography.family.body,
-                        border: `2px solid ${sb1383Qualified ? colors.success : colors.border}`,
-                        background: sb1383Qualified ? colors.successSoft : colors.white,
-                        color: sb1383Qualified ? '#1B4332' : colors.textMuted,
-                        cursor: 'pointer',
-                        transition: `border-color ${transitions.fast}, background ${transitions.fast}`,
-                      }}
-                    >
-                      Yes — we generate organic waste
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSb1383Qualified(false)}
-                      style={{
-                        flex: 1, padding: '10px 12px', borderRadius: radius.md,
-                        fontSize: typography.size.sm, fontWeight: typography.weight.semibold,
-                        fontFamily: typography.family.body,
-                        border: `2px solid ${!sb1383Qualified ? colors.navy : colors.border}`,
-                        background: !sb1383Qualified ? colors.cream : colors.white,
-                        color: !sb1383Qualified ? colors.navy : colors.textMuted,
-                        cursor: 'pointer',
-                        transition: `border-color ${transitions.fast}, background ${transitions.fast}`,
-                      }}
-                    >
-                      No — not applicable
-                    </button>
-                  </div>
-                </div>
-              )}
 
               <div>
                 <label htmlFor="password" style={LABEL_STYLE}>Password</label>
@@ -599,15 +563,15 @@ export function Signup() {
 
               <button
                 type="submit"
-                disabled={loading || !allRequirementsMet || !passwordsMatch || !kitchenType || !termsAccepted}
+                disabled={loading || !allFieldsValid}
                 style={{
                   width: '100%', display: 'flex', justifyContent: 'center',
                   padding: '12px 16px', border: 'none', borderRadius: radius.lg,
                   boxShadow: shadows.sm, fontSize: typography.size.body,
                   fontWeight: typography.weight.semibold, fontFamily: typography.family.body,
                   color: colors.white, background: colors.navy,
-                  cursor: (loading || !allRequirementsMet || !passwordsMatch || !kitchenType || !termsAccepted) ? 'not-allowed' : 'pointer',
-                  opacity: (loading || !allRequirementsMet || !passwordsMatch || !kitchenType || !termsAccepted) ? 0.5 : 1,
+                  cursor: (loading || !allFieldsValid) ? 'not-allowed' : 'pointer',
+                  opacity: (loading || !allFieldsValid) ? 0.5 : 1,
                   transition: `background ${transitions.fast}, box-shadow ${transitions.fast}`,
                 }}
                 onMouseEnter={e => {

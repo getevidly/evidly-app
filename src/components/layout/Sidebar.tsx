@@ -17,7 +17,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
-import { useOrgType } from '../../hooks/useOrgType';
+import { useKitchenType } from '../../hooks/useKitchenType';
 import {
   getHomeItemForRole,
   getRoleConfig,
@@ -430,7 +430,7 @@ export function Sidebar() {
   const { signOut } = useAuth();
   const { branding } = useBranding();
   const { t, locale } = useTranslation();
-  const { orgType } = useOrgType();
+  const { kitchenType } = useKitchenType();
   const { unreadCount: intelUnread } = useUnreadSignals();
 
   const handleLogout = async () => {
@@ -441,7 +441,7 @@ export function Sidebar() {
   const isTestMode = useMemo(() => checkTestMode(), []);
 
   // ── Per-role configuration (with org-type overlays) ──
-  const roleConfig = useMemo(() => getRoleConfig(userRole, orgType), [userRole, orgType]);
+  const roleConfig = useMemo(() => getRoleConfig(userRole, kitchenType), [userRole, kitchenType]);
   const homeItem = useMemo(() => getHomeItemForRole(userRole), [userRole]);
   const topLevelItems = roleConfig.topLevelItems ?? [];
   const sections = roleConfig.sections;

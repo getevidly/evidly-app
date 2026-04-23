@@ -844,7 +844,7 @@ interface OrgTypeSectionOverlay {
 
 const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
   {
-    orgTypes: ['RESTAURANT', 'HEALTHCARE', 'SENIOR_LIVING', 'K12_EDUCATION', 'HIGHER_EDUCATION'],
+    orgTypes: ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
     roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager'],
     section: section('food-recovery', 'Food Recovery', '♻️',
       'Food Recovery (SB 1383)',
@@ -853,7 +853,7 @@ const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
     ),
   },
   {
-    orgTypes: ['K12_EDUCATION'],
+    orgTypes: ['k12_school'],
     roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef'],
     section: section('usda-k12', 'K-12 Food Safety', '🏫',
       'K-12 Food Safety & USDA',
@@ -865,13 +865,13 @@ const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
 
 // ── Public API ───────────────────────────────────────────
 
-/** Get the full sidebar configuration for a role, optionally filtered by org type */
-export function getRoleConfig(role: UserRole, orgType?: string | null): RoleSidebarConfig {
+/** Get the full sidebar configuration for a role, optionally filtered by kitchen type */
+export function getRoleConfig(role: UserRole, kitchenType?: string | null): RoleSidebarConfig {
   const base = ROLE_CONFIGS[role];
-  if (!orgType) return base;
+  if (!kitchenType) return base;
 
   const extraSections = ORG_TYPE_OVERLAYS
-    .filter(o => o.orgTypes.includes(orgType) && o.roles.includes(role))
+    .filter(o => o.orgTypes.includes(kitchenType) && o.roles.includes(role))
     .map(o => o.section);
 
   if (extraSections.length === 0) return base;
@@ -904,8 +904,8 @@ export function getHomeItemForRole(role: UserRole): NavItem {
 }
 
 /** Get sections for a role (backward-compatible wrapper) */
-export const getSectionsForRole = (role: string, orgType?: string | null): SidebarSection[] => {
-  const config = getRoleConfig(role as UserRole, orgType);
+export const getSectionsForRole = (role: string, kitchenType?: string | null): SidebarSection[] => {
+  const config = getRoleConfig(role as UserRole, kitchenType);
   return config ? config.sections : [];
 };
 

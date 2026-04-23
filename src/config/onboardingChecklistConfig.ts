@@ -5,13 +5,13 @@
 
 import type { UserRole } from '../contexts/RoleContext';
 
-// Industry codes used for onboarding step visibility filtering
+// Kitchen type codes used for onboarding step visibility filtering
 export type IndustryCode =
-  | 'RESTAURANT'
-  | 'HEALTHCARE'
-  | 'SENIOR_LIVING'
-  | 'K12_EDUCATION'
-  | 'HIGHER_EDUCATION';
+  | 'restaurant'
+  | 'healthcare_facility'
+  | 'senior_living'
+  | 'k12_school'
+  | 'higher_education';
 
 export type LocationTier = 'single' | 'multi' | 'enterprise';
 
@@ -212,7 +212,7 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     section: 'safety_setup',
     order: 5,
     roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
-    // Visibility controlled by sb1383_enrolled flag in resolveVisibleSteps
+    // Visibility controlled by isSB1383Enrolled flag in resolveVisibleSteps
   },
 
   // ── K-12 USDA ──────────────────────────────────────────
@@ -225,9 +225,9 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     actionLabel: 'Set Up K-12',
     section: 'safety_setup',
     order: 6,
-    industries: ['K12_EDUCATION'],
+    industries: ['k12_school'],
     roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
-    // Visibility controlled by k12_enrolled flag in resolveVisibleSteps
+    // Visibility controlled by isK12Enrolled flag in resolveVisibleSteps
   },
 
   // ── IoT Readiness ────────────────────────────────────────
@@ -336,11 +336,11 @@ export function resolveVisibleSteps(
     if (step.minTier && TIER_RANK[tier] < TIER_RANK[step.minTier]) {
       return false;
     }
-    // Enrollment flag filter — sb1383_setup only shows when sb1383_enrolled
+    // Enrollment flag filter — sb1383_setup only shows when SB 1383 enabled
     if (step.id === 'sb1383_setup' && !enrollmentFlags?.isSB1383Enrolled) {
       return false;
     }
-    // k12_setup only shows when k12_enrolled (industry filter already handles K12_EDUCATION)
+    // k12_setup only shows when K-12 enabled (industry filter already handles k12_school)
     if (step.id === 'k12_setup' && !enrollmentFlags?.isK12Enrolled) {
       return false;
     }

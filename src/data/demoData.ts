@@ -146,7 +146,7 @@ export function calcPillar(p: { ops: number; docs: number }): number {
 export const DEMO_ORG = {
   name: 'EvidLY Demo Org',
   locationCount: 3,
-  industry_type: 'RESTAURANT',
+  industry_type: 'restaurant',
   planned_location_count: 3,
 };
 
