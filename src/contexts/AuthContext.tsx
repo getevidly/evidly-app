@@ -175,87 +175,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string) => {
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Store ALL form data in user_metadata — org/profile/access INSERTs
+    // are deferred to EmailConfirmed.tsx where a confirmed session exists.
+    const { error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/email-confirmed`,
         data: {
           full_name: fullName,
+          phone,
+          org_name: orgName,
+          state,
           kitchen_type: kitchenType,
+          terms_accepted_at: new Date().toISOString(),
         },
       },
     });
 
-    if (authError || !authData.user) {
-      return { error: authError };
-    }
-
-    // Generate slug: lowercase org name + 6-char random suffix
-    const generateSlug = (name: string) => {
-      const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let suffix = '';
-      for (let i = 0; i < 6; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-      return `${base}-${suffix}`;
-    };
-
-    // Insert org with slug — retry up to 3x on unique violation (23505)
-    let orgData: { id: string } | null = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const slug = generateSlug(orgName);
-      const { data: orgResult, error: orgError } = await supabase
-        .from('organizations')
-        .insert([{ name: orgName, slug, state }])
-        .select()
-        .single();
-
-      if (!orgError) {
-        orgData = orgResult;
-        break;
-      }
-      if (orgError.code !== '23505' || !orgError.message?.includes('slug')) {
-        return { error: orgError };
-      }
-      // Slug collision — retry with fresh suffix
-    }
-
-    if (!orgData) {
-      return { error: { message: 'Failed to create organization — please try again' } };
-    }
-
-    const { error: profileError } = await supabase
-      .from('user_profiles')
-      .insert([
-        {
-          id: authData.user.id,
-          full_name: fullName,
-          phone,
-          organization_id: orgData.id,
-          role: 'owner_operator',
-          terms_accepted_at: new Date().toISOString(),
-        },
-      ]);
-
-    if (profileError) {
-      return { error: profileError };
-    }
-
-    const { error: accessError } = await supabase
-      .from('user_location_access')
-      .insert([
-        {
-          user_id: authData.user.id,
-          organization_id: orgData.id,
-          role: 'owner',
-        },
-      ]);
-
-    if (accessError) {
-      return { error: accessError };
-    }
-
-    return { error: null };
+    return { error: authError };
   };
 
   const signOut = async () => {
