@@ -507,7 +507,8 @@ export function Calendar() {
               recurrence: recurrence || 'one-time',
               updated_at: new Date().toISOString(),
             })
-            .eq('id', editingEvent.id);
+            .eq('id', editingEvent.id)
+            .eq('organization_id', orgId);
 
           if (error) throw error;
           showToast('Event updated successfully');
