@@ -1,71 +1,73 @@
-import { useEffect, useCallback } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
-const sizeMap = {
-  sm: 'max-w-md',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
-};
-
-export default function Modal({ open, onClose, title, children, size = 'md' }) {
-  const handleEscape = useCallback(
-    (e) => {
-      if (e.key === 'Escape') onClose();
-    },
-    [onClose],
-  );
-
+/**
+ * Modal — portaled overlay that renders into document.body.
+ *
+ * Because it portals out of the React tree, the overlay anchors to the
+ * viewport regardless of any containing-block ancestors (transform,
+ * filter, isolate, contain, etc.) in the component tree above.
+ *
+ * Props:
+ *   isOpen        boolean  — controls render
+ *   onClose       function — called on Escape, backdrop click, or close button
+ *   children      ReactNode
+ *   size          'sm' | 'md' | 'lg' | 'xl' | 'full'  (default 'md')
+ *   closeOnBackdrop  boolean (default true)
+ *   closeOnEscape    boolean (default true)
+ *   className     string — applied to the content card
+ *   overlayClassName string — applied to the backdrop
+ */
+export function Modal({
+  isOpen,
+  onClose,
+  children,
+  size = 'md',
+  closeOnBackdrop = true,
+  closeOnEscape = true,
+  className = '',
+  overlayClassName = '',
+}) {
+  // Escape key
   useEffect(() => {
-    if (!open) return;
-    document.addEventListener('keydown', handleEscape);
+    if (!isOpen || !closeOnEscape) return;
+    const handler = (e) => { if (e.key === 'Escape') onClose?.(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, closeOnEscape, onClose]);
+
+  // Body scroll lock
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
-    };
-  }, [open, handleEscape]);
+    return () => { document.body.style.overflow = prev; };
+  }, [isOpen]);
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-navy/40 modal-backdrop-enter"
-        onClick={onClose}
-      />
+  const sizeClass = {
+    sm:   'max-w-sm',
+    md:   'max-w-md',
+    lg:   'max-w-2xl',
+    xl:   'max-w-4xl',
+    full: 'max-w-[95vw]',
+  }[size] || 'max-w-md';
 
-      {/* Content */}
-      <div
-        className={`relative w-full ${sizeMap[size] || sizeMap.md} max-h-[90vh] flex flex-col bg-white rounded-xl shadow-xl modal-content-enter`}
-      >
-        {/* Header */}
-        {title && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-navy/10 flex-shrink-0">
-            <h2 className="text-base font-semibold text-navy">{title}</h2>
-            <button
-              onClick={onClose}
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-navy/40 hover:text-navy hover:bg-navy/5 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        {/* Body */}
-        <div className={`flex-1 overflow-y-auto min-h-0 ${title ? 'p-5' : 'p-5 pt-4'}`}>
-          {!title && (
-            <button
-              onClick={onClose}
-              className="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-lg text-navy/40 hover:text-navy hover:bg-navy/5 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-          {children}
-        </div>
+  const overlay = (
+    <div
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 ${overlayClassName}`}
+      onClick={(e) => { if (closeOnBackdrop && e.target === e.currentTarget) onClose?.(); }}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className={`bg-white rounded-xl shadow-2xl w-full ${sizeClass} max-h-[90vh] overflow-y-auto ${className}`}>
+        {children}
       </div>
     </div>
   );
+
+  return createPortal(overlay, document.body);
 }
+
+export default Modal;

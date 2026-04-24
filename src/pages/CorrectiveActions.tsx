@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Modal } from '../components/ui/Modal';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -579,8 +580,7 @@ export function CorrectiveActions() {
 
       {/* ── Create CA Modal ──────────────────────────────────── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-content-enter">
+        <Modal isOpen onClose={() => setShowCreateModal(false)} size="lg" className="flex flex-col">
             {/* Modal header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10 flex-shrink-0">
               <h2 className="text-lg font-bold" style={{ color: NAVY }}>New Corrective Action</h2>
@@ -867,8 +867,7 @@ export function CorrectiveActions() {
                 </button>
               )}
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
 
       {/* Demo upgrade prompt */}

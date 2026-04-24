@@ -9,6 +9,7 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
@@ -2179,8 +2180,8 @@ export function Checklists() {
 
       {/* Create Template Modal */}
       {showTemplateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+        <Modal isOpen onClose={() => setShowTemplateModal(false)} size="lg">
+          <div className="p-4 sm:p-6">
             <h3 className="text-2xl font-bold tracking-tight mb-6">{t('checklists.createTemplate')}</h3>
 
             <form onSubmit={handleCreateTemplate} className="space-y-6">
@@ -2296,13 +2297,13 @@ export function Checklists() {
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Complete Checklist Modal */}
       {showCompleteModal && selectedTemplate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+        <Modal isOpen onClose={() => setShowCompleteModal(false)} size="lg">
+          <div className="p-4 sm:p-6">
             <div className="mb-6">
               <h3 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
@@ -2349,7 +2350,7 @@ export function Checklists() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {showUpgrade && (

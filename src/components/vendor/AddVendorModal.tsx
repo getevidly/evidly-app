@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, XCircle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import { useCreateVendor } from '../../hooks/useCreateVendor';
 import { VENDOR_CATEGORIES, getCategoryById } from '../../config/vendorCategories';
@@ -153,13 +154,7 @@ export function AddVendorModal({
   }
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-50 modal-backdrop-enter" onClick={handleClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div
-          className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter"
-          onClick={(e) => e.stopPropagation()}
-        >
+    <Modal isOpen onClose={handleClose} size="lg" className="border border-[#1E2D4D]/10">
           {/* Header */}
           <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/10 sticky top-0 bg-white rounded-t-xl z-10">
             <div className="flex items-center justify-between">
@@ -353,8 +348,6 @@ export function AddVendorModal({
               {submitting ? 'Adding...' : 'Add Vendor'}
             </button>
           </div>
-        </div>
-      </div>
-    </>
+    </Modal>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Modal } from '../ui/Modal';
 import { X, Plus } from 'lucide-react';
 import type { DefSeverity } from '../../data/deficienciesDemoData';
 
@@ -50,11 +51,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
-      <div
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl border"
-        style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
-      >
+    <Modal isOpen onClose={onClose} size="lg" className="border border-[#D1D9E6]">
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Plus className="w-5 h-5" style={{ color: '#1E2D4D' }} />
@@ -191,7 +188,6 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
             Add Deficiency
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { useRole } from '../contexts/RoleContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
@@ -1326,8 +1327,8 @@ export function IncidentLog() {
 
         {/* Take Action Modal */}
         {showActionForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+          <Modal isOpen onClose={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion(''); }} size="lg">
+            <div className="p-4 sm:p-6">
               <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.takeCorrectiveAction')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1412,13 +1413,13 @@ export function IncidentLog() {
                 </div>
               </div>
             </div>
-          </div>
+          </Modal>
         )}
 
         {/* Resolve Modal */}
         {showResolveForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+          <Modal isOpen onClose={() => setShowResolveForm(false)} size="lg">
+            <div className="p-4 sm:p-6">
               <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.resolveIncident')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1490,7 +1491,7 @@ export function IncidentLog() {
                 </div>
               </div>
             </div>
-          </div>
+          </Modal>
         )}
 
         {/* Toast notification */}
@@ -1505,9 +1506,9 @@ export function IncidentLog() {
   }
 
   // ── Create Incident Modal ──────────────────────────────────────
-  const CreateModal = showCreateForm ? (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+  const CreateModal = (
+    <Modal isOpen={!!showCreateForm} onClose={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }} size="lg">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <h3 className="text-xl font-bold text-[#1E2D4D]">{t('incidents.reportNewIncident')}</h3>
           <button
@@ -1640,8 +1641,8 @@ export function IncidentLog() {
           </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    </Modal>
+  );
 
   // ── List View ──────────────────────────────────────────────────
   return (

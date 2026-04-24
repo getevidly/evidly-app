@@ -8,6 +8,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
 import { TeamInviteModal } from '../components/TeamInviteModal';
+import { Modal } from '../components/ui/Modal';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -900,8 +901,8 @@ export function Team() {
 
       {/* Member Details Modal */}
       {showDetailsModal && selectedMember && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+        <Modal isOpen onClose={() => setShowDetailsModal(false)} size="lg">
+          <div className="p-4 sm:p-6">
             <div className="flex justify-between items-start mb-6 flex-wrap gap-2">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1E2D4D] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
@@ -1097,13 +1098,13 @@ export function Team() {
               )}
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Reset Password Confirmation Modal */}
       {showResetModal && resetMember && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-md modal-content-enter">
+        <Modal isOpen onClose={() => { setShowResetModal(false); setResetMember(null); }} size="md">
+          <div className="p-4 sm:p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <KeyRound className="h-5 w-5 text-amber-600" />
@@ -1137,7 +1138,7 @@ export function Team() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       <TeamInviteModal
@@ -1163,8 +1164,8 @@ export function Team() {
 
       {/* Emulation Not Available in Demo Mode Modal */}
       {showEmulationDemoModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-5 w-full max-w-md modal-content-enter">
+        <Modal isOpen onClose={() => setShowEmulationDemoModal(false)} size="md">
+          <div className="p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <ShieldAlert className="h-5 w-5 text-amber-600" />
@@ -1183,7 +1184,7 @@ export function Team() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );

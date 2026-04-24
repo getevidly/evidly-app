@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { RequestServiceModal } from '../components/services/RequestServiceModal';
 import { getScoreColor } from '../lib/complianceScoring';
 import { useAuth } from '../contexts/AuthContext';
@@ -1680,8 +1681,7 @@ export function Equipment() {
 
         {/* ── Add / Edit Equipment Modal ─────────────────────────── */}
         {showForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={() => setShowForm(false)}>
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 modal-content-enter" onClick={e => e.stopPropagation()}>
+          <Modal isOpen onClose={() => setShowForm(false)} size="lg" className="border border-[#1E2D4D]/10">
               <div className="p-5 border-b border-[#1E2D4D]/10 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-[#1E2D4D]">{t('pages.equipment.addEquipment')}</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-[#1E2D4D]/5"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
@@ -1835,8 +1835,7 @@ export function Equipment() {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
+          </Modal>
         )}
 
         {/* Toast notification */}

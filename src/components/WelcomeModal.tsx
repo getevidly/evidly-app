@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Mail, Phone, X } from 'lucide-react';
+import { Modal } from './ui/Modal';
 import { FOUNDER } from '../lib/founderConfig';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -39,11 +40,8 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
   };
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-    >
-      <div data-testid="welcome-modal" className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={visible} onClose={handleGetStarted} size="lg" closeOnBackdrop={false}>
+      <div data-testid="welcome-modal" className="relative">
         <button
           onClick={handleGetStarted}
           className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors z-10"
@@ -143,6 +141,6 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

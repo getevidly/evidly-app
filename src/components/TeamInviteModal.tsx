@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Mail, UserPlus, Phone, Users, MapPin } from 'lucide-react';
+import { Modal } from './ui/Modal';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 
@@ -275,14 +276,11 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
     }
   };
 
-  if (!isOpen) return null;
-
   const bulkEmailCount = parseBulkEmails(bulkEmails).length;
   const isBulk = mode === 'bulk';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-xl border border-[#1E2D4D]/10 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
+    <Modal isOpen={isOpen} onClose={handleClose} size={isBulk ? 'lg' : 'md'} className="border border-[#1E2D4D]/10">
         <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/10 sticky top-0 bg-white rounded-t-xl z-10">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#A08C5A]/10 rounded-lg">
@@ -477,7 +475,6 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }
