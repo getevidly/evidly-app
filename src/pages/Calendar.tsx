@@ -606,11 +606,17 @@ export function Calendar() {
       setCustomEvents(prev => prev.filter(e => e.id !== selectedEvent.id));
       showToast('Event deleted successfully');
     } else {
+      const orgId = profile?.organization_id;
+      if (!orgId) {
+        showToast('Unable to delete — missing organization context.');
+        return;
+      }
       try {
         const { error } = await supabase
           .from('calendar_events')
           .delete()
-          .eq('id', selectedEvent.id);
+          .eq('id', selectedEvent.id)
+          .eq('organization_id', orgId);
 
         if (error) throw error;
         showToast('Event deleted successfully');
@@ -624,7 +630,7 @@ export function Calendar() {
 
     setShowDeleteConfirm(false);
     setSelectedEvent(null);
-  }, [selectedEvent, isDemoMode, showToast]);
+  }, [selectedEvent, isDemoMode, profile?.organization_id, showToast]);
 
   // Fetch calendar events from multiple Supabase tables in live mode
   const viewMonth = currentDate.getFullYear() * 12 + currentDate.getMonth();
