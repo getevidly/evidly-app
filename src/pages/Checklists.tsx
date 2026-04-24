@@ -803,45 +803,47 @@ export function Checklists() {
 
   const fetchCompletions = async () => {
     try {
-      // Step 1: fetch completions without user_profiles embed (no FK chain)
+      // Query 1: flat select — no PostgREST embeds (FK chains are broken)
       const { data, error } = await supabase
         .from('checklist_template_completions')
-        .select(`
-          id,
-          completed_at,
-          completed_by,
-          score_percentage,
-          checklist_templates(name)
-        `)
+        .select('id, completed_at, completed_by, template_id, score_percentage')
         .eq('organization_id', profile?.organization_id)
         .order('completed_at', { ascending: false })
         .limit(20);
 
       if (error) throw error;
 
-      // Step 2: batch-fetch user names separately
+      // Query 2: batch-fetch user names
       const userIds = [...new Set((data ?? []).map((c: any) => c.completed_by).filter(Boolean))];
       let userMap: Record<string, string> = {};
-
       if (userIds.length > 0) {
-        const { data: profiles, error: profilesError } = await supabase
+        const { data: profiles } = await supabase
           .from('user_profiles')
           .select('id, full_name')
           .in('id', userIds);
-
-        if (profilesError) {
-          console.error('Failed to fetch user names:', profilesError);
-          // Non-fatal — fall through with empty map, names will show "Unknown"
-        } else if (profiles) {
+        if (profiles) {
           userMap = Object.fromEntries(profiles.map((p: any) => [p.id, p.full_name ?? 'Unknown']));
         }
       }
 
-      // Step 3: merge names into completion records
+      // Query 3: batch-fetch template names
+      const templateIds = [...new Set((data ?? []).map((c: any) => c.template_id).filter(Boolean))];
+      let templateMap: Record<string, string> = {};
+      if (templateIds.length > 0) {
+        const { data: tpls } = await supabase
+          .from('checklist_templates')
+          .select('id, name')
+          .in('id', templateIds);
+        if (tpls) {
+          templateMap = Object.fromEntries(tpls.map((t: any) => [t.id, t.name ?? 'Unknown']));
+        }
+      }
+
+      // Merge
       if (data) {
         const formattedCompletions = data.map((completion: any) => ({
           id: completion.id,
-          template_name: completion.checklist_templates?.name || 'Unknown',
+          template_name: templateMap[completion.template_id as string] || 'Unknown',
           completed_by_name: userMap[completion.completed_by as string] || 'Unknown',
           score_percentage: completion.score_percentage || 0,
           completed_at: completion.completed_at,

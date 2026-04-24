@@ -1,4 +1,5 @@
 import { ReactNode, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle } from 'lucide-react';
 import type { ReadingMethod } from './types';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
@@ -14,7 +15,7 @@ interface ModalShellProps {
 
 export function ModalShell({ open, onClose, title, subtitle, children }: ModalShellProps) {
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-[95vw] sm:w-auto sm:min-w-[440px] max-w-lg max-h-[90vh] flex flex-col relative modal-content-enter">
         <div className="flex-shrink-0 p-5 pb-0">
@@ -33,7 +34,8 @@ export function ModalShell({ open, onClose, title, subtitle, children }: ModalSh
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
