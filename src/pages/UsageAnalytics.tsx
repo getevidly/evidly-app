@@ -442,7 +442,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             to: 'usage@getevidly.com',
-            from: 'EvidLY Platform <noreply@getevidly.com>',
+            from: 'EvidLY <noreply@getevidly.com>',
             subject: `EvidLY Usage Report — ${periodLabel} — ${today}`,
             html: emailHtml,
           }),

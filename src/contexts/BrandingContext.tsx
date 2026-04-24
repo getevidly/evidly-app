@@ -57,7 +57,7 @@ export const DEFAULT_BRANDING: BrandingConfig = {
     sidebarText: '#ffffff',
   },
   loginWelcomeText: 'Welcome to EvidLY',
-  supportEmail: 'support@evidly.com',
+  supportEmail: 'support@getevidly.com',
   customDomain: '',
   sso: { enabled: false, provider: null, enforce: false, entityId: '', ssoUrl: '' },
   features: {

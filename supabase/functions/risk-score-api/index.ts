@@ -153,7 +153,7 @@ Deno.serve(async (req: Request) => {
       api_version: "1.0",
       _links: {
         self: `/risk-score${locationId ? `?location_id=${locationId}` : ""}`,
-        documentation: "https://docs.evidly.com/api/risk-score",
+        documentation: "https://docs.getevidly.com/api/risk-score",
       },
     });
   } catch (error) {

@@ -589,13 +589,14 @@ export function CorrectiveActions() {
               </button>
             </div>
 
-            {/* Tab toggle */}
-            <div className="flex border-b border-[#1E2D4D]/10 px-6">
+            {/* Tab toggle — always visible regardless of active tab */}
+            <div className="flex flex-shrink-0 border-b border-[#1E2D4D]/10 px-6">
               <button
+                type="button"
                 onClick={() => setCreateTab('template')}
-                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   createTab === 'template'
-                    ? 'border-current text-[#1E2D4D]'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
                     : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
               >
@@ -603,10 +604,11 @@ export function CorrectiveActions() {
                 From Template
               </button>
               <button
+                type="button"
                 onClick={() => setCreateTab('scratch')}
-                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   createTab === 'scratch'
-                    ? 'border-current text-[#1E2D4D]'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
                     : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
               >

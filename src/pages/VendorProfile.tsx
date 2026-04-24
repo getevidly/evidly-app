@@ -701,11 +701,11 @@ export function VendorProfile() {
               </div>
             </div>
 
-            {/* EvidLY Platform Stats */}
+            {/* EvidLY Stats */}
             <div className="mt-8 bg-gradient-to-r from-[#eef4f8] to-[#f0f7fb] rounded-xl border border-[#b8d4e8] p-5">
               <div className="flex items-center gap-2 mb-4">
                 <EvidlyIcon size={20} />
-                <h3 className="text-sm font-semibold text-[#1E2D4D]">EvidLY Platform Stats</h3>
+                <h3 className="text-sm font-semibold text-[#1E2D4D]">EvidLY Stats</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">

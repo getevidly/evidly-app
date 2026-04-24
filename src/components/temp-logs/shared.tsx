@@ -15,19 +15,23 @@ interface ModalShellProps {
 export function ModalShell({ open, onClose, title, subtitle, children }: ModalShellProps) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[440px] max-w-lg max-h-[90vh] overflow-y-auto relative modal-content-enter">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors bg-transparent border-none cursor-pointer"
-          aria-label="Close"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <h3 className="text-xl font-bold text-[#1E2D4D] mb-1 pr-8">{title}</h3>
-        {subtitle && <p className="text-sm text-[#1E2D4D]/50 mb-5">{subtitle}</p>}
-        {!subtitle && <div className="mb-5" />}
-        {children}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-[95vw] sm:w-auto sm:min-w-[440px] max-w-lg max-h-[90vh] flex flex-col relative modal-content-enter">
+        <div className="flex-shrink-0 p-5 pb-0">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors bg-transparent border-none cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <h3 className="text-xl font-bold text-[#1E2D4D] mb-1 pr-8">{title}</h3>
+          {subtitle && <p className="text-sm text-[#1E2D4D]/50 mb-5">{subtitle}</p>}
+          {!subtitle && <div className="mb-5" />}
+        </div>
+        <div className="flex-1 overflow-y-auto px-5 pb-5">
+          {children}
+        </div>
       </div>
     </div>
   );

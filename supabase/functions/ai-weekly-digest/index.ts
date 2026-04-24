@@ -285,7 +285,7 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  from: "EvidLY <digest@evidly.com>",
+                  from: "EvidLY <digest@getevidly.com>",
                   to: email,
                   subject: `Weekly Compliance Digest — ${org.name}`,
                   html: `
