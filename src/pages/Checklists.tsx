@@ -810,7 +810,7 @@ export function Checklists() {
           completed_at,
           score_percentage,
           checklist_templates(name),
-          user_profiles!checklist_template_completions_completed_by_fkey(full_name)
+          user_profiles!completed_by(full_name)
         `)
         .eq('organization_id', profile?.organization_id)
         .order('completed_at', { ascending: false })
