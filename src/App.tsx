@@ -12,7 +12,6 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { EmulationProvider } from './contexts/EmulationContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { EnvBadge } from './components/ui/EnvBadge';
 import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
@@ -516,7 +515,6 @@ function ProtectedLayout() {
     return (
       <AdminShell>
         {content}
-        <EnvBadge />
       </AdminShell>
     );
   }
@@ -530,7 +528,6 @@ function ProtectedLayout() {
           <DemoTalkingPoints />
         </Suspense>
       )}
-      <EnvBadge />
     </Layout>
   );
 }
