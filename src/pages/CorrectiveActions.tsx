@@ -582,7 +582,7 @@ export function CorrectiveActions() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-content-enter">
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10 flex-shrink-0">
               <h2 className="text-lg font-bold" style={{ color: NAVY }}>New Corrective Action</h2>
               <button onClick={() => setShowCreateModal(false)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                 <X size={20} />
@@ -618,7 +618,7 @@ export function CorrectiveActions() {
             </div>
 
             {/* Modal body */}
-            <div className="flex-1 overflow-y-auto px-6 py-4">
+            <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4">
               {createTab === 'template' ? (
                 <div className="space-y-4">
                   {/* Category chips */}
@@ -849,7 +849,7 @@ export function CorrectiveActions() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#1E2D4D]/10">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#1E2D4D]/10 flex-shrink-0">
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5"

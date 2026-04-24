@@ -38,11 +38,11 @@ export default function Modal({ open, onClose, title, children, size = 'md' }) {
 
       {/* Content */}
       <div
-        className={`relative w-full ${sizeMap[size] || sizeMap.md} bg-white rounded-xl shadow-xl modal-content-enter`}
+        className={`relative w-full ${sizeMap[size] || sizeMap.md} max-h-[90vh] flex flex-col bg-white rounded-xl shadow-xl modal-content-enter`}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-navy/10">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-navy/10 flex-shrink-0">
             <h2 className="text-base font-semibold text-navy">{title}</h2>
             <button
               onClick={onClose}
@@ -54,7 +54,7 @@ export default function Modal({ open, onClose, title, children, size = 'md' }) {
         )}
 
         {/* Body */}
-        <div className={title ? 'p-5' : 'p-5 pt-4'}>
+        <div className={`flex-1 overflow-y-auto min-h-0 ${title ? 'p-5' : 'p-5 pt-4'}`}>
           {!title && (
             <button
               onClick={onClose}

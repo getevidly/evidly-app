@@ -131,7 +131,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
           {/* Name */}
           <div>
             <label className={labelClass}>Task Name *</label>

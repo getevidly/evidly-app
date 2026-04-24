@@ -29,7 +29,7 @@ export function ModalShell({ open, onClose, title, subtitle, children }: ModalSh
           {subtitle && <p className="text-sm text-[#1E2D4D]/50 mb-5">{subtitle}</p>}
           {!subtitle && <div className="mb-5" />}
         </div>
-        <div className="flex-1 overflow-y-auto px-5 pb-5">
+        <div className="flex-1 overflow-y-auto min-h-0 px-5 pb-5">
           {children}
         </div>
       </div>
