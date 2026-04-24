@@ -642,33 +642,40 @@ export function HACCP() {
     doc.text(`Reporting period: Last ${exportRange === 'all' ? 'all available' : exportRange + ' days'}`, m, y);
     y += 8;
 
-    // Demo checklist completion data
-    const demoChecklists = [
-      { name: 'Opening Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Today, 6:15 AM' },
-      { name: 'Mid-Shift Check', score: '83%', completedBy: 'Sarah Chen', date: 'Today, 11:30 AM' },
-      { name: 'Closing Checklist', score: '100%', completedBy: 'Emma Davis', date: 'Yesterday, 9:45 PM' },
-      { name: 'Receiving Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Yesterday, 7:00 AM' },
-      { name: 'Opening Checklist', score: '100%', completedBy: 'Sarah Chen', date: '2 days ago, 6:20 AM' },
-    ];
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Checklist', m, y);
-    doc.text('Score', m + 70, y);
-    doc.text('Completed By', m + 95, y);
-    doc.text('Date', m + 135, y);
-    y += 2;
-    doc.setDrawColor(200, 200, 200);
-    doc.line(m, y, pageW - m, y);
-    y += 5;
-    doc.setFont('helvetica', 'normal');
-    demoChecklists.forEach(cl => {
-      checkPage(8);
-      doc.text(cl.name, m, y);
-      doc.text(cl.score, m + 70, y);
-      doc.text(cl.completedBy, m + 95, y);
-      doc.text(cl.date, m + 135, y);
-      y += 6;
-    });
+    // Checklist completion data — demo uses hardcoded samples, real uses completions array
+    if (isDemoMode) {
+      const demoChecklists = [
+        { name: 'Opening Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Today, 6:15 AM' },
+        { name: 'Mid-Shift Check', score: '83%', completedBy: 'Sarah Chen', date: 'Today, 11:30 AM' },
+        { name: 'Closing Checklist', score: '100%', completedBy: 'Emma Davis', date: 'Yesterday, 9:45 PM' },
+        { name: 'Receiving Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Yesterday, 7:00 AM' },
+        { name: 'Opening Checklist', score: '100%', completedBy: 'Sarah Chen', date: '2 days ago, 6:20 AM' },
+      ];
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Checklist', m, y);
+      doc.text('Score', m + 70, y);
+      doc.text('Completed By', m + 95, y);
+      doc.text('Date', m + 135, y);
+      y += 2;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(m, y, pageW - m, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      demoChecklists.forEach(cl => {
+        checkPage(8);
+        doc.text(cl.name, m, y);
+        doc.text(cl.score, m + 70, y);
+        doc.text(cl.completedBy, m + 95, y);
+        doc.text(cl.date, m + 135, y);
+        y += 6;
+      });
+    } else {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('No checklist completion data available for this reporting period.', m, y);
+      y += 8;
+    }
 
     // ── Temperature Log Summary ──
     y += 10;
@@ -678,32 +685,39 @@ export function HACCP() {
     doc.text('Temperature Log Summary', m, y);
     y += 10;
 
-    const demoTempLogs = [
-      { equipment: 'Walk-in Cooler', temp: '38°F', range: '32-41°F', status: 'PASS', time: 'Today, 6:10 AM' },
-      { equipment: 'Walk-in Freezer', temp: '-2°F', range: '0°F or below', status: 'PASS', time: 'Today, 6:12 AM' },
-      { equipment: 'Hot Hold Cabinet', temp: '142°F', range: '135°F or above', status: 'PASS', time: 'Today, 11:00 AM' },
-      { equipment: 'Prep Table', temp: '40°F', range: '32-41°F', status: 'PASS', time: 'Today, 10:30 AM' },
-    ];
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Equipment', m, y);
-    doc.text('Temp', m + 50, y);
-    doc.text('Range', m + 75, y);
-    doc.text('Status', m + 105, y);
-    doc.text('Time', m + 125, y);
-    y += 2;
-    doc.line(m, y, pageW - m, y);
-    y += 5;
-    doc.setFont('helvetica', 'normal');
-    demoTempLogs.forEach(tl => {
-      checkPage(8);
-      doc.text(tl.equipment, m, y);
-      doc.text(tl.temp, m + 50, y);
-      doc.text(tl.range, m + 75, y);
-      doc.text(tl.status, m + 105, y);
-      doc.text(tl.time, m + 125, y);
-      y += 6;
-    });
+    if (isDemoMode) {
+      const demoTempLogs = [
+        { equipment: 'Walk-in Cooler', temp: '38°F', range: '32-41°F', status: 'PASS', time: 'Today, 6:10 AM' },
+        { equipment: 'Walk-in Freezer', temp: '-2°F', range: '0°F or below', status: 'PASS', time: 'Today, 6:12 AM' },
+        { equipment: 'Hot Hold Cabinet', temp: '142°F', range: '135°F or above', status: 'PASS', time: 'Today, 11:00 AM' },
+        { equipment: 'Prep Table', temp: '40°F', range: '32-41°F', status: 'PASS', time: 'Today, 10:30 AM' },
+      ];
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Equipment', m, y);
+      doc.text('Temp', m + 50, y);
+      doc.text('Range', m + 75, y);
+      doc.text('Status', m + 105, y);
+      doc.text('Time', m + 125, y);
+      y += 2;
+      doc.line(m, y, pageW - m, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      demoTempLogs.forEach(tl => {
+        checkPage(8);
+        doc.text(tl.equipment, m, y);
+        doc.text(tl.temp, m + 50, y);
+        doc.text(tl.range, m + 75, y);
+        doc.text(tl.status, m + 105, y);
+        doc.text(tl.time, m + 125, y);
+        y += 6;
+      });
+    } else {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('No temperature log data available for this reporting period.', m, y);
+      y += 8;
+    }
 
     // ── Corrective Actions ──
     doc.addPage();

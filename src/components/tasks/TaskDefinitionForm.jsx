@@ -119,7 +119,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 modal-backdrop-enter">
       <div
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl"
+        className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl"
         style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
@@ -131,7 +131,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1">
           {/* Name */}
           <div>
             <label className={labelClass}>Task Name *</label>

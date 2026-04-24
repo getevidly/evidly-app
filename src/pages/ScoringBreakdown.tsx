@@ -4,6 +4,7 @@ import {
   ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, XCircle,
   ClipboardCheck, Info,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
@@ -11,8 +12,11 @@ import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { locations } from '../data/demoData';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
 import { ErrorState } from '../components/shared/PageStates';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
+import { supabase } from '../lib/supabase';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -115,10 +119,34 @@ function StatusIcon({ status }: { status: string }) {
 export function ScoringBreakdown() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
   usePageTitle('Scoring Breakdown');
   const [pageError, setPageError] = useState<string | null>(null);
+  const [showAddLocation, setShowAddLocation] = useState(false);
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
+
+  const handleAddLocation = async (data: NewLocationData) => {
+    try {
+      const orgId = profile?.organization_id;
+      if (!orgId) { toast.error('No organization found'); return; }
+      const { error } = await supabase.from('locations').insert({
+        organization_id: orgId,
+        name: data.name,
+        code: data.code,
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zip: data.zip,
+        jurisdiction_slug: data.jurisdictionSlug,
+      });
+      if (error) throw error;
+      setShowAddLocation(false);
+      toast.success(`${data.name} added successfully`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to add location');
+    }
+  };
 
   // Error state
   if (pageError) {
@@ -137,7 +165,7 @@ export function ScoringBreakdown() {
           <ClipboardCheck className="mx-auto h-12 w-12 text-[#1E2D4D]/30 mb-4" />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No food safety data yet</h2>
           <p className="text-sm text-[#1E2D4D]/50 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
-          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
+          <button onClick={() => setShowAddLocation(true)} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
           <br />
@@ -145,6 +173,11 @@ export function ScoringBreakdown() {
             Back to Dashboard
           </button>
         </div>
+        <AddLocationModal
+          open={showAddLocation}
+          onClose={() => setShowAddLocation(false)}
+          onSave={handleAddLocation}
+        />
       </div>
     );
   }

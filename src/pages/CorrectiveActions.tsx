@@ -681,9 +681,18 @@ export function CorrectiveActions() {
                 /* From Scratch / Form view */
                 <div className="space-y-4">
                   {createForm.templateId && (
-                    <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 bg-indigo-50 px-3 py-2 rounded-lg">
-                      <BookOpen size={12} className="text-indigo-500" />
-                      Pre-filled from template. Edit any field below.
+                    <div className="flex items-center justify-between text-xs bg-indigo-50 px-3 py-2 rounded-lg">
+                      <div className="flex items-center gap-2 text-[#1E2D4D]/70">
+                        <BookOpen size={12} className="text-indigo-500" />
+                        Using template: <span className="font-semibold text-[#1E2D4D]">{createForm.title}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCreateTab('template')}
+                        className="text-indigo-600 hover:text-indigo-800 font-medium"
+                      >
+                        Change
+                      </button>
                     </div>
                   )}
 

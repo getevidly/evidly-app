@@ -633,7 +633,7 @@ export function Sidebar() {
             <SidebarNavItem
               key={item.id}
               item={item}
-              isActive={location.pathname === item.path}
+              isActive={location.pathname === item.path || location.pathname.startsWith(item.path + '/')}
               onClick={() => navigate(item.path)}
               displayLabel={getLabel(item)}
               displayDescription={getDescription(item)}
@@ -761,7 +761,7 @@ export function Sidebar() {
                     <SidebarNavItem
                       key={item.id}
                       item={effectiveItem}
-                      isActive={location.pathname === item.path}
+                      isActive={location.pathname === item.path || location.pathname.startsWith(item.path + '/')}
                       onClick={() => navigate(item.path)}
                       displayLabel={getLabel(item)}
                       displayDescription={getDescription(item)}

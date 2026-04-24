@@ -761,11 +761,11 @@ export function Checklists() {
   };
 
   useEffect(() => {
-    if (profile?.organization_id) {
+    if (!isDemoMode && profile?.organization_id) {
       fetchTemplates();
       fetchCompletions();
     }
-  }, [profile]);
+  }, [profile, isDemoMode]);
 
   useEffect(() => {
     if (templateItems.length > 0) {
@@ -796,7 +796,8 @@ export function Checklists() {
         setTemplates(formattedTemplates);
       }
     } catch (err) {
-      setPageError(err instanceof Error ? err.message : 'Failed to load checklist templates');
+      console.error('Failed to load checklist templates:', err);
+      toast.error('Failed to load checklist templates');
     }
   };
 
@@ -808,7 +809,7 @@ export function Checklists() {
           id,
           completed_at,
           score_percentage,
-          checklist_templates!inner(name),
+          checklist_templates(name),
           user_profiles!checklist_template_completions_completed_by_fkey(full_name)
         `)
         .eq('organization_id', profile?.organization_id)
@@ -820,7 +821,7 @@ export function Checklists() {
       if (data) {
         const formattedCompletions = data.map((completion: any) => ({
           id: completion.id,
-          template_name: completion.checklist_templates.name,
+          template_name: completion.checklist_templates?.name || 'Unknown',
           completed_by_name: completion.user_profiles?.full_name || 'Unknown',
           score_percentage: completion.score_percentage || 0,
           completed_at: completion.completed_at,
@@ -828,7 +829,8 @@ export function Checklists() {
         setCompletions(formattedCompletions);
       }
     } catch (err) {
-      setPageError(err instanceof Error ? err.message : 'Failed to load checklist completions');
+      console.error('Failed to load checklist completions:', err);
+      toast.error('Failed to load checklist completions');
     }
   };
 
@@ -1620,7 +1622,7 @@ export function Checklists() {
 
   const reloadData = () => {
     setPageError(null);
-    if (profile?.organization_id) {
+    if (!isDemoMode && profile?.organization_id) {
       fetchTemplates();
       fetchCompletions();
     }

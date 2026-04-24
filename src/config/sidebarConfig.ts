@@ -461,7 +461,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, task management, and incident tracking.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview, I.incidents],
+        [I.foodSafetyOverview, I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.incidents],
         '/food-safety',
       ),
       section('facility-safety', 'Fire Safety', '🔥',
@@ -534,7 +534,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
+        [I.foodSafetyOverview, I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager],
         '/food-safety',
       ),
       section('facility-safety', 'Fire Safety', '🔥',
@@ -576,7 +576,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
+        [I.foodSafetyOverview, I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager],
         '/food-safety',
       ),
       section('facility-safety', 'Fire Safety', '🔥',
@@ -719,7 +719,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
+        [I.foodSafetyOverview, I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager],
         '/food-safety',
       ),
       section('facility-safety', 'Fire Safety', '🔥',
