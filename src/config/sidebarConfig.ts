@@ -104,7 +104,6 @@ const I: Record<string, NavItem> = {
   workforceRisk: {
     id: 'workforce-risk', label: 'Workforce Risk', path: '/workforce-risk', icon: '👷',
     roles: [], description: 'Employee certification status, training compliance gaps, and staffing risk signals.',
-    badge: 'P5',
   },
   cicPse: {
     id: 'cic-pse', label: 'CIC / PSE', path: '/cic-pse', icon: '🛡️',
