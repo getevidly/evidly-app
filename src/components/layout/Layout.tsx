@@ -101,7 +101,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       )}
       <Suspense fallback={null}><DemoBanner /></Suspense>
       <Sidebar />
-      <div className="lg:pl-60 flex flex-col flex-1 overflow-hidden isolate">
+      <div className="lg:pl-60 flex flex-col flex-1 overflow-hidden">
         <TopBar
           title={title}
           locations={locations}
