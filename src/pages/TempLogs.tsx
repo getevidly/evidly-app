@@ -595,10 +595,6 @@ export function TempLogs() {
   };
 
   const fetchHistory = async () => {
-    if (!profile?.organization_id) {
-      setHistory([]);
-      return;
-    }
     try {
       // Query temperature_logs table
       const { data, error } = await supabase
@@ -615,7 +611,6 @@ export function TempLogs() {
           shift,
           log_type
         `)
-        .eq('organization_id', profile?.organization_id)
         .order('reading_time', { ascending: false })
         .limit(200);
 
