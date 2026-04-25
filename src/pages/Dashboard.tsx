@@ -125,7 +125,7 @@ export function Dashboard() {
   const { loading: prefsLoading } = useDashboardPreferences();
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 800);
+    const timer = setTimeout(() => setShowSplash(false), 1500);
     return () => clearTimeout(timer);
   }, []);
 
