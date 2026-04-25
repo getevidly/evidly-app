@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet-async';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
-import { QuickActionsBar } from './QuickActionsBar';
 import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -130,7 +129,6 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           </main>
         </div>
       </div>
-      <QuickActionsBar />
       <MobileTabBar />
       {/* Lazy-loaded overlays — none needed for initial paint */}
       <Suspense fallback={null}>
