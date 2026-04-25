@@ -86,23 +86,12 @@ export function DashboardToday() {
   const deadlines = data.deadlines ?? [];
   const [showOverdueOnly, setShowOverdueOnly] = useState(false);
 
-  const todayStr = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-  });
-
   const doneCount = tasks.filter(t => t.status === 'done').length;
   const overdueCount = tasks.filter(t => t.status === 'overdue').length;
   const urgentDeadlines = deadlines.filter(d => d.severity === 'critical' || d.severity === 'warning');
 
   return (
     <div className="max-w-4xl mx-auto space-y-5" style={{ ...FONT }}>
-      {/* Date header — centered */}
-      <div className="text-center mb-4">
-        <span className="font-semibold" style={{ color: '#1E2D4D' }}>Today</span>
-        <span className="mx-2 text-[#1E2D4D]/30">&middot;</span>
-        <span className="text-[#1E2D4D]/50">{todayStr}</span>
-      </div>
-
       {/* Summary strip — centered */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Tasks Today */}

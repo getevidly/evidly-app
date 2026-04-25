@@ -4,7 +4,7 @@ import {
   Check, ChevronRight, X, Sparkles, Lock, Pencil,
   User, Users, Truck, Thermometer, FileText, Send,
   Wrench, FileSearch, Heart, Calendar, PartyPopper,
-  Copy, ExternalLink, MapPin, Bot, Map,
+  Copy, ExternalLink, MapPin, Bot, Map as MapIcon,
 } from 'lucide-react';
 import { BODY_TEXT, FONT } from './constants';
 import { useOnboardingChecklist } from '../../../hooks/useOnboardingChecklist';
@@ -36,7 +36,7 @@ const STEP_ICONS: Record<string, typeof User> = {
   upload_documents: FileText,
   ai_document_routing: Bot,
   request_documents: FileSearch,
-  take_tour: Map,
+  take_tour: MapIcon,
   k2c_referral: Heart,
   schedule_consultation: Calendar,
   setup_complete: PartyPopper,
@@ -394,13 +394,13 @@ export function OnboardingChecklistCard() {
           })}
         </div>
 
-        {/* Current step detail panel */}
+        {/* Current step detail panel — flush inside card, top border only */}
         {currentStep && (
           <div
-            className="mx-3 my-3 p-4 rounded-xl transition-all"
+            className="px-4 pb-4 pt-3 transition-all"
             style={{
               backgroundColor: currentStep.completed ? STEP_BG_COMPLETED : STEP_BG_ACTIVE,
-              borderLeft: `3px solid ${currentStep.completed ? STEP_BORDER_COMPLETED : STEP_BORDER_ACTIVE}`,
+              borderTop: `1px solid ${currentStep.completed ? STEP_BORDER_COMPLETED : STEP_BORDER_ACTIVE}`,
             }}
           >
             <div className="flex items-start gap-3">

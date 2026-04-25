@@ -280,16 +280,6 @@ function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
       <div className="h-4 w-px" style={{ backgroundColor: '#D1D5DB' }} />
       <div className="flex gap-0.5">
         <Link
-          to="/dashboard"
-          className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
-          style={{
-            color: activeTab === 'overview' ? NAVY : '#6b7280',
-            backgroundColor: activeTab === 'overview' ? 'rgba(30,77,107,0.08)' : 'transparent',
-          }}
-        >
-          Overview
-        </Link>
-        <Link
           to="/dashboard?tab=today"
           className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
           style={{
@@ -298,6 +288,16 @@ function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
           }}
         >
           Today &mdash; {todayShort}
+        </Link>
+        <Link
+          to="/dashboard"
+          className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
+          style={{
+            color: activeTab === 'overview' ? NAVY : '#6b7280',
+            backgroundColor: activeTab === 'overview' ? 'rgba(30,77,107,0.08)' : 'transparent',
+          }}
+        >
+          Overview
         </Link>
       </div>
     </nav>
