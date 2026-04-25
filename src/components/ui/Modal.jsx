@@ -1,23 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-/**
- * Modal — portaled overlay that renders into document.body.
- *
- * Because it portals out of the React tree, the overlay anchors to the
- * viewport regardless of any containing-block ancestors (transform,
- * filter, isolate, contain, etc.) in the component tree above.
- *
- * Props:
- *   isOpen        boolean  — controls render
- *   onClose       function — called on Escape, backdrop click, or close button
- *   children      ReactNode
- *   size          'sm' | 'md' | 'lg' | 'xl' | 'full'  (default 'md')
- *   closeOnBackdrop  boolean (default true)
- *   closeOnEscape    boolean (default true)
- *   className     string — applied to the content card
- *   overlayClassName string — applied to the backdrop
- */
 export function Modal({
   isOpen,
   onClose,
@@ -28,7 +11,6 @@ export function Modal({
   className = '',
   overlayClassName = '',
 }) {
-  // Escape key
   useEffect(() => {
     if (!isOpen || !closeOnEscape) return;
     const handler = (e) => { if (e.key === 'Escape') onClose?.(); };
@@ -36,7 +18,6 @@ export function Modal({
     return () => window.removeEventListener('keydown', handler);
   }, [isOpen, closeOnEscape, onClose]);
 
-  // Body scroll lock
   useEffect(() => {
     if (!isOpen) return;
     const prev = document.body.style.overflow;
@@ -56,13 +37,18 @@ export function Modal({
 
   const overlay = (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 ${overlayClassName}`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 overflow-y-auto ${overlayClassName}`}
       onClick={(e) => { if (closeOnBackdrop && e.target === e.currentTarget) onClose?.(); }}
       role="dialog"
       aria-modal="true"
     >
-      <div className={`bg-white rounded-xl shadow-2xl w-full ${sizeClass} max-h-[90vh] overflow-y-auto ${className}`}>
-        {children}
+      <div
+        className={`bg-white rounded-xl shadow-2xl w-full ${sizeClass} my-auto max-h-[calc(100vh-2rem)] flex flex-col ${className}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="overflow-y-auto min-h-0 flex-1">
+          {children}
+        </div>
       </div>
     </div>
   );
