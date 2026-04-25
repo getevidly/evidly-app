@@ -113,17 +113,12 @@ export default function OwnerOperatorDashboard() {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'insights'>('overview');
-
   // Standing data from hook — replaces all hardcoded data
   const {
     locations, bannerStatus, bannerHeadline,
     todaysTasks, attentionItems, vendorSummary,
     loading, error, refresh,
   } = useDashboardStanding('owner_operator');
-
-  // Strategic Insights: role gate (owner_operator + executive only)
-  const showInsightsTab = userRole === 'owner_operator' || userRole === 'executive';
 
   const insightsInspectionData: InspectionEstimate[] = useMemo(() => {
     if (!isDemoMode) return [];
@@ -229,51 +224,6 @@ export default function OwnerOperatorDashboard() {
         )}
       </div>
 
-      {/* Tab Bar (owner_operator + executive only) */}
-      {showInsightsTab && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-3">
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            padding: 4, borderRadius: radius.lg,
-            background: colors.borderLight,
-          }}>
-            {(['overview', 'insights'] as const).map(tab => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  flex: 1, padding: '6px 0',
-                  fontSize: typography.size.xs,
-                  fontWeight: typography.weight.semibold,
-                  fontFamily: typography.family.body,
-                  borderRadius: radius.md,
-                  border: 'none', cursor: 'pointer',
-                  background: activeTab === tab ? colors.navy : 'transparent',
-                  color: activeTab === tab ? colors.white : colors.textSecondary,
-                  boxShadow: activeTab === tab ? shadows.sm : 'none',
-                  transition: `background ${transitions.fast}, color ${transitions.fast}, box-shadow ${transitions.fast}`,
-                }}
-              >
-                {tab === 'overview' ? 'Overview' : 'Strategic Insights'}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* STRATEGIC INSIGHTS TAB */}
-      {showInsightsTab && activeTab === 'insights' && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4 space-y-4">
-          <ComplianceTrendWidget trendData={isDemoMode ? CATEGORY_ORG_TRENDS : []} />
-          <InspectionProbabilityWidget locations={insightsInspectionData} />
-          <JurisdictionBenchmarkWidget benchmarks={insightsBenchmarkData} />
-        </div>
-      )}
-
-      {/* OVERVIEW TAB (default) */}
-      {activeTab === 'overview' && <>
-
       {/* Onboarding Checklist */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <OnboardingChecklistCard />
@@ -355,6 +305,17 @@ export default function OwnerOperatorDashboard() {
       {/* Portfolio Risk Forecast */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <PortfolioRiskCard />
+      </div>
+
+      {/* Strategic Insights */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <ComplianceTrendWidget trendData={isDemoMode ? CATEGORY_ORG_TRENDS : []} />
+      </div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <InspectionProbabilityWidget locations={insightsInspectionData} />
+      </div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <JurisdictionBenchmarkWidget benchmarks={insightsBenchmarkData} />
       </div>
 
       {/* Annual Vendor Spend (OO only) */}
@@ -477,7 +438,6 @@ export default function OwnerOperatorDashboard() {
         city={isDemoMode ? demoStandingCard.city : ''}
       />
 
-      </>}
     </div>
   );
 }
