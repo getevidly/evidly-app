@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { X, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Modal } from '../ui/Modal';
 import { SuggestionPill } from '../ai/SuggestionPill';
 import {
   CLIENT_ROLE_OPTIONS,
@@ -200,8 +201,6 @@ export function ClientInviteModal({
     handleClose();
   };
 
-  if (!isOpen) return null;
-
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
@@ -222,39 +221,12 @@ export function ClientInviteModal({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        backdropFilter: 'blur(4px)',
-      }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) handleClose();
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '672px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          margin: '16px',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-        }}
-      >
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg" className="overflow-hidden">
         {/* ── Header ─────────────────────────────────────────────── */}
         <div
           style={{
             padding: '20px 24px',
             background: '#1E2D4D',
-            borderRadius: '16px 16px 0 0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -591,7 +563,6 @@ export function ClientInviteModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

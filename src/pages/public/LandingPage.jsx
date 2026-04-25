@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Modal } from "../../components/ui/Modal";
 
 // ─────────────────────────────────────────────
 // SCROLL REVEAL HOOK
@@ -208,8 +209,7 @@ function TourModal({ onClose }) {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }} onClick={onClose}>
-      <div style={{ background: C.white, borderRadius: 16, maxWidth: 460, width: "100%", position: "relative", maxHeight: "92vh", overflowY: "auto", boxShadow: "0 24px 64px rgba(0,0,0,0.18)" }} onClick={(e) => e.stopPropagation()}>
+    <Modal isOpen={true} onClose={onClose} size="md">
         <button onClick={onClose} style={{ position: "absolute", top: 14, right: 14, background: "none", border: "none", fontSize: 20, cursor: "pointer", color: C.g4, lineHeight: 1, zIndex: 1 }}>×</button>
         <div style={{ display: "flex", borderBottom: `1px solid ${C.g2}` }}>
           {["1  Your details", "2  Pick your time"].map((label, i) => {
@@ -270,8 +270,7 @@ function TourModal({ onClose }) {
             <p style={{ fontSize: "0.72rem", color: C.g4, fontFamily: FF_SANS }}>Questions? <a href="mailto:founders@getevidly.com" style={{ color: C.navy, fontWeight: 600 }}>founders@getevidly.com</a></p>
           </div>
         )}
-      </div>
-    </div>
+    </Modal>
   );
 }
 

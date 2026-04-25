@@ -22,6 +22,7 @@
 
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { Modal } from "../../components/ui/Modal";
 
 // ═══ PALETTE (lightened production version) ═══
 const E={
@@ -166,23 +167,21 @@ export default function CountyLandingPage({county: countyProp, cityName: _cn, ci
   </div>}
 
   {/* MODAL */}
-  {modal&&<div style={{position:"fixed",inset:0,zIndex:300,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(4px)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}} onClick={function(){setModal(null);}}>
-    <div style={{background:E.w,borderRadius:16,maxWidth:440,width:"100%",position:"relative",maxHeight:"90vh",overflow:"auto"}} onClick={function(e){e.stopPropagation();}}>
+  <Modal isOpen={!!modal} onClose={function(){setModal(null);}} size="md">
       <button onClick={function(){setModal(null);}} style={{position:"absolute",top:12,right:12,background:"none",border:"none",fontSize:20,cursor:"pointer",color:E.g4,zIndex:1}}>&times;</button>
       {mDone?(<div style={{padding:"48px 28px",textAlign:"center"}}><div style={{fontSize:"2.5rem",marginBottom:8}}>✅</div><h3 style={{fontSize:"1.1rem",fontWeight:700,color:E.navy,marginBottom:6}}>You're all set!</h3><p style={{fontSize:"0.85rem",color:E.g5}}>Email client opened with your details. Or reach us at founders@getevidly.com.</p></div>)
-      :MD[modal].si?(<div style={{padding:"32px 28px",textAlign:"center"}}><div style={{fontSize:"2.5rem",marginBottom:8}}>{MD[modal].ic}</div><h3 style={{fontWeight:700,color:E.navy,marginBottom:4}}>{MD[modal].t}</h3><p style={{fontSize:"0.85rem",color:E.g5,marginBottom:16}}>{MD[modal].s}</p><div style={{background:E.cream,borderRadius:10,padding:16,marginBottom:16,border:"1px solid "+E.g2}}><p style={{fontSize:"0.85rem",color:E.g6,margin:0}}>Launching May 5, 2026. Reserve your <strong>Founder spot</strong> now.</p></div><button onClick={function(){openM("signup");}} style={Object.assign({},bG,{width:"100%"})}>Reserve My Spot →</button></div>)
-      :(<div style={{padding:"28px"}}><div style={{textAlign:"center",marginBottom:20}}><div style={{fontSize:"2.2rem",marginBottom:6}}>{MD[modal].ic}</div><h3 style={{fontWeight:700,color:E.navy,marginBottom:4}}>{MD[modal].t}</h3><p style={{fontSize:"0.82rem",color:E.g5}}>{MD[modal].s}</p></div>
+      :modal&&MD[modal].si?(<div style={{padding:"32px 28px",textAlign:"center"}}><div style={{fontSize:"2.5rem",marginBottom:8}}>{MD[modal].ic}</div><h3 style={{fontWeight:700,color:E.navy,marginBottom:4}}>{MD[modal].t}</h3><p style={{fontSize:"0.85rem",color:E.g5,marginBottom:16}}>{MD[modal].s}</p><div style={{background:E.cream,borderRadius:10,padding:16,marginBottom:16,border:"1px solid "+E.g2}}><p style={{fontSize:"0.85rem",color:E.g6,margin:0}}>Launching May 5, 2026. Reserve your <strong>Founder spot</strong> now.</p></div><button onClick={function(){openM("signup");}} style={Object.assign({},bG,{width:"100%"})}>Reserve My Spot →</button></div>)
+      :modal&&(<div style={{padding:"28px"}}><div style={{textAlign:"center",marginBottom:20}}><div style={{fontSize:"2.2rem",marginBottom:6}}>{MD[modal].ic}</div><h3 style={{fontWeight:700,color:E.navy,marginBottom:4}}>{MD[modal].t}</h3><p style={{fontSize:"0.82rem",color:E.g5}}>{MD[modal].s}</p></div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}><div><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>First Name *</label><input value={mf.first} onChange={function(e){setMf(Object.assign({},mf,{first:e.target.value}));}} style={dinp} placeholder="Jane"/></div><div><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Last Name</label><input value={mf.last} onChange={function(e){setMf(Object.assign({},mf,{last:e.target.value}));}} style={dinp} placeholder="Kim"/></div></div>
         <div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Email *</label><input value={mf.email} onChange={function(e){setMf(Object.assign({},mf,{email:e.target.value}));}} style={dinp} placeholder="jane@restaurant.com"/></div>
         <div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Phone *</label><input value={mf.phone} onChange={function(e){setMf(Object.assign({},mf,{phone:e.target.value}));}} style={dinp} placeholder="(209) 555-0100"/></div>
         <div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Company</label><input value={mf.company} onChange={function(e){setMf(Object.assign({},mf,{company:e.target.value}));}} style={dinp} placeholder="Pacific Kitchen Group"/></div>
         <div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Locations</label><select value={mf.locations} onChange={function(e){setMf(Object.assign({},mf,{locations:e.target.value}));}} style={dinp}><option>1</option><option>2-5</option><option>6-10</option><option>11+</option></select></div>
-        {MD[modal].msg&&<div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Message</label><textarea value={mf.msg} onChange={function(e){setMf(Object.assign({},mf,{msg:e.target.value}));}} style={Object.assign({},dinp,{minHeight:60,resize:"vertical",fontFamily:"inherit"})} placeholder="Tell us more..."/></div>}
-        <button onClick={submitM} style={Object.assign({},MD[modal].c==="navy"?bN:bG,{width:"100%",marginTop:4})}>{MD[modal].b}</button>
+        {modal&&MD[modal].msg&&<div style={{marginBottom:10}}><label style={{fontSize:"0.72rem",fontWeight:600,color:E.g5}}>Message</label><textarea value={mf.msg} onChange={function(e){setMf(Object.assign({},mf,{msg:e.target.value}));}} style={Object.assign({},dinp,{minHeight:60,resize:"vertical",fontFamily:"inherit"})} placeholder="Tell us more..."/></div>}
+        <button onClick={submitM} style={Object.assign({},modal&&MD[modal].c==="navy"?bN:bG,{width:"100%",marginTop:4})}>{modal&&MD[modal].b}</button>
         <p style={{fontSize:"0.72rem",color:E.g4,textAlign:"center",marginTop:8}}>Or <a href="mailto:founders@getevidly.com" style={{color:E.gold}}>founders@getevidly.com</a></p>
       </div>)}
-    </div>
-  </div>}
+  </Modal>
 
   {/* CHAT */}
   <div style={{position:"fixed",bottom:cookie?72:24,right:24,zIndex:150}}>

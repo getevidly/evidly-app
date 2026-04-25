@@ -5,6 +5,7 @@
 import { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 
@@ -554,7 +555,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
         {activeTab === 'industry' && renderByIndustry()}
       </div>
 
-      {showEmailModal && renderEmailModal()}
+      {renderEmailModal()}
     </>
   );
 
@@ -923,21 +924,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
     const decliningOrgs = filteredOrgs.filter(o => o.trend < -5);
 
     return (
-      <div
-        onClick={() => setShowEmailModal(false)}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 50,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', padding: '16px',
-        }}
-      >
-        <div
-          onClick={e => e.stopPropagation()}
-          style={{
-            backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-            maxWidth: '520px', width: '100%', overflow: 'hidden', ...F, maxHeight: '90vh', overflowY: 'auto',
-          }}
-        >
+      <Modal isOpen={showEmailModal} onClose={() => setShowEmailModal(false)} size="lg">
           <div style={{ background: '#1E2D4D', padding: '20px 24px', color: 'white' }}>
             <div style={{ fontSize: '18px', fontWeight: 800 }}>Send Usage Report</div>
             <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '4px' }}>to usage@getevidly.com</div>
@@ -1050,8 +1037,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
               </div>
             )}
           </div>
-        </div>
-      </div>
+      </Modal>
     );
   }
 }

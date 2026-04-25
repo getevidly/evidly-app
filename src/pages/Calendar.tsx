@@ -17,6 +17,7 @@ import { useTooltip } from '../hooks/useTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { GhostInput } from '../components/ai/GhostInput';
 import { SuggestionPill } from '../components/ai/SuggestionPill';
+import { Modal } from '../components/ui/Modal';
 import { vendors as demoVendors } from '../data/demoData';
 import { ENHANCED_VENDOR_PERFORMANCE } from '../data/vendorServiceWorkflowDemo';
 
@@ -1380,36 +1381,10 @@ export function Calendar() {
 
   // ── Event Detail Modal ──
   const renderEventModal = () => {
-    if (!selectedEvent) return null;
-    const t = typeMap[selectedEvent.type];
+    const t = selectedEvent ? typeMap[selectedEvent.type] : null;
 
     return (
-      <div
-        onClick={() => setSelectedEvent(null)}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 50,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          backdropFilter: 'blur(4px)',
-          padding: '16px',
-        }}
-      >
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="w-[95vw] sm:w-full"
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-            maxWidth: '440px',
-            overflow: 'hidden',
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
+      <Modal isOpen={!!selectedEvent} onClose={() => setSelectedEvent(null)} size="md">
           <div style={{ height: '6px', backgroundColor: t?.color || '#6b7280' }} />
           <div style={{ padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1426,9 +1401,9 @@ export function Calendar() {
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
                 }}>
-                  {t?.label || selectedEvent.type}
+                  {t?.label || selectedEvent?.type}
                 </span>
-                {selectedEvent.overdue && (
+                {selectedEvent?.overdue && (
                   <span style={{
                     display: 'inline-block',
                     padding: '3px 10px',
@@ -1446,7 +1421,7 @@ export function Calendar() {
                   </span>
                 )}
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0' }}>
-                  {selectedEvent.title}
+                  {selectedEvent?.title}
                 </h3>
               </div>
               <button
@@ -1460,27 +1435,27 @@ export function Calendar() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563', flexWrap: 'wrap' }}>
                 <Clock size={16} color="#6b7280" />
-                <span>{selectedEvent.time}{selectedEvent.endTime ? ` – ${selectedEvent.endTime}` : ''}</span>
+                <span>{selectedEvent?.time}{selectedEvent?.endTime ? ` – ${selectedEvent.endTime}` : ''}</span>
                 <span style={{ color: '#d1d5db' }}>|</span>
-                <span>{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                <span>{selectedEvent ? new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : ''}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
                 <MapPin size={16} color="#6b7280" />
-                <span>{selectedEvent.location}</span>
+                <span>{selectedEvent?.location}</span>
               </div>
-              {selectedEvent.vendorName && (
+              {selectedEvent?.vendorName && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                   <span>Vendor: <strong>{selectedEvent.vendorName}</strong></span>
                 </div>
               )}
-              {selectedEvent.category && (
+              {selectedEvent?.category && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
                   <span>{selectedEvent.category}</span>
                 </div>
               )}
-              {selectedEvent.description && (
+              {selectedEvent?.description && (
                 <div style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '13px', color: '#4b5563', lineHeight: '1.6', marginTop: '4px' }}>
                   {selectedEvent.description}
                 </div>
@@ -1490,7 +1465,7 @@ export function Calendar() {
             <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => {
-                  openEditForm(selectedEvent);
+                  if (selectedEvent) openEditForm(selectedEvent);
                   setSelectedEvent(null);
                 }}
                 style={{
@@ -1530,8 +1505,7 @@ export function Calendar() {
               </button>
             </div>
           </div>
-        </div>
-      </div>
+      </Modal>
     );
   };
 
@@ -1931,25 +1905,8 @@ export function Calendar() {
         {renderEventModal()}
 
         {/* Delete Confirmation Dialog */}
-        {showDeleteConfirm && selectedEvent && (
-          <div
-            onClick={() => setShowDeleteConfirm(false)}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 55,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
-              padding: '16px',
-            }}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white', borderRadius: '16px',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-                maxWidth: '400px', width: '100%', padding: '24px',
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
+        <Modal isOpen={!!(showDeleteConfirm && selectedEvent)} onClose={() => setShowDeleteConfirm(false)} size="sm">
+              <div style={{ padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{
                   width: '40px', height: '40px', borderRadius: '50%',
@@ -1961,7 +1918,7 @@ export function Calendar() {
                 <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', margin: 0 }}>Delete Event</h3>
               </div>
               <p style={{ fontSize: '14px', color: '#4b5563', margin: '0 0 20px 0', lineHeight: '1.5' }}>
-                Are you sure you want to delete <strong>{selectedEvent.title}</strong>? This action cannot be undone.
+                Are you sure you want to delete <strong>{selectedEvent?.title}</strong>? This action cannot be undone.
               </p>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
@@ -1989,31 +1946,11 @@ export function Calendar() {
                   Delete
                 </button>
               </div>
-            </div>
-          </div>
-        )}
+              </div>
+        </Modal>
 
         {/* Event Form Modal (Create / Edit) */}
-        {showEventForm && (
-          <div
-            onClick={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 50,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-              padding: '16px',
-            }}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="w-[95vw] sm:w-full"
-              style={{
-                backgroundColor: 'white', borderRadius: '16px',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-                maxWidth: '480px', overflow: 'hidden',
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
+        <Modal isOpen={showEventForm} onClose={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }} size="md">
               {/* Header bar */}
               <div style={{ height: '6px', backgroundColor: '#1E2D4D' }} />
               <div style={{ padding: '24px' }}>
@@ -2605,9 +2542,7 @@ export function Calendar() {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+        </Modal>
 
         {/* Toast notification */}
         {toastMessage && (

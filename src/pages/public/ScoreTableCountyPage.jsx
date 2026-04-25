@@ -31,6 +31,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { TestimonialCarousel } from "../../components/social-proof/TestimonialCarousel";
+import { Modal } from "../../components/ui/Modal";
 
 // ═══ PALETTE ═══
 const E={
@@ -479,8 +480,8 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
   </div>}
 
   {/* VENDOR QUOTE MODAL */}
-  {vqVendor&&!vqDone&&<div style={{position:"fixed",inset:0,zIndex:300,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(4px)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}} onClick={function(){setVqVendor(null);}}>
-    <div style={{background:E.w,borderRadius:16,maxWidth:420,width:"100%",padding:"28px",position:"relative"}} onClick={function(e){e.stopPropagation();}}>
+  <Modal isOpen={!!vqVendor&&!vqDone} onClose={function(){setVqVendor(null);}} size="sm">
+      <div style={{padding:"28px",position:"relative"}}>
       <button onClick={function(){setVqVendor(null);}} style={{position:"absolute",top:12,right:12,background:"none",border:"none",fontSize:20,cursor:"pointer",color:E.g4}}>&times;</button>
       <div style={{fontSize:"0.68rem",fontWeight:700,color:S.grn,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Request a Quote</div>
       <h3 style={{fontSize:"1rem",fontWeight:700,color:E.navy,marginBottom:4}}>{vqVendor}</h3>
@@ -494,15 +495,15 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
       {vqBlk&&<div style={{background:E.redBg,border:"1px solid "+E.red,borderRadius:8,padding:10,marginBottom:10,fontSize:"0.78rem",color:E.red}}>Competitor domains are not eligible.</div>}
       <button disabled={!vqReady||vqBlk} onClick={submitVendorQuote} style={Object.assign({},bST,{width:"100%",opacity:vqReady&&!vqBlk?1:0.4})}>Request Quote →</button>
       <p style={{fontSize:"0.68rem",color:E.g4,textAlign:"center",marginTop:8}}>EvidLY Verified vendors only. No spam.</p>
-    </div>
-  </div>}
-  {vqDone&&<div style={{position:"fixed",inset:0,zIndex:300,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(4px)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}} onClick={function(){setVqVendor(null);setVqDone(false);}}>
-    <div style={{background:E.w,borderRadius:16,maxWidth:380,width:"100%",padding:"40px 28px",textAlign:"center"}}>
+      </div>
+  </Modal>
+  <Modal isOpen={!!vqDone} onClose={function(){setVqVendor(null);setVqDone(false);}} size="sm">
+      <div style={{padding:"40px 28px",textAlign:"center"}}>
       <div style={{fontSize:"2rem",marginBottom:8}}>✅</div>
       <h3 style={{fontWeight:700,color:E.navy,marginBottom:4}}>Request sent.</h3>
       <p style={{fontSize:"0.85rem",color:E.g5}}>The vendor will reach out to <strong>{vqEmail}</strong> within 1 business day.</p>
-    </div>
-  </div>}
+      </div>
+  </Modal>
 
   {/* HEADER */}
   <header style={{background:E.w,borderBottom:"1px solid "+E.g2,padding:"0 24px",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
