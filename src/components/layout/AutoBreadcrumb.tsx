@@ -290,7 +290,7 @@ function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
           Today &mdash; {todayShort}
         </Link>
         <Link
-          to="/dashboard"
+          to="/dashboard?tab=overview"
           className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
           style={{
             color: activeTab === 'overview' ? NAVY : '#6b7280',

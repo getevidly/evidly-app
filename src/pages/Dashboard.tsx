@@ -115,7 +115,7 @@ export function Dashboard() {
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   usePageTitle('Dashboard');
   const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab') || 'overview';
+  const tab = searchParams.get('tab') || 'today';
   const [pageError, setPageError] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
 
