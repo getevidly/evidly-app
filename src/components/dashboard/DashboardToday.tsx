@@ -109,6 +109,7 @@ export function DashboardToday() {
         <button
           type="button"
           onClick={() => {
+            setShowOverdueOnly(false);
             const el = document.getElementById('todays-tasks');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
           }}
