@@ -48,21 +48,7 @@ export function VoiceButton({ orgId, locationId, size = 'lg' }) {
     switch (action.type) {
 
       case 'LOG_TEMP': {
-        const { error } = await supabase.from('temperature_logs').insert({
-          org_id: orgId,
-          location_id: locationId,
-          equipment_name: action.equipment,
-          temperature: action.temperature,
-          unit: action.unit,
-          logged_by: profile?.id,
-          source: 'voice',
-          logged_at: new Date().toISOString(),
-        });
-        if (!error) {
-          showResult(`${action.equipment}: ${action.temperature}\u00B0F logged`, 'success');
-        } else {
-          showResult('Could not save temp log \u2014 try again', 'error');
-        }
+        showResult('Voice temperature logging is being rebuilt \u2014 please use Add Reading', 'error');
         break;
       }
 
@@ -84,8 +70,12 @@ export function VoiceButton({ orgId, locationId, size = 'lg' }) {
       }
 
       case 'OPEN_CA': {
+        if (!orgId) {
+          showResult('Missing organization context', 'error');
+          break;
+        }
         const { data, error } = await supabase.from('corrective_actions').insert({
-          org_id: orgId,
+          organization_id: orgId,
           location_id: locationId,
           title: action.description || action.category,
           category: action.category,
