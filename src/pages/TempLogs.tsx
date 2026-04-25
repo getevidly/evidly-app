@@ -1558,7 +1558,7 @@ export function TempLogs() {
     }
   };
 
-  const handleCompleteCooldown = (cooldownId: string) => {
+  const handleCompleteCooldown = async (cooldownId: string) => {
     const cooldown = cooldowns.find(c => c.id === cooldownId);
     if (!cooldown) return;
 
@@ -1578,24 +1578,52 @@ export function TempLogs() {
     setCooldowns(remaining);
     saveCooldownsToStorage(remaining);
     setCompletedCooldowns([completedCooldown, ...completedCooldowns]);
-    showSuccessToast(`Cooldown completed for ${cooldown.itemName}`);
 
-    // FIX-02: Persist completed cooldown to cooldown_temp_checks (live mode only)
+    // Persist completed cooldown (live mode only)
     if (!isDemoMode && profile?.organization_id) {
-      supabase.from('cooldown_temp_checks').insert({
-        organization_id: profile.organization_id,
-        food_item: cooldown.itemName,
-        start_temp: cooldown.startTemp,
-        start_time: cooldown.startTime.toISOString(),
-        end_temp: currentTemp,
-        end_time: new Date().toISOString(),
-        status: completedCooldown.status,
-        location: cooldown.location || null,
-        started_by: cooldown.startedBy || null,
-        checks: cooldown.checks.map(c => ({ temperature: c.temperature, time: c.time.toISOString() })),
-      }).then(({ error: coolErr }) => {
-        if (coolErr) console.warn('[CooldownPersist]', coolErr.message);
-      });
+      // 1. Insert parent record into cooldown_logs
+      const { data: logData, error: logErr } = await supabase
+        .from('cooldown_logs')
+        .insert({
+          organization_id: profile.organization_id,
+          food_item_name: cooldown.itemName,
+          starting_temp: cooldown.startTemp,
+          status: completedCooldown.status,
+          start_time: cooldown.startTime.toISOString(),
+          stage2_complete_time: new Date().toISOString(),
+          current_stage: 2,
+          recorded_by: profile.id,
+        })
+        .select('id')
+        .single();
+
+      if (logErr) {
+        console.warn('[CooldownPersist] cooldown_logs insert failed:', logErr.message);
+        toast.error('Cooldown saved locally but failed to sync');
+        return;
+      }
+
+      // 2. Insert individual checks into cooldown_temp_checks
+      if (logData && cooldown.checks.length > 0) {
+        const checkRows = cooldown.checks.map((c, i) => ({
+          cooldown_log_id: logData.id,
+          temperature_value: c.temperature,
+          check_time: c.time.toISOString(),
+          stage: i < Math.ceil(cooldown.checks.length / 2) ? 1 : 2,
+        }));
+
+        const { error: checkErr } = await supabase
+          .from('cooldown_temp_checks')
+          .insert(checkRows);
+
+        if (checkErr) {
+          console.warn('[CooldownPersist] cooldown_temp_checks insert failed:', checkErr.message);
+        }
+      }
+
+      showSuccessToast(`Cooldown completed for ${cooldown.itemName}`);
+    } else {
+      showSuccessToast(`Cooldown completed for ${cooldown.itemName}`);
     }
   };
 
