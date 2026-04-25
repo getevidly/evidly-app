@@ -253,8 +253,8 @@ export function DashboardToday() {
         {([
           { label: 'Log Temp', subtitle: 'Record a reading', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
           { label: 'Run Checklist', subtitle: 'Start a checklist', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
-          { label: 'Upload Doc', subtitle: 'Add a document', icon: FileUp, route: '/documents', iconBg: '#eff6ff', iconColor: '#3b82f6' },
           { label: 'Report Incident', subtitle: 'Log an incident', icon: AlertTriangle, route: '/incidents', iconBg: '#fefce8', iconColor: '#d97706' },
+          { label: 'Upload Doc', subtitle: 'Add a document', icon: FileUp, route: '/documents', iconBg: '#eff6ff', iconColor: '#3b82f6' },
         ] as const).map(link => (
           <button
             key={link.route}
