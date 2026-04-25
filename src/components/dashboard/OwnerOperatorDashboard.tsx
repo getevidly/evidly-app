@@ -14,7 +14,7 @@ import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
-// OnboardingChecklistCard moved to Dashboard.tsx (above tab content)
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
 import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
 import { K2CWidget } from '../referral/K2CWidget';
@@ -317,6 +317,11 @@ export default function OwnerOperatorDashboard() {
 
       {/* OVERVIEW TAB (default) */}
       {activeTab === 'overview' && <>
+
+      {/* Onboarding Checklist */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <OnboardingChecklistCard />
+      </div>
 
       {/* IRR Progress Card */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
