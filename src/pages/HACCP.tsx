@@ -980,7 +980,7 @@ export function HACCP() {
     }
   };
 
-  const handleVerifyAction = (actionId: string) => {
+  const handleVerifyAction = async (actionId: string) => {
     if (isDemoMode) {
       setLiveCorrectiveActions(prev => {
         const base = prev.length > 0 ? prev : [...CORRECTIVE_ACTIONS];
@@ -989,12 +989,25 @@ export function HACCP() {
         );
       });
       toast.success('Corrective action verified and resolved');
-    } else {
-      supabase.from('haccp_corrective_actions').update({
-        verified_by: profile?.full_name || 'Manager',
+      return;
+    }
+    if (!profile?.organization_id || !profile?.full_name) {
+      toast.error('Unable to verify — profile incomplete.');
+      return;
+    }
+    try {
+      const { error } = await supabase.from('haccp_corrective_actions').update({
+        verified_by: profile.full_name,
         status: 'resolved',
         resolved_at: new Date().toISOString(),
-      }).eq('id', actionId).then(() => toast.success('Corrective action verified'));
+      })
+        .eq('id', actionId)
+        .eq('organization_id', profile.organization_id);
+      if (error) throw error;
+      toast.success('Corrective action verified');
+    } catch (err: any) {
+      console.error('[HACCP] corrective action verify failed:', err.message);
+      toast.error('Failed to verify corrective action');
     }
   };
 
