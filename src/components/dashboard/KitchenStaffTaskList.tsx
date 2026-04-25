@@ -25,7 +25,6 @@ import { StaffStanding } from './shared/StaffStanding';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
-import { DashboardGreeting } from './DashboardGreeting';
 import { useAuth } from '../../contexts/AuthContext';
 import { MyTasksToday } from './shared/MyTasksToday';
 
@@ -196,8 +195,6 @@ export default function KitchenStaffTaskList() {
     <div className="w-full flex justify-center" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="w-full" style={{ maxWidth: 480 }}>
         <div className="space-y-6">
-          <DashboardGreeting role="kitchen_staff" firstName={profile?.first_name} />
-
           {/* Hero Banner */}
           <DashboardHero
             firstName={staffName}
