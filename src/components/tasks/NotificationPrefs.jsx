@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { X, Bell } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
 
@@ -26,10 +27,9 @@ export function NotificationPrefs({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 modal-backdrop-enter">
+    <Modal isOpen={true} onClose={onClose} size="sm">
       <div
-        className="w-full max-w-sm rounded-2xl"
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
+        style={{ border: '1px solid var(--border)' }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2">
@@ -91,6 +91,6 @@ export function NotificationPrefs({ onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

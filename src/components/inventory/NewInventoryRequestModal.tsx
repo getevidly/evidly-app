@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#163a5f';
 const CARD_BG = '#FFFFFF';
@@ -33,8 +34,6 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
   const [items, setItems] = useState<RequestItem[]>([{ name: '', quantity: 1 }]);
   const [notes, setNotes] = useState('');
 
-  if (!isOpen) return null;
-
   const updateItem = (index: number, field: keyof RequestItem, value: string | number) => {
     setItems(prev =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
@@ -57,18 +56,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div
-        className="relative w-full max-w-lg mx-4 rounded-xl shadow-xl max-h-[90vh] overflow-y-auto"
-        style={{ background: CARD_BG }}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 py-4"
@@ -194,7 +182,6 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

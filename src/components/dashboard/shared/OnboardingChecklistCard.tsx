@@ -9,6 +9,7 @@ import {
 import { BODY_TEXT, FONT } from './constants';
 import { useOnboardingChecklist } from '../../../hooks/useOnboardingChecklist';
 import { useConfetti } from '../../../hooks/useConfetti';
+import { Modal } from '../../ui/Modal';
 
 const ACCENT_GOLD = '#A08C5A';
 const MIDNIGHT_NAVY = '#1E2D4D';
@@ -60,12 +61,7 @@ function K2CReferralModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
-        onClick={e => e.stopPropagation()}
-        style={FONT}
-      >
+    <Modal isOpen={true} onClose={onClose} size="md" className="overflow-hidden">
         {/* Header */}
         <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid #E8EDF5' }}>
           <div className="flex items-center justify-between">
@@ -162,8 +158,7 @@ function K2CReferralModal({
             Done — I shared it!
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

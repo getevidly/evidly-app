@@ -13,6 +13,7 @@ import {
   Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight, ArrowRight, BookOpen,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   DEMO_LOCATION_JURISDICTIONS,
@@ -306,8 +307,8 @@ function AddLocationDialog({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="border border-[#1E2D4D]/10">
         <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/5">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Add Location</h2>
           <p className="text-sm text-[#1E2D4D]/50 mt-1">
@@ -615,7 +616,7 @@ function AddLocationDialog({
       {showDialogUpgrade && (
         <DemoUpgradePrompt action={dialogUpgradeAction} featureName={dialogUpgradeFeature} onClose={() => setShowDialogUpgrade(false)} />
       )}
-    </div>
+    </Modal>
   );
 }
 

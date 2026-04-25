@@ -15,6 +15,7 @@ import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { useDemo } from '../../contexts/DemoContext';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 // Color constants removed — now using Tailwind equivalents:
 // NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold
@@ -2077,13 +2078,8 @@ export default function EvidLYIntelligence() {
           { key: 'operationalRisk' as const, noteKey: 'operationalNote' as const, icon: '⚙️', label: 'Operational Risk', desc: 'Process/procedure changes required' },
         ];
         return (
-          <div className="fixed inset-0 bg-black/40 z-[1000] flex items-center justify-center overflow-auto p-5"
-            onClick={() => setPublishModal({ open: false, signal: null })}
-          >
-            <div
-              className="bg-white rounded-[14px] p-7 w-full max-w-[600px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-h-[90vh] overflow-auto"
-              onClick={e => e.stopPropagation()}
-            >
+          <Modal isOpen={true} onClose={() => setPublishModal({ open: false, signal: null })} size="lg">
+            <div className="p-7">
               <div className="text-base font-extrabold text-navy mb-1">Publish Intelligence Signal</div>
               <div className="text-xs text-gray-400 mb-4">
                 Tag risk dimensions and publish to affected client intelligence feeds.
@@ -2271,7 +2267,7 @@ export default function EvidLYIntelligence() {
                 </Button>
               </div>
             </div>
-          </div>
+          </Modal>
         );
       })()}
     </div>

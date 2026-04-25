@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { X, Lock } from 'lucide-react';
+import { Modal } from './ui/Modal';
 
 interface DemoUpgradePromptProps {
   action: string;
@@ -28,12 +29,8 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
   if (isOpen === false) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" data-demo-allow onClick={onClose}>
-      <div className="absolute inset-0 bg-black/50" />
-      <div
-        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden modal-content-enter"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Modal isOpen={true} onClose={onClose} size="md" className="border border-[#1E2D4D]/10 overflow-hidden">
+      <div data-demo-allow>
         {/* Header */}
         <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -78,6 +75,6 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

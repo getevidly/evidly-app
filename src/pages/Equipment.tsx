@@ -1848,9 +1848,8 @@ export function Equipment() {
       </div>
 
       {/* QR Label Modal */}
-      {showQRLabel && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={() => setShowQRLabel(false)}>
-          <div className="bg-white rounded-xl shadow-lg border border-[#1E2D4D]/10 w-full max-w-xs p-6 text-center modal-content-enter" onClick={e => e.stopPropagation()}>
+      <Modal isOpen={!!(showQRLabel && selected)} onClose={() => setShowQRLabel(false)} size="sm">
+          <div className="border border-[#1E2D4D]/10 p-6 text-center">
             <p className="text-xs font-bold text-[#1E2D4D]/30 tracking-widest mb-3">EVIDLY</p>
             <QRCodeSVG
               value={`evidly://equipment/${selected.id}`}
@@ -1891,8 +1890,7 @@ export function Equipment() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />

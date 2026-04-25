@@ -17,6 +17,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 // Tailwind equivalents: NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold,
 // TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400, BORDER=#E5E0D8 → border-border_ui
@@ -2045,13 +2046,8 @@ export default function IntelligenceAdmin() {
 
       {/* SIGNAL-VALIDATION-01: Reject reason modal */}
       {rejectModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-          onClick={() => setRejectModal(null)}
-        >
-          <div
-            className="bg-white rounded-xl py-6 px-7 max-w-[420px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
-            onClick={e => e.stopPropagation()}
-          >
+        <Modal isOpen={true} onClose={() => setRejectModal(null)} size="sm">
+          <div className="py-6 px-7">
             <h3 className="text-base font-bold text-navy m-0 mb-1">
               Reject Signal
             </h3>
@@ -2105,18 +2101,13 @@ export default function IntelligenceAdmin() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* SIGNAL-VALIDATION-01: Subset targeting modal */}
       {subsetModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-          onClick={() => setSubsetModal(null)}
-        >
-          <div
-            className="bg-white rounded-xl py-6 px-7 max-w-[480px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
-            onClick={e => e.stopPropagation()}
-          >
+        <Modal isOpen={true} onClose={() => setSubsetModal(null)} size="md">
+          <div className="py-6 px-7">
             <h3 className="text-base font-bold text-navy m-0 mb-1">
               Approve for Subset
             </h3>
@@ -2161,18 +2152,13 @@ export default function IntelligenceAdmin() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* AUDIT-FIX-06 / P-2: Create Signal Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-          onClick={() => setShowCreateModal(false)}
-        >
-          <div
-            className="bg-white rounded-xl py-6 px-7 max-w-[520px] w-full shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-h-[80vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
+        <Modal isOpen={true} onClose={() => setShowCreateModal(false)} size="lg">
+          <div className="py-6 px-7">
             <h3 className="text-base font-bold text-navy m-0 mb-1">
               Create Signal
             </h3>
@@ -2286,7 +2272,7 @@ export default function IntelligenceAdmin() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Undo toast */}

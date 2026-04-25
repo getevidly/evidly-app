@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X, Calendar, Clock, User } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import type { ScheduledJob, Technician } from '../../hooks/api/useSchedule';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
@@ -31,15 +32,8 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-
-      {/* Modal */}
-      <div
-        className="relative w-full max-w-md rounded-xl shadow-xl"
-        style={{ background: CARD_BG }}
-      >
+    <Modal isOpen={true} onClose={onClose} size="md">
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>Reschedule Job</h2>
@@ -145,6 +139,6 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

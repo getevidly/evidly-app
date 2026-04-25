@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X, Calendar, Clock, MapPin, User, Wrench, FileText, Save } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import { MeetingLocationField } from './MeetingLocationField';
 import { GhostInput } from '../ai/GhostInput';
@@ -74,11 +75,8 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
   const inputClass = 'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-      <div
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl"
-        style={{ background: CARD_BG }}
-      >
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>
@@ -250,6 +248,6 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

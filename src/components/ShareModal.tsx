@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Mail, FileText, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIAssistButton, AIGeneratedIndicator } from './ui/AIAssistButton';
+import { Modal } from './ui/Modal';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -60,14 +61,8 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
     }, 2000);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={onClose} />
-
-        <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full modal-content-enter">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" className="border border-[#1E2D4D]/10 overflow-hidden">
           {sent ? (
             <div className="p-8 text-center">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
@@ -249,8 +244,6 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
               </div>
             </>
           )}
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

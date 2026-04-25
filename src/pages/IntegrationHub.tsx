@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRole } from '../contexts/RoleContext';
+import { Modal } from '../components/ui/Modal';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -380,9 +381,8 @@ export function IntegrationHub() {
       </div>
 
       {/* ── Request Integration Modal ── */}
-      {showRequestForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full modal-content-enter">
+      <Modal isOpen={showRequestForm} onClose={() => setShowRequestForm(false)} size="md">
+          <div className="p-4 sm:p-6">
             <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Request an Integration</h3>
             <div className="space-y-4">
               <div>
@@ -424,8 +424,7 @@ export function IntegrationHub() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {showUpgrade && (
         <DemoUpgradePrompt

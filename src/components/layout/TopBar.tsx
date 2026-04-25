@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState, useMemo } from 'react';
 import { ChevronDown, MapPin, User, Users, Lock, Eye, EyeOff, Globe, Search, Settings, HelpCircle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
@@ -451,11 +452,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
       </Suspense>
 
       {/* Change Password Modal */}
-      {showChangePassword && (
-        <>
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-[60]" onClick={() => setShowChangePassword(false)} />
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md modal-content-enter" onClick={(e) => e.stopPropagation()}>
+      <Modal isOpen={showChangePassword} onClose={() => setShowChangePassword(false)} size="md">
+            <div>
               <div className="p-6 border-b border-[#1E2D4D]/10">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-[#1E2D4D] flex items-center justify-center">
@@ -531,9 +529,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 </button>
               </div>
             </div>
-          </div>
-        </>
-      )}
+      </Modal>
     </>
   );
 }

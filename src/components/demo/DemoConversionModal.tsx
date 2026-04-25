@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, CheckCircle2, Trash2, AlertTriangle } from 'lucide-react';
 import type { DemoSession } from '../../data/demoGeneratorData';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 
@@ -29,12 +30,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
   ];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="fixed inset-0 bg-black/50 modal-backdrop-enter" />
-      <div
-        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter"
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal isOpen={true} onClose={onClose} size="lg" className="border border-[#1E2D4D]/10">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#1E2D4D]/5">
           <h2 className="font-bold" style={{ color: NAVY }}>
@@ -146,7 +142,6 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             )}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

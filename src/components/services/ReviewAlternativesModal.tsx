@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { X, CalendarDays, CheckCircle, XCircle } from 'lucide-react';
 import type { ServiceRequest } from '../../types/serviceRequest';
 import { buildCalendarEvent, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../../lib/calendarSync';
+import { Modal } from '../ui/Modal';
 
 interface ReviewAlternativesModalProps {
   isOpen: boolean;
@@ -71,9 +72,7 @@ export function ReviewAlternativesModal({
     });
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-        <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center modal-content-enter">
+      <Modal isOpen={true} onClose={onClose} size="md" className="p-8 text-center">
           <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Date Confirmed!</h3>
           <p className="text-sm text-[#1E2D4D]/70 mb-6">
@@ -117,15 +116,12 @@ export function ReviewAlternativesModal({
           >
             Done
           </button>
-        </div>
-      </div>
+      </Modal>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg">
         <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/5">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Review Alternative Dates</h2>
           <button onClick={onClose} className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 rounded-lg hover:bg-[#1E2D4D]/5" aria-label="Close">
@@ -199,7 +195,6 @@ export function ReviewAlternativesModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

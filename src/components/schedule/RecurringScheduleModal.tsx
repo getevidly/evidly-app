@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X, RotateCcw, Calendar, Clock, User, MapPin } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import type { RecurrenceFrequency, Technician } from '../../hooks/api/useSchedule';
 import { useCreateRecurringSchedule } from '../../hooks/api/useSchedule';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY } from '../dashboard/shared/constants';
@@ -55,10 +56,8 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-
-      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl" style={{ background: CARD_BG }}>
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10" style={{ borderColor: CARD_BORDER, background: CARD_BG }}>
           <div className="flex items-center gap-2">
@@ -260,6 +259,6 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

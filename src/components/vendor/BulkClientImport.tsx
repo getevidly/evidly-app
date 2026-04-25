@@ -3,6 +3,7 @@ import { X, Upload, Download, CheckCircle, AlertTriangle, Loader2 } from 'lucide
 import { toast } from 'sonner';
 import Papa from 'papaparse';
 import { BULK_CSV_COLUMNS, generateCSVTemplate, type ClientInvitation } from '../../data/serviceProviderDemoData';
+import { Modal } from '../ui/Modal';
 
 // ── Brand colors ───────────────────────────────────────────────
 const NAVY = '#1E2D4D';
@@ -220,19 +221,12 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
     }, Math.max(100, Math.min(600, 3000 / total)));
   }, [validRows, k2cReferral, onImportComplete]);
 
-  // ── Don't render if not open ───────────────────────────────
-  if (!isOpen) return null;
-
   // ── Step indicator ─────────────────────────────────────────
   const stepLabels = ['Upload', 'Preview', 'Send'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 modal-backdrop-enter" onClick={handleClose}>
-      <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col max-h-[90vh] modal-content-enter"
-        onClick={e => e.stopPropagation()}
-        style={{ fontFamily: 'Inter, sans-serif' }}
-      >
+    <Modal isOpen={isOpen} onClose={handleClose} size="xl" className="overflow-hidden flex flex-col">
+      <div style={{ fontFamily: 'Inter, sans-serif' }} className="flex flex-col max-h-[90vh]">
         {/* ── Header ───────────────────────────────────────── */}
         <div className="px-6 pt-5 pb-4 flex items-center justify-between" style={{ backgroundColor: NAVY }}>
           <div>
@@ -554,6 +548,6 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

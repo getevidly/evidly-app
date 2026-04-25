@@ -11,6 +11,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 type Tab = 'organizations' | 'locations' | 'users' | 'vendors';
 
@@ -48,17 +49,17 @@ const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-[13px]
 
 const labelCls = 'text-[11px] text-slate_ui block mb-1';
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+function ConfigModal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
-      <div className="bg-white rounded-[14px] p-7 w-[95vw] max-w-[560px] max-h-[90vh] overflow-y-auto">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="p-7">
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-base font-bold text-navy">{title}</h3>
           <button onClick={onClose} className="bg-transparent border-none text-xl text-gray-400 cursor-pointer">{'×'}</button>
         </div>
         {children}
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -331,7 +332,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   };
 
   return (
-    <Modal title="Add Organization" onClose={onClose}>
+    <ConfigModal title="Add Organization" onClose={onClose}>
       <div className="flex flex-col gap-[14px]">
         <div><label className={labelCls}>Organization Name *</label><input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Clean Kitchen Co." /></div>
         <div className="grid grid-cols-2 gap-3">
@@ -394,7 +395,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
           <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Organization'}</Button>
         </div>
       </div>
-    </Modal>
+    </ConfigModal>
   );
 }
 
@@ -438,7 +439,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   };
 
   return (
-    <Modal title="Add Location" onClose={onClose}>
+    <ConfigModal title="Add Location" onClose={onClose}>
       <div className="flex flex-col gap-[14px]">
         <div><label className={labelCls}>Location Name *</label><input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Downtown Fresno" /></div>
         <OrgCombobox label="Organization" orgs={orgs} value={selectedOrg} onChange={setSelectedOrg} placeholder="Search or create org..." />
@@ -488,7 +489,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
           <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Location'}</Button>
         </div>
       </div>
-    </Modal>
+    </ConfigModal>
   );
 }
 
@@ -510,7 +511,7 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
   };
 
   return (
-    <Modal title="Invite User" onClose={onClose}>
+    <ConfigModal title="Invite User" onClose={onClose}>
       <div className="flex flex-col gap-[14px]">
         <div><label className={labelCls}>Email *</label><input className={inputCls} value={email} onChange={e => setEmail(e.target.value)} placeholder="user@example.com" type="email" /></div>
         <div className="grid grid-cols-2 gap-3">
@@ -530,7 +531,7 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
           <Button variant="primary" size="sm" onClick={handleInvite} disabled={!email.trim() || saving} isLoading={saving}>{saving ? 'Sending...' : 'Send Invitation'}</Button>
         </div>
       </div>
-    </Modal>
+    </ConfigModal>
   );
 }
 
@@ -578,7 +579,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
   };
 
   return (
-    <Modal title="Add Vendor" onClose={onClose}>
+    <ConfigModal title="Add Vendor" onClose={onClose}>
       <div className="flex flex-col gap-[14px]">
         <div><label className={labelCls}>Company Name *</label><input className={inputCls} value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder="ACE Hood Cleaning" /></div>
         <div className="grid grid-cols-2 gap-3">
@@ -658,7 +659,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
           <Button variant="primary" size="sm" onClick={handleSave} disabled={!companyName.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Vendor'}</Button>
         </div>
       </div>
-    </Modal>
+    </ConfigModal>
   );
 }
 

@@ -6,6 +6,7 @@
  */
 import { toast } from 'sonner';
 import type { MilestoneConfig } from '../../lib/ambassadorSystem';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -19,9 +20,8 @@ export function MilestoneCelebrationModal({
   milestone,
   onDismiss,
 }: MilestoneCelebrationModalProps) {
-  if (!milestone) return null;
-
   const handleShare = async () => {
+    if (!milestone) return;
     const text = `${milestone.title} — ${milestone.message} #EvidLY #FoodSafety`;
     if (navigator.share) {
       try {
@@ -41,32 +41,14 @@ export function MilestoneCelebrationModal({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(0, 0, 0, 0.5)',
-        padding: 16,
-      }}
-      onClick={e => {
-        if (e.target === e.currentTarget) onDismiss();
-      }}
-    >
+    <Modal isOpen={!!milestone} onClose={onDismiss} size="sm" className="!bg-[#1E2D4D]">
+      {milestone && (
       <div
         style={{
-          background: NAVY,
           color: '#FAF7F0',
-          borderRadius: 16,
           padding: 32,
           textAlign: 'center',
-          maxWidth: 400,
-          width: '100%',
           fontFamily: "'DM Sans', 'Inter', sans-serif",
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
         }}
       >
         {/* Emoji */}
@@ -135,6 +117,7 @@ export function MilestoneCelebrationModal({
           </button>
         </div>
       </div>
-    </div>
+      )}
+    </Modal>
   );
 }

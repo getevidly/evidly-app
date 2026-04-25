@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import Button from '../../components/ui/Button';
 import { KpiTile } from '../../components/admin/KpiTile';
+import { Modal } from '../../components/ui/Modal';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../../components/DemoUpgradePrompt';
@@ -453,8 +454,8 @@ export default function InsuranceApiKeys() {
 
       {/* Create API Key Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+        <Modal isOpen={true} onClose={() => setShowCreateForm(false)} size="lg">
+          <div className="p-4 sm:p-6">
             <h3 className="text-xl font-bold text-navy mb-4">Create API Key</h3>
             <div className="space-y-4">
               <div>
@@ -545,7 +546,7 @@ export default function InsuranceApiKeys() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {showUpgrade && (

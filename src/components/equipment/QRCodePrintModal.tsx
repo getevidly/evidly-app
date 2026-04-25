@@ -7,6 +7,7 @@ import { QRCodeDisplay } from './QRCodeDisplay';
 import DOMPurify from 'dompurify';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
+import { Modal } from '../ui/Modal';
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -67,12 +68,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="rounded-xl w-full max-w-md mx-4"
-        style={{ background: CARD_BG, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal isOpen={true} onClose={onClose} size="md">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>Print QR Code</h2>
@@ -137,7 +133,6 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
             <Printer className="w-4 h-4" /> Print
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
@@ -621,11 +622,9 @@ function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, con
       </div>
 
       {/* Confirm Modal */}
-      {confirmRole && selectedRoleDef && selectedStaff && (
-        <>
-          <div className="fixed inset-0 z-[60] bg-black/50 modal-backdrop-enter" onClick={() => setConfirmRole(null)} />
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm modal-content-enter" onClick={(e) => e.stopPropagation()}>
+      <Modal isOpen={!!(confirmRole && selectedRoleDef && selectedStaff)} onClose={() => setConfirmRole(null)} size="sm">
+        {confirmRole && selectedRoleDef && selectedStaff && (
+            <div>
               <div className="px-5 pt-5 pb-3 border-b" style={{ borderColor: '#e5e7eb' }}>
                 <h3 className="text-sm font-bold" style={{ color: '#0B1628' }}>Start Staff Preview</h3>
                 <p className="text-xs mt-0.5" style={{ color: '#6B7F96' }}>This session will be logged</p>
@@ -663,9 +662,8 @@ function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, con
                 </button>
               </div>
             </div>
-          </div>
-        </>
-      )}
+        )}
+      </Modal>
     </>
   );
 }

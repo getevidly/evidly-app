@@ -5,6 +5,7 @@ import {
   Upload, X, Star,
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
+import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../contexts/AuthContext';
 import { demoReferral } from '../data/demoData';
 import {
@@ -439,9 +440,8 @@ export function DocumentChecklist() {
         />
       )}
 
-      {naModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4 modal-content-enter">
+      <Modal isOpen={!!naModal} onClose={() => setNaModal(null)} size="md">
+          <div className="p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
                 Not Applicable: {naModal.docName}
@@ -502,8 +502,7 @@ export function DocumentChecklist() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#163a5f';
 const CARD_BG = '#FFFFFF';
@@ -20,8 +21,6 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
   const [jobReference, setJobReference] = useState('');
   const [notes, setNotes] = useState('');
 
-  if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert('Usage logged (not yet implemented)');
@@ -29,18 +28,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div
-        className="relative w-full max-w-md mx-4 rounded-xl shadow-xl"
-        style={{ background: CARD_BG }}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} size="md">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 py-4"
@@ -144,7 +132,6 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

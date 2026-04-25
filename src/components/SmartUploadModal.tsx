@@ -5,6 +5,7 @@ import {
   ChevronDown, Trash2, Sparkles, Pencil,
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
+import { Modal } from './ui/Modal';
 import {
   canClassify, validateFileForUpload, classifyDocument, classifyDocumentDemo,
   getConfidenceLevel, getConfidenceColor, getConfidenceIcon,
@@ -329,15 +330,12 @@ export function SmartUploadModal({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   // -----------------------------------------------------------------------
   // Render
   // -----------------------------------------------------------------------
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col modal-content-enter">
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg" className="flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
           <div className="flex items-center gap-2">
@@ -463,8 +461,7 @@ export function SmartUploadModal({
               : `Save ${classifiedFiles.length > 0 ? classifiedFiles.length : ''} Document${classifiedFiles.length > 1 ? 's' : ''}`}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

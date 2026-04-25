@@ -19,6 +19,7 @@ import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
 import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type IoTSensorReading } from '../data/demoData';
+import { Modal } from '../components/ui/Modal';
 import { AddCurrentReadingModal, type CurrentReadingSaveData } from '../components/temp-logs/AddCurrentReadingModal';
 import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../components/temp-logs/AddReceivingReadingModal';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
@@ -2013,9 +2014,8 @@ export function TempLogs() {
               </form>
 
               {/* CCP-04 Corrective Action Modal */}
-              {showCcpModal && pendingFailItem && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
-                  <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 modal-content-enter">
+              <Modal isOpen={!!(showCcpModal && pendingFailItem)} onClose={() => { setShowCcpModal(false); setPendingFailItem(null); }} size="lg">
+                  <div className="p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-6 w-6" style={{ color: '#C62828' }} />
                       <h3 className="text-lg font-bold" style={{ color: '#C62828' }}>CCP-04 Deviation — Corrective Action Required</h3>
@@ -2091,8 +2091,7 @@ export function TempLogs() {
                       </button>
                     </div>
                   </div>
-                </div>
-              )}
+              </Modal>
 
               {/* Added Items List */}
               {receivingItems.length > 0 && (
@@ -3440,9 +3439,8 @@ export function TempLogs() {
       )}
 
       {/* Log Temperature Modal */}
-      {showLogModal && selectedEquipment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+      <Modal isOpen={!!(showLogModal && selectedEquipment)} onClose={() => setShowLogModal(false)} size="lg">
+          <div className="p-4 sm:p-5">
             <h3 className="text-2xl font-bold tracking-tight mb-2 text-center">{selectedEquipment.name}</h3>
             <p className="text-center text-[#1E2D4D]/70 mb-6">
               {t('tempLogs.range')} {selectedEquipment.min_temp}°{selectedEquipment.unit} - {selectedEquipment.max_temp}°
@@ -3575,13 +3573,11 @@ export function TempLogs() {
               </div>
             </form>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Batch Log Modal */}
-      {showBatchModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-y-auto modal-content-enter">
+      <Modal isOpen={showBatchModal} onClose={() => setShowBatchModal(false)} size="xl">
+          <div className="p-4 sm:p-6">
             <h3 className="text-2xl font-bold tracking-tight mb-6">Batch Temperature Logging</h3>
 
             <div className="mb-4">
@@ -3677,13 +3673,11 @@ export function TempLogs() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Start Cooldown Modal */}
-      {showStartCooldown && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+      <Modal isOpen={showStartCooldown} onClose={() => setShowStartCooldown(false)} size="lg">
+          <div className="p-4 sm:p-5">
             <h3 className="text-2xl font-bold tracking-tight mb-6">Start New Cooldown</h3>
 
             <form onSubmit={handleStartCooldown} className="space-y-4">
@@ -3773,8 +3767,7 @@ export function TempLogs() {
               </div>
             </form>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Demo Upgrade Prompt */}
       {showUpgrade && (
@@ -3782,9 +3775,8 @@ export function TempLogs() {
       )}
 
       {/* Cooldown Check Modal */}
-      {showCooldownCheckModal && selectedCooldown && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+      <Modal isOpen={!!(showCooldownCheckModal && selectedCooldown)} onClose={() => { setShowCooldownCheckModal(false); setSelectedCooldown(null); }} size="lg">
+          <div className="p-4 sm:p-5">
             <h3 className="text-2xl font-bold tracking-tight mb-2">{selectedCooldown.itemName}</h3>
             <p className="text-[#1E2D4D]/70 mb-6">Log Temperature Reading</p>
 
@@ -3834,8 +3826,7 @@ export function TempLogs() {
               </div>
             </form>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Manual Add Reading Modals */}
       <AddCurrentReadingModal

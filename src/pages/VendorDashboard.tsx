@@ -9,6 +9,7 @@ import {
   Mail, RefreshCw, Link2,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { supabase } from '../lib/supabase';
 import { useDemo } from '../contexts/DemoContext';
 import {
@@ -908,8 +909,8 @@ export function VendorDashboard() {
   const renderSubscriptionModal = () => {
     if (!showSubscriptionModal) return null;
     return (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter" onClick={() => setShowSubscriptionModal(false)}>
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 modal-content-enter" onClick={e => e.stopPropagation()}>
+      <Modal isOpen={showSubscriptionModal} onClose={() => setShowSubscriptionModal(false)} size="xl">
+        <div className="border border-[#1E2D4D]/10 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
             <h2 className="text-xl font-bold text-[#1E2D4D]">Choose Your Plan</h2>
             <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-[#1E2D4D]/5 rounded-full">
@@ -965,7 +966,7 @@ export function VendorDashboard() {
             })}
           </div>
         </div>
-      </div>
+      </Modal>
     );
   };
 

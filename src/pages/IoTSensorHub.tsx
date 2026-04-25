@@ -13,6 +13,7 @@ import {
   X, Plus, ArrowLeft, Wrench, Pause, Trash2, Mail, Phone, ChevronLeft, ChevronUp,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -1168,8 +1169,8 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col modal-content-enter" style={F}>
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="border border-[#1E2D4D]/10 overflow-hidden flex flex-col max-h-[85vh]" style={F}>
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/10 flex items-center justify-between">
           <div>
@@ -1518,7 +1519,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

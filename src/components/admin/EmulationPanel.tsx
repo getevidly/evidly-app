@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ShieldAlert, User, Building2, ChevronRight, X, Clock, Loader2 } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { useEmulation, type EmulatedUser } from '../../contexts/EmulationContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole, type UserRole } from '../../contexts/RoleContext';
@@ -349,11 +350,9 @@ export function EmulationPanel() {
       </div>
 
       {/* ── Confirm Modal ── */}
-      {confirmUser && (
-        <>
-          <div className="fixed inset-0 z-[60] bg-black/50 modal-backdrop-enter" onClick={() => setConfirmUser(null)} />
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md modal-content-enter" style={{ ...F }} onClick={(e) => e.stopPropagation()}>
+      <Modal isOpen={!!confirmUser} onClose={() => setConfirmUser(null)} size="md">
+        {confirmUser && (
+            <div style={{ ...F }}>
               <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#e5e7eb' }}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#fef2f2' }}>
@@ -401,9 +400,8 @@ export function EmulationPanel() {
                 </button>
               </div>
             </div>
-          </div>
-        </>
-      )}
+        )}
+      </Modal>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
+import { Modal } from './ui/Modal';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -41,8 +42,6 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [showConfirmPin, setShowConfirmPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-
-  if (!isOpen) return null;
 
   const pinMismatch = pin.length > 0 && confirmPin.length > 0 && pin !== confirmPin;
   const saveDisabled = loading || pinMismatch;
@@ -92,8 +91,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full modal-content-enter">
+    <Modal isOpen={isOpen} onClose={onClose} size="md" className="p-4 sm:p-5">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">My Profile</h2>
           <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" aria-label="Close">
@@ -231,7 +229,6 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

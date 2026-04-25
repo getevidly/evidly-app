@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Copy, Mail, MessageSquare, Link2, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 
@@ -13,8 +14,6 @@ interface ShareInviteLinkPanelProps {
 
 export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode }: ShareInviteLinkPanelProps) {
   const [justCopied, setJustCopied] = useState(false);
-
-  if (!isOpen) return null;
 
   const inviteLink = `https://app.evidly.com/vendor/invite/${inviteCode}`;
 
@@ -39,15 +38,7 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
   );
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
-        onClick={e => e.stopPropagation()}
-        style={{ fontFamily: 'Inter, sans-serif' }}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} size="md" className="overflow-hidden">
         {/* Navy Header */}
         <div
           className="px-6 py-4 flex items-center justify-between"
@@ -165,7 +156,6 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
             Close
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

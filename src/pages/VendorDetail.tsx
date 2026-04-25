@@ -54,6 +54,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, Mail, MapPin, Calendar, FileText, CheckCircle, XCircle, AlertTriangle, Download, Upload, Send } from 'lucide-react';
 import { vendors } from '../data/demoData';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { VendorContactActions } from '../components/VendorContactActions';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -437,9 +438,8 @@ export default function VendorDetail() {
         )}
       </div>
 
-      {showRequestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-md modal-content-enter">
+      <Modal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} size="md">
+          <div className="p-4 sm:p-6">
             <h3 className="text-lg font-semibold tracking-tight mb-4">Request Document</h3>
             <p className="text-[#1E2D4D]/70 mb-4">
               An email will be sent to {vendor.email} requesting the missing documents with a secure upload link.
@@ -462,8 +462,7 @@ export default function VendorDetail() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {showUpgrade && (
         <DemoUpgradePrompt

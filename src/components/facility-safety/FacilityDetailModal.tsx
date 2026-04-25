@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { statusColor, statusLabel } from '../shared/FireStatusBars';
 import type { FacilityDetailData, ServiceHistoryEntry, DocumentEntry } from '../../data/facilityDetailDemoData';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 
@@ -76,12 +77,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
   const label = statusLabel(data.status);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl w-full max-w-xl max-h-[85vh] flex flex-col relative modal-content-enter"
-        style={{}}
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal isOpen={open} onClose={onClose} size="lg" className="max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-5 pb-3 border-b border-[#1E2D4D]/5">
           <div className="flex items-center gap-3">
@@ -243,7 +239,6 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             Close
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

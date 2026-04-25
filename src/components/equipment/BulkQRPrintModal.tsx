@@ -6,6 +6,7 @@ import { X, Printer, QrCode, Search, CheckSquare } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
+import { Modal } from '../ui/Modal';
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -85,12 +86,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="rounded-xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col"
-        style={{ background: CARD_BG, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal isOpen={true} onClose={onClose} size="lg" className="max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b flex-shrink-0" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
@@ -182,7 +178,6 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
             <Printer className="w-4 h-4" /> Print {selected.size} QR Code{selected.size !== 1 ? 's' : ''}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

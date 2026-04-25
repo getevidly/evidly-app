@@ -11,6 +11,7 @@ import {
   useNextWeekDates,
 } from '../../hooks/api/useAvailability';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY } from '../../components/dashboard/shared/constants';
+import { Modal } from '../../components/ui/Modal';
 
 const DAY_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -231,9 +232,8 @@ export function AvailabilitySubmissionPage() {
       )}
 
       {/* Confirmation modal */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6 modal-content-enter">
+      <Modal isOpen={showConfirm} onClose={() => setShowConfirm(false)} size="sm">
+          <div className="p-6">
             <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>Confirm Submission</h3>
             <p className="text-sm mb-1" style={{ color: TEXT_TERTIARY }}>
               Week of {formatDate(dates[0])} — {formatDate(dates[6])}
@@ -255,8 +255,7 @@ export function AvailabilitySubmissionPage() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

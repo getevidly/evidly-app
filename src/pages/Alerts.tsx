@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { Modal } from '../components/ui/Modal';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -764,9 +765,8 @@ export function Alerts() {
       )}
 
       {/* Resolve Modal */}
-      {showResolveModal && selectedAlert && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full modal-content-enter">
+      <Modal isOpen={!!(showResolveModal && selectedAlert)} onClose={() => setShowResolveModal(false)} size="lg">
+          <div className="p-4 sm:p-6">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">{t('pages.alerts.resolveAlert')}</h3>
             <p className="text-[#1E2D4D]/70 mb-6">{selectedAlert.title}</p>
 
@@ -861,8 +861,7 @@ export function Alerts() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
     </>
   );
 }

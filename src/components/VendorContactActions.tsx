@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Phone, Mail, MessageSquare, Send, X, CheckCircle } from 'lucide-react';
+import { Modal } from './ui/Modal';
 
 interface VendorContactActionsProps {
   vendorName: string;
@@ -83,9 +84,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
       )}
 
       {/* SMS Modal */}
-      {showSmsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 modal-backdrop-enter">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full border border-[#1E2D4D]/10 animate-slide-up">
+      <Modal isOpen={showSmsModal} onClose={() => setShowSmsModal(false)} size="md" className="border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Send SMS to {contactName}</h3>
               <button onClick={() => setShowSmsModal(false)} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full">
@@ -112,14 +111,10 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
                 Send SMS
               </button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Email Modal */}
-      {showEmailModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 modal-backdrop-enter">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full border border-[#1E2D4D]/10 animate-slide-up">
+      <Modal isOpen={showEmailModal} onClose={() => setShowEmailModal(false)} size="lg" className="border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Email {contactName}</h3>
               <button onClick={() => setShowEmailModal(false)} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full">
@@ -149,9 +144,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
                 Send Email
               </button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </>
   );
 }

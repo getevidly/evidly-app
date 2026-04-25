@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { useCreateServiceType, useUpdateServiceType, type ServiceType } from '../../hooks/api/useSettings';
 import { SuggestionPill } from '../ai/SuggestionPill';
 import { GhostInput } from '../ai/GhostInput';
@@ -124,22 +125,9 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={onClose} />
-      <div style={{
-        position: 'relative',
-        background: CARD_BG,
-        borderRadius: 14,
-        width: '100%',
-        maxWidth: 540,
-        maxHeight: '90vh',
-        overflow: 'auto',
-        padding: 28,
-        ...FONT,
-      }}>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <div style={{ padding: 28, ...FONT }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
@@ -297,6 +285,6 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

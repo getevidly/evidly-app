@@ -7,6 +7,7 @@
  */
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Modal } from '../ui/Modal';
 import { submitTestimonial } from '../../lib/testimonialSystem';
 import { useDemo } from '../../contexts/DemoContext';
 
@@ -42,12 +43,10 @@ export function TestimonialCollectionModal({
   const [submitting, setSubmitting] = useState(false);
   const { isDemoMode } = useDemo();
 
-  if (!isOpen) return null;
+  const canSubmit = quote.trim().length >= 10 && agreed && !submitting;
 
   // Already prompted this session
-  if (sessionStorage.getItem(SESSION_KEY)) return null;
-
-  const canSubmit = quote.trim().length >= 10 && agreed && !submitting;
+  const alreadyPrompted = typeof window !== 'undefined' && sessionStorage.getItem(SESSION_KEY);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -88,33 +87,16 @@ export function TestimonialCollectionModal({
     onClose();
   };
 
+  if (alreadyPrompted) return null;
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(0, 0, 0, 0.5)',
-        padding: 16,
-      }}
-      onClick={e => {
-        if (e.target === e.currentTarget) handleDismiss();
-      }}
-    >
+    <Modal isOpen={isOpen} onClose={handleDismiss} size="md" className="!bg-[#1E2D4D]">
       <div
         style={{
-          background: NAVY,
           color: '#FAF7F0',
-          borderRadius: 16,
           padding: 32,
           textAlign: 'center',
-          maxWidth: 440,
-          width: '100%',
           fontFamily: "'DM Sans', 'Inter', sans-serif",
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
         }}
       >
         <p style={{ fontSize: 42, margin: '0 0 12px', lineHeight: 1 }}>💬</p>
@@ -224,6 +206,6 @@ export function TestimonialCollectionModal({
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { X, Heart, Send, AlertTriangle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
@@ -269,8 +270,6 @@ export function K2CInviteModal({
     }
   };
 
-  if (!isOpen) return null;
-
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px', borderRadius: '8px',
     border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
@@ -282,25 +281,8 @@ export function K2CInviteModal({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 50,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        backdropFilter: 'blur(4px)',
-      }}
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
-    >
-      <div style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '16px',
-        width: '100%',
-        maxWidth: '560px',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        margin: '16px',
-        boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-      }}>
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
+      <div>
         {/* Header */}
         <div style={{
           padding: '20px 24px',
@@ -530,6 +512,6 @@ export function K2CInviteModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

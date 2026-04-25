@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import type { EquipmentIncidentType } from '../../hooks/api/useIncidents';
+import { Modal } from '../ui/Modal';
 
 // ── Design tokens ────────────────────────────────────────────
 const NAVY = '#163a5f';
@@ -51,15 +52,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
   const labelStyle = { color: NAVY };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-
-      {/* Modal */}
-      <div
-        className="relative w-full max-w-lg mx-4 rounded-xl shadow-xl max-h-[90vh] overflow-y-auto"
-        style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 py-4"
@@ -218,7 +211,6 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

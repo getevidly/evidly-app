@@ -26,6 +26,7 @@ import {
   X,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { FeatureGate } from '../components/FeatureGate';
@@ -1111,9 +1112,8 @@ export function InsuranceRisk() {
       </div>
 
       {/* Share with Insurer Modal */}
-      {showShareModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto modal-content-enter">
+      <Modal isOpen={showShareModal} onClose={() => { setShowShareModal(false); setShareGenerated(false); setShareRecipient(''); setShareEmail(''); }} size="md">
+          <div>
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
@@ -1262,8 +1262,7 @@ export function InsuranceRisk() {
               )}
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       </>)}
 

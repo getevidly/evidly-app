@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { NAVY, CARD_BORDER, TEXT_TERTIARY } from '../../components/dashboard/shared/constants';
+import { Modal } from '../ui/Modal';
 
 interface Props {
   onClose: () => void;
@@ -62,8 +63,7 @@ export function InsurancePolicyModal({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg">
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-lg font-bold" style={{ color: NAVY }}>Add Insurance Policy</h2>
           <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close"><X className="w-5 h-5" /></button>
@@ -140,8 +140,7 @@ export function InsurancePolicyModal({ onClose }: Props) {
           <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>Cancel</button>
           <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white rounded-lg" style={{ background: NAVY }}>Save Policy</button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

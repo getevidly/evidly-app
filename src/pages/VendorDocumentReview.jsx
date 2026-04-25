@@ -3,6 +3,7 @@ import { useVendorSubmissions } from '../hooks/useVendorSubmissions';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useDemo } from '../contexts/DemoContext';
 import { requestReupload } from '../lib/vendorDocumentActions';
+import { Modal } from '../components/ui/Modal';
 import {
   FileText, CheckCircle2, XCircle, Clock, AlertTriangle,
   ChevronDown, ChevronUp, Eye, ThumbsUp, ThumbsDown, RefreshCw,
@@ -385,10 +386,9 @@ export default function VendorDocumentReview() {
       })}
 
       {/* Decline modal */}
-      {declineModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
+      <Modal isOpen={!!declineModal} onClose={() => { setDeclineModal(null); setDeclineReason(''); }} size="md">
           <div
-            className="rounded-xl p-6 w-full max-w-md"
+            className="p-6"
             style={{ backgroundColor: CARD_BG }}
           >
             <h3 className="text-lg font-semibold tracking-tight mb-3" style={{ color: BODY_TEXT }}>
@@ -422,13 +422,11 @@ export default function VendorDocumentReview() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Demo upgrade modal */}
-      {showUpgrade && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center modal-content-enter">
+      <Modal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} size="sm">
+          <div className="p-6 text-center">
             <h3 className="text-lg font-semibold tracking-tight mb-2">{upgradeFeature || 'Feature'}</h3>
             <p className="text-sm text-[#1E2D4D]/50 mb-4">This feature requires a live account.</p>
             <button
@@ -439,8 +437,7 @@ export default function VendorDocumentReview() {
               Got it
             </button>
           </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

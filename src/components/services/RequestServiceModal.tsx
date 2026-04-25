@@ -9,6 +9,7 @@ import { X, Send, Calendar, AlertCircle, CalendarDays } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { buildCalendarEvent, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../../lib/calendarSync';
+import { Modal } from '../ui/Modal';
 
 interface RequestServiceModalProps {
   isOpen: boolean;
@@ -129,8 +130,6 @@ export function RequestServiceModal({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   // Build calendar event for confirmed requests
   const calEvent = confirmedDatetime
     ? buildCalendarEvent({
@@ -141,9 +140,7 @@ export function RequestServiceModal({
     : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
         <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/5">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Request Service</h2>
           <button onClick={handleClose} className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 rounded-lg hover:bg-[#1E2D4D]/5" aria-label="Close">
@@ -325,7 +322,6 @@ export function RequestServiceModal({
             </button>
           </div>
         )}
-      </div>
-    </div>
+    </Modal>
   );
 }

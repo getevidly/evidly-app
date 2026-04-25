@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Send, Clock, CheckCircle, AlertCircle, Settings, Mail, MessageSquare, Link2, X, Zap } from 'lucide-react';
+import { Modal } from './ui/Modal';
 
 interface DocRequest {
   id: string;
@@ -147,9 +148,7 @@ export function AutoDocumentRequest() {
       </div>
 
       {/* Settings Modal */}
-      {showSettings && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 modal-backdrop-enter">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full border border-[#1E2D4D]/10 animate-slide-up">
+      <Modal isOpen={showSettings} onClose={() => setShowSettings(false)} size="lg" className="border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Auto-Request Settings</h3>
               <button onClick={() => setShowSettings(false)} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full">
@@ -241,9 +240,7 @@ export function AutoDocumentRequest() {
                 Save Settings
               </button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

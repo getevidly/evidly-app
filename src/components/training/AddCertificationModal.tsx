@@ -14,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import type { TrainingEmployeeCert } from '../../data/trainingRecordsDemoData';
 import { GhostInput } from '../ai/GhostInput';
 import { SuggestionPill } from '../ai/SuggestionPill';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 
@@ -141,11 +142,8 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Award size={20} color={NAVY} />
@@ -292,8 +290,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
             {saving ? 'Saving...' : existingCert ? 'Update' : 'Add Certification'}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

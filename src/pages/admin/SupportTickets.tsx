@@ -11,6 +11,7 @@ import { KpiTile } from '../../components/admin/KpiTile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 type Tab = 'all' | 'mine' | 'analytics';
 
@@ -659,9 +660,9 @@ export default function SupportTickets() {
       )}
 
       {/* CSAT Prompt Modal */}
-      {showCsatPrompt && csatResolvedTicket && (
-        <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
-          <div className="bg-white rounded-[14px] w-[420px] max-w-[90vw] px-6 py-7 shadow-[0_12px_40px_rgba(0,0,0,0.15)] text-center">
+      <Modal isOpen={showCsatPrompt && !!csatResolvedTicket} onClose={handleSkipCsat} size="sm">
+        {csatResolvedTicket && (
+          <div className="px-6 py-7 text-center">
             <div className="text-4xl mb-3">&#9993;</div>
             <h3 className="text-base font-bold text-navy mb-2">
               Send CSAT Survey?
@@ -681,8 +682,8 @@ export default function SupportTickets() {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Create Ticket Modal */}
       {showCreate && (
@@ -998,8 +999,8 @@ function CreateTicketModal({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
-      <div className="bg-white rounded-[14px] w-[520px] max-w-[90vw] max-h-[90vh] overflow-y-auto p-6 shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-navy m-0">Create Ticket</h2>
           <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-[22px] text-gray-400 leading-none">
@@ -1084,6 +1085,6 @@ function CreateTicketModal({
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

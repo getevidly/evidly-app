@@ -1,5 +1,6 @@
 import { Sparkles, Lock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from './ui/Modal';
 
 interface AiUpgradePromptProps {
   feature: string;
@@ -41,8 +42,7 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
 
   if (variant === 'modal') {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-md w-full p-6 text-center modal-content-enter">
+      <Modal isOpen={true} onClose={onClose ?? (() => {})} size="md" closeOnBackdrop={!!onClose} className="border border-[#1E2D4D]/10 p-6 text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#fdf8e8' }}>
             <Sparkles className="h-7 w-7" style={{ color: '#A08C5A' }} />
           </div>
@@ -66,8 +66,7 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
               <Sparkles className="h-4 w-4" /> View Plans <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
-        </div>
-      </div>
+      </Modal>
     );
   }
 

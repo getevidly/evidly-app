@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { useConnectIntegration, useDisconnectIntegration } from '../../hooks/api/useSettings';
 import {
   CARD_BG, CARD_BORDER, PANEL_BG, BODY_TEXT, MUTED, NAVY, FONT,
@@ -50,9 +51,8 @@ export function IntegrationDetailModal({ isOpen, onClose, integration }: Props) 
   const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
 
-  if (!isOpen || !integration) return null;
-
-  const slug = integration.slug;
+  const slug = integration?.slug || '';
+  if (!integration) return null;
   const isOAuth = ['quickbooks', 'stripe', 'hubspot'].includes(slug);
 
   const handleConnect = async () => {
@@ -92,19 +92,8 @@ export function IntegrationDetailModal({ isOpen, onClose, integration }: Props) 
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={onClose} />
-      <div style={{
-        position: 'relative',
-        background: CARD_BG,
-        borderRadius: 14,
-        width: '100%',
-        maxWidth: 480,
-        maxHeight: '90vh',
-        overflow: 'auto',
-        padding: 28,
-        ...FONT,
-      }}>
+    <Modal isOpen={isOpen} onClose={onClose} size="md">
+      <div style={{ padding: 28, ...FONT }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -299,6 +288,6 @@ export function IntegrationDetailModal({ isOpen, onClose, integration }: Props) 
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

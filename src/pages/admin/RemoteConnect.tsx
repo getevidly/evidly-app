@@ -8,6 +8,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { Modal } from '../../components/ui/Modal';
 
 type SessionType = 'screen_share' | 'co_browse' | 'guided_walkthrough' | 'diagnostic';
 type SessionStatus = 'pending' | 'active' | 'ended' | 'expired';
@@ -451,14 +452,8 @@ export default function RemoteConnect() {
 
       {/* ───────── Confirmation Modal ───────── */}
       {showModal && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
-          onClick={() => setShowModal(false)}
-        >
-          <div
-            className="bg-white rounded-2xl p-8 max-w-[480px] w-[90%] shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
-            onClick={e => e.stopPropagation()}
-          >
+        <Modal isOpen={true} onClose={() => setShowModal(false)} size="md">
+          <div className="p-8">
             <div className="text-center mb-5">
               <div className="w-12 h-12 rounded-full bg-green-50 inline-flex items-center justify-center mb-3">
                 <span className="text-2xl">&#x2713;</span>
@@ -498,7 +493,7 @@ export default function RemoteConnect() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

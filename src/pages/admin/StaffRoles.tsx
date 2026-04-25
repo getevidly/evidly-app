@@ -14,6 +14,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 type Tab = 'staff' | 'roles' | 'activity';
 
@@ -364,15 +365,8 @@ export default function StaffRoles() {
           </div>
 
           {/* ── Add Staff Member Modal ── */}
-          {showAddModal && (
-            <div
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
-              onClick={() => resetModal()}
-            >
-              <div
-                onClick={e => e.stopPropagation()}
-                className="bg-white rounded-2xl p-7 w-[520px] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
-              >
+          <Modal isOpen={showAddModal} onClose={() => resetModal()} size="lg">
+            <div className="p-7">
                 <h3 className="text-lg font-bold text-navy mb-5">
                   Add Staff Member
                 </h3>
@@ -469,9 +463,8 @@ export default function StaffRoles() {
                     Provision Now
                   </Button>
                 </div>
-              </div>
             </div>
-          )}
+          </Modal>
         </>
       )}
 

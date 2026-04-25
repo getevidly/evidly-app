@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 type Tab = 'overview' | 'setup' | 'history' | 'templates';
 
@@ -1244,8 +1245,8 @@ function TemplateModal({ template, onClose, onSave }: {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="p-4 sm:p-6">
         <h3 className="text-lg font-bold text-navy mb-4">{template ? 'Edit Template' : 'New Template'}</h3>
         <div className="space-y-4">
           <Input label="Name *" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
@@ -1293,7 +1294,7 @@ function TemplateModal({ template, onClose, onSave }: {
           </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

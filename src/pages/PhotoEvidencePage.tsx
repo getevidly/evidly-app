@@ -7,6 +7,7 @@ import {
   FileText, LayoutGrid, List as ListIcon,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -700,27 +701,28 @@ export function PhotoEvidencePage() {
       </div>
 
       {/* Detail Modal / Lightbox */}
-      {selected && selectedIndex !== null && (
-        <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80"
-          onClick={() => setSelectedIndex(null)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
+      <Modal
+        isOpen={!!(selected && selectedIndex !== null)}
+        onClose={() => setSelectedIndex(null)}
+        size="lg"
+        overlayClassName="!bg-black/80"
+        className="!bg-transparent !shadow-none overflow-visible"
+      >
           <div
-            className="relative w-full max-w-lg mx-4"
-            onClick={(e) => e.stopPropagation()}
+            className="relative"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             {/* Close button */}
             <button
               onClick={() => setSelectedIndex(null)}
-              className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors"
+              className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors z-10"
             >
               <X className="h-6 w-6" />
             </button>
 
             {/* Previous arrow */}
-            {selectedIndex > 0 && (
+            {selectedIndex !== null && selectedIndex > 0 && (
               <button
                 onClick={goPrev}
                 className="absolute left-[-48px] top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors hidden sm:flex"
@@ -730,7 +732,7 @@ export function PhotoEvidencePage() {
             )}
 
             {/* Next arrow */}
-            {selectedIndex < filteredPhotos.length - 1 && (
+            {selectedIndex !== null && selectedIndex < filteredPhotos.length - 1 && (
               <button
                 onClick={goNext}
                 className="absolute right-[-48px] top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors hidden sm:flex"
@@ -827,8 +829,7 @@ export function PhotoEvidencePage() {
               Swipe or use arrow keys to navigate
             </p>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Demo Upgrade Prompt */}
       {showUpgrade && (

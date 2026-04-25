@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -335,8 +336,8 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div className="p-4 sm:p-6">
         <h3 className="text-lg font-bold text-navy mb-4">New Campaign</h3>
         <div className="space-y-4">
           <FormInput label="Campaign Name *" value={form.name} onChange={v => { setFieldErrors(p => ({ ...p, name: '' })); setForm(p => ({ ...p, name: v })); }} error={fieldErrors.name} />
@@ -375,7 +376,7 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
           </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

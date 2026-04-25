@@ -9,6 +9,7 @@
 
 import { useState, useMemo } from 'react';
 import { X, Search, Check, Shield, RotateCcw } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import {
   getPermissionCategories,
   formatRoleName,
@@ -88,8 +89,6 @@ export function UserExceptionModal({
     return map;
   }, [userExceptions]);
 
-  if (!isOpen) return null;
-
   const handleToggleOverride = (key: string) => {
     if (!selectedUser) return;
     if (isProtectedPermission(key) && !ADMIN_ONLY_ROLES.includes(selectedUser.role)) return;
@@ -122,10 +121,10 @@ export function UserExceptionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" className="max-h-[85vh] flex flex-col">
       <div
-        className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl shadow-xl border"
-        style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
+        className="flex flex-col flex-1 min-h-0 border"
+        style={{ borderColor: 'var(--border)' }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
@@ -288,7 +287,7 @@ export function UserExceptionModal({
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

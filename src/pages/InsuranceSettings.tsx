@@ -16,6 +16,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { FeatureGate } from '../components/FeatureGate';
@@ -339,9 +340,8 @@ export function InsuranceSettings() {
       </div>
 
       {/* Consent Confirmation Modal */}
-      {showConsentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-backdrop-enter">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-lg w-[95vw] sm:w-full p-4 sm:p-6 modal-content-enter" style={F}>
+      <Modal isOpen={showConsentModal} onClose={() => setShowConsentModal(false)} size="lg">
+          <div className="border border-[#1E2D4D]/10 p-4 sm:p-6" style={F}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                 <EvidlyIcon size={20} />
@@ -397,8 +397,7 @@ export function InsuranceSettings() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       <DemoUpgradePrompt
         isOpen={showUpgrade}

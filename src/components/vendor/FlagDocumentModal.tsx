@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import type { FlagCategory } from '../../types/vendorDocuments';
 import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
+import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
 
@@ -31,12 +32,8 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
-        onClick={e => e.stopPropagation()}
-        style={{ fontFamily: 'Inter, sans-serif' }}
-      >
+    <Modal isOpen={true} onClose={onClose} size="md">
+      <div style={{ fontFamily: 'Inter, sans-serif' }}>
         {/* Header */}
         <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid #E8EDF5' }}>
           <div className="flex items-center justify-between">
@@ -123,6 +120,6 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

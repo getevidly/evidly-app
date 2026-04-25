@@ -6,6 +6,7 @@
  */
 import { useRef, useState } from 'react';
 import { Download, Share2, Copy, Check, X, Linkedin, Mail, MessageSquare } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import { InspectionBadge, type InspectionBadgeData } from './InspectionBadge';
 import {
@@ -28,8 +29,6 @@ export function InspectionBadgeModal({ isOpen, onClose, data }: InspectionBadgeM
   const cardRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
-
-  if (!isOpen) return null;
 
   const verifyUrl = getStandingVerifyUrl(data.referralCode);
 
@@ -82,33 +81,8 @@ export function InspectionBadgeModal({ isOpen, onClose, data }: InspectionBadgeM
   const shareText = `${data.orgName} just completed an inspection — and we were ready, thanks to EvidLY.`;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(0, 0, 0, 0.5)',
-        padding: 16,
-      }}
-      onClick={e => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-        style={{
-          background: '#fff',
-          borderRadius: 16,
-          maxWidth: 540,
-          width: '100%',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          padding: 24,
-          position: 'relative',
-        }}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <div style={{ padding: 24, position: 'relative' }}>
         {/* Close */}
         <button
           onClick={onClose}
@@ -304,6 +278,6 @@ export function InspectionBadgeModal({ isOpen, onClose, data }: InspectionBadgeM
           </a>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

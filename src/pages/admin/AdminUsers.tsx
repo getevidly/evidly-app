@@ -17,6 +17,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 const ROLES = [
   'platform_admin', 'owner_operator', 'executive', 'compliance_officer',
@@ -412,8 +413,8 @@ export default function AdminUsers() {
 
       {/* Action confirmation modal */}
       {actionUser && (
-        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-7 w-[420px] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <Modal isOpen={true} onClose={closeAction} size="sm">
+          <div className="p-7">
             <h3 className="text-base font-bold text-navy mb-3">
               {actionType === 'suspend' && `Suspend ${actionUser.full_name}?`}
               {actionType === 'unsuspend' && `Unsuspend ${actionUser.full_name}?`}
@@ -499,13 +500,13 @@ export default function AdminUsers() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Invite modal */}
       {showInvite && (
-        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-7 w-[400px] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <Modal isOpen={true} onClose={() => setShowInvite(false)} size="sm">
+          <div className="p-7">
             <h3 className="text-base font-bold text-navy mb-4">Invite New User</h3>
             <div className="flex flex-col gap-3">
               <div>
@@ -535,7 +536,7 @@ export default function AdminUsers() {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

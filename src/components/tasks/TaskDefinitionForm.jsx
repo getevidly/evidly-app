@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 const TASK_TYPES = [
   { value: 'temperature_log', label: 'Temperature Log' },
@@ -117,10 +118,10 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 modal-backdrop-enter">
+    <Modal isOpen={true} onClose={onClose} size="lg" className="max-h-[90vh] flex flex-col">
       <div
-        className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl"
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
+        className="flex flex-col flex-1 min-h-0"
+        style={{ border: '1px solid var(--border)' }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
           <h2 className="text-base font-bold text-[var(--text-primary)]">
@@ -336,6 +337,6 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

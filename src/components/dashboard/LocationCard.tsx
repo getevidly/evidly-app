@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { QrCode, X, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { getReadinessColor } from '../../utils/inspectionReadiness';
+import { Modal } from '../ui/Modal';
 
 interface LocationCardProps {
   locationId: string;
@@ -68,12 +69,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
       </div>
 
       {/* QR Passport Modal */}
-      {showQrModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={() => setShowQrModal(false)} />
-
-            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full modal-content-enter">
+      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} size="md" className="border border-[#1E2D4D]/10 overflow-hidden">
               {/* Header */}
               <div style={{ background: '#1E2D4D' }} className="px-6 py-4">
                 <div className="flex items-center justify-between">
@@ -137,10 +133,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
                   Close
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </>
   );
 }

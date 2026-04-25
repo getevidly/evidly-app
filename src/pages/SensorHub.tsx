@@ -15,6 +15,7 @@ import {
   type IoTSensor,
 } from '../data/demoData';
 import { useDemo } from '../contexts/DemoContext';
+import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -286,14 +287,12 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
     onClose();
   };
 
-  if (!open) return null;
-
   const thresholdUnit = SENSOR_TYPE_DEFAULTS[sensorType].unit;
   const showThresholds = sensorType !== 'door_contact';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[480px] max-w-lg max-h-[90vh] overflow-y-auto relative modal-content-enter" style={F}>
+    <Modal isOpen={open} onClose={handleClose} size="lg">
+      <div className="p-5 relative" style={F}>
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
@@ -455,7 +454,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 

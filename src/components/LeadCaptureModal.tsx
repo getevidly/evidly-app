@@ -5,6 +5,7 @@ import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useDemo } from '../contexts/DemoContext';
 import type { DemoLead } from '../contexts/DemoContext';
 import { useDemoLeadCapture } from '../hooks/useDemoLeadCapture';
+import { Modal } from './ui/Modal';
 
 const BUSINESS_TYPES = [
   { value: 'restaurant', label: 'Restaurant' },
@@ -28,8 +29,6 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
   const [form, setForm] = useState({ fullName: '', email: '', companyName: '', businessType: '' });
   const [submitting, setSubmitting] = useState(false);
 
-  if (!isOpen) return null;
-
   const canSubmit = form.fullName && form.email && form.companyName && form.businessType;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,10 +43,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
   };
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-[80] modal-backdrop-enter" onClick={onClose} />
-      <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden modal-content-enter" onClick={(e) => e.stopPropagation()}>
+    <Modal isOpen={isOpen} onClose={onClose} size="md" className="border border-[#1E2D4D]/10 overflow-hidden">
           {/* Header */}
           <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -144,8 +140,6 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
               No account needed — explore the full platform instantly
             </p>
           </form>
-        </div>
-      </div>
-    </>
+    </Modal>
   );
 }

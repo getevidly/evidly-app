@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, CheckCircle } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 interface AcknowledgeModalProps {
   deficiencyCode: string;
@@ -19,10 +20,10 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
   const [notes, setNotes] = useState('');
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <Modal isOpen={true} onClose={onClose} size="md">
       <div
-        className="w-full max-w-md rounded-xl shadow-xl border"
-        style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
+        className="border"
+        style={{ borderColor: '#D1D9E6' }}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
@@ -90,6 +91,6 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

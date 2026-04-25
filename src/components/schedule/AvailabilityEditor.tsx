@@ -3,6 +3,7 @@
  */
 import { useState, useMemo } from 'react';
 import { X, Clock, Check } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { format, addDays, startOfWeek } from 'date-fns';
 import type { Technician } from '../../hooks/api/useSchedule';
 import { useUpdateAvailability } from '../../hooks/api/useSchedule';
@@ -68,10 +69,8 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
     }, 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-
-      <div className="relative w-full max-w-md rounded-xl shadow-xl" style={{ background: CARD_BG }}>
+    <Modal isOpen={true} onClose={onClose} size="md">
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <div>
@@ -165,6 +164,6 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -14,6 +14,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { FeatureGate } from '../../components/feature-flags/FeatureGate';
 import { KpiTile } from '../../components/admin/KpiTile';
 import Button from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 
 // -- Types --
 
@@ -474,11 +475,9 @@ export default function ViolationOutreach() {
       )}
 
       {/* -- Outreach Content Modal -- */}
-      {modalContent && (
-        <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-6"
-          onClick={() => setModalContent(null)}>
-          <div className="bg-white rounded-2xl max-w-[640px] w-full max-h-[80vh] overflow-hidden flex flex-col"
-            onClick={e => e.stopPropagation()}>
+      <Modal isOpen={!!modalContent} onClose={() => setModalContent(null)} size="lg">
+        {modalContent && (
+          <>
             <div className="px-6 py-4 border-b border-border_ui-warm flex items-center justify-between">
               <div>
                 <div className="text-[15px] font-bold text-navy">{modalContent.title}</div>
@@ -507,16 +506,14 @@ export default function ViolationOutreach() {
                 Done
               </Button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* -- Touch History Modal -- */}
-      {touchHistory && (
-        <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-6"
-          onClick={() => setTouchHistory(null)}>
-          <div className="bg-white rounded-2xl max-w-[560px] w-full max-h-[70vh] overflow-hidden flex flex-col"
-            onClick={e => e.stopPropagation()}>
+      <Modal isOpen={!!touchHistory} onClose={() => setTouchHistory(null)} size="lg">
+        {touchHistory && (
+          <>
             <div className="px-6 py-4 border-b border-border_ui-warm flex items-center justify-between">
               <div>
                 <div className="text-[15px] font-bold text-navy">Touch History</div>
@@ -557,9 +554,9 @@ export default function ViolationOutreach() {
               <Button onClick={() => setTouchHistory(null)}
                 variant="primary" size="sm">Close</Button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </div>
     </FeatureGate>
   );

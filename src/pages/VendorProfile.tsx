@@ -7,6 +7,7 @@ import {
   Users, TrendingUp, Building2, Send, ChevronDown, Loader2,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { Modal } from '../components/ui/Modal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   marketplaceVendors, marketplaceReviews, locations,
@@ -928,9 +929,8 @@ export function VendorProfile() {
       {/* ═══════════════════════════════════════════════════════ */}
       {/* SERVICE REQUEST MODAL                                  */}
       {/* ═══════════════════════════════════════════════════════ */}
-      {showRequestModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 modal-content-enter">
+      <Modal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} size="lg">
+          <div className="border border-[#1E2D4D]/10 p-4 sm:p-6">
             <h2 className="text-lg font-bold text-[#1E2D4D] mb-4">
               Request Quote from {vendor.companyName}
             </h2>
@@ -1022,8 +1022,7 @@ export function VendorProfile() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {showUpgrade && (
         <DemoUpgradePrompt

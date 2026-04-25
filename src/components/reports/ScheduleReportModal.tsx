@@ -3,6 +3,7 @@
  */
 import { useState } from 'react';
 import { X, Loader2, CalendarClock } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
 interface ScheduleReportModalProps {
@@ -46,12 +47,8 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
-      <div
-        className="rounded-xl w-full max-w-lg mx-4"
-        style={{ background: CARD_BG, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal isOpen={true} onClose={onClose} size="lg">
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
@@ -180,6 +177,6 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

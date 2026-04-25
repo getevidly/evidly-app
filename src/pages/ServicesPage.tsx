@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { useRole } from '../contexts/RoleContext';
+import { Modal } from '../components/ui/Modal';
 import { useDemo } from '../contexts/DemoContext';
 import {
   VENDOR_CATEGORIES,
@@ -480,13 +481,9 @@ export default function ServicesPage() {
       </div>
 
       {/* Log Service Modal */}
-      {showLogService && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-50 modal-backdrop-enter" onClick={() => setShowLogService(false)} />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <Modal isOpen={showLogService} onClose={() => setShowLogService(false)} size="lg">
             <div
-              className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto modal-content-enter"
-              onClick={(e) => e.stopPropagation()}
+              className="border border-[#1E2D4D]/10"
             >
               <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/10">
                 <div className="flex items-center justify-between">
@@ -655,9 +652,7 @@ export default function ServicesPage() {
                 </button>
               </div>
             </div>
-          </div>
-        </>
-      )}
+      </Modal>
 
       {/* Toast */}
       {toastMessage && (

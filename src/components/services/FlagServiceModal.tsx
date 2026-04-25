@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Flag } from 'lucide-react';
+import { Modal } from '../ui/Modal';
 
 const FLAG_CATEGORIES = [
   { value: 'incomplete_work', label: 'Incomplete Work' },
@@ -23,10 +24,10 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
   const canSubmit = category && reason.trim().length > 0;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <Modal isOpen={true} onClose={onClose} size="md">
       <div
-        className="w-full max-w-md rounded-xl shadow-xl border"
-        style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
+        className="border rounded-xl"
+        style={{ borderColor: '#D1D9E6' }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
@@ -97,6 +98,6 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
