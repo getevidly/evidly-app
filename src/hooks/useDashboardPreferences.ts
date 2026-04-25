@@ -40,9 +40,6 @@ export function useDashboardPreferences(): UseDashboardPreferencesReturn {
         setLoading(true);
         setError(null);
 
-        // TEMP: artificial delay to verify skeleton state — remove after verification
-        await new Promise(r => setTimeout(r, 3000));
-
         const { data: { user }, error: authErr } = await supabase.auth.getUser();
         if (authErr || !user) {
           if (!cancelled) setLoading(false);
