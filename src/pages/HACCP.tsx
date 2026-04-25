@@ -954,16 +954,29 @@ export function HACCP() {
     return 'good';
   };
 
-  const handleMarkReviewed = (planId: string) => {
+  const handleMarkReviewed = async (planId: string) => {
     if (isDemoMode) {
       const nowStr = new Date().toISOString();
       if (selectedPlan?.id === planId) {
         setSelectedPlan({ ...selectedPlan, lastReviewed: nowStr, status: 'active' });
       }
       toast.success('Plan marked as reviewed');
-    } else {
-      supabase.from('haccp_plans').update({ last_reviewed: new Date().toISOString(), status: 'active' }).eq('id', planId)
-        .then(() => toast.success('Plan marked as reviewed'));
+      return;
+    }
+    if (!profile?.organization_id) {
+      toast.error('Unable to update — missing organization context.');
+      return;
+    }
+    try {
+      const { error } = await supabase.from('haccp_plans')
+        .update({ last_reviewed: new Date().toISOString(), status: 'active' })
+        .eq('id', planId)
+        .eq('organization_id', profile.organization_id);
+      if (error) throw error;
+      toast.success('Plan marked as reviewed');
+    } catch (err: any) {
+      console.error('[HACCP] plan review update failed:', err.message);
+      toast.error('Failed to mark plan as reviewed');
     }
   };
 
