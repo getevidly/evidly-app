@@ -261,7 +261,7 @@ const NAVY = '#1E2D4D';
 
 function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
   const params = new URLSearchParams(search);
-  const activeTab = params.get('tab') || 'overview';
+  const activeTab = params.get('tab') || 'today';
   const todayShort = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   return (
