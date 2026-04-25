@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2, Clock, AlertTriangle, ChevronRight,
-  CalendarDays, ClipboardCheck, Thermometer,
+  ClipboardCheck, Thermometer, FileUp,
 } from 'lucide-react';
 import { useDashboardData, type TaskItem, type DeadlineItem } from '../../hooks/useDashboardData';
 import { NAVY, BODY_TEXT, FONT } from './shared/constants';
@@ -248,12 +248,13 @@ export function DashboardToday() {
         </div>
       )}
 
-      {/* Quick links — centered, clickable, with colored icons and hover animations */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {([
-          { label: 'Calendar', icon: CalendarDays, route: '/calendar', iconBg: '#eff6ff', iconColor: '#3b82f6' },
-          { label: 'Temperature Readings', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
-          { label: 'Checklists', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
+          { label: 'Log Temp', subtitle: 'Record a reading', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
+          { label: 'Run Checklist', subtitle: 'Start a checklist', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
+          { label: 'Upload Doc', subtitle: 'Add a document', icon: FileUp, route: '/documents', iconBg: '#eff6ff', iconColor: '#3b82f6' },
+          { label: 'Report Incident', subtitle: 'Log an incident', icon: AlertTriangle, route: '/incidents', iconBg: '#fefce8', iconColor: '#d97706' },
         ] as const).map(link => (
           <button
             key={link.route}
@@ -265,10 +266,13 @@ export function DashboardToday() {
             <div className="p-2 rounded-lg" style={{ backgroundColor: link.iconBg, color: link.iconColor }}>
               <link.icon size={18} />
             </div>
-            <span className="text-sm font-medium" style={{ color: BODY_TEXT }}>{link.label}</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium block" style={{ color: BODY_TEXT }}>{link.label}</span>
+              <span className="text-xs" style={{ color: '#6b7280' }}>{link.subtitle}</span>
+            </div>
             <ChevronRight
               size={14}
-              className="ml-auto text-[#1E2D4D]/30 group-hover:text-[#1E2D4D]/70 group-hover:translate-x-1 transition-all duration-200"
+              className="ml-auto shrink-0 text-[#1E2D4D]/30 group-hover:text-[#1E2D4D]/70 group-hover:translate-x-1 transition-all duration-200"
             />
           </button>
         ))}
