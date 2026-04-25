@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { X, Award, Calendar, FileText, Hash, Building2, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import type { TrainingEmployeeCert } from '../../data/trainingRecordsDemoData';
 import { GhostInput } from '../ai/GhostInput';
@@ -44,6 +45,7 @@ interface Props {
 
 export function AddCertificationModal({ isOpen, onClose, employeeId, employeeName, existingCert, onSaved }: Props) {
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
   const [saving, setSaving] = useState(false);
 
   const [certType, setCertType] = useState(existingCert?.type || 'food_handler');
@@ -103,8 +105,14 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
     };
 
     if (!isDemoMode) {
+      if (!profile?.organization_id) {
+        toast.error('Missing organization context');
+        setSaving(false);
+        return;
+      }
       try {
         const payload = {
+          organization_id: profile.organization_id,
           user_id: employeeId,
           certification_name: certRecord.name,
           issue_date: certRecord.issued,
@@ -118,7 +126,8 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
           const { error } = await supabase
             .from('employee_certifications')
             .update(payload)
-            .eq('id', existingCert.id);
+            .eq('id', existingCert.id)
+            .eq('organization_id', profile.organization_id);
           if (error) throw error;
         } else {
           const { error } = await supabase
