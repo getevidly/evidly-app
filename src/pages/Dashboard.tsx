@@ -21,6 +21,9 @@ import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { DashboardSplash } from '../components/dashboard/DashboardSplash';
+import { DashboardLoadingSkeleton } from '../components/dashboard/DashboardLoadingSkeleton';
+import { useDashboardPreferences } from '../hooks/useDashboardPreferences';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -118,6 +121,13 @@ export function Dashboard() {
   const tab = searchParams.get('tab') || 'today';
   const [pageError, setPageError] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const { loading: prefsLoading } = useDashboardPreferences();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Show WelcomeModal exactly once per user (first login)
   useEffect(() => {
@@ -130,6 +140,9 @@ export function Dashboard() {
   const welcomeFirstName = isDemoMode
     ? (demoFirstName || 'there')
     : (profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there');
+
+  if (showSplash) return <DashboardSplash />;
+  if (prefsLoading) return <DashboardLoadingSkeleton />;
 
   if (pageError) {
     return <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />;
