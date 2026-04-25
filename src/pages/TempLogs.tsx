@@ -838,8 +838,7 @@ export function TempLogs() {
       const eq = equipment.find(e => e.id === entry.equipment_id);
 
       return {
-        facility_id: profile?.organization_id,
-        location_id: (eq as any)?.location_id,
+        facility_id: (eq as any)?.location_id,
         equipment_id: entry.equipment_id,
         input_method: 'manual',
         temperature: tempValue,
