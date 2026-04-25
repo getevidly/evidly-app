@@ -1,5 +1,4 @@
-import { Lock } from 'lucide-react';
-import { CARD_BG, CARD_BORDER, BODY_TEXT } from '../constants';
+import { CARD_BG, CARD_BORDER, BODY_TEXT, NAVY } from '../constants';
 
 export interface BenchmarkItem {
   locationName: string;
@@ -13,42 +12,65 @@ interface Props {
   benchmarks: BenchmarkItem[];
 }
 
-export function JurisdictionBenchmarkWidget({ benchmarks: _benchmarks }: Props) {
+export function JurisdictionBenchmarkWidget({ benchmarks }: Props) {
   return (
     <div
-      className="rounded-lg overflow-hidden relative"
-      style={{
-        backgroundColor: CARD_BG,
-        border: `1px solid ${CARD_BORDER}`,
-        opacity: 0.55,
-        pointerEvents: 'none',
-      }}
-      title="Unlocks as your kitchen builds history."
+      className="rounded-lg overflow-hidden"
+      style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
     >
-      {/* Lock overlay */}
-      <div className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full flex items-center justify-center" style={{ backgroundColor: '#A08C5A20' }}>
-        <Lock size={14} style={{ color: '#A08C5A' }} />
-      </div>
-
       <div className="px-4 py-3" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Jurisdiction Benchmark</h3>
-        <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>Public inspection activity in your county</p>
+        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Your score vs. jurisdiction average</p>
       </div>
-
-      {/* Placeholder content */}
-      <div className="px-4 py-6 space-y-4">
-        {[1, 2].map(i => (
-          <div key={i}>
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="h-3 rounded" style={{ width: '35%', backgroundColor: '#E8EDF5' }} />
-              <div className="h-3 w-10 rounded" style={{ backgroundColor: '#E8EDF5' }} />
+      <div className="divide-y divide-[#1E2D4D]/5">
+        {benchmarks.map(b => {
+          const isPositive = b.delta >= 0;
+          return (
+            <div key={b.locationName} className="px-4 py-3">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p className="text-sm font-semibold text-[#1E2D4D]/90">{b.locationName}</p>
+                  <p className="text-xs text-[#1E2D4D]/50">{b.jurisdictionName}</p>
+                </div>
+                <span
+                  className="text-xs font-bold px-2 py-0.5 rounded"
+                  style={{
+                    backgroundColor: isPositive ? '#f0fdf4' : '#fef2f2',
+                    color: isPositive ? '#166534' : '#991b1b',
+                  }}
+                >
+                  {isPositive ? '+' : ''}{b.delta}
+                </span>
+              </div>
+              <div className="flex items-center gap-4 mt-2">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>You</span>
+                    <span className="text-xs font-bold" style={{ color: NAVY }}>{b.yourScore}</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${b.yourScore}%`, backgroundColor: '#1E2D4D' }}
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>Avg</span>
+                    <span className="text-xs font-bold" style={{ color: '#6B7F96' }}>{b.jurisdictionAvg}</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${b.jurisdictionAvg}%`, backgroundColor: '#94a3b8' }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: '#E8EDF5' }} />
-              <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: '#E8EDF5' }} />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

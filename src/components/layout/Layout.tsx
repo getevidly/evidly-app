@@ -13,8 +13,6 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
 
-const SetupBanner = lazy(() => import('../onboarding/SetupBanner').then(m => ({ default: m.SetupBanner })));
-
 // Lazy-load all overlay components — none are needed for initial render
 const GuidedTour = lazy(() => import('../GuidedTour').then(m => ({ default: m.GuidedTour })));
 const DemoTour = lazy(() => import('../DemoTour').then(m => ({ default: m.DemoTour })));
@@ -125,8 +123,6 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
             <AutoBreadcrumb />
           </div>
         </div>
-        {/* Onboarding setup banner — all authenticated pages except /dashboard */}
-        <Suspense fallback={null}><SetupBanner /></Suspense>
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto" id="layout-scroll-container">
           <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>

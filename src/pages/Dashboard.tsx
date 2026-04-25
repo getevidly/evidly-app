@@ -21,7 +21,6 @@ import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { OnboardingChecklistCard } from '../components/dashboard/shared/OnboardingChecklistCard';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -116,7 +115,7 @@ export function Dashboard() {
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   usePageTitle('Dashboard');
   const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab') || 'today';
+  const tab = searchParams.get('tab') || 'overview';
   const [pageError, setPageError] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -154,7 +153,6 @@ export function Dashboard() {
       <OutbreakBanner />
       <IntelligenceBanner />
       <CopilotBriefingCard />
-      <OnboardingChecklistCard />
       {tab === 'today' ? (
         <DashboardToday />
       ) : (

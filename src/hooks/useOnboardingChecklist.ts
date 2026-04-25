@@ -118,7 +118,6 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
 
   const [orgIndustry, setOrgIndustry] = useState<string | null>(null);
   const [orgLocationCount, setOrgLocationCount] = useState(1);
-  const [enrollmentFlags, setEnrollmentFlags] = useState<{ isSB1383Enrolled?: boolean; isK12Enrolled?: boolean }>({});
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [isDismissed, setIsDismissed] = useState(false);
@@ -148,7 +147,7 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
       try {
         const { data } = await supabase
           .from('organizations')
-          .select('industry_type, planned_location_count, onboarding_completed, is_sb1383_enrolled, is_k12')
+          .select('industry_type, planned_location_count, onboarding_completed')
           .eq('id', orgId)
           .maybeSingle();
 
@@ -156,10 +155,6 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
           setOrgIndustry(data.industry_type || null);
           setOrgLocationCount(data.planned_location_count || 1);
           if (data.onboarding_completed) setIsDismissed(true);
-          setEnrollmentFlags({
-            isSB1383Enrolled: data.is_sb1383_enrolled === true,
-            isK12Enrolled: data.is_k12 === true,
-          });
         }
       } catch { /* ignore */ }
 
@@ -174,8 +169,8 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
 
   // ── Compute visible steps ─────────────────────────────
   const visibleSteps = useMemo(
-    () => resolveVisibleSteps(orgIndustry, orgLocationCount, userRole, enrollmentFlags),
-    [orgIndustry, orgLocationCount, userRole, enrollmentFlags],
+    () => resolveVisibleSteps(orgIndustry, orgLocationCount, userRole),
+    [orgIndustry, orgLocationCount, userRole],
   );
 
   // ── Auto-detection: query Supabase tables (auth mode only) ──
