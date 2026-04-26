@@ -1642,22 +1642,9 @@ export function Calendar() {
               </div>
             </div>
 
-            {/* Filter row: stacks full-width on mobile */}
+            {/* Filter row: Location → Event Type → Vendor Service (dependent). Stacks full-width on mobile. */}
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              {/* Type filter select */}
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                style={selectStyle}
-                className="w-full sm:w-auto sm:min-w-[150px]"
-              >
-                <option value="all">{tr('pages.calendar.allTypes')}</option>
-                {eventTypes.map(t => (
-                  <option key={t.id} value={t.id}>{t.label}</option>
-                ))}
-              </select>
-
-              {/* Location filter select */}
+              {/* Location filter select — primary axis */}
               <select
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
@@ -1670,18 +1657,37 @@ export function Calendar() {
                 ))}
               </select>
 
-              {/* Category filter select */}
+              {/* Event Type filter select */}
               <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
+                value={typeFilter}
+                onChange={(e) => {
+                  setTypeFilter(e.target.value);
+                  // Reset category when leaving vendor context
+                  if (e.target.value !== 'vendor') setCategoryFilter('all');
+                }}
                 style={selectStyle}
                 className="w-full sm:w-auto sm:min-w-[150px]"
               >
-                <option value="all">All Categories</option>
-                {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                <option value="all">{tr('pages.calendar.allTypes')}</option>
+                {eventTypes.map(t => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
                 ))}
               </select>
+
+              {/* Vendor Service filter — dependent: only shown when Event Type = Vendor Service */}
+              {typeFilter === 'vendor' && (
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  style={selectStyle}
+                  className="w-full sm:w-auto sm:min-w-[150px]"
+                >
+                  <option value="all">All vendor services</option>
+                  {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
         </div>
