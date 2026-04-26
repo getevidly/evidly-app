@@ -231,7 +231,7 @@ function formatDateKey(d: Date) {
   return `${year}-${month}-${day}`;
 }
 
-const HOURS = Array.from({ length: 18 }, (_, i) => i + 5); // 5 AM to 10 PM
+const HOURS = Array.from({ length: 17 }, (_, i) => i + 6); // 6 AM to 10 PM
 
 function hourLabel(h: number) {
   if (h === 0) return '12 AM';
@@ -1322,7 +1322,7 @@ export function Calendar() {
             });
 
             elements.push(
-              <div key={hour} style={{ display: 'flex', borderBottom: '1px solid #f3f4f6', minHeight: '64px', backgroundColor: isOutside ? '#f3f4f6' : 'transparent' }}>
+              <div key={hour} style={{ display: 'flex', borderBottom: '1px solid #f3f4f6', minHeight: '26px', backgroundColor: isOutside ? '#f3f4f6' : 'transparent' }}>
                 <div className="w-[56px] sm:w-[80px]" style={{ padding: '8px 6px', textAlign: 'right', fontSize: '12px', color: isOutside ? '#c9cdd2' : '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
                   {hourLabel(hour)}
                 </div>
