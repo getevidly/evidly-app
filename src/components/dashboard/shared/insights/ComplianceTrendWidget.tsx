@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function ComplianceTrendWidget({ trendData }: Props) {
-  const [period, setPeriod] = useState<TimePeriod>('90d');
+  const [period, setPeriod] = useState<TimePeriod>('30d');
   const filtered = filterByPeriod(trendData, period);
   const analysis = analyzeTrend(filtered.map(d => d.foodSafety));
 
