@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle, Plus, Trash2, Edit3 } from 'lucide-react';
-import { Breadcrumb } from '../components/Breadcrumb';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import type { UserRole } from '../contexts/RoleContext';
@@ -1530,8 +1529,6 @@ export function Calendar() {
   // ── Main Render ──
   return (
     <>
-      <Breadcrumb items={[{ label: tr('nav.dashboard'), href: '/dashboard' }, { label: tr('pages.calendar.title') }]} />
-
       {categoryParam && (
         <div className="px-3 sm:px-6" style={{ maxWidth: '1400px', margin: '0 auto' }}>
           <button
