@@ -25,7 +25,7 @@ export function ComplianceTrendWidget({ trendData }: Props) {
     >
       <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
         <div>
-          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Compliance Score Trend</h3>
+          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Compliance Pulse</h3>
           <span className="text-xs font-medium" style={{ color: deltaColor }}>
             {deltaSign}{analysis.periodDelta} pts ({analysis.direction})
           </span>

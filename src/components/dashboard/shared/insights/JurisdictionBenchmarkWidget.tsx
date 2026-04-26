@@ -20,7 +20,7 @@ export function JurisdictionBenchmarkWidget({ benchmarks }: Props) {
     >
       <div className="px-4 py-3" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Jurisdiction Benchmark</h3>
-        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Your score vs. jurisdiction average</p>
+        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Public inspection activity in your county</p>
       </div>
       <div className="divide-y divide-[#1E2D4D]/5">
         {benchmarks.map(b => {

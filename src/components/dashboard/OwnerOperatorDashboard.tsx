@@ -13,6 +13,7 @@ import { LocationStandingList } from './shared/LocationStandingList';
 import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import LockedWidgetOverlay from './shared/LockedWidgetOverlay';
 import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
 import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
 import { K2CWidget } from '../referral/K2CWidget';
@@ -312,10 +313,14 @@ export default function OwnerOperatorDashboard() {
         <ComplianceTrendWidget trendData={isDemoMode ? CATEGORY_ORG_TRENDS : []} />
       </div>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <InspectionProbabilityWidget locations={insightsInspectionData} />
+        <LockedWidgetOverlay>
+          <InspectionProbabilityWidget locations={insightsInspectionData} />
+        </LockedWidgetOverlay>
       </div>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <JurisdictionBenchmarkWidget benchmarks={insightsBenchmarkData} />
+        <LockedWidgetOverlay>
+          <JurisdictionBenchmarkWidget benchmarks={insightsBenchmarkData} />
+        </LockedWidgetOverlay>
       </div>
 
       {/* Annual Vendor Spend (OO only) */}
