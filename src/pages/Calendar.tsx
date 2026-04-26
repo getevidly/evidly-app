@@ -1585,7 +1585,7 @@ export function Calendar() {
           </div>
 
           {/* Right: Today + View toggle + Filters */}
-          <div data-demo-allow style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: '10px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
+          <div data-demo-allow style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
             {/* Action row: Today + Add Event + View toggle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               {/* Today button */}
