@@ -12,7 +12,6 @@ import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import LockedWidgetOverlay from './shared/LockedWidgetOverlay';
 import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
 import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
@@ -223,11 +222,6 @@ export default function OwnerOperatorDashboard() {
             { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
           ]} />
         )}
-      </div>
-
-      {/* Onboarding Checklist */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <OnboardingChecklistCard />
       </div>
 
       {/* Confidence Banner */}

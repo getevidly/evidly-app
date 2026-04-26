@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useDashboardData, type TaskItem, type DeadlineItem } from '../../hooks/useDashboardData';
 import { NAVY, BODY_TEXT, FONT } from './shared/constants';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 const STATUS_COLORS: Record<TaskItem['status'], { dot: string; text: string }> = {
   done: { dot: '#16a34a', text: '#16a34a' },
@@ -101,6 +102,11 @@ export function DashboardToday() {
         <span className="font-semibold" style={{ color: '#1E2D4D' }}>Today</span>
         <span className="mx-2 text-[#1E2D4D]/30">&middot;</span>
         <span className="text-[#1E2D4D]/50">{todayStr}</span>
+      </div>
+
+      {/* Onboarding Checklist */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <OnboardingChecklistCard />
       </div>
 
       {/* Summary strip — centered */}

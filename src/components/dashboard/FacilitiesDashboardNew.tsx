@@ -10,7 +10,6 @@ import { FACILITIES_EVENTS, FACILITIES_CALENDAR } from '../../data/calendarDemoE
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { ServicesDueSoonWidget, AnnualVendorSpendWidget } from './VendorServiceWidgets';
 import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
 import { MetricCardRow } from './shared/MetricCardRow';
@@ -69,9 +68,6 @@ export default function FacilitiesDashboardNew() {
       <DashboardHero
         orgName={companyName || DEMO_ORG.name}
       />
-
-      {/* 2. ONBOARDING CHECKLIST */}
-      <OnboardingChecklistCard />
 
       {/* 3. CONFIDENCE BANNER */}
       <ConfidenceBanner

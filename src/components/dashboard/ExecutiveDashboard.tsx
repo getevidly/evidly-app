@@ -8,7 +8,6 @@ import { DashboardHero } from './shared/DashboardHero';
 import { CalendarCard } from './shared/CalendarCard';
 import { EXECUTIVE_EVENTS, EXECUTIVE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -84,11 +83,6 @@ export default function ExecutiveDashboard() {
           { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
           { label: 'Open CAs', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
         ]} />
-      </div>
-
-      {/* 2. ONBOARDING CHECKLIST */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
-        <OnboardingChecklistCard />
       </div>
 
       {/* 3. CONFIDENCE BANNER */}

@@ -10,7 +10,6 @@ import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/cal
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { MetricCardRow } from './shared/MetricCardRow';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
@@ -128,9 +127,6 @@ export default function KitchenManagerDashboard() {
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
-
-      {/* 2. ONBOARDING CHECKLIST */}
-      <OnboardingChecklistCard />
 
       {/* 3. CONFIDENCE BANNER */}
       <ConfidenceBanner

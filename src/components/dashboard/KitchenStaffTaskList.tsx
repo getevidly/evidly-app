@@ -20,7 +20,6 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { StaffStanding } from './shared/StaffStanding';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
@@ -201,9 +200,6 @@ export default function KitchenStaffTaskList() {
             orgName={isDemoMode ? companyName : ''}
             locationName={isDemoMode ? locationName : ''}
           />
-
-          {/* Onboarding checklist */}
-          <OnboardingChecklistCard />
 
           {/* Confidence Banner */}
           <ConfidenceBanner

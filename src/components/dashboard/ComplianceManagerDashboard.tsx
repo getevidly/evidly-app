@@ -15,7 +15,6 @@ import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { CalendarCard } from './shared/CalendarCard';
 import { COMPLIANCE_EVENTS, COMPLIANCE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -133,13 +132,6 @@ export default function ComplianceManagerDashboard() {
         >
           <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
         </DashboardHero>
-      </div>
-
-      {/* 2. ONBOARDING CHECKLIST */}
-      <div style={{ padding: '0 24px' }}>
-        <div className="mt-4">
-          <OnboardingChecklistCard />
-        </div>
       </div>
 
       {/* 3. CONFIDENCE BANNER */}

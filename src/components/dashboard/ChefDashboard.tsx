@@ -10,7 +10,6 @@ import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/cal
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
-import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { MetricCardRow } from './shared/MetricCardRow';
 import { CARD_BG, CARD_BORDER, BODY_TEXT, NAVY } from './shared/constants';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
@@ -74,9 +73,6 @@ export default function ChefDashboard() {
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
-
-      {/* 2. ONBOARDING CHECKLIST */}
-      <OnboardingChecklistCard />
 
       {/* 3. CONFIDENCE BANNER */}
       <ConfidenceBanner
