@@ -15,7 +15,7 @@ export default function LockedWidgetOverlay({
   label = 'Collecting data \u2014 insights appear as history builds',
 }: LockedWidgetOverlayProps) {
   return (
-    <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', minHeight: 200 }}>
       <div style={{ opacity: 0.45, pointerEvents: 'none' }}>
         {children}
       </div>
@@ -26,12 +26,12 @@ export default function LockedWidgetOverlay({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'rgba(250, 247, 240, 0.6)',
+          background: 'rgba(250, 247, 240, 0.85)',
           borderRadius: 12,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Lock size={18} color="#1E2D4D" />
+          <Lock size={24} color="#1E2D4D" />
           <span
             style={{
               color: '#1E2D4D',
