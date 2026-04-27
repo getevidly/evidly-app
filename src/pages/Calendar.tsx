@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle, Plus } from 'lucide-react';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import type { UserRole } from '../contexts/RoleContext';
@@ -179,7 +179,6 @@ export function Calendar() {
     return () => window.removeEventListener('resize', handler);
   }, []);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-  const [typeFilter, setTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState(() =>
     CATEGORY_PARAM_MAP[categoryParam || ''] || 'all'
@@ -274,11 +273,10 @@ export function Calendar() {
     const roleTypes = ROLE_EVENT_TYPES[userRole];
     return events.filter(e =>
       (roleTypes === 'all' || roleTypes.includes(e.type)) &&
-      (typeFilter === 'all' || e.type === typeFilter) &&
       (locationFilter === 'all' || e.location === locationFilter) &&
       (categoryFilter === 'all' || e.category === categoryFilter)
     );
-  }, [events, typeFilter, locationFilter, categoryFilter, userRole]);
+  }, [events, locationFilter, categoryFilter, userRole]);
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
@@ -947,6 +945,23 @@ export function Calendar() {
                 ))}
               </div>
 
+              {/* Schedule a service */}
+              <button
+                onClick={() => navigate('/vendors')}
+                style={{
+                  padding: '8px 16px', borderRadius: '8px',
+                  border: 'none', backgroundColor: '#3B6D11',
+                  fontWeight: 500, fontSize: '14px', color: 'white',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  display: 'flex', alignItems: 'center',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
+              >
+                <Plus size={16} style={{ marginRight: '6px' }} />
+                Schedule a service
+              </button>
+
               {/* 24h toggle */}
               <button
                 type="button"
@@ -979,37 +994,18 @@ export function Calendar() {
                 ))}
               </select>
 
-              {/* Event Type filter select */}
+              {/* Vendor Service filter */}
               <select
-                value={typeFilter}
-                onChange={(e) => {
-                  setTypeFilter(e.target.value);
-                  // Reset category when leaving vendor context
-                  if (e.target.value !== 'vendor') setCategoryFilter('all');
-                }}
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
                 style={selectStyle}
                 className="w-full sm:w-auto sm:min-w-[150px]"
               >
-                <option value="all">{tr('pages.calendar.allTypes')}</option>
-                {eventTypes.map(t => (
-                  <option key={t.id} value={t.id}>{t.label}</option>
+                <option value="all">All vendor services</option>
+                {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
-
-              {/* Vendor Service filter — dependent: only shown when Event Type = Vendor Service */}
-              {typeFilter === 'vendor' && (
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  style={selectStyle}
-                  className="w-full sm:w-auto sm:min-w-[150px]"
-                >
-                  <option value="all">All vendor services</option>
-                  {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              )}
             </div>
           </div>
         </div>
@@ -1140,9 +1136,7 @@ export function Calendar() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 {[
                   { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1E2D4D' },
-                  { label: tr('pages.calendar.inspections'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#ea580c' },
                   { label: tr('pages.calendar.vendorVisits'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
-                  { label: tr('pages.calendar.meetings'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'meeting' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#0891b2' },
                 ].map(stat => (
                   <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>
