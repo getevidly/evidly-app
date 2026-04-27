@@ -1148,7 +1148,7 @@ const en = {
       upcoming: 'Upcoming',
       noUpcomingEvents: 'No upcoming events',
       thisMonth: 'This Month',
-      totalEvents: 'Total Events',
+      totalEvents: 'Services',
       inspections: 'Inspections',
       vendorVisits: 'Vendor Visits',
       meetings: 'Meetings',

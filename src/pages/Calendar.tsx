@@ -1094,7 +1094,7 @@ export function Calendar() {
                   <div style={{ padding: '4px 0' }}>
                     <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
                     <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
-                      EvidLY adds events automatically when services are scheduled, inspections are predicted, or corrective actions are due.
+                      EvidLY adds events automatically when vendor services are scheduled.
                     </p>
                   </div>
                 )}
