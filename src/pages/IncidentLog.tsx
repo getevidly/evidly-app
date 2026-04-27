@@ -60,6 +60,7 @@ interface Comment {
 
 interface Incident {
   id: string;
+  dbId?: string; // Actual Supabase incidents.id uuid — used for FK writes. id holds the human-readable incident_number.
   type: IncidentType;
   severity: Severity;
   title: string;
@@ -541,6 +542,7 @@ export function IncidentLog() {
 
       const mapped: Incident[] = (data || []).map((row: any) => ({
         id: row.incident_number || row.id,
+        dbId: row.id,
         type: row.type as IncidentType,
         severity: row.severity as Severity,
         title: row.title,
@@ -709,6 +711,7 @@ export function IncidentLog() {
     const nowIso = new Date().toISOString();
 
     // Live mode: insert to Supabase
+    let insertedDbId: string | undefined;
     if (!isDemoMode && profile?.organization_id) {
       const { data: inserted, error } = await supabase.from('incidents').insert({
         organization_id: profile.organization_id,
@@ -733,6 +736,7 @@ export function IncidentLog() {
 
       // Insert timeline entries
       if (inserted) {
+        insertedDbId = inserted.id;
         await supabase.from('incident_timeline').insert([
           { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: 'Current User' },
           { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'assigned', performed_by: 'System' },
@@ -742,6 +746,7 @@ export function IncidentLog() {
 
     const newIncident: Incident = {
       id: incNumber,
+      dbId: insertedDbId,
       type: newType,
       severity: newSeverity,
       title: newTitle,
@@ -786,6 +791,10 @@ export function IncidentLog() {
     }];
 
     if (!isDemoMode && profile?.organization_id) {
+      if (!selectedIncident.dbId) {
+        console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
+        return;
+      }
       await supabase.from('incidents').update({
         status: 'in_progress',
         corrective_action: actionText,
@@ -794,7 +803,7 @@ export function IncidentLog() {
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
       await supabase.from('incident_timeline').insert({
-        incident_id: selectedIncident.id,
+        incident_id: selectedIncident.dbId,
         action: `Corrective action: ${actionText}${estLabel}`,
         status: 'in_progress',
         performed_by: 'Current User',
@@ -829,6 +838,10 @@ export function IncidentLog() {
     }];
 
     if (!isDemoMode && profile?.organization_id) {
+      if (!selectedIncident.dbId) {
+        console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
+        return;
+      }
       await supabase.from('incidents').update({
         status: 'resolved',
         resolved_at: nowIso,
@@ -839,7 +852,7 @@ export function IncidentLog() {
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
       await supabase.from('incident_timeline').insert({
-        incident_id: selectedIncident.id,
+        incident_id: selectedIncident.dbId,
         action: `Resolved: ${resolutionSummary}`,
         status: 'resolved',
         performed_by: 'Current User',
@@ -884,6 +897,10 @@ export function IncidentLog() {
     }
 
     if (!isDemoMode && profile?.organization_id) {
+      if (!selectedIncident.dbId) {
+        console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
+        return;
+      }
       if (approved) {
         await supabase.from('incidents').update({
           status: 'verified',
@@ -893,7 +910,7 @@ export function IncidentLog() {
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
         await supabase.from('incident_timeline').insert({
-          incident_id: selectedIncident.id,
+          incident_id: selectedIncident.dbId,
           action: 'Resolution verified and approved',
           status: 'verified',
           performed_by: 'Current User',
@@ -906,7 +923,7 @@ export function IncidentLog() {
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
         await supabase.from('incident_timeline').insert({
-          incident_id: selectedIncident.id,
+          incident_id: selectedIncident.dbId,
           action: 'Resolution rejected — sent back for additional action',
           status: 'in_progress',
           performed_by: 'Current User',
@@ -930,8 +947,12 @@ export function IncidentLog() {
     }];
 
     if (!isDemoMode && profile?.organization_id) {
+      if (!selectedIncident.dbId) {
+        console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
+        return;
+      }
       await supabase.from('incident_comments').insert({
-        incident_id: selectedIncident.id,
+        incident_id: selectedIncident.dbId,
         user_name: 'Current User',
         comment_text: commentText,
       });
