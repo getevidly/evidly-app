@@ -810,6 +810,11 @@ export function Calendar() {
           endTime: ce.end_time || undefined,
           location: locMap[ce.location_id] || 'Unknown',
           description: ce.description || undefined,
+          category: ce.category || undefined,
+          vendorId: ce.vendor_id || undefined,
+          vendorName: ce.vendor_name || undefined,
+          recurrence: ce.recurrence || undefined,
+          recurrenceGroupId: ce.recurrence_group_id || undefined,
           source: 'calendar_events',
         });
       }
