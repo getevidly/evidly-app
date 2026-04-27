@@ -906,7 +906,26 @@ export function Calendar() {
 
           {/* Right: Today + View toggle + Filters */}
           <div data-demo-allow style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
-            {/* Action row: Today + Add Event + View toggle */}
+            {/* Schedule a service */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+              <button
+                onClick={() => navigate('/vendors')}
+                style={{
+                  padding: '8px 16px', borderRadius: '8px',
+                  border: 'none', backgroundColor: '#3B6D11',
+                  fontWeight: 500, fontSize: '14px', color: 'white',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  display: 'flex', alignItems: 'center',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
+              >
+                <Plus size={16} style={{ marginRight: '6px' }} />
+                Schedule a service
+              </button>
+            </div>
+
+            {/* Action row: Today + View toggle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               {/* Today button */}
               <button
@@ -923,7 +942,6 @@ export function Calendar() {
               >
                 {tr('pages.calendar.today')}
               </button>
-
 
               {/* View toggle */}
               <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
@@ -944,23 +962,6 @@ export function Calendar() {
                   </button>
                 ))}
               </div>
-
-              {/* Schedule a service */}
-              <button
-                onClick={() => navigate('/vendors')}
-                style={{
-                  padding: '8px 16px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#3B6D11',
-                  fontWeight: 500, fontSize: '14px', color: 'white',
-                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                  display: 'flex', alignItems: 'center',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
-              >
-                <Plus size={16} style={{ marginRight: '6px' }} />
-                Schedule a service
-              </button>
 
               {/* 24h toggle */}
               <button
