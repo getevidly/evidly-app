@@ -865,7 +865,25 @@ export function Calendar() {
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
+            {/* Schedule a service */}
+            <button
+              onClick={() => navigate('/vendors')}
+              style={{
+                padding: '8px 16px', borderRadius: '8px',
+                border: 'none', backgroundColor: '#3B6D11',
+                fontWeight: 500, fontSize: '14px', color: 'white',
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                display: 'flex', alignItems: 'center',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
+            >
+              <Plus size={16} style={{ marginRight: '6px' }} />
+              Schedule a service
+            </button>
+          </div>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
@@ -906,25 +924,6 @@ export function Calendar() {
 
           {/* Right: Today + View toggle + Filters */}
           <div data-demo-allow style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '10px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
-            {/* Schedule a service */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-              <button
-                onClick={() => navigate('/vendors')}
-                style={{
-                  padding: '8px 16px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#3B6D11',
-                  fontWeight: 500, fontSize: '14px', color: 'white',
-                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                  display: 'flex', alignItems: 'center',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
-              >
-                <Plus size={16} style={{ marginRight: '6px' }} />
-                Schedule a service
-              </button>
-            </div>
-
             {/* Action row: Today + View toggle */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               {/* Today button */}
