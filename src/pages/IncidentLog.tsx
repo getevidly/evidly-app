@@ -459,7 +459,7 @@ export function IncidentLog() {
   };
 
   // Auth & demo mode
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { isDemoMode } = useDemo();
   const locationOptions = isDemoMode ? LOCATIONS : getAccessibleLocations().map(l => l.locationName);
   const [loading, setLoading] = useState(false);
@@ -469,6 +469,30 @@ export function IncidentLog() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   }, []);
+
+  // Org members for name display (live mode only)
+  const [orgMembers, setOrgMembers] = useState<{ id: string; full_name: string | null; email: string | null; role: string | null }[]>([]);
+
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    supabase
+      .from('user_profiles')
+      .select('id, full_name, email, role')
+      .eq('organization_id', profile.organization_id)
+      .then(({ data }) => { if (data) setOrgMembers(data); });
+  }, [isDemoMode, profile?.organization_id]);
+
+  const memberById = useMemo(() => {
+    const map: Record<string, string> = {};
+    orgMembers.forEach(m => { map[m.id] = m.full_name || m.email || 'Unknown'; });
+    return map;
+  }, [orgMembers]);
+
+  const displayName = useCallback((uid: string | null | undefined) => {
+    if (!uid) return 'Unknown';
+    if (memberById[uid]) return memberById[uid];
+    return uid; // demo mode: already a name string
+  }, [memberById]);
 
   // State
   const [incidents, setIncidents] = useState<Incident[]>(isDemoMode ? DEMO_INCIDENTS : []);
@@ -580,15 +604,13 @@ export function IncidentLog() {
           .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
           .map((c: any) => ({
             id: c.id,
-            user: c.user_name,
+            user: c.author_id || '',
             text: c.comment_text,
             timestamp: c.created_at,
           })),
       }));
 
-      if (mapped.length > 0) {
-        setIncidents(mapped);
-      }
+      setIncidents(mapped);
       setLoading(false);
     }
 
@@ -619,7 +641,7 @@ export function IncidentLog() {
     let list = [...incidents];
     // Role-based filtering: kitchen staff only sees incidents they reported or are assigned to
     if (userRole === 'kitchen_staff') {
-      list = list.filter(i => i.reportedBy === 'Current User' || i.assignedTo === 'Current User');
+      list = list.filter(i => i.reportedBy === (user?.id ?? '') || i.assignedTo === (user?.id ?? ''));
     }
     if (statusFilter !== 'all') list = list.filter(i => i.status === statusFilter);
     if (severityFilter !== 'all') list = list.filter(i => i.severity === severityFilter);
@@ -706,7 +728,7 @@ export function IncidentLog() {
       showToast('Title and description are required.');
       return;
     }
-    const assignee = TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)];
+    const assignee = isDemoMode ? TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)] : null;
     const incNumber = `INC-${String(incidents.length + 1).padStart(3, '0')}`;
     const nowIso = new Date().toISOString();
 
@@ -723,7 +745,7 @@ export function IncidentLog() {
         location_name: newLocation,
         status: 'assigned',
         assigned_to: assignee,
-        reported_by: 'Current User',
+        reported_by: user?.id ?? null,
         photos: newPhotos,
         resolution_photos: [],
       }).select().single();
@@ -738,7 +760,7 @@ export function IncidentLog() {
       if (inserted) {
         insertedDbId = inserted.id;
         await supabase.from('incident_timeline').insert([
-          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: 'Current User' },
+          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: user?.id ?? null },
           { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'assigned', performed_by: 'System' },
         ]);
       }
@@ -753,15 +775,15 @@ export function IncidentLog() {
       description: newDescription,
       location: newLocation,
       status: 'assigned',
-      assignedTo: assignee,
-      reportedBy: 'Current User',
+      assignedTo: assignee ?? '',
+      reportedBy: user?.id ?? '',
       createdAt: nowIso,
       updatedAt: nowIso,
       regulatoryReportRequired: newRegulatoryRequired || undefined,
       photos: newPhotos,
       resolutionPhotos: [],
       timeline: [
-        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: 'Current User', timestamp: nowIso },
+        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: user?.id ?? '', timestamp: nowIso },
         { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: nowIso },
       ],
       comments: [],
@@ -785,7 +807,7 @@ export function IncidentLog() {
       id: `t-${Date.now()}`,
       action: `Corrective action: ${actionText}${estLabel}`,
       status: 'in_progress',
-      user: 'Current User',
+      user: user?.id ?? '',
       timestamp: new Date().toISOString(),
       photos: actionPhotos.length > 0 ? actionPhotos : undefined,
     }];
@@ -806,7 +828,7 @@ export function IncidentLog() {
         incident_id: selectedIncident.dbId,
         action: `Corrective action: ${actionText}${estLabel}`,
         status: 'in_progress',
-        performed_by: 'Current User',
+        performed_by: user?.id ?? null,
         photos: actionPhotos.length > 0 ? actionPhotos : [],
       });
     }
@@ -832,7 +854,7 @@ export function IncidentLog() {
       id: `t-${Date.now()}`,
       action: `Resolved: ${resolutionSummary}`,
       status: 'resolved',
-      user: 'Current User',
+      user: user?.id ?? '',
       timestamp: nowIso,
       photos: resolutionPhotos.length > 0 ? resolutionPhotos : undefined,
     }];
@@ -855,7 +877,7 @@ export function IncidentLog() {
         incident_id: selectedIncident.dbId,
         action: `Resolved: ${resolutionSummary}`,
         status: 'resolved',
-        performed_by: 'Current User',
+        performed_by: user?.id ?? null,
         photos: resolutionPhotos.length > 0 ? resolutionPhotos : [],
       });
     }
@@ -874,13 +896,13 @@ export function IncidentLog() {
     if (approved) {
       updated.status = 'verified';
       updated.verifiedAt = nowIso;
-      updated.verifiedBy = 'Current User';
+      updated.verifiedBy = user?.id ?? '';
       updated.updatedAt = nowIso;
       updated.timeline = [...updated.timeline, {
         id: `t-${Date.now()}`,
         action: 'Resolution verified and approved',
         status: 'verified',
-        user: 'Current User',
+        user: user?.id ?? '',
         timestamp: new Date().toISOString(),
       }];
     } else {
@@ -891,7 +913,7 @@ export function IncidentLog() {
         id: `t-${Date.now()}`,
         action: 'Resolution rejected — sent back for additional action',
         status: 'in_progress',
-        user: 'Current User',
+        user: user?.id ?? '',
         timestamp: new Date().toISOString(),
       }];
     }
@@ -905,7 +927,7 @@ export function IncidentLog() {
         await supabase.from('incidents').update({
           status: 'verified',
           verified_at: nowIso,
-          verified_by: 'Current User',
+          verified_by: user?.id ?? null,
           updated_at: nowIso,
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
@@ -913,7 +935,7 @@ export function IncidentLog() {
           incident_id: selectedIncident.dbId,
           action: 'Resolution verified and approved',
           status: 'verified',
-          performed_by: 'Current User',
+          performed_by: user?.id ?? null,
         });
       } else {
         await supabase.from('incidents').update({
@@ -926,7 +948,7 @@ export function IncidentLog() {
           incident_id: selectedIncident.dbId,
           action: 'Resolution rejected — sent back for additional action',
           status: 'in_progress',
-          performed_by: 'Current User',
+          performed_by: user?.id ?? null,
         });
       }
     }
@@ -941,7 +963,7 @@ export function IncidentLog() {
     const updated = { ...selectedIncident };
     updated.comments = [...updated.comments, {
       id: `c-${Date.now()}`,
-      user: 'Current User',
+      user: user?.id ?? '',
       text: commentText,
       timestamp: new Date().toISOString(),
     }];
@@ -953,7 +975,7 @@ export function IncidentLog() {
       }
       await supabase.from('incident_comments').insert({
         incident_id: selectedIncident.dbId,
-        user_name: 'Current User',
+        author_id: user?.id ?? null,
         comment_text: commentText,
       });
     }
@@ -1077,7 +1099,7 @@ export function IncidentLog() {
                   </div>
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('common.assignedTo')}</span>
-                    <span className="font-medium text-[#1E2D4D] flex items-center gap-1"><User className="h-3.5 w-3.5" />{inc.assignedTo}</span>
+                    <span className="font-medium text-[#1E2D4D] flex items-center gap-1"><User className="h-3.5 w-3.5" />{displayName(inc.assignedTo)}</span>
                   </div>
                   <div>
                     <span className="text-[#1E2D4D]/50 block">{t('incidents.reported')}</span>
@@ -1183,7 +1205,7 @@ export function IncidentLog() {
                   <div className="flex items-center gap-2 text-sm bg-green-50 border border-green-200 rounded-xl p-3">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span className="text-green-800">
-                      {t('incidents.verifiedBy')} <span className="font-semibold">{inc.verifiedBy}</span> {t('incidents.on')} {format(new Date(inc.verifiedAt!), 'MMM d, yyyy h:mm a')}
+                      {t('incidents.verifiedBy')} <span className="font-semibold">{displayName(inc.verifiedBy)}</span> {t('incidents.on')} {format(new Date(inc.verifiedAt!), 'MMM d, yyyy h:mm a')}
                     </span>
                   </div>
                 )}
@@ -1209,7 +1231,7 @@ export function IncidentLog() {
                         <div className="ml-2">
                           <p className="text-sm font-medium text-[#1E2D4D]">{entry.action}</p>
                           <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1">
-                            <span className="flex items-center gap-1"><User className="h-3 w-3" />{entry.user}</span>
+                            <span className="flex items-center gap-1"><User className="h-3 w-3" />{displayName(entry.user)}</span>
                             <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(entry.timestamp), 'MMM d, h:mm a')}</span>
                           </div>
                           {entry.photos && entry.photos.length > 0 && (
@@ -1236,7 +1258,7 @@ export function IncidentLog() {
                   {inc.comments.map(c => (
                     <div key={c.id} className="border border-[#1E2D4D]/5 rounded-xl p-3">
                       <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 mb-1">
-                        <span className="font-semibold text-[#1E2D4D]/80">{c.user}</span>
+                        <span className="font-semibold text-[#1E2D4D]/80">{displayName(c.user)}</span>
                         <span>{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}</span>
                       </div>
                       <p className="text-sm text-[#1E2D4D]/90">{c.text}</p>
@@ -1295,7 +1317,7 @@ export function IncidentLog() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('common.reportedBy')}</span>
-                    <span className="font-medium text-[#1E2D4D]">{inc.reportedBy}</span>
+                    <span className="font-medium text-[#1E2D4D]">{displayName(inc.reportedBy)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1E2D4D]/50">{t('incidents.created')}</span>
@@ -1749,7 +1771,10 @@ export function IncidentLog() {
             </select>
             <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allAssignees')}</option>
-              {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+              {isDemoMode
+                ? TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)
+                : orgMembers.map(m => <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>)
+              }
             </select>
             <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allTime')}</option>
@@ -1817,7 +1842,7 @@ export function IncidentLog() {
                       <h3 className="font-semibold text-[#1E2D4D] mt-1 truncate">{inc.title}</h3>
                       <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1 flex-wrap">
                         <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{inc.location}</span>
-                        <span className="flex items-center gap-1"><User className="h-3 w-3" />{inc.assignedTo}</span>
+                        <span className="flex items-center gap-1"><User className="h-3 w-3" />{displayName(inc.assignedTo)}</span>
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
                       </div>
                     </div>
