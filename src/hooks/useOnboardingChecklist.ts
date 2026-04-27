@@ -149,15 +149,15 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
       try {
         const { data } = await supabase
           .from('organizations')
-          .select('industry_type, planned_location_count, onboarding_completed, sb1383_enrolled, k12_enrolled')
+          .select('industry_type, planned_location_count, onboarding_completed, is_sb1383_enrolled, is_k12_enrolled')
           .eq('id', orgId)
           .maybeSingle();
 
         if (data) {
           setOrgIndustry(data.industry_type || null);
           setOrgLocationCount(data.planned_location_count || 1);
-          setOrgSB1383Enrolled(data.sb1383_enrolled ?? false);
-          setOrgK12Enrolled(data.k12_enrolled ?? false);
+          setOrgSB1383Enrolled(data.is_sb1383_enrolled ?? false);
+          setOrgK12Enrolled(data.is_k12_enrolled ?? false);
           if (data.onboarding_completed) setIsDismissed(true);
         }
       } catch { /* ignore */ }
