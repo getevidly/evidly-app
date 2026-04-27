@@ -15,6 +15,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { useTooltip } from '../hooks/useTooltip';
 import { Modal } from '../components/ui/Modal';
+import ReadOnlyEventModal from '../components/calendar/ReadOnlyEventModal';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -72,7 +73,7 @@ const TIME_OPTIONS = [
 
 
 // ── Demo Events ──────────────────────────────────────────────
-interface CalendarEvent {
+export interface CalendarEvent {
   id: string;
   title: string;
   type: string;
@@ -833,106 +834,6 @@ export function Calendar() {
     );
   };
 
-  // ── Event Detail Modal ──
-  const renderEventModal = () => {
-    const t = selectedEvent ? typeMap[selectedEvent.type] : null;
-
-    return (
-      <Modal isOpen={!!selectedEvent} onClose={() => setSelectedEvent(null)} size="md">
-          <div style={{ height: '6px', backgroundColor: t?.color || '#6b7280' }} />
-          <div style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '3px 10px',
-                  borderRadius: '20px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: t?.color || '#6b7280',
-                  backgroundColor: t?.bg || '#f3f4f6',
-                  marginBottom: '8px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}>
-                  {t?.label || selectedEvent?.type}
-                </span>
-                {selectedEvent?.overdue && (
-                  <span style={{
-                    display: 'inline-block',
-                    padding: '3px 10px',
-                    borderRadius: '20px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    color: '#dc2626',
-                    backgroundColor: '#fef2f2',
-                    marginBottom: '8px',
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}>
-                    {tr('pages.calendar.overdue')}
-                  </span>
-                )}
-                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0' }}>
-                  {selectedEvent?.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
-              >
-                <X size={20} color="#9ca3af" />
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563', flexWrap: 'wrap' }}>
-                <Clock size={16} color="#6b7280" />
-                <span>{selectedEvent?.time}{selectedEvent?.endTime ? ` – ${selectedEvent.endTime}` : ''}</span>
-                <span style={{ color: '#d1d5db' }}>|</span>
-                <span>{selectedEvent ? new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : ''}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
-                <MapPin size={16} color="#6b7280" />
-                <span>{selectedEvent?.location}</span>
-              </div>
-              {selectedEvent?.vendorName && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                  <span>Vendor: <strong>{selectedEvent.vendorName}</strong></span>
-                </div>
-              )}
-              {selectedEvent?.category && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
-                  <span>{selectedEvent.category}</span>
-                </div>
-              )}
-              {selectedEvent?.description && (
-                <div style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '13px', color: '#4b5563', lineHeight: '1.6', marginTop: '4px' }}>
-                  {selectedEvent.description}
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                style={{
-                  flex: 1, padding: '10px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#1E2D4D',
-                  fontWeight: 600, fontSize: '13px', color: 'white',
-                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                {tr('common.close')}
-              </button>
-            </div>
-          </div>
-      </Modal>
-    );
-  };
 
   // ── Select Dropdown Style ──
   const selectStyle: React.CSSProperties = {
@@ -1331,7 +1232,11 @@ export function Calendar() {
         </div>
 
         {/* Event detail modal */}
-        {renderEventModal()}
+        <ReadOnlyEventModal
+          event={selectedEvent}
+          isOpen={selectedEvent !== null}
+          onClose={() => setSelectedEvent(null)}
+        />
 
 
 
