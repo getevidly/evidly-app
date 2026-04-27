@@ -37,7 +37,6 @@ const eventTypes: EventType[] = [
   { id: 'inspection', label: 'Inspection', color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
   { id: 'corrective', label: 'Corrective Action', color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
   { id: 'certification', label: 'Certification', color: '#A08C5A', bg: '#fefce8', border: '#fde68a' },
-  { id: 'meeting', label: 'Meeting', color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
 ];
 
 const typeMap = Object.fromEntries(eventTypes.map(t => [t.id, t]));
@@ -1617,14 +1616,14 @@ export function Calendar() {
                 onClick={openCreateForm}
                 style={{
                   padding: '8px 16px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#1E2D4D',
+                  border: 'none', backgroundColor: '#3B6D11',
                   fontWeight: 700, fontSize: '13px', color: 'white',
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                   display: 'flex', alignItems: 'center', gap: '6px',
                   transition: 'background-color 0.15s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1E2D4D'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2D5309'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#3B6D11'; }}
               >
                 <Plus size={16} /> Add Event
               </button>
