@@ -16,6 +16,7 @@ interface UserProfile {
   last_login_at: string | null;
   onboarding_completed: boolean;
   is_suspended?: boolean;
+  pillar_override?: 'food_safety' | 'facility_safety' | 'all' | null;
 }
 
 interface AuthContextType {
