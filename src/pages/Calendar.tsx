@@ -186,7 +186,7 @@ interface CalendarEvent {
   category?: string;
   recurrence?: string;
   recurrenceGroupId?: string;
-  source: 'calendar_events' | 'temperature_logs' | 'checklist_template_completions' | 'equipment' | 'documents' | 'haccp_corrective_actions';
+  source: 'calendar_events';
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -664,143 +664,17 @@ export function Calendar() {
       (locData || []).forEach((l: any) => { locMap[l.id] = l.name; });
 
       const allEvents: CalendarEvent[] = [];
-      let nextId = 10000;
+      // Query calendar_events only — calendar is a vendor service schedule view.
+      // Source records (temp logs, checklists, equipment service, documents, HACCP)
+      // live in their own modules and are never edited from the calendar.
+      const { data: customCalRes } = await supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('organization_id', orgId)
+        .gte('date', startStr)
+        .lte('date', endStr);
 
-      // Query 6 tables in parallel
-      const [tempRes, checklistRes, equipRes, docsRes, correctiveRes, customCalRes] = await Promise.all([
-        supabase
-          .from('temperature_logs')
-          .select('*, temperature_equipment(name)')
-          .eq('facility_id', orgId)
-          .gte('reading_time', startStr)
-          .lte('reading_time', endStr),
-        supabase
-          .from('checklist_template_completions')
-          .select('*, checklist_templates(name)')
-          .eq('organization_id', orgId)
-          .gte('completed_at', startStr)
-          .lte('completed_at', endStr),
-        supabase
-          .from('equipment')
-          .select('*, equipment_service_records(*)')
-          .eq('organization_id', orgId)
-          .eq('is_active', true),
-        supabase
-          .from('documents')
-          .select('*')
-          .eq('organization_id', orgId)
-          .not('expiration_date', 'is', null)
-          .gte('expiration_date', startStr)
-          .lte('expiration_date', endStr),
-        supabase
-          .from('haccp_corrective_actions')
-          .select('*')
-          .eq('organization_id', orgId)
-          .in('status', ['open', 'in_progress']),
-        supabase
-          .from('calendar_events')
-          .select('*')
-          .eq('organization_id', orgId)
-          .gte('date', startStr)
-          .lte('date', endStr),
-      ]);
-
-      // 1. Temperature checks → temp-check events
-      for (const t of (tempRes.data || [])) {
-        const readingAt = new Date(t.reading_time || t.created_at);
-        const eqName = t.temperature_equipment?.name || 'Equipment';
-        allEvents.push({
-          id: String(nextId++),
-          title: `Temp Reading: ${eqName}`,
-          type: 'temp-check',
-          date: formatDateKey(readingAt),
-          time: readingAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-          location: locMap[t.facility_id] || 'Unknown',
-          description: `${t.temperature ?? t.temperature_value}° — ${(t.temp_pass ?? t.is_within_range) ? 'Within range' : 'OUT OF RANGE'}`,
-          source: 'temperature_logs',
-        });
-      }
-
-      // 2. Checklist completions → checklist events
-      for (const c of (checklistRes.data || [])) {
-        const completedAt = new Date(c.completed_at);
-        const tmplName = c.checklist_templates?.name || 'Checklist';
-        allEvents.push({
-          id: String(nextId++),
-          title: tmplName,
-          type: 'checklist',
-          date: formatDateKey(completedAt),
-          time: completedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-          location: locMap[c.location_id] || 'Unknown',
-          description: c.score_percentage != null ? `Score: ${c.score_percentage}%` : undefined,
-          source: 'checklist_template_completions',
-        });
-      }
-
-      // 3. Equipment maintenance due dates + service records → vendor events
-      for (const eq of (equipRes.data || [])) {
-        if (eq.next_maintenance_due && eq.next_maintenance_due >= startStr && eq.next_maintenance_due <= endStr) {
-          allEvents.push({
-            id: String(nextId++),
-            title: `Maintenance Due: ${eq.name}`,
-            type: 'vendor',
-            date: eq.next_maintenance_due,
-            time: '9:00 AM',
-            location: locMap[eq.location_id] || 'Unknown',
-            description: `${eq.maintenance_interval || ''} maintenance — ${eq.linked_vendor || 'Unassigned'}`,
-            source: 'equipment',
-          });
-        }
-        for (const sr of (eq.equipment_service_records || [])) {
-          if (sr.service_date >= startStr && sr.service_date <= endStr) {
-            allEvents.push({
-              id: String(nextId++),
-              title: `Service: ${sr.service_type}`,
-              type: 'vendor',
-              date: sr.service_date,
-              time: '8:00 AM',
-              location: locMap[eq.location_id] || 'Unknown',
-              description: `${sr.vendor} — $${sr.cost || 0}`,
-              source: 'equipment',
-            });
-          }
-        }
-      }
-
-      // 4. Document expirations → certification events
-      for (const doc of (docsRes.data || [])) {
-        allEvents.push({
-          id: String(nextId++),
-          title: `Expiring: ${doc.title}`,
-          type: 'certification',
-          date: doc.expiration_date,
-          time: '9:00 AM',
-          location: locMap[doc.location_id] || 'All Locations',
-          allDay: true,
-          description: `${doc.category} — Status: ${doc.status}`,
-          source: 'documents',
-        });
-      }
-
-      // 5. Corrective actions → corrective events
-      for (const ca of (correctiveRes.data || [])) {
-        const createdAt = new Date(ca.created_at);
-        const daysOld = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
-        allEvents.push({
-          id: String(nextId++),
-          title: `CA: ${ca.deviation}`,
-          type: 'corrective',
-          date: formatDateKey(createdAt),
-          time: createdAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-          location: locMap[ca.location_id] || 'Unknown',
-          description: `${ca.ccp_hazard} — ${ca.action_taken}`,
-          overdue: ca.status === 'open' && daysOld > 2,
-          source: 'haccp_corrective_actions',
-        });
-      }
-
-      // 6. Custom calendar events → vendor events
-      for (const ce of (customCalRes.data || [])) {
+      for (const ce of (customCalRes || [])) {
         allEvents.push({
           id: ce.id,
           title: ce.title,
