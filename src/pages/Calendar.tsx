@@ -186,6 +186,7 @@ interface CalendarEvent {
   category?: string;
   recurrence?: string;
   recurrenceGroupId?: string;
+  source: 'calendar_events' | 'temperature_logs' | 'checklist_template_completions' | 'equipment' | 'documents' | 'haccp_corrective_actions';
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -716,6 +717,7 @@ export function Calendar() {
           time: readingAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
           location: locMap[t.facility_id] || 'Unknown',
           description: `${t.temperature ?? t.temperature_value}° — ${(t.temp_pass ?? t.is_within_range) ? 'Within range' : 'OUT OF RANGE'}`,
+          source: 'temperature_logs',
         });
       }
 
@@ -731,6 +733,7 @@ export function Calendar() {
           time: completedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
           location: locMap[c.location_id] || 'Unknown',
           description: c.score_percentage != null ? `Score: ${c.score_percentage}%` : undefined,
+          source: 'checklist_template_completions',
         });
       }
 
@@ -745,6 +748,7 @@ export function Calendar() {
             time: '9:00 AM',
             location: locMap[eq.location_id] || 'Unknown',
             description: `${eq.maintenance_interval || ''} maintenance — ${eq.linked_vendor || 'Unassigned'}`,
+            source: 'equipment',
           });
         }
         for (const sr of (eq.equipment_service_records || [])) {
@@ -757,6 +761,7 @@ export function Calendar() {
               time: '8:00 AM',
               location: locMap[eq.location_id] || 'Unknown',
               description: `${sr.vendor} — $${sr.cost || 0}`,
+              source: 'equipment',
             });
           }
         }
@@ -773,6 +778,7 @@ export function Calendar() {
           location: locMap[doc.location_id] || 'All Locations',
           allDay: true,
           description: `${doc.category} — Status: ${doc.status}`,
+          source: 'documents',
         });
       }
 
@@ -789,6 +795,7 @@ export function Calendar() {
           location: locMap[ca.location_id] || 'Unknown',
           description: `${ca.ccp_hazard} — ${ca.action_taken}`,
           overdue: ca.status === 'open' && daysOld > 2,
+          source: 'haccp_corrective_actions',
         });
       }
 
@@ -803,6 +810,7 @@ export function Calendar() {
           endTime: ce.end_time || undefined,
           location: locMap[ce.location_id] || 'Unknown',
           description: ce.description || undefined,
+          source: 'calendar_events',
         });
       }
 
