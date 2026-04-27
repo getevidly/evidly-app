@@ -36,7 +36,7 @@ export function useTaskInstances() {
       const { data, error } = await supabase
         .from('task_instances')
         .select('*')
-        .eq('org_id', orgId)
+        .eq('organization_id', orgId)
         .eq('date', today)
         .order('due_at', { ascending: true });
 
@@ -69,7 +69,7 @@ export function useTaskInstances() {
           event: '*',
           schema: 'public',
           table: 'task_instances',
-          filter: `org_id=eq.${orgId}`,
+          filter: `organization_id=eq.${orgId}`,
         },
         () => {
           fetchTasks();

@@ -12,7 +12,7 @@ import { useDemo } from '../contexts/DemoContext';
 import type { TaskDefinition } from '../types/tasks';
 
 type CreatePayload = Omit<TaskDefinition, 'id' | 'created_at' | 'updated_at'>;
-type UpdatePayload = Partial<Omit<TaskDefinition, 'id' | 'org_id' | 'created_at' | 'updated_at'>>;
+type UpdatePayload = Partial<Omit<TaskDefinition, 'id' | 'organization_id' | 'created_at' | 'updated_at'>>;
 
 export function useTaskDefinitions() {
   const { user, profile } = useAuth();
@@ -34,7 +34,7 @@ export function useTaskDefinitions() {
       const { data, error } = await supabase
         .from('task_definitions')
         .select('*')
-        .eq('org_id', orgId)
+        .eq('organization_id', orgId)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -59,7 +59,7 @@ export function useTaskDefinitions() {
 
       const { data, error } = await supabase
         .from('task_definitions')
-        .insert({ ...payload, org_id: orgId, created_by: userId })
+        .insert({ ...payload, organization_id: orgId, created_by: userId })
         .select()
         .single();
 
@@ -82,7 +82,7 @@ export function useTaskDefinitions() {
         .from('task_definitions')
         .update({ ...payload, updated_at: new Date().toISOString() })
         .eq('id', id)
-        .eq('org_id', orgId);
+        .eq('organization_id', orgId);
 
       if (error) {
         console.error('[useTaskDefinitions] Update error:', error.message);
