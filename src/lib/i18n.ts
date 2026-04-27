@@ -1134,7 +1134,7 @@ const en = {
     },
     calendar: {
       title: 'Calendar',
-      subtitle: 'Schedule and track compliance events, inspections, and vendor services',
+      subtitle: 'Your vendor service schedule across all locations',
       today: 'Today',
       week: 'Week',
       month: 'Month',

@@ -329,11 +329,6 @@ export function Calendar() {
     return counts;
   }, [todayEvents]);
 
-  // Overdue events
-  const overdueEvents = useMemo(() =>
-    events.filter(e => e.overdue),
-    [events]
-  );
 
   // Upcoming events for sidebar
   const upcomingEvents = useMemo(() => {
@@ -1056,79 +1051,7 @@ export function Calendar() {
 
           {/* Sidebar */}
           <div className="w-full lg:w-[280px]" style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Legend */}
-            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {tr('pages.calendar.eventTypes')}
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {eventTypes.map(type => (
-                  <div
-                    key={type.id}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '8px',
-                      fontSize: '12px', fontWeight: 500,
-                      color: (typeFilter === 'all' || typeFilter === type.id) ? '#374151' : '#9ca3af',
-                      fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', transition: 'color 0.15s',
-                    }}
-                    onClick={() => setTypeFilter(typeFilter === type.id ? 'all' : type.id)}
-                  >
-                    <span style={{
-                      width: '10px', height: '10px', borderRadius: '3px',
-                      backgroundColor: (typeFilter === 'all' || typeFilter === type.id) ? type.color : '#d1d5db',
-                      flexShrink: 0, transition: 'background-color 0.15s',
-                    }} />
-                    {type.label}
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Overdue Items */}
-            {overdueEvents.length > 0 && (
-              <div style={{
-                backgroundColor: '#fff1f2',
-                border: '1px solid #fecdd3',
-                borderRadius: '12px',
-                padding: '16px',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <AlertTriangle size={16} color="#dc2626" />
-                  <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#dc2626', margin: 0, fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    {tr('pages.calendar.overdue')} ({overdueEvents.length})
-                  </h3>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {overdueEvents.map(event => {
-                    const eventDate = new Date(event.date + 'T12:00:00');
-                    const daysOverdue = Math.floor((today.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24));
-                    return (
-                      <div
-                        key={event.id}
-                        onClick={() => setSelectedEvent(event)}
-                        style={{
-                          padding: '10px',
-                          borderRadius: '8px',
-                          backgroundColor: 'white',
-                          borderLeft: '3px solid #dc2626',
-                          cursor: 'pointer',
-                          fontFamily: "'DM Sans', sans-serif",
-                          transition: 'box-shadow 0.15s',
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
-                      >
-                        <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
-                        <div style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>
-                          {daysOverdue} {daysOverdue !== 1 ? tr('pages.calendar.daysOverdue') : tr('pages.calendar.dayOverdue')}
-                        </div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '1px' }}>{event.location}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Today Card */}
             <div style={{
