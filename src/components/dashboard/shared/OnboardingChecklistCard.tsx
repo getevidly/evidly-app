@@ -6,7 +6,7 @@ import {
   Wrench, FileSearch, Heart, Calendar, PartyPopper,
   Copy, ExternalLink, MapPin, Bot, Map,
 } from 'lucide-react';
-import { BODY_TEXT, FONT } from './constants';
+import { FONT } from './constants';
 import { useOnboardingChecklist } from '../../../hooks/useOnboardingChecklist';
 import { useConfetti } from '../../../hooks/useConfetti';
 import { Modal } from '../../ui/Modal';
@@ -18,7 +18,6 @@ const STEP_BG_ACTIVE = '#FFFDF5';
 const STEP_BG_COMPLETED = '#F0FDF4';
 const STEP_BORDER_ACTIVE = ACCENT_GOLD;
 const STEP_BORDER_COMPLETED = GREEN;
-const LOCKED_BG = '#F8F9FB';
 const SKIPPED_COLOR = '#B0B8C5';
 const DEP_WARNING_BG = '#FEF3CD';
 const DEP_WARNING_TEXT = '#856404';
@@ -339,7 +338,10 @@ export function OnboardingChecklistCard() {
                 key={step.id}
                 type="button"
                 onClick={() => {
-                  if (!isCompleted && unlocked) goToStep(i);
+                  if (!isCompleted && unlocked) {
+                    if (step.skipped) unskipStep(step.id);
+                    goToStep(i);
+                  }
                 }}
                 className={`flex items-center gap-1 transition-all ${
                   isCompleted ? 'cursor-default' : isLocked ? 'cursor-not-allowed' : 'cursor-pointer'
@@ -501,109 +503,6 @@ export function OnboardingChecklistCard() {
           </div>
         )}
 
-        {/* Completed / remaining / locked steps (collapsed list) */}
-        <div className="px-3 pb-3">
-          {steps.map((step, i) => {
-            if (i === currentStepIndex) return null;
-            const Icon = STEP_ICONS[step.id] || Sparkles;
-            const unlocked = isStepUnlocked(i);
-            const isLocked = !unlocked && !step.completed;
-            const isSkipped = step.skipped && !step.completed;
-            const missingDeps = getMissingDeps(i);
-            const hasDeps = isLocked && missingDeps.length > 0;
-
-            return (
-              <div
-                key={step.id}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${
-                  isLocked ? 'cursor-not-allowed' : ''
-                }`}
-                style={isLocked ? { backgroundColor: LOCKED_BG } : undefined}
-                title={hasDeps ? `Requires: ${missingDeps.join(', ')}` : undefined}
-              >
-                {/* Status indicator */}
-                <div
-                  className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                  style={{
-                    backgroundColor: step.completed
-                      ? GREEN
-                      : isSkipped
-                        ? SKIPPED_COLOR
-                        : isLocked
-                          ? '#E8EDF5'
-                          : '#FFFFFF',
-                    border: step.completed || isSkipped || isLocked ? 'none' : '2px solid #D1D9E6',
-                    opacity: isLocked ? 0.5 : 1,
-                  }}
-                >
-                  {step.completed ? (
-                    <Check size={10} color="#FFFFFF" strokeWidth={3} />
-                  ) : isSkipped ? (
-                    <ChevronRight size={8} color="#FFFFFF" strokeWidth={3} />
-                  ) : isLocked ? (
-                    <Lock size={8} color="#9CA3AF" />
-                  ) : (
-                    <span className="text-[11px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
-                  )}
-                </div>
-
-                {/* Icon + label */}
-                <Icon
-                  size={14}
-                  style={{ color: step.completed || isLocked ? '#9CA3AF' : isSkipped ? SKIPPED_COLOR : '#6B7F96' }}
-                  className="shrink-0"
-                />
-                <span
-                  className={`text-xs font-medium flex-1 ${step.completed ? 'line-through' : ''}`}
-                  style={{
-                    color: step.completed ? '#9CA3AF' : isLocked ? '#B0B8C5' : isSkipped ? SKIPPED_COLOR : BODY_TEXT,
-                  }}
-                >
-                  {step.label}
-                  {isSkipped && (
-                    <span className="ml-1.5 text-xs font-normal" style={{ color: SKIPPED_COLOR }}>
-                      (skipped)
-                    </span>
-                  )}
-                </span>
-
-                {/* Action: Edit for completed, Start for skipped, chevron/lock for others */}
-                {step.completed ? (
-                  step.route && step.stepType !== 'modal' && step.stepType !== 'external' && step.stepType !== 'celebration' ? (
-                    <button
-                      type="button"
-                      onClick={() => navigate(step.route)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5 shrink-0"
-                      style={{ color: '#6B7F96' }}
-                    >
-                      <Pencil size={10} />
-                      Edit
-                    </button>
-                  ) : null
-                ) : isSkipped ? (
-                  <button
-                    type="button"
-                    onClick={() => { unskipStep(step.id); goToStep(i); }}
-                    className="px-2 py-1 rounded text-xs font-semibold transition-colors hover:bg-amber-50 shrink-0"
-                    style={{ color: ACCENT_GOLD }}
-                  >
-                    Start
-                  </button>
-                ) : isLocked ? (
-                  <Lock size={12} style={{ color: '#D1D9E6' }} className="shrink-0" />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => goToStep(i)}
-                    className="shrink-0 p-0.5 rounded hover:bg-[#1E2D4D]/5 transition-colors"
-                  >
-                    <ChevronRight size={12} style={{ color: '#9CA3AF' }} />
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
       </div>
     </>
   );
