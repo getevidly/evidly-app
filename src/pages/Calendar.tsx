@@ -9,6 +9,7 @@ import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_L
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { useUserPreferences } from '../hooks/useUserPreferences';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
@@ -230,7 +231,8 @@ function formatDateKey(d: Date) {
   return `${year}-${month}-${day}`;
 }
 
-const HOURS = Array.from({ length: 17 }, (_, i) => i + 6); // 6 AM to 10 PM
+const BUSINESS_HOURS = Array.from({ length: 17 }, (_, i) => i + 6); // 6 AM to 10 PM
+const FULL_DAY_HOURS = Array.from({ length: 24 }, (_, i) => i);   // 12 AM to 11 PM
 
 function hourLabel(h: number) {
   if (h === 0) return '12 AM';
@@ -256,6 +258,12 @@ export function Calendar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
+
+  // 24-hour preference
+  const { getPreference, setPreference } = useUserPreferences();
+  const is24h = getPreference<boolean>('calendar_24h_view', false);
+  const HOURS = is24h ? FULL_DAY_HOURS : BUSINESS_HOURS;
+
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
   const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 640;
@@ -1640,6 +1648,22 @@ export function Calendar() {
                   </button>
                 ))}
               </div>
+
+              {/* 24h toggle */}
+              <button
+                type="button"
+                onClick={() => setPreference('calendar_24h_view', !is24h)}
+                style={{
+                  padding: '8px 12px', fontSize: '13px', fontWeight: 600,
+                  fontFamily: "'DM Sans', sans-serif", borderRadius: '8px',
+                  border: '1px solid #e5e7eb', cursor: 'pointer',
+                  backgroundColor: is24h ? '#1E2D4D' : 'white',
+                  color: is24h ? 'white' : '#4b5563',
+                  transition: 'all 0.15s', whiteSpace: 'nowrap',
+                }}
+              >
+                24h
+              </button>
             </div>
 
             {/* Filter row: Location → Event Type → Vendor Service (dependent). Stacks full-width on mobile. */}
