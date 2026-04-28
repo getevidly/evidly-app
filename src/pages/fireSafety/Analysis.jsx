@@ -330,24 +330,22 @@ export default function FireSafetyAnalysis() {
         Fire Safety Analysis
       </h1>
 
-      {/* Filter strip */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px' }}>
-        {accessibleLocations.length > 1 && (
-          <select
-            value={selectedLocations.length === 0 ? '' : selectedLocations[0]}
-            onChange={(e) => setSelectedLocations(e.target.value ? [e.target.value] : [])}
-            style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(30,45,77,0.15)', fontSize: '13px', color: '#1E2D4D', backgroundColor: 'white' }}
-          >
-            <option value="">All locations</option>
-            {accessibleLocations.map(loc => (
-              <option key={loc.locationId} value={loc.locationId}>{loc.name}</option>
-            ))}
-          </select>
-        )}
+      {/* Filter Strip */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', padding: '12px 16px', backgroundColor: '#FAF7F0', borderRadius: '10px', border: '1px solid rgba(30,45,77,0.1)' }}>
+        <select
+          value={selectedLocations.length === 0 ? 'all' : selectedLocations[0]}
+          onChange={(e) => setSelectedLocations(e.target.value === 'all' ? [] : [e.target.value])}
+          style={{ padding: '8px 12px', border: '1px solid rgba(30,45,77,0.15)', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white' }}
+        >
+          <option value="all">All Locations</option>
+          {accessibleLocations.map(loc => (
+            <option key={loc.locationId} value={loc.locationId}>{loc.name}</option>
+          ))}
+        </select>
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(Number(e.target.value))}
-          style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(30,45,77,0.15)', fontSize: '13px', color: '#1E2D4D', backgroundColor: 'white' }}
+          style={{ padding: '8px 12px', border: '1px solid rgba(30,45,77,0.15)', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white' }}
         >
           {TIME_RANGES.map(tr => (
             <option key={tr.days} value={tr.days}>{tr.label}</option>
