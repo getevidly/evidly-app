@@ -103,7 +103,7 @@ export default function FireSafetyTrajectory() {
   useEffect(() => {
     if (!orgId && !isDemoMode) { setLoading(false); return; }
     loadData();
-  }, [orgId, locationIds, timeRange, metric, isDemoMode]);
+  }, [orgId, selectedLocations, timeRange, metric, isDemoMode]);
 
   async function loadData() {
     setLoading(true);

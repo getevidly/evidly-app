@@ -92,7 +92,7 @@ export default function FireSafetyAnalysis() {
   useEffect(() => {
     if (!orgId && !isDemoMode) { setLoading(false); return; }
     loadData();
-  }, [orgId, locationIds, timeRange, isDemoMode]);
+  }, [orgId, selectedLocations, timeRange, isDemoMode]);
 
   async function loadData() {
     setLoading(true);
