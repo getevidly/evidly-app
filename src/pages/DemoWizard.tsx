@@ -542,7 +542,7 @@ export function DemoWizard() {
               <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200 max-w-md mx-auto">
                 <p className="text-sm font-semibold text-[#0B1628] mb-1">Want a personalized compliance risk assessment?</p>
                 <p className="text-xs text-[#1E2D4D]/50 mb-3">Answer a few questions and get a free gap report with risk scores and estimated business impact.</p>
-                <a href="/assessment" className="inline-flex items-center gap-2 px-4 py-2 bg-[#A08C5A] text-white text-sm font-semibold rounded-lg hover:bg-[#8a7649] transition-colors">
+                <a href="https://getevidly.com/assessment" className="inline-flex items-center gap-2 px-4 py-2 bg-[#A08C5A] text-white text-sm font-semibold rounded-lg hover:bg-[#8a7649] transition-colors">
                   Get Your Free Assessment
                   <ArrowRight className="h-4 w-4" />
                 </a>

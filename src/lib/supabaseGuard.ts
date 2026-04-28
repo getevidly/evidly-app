@@ -71,8 +71,6 @@ export function setEmulationWriteBlock(active: boolean) {
 const ALWAYS_ALLOWED = new Set([
   'demo_leads',
   'assessment_leads',
-  'assessment_responses',
-  'assessment_results',
   'kitchen_checkups',
   'kitchen_checkup_responses',
   'irr_submissions',

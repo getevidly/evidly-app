@@ -111,7 +111,7 @@ const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m 
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 const VendorMigration = lazy(() => import('./pages/VendorMigration').then(m => ({ default: m.VendorMigration })));
-const Progress = lazy(() => import('./pages/Progress'));
+
 
 const NotFound = lazy(() => import('./pages/NotFound'));
 const TaskManager = lazy(() => import('./pages/TaskManager'));
@@ -207,12 +207,12 @@ const SelfDiagnosis = lazy(() => import('./pages/SelfDiagnosis').then(m => ({ de
 const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
-const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
+
 const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
-const OperationsCheck = lazy(() => import('./pages/public/OperationsCheck'));
+
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
 const CityPage = lazy(() => import('./pages/public/CityPage'));
@@ -540,8 +540,6 @@ function AppRoutes() {
     <>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/operations-check" element={<Suspense fallback={<PageSkeleton />}><OperationsCheck /></Suspense>} />
-
         {/* Public routes */}
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
@@ -558,7 +556,7 @@ function AppRoutes() {
         <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><PrivacyPolicy /></Suspense>} />
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
-        <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
+
         <Route path="/scoretable" element={<Suspense fallback={<PageSkeleton />}><ScoreTableIndex /></Suspense>} />
         <Route path="/scoretable/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCityPage /></Suspense>} />
         <Route path="/scoretable/:stateSlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableState /></Suspense>} />
@@ -671,7 +669,7 @@ function AppRoutes() {
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/workforce-risk" element={<WorkforceRisk />} />
           <Route path="/cic-pse" element={<CicPseView />} />
-          <Route path="/progress" element={<Progress />} />
+
           <Route path="/food-recovery" element={<FoodRecovery />} />
           <Route path="/sb1383" element={<SB1383Compliance />} />
           <Route path="/k12" element={<K12Compliance />} />

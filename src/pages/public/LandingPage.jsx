@@ -947,7 +947,7 @@ function Footer() {
             <button onClick={() => scrollTo("how-it-works")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>How It Works</button>
             <button onClick={() => scrollTo("coverage")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>What's Covered</button>
             <button onClick={() => scrollTo("pricing")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>Pricing</button>
-            <a href="/operations-check" style={col}>Operations Check</a>
+            <a href="https://getevidly.com/operations-check" style={col}>Operations Check</a>
           </div>
           <div>
             <div style={head}>Company</div>
@@ -998,7 +998,7 @@ export default function LandingPage() {
   const [cookie,   setCookie]   = useState(() => !localStorage.getItem("evidly-cookie-consent"));
   const openTour  = useCallback(() => setTourOpen(true),  []);
   const closeTour = useCallback(() => setTourOpen(false), []);
-  const openIRR   = useCallback(() => window.open("/operations-check", "_blank"), []);
+  const openIRR   = useCallback(() => window.open("https://getevidly.com/operations-check", "_blank"), []);
   const acceptCookies = useCallback(() => { localStorage.setItem("evidly-cookie-consent", "accepted"); setCookie(false); }, []);
   const declineCookies = useCallback(() => { localStorage.setItem("evidly-cookie-consent", "declined"); setCookie(false); }, []);
 
