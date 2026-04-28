@@ -40,7 +40,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
 
   // ── Insights children ──
   '/ai-advisor': { label: 'AI Advisor', parent: '/insights' },
-  '/analysis': { label: 'Analytics', parent: '/insights' },
+  '/food-safety/analysis': { label: 'Analysis', parent: '/food-safety' },
+  '/food-safety/trajectory': { label: 'Trajectory', parent: '/food-safety' },
   '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
   '/intelligence': { label: 'Intelligence Hub', parent: '/insights' },
   '/copilot': { label: 'Compliance Copilot', parent: '/insights' },

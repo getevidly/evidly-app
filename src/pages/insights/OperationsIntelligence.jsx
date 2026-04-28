@@ -21,7 +21,7 @@ const DEMO_INSIGHTS = [
   { id: 'd2', priority: 1, category: 'ca_aging', title: '3 corrective actions open >14 days', body: 'Long-open CAs: Walk-in cooler temp (18d), Handwash station (16d), Floor drain (15d).', source: 'corrective_actions', action_text: 'Review CAs', action_url: '/corrective-actions', status: 'active' },
   { id: 'd3', priority: 2, category: 'document_currency', title: '2 documents expiring within 30 days', body: 'Expiring soon: Business License (12d), Health Permit (28d).', source: 'documents', action_text: 'Renew Documents', action_url: '/documents', status: 'active' },
   { id: 'd4', priority: 2, category: 'temp_trend', title: 'Walk-in Cooler: +2.3°F drift detected', body: 'Average temperature shifted from 36.2°F to 38.5°F over 14 days. Check calibration.', source: 'temp_logs', action_text: 'Check Equipment', action_url: '/temperature', status: 'active' },
-  { id: 'd5', priority: 3, category: 'trajectory', title: 'Readiness score improving (+6.2 pts)', body: 'Average score rose from 78.4 to 84.6. Great work maintaining compliance.', source: 'readiness_snapshots', action_text: 'View Trajectory', action_url: '/insights/trajectory', status: 'active' },
+  { id: 'd5', priority: 3, category: 'trajectory', title: 'Readiness score improving (+6.2 pts)', body: 'Average score rose from 78.4 to 84.6. Great work maintaining compliance.', source: 'readiness_snapshots', action_text: 'View Trajectory', action_url: '/food-safety/trajectory', status: 'active' },
 ];
 
 const DEMO_COACH = 'Focus on scheduling fire alarm and sprinkler inspections this week — two critical safeguards are missing service records.';

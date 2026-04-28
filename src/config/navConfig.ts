@@ -52,7 +52,7 @@ const ROLE_NAV_ITEMS: Record<Exclude<UserRole, 'kitchen_staff'>, BottomNavItem[]
   ],
   executive: [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
-    { path: '/analysis', icon: BarChart3, label: 'Analytics' },
+    { path: '/food-safety/analysis', icon: BarChart3, label: 'Analysis' },
     { path: '/reports', icon: FileText, label: 'Reports' },
     { path: '/calendar', icon: Calendar, label: 'Calendar' },
   ],

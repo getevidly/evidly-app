@@ -6,7 +6,8 @@ import type { UserRole } from '../contexts/RoleContext';
 
 const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Insights — roles with the Insights sidebar section
-  ['/analysis',              ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
+  ['/food-safety/analysis',  ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
+  ['/food-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
   ['/audit-trail',           ['owner_operator', 'executive', 'compliance_manager']],
   ['/benchmarks',            ['owner_operator', 'executive']],
   ['/compliance-trends',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
@@ -15,7 +16,6 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/insights/reports',      ['owner_operator', 'executive', 'compliance_manager']],
   ['/insights/inspection-forecast', ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'facilities_manager']],
   ['/insights/violation-radar',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef']],
-  ['/insights/trajectory',          ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/insights/vendor-performance',  ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/insights/signals',             ['owner_operator', 'executive', 'compliance_manager']],
   ['/insights/leaderboard',         ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],

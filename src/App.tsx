@@ -47,7 +47,8 @@ const FoodRecovery = lazy(() => import('./pages/FoodRecovery').then(m => ({ defa
 const USDAProductionRecords = lazy(() => import('./pages/USDAProductionRecords').then(m => ({ default: m.USDAProductionRecords })));
 const SB1383Compliance = lazy(() => import('./pages/SB1383Compliance').then(m => ({ default: m.SB1383Compliance })));
 const K12Compliance = lazy(() => import('./pages/K12Compliance').then(m => ({ default: m.K12Compliance })));
-const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
+const FoodSafetyAnalysis = lazy(() => import('./pages/foodSafety/Analysis'));
+const FoodSafetyTrajectory = lazy(() => import('./pages/foodSafety/Trajectory'));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const CompanyProfilePage = lazy(() => import('./pages/settings/CompanyProfilePage').then(m => ({ default: m.CompanyProfilePage })));
@@ -248,7 +249,6 @@ const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ de
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
 const InspectionForecastPage = lazy(() => import('./pages/insights/InspectionForecast').then(m => ({ default: m.InspectionForecast })));
 const ViolationRadarPage = lazy(() => import('./pages/insights/ViolationRadar').then(m => ({ default: m.ViolationRadar })));
-const ComplianceTrajectoryPage = lazy(() => import('./pages/insights/ComplianceTrajectory').then(m => ({ default: m.ComplianceTrajectory })));
 const VendorPerformancePage = lazy(() => import('./pages/insights/VendorPerformance').then(m => ({ default: m.VendorPerformance })));
 const JurisdictionSignalsPage = lazy(() => import('./pages/insights/JurisdictionSignals').then(m => ({ default: m.JurisdictionSignals })));
 const TeamLeaderboardPage = lazy(() => import('./pages/insights/TeamLeaderboard').then(m => ({ default: m.TeamLeaderboard })));
@@ -640,7 +640,8 @@ function AppRoutes() {
           <Route path="/ai-advisor" element={<AIAdvisor />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/referrals" element={<ReferralDashboard />} />
-          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/food-safety/analysis" element={<FoodSafetyAnalysis />} />
+          <Route path="/food-safety/trajectory" element={<FoodSafetyTrajectory />} />
           <Route path="/team" element={<Team />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/reports/:slug" element={<ReportGeneratorPage />} />
@@ -799,7 +800,6 @@ function AppRoutes() {
           <Route path="/insights/predictions" element={<PredictiveAnalysis />} />
           <Route path="/insights/inspection-forecast" element={<InspectionForecastPage />} />
           <Route path="/insights/violation-radar" element={<ViolationRadarPage />} />
-          <Route path="/insights/trajectory" element={<ComplianceTrajectoryPage />} />
           <Route path="/insights/vendor-performance" element={<VendorPerformancePage />} />
           <Route path="/insights/signals" element={<JurisdictionSignalsPage />} />
           <Route path="/insights/leaderboard" element={<TeamLeaderboardPage />} />
@@ -816,7 +816,7 @@ function AppRoutes() {
           <Route path="/incident-playbook" element={<Navigate to="/playbooks" replace />} />
           <Route path="/regulatory-tracking" element={<Navigate to="/regulatory-alerts" replace />} />
           <Route path="/ai-insights" element={<Navigate to="/ai-advisor" replace />} />
-          <Route path="/analytics" element={<Navigate to="/analysis" replace />} />
+          <Route path="/analytics" element={<Navigate to="/food-safety/analysis" replace />} />
           <Route path="/daily-operations" element={<Navigate to="/dashboard" replace />} />
           <Route path="/locations" element={<Navigate to="/org-hierarchy" replace />} />
           <Route path="/inspections" element={<Navigate to="/self-audit" replace />} />

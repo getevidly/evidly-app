@@ -34,7 +34,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   compliance_manager: [
     { emoji: '✅', label: 'Compliance', route: '/scoring-breakdown', permission: 'bottom.compliance' },
     { emoji: '🔎', label: 'Self-Inspect', route: '/self-inspection', permission: 'bottom.self-inspect' },
-    { emoji: '⚠️', label: 'Violations', route: '/analysis', permission: 'bottom.violations' },
+    { emoji: '⚠️', label: 'Violations', route: '/food-safety/analysis', permission: 'bottom.violations' },
     { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },
     { emoji: '🔧', label: 'Fix Items', route: '/corrective-actions', permission: 'bottom.corrective-actions' },
   ],
@@ -50,7 +50,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🔧', label: 'Equipment', route: '/equipment', permission: 'bottom.equipment' },
     { emoji: '📝', label: 'Request Svc', route: '/vendors?tab=requests', permission: 'bottom.schedule' },
     { emoji: '👷', label: 'Vendors', route: '/vendors', permission: 'bottom.vendors' },
-    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
+    { emoji: '🔔', label: 'Alerts', route: '/food-safety/analysis', permission: 'bottom.alerts' },
   ],
   kitchen_manager: [
     { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },

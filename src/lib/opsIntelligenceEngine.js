@@ -641,7 +641,7 @@ export async function generateTrajectoryInsights(orgId, supabase) {
         body: `Average score dropped from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)} over recent snapshots. Investigate root causes.`,
         source: 'readiness_snapshots',
         action_text: 'View Trajectory',
-        action_url: '/insights/trajectory',
+        action_url: '/food-safety/trajectory',
         metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
       });
     } else if (diff > 5) {
@@ -652,7 +652,7 @@ export async function generateTrajectoryInsights(orgId, supabase) {
         body: `Average score rose from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)}. Great work maintaining compliance.`,
         source: 'readiness_snapshots',
         action_text: 'View Trajectory',
-        action_url: '/insights/trajectory',
+        action_url: '/food-safety/trajectory',
         metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
       });
     }
