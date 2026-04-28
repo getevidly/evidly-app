@@ -8,6 +8,8 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Insights — roles with the Insights sidebar section
   ['/food-safety/analysis',  ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
   ['/food-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
+  ['/fire-safety/analysis',  ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
+  ['/fire-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/audit-trail',           ['owner_operator', 'executive', 'compliance_manager']],
   ['/benchmarks',            ['owner_operator', 'executive']],
   ['/compliance-trends',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],

@@ -5,7 +5,7 @@ import { useRole } from '../../contexts/RoleContext';
  * Mounted pillar routes — flip fire: true in Sprint 5d-1b
  * when /fire-safety/* routes are added to the router.
  */
-export const MOUNTED_PILLAR_ROUTES = { food: true, fire: false };
+export const MOUNTED_PILLAR_ROUTES = { food: true, fire: true };
 
 const CROSS_PILLAR_ROLES = ['owner_operator', 'executive', 'compliance_manager'];
 

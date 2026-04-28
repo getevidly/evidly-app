@@ -49,6 +49,8 @@ const SB1383Compliance = lazy(() => import('./pages/SB1383Compliance').then(m =>
 const K12Compliance = lazy(() => import('./pages/K12Compliance').then(m => ({ default: m.K12Compliance })));
 const FoodSafetyAnalysis = lazy(() => import('./pages/foodSafety/Analysis'));
 const FoodSafetyTrajectory = lazy(() => import('./pages/foodSafety/Trajectory'));
+const FireSafetyAnalysis = lazy(() => import('./pages/fireSafety/Analysis'));
+const FireSafetyTrajectory = lazy(() => import('./pages/fireSafety/Trajectory'));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const CompanyProfilePage = lazy(() => import('./pages/settings/CompanyProfilePage').then(m => ({ default: m.CompanyProfilePage })));
@@ -663,6 +665,8 @@ function AppRoutes() {
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/facility-safety" element={<FacilitySafety />} />
+          <Route path="/fire-safety/analysis" element={<FireSafetyAnalysis />} />
+          <Route path="/fire-safety/trajectory" element={<FireSafetyTrajectory />} />
           <Route path="/workforce-risk" element={<WorkforceRisk />} />
           <Route path="/cic-pse" element={<CicPseView />} />
 

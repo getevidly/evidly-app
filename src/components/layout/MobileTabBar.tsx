@@ -60,6 +60,8 @@ const PATH_ICON: Record<string, any> = {
   '/intelligence': Brain,
   '/food-safety/analysis': TrendingUp,
   '/food-safety/trajectory': TrendingUp,
+  '/fire-safety/analysis': BarChart3,
+  '/fire-safety/trajectory': TrendingUp,
   '/audit-trail': ClipboardList,
   '/benchmarks': Target,
   '/iot-monitoring': Thermometer,
