@@ -85,7 +85,6 @@ const PATH_ICON: Record<string, any> = {
   '/vendors/review': FileText,
   '/marketplace': Store,
   '/help': HelpCircle,
-  '/insurance-risk': Shield,
   '/allergen-tracking': AlertTriangle,
   '/cooling-logs': Snowflake,
   '/receiving-log': FileText,

@@ -87,12 +87,11 @@ describe('Partner Demo System', () => {
     it('cleanup targets correct tables', () => {
       const tablesToClean = [
         'temp_logs', 'checklist_completions', 'corrective_actions',
-        'documents', 'equipment_service_records', 'insurance_risk_scores',
+        'documents', 'equipment_service_records',
         'sb1383_compliance', 'notifications', 'checklists', 'vendors',
       ];
       expect(tablesToClean).toContain('temp_logs');
       expect(tablesToClean).toContain('equipment_service_records');
-      expect(tablesToClean).toContain('insurance_risk_scores');
       expect(tablesToClean).not.toContain('partner_demos'); // Metadata table, not data
       expect(tablesToClean).not.toContain('demo_tours');    // Separate system
     });

@@ -86,10 +86,6 @@ const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default:
 const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
 const ComplianceOverview = lazy(() => import('./pages/ComplianceOverview').then(m => ({ default: m.ComplianceOverview })));
-const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ default: m.InsuranceRisk })));
-const InsuranceRiskShared = lazy(() => import('./pages/InsuranceRiskShared'));
-const ImproveScore = lazy(() => import('./pages/ImproveScore').then(m => ({ default: m.ImproveScore })));
-const InsuranceSettings = lazy(() => import('./pages/InsuranceSettings').then(m => ({ default: m.InsuranceSettings })));
 const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
 const VendorMarketplace = lazy(() => import('./pages/VendorMarketplace').then(m => ({ default: m.VendorMarketplace })));
 const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
@@ -544,7 +540,6 @@ function AppRoutes() {
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
         <Route path="/r/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralPage /></Suspense>} />
-        <Route path="/risk/:shareToken" element={<Suspense fallback={<PageSkeleton />}><InsuranceRiskShared /></Suspense>} />
         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
@@ -686,9 +681,6 @@ function AppRoutes() {
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
           <Route path="/compliance-overview" element={<ComplianceOverview />} />
-          <Route path="/insurance-risk" element={<InsuranceRisk />} />
-          <Route path="/improve-score" element={<ImproveScore />} />
-          <Route path="/insurance-settings" element={<InsuranceSettings />} />
           {/* IoT Sensor Platform + Vendor Migration (all authenticated users) */}
           <Route path="/iot/platform" element={<IoTSensorPlatform />} />
           <Route path="/iot/setup" element={<SensorSetupWizard />} />

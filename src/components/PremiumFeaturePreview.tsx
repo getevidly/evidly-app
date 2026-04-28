@@ -135,46 +135,6 @@ function IndustryBenchmarksSample() {
   );
 }
 
-function InsuranceRiskScoreSample() {
-  const factors = [
-    { label: 'Compliance History', value: 82 },
-    { label: 'Equipment Maintenance', value: 68 },
-    { label: 'Documentation', value: 74 },
-  ];
-  return (
-    <div style={{ display: 'flex', gap: 28, alignItems: 'center', flexWrap: 'wrap' }}>
-      <div
-        style={{
-          width: 88,
-          height: 88,
-          borderRadius: '50%',
-          border: '4px solid #A08C5A',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          flexShrink: 0,
-        }}
-      >
-        <span style={{ fontSize: 28, fontWeight: 800, color: '#1E2D4D' }}>B+</span>
-      </div>
-      <div style={{ flex: 1, minWidth: 180 }}>
-        <p style={{ margin: '0 0 12px', fontWeight: 600, color: '#1E2D4D', fontSize: 14 }}>
-          Risk Assessment: Medium
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {factors.map((f) => (
-            <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', width: 160, flexShrink: 0 }}>{f.label}</span>
-              <ProgressBar value={f.value} color="#1E2D4D" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function DefaultSample() {
   const stats = [
     { label: 'Score', value: '87%' },
@@ -208,8 +168,6 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
   const sampleContent =
     feature.id === 'industry-benchmarks' ? (
       <IndustryBenchmarksSample />
-    ) : feature.id === 'insurance-risk-score' ? (
-      <InsuranceRiskScoreSample />
     ) : (
       <DefaultSample />
     );

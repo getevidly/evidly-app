@@ -59,7 +59,7 @@ export type RfpRecommendedAction = 'pursue' | 'monitor' | 'skip';
 
 export type RfpModule =
   | 'food_safety' | 'sb1383' | 'facility_safety' | 'k12_production'
-  | 'compliance_intelligence' | 'insurance_risk' | 'vendor_management'
+  | 'compliance_intelligence' | 'vendor_management'
   | 'temp_monitoring' | 'haccp' | 'training' | 'document_management';
 
 export interface RfpClassification {
@@ -166,7 +166,6 @@ export const MODULE_LABELS: Record<string, string> = {
   sb1383: 'SB 1383',
   k12_production: 'K-12 Production',
   compliance_intelligence: 'Compliance Intelligence',
-  insurance_risk: 'Insurance Risk',
   vendor_management: 'Vendor Management',
   temp_monitoring: 'Temp Monitoring',
   haccp: 'HACCP',

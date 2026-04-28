@@ -69,7 +69,6 @@ export const ALL_MODULES = [
       { id: 'trend_analytics', label: 'Trend Analytics', description: '30/60/90/180/365-day compliance trend views' },
       { id: 'business_intelligence', label: 'Business Intelligence', description: 'Executive-level portfolio insights and KPI dashboards' },
       { id: 'compliance_score_engine', label: 'Compliance Score Engine', description: 'Inspection Readiness + Benchmarking Index + Insurance Risk Score' },
-      { id: 'insurance_risk_score', label: 'Insurance Risk Score', description: 'Configurable-weight risk score for insurance premium reduction' },
     ],
   },
   {
