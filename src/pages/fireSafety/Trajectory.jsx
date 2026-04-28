@@ -8,6 +8,14 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
 
+/** Wrap a Supabase query promise with a 5-second timeout */
+function withTimeout(promise, ms = 5000) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => resolve({ data: null, error: { message: 'timeout' } }), ms)),
+  ]);
+}
+
 const TIME_RANGES = [
   { label: 'Last 30 days', days: 30 },
   { label: 'Last 90 days', days: 90 },
@@ -28,7 +36,7 @@ function daysAgo(n) {
   return new Date(Date.now() - n * 86400000).toISOString();
 }
 
-function StatCard({ title, value, subtitle, loading: cardLoading }) {
+function StatCard({ title, value, subtitle, emptyText, loading: cardLoading }) {
   return (
     <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '20px', flex: '1 1 0', minWidth: '200px' }}>
       <div style={{ fontSize: '13px', color: 'rgba(30,45,77,0.6)', fontWeight: 500, marginBottom: '8px' }}>{title}</div>
@@ -37,7 +45,7 @@ function StatCard({ title, value, subtitle, loading: cardLoading }) {
           <Loader2 className="h-5 w-5 animate-spin" style={{ color: 'rgba(30,45,77,0.4)' }} />
         </div>
       ) : value === null ? (
-        <div style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No data in this period</div>
+        <div style={{ fontSize: '13px', color: 'rgba(30,45,77,0.4)', lineHeight: 1.5 }}>{emptyText || 'No data in this period'}</div>
       ) : (
         <>
           <div style={{ fontSize: '28px', fontWeight: 700, color: '#1E2D4D' }}>{value}</div>
@@ -129,7 +137,7 @@ export default function FireSafetyTrajectory() {
       schedQuery = schedQuery.in('location_id', locationIds);
     }
 
-    const { data: schedRows } = await schedQuery;
+    const { data: schedRows } = await withTimeout(schedQuery);
     const scheduled = schedRows || [];
     const onTime = scheduled.filter(r => r.last_service_date && r.next_due_date && new Date(r.last_service_date) <= new Date(r.next_due_date)).length;
     const pseCompletion = scheduled.length > 0 ? Math.round((onTime / scheduled.length) * 100) : null;
@@ -148,7 +156,7 @@ export default function FireSafetyTrajectory() {
       resQuery = resQuery.in('location_id', locationIds);
     }
 
-    const { data: resolved } = await resQuery;
+    const { data: resolved } = await withTimeout(resQuery);
     const resolvedFindings = resolved || [];
 
     let avgDays = null;
@@ -218,7 +226,7 @@ export default function FireSafetyTrajectory() {
       query = query.gte('created_at', since);
     }
 
-    const { data: rows } = await query;
+    const { data: rows } = await withTimeout(query);
     const cas = rows || [];
 
     // Group by week
@@ -276,7 +284,7 @@ export default function FireSafetyTrajectory() {
       query = query.in('location_id', locationIds);
     }
 
-    const { data: rows } = await query;
+    const { data: rows } = await withTimeout(query);
     const schedules = rows || [];
 
     // Group by location
@@ -355,24 +363,28 @@ export default function FireSafetyTrajectory() {
           title="PSE test completion"
           value={stats.pseCompletion !== null ? `${stats.pseCompletion}%` : null}
           subtitle={stats.pseDetail || null}
+          emptyText="No data yet. Will appear once PSE test records are connected."
           loading={loading}
         />
         <StatCard
           title="Average findings resolution"
           value={stats.avgResolution}
-          subtitle={stats.avgResolution ? null : 'No resolved findings in this period'}
+          subtitle={null}
+          emptyText="No data yet. Will appear once findings are resolved in the selected period."
           loading={loading}
         />
         <StatCard
           title="Findings resolved on time"
           value={stats.resolvedOnTime}
           subtitle={null}
+          emptyText="No data yet. Will appear once findings are closed in the selected period."
           loading={loading}
         />
         <StatCard
           title="Critical findings cleared"
           value={stats.criticalCleared}
           subtitle={null}
+          emptyText="No data yet. Will appear once critical findings are cleared in the selected period."
           loading={loading}
         />
       </div>
@@ -388,7 +400,7 @@ export default function FireSafetyTrajectory() {
           </div>
         ) : trendData.length === 0 ? (
           <div style={{ height: '200px', backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No trend data available for this metric and period</p>
+            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>Trend will appear once data is recorded for the selected metric.</p>
           </div>
         ) : (
           <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '20px' }}>
@@ -415,7 +427,7 @@ export default function FireSafetyTrajectory() {
             </div>
           ) : locationData.length === 0 ? (
             <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '32px', textAlign: 'center' }}>
-              <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No per-location data available</p>
+              <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No location data yet. Will appear once PSE test records are connected.</p>
             </div>
           ) : (
             <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '16px 20px' }}>

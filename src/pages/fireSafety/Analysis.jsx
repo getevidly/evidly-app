@@ -8,6 +8,14 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
 
+/** Wrap a Supabase query promise with a 5-second timeout */
+function withTimeout(promise, ms = 5000) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => resolve({ data: null, error: { message: 'timeout' } }), ms)),
+  ]);
+}
+
 const TIME_RANGES = [
   { label: 'Last 7 days', days: 7 },
   { label: 'Last 30 days', days: 30 },
@@ -116,7 +124,7 @@ export default function FireSafetyAnalysis() {
       query = query.in('location_id', locationIds);
     }
 
-    const { data: schedules } = await query;
+    const { data: schedules } = await withTimeout(query);
 
     // Also try vendor_service_records for fire_alarm and sprinklers
     let vsrQuery = supabase
@@ -130,7 +138,7 @@ export default function FireSafetyAnalysis() {
       vsrQuery = vsrQuery.in('location_id', locationIds);
     }
 
-    const { data: vsrRows } = await vsrQuery;
+    const { data: vsrRows } = await withTimeout(vsrQuery);
 
     // Build PSE status from available data
     const now = new Date();
@@ -215,7 +223,7 @@ export default function FireSafetyAnalysis() {
       query = query.in('location_id', locationIds);
     }
 
-    const { data: rows } = await query;
+    const { data: rows } = await withTimeout(query);
     const active = rows || [];
     setFindings(active);
 
@@ -259,7 +267,7 @@ export default function FireSafetyAnalysis() {
       query = query.in('location_id', locationIds);
     }
 
-    const { data: allCAs } = await query;
+    const { data: allCAs } = await withTimeout(query);
     const cas = allCAs || [];
 
     const chartData = weeks.map(week => {
@@ -379,8 +387,8 @@ export default function FireSafetyAnalysis() {
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1E2D4D', margin: 0 }}>Big 4 PSE Status</h2>
-            <p style={{ fontSize: '13px', color: 'rgba(30,45,77,0.5)', margin: '4px 0 0' }}>Fire Alarms &middot; Sprinklers &middot; Hood &middot; Ansul</p>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1E2D4D', margin: 0 }}>Protective Safeguards Endorsement</h2>
+            <p style={{ fontSize: '13px', color: 'rgba(30,45,77,0.5)', margin: '4px 0 0' }}>PSE &mdash; Fire Alarms &middot; Sprinklers &middot; Hood &middot; Ansul</p>
           </div>
           <div style={{ display: 'inline-flex', border: '1px solid rgba(30,45,77,0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
             <button
@@ -406,7 +414,7 @@ export default function FireSafetyAnalysis() {
           </div>
         ) : pseData.length === 0 ? (
           <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
-            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No PSE service records found. Add records in Vendor Management to see status here.</p>
+            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>PSE test records will appear here once test and inspection data is connected.</p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
@@ -475,7 +483,7 @@ export default function FireSafetyAnalysis() {
         )}
         {!loading && findingsTable.length === 0 && findings.length === 0 && (
           <div style={{ marginTop: '16px', backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
-            <p style={{ fontSize: '13px', color: 'rgba(30,45,77,0.4)' }}>No overdue findings.</p>
+            <p style={{ fontSize: '13px', color: 'rgba(30,45,77,0.4)' }}>No findings requiring attention right now.</p>
           </div>
         )}
       </div>
@@ -489,7 +497,7 @@ export default function FireSafetyAnalysis() {
           </div>
         ) : trendData.length === 0 ? (
           <div style={{ height: '200px', backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>No trend data available</p>
+            <p style={{ fontSize: '14px', color: 'rgba(30,45,77,0.4)' }}>Trend will appear once findings are recorded.</p>
           </div>
         ) : (
           <div style={{ backgroundColor: 'white', border: '1px solid rgba(30,45,77,0.1)', borderRadius: '12px', padding: '20px' }}>
