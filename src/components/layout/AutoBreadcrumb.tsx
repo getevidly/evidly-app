@@ -17,12 +17,17 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/tools': { label: 'Tools', parent: '/dashboard' },
   '/admin': { label: 'Administration', parent: '/dashboard' },
 
+  '/food-safety/overview': { label: 'Overview', parent: '/food-safety' },
+
   // ── Food Safety children ──
   '/temp-logs': { label: 'Temperature Readings', parent: '/food-safety' },
   '/checklists': { label: 'Checklists', parent: '/food-safety' },
   '/haccp': { label: 'HACCP Management', parent: '/food-safety' },
   '/corrective-actions': { label: 'Corrective Actions', parent: '/food-safety' },
   '/scoring-breakdown': { label: 'Food Safety Overview', parent: '/food-safety' },
+
+  // ── Top-level pages ──
+  '/compliance-overview': { label: 'Compliance Overview', parent: '/dashboard' },
 
   // ── Compliance children ──
   '/compliance-index': { label: 'Compliance Index', parent: '/compliance' },
@@ -42,6 +47,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/ai-advisor': { label: 'AI Advisor', parent: '/insights' },
   '/food-safety/analysis': { label: 'Analysis', parent: '/food-safety' },
   '/food-safety/trajectory': { label: 'Trajectory', parent: '/food-safety' },
+  '/fire-safety/overview': { label: 'Overview', parent: '/facility-safety' },
   '/fire-safety/analysis': { label: 'Analysis', parent: '/facility-safety' },
   '/fire-safety/trajectory': { label: 'Trajectory', parent: '/facility-safety' },
   '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
@@ -55,7 +61,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/iot-platform': { label: 'IoT Platform', parent: '/insights' },
 
   // ── Tools children ──
-  '/calendar': { label: 'Calendar', parent: '/dashboard' },
+  '/calendar': { label: 'Calendar', parent: '/facility-safety' },
   '/vendors': { label: 'Vendor Management', parent: '/tools' },
   '/marketplace': { label: 'Marketplace', parent: '/tools' },
   '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },
