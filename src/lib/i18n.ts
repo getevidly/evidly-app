@@ -420,7 +420,7 @@ const en = {
   // ── Temperature Readings ────────────────────────────────
   tempLogs: {
     title: 'Temperature Readings',
-    subtitle: 'Monitor and record equipment temperatures',
+    subtitle: 'Captures and logs equipment temperatures',
     currentReadings: 'Current Readings',
     history: 'History',
     receiving: 'Receiving',
