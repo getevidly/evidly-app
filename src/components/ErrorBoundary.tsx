@@ -13,12 +13,13 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  componentStack: string | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, componentStack: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -26,6 +27,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    console.error('[ErrorBoundary] error.message:', error.message);
+    console.error('[ErrorBoundary] error.stack:', error.stack);
+    console.error('[ErrorBoundary] componentStack:', errorInfo.componentStack);
+    this.setState({ componentStack: errorInfo.componentStack || null });
     reportError(error, { componentStack: errorInfo.componentStack });
     this.props.onError?.(error, errorInfo);
   }
@@ -36,12 +41,12 @@ export class ErrorBoundary extends Component<Props, State> {
       prevProps.resetKey !== this.props.resetKey &&
       this.state.hasError
     ) {
-      this.setState({ hasError: false, error: null });
+      this.setState({ hasError: false, error: null, componentStack: null });
     }
   }
 
   handleRetry = (): void => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, componentStack: null });
   };
 
   render(): ReactNode {
@@ -53,6 +58,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <ErrorFallback
           level={this.props.level ?? 'page'}
           error={this.state.error}
+          componentStack={this.state.componentStack}
           onRetry={this.handleRetry}
         />
       );

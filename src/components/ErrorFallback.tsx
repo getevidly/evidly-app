@@ -6,10 +6,11 @@ import { useTranslation } from '../contexts/LanguageContext';
 interface ErrorFallbackProps {
   level: 'page' | 'section' | 'widget';
   error: Error | null;
+  componentStack?: string | null;
   onRetry: () => void;
 }
 
-function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
+function PageFallback({ error, componentStack, onRetry }: { error: Error | null; componentStack?: string | null; onRetry: () => void }) {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const { t } = useTranslation();
@@ -65,12 +66,20 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
               {t('errors.showDetails')}
             </button>
             {showDetails && (
-              <pre className="mt-2 p-3 bg-[#1E2D4D]/5 rounded-lg text-xs text-[#1E2D4D]/80 font-mono overflow-x-auto whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
+              <pre className="mt-2 p-3 bg-[#1E2D4D]/5 rounded-lg text-xs text-[#1E2D4D]/80 font-mono overflow-x-auto whitespace-pre-wrap break-words max-h-72 overflow-y-auto">
                 <strong>Error:</strong> {error.message}
                 {'\n\n'}
                 <strong>Stack:</strong>
                 {'\n'}
                 {truncatedStack}
+                {componentStack && (
+                  <>
+                    {'\n\n'}
+                    <strong>Component Stack:</strong>
+                    {'\n'}
+                    {componentStack}
+                  </>
+                )}
               </pre>
             )}
           </div>
@@ -120,9 +129,9 @@ function WidgetFallback({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-export function ErrorFallback({ level, error, onRetry }: ErrorFallbackProps) {
+export function ErrorFallback({ level, error, componentStack, onRetry }: ErrorFallbackProps) {
   if (level === 'page') {
-    return <PageFallback error={error} onRetry={onRetry} />;
+    return <PageFallback error={error} componentStack={componentStack} onRetry={onRetry} />;
   }
   if (level === 'section') {
     return <SectionFallback onRetry={onRetry} />;
