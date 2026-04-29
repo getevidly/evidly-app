@@ -982,7 +982,6 @@ export function TempLogs() {
       setReceivingItems([]);
       setFoodCategory('');
       setReceivedBy('');
-      setShowVendorOther(false);
       return;
     }
 
@@ -1028,7 +1027,6 @@ export function TempLogs() {
       setReceivingItems([]);
       setFoodCategory('');
       setReceivedBy('');
-      setShowVendorOther(false);
     }
   };
 
