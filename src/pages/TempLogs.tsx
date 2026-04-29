@@ -574,7 +574,7 @@ export function TempLogs() {
           })
         );
 
-        setEquipment(equipmentWithLastCheck);
+        setEquipment(equipmentWithLastCheck.filter(eq => eq.name && eq.equipment_type));
       }
     } catch (err) {
       setPageError(err instanceof Error ? err.message : 'Failed to load equipment data');
