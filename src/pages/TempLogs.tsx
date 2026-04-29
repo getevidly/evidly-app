@@ -1129,7 +1129,7 @@ export function TempLogs() {
         const bTime = b.last_check ? new Date(b.last_check.created_at).getTime() : 0;
         return bTime - aTime;
       } else if (sortBy === 'alphabetical') {
-        return a.name.localeCompare(b.name);
+        return (a.name || '').localeCompare(b.name || '');
       } else if (sortBy === 'mostRecent') {
         const aTime = a.last_check ? new Date(a.last_check.created_at).getTime() : 0;
         const bTime = b.last_check ? new Date(b.last_check.created_at).getTime() : 0;
