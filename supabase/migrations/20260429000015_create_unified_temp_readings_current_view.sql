@@ -1,0 +1,210 @@
+-- Create unified_temp_readings_current view.
+-- Returns LATEST state per equipment / food batch / receiving event / cooldown event.
+-- Powers the Current Readings tab — what's happening right now, not full history.
+--
+-- Same 25 columns as unified_temp_readings_granular for UI consistency.
+--
+-- Each leg uses ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ... DESC) and filters to rn=1.
+-- Single uniform pattern across all four legs; avoids the DISTINCT ON + ORDER BY
+-- mid-UNION-ALL limitation in PostgreSQL.
+--
+-- Filter rules per source:
+--   1. Equipment — only is_active = true equipment, latest reading
+--   2. Food — only active batches not yet served or discarded, requires at least one reading
+--   3. Receiving — last 24 hours only, deduped by vendor + delivery date
+--   4. Cooldown — only active cooldowns, latest checkpoint
+--
+-- security_invoker = true delegates RLS to underlying tables (Postgres 15+).
+-- ccp_number, temp_pass, and required_max for cooldown rows use the same
+-- computed logic as unified_temp_readings_granular (see that view's comment).
+
+CREATE OR REPLACE VIEW unified_temp_readings_current
+WITH (security_invoker = true)
+AS
+
+-- Latest reading per equipment (no food batch)
+SELECT
+  id, reading_source, reading_type, location_id, zone_id, equipment_id,
+  equipment_name, food_item_name, vendor_name, food_batch_id, cooldown_log_id,
+  cooldown_stage, ccp_number, temperature, required_min, required_max, temp_pass,
+  input_method, shift, recorded_at, recorded_by, notes, photo_url,
+  corrective_action, created_at
+FROM (
+  SELECT
+    tl.id,
+    'equipment'::text AS reading_source,
+    tl.log_type AS reading_type,
+    te.location_id,
+    te.zone_id,
+    te.id AS equipment_id,
+    te.name AS equipment_name,
+    NULL::text AS food_item_name,
+    NULL::text AS vendor_name,
+    NULL::uuid AS food_batch_id,
+    NULL::uuid AS cooldown_log_id,
+    NULL::integer AS cooldown_stage,
+    te.ccp_number,
+    tl.temperature,
+    tl.required_min,
+    tl.required_max,
+    tl.temp_pass,
+    tl.input_method,
+    tl.shift,
+    tl.reading_time AS recorded_at,
+    tl.logged_by AS recorded_by,
+    tl.notes,
+    tl.photo_url,
+    tl.corrective_action,
+    tl.created_at,
+    ROW_NUMBER() OVER (PARTITION BY te.id ORDER BY tl.reading_time DESC) AS rn
+  FROM temperature_equipment te
+  JOIN temperature_logs tl ON tl.equipment_id = te.id
+  WHERE te.is_active = true AND tl.food_batch_id IS NULL
+) ranked
+WHERE rn = 1
+
+UNION ALL
+
+-- Latest reading per active food_batch
+SELECT
+  id, reading_source, reading_type, location_id, zone_id, equipment_id,
+  equipment_name, food_item_name, vendor_name, food_batch_id, cooldown_log_id,
+  cooldown_stage, ccp_number, temperature, required_min, required_max, temp_pass,
+  input_method, shift, recorded_at, recorded_by, notes, photo_url,
+  corrective_action, created_at
+FROM (
+  SELECT
+    tl.id,
+    'food'::text AS reading_source,
+    tl.log_type AS reading_type,
+    fb.location_id,
+    fb.zone_id,
+    tl.equipment_id,
+    te.name AS equipment_name,
+    fb.food_item_name,
+    NULL::text AS vendor_name,
+    fb.id AS food_batch_id,
+    NULL::uuid AS cooldown_log_id,
+    NULL::integer AS cooldown_stage,
+    COALESCE(te.ccp_number,
+      CASE tl.log_type
+        WHEN 'cooking' THEN 5::smallint
+        WHEN 'reheating' THEN 5::smallint
+        WHEN 'hot_holding' THEN 3::smallint
+        WHEN 'cold_holding' THEN 2::smallint
+        ELSE NULL::smallint
+      END) AS ccp_number,
+    tl.temperature,
+    tl.required_min,
+    tl.required_max,
+    tl.temp_pass,
+    tl.input_method,
+    tl.shift,
+    tl.reading_time AS recorded_at,
+    tl.logged_by AS recorded_by,
+    tl.notes,
+    tl.photo_url,
+    tl.corrective_action,
+    tl.created_at,
+    ROW_NUMBER() OVER (PARTITION BY fb.id ORDER BY tl.reading_time DESC) AS rn
+  FROM food_batches fb
+  JOIN temperature_logs tl ON tl.food_batch_id = fb.id
+  LEFT JOIN temperature_equipment te ON tl.equipment_id = te.id
+  WHERE fb.is_active = true AND fb.current_status NOT IN ('served','discarded')
+) ranked
+WHERE rn = 1
+
+UNION ALL
+
+-- Latest receiving reading per delivery (last 24 hours)
+SELECT
+  id, reading_source, reading_type, location_id, zone_id, equipment_id,
+  equipment_name, food_item_name, vendor_name, food_batch_id, cooldown_log_id,
+  cooldown_stage, ccp_number, temperature, required_min, required_max, temp_pass,
+  input_method, shift, recorded_at, recorded_by, notes, photo_url,
+  corrective_action, created_at
+FROM (
+  SELECT
+    rtl.id,
+    'receiving'::text AS reading_source,
+    'receiving'::text AS reading_type,
+    rtl.location_id,
+    NULL::uuid AS zone_id,
+    NULL::uuid AS equipment_id,
+    rtl.item_description AS equipment_name,
+    rtl.item_description AS food_item_name,
+    rtl.vendor_name,
+    rtl.food_batch_id,
+    NULL::uuid AS cooldown_log_id,
+    NULL::integer AS cooldown_stage,
+    1::smallint AS ccp_number,
+    rtl.temperature_value AS temperature,
+    NULL::numeric AS required_min,
+    NULL::numeric AS required_max,
+    rtl.is_pass AS temp_pass,
+    COALESCE(rtl.input_method, 'manual') AS input_method,
+    NULL::text AS shift,
+    COALESCE(rtl.delivery_time, rtl.created_at) AS recorded_at,
+    rtl.received_by AS recorded_by,
+    rtl.notes,
+    rtl.photo_url,
+    rtl.corrective_action,
+    rtl.created_at,
+    ROW_NUMBER() OVER (PARTITION BY rtl.vendor_name, rtl.delivery_time::date ORDER BY COALESCE(rtl.delivery_time, rtl.created_at) DESC) AS rn
+  FROM receiving_temp_logs rtl
+  WHERE COALESCE(rtl.delivery_time, rtl.created_at) > now() - interval '24 hours'
+) ranked
+WHERE rn = 1
+
+UNION ALL
+
+-- Latest checkpoint per active cooldown
+SELECT
+  id, reading_source, reading_type, location_id, zone_id, equipment_id,
+  equipment_name, food_item_name, vendor_name, food_batch_id, cooldown_log_id,
+  cooldown_stage, ccp_number, temperature, required_min, required_max, temp_pass,
+  input_method, shift, recorded_at, recorded_by, notes, photo_url,
+  corrective_action, created_at
+FROM (
+  SELECT
+    ctc.id,
+    'cooldown'::text AS reading_source,
+    'cooling'::text AS reading_type,
+    cl.location_id,
+    NULL::uuid AS zone_id,
+    NULL::uuid AS equipment_id,
+    cl.food_item_name AS equipment_name,
+    cl.food_item_name,
+    NULL::text AS vendor_name,
+    cl.food_batch_id,
+    cl.id AS cooldown_log_id,
+    ctc.stage AS cooldown_stage,
+    4::smallint AS ccp_number,
+    ctc.temperature_value AS temperature,
+    NULL::numeric AS required_min,
+    CASE ctc.stage
+      WHEN 1 THEN cl.stage1_target_temp
+      WHEN 2 THEN cl.stage2_target_temp
+      ELSE NULL
+    END AS required_max,
+    CASE
+      WHEN ctc.stage = 1 AND ctc.temperature_value <= cl.stage1_target_temp THEN true
+      WHEN ctc.stage = 2 AND ctc.temperature_value <= cl.stage2_target_temp THEN true
+      ELSE NULL::boolean
+    END AS temp_pass,
+    'manual'::text AS input_method,
+    NULL::text AS shift,
+    ctc.check_time AS recorded_at,
+    cl.recorded_by,
+    cl.notes,
+    NULL::text AS photo_url,
+    NULL::text AS corrective_action,
+    ctc.created_at,
+    ROW_NUMBER() OVER (PARTITION BY cl.id ORDER BY ctc.check_time DESC) AS rn
+  FROM cooldown_logs cl
+  JOIN cooldown_temp_checks ctc ON ctc.cooldown_log_id = cl.id
+  WHERE cl.status = 'active'
+) ranked
+WHERE rn = 1;
+
+GRANT SELECT ON unified_temp_readings_current TO authenticated;
