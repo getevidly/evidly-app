@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment, useRef, Component, ErrorInfo, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3 } from 'lucide-react';
@@ -136,6 +136,85 @@ const isHoldingCold = (type: string) => HOLDING_COLD_TYPES.includes(type);
 const isHoldingHot = (type: string) => HOLDING_HOT_TYPES.includes(type);
 const isFreezerType = (type: string) => type === 'storage_frozen' || type === 'freezer';
 
+// ── DEBUG BOUNDARY (temporary — remove after bug is found) ──────────
+interface DebugBoundaryProps { stateRef: React.RefObject<any>; children: ReactNode }
+interface DebugBoundaryState { hasError: boolean; error: Error | null; componentStack: string | null; stateSnapshot: any }
+
+class TempLogsDebugBoundary extends Component<DebugBoundaryProps, DebugBoundaryState> {
+  constructor(props: DebugBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null, componentStack: null, stateSnapshot: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const snapshot = this.props.stateRef?.current || {};
+    const flagged = (snapshot.equipment || []).map((eq: any, i: number) => ({
+      index: i, id: eq?.id, name: eq?.name, equipment_type: eq?.equipment_type,
+      nameIsNull: eq?.name == null, typeIsNull: eq?.equipment_type == null, entireObjectIsNull: eq == null,
+    }));
+    console.error('[TempLogs DEBUG] Error:', error.message);
+    console.error('[TempLogs DEBUG] Component stack:', errorInfo.componentStack);
+    console.error('[TempLogs DEBUG] State snapshot:', JSON.stringify(snapshot, null, 2));
+    console.error('[TempLogs DEBUG] Equipment audit:', JSON.stringify(flagged, null, 2));
+    this.setState({ componentStack: errorInfo.componentStack || null, stateSnapshot: snapshot });
+  }
+  render() {
+    if (this.state.hasError) {
+      const { error, componentStack, stateSnapshot } = this.state;
+      const eqList = stateSnapshot?.equipment || [];
+      const badItems = eqList.filter((eq: any) => !eq || !eq.name || !eq.equipment_type);
+      return (
+        <div style={{ padding: 24, fontFamily: 'monospace', fontSize: 13, color: '#1E2D4D', maxWidth: 900, margin: '0 auto' }}>
+          <h1 style={{ color: '#991b1b', fontSize: 18, marginBottom: 12 }}>TempLogs Crash — Debug Snapshot</h1>
+          <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 8, padding: 16, marginBottom: 16 }}>
+            <strong>Error:</strong> {error?.message}
+          </div>
+          <details open style={{ marginBottom: 16 }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 700 }}>Component Stack</summary>
+            <pre style={{ background: '#f8fafc', padding: 12, borderRadius: 6, overflow: 'auto', maxHeight: 300, fontSize: 11 }}>
+              {componentStack || 'unavailable'}
+            </pre>
+          </details>
+          <details open style={{ marginBottom: 16 }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 700 }}>
+              Equipment Array ({eqList.length} items, {badItems.length} bad)
+            </summary>
+            {badItems.length > 0 && (
+              <div style={{ background: '#fef9c3', border: '1px solid #fde047', borderRadius: 6, padding: 12, marginTop: 8 }}>
+                <strong>BAD ITEMS (null name or type):</strong>
+                <pre style={{ fontSize: 11 }}>{JSON.stringify(badItems, null, 2)}</pre>
+              </div>
+            )}
+            <pre style={{ background: '#f8fafc', padding: 12, borderRadius: 6, overflow: 'auto', maxHeight: 300, fontSize: 11, marginTop: 8 }}>
+              {JSON.stringify(eqList.map((eq: any) => ({ id: eq?.id, name: eq?.name, type: eq?.equipment_type })), null, 2)}
+            </pre>
+          </details>
+          <details style={{ marginBottom: 16 }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 700 }}>Selected Equipment</summary>
+            <pre style={{ background: '#f8fafc', padding: 12, borderRadius: 6, overflow: 'auto', fontSize: 11 }}>
+              {JSON.stringify(stateSnapshot?.selectedEquipment, null, 2) || 'null'}
+            </pre>
+          </details>
+          <details style={{ marginBottom: 16 }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 700 }}>Full State Snapshot</summary>
+            <pre style={{ background: '#f8fafc', padding: 12, borderRadius: 6, overflow: 'auto', maxHeight: 400, fontSize: 11 }}>
+              {JSON.stringify(stateSnapshot, null, 2)}
+            </pre>
+          </details>
+          <button onClick={() => this.setState({ hasError: false, error: null })}
+            style={{ background: '#1E2D4D', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer', fontSize: 13 }}>
+            Try Again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+// ── END DEBUG BOUNDARY ──────────────────────────────────────────────
+
 export function TempLogs() {
   const navigate = useNavigate();
   const { profile } = useAuth();
@@ -221,6 +300,22 @@ export function TempLogs() {
 
   // Page-level error state
   const [pageError, setPageError] = useState<string | null>(null);
+
+  // ── DEBUG: state snapshot ref for error boundary ──
+  const debugStateRef = useRef<any>({});
+  debugStateRef.current = {
+    equipment,
+    selectedEquipment,
+    locations: 'computed at render',
+    activeTab,
+    loading,
+    isDemoMode,
+    historyCount: history.length,
+    cooldownCount: cooldowns.length,
+    usersCount: users.length,
+    pageError,
+    profileOrgId: profile?.organization_id || null,
+  };
 
   useEffect(() => {
     try {
@@ -1639,6 +1734,7 @@ export function TempLogs() {
   const isWithinRange = selectedEquipment && tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
   const locations = isDemoMode ? ['Location 1', 'Location 2', 'Location 3'] : [];
+  debugStateRef.current.locations = locations;
 
   // Error state — early return before main render
   if (pageError) {
@@ -1662,6 +1758,7 @@ export function TempLogs() {
   }
 
   return (
+    <TempLogsDebugBoundary stateRef={debugStateRef}>
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('tempLogs.title') }]} />
 
@@ -3883,5 +3980,6 @@ export function TempLogs() {
         onSave={handleSaveCooldownReading}
       />
     </>
+    </TempLogsDebugBoundary>
   );
 }
