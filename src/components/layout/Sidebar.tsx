@@ -681,11 +681,8 @@ export function Sidebar() {
                   ) : section.path ? (
                     /* Navigable section — label navigates, arrow toggles */
                     <div className="w-full flex items-center justify-between px-3 py-1.5 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => navigate(section.path!)}
+                      <span
                         style={{
-                          background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                           color: hasActiveChild ? '#ffffff' : colors.gold,
                           fontSize: 9, fontWeight: 800,
                           textTransform: 'uppercase' as const,
@@ -693,7 +690,7 @@ export function Sidebar() {
                         }}
                       >
                         {section.label}
-                      </button>
+                      </span>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); toggleSection(section.id); }}
