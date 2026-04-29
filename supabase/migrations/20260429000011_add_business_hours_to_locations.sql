@@ -1,0 +1,28 @@
+-- Add business hours columns to locations.
+-- Four new columns define each location's operating window:
+--   business_hours_start     — Opening time (default 07:00).
+--   business_hours_end       — Closing time (default 22:00).
+--   business_hours_days      — Day pattern using MTWRFSU (default all days).
+--   business_hours_timezone  — IANA timezone (NO default).
+--
+-- business_hours_timezone has no default — application must set it
+-- explicitly on every location insert (typically derived from the
+-- location's address). A wrong timezone silently breaks auto-dispatch
+-- logic and weekly report scheduling. Operating hours and days have
+-- safe defaults that can be overridden in the location settings UI.
+--
+-- Used by:
+--   1. Auto-dispatch logic for sensor support tickets — outside business
+--      hours = auto-dispatch on CRITICAL severity (locked decision).
+--   2. Day filtering for weekly_report_recipients setup — send_day
+--      options are filtered to days the location is open.
+
+ALTER TABLE locations
+  ADD COLUMN IF NOT EXISTS business_hours_start time NOT NULL DEFAULT '07:00',
+  ADD COLUMN IF NOT EXISTS business_hours_end time NOT NULL DEFAULT '22:00',
+  ADD COLUMN IF NOT EXISTS business_hours_days text NOT NULL DEFAULT 'MTWRFSU',
+  ADD COLUMN IF NOT EXISTS business_hours_timezone text;
+
+UPDATE locations SET business_hours_timezone = 'America/Los_Angeles' WHERE business_hours_timezone IS NULL;
+
+ALTER TABLE locations ALTER COLUMN business_hours_timezone SET NOT NULL;
