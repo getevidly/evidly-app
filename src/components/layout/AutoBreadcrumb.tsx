@@ -153,7 +153,7 @@ const QUERY_CONTEXT_PARAMS: Record<string, Record<string, string>> = {
     receiving: 'Receiving',
     holding: 'Hot/Cold Holding',
     cooldown: 'Cooldown',
-    iot: 'IoT Live View',
+    iot: 'Live Sensors',
     analytics: 'Analytics',
     history: 'History',
   },

@@ -1717,7 +1717,7 @@ export function TempLogs() {
             { key: 'receiving', label: t('tempLogs.receiving') },
             { key: 'holding', label: 'Hot/Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
             { key: 'cooldown', label: t('tempLogs.cooldown') },
-            { key: 'iot', label: 'IoT Live View', icon: <Radio className="h-3.5 w-3.5" /> },
+            { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" /> },
             { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" /> },
             { key: 'history', label: t('tempLogs.history') },
           ] as { key: string; label: string; icon?: React.ReactNode }[]).map(tab => (
@@ -2863,7 +2863,7 @@ export function TempLogs() {
           </div>
         )}
 
-        {/* IoT Live View Tab */}
+        {/* Live Sensors Tab */}
         {activeTab === 'iot' && !isDemoMode && (
           <div className="space-y-6">
             <EmptyState
