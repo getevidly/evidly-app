@@ -2609,7 +2609,7 @@ export function TempLogs() {
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
               <div className="px-6 py-4 bg-[#eef4f8] border-b border-[#b8d4e8]">
                 <h3 className="text-lg font-bold text-[#1E2D4D]">Cooling Standards Reference</h3>
-                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Both standards must be met for California locations</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">FDA and California require the same two-stage cooldown.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#1E2D4D]/10">
                 {/* FDA Standard */}
@@ -2639,28 +2639,28 @@ export function TempLogs() {
                 <div className="p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded">California</span>
-                    <span className="text-xs text-[#1E2D4D]/50">CalCode §114002(a) — effective April 1, 2026</span>
+                    <span className="text-xs text-[#1E2D4D]/50">CalCode §114002(b) — effective January 1, 2026</span>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                       <div>
-                        <p className="text-sm font-semibold text-[#1E2D4D]">Cooked temp → 70°F within 2 hours</p>
-                        <p className="text-xs text-red-600 font-medium">Clock starts at actual cooked temperature (stricter)</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">135°F → 70°F within 2 hours</p>
+                        <p className="text-xs text-[#1E2D4D]/50">Clock starts at 135°F (matches FDA)</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                       <div>
                         <p className="text-sm font-semibold text-[#1E2D4D]">70°F → 41°F within 4 hours</p>
-                        <p className="text-xs text-[#1E2D4D]/50">6 hours total from start of cooling</p>
+                        <p className="text-xs text-[#1E2D4D]/50">6 hours total from 135°F</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="px-5 py-3 bg-amber-50 border-t border-amber-200">
-                <p className="text-xs text-amber-800"><strong>Why California is stricter:</strong> FDA starts the 2-hour clock at 135°F. California starts it at the actual cooked temperature (e.g., 165°F for poultry). Your food must travel a greater temperature range in the same 2 hours.</p>
+                <p className="text-xs text-amber-800"><strong>Best practice in California:</strong> California §114002(a) also requires rapid cooling. CA inspectors typically expect active cooling — ice bath, blast chiller, shallow pans — to begin as soon as food comes off heat, not when it drifts down to 135°F on its own.</p>
               </div>
             </div>
 
