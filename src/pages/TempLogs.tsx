@@ -2042,6 +2042,7 @@ export function TempLogs() {
 
               {/* CCP-04 Corrective Action Modal */}
               <Modal isOpen={!!(showCcpModal && pendingFailItem)} onClose={() => { setShowCcpModal(false); setPendingFailItem(null); }} size="lg">
+                {pendingFailItem && (
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-6 w-6" style={{ color: '#C62828' }} />
@@ -2118,6 +2119,7 @@ export function TempLogs() {
                       </button>
                     </div>
                   </div>
+                )}
               </Modal>
 
               {/* Added Items List */}
@@ -3467,6 +3469,7 @@ export function TempLogs() {
 
       {/* Log Temperature Modal */}
       <Modal isOpen={!!(showLogModal && selectedEquipment)} onClose={() => setShowLogModal(false)} size="lg">
+        {selectedEquipment && (
           <div className="p-4 sm:p-5">
             <h3 className="text-2xl font-bold tracking-tight mb-2 text-center">{selectedEquipment.name}</h3>
             <p className="text-center text-[#1E2D4D]/70 mb-6">
@@ -3600,6 +3603,7 @@ export function TempLogs() {
               </div>
             </form>
           </div>
+        )}
       </Modal>
 
       {/* Batch Log Modal */}
@@ -3803,6 +3807,7 @@ export function TempLogs() {
 
       {/* Cooldown Check Modal */}
       <Modal isOpen={!!(showCooldownCheckModal && selectedCooldown)} onClose={() => { setShowCooldownCheckModal(false); setSelectedCooldown(null); }} size="lg">
+        {selectedCooldown && (
           <div className="p-4 sm:p-5">
             <h3 className="text-2xl font-bold tracking-tight mb-2">{selectedCooldown.itemName}</h3>
             <p className="text-[#1E2D4D]/70 mb-6">Log Temperature Reading</p>
@@ -3853,6 +3858,7 @@ export function TempLogs() {
               </div>
             </form>
           </div>
+        )}
       </Modal>
 
       {/* Manual Add Reading Modals */}
