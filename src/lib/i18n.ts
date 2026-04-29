@@ -130,7 +130,7 @@ const en = {
     serviceReporting: 'Service Reporting',
     analytics: 'Analytics',
     intelligence: 'Compliance Intelligence',
-    foodSafetyOverview: 'Food Safety Overview',
+    foodSafetyOverview: 'Overview',
     allEquipment: 'All Equipment',
   },
 
