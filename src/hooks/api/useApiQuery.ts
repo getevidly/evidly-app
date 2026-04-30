@@ -23,6 +23,8 @@ export interface ApiMutationResult<TArgs, TResult = void> {
   mutate: (args: TArgs) => Promise<TResult>;
   isLoading: boolean;
   error: Error | null;
+  data: TResult | null;
+  reset: () => void;
 }
 
 /**
@@ -74,6 +76,10 @@ export function useApiQuery<T>(
 /**
  * Mutation hook — in demo mode it updates local state only;
  * in authenticated mode it calls mutationFn (Supabase write).
+ *
+ * Returns { mutate, isLoading, error, data, reset }.
+ * Race-safe: if mutate is called while a previous call is in flight,
+ * only the latest call updates state.
  */
 export function useApiMutation<TArgs, TResult = void>(
   mutationFn: (args: TArgs) => Promise<TResult>,
@@ -82,24 +88,39 @@ export function useApiMutation<TArgs, TResult = void>(
   const { isDemoMode } = useDemo();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<TResult | null>(null);
+  const callIdRef = useRef(0);
 
   const mutate = useCallback(async (args: TArgs): Promise<TResult> => {
     if (isDemoMode && demoFn) {
       return demoFn(args);
     }
+    const thisCallId = ++callIdRef.current;
     setIsLoading(true);
     setError(null);
+    setData(null);
     try {
       const result = await mutationFn(args);
-      setIsLoading(false);
+      if (callIdRef.current === thisCallId) {
+        setData(result as TResult | null);
+        setIsLoading(false);
+      }
       return result;
     } catch (err) {
       const e = err instanceof Error ? err : new Error(String(err));
-      setError(e);
-      setIsLoading(false);
+      if (callIdRef.current === thisCallId) {
+        setError(e);
+        setIsLoading(false);
+      }
       throw e;
     }
   }, [isDemoMode, mutationFn, demoFn]);
 
-  return { mutate, isLoading, error };
+  const reset = useCallback(() => {
+    setIsLoading(false);
+    setError(null);
+    setData(null);
+  }, []);
+
+  return { mutate, isLoading, error, data, reset };
 }
