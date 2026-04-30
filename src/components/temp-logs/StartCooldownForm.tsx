@@ -85,6 +85,23 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
         Start a Cooldown
       </h3>
 
+      {/* Guidance */}
+      <div
+        className="rounded-xl px-4 py-3 mb-5 space-y-1.5"
+        style={{ backgroundColor: colors.cream }}
+      >
+        <p className="text-sm" style={{ color: colors.textPrimary }}>
+          <span className="font-semibold">FDA + CalCode:</span>{' '}
+          cool from 135°F to 70°F in 2 hours, then to 41°F within 4 more hours. 6 hours total.
+        </p>
+        <p className="text-xs" style={{ color: colors.textSecondary }}>
+          The clock starts when you save this cooldown.
+        </p>
+        <p className="text-xs" style={{ color: colors.textSecondary }}>
+          Use shallow pans, ice baths, or blast chillers to actively cool. Don't rely on refrigeration alone.
+        </p>
+      </div>
+
       <div className="space-y-5">
         {/* Food Item Name — with menu item search */}
         <div>
@@ -150,6 +167,9 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
             className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
             placeholder="e.g., 165"
           />
+          <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
+            Enter the temperature when the food first dropped to 135°F. This starts your 6-hour clock.
+          </p>
         </div>
 
         {/* Cooling Location Notes */}

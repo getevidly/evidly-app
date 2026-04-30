@@ -25,6 +25,7 @@ import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../comp
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
 import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
 import { CooldownActiveList } from '../components/temp-logs/CooldownActiveList';
+import { CoolingStandardsReference } from '../components/temp-logs/CoolingStandardsReference';
 import { VendorCombobox } from '../components/temp-logs/VendorCombobox';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { getShift, getLogType, TEMP_CHECK_INTERVALS } from '../config/tempConfig';
@@ -2359,7 +2360,12 @@ export function TempLogs() {
         )}
 
         {/* Cooldown Tab */}
-        {activeTab === 'cooldown' && <CooldownActiveList />}
+        {activeTab === 'cooldown' && (
+          <div className="space-y-4">
+            <CoolingStandardsReference />
+            <CooldownActiveList />
+          </div>
+        )}
 
 
         {/* Live Sensors Tab */}
