@@ -117,7 +117,7 @@ function getUrgencyBadgeColor(days: number): string {
 
 // Short summary for each key CA regulation
 const REGULATION_SUMMARIES: Record<string, string> = {
-  'calcode-114002-cooling': '2-hour first stage from cooked temp (stricter than FDA)',
+  'calcode-114002-cooling': 'Cool from 135°F to 70°F within 2 hours, then to 41°F within 4 more hours (CalCode §114002(b) — same rule under FDA Food Code §3-501.14)',
   'ab-660': '"BEST if Used By" / "USE By" labels, bans "Sell By"',
   'sb-68': 'Allergen disclosure on menus for chains 20+ locations',
   'sb-1383': '75% organic waste reduction, edible food recovery',
