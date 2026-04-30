@@ -62,7 +62,8 @@ export function useApiQuery<T>(
         setIsLoading(false);
       }
     }
-  }, [isDemoMode, demoData, queryFn]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDemoMode, queryFn]);
 
   useEffect(() => {
     mountedRef.current = true;
