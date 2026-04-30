@@ -219,9 +219,9 @@ const TEMPLATE_CATEGORIES = [
         estimatedTime: '5 min per check',
         role: 'Kitchen Staff',
         items: [
-          { title: 'Record start temp and time — clock starts NOW (CA: from cooked temp, not 135°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '135→70°F in 2hrs, 70→41°F in 4hrs', is_critical: true },
+          { title: 'Record start temp and time — clock starts when food first drops below 135°F (CalCode §114002(b) and FDA §3-501.14)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '135→70°F in 2hrs, 70→41°F in 4hrs', is_critical: true },
           { title: 'FDA Stage 1: 135°F → 70°F within 2 hours', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F at 2hr mark', temp_max: 70, is_critical: true, requires_corrective_action: true },
-          { title: 'CA Stage 1 (eff. Apr 1, 2026): Cooked temp → 70°F within 2 hours (stricter — clock starts at actual cooked temp)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F at 2hr mark (from cooked temp)', temp_max: 70, is_critical: true, requires_corrective_action: true },
+          { title: 'Stage 1: 135°F → 70°F within 2 hours (CalCode §114002(b) and FDA §3-501.14)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F at 2hr mark', temp_max: 70, is_critical: true, requires_corrective_action: true },
           { title: 'Check temp at 2-hour mark (must be at or below 70°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F', temp_max: 70, is_critical: true },
           { title: 'Stage 2: 70°F → 41°F within 4 additional hours (6 hours total)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤41°F at 6hr mark', temp_max: 41, is_critical: true, requires_corrective_action: true },
           { title: 'Check temp at 6-hour mark (must be at or below 41°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
@@ -1975,7 +1975,7 @@ export function Checklists() {
                           return (
                             <div className={`mt-2 text-xs rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
                               <span className="font-bold">{isActive ? 'NOW IN EFFECT' : 'Effective Apr 1, 2026'}:</span>{' '}
-                              CA Stage 1 — cooling clock starts at actual cooked temp, not 135°F. Stricter than FDA rule.
+                              Stage 1: 135°F → 70°F within 2 hr · Stage 2: 70°F → 41°F within 4 hr · Total 6 hr · Same in CA and FDA
                               {isActive && <span className="font-semibold"> This template reflects the CA requirement.</span>}
                             </div>
                           );
