@@ -87,19 +87,62 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
 
       {/* Guidance */}
       <div
-        className="rounded-xl px-4 py-3 mb-5 space-y-1.5"
+        className="rounded-xl px-4 py-4 mb-5"
         style={{ backgroundColor: colors.cream }}
       >
-        <p className="text-sm" style={{ color: colors.textPrimary }}>
-          <span className="font-semibold">FDA + CalCode:</span>{' '}
-          cool from 135°F to 70°F in 2 hours, then to 41°F within 4 more hours. 6 hours total.
+        <p
+          className="text-xs uppercase tracking-wide font-semibold mb-3"
+          style={{ color: colors.textSecondary }}
+        >
+          FDA + CalCode — two-stage cooldown
         </p>
-        <p className="text-xs" style={{ color: colors.textSecondary }}>
-          The clock starts when you save this cooldown.
-        </p>
-        <p className="text-xs" style={{ color: colors.textSecondary }}>
-          Use shallow pans, ice baths, or blast chillers to actively cool. Don't rely on refrigeration alone.
-        </p>
+
+        <div className="space-y-2.5 mb-3">
+          {/* Stage 1 */}
+          <div className="flex items-start gap-2.5">
+            <span
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              style={{ backgroundColor: `${colors.gold}20`, color: colors.gold }}
+            >
+              1
+            </span>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: colors.textPrimary }}>
+                135°F → 70°F within 2 hours
+              </p>
+              <p className="text-xs" style={{ color: colors.textMuted }}>
+                Clock starts at 135°F
+              </p>
+            </div>
+          </div>
+
+          {/* Stage 2 */}
+          <div className="flex items-start gap-2.5">
+            <span
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              style={{ backgroundColor: `${colors.success}15`, color: colors.success }}
+            >
+              2
+            </span>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: colors.textPrimary }}>
+                70°F → 41°F within 4 more hours
+              </p>
+              <p className="text-xs" style={{ color: colors.textMuted }}>
+                6 hours total from 135°F
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-xs" style={{ color: colors.textSecondary }}>
+            The clock starts when you save this cooldown.
+          </p>
+          <p className="text-xs" style={{ color: colors.textSecondary }}>
+            Use shallow pans, ice baths, or blast chillers to actively cool. Don't rely on refrigeration alone.
+          </p>
+        </div>
       </div>
 
       <div className="space-y-5">
