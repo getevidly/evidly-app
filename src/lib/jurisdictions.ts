@@ -200,9 +200,9 @@ const CALIFORNIA: JurisdictionProfile = {
   parentId: 'federal-fda',
   temperatureThresholds: [], // Inherits federal thresholds
   cookingTemps: [], // Inherits federal cooking temps
-  // California cooling is stricter: timer starts from actual cooked temp (not 135°F)
+  // Cooling clock starts when food first drops below 135°F (CalCode §114002(b) and FDA §3-501.14 are identical on this).
   coolingRequirements: [
-    { stage: 'Stage 1 (California)', fromTempF: 135, toTempF: 70, maxHours: 2, source: 'CalCode §114002(a) — effective April 1, 2026. Timer starts from cooked temperature (not 135°F). Stricter than FDA.' },
+    { stage: 'Stage 1 (California)', fromTempF: 135, toTempF: 70, maxHours: 2, source: 'CalCode §114002(b). Identical to FDA Food Code §3-501.14 on cooling thresholds.' },
     { stage: 'Stage 2 (California)', fromTempF: 70, toTempF: 41, maxHours: 4, source: 'CalCode §114002(a) — effective April 1, 2026. 6 hours total from start of cooling.' },
   ],
   certifications: [
@@ -281,7 +281,7 @@ const CALIFORNIA: JurisdictionProfile = {
     'SB 294: Written notice of workers\' rights to all current employees, annual notices required',
     // California Fire Code (CFC) — Title 24, Part 9 (2022 edition, effective Jan 1, 2023)
     // California Cooling Requirement — CalCode §114002(a), effective April 1, 2026
-    'CalCode §114002(a): Cooked foods must reach 70°F within 2 hours from ACTUAL cooked temperature (stricter than FDA which starts at 135°F)',
+    'CalCode §114002(b) and FDA Food Code §3-501.14: 135°F to 70°F within 2 hours, then 70°F to 41°F within 4 more hours (6 hours total). Clock starts when food first drops below 135°F.',
     'CalCode §114002(a): Then 70°F to 41°F within 4 additional hours (6 hours total). Enforcement begins May 1, 2026.',
     'Staff training required: 2-hour first-stage cooling window — adjust batch sizes or use ice baths if items regularly exceed 2 hours',
     // California Fire Code (CFC) — Title 24, Part 9 (2022 edition, effective Jan 1, 2023)
