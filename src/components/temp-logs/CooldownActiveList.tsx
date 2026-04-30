@@ -50,7 +50,19 @@ export function CooldownActiveList() {
 
   let content;
 
-  if (isLoading) {
+  if (!locationId) {
+    content = (
+      <EmptyState
+        icon={Snowflake}
+        title="No active cooldowns"
+        description="Start a cooldown to track cooling events and stay compliant with FDA and CalCode requirements."
+        action={{
+          label: 'Start a New Cooldown',
+          onClick: () => setShowStartForm(true),
+        }}
+      />
+    );
+  } else if (isLoading) {
     content = (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
