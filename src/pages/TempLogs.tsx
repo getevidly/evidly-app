@@ -197,10 +197,6 @@ export function TempLogs() {
   // Cooldown state
   const [cooldowns, setCooldowns] = useState<Cooldown[]>([]);
   const [, setCompletedCooldowns] = useState<Cooldown[]>([]);
-  const [selectedCooldown, setSelectedCooldown] = useState<Cooldown | null>(null);
-  const [showCooldownCheckModal, setShowCooldownCheckModal] = useState(false);
-  const [cooldownCheckTemp, setCooldownCheckTemp] = useState('');
-  const [cooldownCheckTime, setCooldownCheckTime] = useState('');
 
   // Manual Add Reading modals
   const [showAddCurrentModal, setShowAddCurrentModal] = useState(false);
@@ -1306,31 +1302,6 @@ export function TempLogs() {
     return null;
   };
 
-
-  const handleLogCooldownCheck = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCooldown) return;
-
-    const newCheck: CooldownCheck = {
-      temperature: parseFloat(cooldownCheckTemp),
-      time: cooldownCheckTime ? new Date(cooldownCheckTime) : new Date(),
-    };
-
-    const updatedCooldowns = cooldowns.map(c => {
-      if (c.id === selectedCooldown.id) {
-        return { ...c, checks: [...c.checks, newCheck] };
-      }
-      return c;
-    });
-
-    setCooldowns(updatedCooldowns);
-    saveCooldownsToStorage(updatedCooldowns);
-    setShowCooldownCheckModal(false);
-    setSelectedCooldown(null);
-    setCooldownCheckTemp('');
-    setCooldownCheckTime('');
-    showSuccessToast(`Temperature check logged: ${newCheck.temperature}°F`);
-  };
 
   // ── Manual Add Reading handlers ──────────────────────────────
   const handleSaveCurrentReading = (data: CurrentReadingSaveData) => {
@@ -3237,62 +3208,6 @@ export function TempLogs() {
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
-
-      {/* Cooldown Check Modal */}
-      <Modal isOpen={!!(showCooldownCheckModal && selectedCooldown)} onClose={() => { setShowCooldownCheckModal(false); setSelectedCooldown(null); }} size="lg">
-        {selectedCooldown && (
-          <div className="p-4 sm:p-5">
-            <h3 className="text-2xl font-bold tracking-tight mb-2">{selectedCooldown.itemName}</h3>
-            <p className="text-[#1E2D4D]/70 mb-6">Log Temperature Reading</p>
-
-            <form onSubmit={handleLogCooldownCheck} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.temperatureF')}</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  inputMode="decimal"
-                  value={cooldownCheckTemp}
-                  onChange={(e) => setCooldownCheckTemp(e.target.value)}
-                  required
-                  className="w-full px-4 py-6 text-4xl font-bold text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  placeholder="00.0"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Check Time</label>
-                <input
-                  type="datetime-local"
-                  value={cooldownCheckTime}
-                  onChange={(e) => setCooldownCheckTime(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCooldownCheckModal(false);
-                    setSelectedCooldown(null);
-                  }}
-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
-                >
-                  Save Check
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </Modal>
 
       {/* Manual Add Reading Modals */}
       <AddCurrentReadingModal

@@ -7,6 +7,7 @@ import { colors, shadows } from '../../lib/designSystem';
 import { EmptyState } from '../EmptyState';
 import { Modal } from '../ui/Modal';
 import { StartCooldownForm } from './StartCooldownForm';
+import { CooldownTimelineDetail } from './CooldownTimelineDetail';
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -39,6 +40,7 @@ function formatElapsed(startTime: string | null): string {
 
 export function CooldownActiveList() {
   const [showStartForm, setShowStartForm] = useState(false);
+  const [selectedLog, setSelectedLog] = useState<CooldownLog | null>(null);
   const { getAccessibleLocations } = useRole();
   const locationId = getAccessibleLocations()[0]?.locationId ?? '';
 
@@ -109,7 +111,8 @@ export function CooldownActiveList() {
             return (
               <div
                 key={log.id}
-                className="rounded-xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3"
+                onClick={() => setSelectedLog(log)}
+                className="rounded-xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 cursor-pointer transition-shadow hover:shadow-md"
                 style={{
                   backgroundColor: colors.white,
                   borderColor: colors.border,
@@ -198,6 +201,15 @@ export function CooldownActiveList() {
           onClose={() => setShowStartForm(false)}
           onSuccess={() => refetch()}
         />
+      </Modal>
+      <Modal isOpen={!!selectedLog} onClose={() => setSelectedLog(null)} size="lg">
+        {selectedLog && (
+          <CooldownTimelineDetail
+            log={selectedLog}
+            onClose={() => setSelectedLog(null)}
+            onCheckLogged={() => refetch()}
+          />
+        )}
       </Modal>
     </>
   );
