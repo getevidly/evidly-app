@@ -87,36 +87,6 @@ export const MONITORED_SOURCES: MonitoredSource[] = [
 export const DEMO_ALERTS: RegulatoryAlert[] = [
   // ── ACTION REQUIRED ────────────────────────────────
   {
-    id: 'RA-2026-001',
-    source: 'California',
-    sourceDetail: 'California Retail Food Code (CalCode) §114002',
-    impactLevel: 'action_required',
-    status: 'new',
-    title: 'California Updates Cooling Requirements for Cooked Foods',
-    effectiveDate: '2026-04-01',
-    postedDate: '2026-02-05',
-    summary: 'California has shortened the first-stage cooling window for cooked foods. Under the new rule, cooked foods must reach 70°F within 2 hours from the ACTUAL cooked temperature, then 41°F within 4 additional hours (6 hours total). This is stricter than the FDA Food Code, which starts the 2-hour clock at 135°F — California starts it at whatever temperature the food was cooked to. For example, chicken cooked to 165°F must reach 70°F within 2 hours under California rules, while FDA only starts counting once it drops to 135°F.',
-    actionItems: [
-      'CRITICAL: Understand the difference — California starts the 2-hour clock at the cooked temperature (e.g., 165°F), NOT at 135°F like the FDA standard',
-      'Update all cooling logs to show BOTH FDA and California standards',
-      'Train kitchen staff on the shortened cooling timeline before April 1 — emphasize the clock starts at cooked temp',
-      'Review your current cooling procedures — if any items regularly take more than 2 hours for Stage 1, reduce batch sizes or use ice baths/blast chillers',
-      'Verify your cooldown monitoring alerts are set to flag items exceeding the 2-hour mark from start (not from 135°F)',
-      'Post cooling reference chart in kitchen showing both FDA and California requirements',
-    ],
-    affectedAreas: ['Food Safety', 'Training', 'Temperature Monitoring'],
-    affectedLocations: ['Location 1', 'Location 2', 'Location 3'], // demo
-    autoActions: [
-      { text: 'Cooldown tracker updated — displays both FDA and California cooling standards side by side', completed: true },
-      { text: 'Cooling Log checklist template updated with CA-specific notes', completed: true },
-      { text: 'Temperature threshold alert adjusted to 2-hour window from cooked temp', completed: true },
-      { text: 'California cooling requirement added to jurisdiction engine', completed: true },
-      { text: 'Staff training needed — schedule training session on CA cooling rules', completed: false, actionType: 'link', linkTo: '/team' },
-    ],
-    fullRegulatoryText: 'CalCode Section 114002(a) — Potentially hazardous food shall be cooled from its cooked temperature to 70°F within 2 hours, and from 70°F to 41°F or below within the following 4 hours (6 hours total from start of cooling). [Previously: 135°F to 70°F within 2.5 hours.]\n\nKey difference from FDA Food Code §3-501.14: The FDA standard measures Stage 1 from 135°F to 70°F within 2 hours. California measures Stage 1 from the actual cooked temperature to 70°F within 2 hours. This means California is stricter — a food cooked to 165°F has the same 2-hour window to reach 70°F, but must cool an additional 30°F compared to the FDA standard.\n\nEffective April 1, 2026. Enforcement begins May 1, 2026.',
-    sourceUrl: 'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx',
-  },
-  {
     id: 'RA-2026-002',
     source: 'County',
     sourceDetail: 'Fresno County Health Department Ordinance 2026-03',
