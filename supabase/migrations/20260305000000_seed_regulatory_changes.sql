@@ -6,27 +6,10 @@
 -- Record 8 is pending (for admin to practice publish flow).
 -- ============================================================
 
--- 1. CalCode Cooling Requirements Update (critical, published)
-INSERT INTO regulatory_changes (
-  source_id, change_type, title, summary, impact_description,
-  impact_level, affected_pillars, affected_equipment_types,
-  affected_states, effective_date, source_url, raw_input_text,
-  ai_generated, published, published_at, affected_location_count
-) VALUES (
-  (SELECT id FROM regulatory_sources WHERE code_short = 'calcode'),
-  'amendment',
-  'California Updates Cooling Requirements for Cooked Foods',
-  'California has shortened the first-stage cooling window for cooked foods. Under the new rule, cooked foods must reach 70°F within 2 hours from the ACTUAL cooked temperature, then 41°F within 4 additional hours (6 hours total). This is stricter than the FDA Food Code, which starts the 2-hour clock at 135°F.',
-  E'CRITICAL: Understand the difference — California starts the 2-hour clock at the cooked temperature (e.g., 165°F), NOT at 135°F like the FDA standard\nUpdate all cooling logs to show BOTH FDA and California standards\nTrain kitchen staff on the shortened cooling timeline before April 1\nReview your current cooling procedures — if any items regularly take more than 2 hours for Stage 1, reduce batch sizes or use ice baths/blast chillers\nVerify your cooldown monitoring alerts are set to flag items exceeding the 2-hour mark from start\nPost cooling reference chart in kitchen showing both FDA and California requirements',
-  'critical',
-  ARRAY['food_safety'],
-  ARRAY['cooler'],
-  ARRAY['CA'],
-  '2026-04-01',
-  'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx',
-  E'CalCode Section 114002(a) — Potentially hazardous food shall be cooled from its cooked temperature to 70°F within 2 hours, and from 70°F to 41°F or below within the following 4 hours (6 hours total from start of cooling). [Previously: 135°F to 70°F within 2.5 hours.]',
-  true, true, '2026-02-05T12:00:00Z', 0
-);
+-- 1. (Deleted) CalCode Cooling Requirements Update — removed because the original
+-- text incorrectly claimed California starts the cooling clock at the cooked
+-- temperature. CalCode §114002(b) and FDA Food Code §3-501.14 are identical:
+-- clock starts at 135°F. Row was never present in PROD.
 
 -- 2. Fresno County Digital Temperature Records (critical, published)
 INSERT INTO regulatory_changes (
