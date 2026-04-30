@@ -22,19 +22,21 @@ import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type
 import { Modal } from '../components/ui/Modal';
 import { AddCurrentReadingModal, type CurrentReadingSaveData } from '../components/temp-logs/AddCurrentReadingModal';
 import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../components/temp-logs/AddReceivingReadingModal';
-import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
+
 import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
 import { CooldownActiveList } from '../components/temp-logs/CooldownActiveList';
 import { CoolingStandardsReference } from '../components/temp-logs/CoolingStandardsReference';
 import { VendorCombobox } from '../components/temp-logs/VendorCombobox';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
-import { getShift, getLogType, TEMP_CHECK_INTERVALS } from '../config/tempConfig';
+import { getShift, getLogType } from '../config/tempConfig';
 import { dispatchTempViolationSignal } from '../lib/tempSignalDispatch';
 import { TempIntelligenceCard } from '../components/temp-logs/TempIntelligenceCard';
 import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
 import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
+import { isStorageEquipment, isFreezerType } from '../lib/equipmentHelpers';
+import { HoldingActiveStatus } from '../components/temp-logs/HoldingActiveStatus';
 
 interface TemperatureEquipment {
   id: string;
@@ -126,17 +128,7 @@ const CATEGORY_TEMP_CONFIG: Record<string, { tempRequired: boolean; maxTemp?: nu
   'canned_shelf_stable':       { tempRequired: false, label: 'Canned / Shelf-Stable' },
 };
 
-// Equipment classification: which tab each type belongs to
-const STORAGE_TYPES = ['storage_cold', 'storage_frozen', 'cooler', 'freezer'];
-const HOLDING_COLD_TYPES = ['holding_cold', 'cold_holding'];
-const HOLDING_HOT_TYPES = ['holding_hot', 'hot_hold', 'hot_holding'];
-const HOLDING_TYPES = [...HOLDING_COLD_TYPES, ...HOLDING_HOT_TYPES];
-
-const isStorageEquipment = (type: string) => STORAGE_TYPES.includes(type);
-const isHoldingEquipment = (type: string) => HOLDING_TYPES.includes(type);
-const isHoldingCold = (type: string) => HOLDING_COLD_TYPES.includes(type);
-const isHoldingHot = (type: string) => HOLDING_HOT_TYPES.includes(type);
-const isFreezerType = (type: string) => type === 'storage_frozen' || type === 'freezer';
+// Equipment classifiers moved to ../lib/equipmentHelpers.ts
 
 export function TempLogs() {
   const navigate = useNavigate();
@@ -153,7 +145,7 @@ export function TempLogs() {
   const [temperature, setTemperature] = useState('');
   const [correctiveAction, setCorrectiveAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot' | 'holding' | 'analytics'>('equipment');
+  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot' | 'hot_holding' | 'cold_holding' | 'analytics'>('equipment');
   const [showHistoryDetails, setShowHistoryDetails] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -202,7 +194,7 @@ export function TempLogs() {
   // Manual Add Reading modals
   const [showAddCurrentModal, setShowAddCurrentModal] = useState(false);
   const [showAddReceivingModal, setShowAddReceivingModal] = useState(false);
-  const [showAddHoldingModal, setShowAddHoldingModal] = useState(false);
+
   const [showAddCooldownModal, setShowAddCooldownModal] = useState(false);
 
   // HACCP Deviation Report
@@ -1345,35 +1337,6 @@ export function TempLogs() {
     toast.success(`${data.itemDescription} — ${data.isPass ? 'Accepted' : 'Rejected'}`);
   };
 
-  const handleSaveHoldingReading = (data: HoldingReadingSaveData) => {
-    const eq = equipment.find(e => e.id === data.equipmentId);
-    if (!eq) return;
-    const isWithinRange = data.temperature >= eq.min_temp && data.temperature <= eq.max_temp;
-    const now = data.readingTime;
-    setEquipment(prev => prev.map(e =>
-      e.id === data.equipmentId
-        ? { ...e, last_check: { temperature_value: data.temperature, created_at: now, is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
-        : e
-    ));
-    setHistory(prev => [{
-      id: `manual-holding-${Date.now()}`,
-      equipment_id: eq.id,
-      equipment_name: eq.name,
-      equipment_type: eq.equipment_type,
-      temperature_value: data.temperature,
-      is_within_range: isWithinRange,
-      recorded_by_name: 'Demo User',
-      corrective_action: !isWithinRange ? (data.correctiveAction || 'Temperature deviation noted') : null,
-      created_at: now,
-      input_method: 'manual' as InputMethod,
-    }, ...prev]);
-    if (isWithinRange) {
-      toast.success(`${data.temperature}°F logged for ${eq.name} — Within safe range`);
-    } else {
-      toast.warning(`${data.temperature}°F logged for ${eq.name} — Outside safe range`);
-    }
-  };
-
   const handleSaveCooldownReading = (data: CooldownSaveData) => {
     if (data.mode === 'check') {
       const newCheck: CooldownCheck = {
@@ -1492,7 +1455,8 @@ export function TempLogs() {
           {([
             { key: 'equipment', label: t('tempLogs.currentReadings') },
             { key: 'receiving', label: t('tempLogs.receiving') },
-            { key: 'holding', label: 'Hot/Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
+            { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
+            { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
             { key: 'cooldown', label: t('tempLogs.cooldown') },
             { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" /> },
             { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" /> },
@@ -2624,180 +2588,11 @@ export function TempLogs() {
           );
         })()}
 
-        {/* Hot/Cold Holding Tab */}
-        {activeTab === 'holding' && (() => {
-          const holdingEquip = equipment.filter(eq => isHoldingEquipment(eq.equipment_type));
-          const coldHolding = holdingEquip.filter(eq => isHoldingCold(eq.equipment_type));
-          const hotHolding = holdingEquip.filter(eq => isHoldingHot(eq.equipment_type));
-          // Compliance badge: count holding equipment with valid recent readings
-          const holdingCompliant = holdingEquip.filter(eq => {
-            if (!eq.last_check) return false;
-            const ageMin = (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60);
-            return eq.last_check.is_within_range && ageMin <= 240;
-          }).length;
+        {/* Hot Holding Tab */}
+        {activeTab === 'hot_holding' && <HoldingActiveStatus variant="hot" />}
 
-          return (
-          <div className="space-y-4">
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-lg font-bold text-[#1E2D4D]">Hot/Cold Holding Status</h2>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5">CalCode §113996 — Temperature holding compliance</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowAddHoldingModal(true)}
-                    className="px-4 py-2 min-h-[36px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium shadow-sm flex items-center space-x-2 text-sm"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    <span>Add Reading</span>
-                  </button>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${holdingCompliant === holdingEquip.length ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-100 text-amber-800'}`}>
-                    {holdingCompliant}/{holdingEquip.length} Compliant
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Cold Holding */}
-                <div className="border border-blue-200 rounded-xl p-4 bg-blue-50/30">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <Thermometer className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-[#1E2D4D]">Cold Holding</h3>
-                      <p className="text-xs text-[#1E2D4D]/50">Must remain ≤ 41°F — check every 4 hours</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {coldHolding.map(eq => {
-                      const inRange = eq.last_check?.is_within_range ?? true;
-                      const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
-                      const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
-                      return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-[#1E2D4D]/5'}`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
-                              {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
-                              <span className="text-sm text-[#1E2D4D] truncate">{eq.name}</span>
-                              {isOverdue && (
-                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 shrink-0">CHECK OVERDUE</span>
-                              )}
-                              {isDueSoon && (
-                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <div className="text-right">
-                                <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
-                                  {eq.last_check?.temperature_value ?? '--'}°F
-                                </span>
-                                {eq.last_check && (
-                                  <p className="text-xs text-[#1E2D4D]/30">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
-                                )}
-                              </div>
-                              <button
-                                onClick={() => handleLogTemp(eq)}
-                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1E2D4D] text-white hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] whitespace-nowrap"
-                              >
-                                + Log
-                              </button>
-                            </div>
-                          </div>
-                          {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
-                            <div className="mt-1 flex items-center gap-1 text-xs text-blue-600">
-                              <Radio className="h-3 w-3" /> IoT sensor reading
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {coldHolding.length === 0 && (
-                      <p className="text-sm text-[#1E2D4D]/30 text-center py-4">No cold holding equipment</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Hot Holding */}
-                <div className="border border-orange-200 rounded-xl p-4 bg-orange-50/30">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                      <Thermometer className="h-4 w-4 text-orange-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-[#1E2D4D]">Hot Holding</h3>
-                      <p className="text-xs text-[#1E2D4D]/50">Must remain ≥ 135°F — check every 4 hours</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {hotHolding.map(eq => {
-                      const inRange = eq.last_check?.is_within_range ?? true;
-                      const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
-                      const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
-                      return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-[#1E2D4D]/5'}`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
-                              {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
-                              <span className="text-sm text-[#1E2D4D] truncate">{eq.name}</span>
-                              {isOverdue && (
-                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 shrink-0">CHECK OVERDUE</span>
-                              )}
-                              {isDueSoon && (
-                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <div className="text-right">
-                                <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
-                                  {eq.last_check?.temperature_value ?? '--'}°F
-                                </span>
-                                {eq.last_check && (
-                                  <p className="text-xs text-[#1E2D4D]/30">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
-                                )}
-                              </div>
-                              <button
-                                onClick={() => handleLogTemp(eq)}
-                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1E2D4D] text-white hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] whitespace-nowrap"
-                              >
-                                + Log
-                              </button>
-                            </div>
-                          </div>
-                          {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
-                            <div className="mt-1 flex items-center gap-1 text-xs text-blue-600">
-                              <Radio className="h-3 w-3" /> IoT sensor reading
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {hotHolding.length === 0 && (
-                      <p className="text-sm text-[#1E2D4D]/30 text-center py-4">No hot holding equipment</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Compliance Reference */}
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-              <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Regulatory Reference</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-[#1E2D4D]/70">
-                <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
-                  <span className="font-semibold text-blue-800">CalCode §113996(a)</span> — Cold potentially hazardous food shall be held at 41°F or below
-                </div>
-                <div className="p-3 bg-orange-50 rounded-xl border border-orange-100">
-                  <span className="font-semibold text-orange-800">CalCode §113996(b)</span> — Hot potentially hazardous food shall be held at 135°F or above
-                </div>
-              </div>
-            </div>
-          </div>
-          );
-        })()}
+        {/* Cold Holding Tab */}
+        {activeTab === 'cold_holding' && <HoldingActiveStatus variant="cold" />}
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (() => {
@@ -3227,13 +3022,6 @@ export function TempLogs() {
         onClose={() => setShowAddReceivingModal(false)}
         categoryConfig={CATEGORY_TEMP_CONFIG}
         onSave={handleSaveReceivingReading}
-      />
-      <AddHoldingReadingModal
-        open={showAddHoldingModal}
-        onClose={() => setShowAddHoldingModal(false)}
-        equipment={equipment.filter(eq => isHoldingEquipment(eq.equipment_type))}
-        isHoldingHot={isHoldingHot}
-        onSave={handleSaveHoldingReading}
       />
       <AddCooldownReadingModal
         open={showAddCooldownModal}

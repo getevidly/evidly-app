@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Check } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, OutOfRangeWarning, tempInputClass, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL, isOutOfRange } from './shared';
 import type { TemperatureEquipment, ReadingMethod } from './types';
@@ -23,10 +23,17 @@ interface Props {
   equipment: TemperatureEquipment[];
   isHoldingHot: (type: string) => boolean;
   onSave: (data: HoldingReadingSaveData) => void;
+  defaultEquipmentId?: string;
 }
 
-export function AddHoldingReadingModal({ open, onClose, equipment, isHoldingHot: checkHot, onSave }: Props) {
+export function AddHoldingReadingModal({ open, onClose, equipment, isHoldingHot: checkHot, onSave, defaultEquipmentId }: Props) {
   const [equipmentId, setEquipmentId] = useState('');
+  // Pre-select equipment when modal opens with a default
+  useEffect(() => {
+    if (open && defaultEquipmentId) {
+      setEquipmentId(defaultEquipmentId);
+    }
+  }, [open, defaultEquipmentId]);
   const [foodItem, setFoodItem] = useState('');
   const [temperature, setTemperature] = useState('');
   const [readingMethod, setReadingMethod] = useState<ReadingMethod>('manual_thermometer');
