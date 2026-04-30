@@ -197,14 +197,6 @@ export function TempLogs() {
   // Cooldown state
   const [cooldowns, setCooldowns] = useState<Cooldown[]>([]);
   const [, setCompletedCooldowns] = useState<Cooldown[]>([]);
-  const [showStartCooldown, setShowStartCooldown] = useState(false);
-  const [cooldownForm, setCooldownForm] = useState({
-    itemName: '',
-    startTemp: '',
-    startTime: '',
-    location: '',
-    startedBy: '',
-  });
   const [selectedCooldown, setSelectedCooldown] = useState<Cooldown | null>(null);
   const [showCooldownCheckModal, setShowCooldownCheckModal] = useState(false);
   const [cooldownCheckTemp, setCooldownCheckTemp] = useState('');
@@ -1314,36 +1306,6 @@ export function TempLogs() {
     return null;
   };
 
-  const handleStartCooldown = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const newCooldown: Cooldown = {
-      id: Date.now().toString(),
-      itemName: cooldownForm.itemName,
-      startTemp: parseFloat(cooldownForm.startTemp),
-      startTime: cooldownForm.startTime ? new Date(cooldownForm.startTime) : new Date(),
-      location: cooldownForm.location,
-      startedBy: cooldownForm.startedBy,
-      checks: [{
-        temperature: parseFloat(cooldownForm.startTemp),
-        time: cooldownForm.startTime ? new Date(cooldownForm.startTime) : new Date(),
-      }],
-      status: 'active',
-    };
-
-    const updated = [...cooldowns, newCooldown];
-    setCooldowns(updated);
-    saveCooldownsToStorage(updated);
-    setShowStartCooldown(false);
-    setCooldownForm({
-      itemName: '',
-      startTemp: '',
-      startTime: '',
-      location: '',
-      startedBy: '',
-    });
-    showSuccessToast(`Cooldown started for ${newCooldown.itemName}`);
-  };
 
   const handleLogCooldownCheck = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -3270,99 +3232,6 @@ export function TempLogs() {
           </div>
       </Modal>
 
-      {/* Start Cooldown Modal */}
-      <Modal isOpen={showStartCooldown} onClose={() => setShowStartCooldown(false)} size="lg">
-          <div className="p-4 sm:p-5">
-            <h3 className="text-2xl font-bold tracking-tight mb-6">Start New Cooldown</h3>
-
-            <form onSubmit={handleStartCooldown} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.foodItemName')}</label>
-                <input
-                  type="text"
-                  value={cooldownForm.itemName}
-                  onChange={(e) => setCooldownForm({ ...cooldownForm, itemName: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  placeholder="e.g., Rice Pilaf, Chicken Soup"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startingTempF')}</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  inputMode="decimal"
-                  value={cooldownForm.startTemp}
-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startTemp: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  placeholder="e.g., 165"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startTime')}</label>
-                <input
-                  type="datetime-local"
-                  value={cooldownForm.startTime}
-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startTime: e.target.value })}
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                />
-                <p className="text-xs text-[#1E2D4D]/50 mt-1">Leave blank to use current time</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
-                <select
-                  value={cooldownForm.location}
-                  onChange={(e) => setCooldownForm({ ...cooldownForm, location: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                >
-                  <option value="">Select location...</option>
-                  {locations.map(loc => (
-                    <option key={loc} value={loc}>{loc}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startedBy')}</label>
-                <select
-                  value={cooldownForm.startedBy}
-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startedBy: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                >
-                  <option value="">Select employee...</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.full_name}>
-                      {user.full_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setShowStartCooldown(false)}
-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
-                >
-                  Start
-                </button>
-              </div>
-            </form>
-          </div>
-      </Modal>
 
       {/* Demo Upgrade Prompt */}
       {showUpgrade && (
