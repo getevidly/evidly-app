@@ -1240,6 +1240,12 @@ export function Checklists() {
       .limit(1)
       .maybeSingle();
 
+    if (!locationData?.id) {
+      setLoading(false);
+      toast.error('No location set up yet. Please create a location in Settings before completing a checklist.');
+      return;
+    }
+
     const { data: completionData, error: completionError } = await supabase
       .from('checklist_template_completions')
       .insert({
