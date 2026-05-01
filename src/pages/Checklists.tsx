@@ -2128,7 +2128,11 @@ export function Checklists() {
                       : 'bg-emerald-50 text-emerald-700';
                     const statusLabel = entry.status === 'missed' ? t('checklists.missed') : entry.status === 'incomplete' ? t('checklists.incomplete') : t('common.completed');
                     return (
-                    <tr key={entry.id} className="hover:bg-[#FAF7F0]">
+                    <tr
+                      key={entry.id}
+                      className="hover:bg-[#FAF7F0] cursor-pointer"
+                      onClick={() => !isDemoMode && nav(`/checklists/history/${entry.id}`)}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                         {format(new Date(entry.date), 'MMM d, yyyy')}
                         <span className="text-[#1E2D4D]/30 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>

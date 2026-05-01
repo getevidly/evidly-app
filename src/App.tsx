@@ -35,6 +35,7 @@ const Onboarding = lazy(() => import('./pages/Onboarding').then(m => ({ default:
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const TempLogs = lazy(() => import('./pages/TempLogs').then(m => ({ default: m.TempLogs })));
 const Checklists = lazy(() => import('./pages/Checklists').then(m => ({ default: m.Checklists })));
+const ChecklistCompletionDetail = lazy(() => import('./pages/ChecklistCompletionDetail'));
 const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m.Documents })));
 const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
@@ -629,6 +630,7 @@ function AppRoutes() {
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
+          <Route path="/checklists/history/:completionId" element={<ChecklistCompletionDetail />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<Vendors />} />
