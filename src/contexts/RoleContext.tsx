@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, Re
 import { toast } from 'sonner';
 import { useAuth } from './AuthContext';
 import { useDemo } from './DemoContext';
+import { supabase } from '../lib/supabase';
 
 export type UserRole = 'platform_admin' | 'owner_operator' | 'executive' | 'compliance_manager' | 'chef' | 'facilities_manager' | 'kitchen_manager' | 'kitchen_staff';
 
@@ -127,6 +128,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem('evidly-demo-role', role); } catch {}
   }, [_previewRole]);
   const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(isDemoMode ? INITIAL_TEMP_COVERAGE : []);
+  const [accessibleLocations, setAccessibleLocations] = useState<LocationAssignment[]>([]);
 
   // ── Sync role from database when a real session exists ──
   // When an authenticated user has a profile, use the database role.
@@ -140,10 +142,89 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     }
   }, [isDemoMode, session, profile?.role, _previewRole]);
 
+  // ── Load accessible locations from user_location_access ──
+  useEffect(() => {
+    if (isDemoMode || _previewRole) return;
+    if (!session?.user?.id) {
+      setAccessibleLocations([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadAccessibleLocations(userId: string) {
+      try {
+        const { data: ulaRows, error: ulaError } = await supabase
+          .from('user_location_access')
+          .select('role, organization_id, location_id, region_id')
+          .eq('user_id', userId);
+
+        if (ulaError) {
+          console.error('[RoleContext] ULA query failed:', ulaError.message);
+          return;
+        }
+        if (cancelled || !ulaRows || ulaRows.length === 0) return;
+
+        const locMap = new Map<string, LocationAssignment>();
+
+        for (const row of ulaRows) {
+          if (row.location_id) {
+            // Case (b): specific location access
+            const { data: loc, error: locError } = await supabase
+              .from('locations')
+              .select('id, name')
+              .eq('id', row.location_id)
+              .single();
+
+            if (!locError && loc) {
+              locMap.set(loc.id, {
+                locationId: loc.id,
+                locationUrlId: loc.id,
+                locationName: loc.name,
+              });
+            }
+          } else if (row.region_id) {
+            // Case (region): all locations in region — deferred to commit 18+
+            // TODO: query locations by region_id when regions UI ships
+          } else if (row.organization_id) {
+            // Case (c): org-level access — all active locations in organization
+            const { data: orgLocs, error: orgError } = await supabase
+              .from('locations')
+              .select('id, name')
+              .eq('organization_id', row.organization_id)
+              .eq('status', 'active');
+
+            if (!orgError && orgLocs) {
+              for (const loc of orgLocs) {
+                locMap.set(loc.id, {
+                  locationId: loc.id,
+                  locationUrlId: loc.id,
+                  locationName: loc.name,
+                });
+              }
+            }
+          }
+        }
+
+        if (!cancelled) {
+          setAccessibleLocations(Array.from(locMap.values()));
+        }
+      } catch (err) {
+        console.error('[RoleContext] Failed to load accessible locations:', err);
+      }
+    }
+
+    loadAccessibleLocations(session.user.id);
+
+    return () => { cancelled = true; };
+  }, [session?.user?.id, isDemoMode, _previewRole]);
+
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
-    if (!isDemoMode && !_previewRole) return []; // Production: locations come from DB via user_location_access
-    return ROLE_LOCATION_ASSIGNMENTS[userRole] || [];
-  }, [userRole, isDemoMode, _previewRole]);
+    if (isDemoMode || _previewRole) {
+      return ROLE_LOCATION_ASSIGNMENTS[userRole] || [];
+    }
+    return accessibleLocations;
+  }, [userRole, isDemoMode, _previewRole, accessibleLocations]);
 
   const getAccessibleLocationUrlIds = useCallback((): string[] => {
     return getAccessibleLocations().map(l => l.locationUrlId);
