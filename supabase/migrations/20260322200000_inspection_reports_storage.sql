@@ -1,0 +1,22 @@
+-- Migration: inspection_reports_storage
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260322200000
+--
+-- This migration's effects are present in PROD but its file was removed during
+-- earlier development cycles (file renames, rebases, or application via
+-- dashboard / MCP / manual SQL outside the supabase CLI workflow).
+--
+-- This placeholder exists so the supabase CLI does not flag this version
+-- as a remote-only orphan during db push. The original DDL is documented
+-- below for audit and reference. Do not modify or re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260322200000'.
+--
+-- ── ORIGINAL DDL ─────────────────────────────────────────────────────────
+-- Original file content was not recoverable from git history.
+-- Migration name suggests: Storage bucket or table setup for inspection report PDFs/files.
+-- Schema effects: confirmed present in PROD (verified in 14a diagnostic).
+-- ── END ──────────────────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
