@@ -345,6 +345,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     content = (
       <EmptyState
         icon={Thermometer}
+        iconClassName={`w-8 h-8 ${isHot ? 'text-[#EA580C]' : 'text-[#2563EB]'}`}
         title={`No ${title.toLowerCase()} equipment`}
         description="Configure equipment in your location settings to start tracking holding temperatures."
       />
@@ -374,6 +375,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     content = (
       <EmptyState
         icon={Thermometer}
+        iconClassName={`w-8 h-8 ${isHot ? 'text-[#EA580C]' : 'text-[#2563EB]'}`}
         title={`No ${title.toLowerCase()} equipment`}
         description="Configure equipment in your location settings to start tracking holding temperatures."
       />

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History, Gauge } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -1453,7 +1453,7 @@ export function TempLogs() {
         {/* Tabs */}
         <div style={{ display: 'flex', overflowX: 'auto', borderBottom: `1px solid ${colors.borderLight}`, margin: '0 -4px' }}>
           {([
-            { key: 'equipment', label: t('tempLogs.currentReadings') },
+            { key: 'equipment', label: t('tempLogs.currentReadings'), icon: <Gauge className="h-3.5 w-3.5" /> },
             { key: 'receiving', label: t('tempLogs.receiving'), icon: <Package className="h-3.5 w-3.5" /> },
             { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: '#EA580C' }} /> },
             { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: colors.info }} /> },
@@ -1491,9 +1491,14 @@ export function TempLogs() {
         {/* Equipment Tab */}
         {activeTab === 'equipment' && (
           <div className="space-y-6">
-            <div className="flex items-center gap-1">
-              <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.navy }}>Current Readings</h2>
-              <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${colors.navy}10` }}>
+                <Gauge className="h-5 w-5" style={{ color: colors.navy }} />
+              </div>
+              <div className="flex items-center gap-1">
+                <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.navy }}>Current Readings</h2>
+                <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
+              </div>
             </div>
             {/* Filters Section */}
             <div data-demo-allow style={{ background: colors.white, borderRadius: radius.xl, border: `1px solid ${colors.borderLight}`, boxShadow: shadows.sm, padding: 16 }}>
