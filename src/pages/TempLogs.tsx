@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3 } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -1454,13 +1454,13 @@ export function TempLogs() {
         <div style={{ display: 'flex', overflowX: 'auto', borderBottom: `1px solid ${colors.borderLight}`, margin: '0 -4px' }}>
           {([
             { key: 'equipment', label: t('tempLogs.currentReadings') },
-            { key: 'receiving', label: t('tempLogs.receiving') },
-            { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
-            { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" /> },
-            { key: 'cooldown', label: t('tempLogs.cooldown') },
+            { key: 'receiving', label: t('tempLogs.receiving'), icon: <Package className="h-3.5 w-3.5" /> },
+            { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: '#EA580C' }} /> },
+            { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: colors.info }} /> },
+            { key: 'cooldown', label: t('tempLogs.cooldown'), icon: <Snowflake className="h-3.5 w-3.5" /> },
             { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" /> },
+            { key: 'history', label: t('tempLogs.history'), icon: <History className="h-3.5 w-3.5" /> },
             { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" /> },
-            { key: 'history', label: t('tempLogs.history') },
           ] as { key: string; label: string; icon?: React.ReactNode }[]).map(tab => (
             <button
               key={tab.key}

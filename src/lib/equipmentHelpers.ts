@@ -2,8 +2,8 @@
 // Centralised type predicates for temperature_equipment rows.
 
 export const STORAGE_TYPES = ['storage_cold', 'storage_frozen', 'cooler', 'freezer'];
-export const HOLDING_COLD_TYPES = ['holding_cold', 'cold_holding'];
-export const HOLDING_HOT_TYPES = ['holding_hot', 'hot_hold', 'hot_holding'];
+export const HOLDING_COLD_TYPES = ['holding_cold', 'cold_holding', 'salad_bar', 'sandwich_station'];
+export const HOLDING_HOT_TYPES = ['holding_hot', 'hot_hold', 'hot_holding', 'steam_table', 'soup_well', 'salamander'];
 export const HOLDING_TYPES = [...HOLDING_COLD_TYPES, ...HOLDING_HOT_TYPES];
 
 export const isStorageEquipment = (type: string) => STORAGE_TYPES.includes(type);
