@@ -1,0 +1,63 @@
+-- Migration: add_step_and_ccp_to_temperature_logs
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000020
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000020'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Migration: Add step + derived ccp_number on temperature_logs
+-- -- Why: Phase 1 capture flow uses Step as the primary classifier for every
+-- --      reading. ccp_number is derived from step automatically so staff never
+-- --      enter it twice and CCP reports query the same source-of-truth row.
+-- --      Honors "capture once, surface everywhere" constitutional rule.
+-- -- CCP mapping (locked from dev/test transfer doc):
+-- --   receiving=1, cold_holding=2, hot_holding=3, cooldown=4, cooking=5
+-- --   storage, prep, serving = NULL (not designated CCPs)
+-- -- Cross-references:
+-- --   - Phase 1 Schema Sprint commit 1 (haccp_step enum)
+-- --   - Phase 1 Schema Sprint commit 3 (same shape applied to receiving_temp_logs)
+-- --   - Phase 1 Schema Sprint commit 4 (override columns + dedupe indexes)
+-- -- Pre-launch context: temperature_logs has 0 rows, NOT NULL is safe.
+-- 
+-- ALTER TABLE temperature_logs
+--   ADD COLUMN step haccp_step NOT NULL;
+-- 
+-- ALTER TABLE temperature_logs
+--   ADD COLUMN ccp_number SMALLINT
+--   GENERATED ALWAYS AS (
+--     CASE step
+--       WHEN 'receiving'    THEN 1
+--       WHEN 'cold_holding' THEN 2
+--       WHEN 'hot_holding'  THEN 3
+--       WHEN 'cooldown'     THEN 4
+--       WHEN 'cooking'      THEN 5
+--       ELSE NULL
+--     END
+--   ) STORED;
+-- 
+-- CREATE INDEX idx_temperature_logs_step
+--   ON temperature_logs(step);
+-- 
+-- CREATE INDEX idx_temperature_logs_ccp_number
+--   ON temperature_logs(ccp_number)
+--   WHERE ccp_number IS NOT NULL;
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

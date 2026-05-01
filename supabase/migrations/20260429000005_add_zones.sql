@@ -1,0 +1,58 @@
+-- Migration: add_zones
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000005
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000005'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Add zones table for kitchen physical area assignment.
+-- -- Zones allow equipment and food batches to be grouped by physical area
+-- -- (e.g., "Walk-in Corridor", "Prep Line", "Service Line") within a location.
+-- -- Used by shift assignments, temperature equipment, and food batches.
+-- 
+-- CREATE TABLE zones (
+--   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+--   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+--   location_id uuid NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
+--   name text NOT NULL,
+--   description text,
+--   display_order integer DEFAULT 0,
+--   is_active boolean DEFAULT true,
+--   created_at timestamptz NOT NULL DEFAULT now(),
+--   updated_at timestamptz NOT NULL DEFAULT now(),
+--   UNIQUE(location_id, name)
+-- );
+-- 
+-- CREATE INDEX idx_zones_organization_id ON zones(organization_id);
+-- CREATE INDEX idx_zones_location_id ON zones(location_id);
+-- 
+-- ALTER TABLE zones ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE POLICY zones_select ON zones FOR SELECT
+--   USING (location_id IN (SELECT location_id FROM user_location_access WHERE user_id = auth.uid()));
+-- CREATE POLICY zones_insert ON zones FOR INSERT
+--   WITH CHECK (location_id IN (SELECT location_id FROM user_location_access WHERE user_id = auth.uid()));
+-- CREATE POLICY zones_update ON zones FOR UPDATE
+--   USING (location_id IN (SELECT location_id FROM user_location_access WHERE user_id = auth.uid()));
+-- CREATE POLICY zones_delete ON zones FOR DELETE
+--   USING (location_id IN (SELECT location_id FROM user_location_access WHERE user_id = auth.uid()));
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

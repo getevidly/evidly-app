@@ -1,0 +1,81 @@
+-- Migration: irr_submissions
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260527000000
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260527000000'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- IRR-LEAD-MAGNET-01: Operations Check lead persistence
+-- CREATE TABLE IF NOT EXISTS irr_submissions (
+--   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+-- 
+--   -- intake fields
+--   first_name     TEXT NOT NULL,
+--   last_name      TEXT,
+--   email          TEXT NOT NULL,
+--   phone          TEXT,
+--   business_name  TEXT,
+--   street         TEXT,
+--   city           TEXT,
+--   state          TEXT DEFAULT 'CA',
+--   zip            TEXT,
+--   county         TEXT NOT NULL,
+--   locations      TEXT,
+--   op_type        TEXT,
+-- 
+--   -- assessment answers (1=yes, 2=partial, 3=no)
+--   q1_receiving_temps       SMALLINT CHECK (q1_receiving_temps    IN (1,2,3)),
+--   q2_cold_hot_holding      SMALLINT CHECK (q2_cold_hot_holding   IN (1,2,3)),
+--   q3_cooldown_logs         SMALLINT CHECK (q3_cooldown_logs      IN (1,2,3)),
+--   q4_checklists_haccp      SMALLINT CHECK (q4_checklists_haccp   IN (1,2,3)),
+--   q5_food_handler_cards    SMALLINT CHECK (q5_food_handler_cards IN (1,2,3)),
+--   q6_staff_cert_tracking   SMALLINT CHECK (q6_staff_cert_tracking IN (1,2,3)),
+--   q7_hood_cleaning         SMALLINT CHECK (q7_hood_cleaning      IN (1,2,3)),
+--   q8_fire_suppression      SMALLINT CHECK (q8_fire_suppression   IN (1,2,3)),
+--   q9_vendor_performance    SMALLINT CHECK (q9_vendor_performance IN (1,2,3)),
+--   q10_vendor_records       SMALLINT CHECK (q10_vendor_records    IN (1,2,3)),
+--   q11_vendor_coi           SMALLINT CHECK (q11_vendor_coi        IN (1,2,3)),
+-- 
+--   -- computed
+--   posture                  TEXT CHECK (posture IN ('critical','high','moderate','strong')),
+--   food_safety_score        SMALLINT,
+--   facility_safety_score    SMALLINT,
+-- 
+--   -- metadata
+--   source_page              TEXT DEFAULT 'operations-check',
+--   account_created          BOOLEAN DEFAULT FALSE,
+--   created_at               TIMESTAMPTZ DEFAULT now()
+-- );
+-- 
+-- -- RLS: public insert, service-role read
+-- ALTER TABLE irr_submissions ENABLE ROW LEVEL SECURITY;
+-- DROP POLICY IF EXISTS "Anyone can insert irr_submissions" ON irr_submissions;
+-- CREATE POLICY "Anyone can insert irr_submissions"
+--   ON irr_submissions FOR INSERT WITH CHECK (true);
+-- DROP POLICY IF EXISTS "Service role reads irr_submissions" ON irr_submissions;
+-- CREATE POLICY "Service role reads irr_submissions"
+--   ON irr_submissions FOR SELECT USING (auth.role() = 'service_role');
+-- 
+-- -- Indexes for admin queries
+-- CREATE INDEX IF NOT EXISTS idx_irr_submissions_email   ON irr_submissions (email);
+-- CREATE INDEX IF NOT EXISTS idx_irr_submissions_created ON irr_submissions (created_at DESC);
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

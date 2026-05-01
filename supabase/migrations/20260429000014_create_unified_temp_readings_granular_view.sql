@@ -1,0 +1,192 @@
+-- Migration: create_unified_temp_readings_granular_view
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000014
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000014'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Create unified_temp_readings_granular view.
+-- -- Read-only SELECT view that UNIONs four sources into a single timeline:
+-- --   1. Equipment readings — temperature_logs WHERE food_batch_id IS NULL
+-- --   2. Food readings — temperature_logs WHERE food_batch_id IS NOT NULL
+-- --   3. Receiving readings — receiving_temp_logs
+-- --   4. Cooldown checkpoints — cooldown_temp_checks JOIN cooldown_logs
+-- --
+-- -- 25 unified columns. Powers History, Analytics, granular reports,
+-- -- and the inspector packet.
+-- --
+-- -- security_invoker = true delegates RLS to underlying tables (Postgres 15+).
+-- -- ccp_number on food readings falls back to a log_type-based mapping when
+-- -- the equipment row has no CCP designation.
+-- -- temp_pass on cooldown rows is computed: stage 1 passes at <= stage1_target_temp,
+-- -- stage 2 passes at <= stage2_target_temp.
+-- -- required_max on cooldown rows is the stage-specific target temp.
+-- 
+-- CREATE OR REPLACE VIEW unified_temp_readings_granular
+-- WITH (security_invoker = true)
+-- AS
+-- 
+-- -- Equipment readings (no food batch)
+-- SELECT
+--   tl.id,
+--   'equipment'::text AS reading_source,
+--   tl.log_type AS reading_type,
+--   tl.facility_id AS location_id,
+--   te.zone_id,
+--   tl.equipment_id,
+--   te.name AS equipment_name,
+--   NULL::text AS food_item_name,
+--   NULL::text AS vendor_name,
+--   NULL::uuid AS food_batch_id,
+--   NULL::uuid AS cooldown_log_id,
+--   NULL::integer AS cooldown_stage,
+--   te.ccp_number,
+--   tl.temperature,
+--   tl.required_min,
+--   tl.required_max,
+--   tl.temp_pass,
+--   tl.input_method,
+--   tl.shift,
+--   tl.reading_time AS recorded_at,
+--   tl.logged_by AS recorded_by,
+--   tl.notes,
+--   tl.photo_url,
+--   tl.corrective_action,
+--   tl.created_at
+-- FROM temperature_logs tl
+-- LEFT JOIN temperature_equipment te ON tl.equipment_id = te.id
+-- WHERE tl.food_batch_id IS NULL
+-- 
+-- UNION ALL
+-- 
+-- -- Food readings (linked to food_batch)
+-- SELECT
+--   tl.id,
+--   'food'::text AS reading_source,
+--   tl.log_type AS reading_type,
+--   tl.facility_id AS location_id,
+--   fb.zone_id,
+--   tl.equipment_id,
+--   te.name AS equipment_name,
+--   fb.food_item_name,
+--   NULL::text AS vendor_name,
+--   tl.food_batch_id,
+--   NULL::uuid AS cooldown_log_id,
+--   NULL::integer AS cooldown_stage,
+--   COALESCE(te.ccp_number,
+--     CASE tl.log_type
+--       WHEN 'cooking' THEN 5::smallint
+--       WHEN 'reheating' THEN 5::smallint
+--       WHEN 'hot_holding' THEN 3::smallint
+--       WHEN 'cold_holding' THEN 2::smallint
+--       ELSE NULL::smallint
+--     END) AS ccp_number,
+--   tl.temperature,
+--   tl.required_min,
+--   tl.required_max,
+--   tl.temp_pass,
+--   tl.input_method,
+--   tl.shift,
+--   tl.reading_time AS recorded_at,
+--   tl.logged_by AS recorded_by,
+--   tl.notes,
+--   tl.photo_url,
+--   tl.corrective_action,
+--   tl.created_at
+-- FROM temperature_logs tl
+-- LEFT JOIN temperature_equipment te ON tl.equipment_id = te.id
+-- LEFT JOIN food_batches fb ON tl.food_batch_id = fb.id
+-- WHERE tl.food_batch_id IS NOT NULL
+-- 
+-- UNION ALL
+-- 
+-- -- Receiving readings
+-- SELECT
+--   rtl.id,
+--   'receiving'::text AS reading_source,
+--   'receiving'::text AS reading_type,
+--   rtl.location_id,
+--   NULL::uuid AS zone_id,
+--   NULL::uuid AS equipment_id,
+--   rtl.item_description AS equipment_name,
+--   rtl.item_description AS food_item_name,
+--   rtl.vendor_name,
+--   rtl.food_batch_id,
+--   NULL::uuid AS cooldown_log_id,
+--   NULL::integer AS cooldown_stage,
+--   1::smallint AS ccp_number,
+--   rtl.temperature_value AS temperature,
+--   NULL::numeric AS required_min,
+--   NULL::numeric AS required_max,
+--   rtl.is_pass AS temp_pass,
+--   COALESCE(rtl.input_method, 'manual') AS input_method,
+--   NULL::text AS shift,
+--   COALESCE(rtl.delivery_time, rtl.created_at) AS recorded_at,
+--   rtl.received_by AS recorded_by,
+--   rtl.notes,
+--   rtl.photo_url,
+--   rtl.corrective_action,
+--   rtl.created_at
+-- FROM receiving_temp_logs rtl
+-- 
+-- UNION ALL
+-- 
+-- -- Cooldown checkpoint readings
+-- SELECT
+--   ctc.id,
+--   'cooldown'::text AS reading_source,
+--   'cooling'::text AS reading_type,
+--   cl.location_id,
+--   NULL::uuid AS zone_id,
+--   NULL::uuid AS equipment_id,
+--   cl.food_item_name AS equipment_name,
+--   cl.food_item_name,
+--   NULL::text AS vendor_name,
+--   cl.food_batch_id,
+--   cl.id AS cooldown_log_id,
+--   ctc.stage AS cooldown_stage,
+--   4::smallint AS ccp_number,
+--   ctc.temperature_value AS temperature,
+--   NULL::numeric AS required_min,
+--   CASE ctc.stage
+--     WHEN 1 THEN cl.stage1_target_temp
+--     WHEN 2 THEN cl.stage2_target_temp
+--     ELSE NULL
+--   END AS required_max,
+--   CASE
+--     WHEN ctc.stage = 1 AND ctc.temperature_value <= cl.stage1_target_temp THEN true
+--     WHEN ctc.stage = 2 AND ctc.temperature_value <= cl.stage2_target_temp THEN true
+--     ELSE NULL::boolean
+--   END AS temp_pass,
+--   'manual'::text AS input_method,
+--   NULL::text AS shift,
+--   ctc.check_time AS recorded_at,
+--   cl.recorded_by,
+--   cl.notes,
+--   NULL::text AS photo_url,
+--   NULL::text AS corrective_action,
+--   ctc.created_at
+-- FROM cooldown_temp_checks ctc
+-- JOIN cooldown_logs cl ON ctc.cooldown_log_id = cl.id;
+-- 
+-- GRANT SELECT ON unified_temp_readings_granular TO authenticated;
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

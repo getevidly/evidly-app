@@ -1,0 +1,56 @@
+-- Migration: add_vendor_contact_id_fk_to_receiving_temp_logs
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000023
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000023'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Migration: Add vendor_contact_id FK on receiving_temp_logs
+-- -- Why: Closes a data-quality gap surfaced during commit 4 inspection.
+-- --      The existing vendor_name (text, free-text) column allowed silent
+-- --      string mismatches ("Sysco" vs "sysco" vs "Sysco Foods") that would
+-- --      bypass the dedupe rule landing in commit 4. The proper FK to
+-- --      vendor_contacts gives canonical vendor identity.
+-- -- Design notes:
+-- --   - Nullable: post-launch rows may not yet have a registered vendor;
+-- --     application enforces FK presence on new captures.
+-- --   - ON DELETE SET NULL: preserves the receiving log if a vendor_contact
+-- --     is deleted; free-text vendor_name survives for display.
+-- --   - vendor_name column kept for backward compatibility and as the
+-- --     display string captured at log time.
+-- -- Cross-references:
+-- --   - Original schema sprint commit 6 (vendor_contacts table)
+-- --   - Phase 1 Schema Sprint commit 3 (step + ccp_number on receiving_temp_logs)
+-- --   - Phase 1 Schema Sprint commit 4 (dedupe index will USE vendor_contact_id)
+-- -- Pre-launch context: receiving_temp_logs has 0 rows.
+-- 
+-- ALTER TABLE receiving_temp_logs
+--   ADD COLUMN vendor_contact_id UUID NULL;
+-- 
+-- ALTER TABLE receiving_temp_logs
+--   ADD CONSTRAINT receiving_temp_logs_vendor_contact_id_fkey
+--     FOREIGN KEY (vendor_contact_id) REFERENCES vendor_contacts(id) ON DELETE SET NULL;
+-- 
+-- CREATE INDEX idx_receiving_temp_logs_vendor_contact_id
+--   ON receiving_temp_logs(vendor_contact_id)
+--   WHERE vendor_contact_id IS NOT NULL;
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

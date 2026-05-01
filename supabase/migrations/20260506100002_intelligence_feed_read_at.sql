@@ -1,0 +1,32 @@
+-- Migration: intelligence_feed_read_at
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260506100002
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260506100002'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- INTELLIGENCE-PIPELINE-ALIGN-01: Add read_at timestamp to client_intelligence_feed
+-- -- is_read boolean already exists (default false); this adds the timestamp for tracking
+-- 
+-- ALTER TABLE client_intelligence_feed
+--   ADD COLUMN IF NOT EXISTS read_at TIMESTAMPTZ;
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

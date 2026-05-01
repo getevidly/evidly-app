@@ -1,0 +1,68 @@
+-- Migration: add_notification_preferences
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000016
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000016'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Add notification_preferences table for per-user delivery channel and alert opt-in.
+-- -- Also adds phone_verified column to user_profiles (phone already exists).
+-- --
+-- -- notification_preferences controls how a user receives alerts:
+-- --   - sms_enabled / email_enabled / push_enabled: per-channel toggles
+-- --   - cooldown_alerts_enabled: server-side cooldown alerts (locked decision —
+-- --     fires regardless of login state, hits primary + secondary + manager simultaneously)
+-- --   - out_of_range_alerts_enabled: temperature out-of-range push notifications
+-- --   - missed_reading_alerts_enabled: missed reading reminders
+-- --   - quiet_hours_start / quiet_hours_end: local-time window where non-critical
+-- --     alerts suppress (CRITICAL severity always overrides quiet hours)
+-- --
+-- -- phone_verified column added to user_profiles (existing phone column kept as-is).
+-- 
+-- ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS phone_verified boolean DEFAULT false;
+-- 
+-- CREATE TABLE notification_preferences (
+--   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+--   user_id uuid NOT NULL UNIQUE REFERENCES user_profiles(id) ON DELETE CASCADE,
+--   sms_enabled boolean DEFAULT false,
+--   email_enabled boolean DEFAULT true,
+--   push_enabled boolean DEFAULT true,
+--   cooldown_alerts_enabled boolean DEFAULT true,
+--   out_of_range_alerts_enabled boolean DEFAULT true,
+--   missed_reading_alerts_enabled boolean DEFAULT true,
+--   quiet_hours_start time,
+--   quiet_hours_end time,
+--   created_at timestamptz NOT NULL DEFAULT now(),
+--   updated_at timestamptz NOT NULL DEFAULT now()
+-- );
+-- 
+-- CREATE INDEX idx_notification_preferences_user_id ON notification_preferences(user_id);
+-- 
+-- ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE POLICY notification_preferences_select ON notification_preferences FOR SELECT
+--   USING (user_id = auth.uid());
+-- CREATE POLICY notification_preferences_insert ON notification_preferences FOR INSERT
+--   WITH CHECK (user_id = auth.uid());
+-- CREATE POLICY notification_preferences_update ON notification_preferences FOR UPDATE
+--   USING (user_id = auth.uid());
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

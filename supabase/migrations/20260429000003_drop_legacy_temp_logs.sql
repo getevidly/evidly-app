@@ -1,0 +1,33 @@
+-- Migration: drop_legacy_temp_logs
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000003
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000003'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Drop legacy temp_logs table.
+-- -- Superseded by temperature_logs (migration 20260307000000).
+-- -- Phase 0 inventory (2026-04-28) confirmed zero rows and no code references.
+-- -- Verified empty 2026-04-29 before drop.
+-- 
+-- DROP TABLE IF EXISTS temp_logs CASCADE;
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

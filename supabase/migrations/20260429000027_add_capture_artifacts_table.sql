@@ -1,0 +1,141 @@
+-- Migration: add_capture_artifacts_table
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000027
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000027'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Migration: Add capture_artifacts table for proof-of-capture storage
+-- -- Why: Constitutional rule — every capture event has a storage place for
+-- --      proof and protection. capture_artifacts is the polymorphic table
+-- --      backing photo, audio, OCR, probe payload, IoT payload, QR payload,
+-- --      and voice transcript artifacts.
+-- -- Design notes:
+-- --   - artifact_type enum has 7 values; new sensor brands plug in without
+-- --     schema changes (storage_path + metadata jsonb absorb new shapes)
+-- --   - Source-link CHECK enforces exactly one of the four FKs populated —
+-- --     no orphan artifacts, no double-claimed artifacts
+-- --   - RLS location-scoped via user_location_access, mirroring menu_items
+-- --   - UPDATE policy intentionally OMITTED — artifacts are immutable once
+-- --     written. Audit immutability per SOP rule 5.3.
+-- -- Cross-references:
+-- --   - Phase 1 Schema Sprint commit 12 (creates the capture-artifacts
+-- --     Storage bucket with org+location RLS to back this table)
+-- 
+-- -- ── artifact_type enum ───────────────────────────────────────────────
+-- 
+-- CREATE TYPE artifact_type AS ENUM (
+--   'photo',
+--   'audio',
+--   'ocr_text',
+--   'probe_payload',
+--   'iot_payload',
+--   'qr_payload',
+--   'transcript'
+-- );
+-- 
+-- -- ── capture_artifacts table ──────────────────────────────────────────
+-- 
+-- CREATE TABLE capture_artifacts (
+--   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+--   location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
+--   artifact_type artifact_type NOT NULL,
+--   storage_path TEXT NOT NULL,
+--   storage_bucket TEXT NOT NULL DEFAULT 'capture-artifacts',
+--   mime_type TEXT NULL,
+--   size_bytes BIGINT NULL,
+--   metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+--   temperature_log_id UUID NULL REFERENCES temperature_logs(id) ON DELETE CASCADE,
+--   receiving_temp_log_id UUID NULL REFERENCES receiving_temp_logs(id) ON DELETE CASCADE,
+--   cooldown_log_id UUID NULL REFERENCES cooldown_logs(id) ON DELETE CASCADE,
+--   cooldown_temp_check_id UUID NULL REFERENCES cooldown_temp_checks(id) ON DELETE CASCADE,
+--   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+--   created_by UUID NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+--   CONSTRAINT capture_artifacts_source_link_chk CHECK (
+--     (CASE WHEN temperature_log_id      IS NOT NULL THEN 1 ELSE 0 END)
+--   + (CASE WHEN receiving_temp_log_id   IS NOT NULL THEN 1 ELSE 0 END)
+--   + (CASE WHEN cooldown_log_id         IS NOT NULL THEN 1 ELSE 0 END)
+--   + (CASE WHEN cooldown_temp_check_id  IS NOT NULL THEN 1 ELSE 0 END)
+--   = 1
+--   )
+-- );
+-- 
+-- CREATE INDEX idx_capture_artifacts_organization_id
+--   ON capture_artifacts(organization_id);
+-- 
+-- CREATE INDEX idx_capture_artifacts_location_id
+--   ON capture_artifacts(location_id);
+-- 
+-- CREATE INDEX idx_capture_artifacts_temperature_log_id
+--   ON capture_artifacts(temperature_log_id)
+--   WHERE temperature_log_id IS NOT NULL;
+-- 
+-- CREATE INDEX idx_capture_artifacts_receiving_temp_log_id
+--   ON capture_artifacts(receiving_temp_log_id)
+--   WHERE receiving_temp_log_id IS NOT NULL;
+-- 
+-- CREATE INDEX idx_capture_artifacts_cooldown_log_id
+--   ON capture_artifacts(cooldown_log_id)
+--   WHERE cooldown_log_id IS NOT NULL;
+-- 
+-- CREATE INDEX idx_capture_artifacts_cooldown_temp_check_id
+--   ON capture_artifacts(cooldown_temp_check_id)
+--   WHERE cooldown_temp_check_id IS NOT NULL;
+-- 
+-- CREATE INDEX idx_capture_artifacts_type_created
+--   ON capture_artifacts(artifact_type, created_at DESC);
+-- 
+-- -- RLS
+-- 
+-- ALTER TABLE capture_artifacts ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE POLICY capture_artifacts_select ON capture_artifacts
+--   FOR SELECT
+--   USING (
+--     location_id IN (
+--       SELECT location_id FROM user_location_access
+--       WHERE user_id = auth.uid()
+--     )
+--   );
+-- 
+-- CREATE POLICY capture_artifacts_insert ON capture_artifacts
+--   FOR INSERT
+--   WITH CHECK (
+--     location_id IN (
+--       SELECT location_id FROM user_location_access
+--       WHERE user_id = auth.uid()
+--     )
+--   );
+-- 
+-- CREATE POLICY capture_artifacts_delete ON capture_artifacts
+--   FOR DELETE
+--   USING (
+--     location_id IN (
+--       SELECT location_id FROM user_location_access
+--       WHERE user_id = auth.uid()
+--     )
+--   );
+-- 
+-- -- NOTE: No UPDATE policy — artifacts are immutable once written.
+-- -- Audit immutability per SOP rule 5.3.
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

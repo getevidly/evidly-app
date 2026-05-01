@@ -1,0 +1,47 @@
+-- Migration: add_haccp_step_enum
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000019
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000019'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Migration: Add haccp_step enum (8 HACCP Steps)
+-- -- Why: Phase 1 capture flow uses Step as the primary classifier for every
+-- --      temperature reading. Adopted from SmartTemps' proven model and aligned
+-- --      with HACCP standard Steps. Order matches user-facing Step Picker grid.
+-- -- Cross-references:
+-- --   - phase1-capture-flow-mockup.jsx (Step Picker design)
+-- --   - Phase 1 Schema Sprint plan (this is commit 1 of 7)
+-- -- Notable: No table changes here. Commits 2 and 3 add step columns referencing
+-- -- this enum on temperature_logs and receiving_temp_logs respectively.
+-- 
+-- CREATE TYPE haccp_step AS ENUM (
+--   'receiving',
+--   'storage',
+--   'prep',
+--   'cooking',
+--   'hot_holding',
+--   'cold_holding',
+--   'serving',
+--   'cooldown'
+-- );
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+

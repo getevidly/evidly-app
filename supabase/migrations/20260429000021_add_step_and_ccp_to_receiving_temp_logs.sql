@@ -1,0 +1,51 @@
+-- Migration: add_step_and_ccp_to_receiving_temp_logs
+-- Status: APPLIED — placeholder file
+-- Original timestamp: 20260429000021
+--
+-- This migration's effects are present in PROD but the original file
+-- was removed when 14c-1 marked these versions as already-applied
+-- (commit 82b83ff). Each version was marked applied via direct INSERT
+-- into supabase_migrations.schema_migrations because the schema
+-- changes had been applied to PROD via routes outside the supabase
+-- CLI workflow during earlier development cycles.
+--
+-- This placeholder exists so the supabase CLI does not flag this
+-- version as a remote-only orphan during db push. The original DDL
+-- is documented below for audit and reference. Do not modify or
+-- re-apply this file.
+--
+-- Tracker entry: supabase_migrations.schema_migrations WHERE version = '20260429000021'.
+--
+-- ── ORIGINAL DDL (recovered from git history) ────────────────────────────
+-- Source: 72c9417 (parent of deletion commit 82b83ff)
+--
+-- -- Migration: Add step + derived ccp_number on receiving_temp_logs
+-- -- Why: Mirrors commit 2's shape on a different table. receiving_temp_logs is
+-- --      purpose-built for the Receiving Step, so step defaults to 'receiving'
+-- --      and ccp_number is constant 1 (every row in this table is CCP 1).
+-- --      Honors "capture once, surface everywhere" constitutional rule —
+-- --      Receiving CCP reports query this table directly, no duplicate
+-- --      CCP-specific table.
+-- -- CCP mapping (locked from dev/test transfer doc):
+-- --   receiving = CCP 1 (this table, every row)
+-- -- Cross-references:
+-- --   - Phase 1 Schema Sprint commit 1 (haccp_step enum)
+-- --   - Phase 1 Schema Sprint commit 2 (same shape on temperature_logs)
+-- --   - Phase 1 Schema Sprint commit 4 (override columns + dedupe indexes)
+-- -- Pre-launch context: receiving_temp_logs has 0 rows, NOT NULL is safe.
+-- 
+-- ALTER TABLE receiving_temp_logs
+--   ADD COLUMN step haccp_step NOT NULL DEFAULT 'receiving';
+-- 
+-- ALTER TABLE receiving_temp_logs
+--   ADD COLUMN ccp_number SMALLINT
+--   GENERATED ALWAYS AS (1) STORED;
+-- 
+-- CREATE INDEX idx_receiving_temp_logs_step
+--   ON receiving_temp_logs(step);
+--
+-- ── END ORIGINAL DDL ─────────────────────────────────────────────────────
+
+-- Intentional no-op so accidental execution does nothing:
+SELECT 1 WHERE FALSE;
+
