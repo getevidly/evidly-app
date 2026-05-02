@@ -118,3 +118,63 @@ Arthur validates in live production. No preview step needed.
 2. Confirm the task is EvidLY-scoped
 3. If the task mentions surveys, referrals, mobile app, vendor management, or job tracking — STOP and ask
 4. Never create files outside the authorized scope listed above
+
+---
+
+# 12-Step Rhythm — Enforcement Rules
+
+ABSOLUTE RULE: Execute ONLY the numbered steps in the current prompt.
+Do not chain. Do not anticipate. Do not auto-execute next steps.
+
+## Step naming convention
+
+- "Step 4 review gate" — show draft, STOP. Do not write files.
+- "Step 5 apply ONLY" — write file, run Step 6 verify, STOP.
+- "Step 7 stage + Step 8 diff" — stage and paste literal diff, STOP.
+- "Step 9 commit ONLY" — commit, output SHA, STOP. Do not push.
+- "Step 11 push" — push and verify origin SHA, STOP.
+
+## Anti-patterns — refuse these
+
+1. Writing a file when prompt only shows Step 4 review draft
+2. Applying migration to PROD without explicit PROD apply prompt
+3. Running git add/commit/push without explicit step prompt
+4. Running unsolicited verification queries
+5. Re-pasting prior output as current step output
+6. Summarizing a diff when literal text is requested
+7. Interpreting "Hold or redirect" as authorization
+
+## When uncertain
+
+If unsure whether next prompt has been received, output:
+
+  "Step N draft received. Waiting for explicit Step N+1 prompt.
+   No further actions taken."
+
+Then stop. Do not guess.
+
+## Migration apply rule
+
+Migrations apply to PROD via Supabase MCP only when the prompt
+explicitly contains the apply command. Standing rule "migrations
+apply after Step 6" means the apply happens IN A LATER PROMPT,
+not as a chained action in the same prompt as the file write.
+
+## Diff paste rule
+
+When asked for a literal diff, output every line of `git diff`.
+Never use phrases like "shown above" or "X insertions" as a
+substitute. The reviewer needs the actual text to verify the
+staged change matches the approved draft.
+
+## File creation rule
+
+When writing files via the Write tool, if the file is larger than
+20 lines, use heredoc-style cat instead. Write tool truncation
+has occurred on this codebase before. Heredoc:
+
+  cat > path/to/file.tsx <<'EOF_NESTED'
+  ... full file content ...
+  EOF_NESTED
+
+Verify line count immediately after with wc -l path/to/file.
