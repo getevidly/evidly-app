@@ -21,8 +21,8 @@ interface CompletionDetail {
 
 interface ItemWithResponse {
   item_id: string;
-  item_text: string;
-  item_order: number;
+  title: string;
+  order: number;
   response_id: string | null;
   response_value: string | null;
   is_pass: boolean | null;
@@ -99,9 +99,9 @@ export function ChecklistCompletionDetail() {
 
         const { data: itemRows, error: iErr } = await supabase
           .from('checklist_template_items')
-          .select('id, item_text, sort_order')
+          .select('id, title, "order"')
           .eq('template_id', c.template_id)
-          .order('sort_order', { ascending: true });
+          .order('order', { ascending: true });
 
         if (iErr) throw iErr;
 
@@ -121,8 +121,8 @@ export function ChecklistCompletionDetail() {
             const r = respByItem.get(item.id);
             return {
               item_id: item.id,
-              item_text: item.item_text,
-              item_order: item.sort_order ?? 0,
+              title: item.title,
+              order: item.order ?? 0,
               response_id: r?.id ?? null,
               response_value: r?.response_value ?? null,
               is_pass: r?.is_pass ?? null,
@@ -248,7 +248,7 @@ export function ChecklistCompletionDetail() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-[#1E2D4D]">{item.item_text}</div>
+                <div className="text-sm font-medium text-[#1E2D4D]">{item.title}</div>
                 {item.response_id === null ? (
                   <div className="text-xs text-[#1E2D4D]/40 mt-1 italic">Not answered</div>
                 ) : (
