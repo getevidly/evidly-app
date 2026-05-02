@@ -32,6 +32,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ de
 const EmailConfirmed = lazy(() => import('./pages/EmailConfirmed').then(m => ({ default: m.EmailConfirmed })));
 const DemoWizard = lazy(() => import('./pages/DemoWizard').then(m => ({ default: m.DemoWizard })));
 const Onboarding = lazy(() => import('./pages/Onboarding').then(m => ({ default: m.Onboarding })));
+const SetupFoodSafety = lazy(() => import('./pages/SetupFoodSafety').then(m => ({ default: m.SetupFoodSafety })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const TempLogs = lazy(() => import('./pages/TempLogs').then(m => ({ default: m.TempLogs })));
 const Checklists = lazy(() => import('./pages/Checklists').then(m => ({ default: m.Checklists })));
