@@ -84,6 +84,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/settings/service-types',     ['owner_operator', 'executive']],
   ['/settings/billing',           ['owner_operator']],
   ['/iot/hub',               ['owner_operator', 'executive', 'compliance_manager']],
+
+  // Setup wizards — configuration roles only, not floor staff
+  ['/setup/food-safety',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef']],
 ];
 
 /**
