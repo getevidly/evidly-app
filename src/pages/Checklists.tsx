@@ -1962,6 +1962,55 @@ export function Checklists() {
               </button>
             </div>
 
+            {/* Custom Templates */}
+            {templates.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Your Templates</h3>
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden overflow-x-auto">
+                  <table className="min-w-full divide-y divide-[#1E2D4D]/10">
+                    <thead className="bg-[#FAF7F0]">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.type')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.items')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.status')}</th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-[#1E2D4D]/50 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
+                      {templates.map((template) => (
+                        <tr key={template.id} className="hover:bg-[#FAF7F0]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">{templateNameMap[template.name] || template.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 capitalize hidden sm:table-cell">{template.checklist_type.replace('_', ' ')}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{template.items_count}</td>
+                          <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${template.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}>
+                              {template.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex items-center justify-end gap-2">
+                              <button onClick={() => handleStartChecklist(template)} className="text-[#1E2D4D] hover:text-[#141E33]" title="Start checklist">
+                                <Play className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => handleEditTemplate(template)} className="text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80" title="Edit template">
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900" title="Delete template">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Add from Library</h3>
+
             {TEMPLATE_CATEGORIES.map((cat) => (
               <div key={cat.category}>
                 <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4 flex items-center space-x-2">
@@ -2071,53 +2120,6 @@ export function Checklists() {
                 </div>
               </div>
             ))}
-
-            {/* Custom Templates */}
-            {templates.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Your Templates</h3>
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden overflow-x-auto">
-                  <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                    <thead className="bg-[#FAF7F0]">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.type')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.items')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.status')}</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-[#1E2D4D]/50 uppercase">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
-                      {templates.map((template) => (
-                        <tr key={template.id} className="hover:bg-[#FAF7F0]">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">{templateNameMap[template.name] || template.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 capitalize hidden sm:table-cell">{template.checklist_type.replace('_', ' ')}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{template.items_count}</td>
-                          <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${template.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}>
-                              {template.is_active ? 'Active' : 'Inactive'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2">
-                              <button onClick={() => handleStartChecklist(template)} className="text-[#1E2D4D] hover:text-[#141E33]" title="Start checklist">
-                                <Play className="h-4 w-4" />
-                              </button>
-                              <button onClick={() => handleEditTemplate(template)} className="text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80" title="Edit template">
-                                <Edit2 className="h-4 w-4" />
-                              </button>
-                              <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900" title="Delete template">
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
