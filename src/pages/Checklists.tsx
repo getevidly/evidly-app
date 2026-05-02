@@ -690,6 +690,7 @@ export function Checklists() {
   const [historyFrom, setHistoryFrom] = useState('');
   const [historyTo, setHistoryTo] = useState('');
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
+  const existingTemplateNames = new Set(templates.map(t => t.name));
   const [completions, setCompletions] = useState<ChecklistCompletion[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
@@ -1947,15 +1948,23 @@ export function Checklists() {
                             );
                           })}
                         </div>
-                        {PREBUILT_TEMPLATES[tmpl.key as keyof typeof PREBUILT_TEMPLATES] && (
-                          <button
-                            onClick={() => createPrebuiltTemplate(tmpl.key as keyof typeof PREBUILT_TEMPLATES)}
-                            disabled={loading}
-                            className="w-full px-4 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#1E2D4D] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
-                          >
-                            {t('checklists.useTemplate')}
-                          </button>
-                        )}
+                        {PREBUILT_TEMPLATES[tmpl.key as keyof typeof PREBUILT_TEMPLATES] && (() => {
+                          const alreadyAdded = existingTemplateNames.has(tmpl.name);
+                          return (
+                            <button
+                              onClick={() => !alreadyAdded && createPrebuiltTemplate(tmpl.key as keyof typeof PREBUILT_TEMPLATES)}
+                              disabled={loading || alreadyAdded}
+                              title={alreadyAdded ? 'This template is already in your library' : ''}
+                              className={`w-full px-4 py-2 border-2 rounded-lg transition-colors font-medium text-sm ${
+                                alreadyAdded
+                                  ? 'border-[#1E2D4D]/20 text-[#1E2D4D]/40 cursor-not-allowed bg-[#1E2D4D]/5'
+                                  : 'border-[#1E2D4D] text-[#1E2D4D] hover:bg-[#1E2D4D] hover:text-white disabled:opacity-50'
+                              }`}
+                            >
+                              {alreadyAdded ? 'Already Added' : t('checklists.useTemplate')}
+                            </button>
+                          );
+                        })()}
                         {/* CCP info for HACCP templates */}
                         {cat.category === 'HACCP Checklists' && (() => {
                           const ccpItems = tmpl.items.filter(item => {
