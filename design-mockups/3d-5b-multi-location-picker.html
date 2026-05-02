@@ -1,0 +1,148 @@
+<!--
+  3d-5b-multi-location-picker.html
+  Approved design mockup for sprint commit 3d-5b1
+  (SetupFoodSafetyEntry component, multi-location picker UI).
+
+  Audience: owners, executives, compliance managers, kitchen managers, chefs
+  configuring food safety profiles across multiple locations.
+
+  Voice: peer-to-peer, decision-prompting (this is a choice moment,
+  not a working moment).
+
+  Status badges driven by location_food_safety_profile.wizard_completed_at:
+    - No row in profile table        → Not started (amber)
+    - Row exists, timestamp NULL     → In progress (blue)
+    - Row exists, timestamp set      → Set up (teal)
+
+  Click row → navigate to /setup/food-safety/<locationId>.
+  Set-up rows are still clickable (re-entry) but visually recessed
+  with off-white background.
+
+  This is the source of truth for the picker visual contract.
+  Code commit 3d-5b1 must visually match this mockup. Future commits
+  that modify picker visuals must update this file in the same commit.
+-->
+<div style="background: #F8F4ED; padding: 1.5rem; border-radius: 12px; font-family: 'DM Sans', sans-serif;">
+
+<div style="background: #ffffff; border-radius: 12px; padding: 1.5rem 1.75rem; border: 0.5px solid rgba(0,0,0,0.08);">
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+<div>
+<div style="font-size: 12px; color: #5F5E5A; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 500; margin-bottom: 6px;">Food safety profile</div>
+<div style="font-size: 18px; font-weight: 500; color: #1E2D4D;">Choose a location to set up</div>
+</div>
+<div style="font-size: 13px; color: #5F5E5A;">6 locations</div>
+</div>
+
+<div style="margin-top: 6px; font-size: 14px; color: #5F5E5A; line-height: 1.5;">
+Each location has its own food safety profile. Pick one to start or pick up where you left off.
+</div>
+
+<div style="margin-top: 22px;">
+<div style="font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px;">Needs setup &middot; 3</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px;">
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #ffffff; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Mariposa Lodge</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">El Portal, CA &middot; Mariposa County</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #FAEEDA; color: #854F0B; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="#854F0B"><circle cx="12" cy="12" r="6"/></svg>
+Not started
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #ffffff; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Tioga Pass Cafe</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">Lee Vining, CA &middot; Mono County</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #FAEEDA; color: #854F0B; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="#854F0B"><circle cx="12" cy="12" r="6"/></svg>
+Not started
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #ffffff; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Wawona Hotel Dining</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">Wawona, CA &middot; NPS &middot; Mariposa County</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #FAEEDA; color: #854F0B; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="#854F0B"><circle cx="12" cy="12" r="6"/></svg>
+Not started
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+</div>
+</div>
+
+<div style="margin-top: 22px;">
+<div style="font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px;">In progress &middot; 2</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px;">
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #ffffff; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Curry Village Pavilion</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">Yosemite Valley, CA &middot; NPS &middot; Mariposa County</div>
+<div style="font-size: 12px; color: #888780; margin-top: 4px;">Step 4 of 7 &middot; updated 2 days ago</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #E6F1FB; color: #0C447C; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0C447C" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2 a 10 10 0 0 1 10 10"/></svg>
+In progress
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #ffffff; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Yosemite Valley Lodge</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">Yosemite Valley, CA &middot; NPS &middot; Mariposa County</div>
+<div style="font-size: 12px; color: #888780; margin-top: 4px;">Step 2 of 7 &middot; updated 5 days ago</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #E6F1FB; color: #0C447C; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0C447C" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2 a 10 10 0 0 1 10 10"/></svg>
+In progress
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+</div>
+</div>
+
+<div style="margin-top: 22px;">
+<div style="font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px;">Set up &middot; 1</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px;">
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E5E2D5; background: #FBFAF6; border-radius: 12px; cursor: pointer;">
+<div style="flex: 1; min-width: 0;">
+<div style="font-size: 15px; font-weight: 500; color: #1E2D4D;">Ahwahnee Dining Room</div>
+<div style="font-size: 13px; color: #5F5E5A; margin-top: 2px;">Yosemite Valley, CA &middot; NPS &middot; Mariposa County</div>
+<div style="font-size: 12px; color: #888780; margin-top: 4px;">Set up Apr 28, 2026 &middot; tap to review or update</div>
+</div>
+<div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #E1F5EE; color: #085041; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#085041" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+Set up
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
+
+</div>
+</div>
+
+<div style="margin-top: 24px; padding-top: 18px; border-top: 0.5px solid rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+<div style="font-size: 13px; color: #5F5E5A;">
+Don't see your location? <a style="color: #1E2D4D; text-decoration: underline; cursor: pointer;">Ask your administrator</a>
+</div>
+</div>
+
+</div>
+
+</div>
