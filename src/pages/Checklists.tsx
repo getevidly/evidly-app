@@ -674,6 +674,7 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const nav = useNavigate();
   usePageTitle('Checklists');
   const [searchParams] = useSearchParams();
   const locationParam = searchParams.get('location') || '';
