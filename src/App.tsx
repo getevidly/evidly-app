@@ -611,7 +611,7 @@ function AppRoutes() {
         {/* /business-intelligence now handled by /insights/intelligence */}
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/setup/food-safety" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafety /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/setup/food-safety/:locationId" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafety /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
         {/* Demo expired — full-screen upgrade prompt, no layout chrome */}
         <Route path="/demo-expired" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><DemoExpired /></Suspense></ErrorBoundary></ProtectedRoute>} />
