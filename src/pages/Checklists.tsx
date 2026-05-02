@@ -916,6 +916,10 @@ export function Checklists() {
       if (templateError) {
         console.error('Template creation error:', templateError);
         setLoading(false);
+        if (templateError.code === '23505') {
+          toast.error(`A template named "${template.name}" already exists for your organization.`);
+          return;
+        }
         toast.error(`Error creating template: ${templateError.message}`);
         return;
       }
