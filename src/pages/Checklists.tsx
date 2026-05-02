@@ -30,6 +30,9 @@ interface ChecklistTemplate {
   frequency: string;
   is_active: boolean;
   items_count: number;
+  cadence?: string;
+  due_windows?: Array<{ start_time: string; end_time: string; label: string }>;
+  active_days?: string;
 }
 
 interface ChecklistTemplateItem {
@@ -64,10 +67,12 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
 
 interface ChecklistCompletion {
   id: string;
+  template_id: string;
   template_name: string;
   completed_by_name: string;
   score_percentage: number;
   completed_at: string;
+  status?: string;
 }
 
 interface ItemResponse {
@@ -771,6 +776,61 @@ export function Checklists() {
   }, [profile, isDemoMode]);
 
   useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    if (templates.length === 0) {
+      setTodayChecklists([]);
+      return;
+    }
+
+    const now = new Date();
+    const dayChar = ['U','M','T','W','R','F','S'][now.getDay()];
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
+
+    const todaysCompletions = completions.filter(c =>
+      c.completed_at >= todayStart && c.completed_at < tomorrowStart
+    );
+
+    const scheduled = templates.filter(t =>
+      t.cadence && t.cadence !== 'on_demand' &&
+      (t.active_days ?? 'MTWRFSU').includes(dayChar)
+    );
+
+    const userName = profile?.full_name || 'You';
+
+    const computed = scheduled.map(t => {
+      const completion = todaysCompletions.find(c => c.template_id === t.id);
+      let status: 'not_started' | 'in_progress' | 'complete' = 'not_started';
+      let completed = 0;
+      const total = t.items_count;
+
+      if (completion) {
+        const score = completion.score_percentage ?? 0;
+        if (completion.status === 'in_progress') {
+          status = 'in_progress';
+          completed = Math.round((score / 100) * total);
+        } else {
+          status = 'complete';
+          completed = total;
+        }
+      }
+
+      return {
+        id: completion?.id || `today-${t.id}`,
+        name: t.name,
+        completed,
+        total,
+        status,
+        assignee: userName,
+        completedAt: completion ? new Date(completion.completed_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '',
+        location: '',
+      };
+    });
+
+    setTodayChecklists(computed);
+  }, [templates, completions, isDemoMode, profile]);
+
+  useEffect(() => {
     if (templateItems.length > 0) {
       const answered = Object.keys(itemResponses).length;
       setCurrentProgress(Math.round((answered / templateItems.length) * 100));
@@ -795,6 +855,9 @@ export function Checklists() {
           frequency: template.frequency,
           is_active: template.is_active,
           items_count: template.checklist_template_items?.[0]?.count || 0,
+          cadence: template.cadence,
+          due_windows: template.due_windows,
+          active_days: template.active_days,
         }));
         setTemplates(formattedTemplates);
       }
@@ -809,7 +872,7 @@ export function Checklists() {
       // Query 1: flat select — no PostgREST embeds (FK chains are broken)
       const { data, error } = await supabase
         .from('checklist_template_completions')
-        .select('id, completed_at, completed_by, template_id, score_percentage')
+        .select('id, completed_at, completed_by, template_id, score_percentage, status')
         .eq('organization_id', profile?.organization_id)
         .order('completed_at', { ascending: false })
         .limit(20);
@@ -846,10 +909,12 @@ export function Checklists() {
       if (data) {
         const formattedCompletions = data.map((completion: any) => ({
           id: completion.id,
+          template_id: completion.template_id,
           template_name: templateMap[completion.template_id as string] || 'Unknown',
           completed_by_name: userMap[completion.completed_by as string] || 'Unknown',
           score_percentage: completion.score_percentage || 0,
           completed_at: completion.completed_at,
+          status: completion.status,
         }));
         setCompletions(formattedCompletions);
       }
