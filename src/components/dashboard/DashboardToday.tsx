@@ -85,8 +85,6 @@ export function DashboardToday() {
   const { data } = useDashboardData();
   const tasks = data.tasks ?? [];
   const deadlines = data.deadlines ?? [];
-  const [showOverdueOnly, setShowOverdueOnly] = useState(false);
-
   const todayStr = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   });
@@ -114,11 +112,7 @@ export function DashboardToday() {
         {/* Tasks Today */}
         <button
           type="button"
-          onClick={() => {
-            setShowOverdueOnly(false);
-            const el = document.getElementById('todays-tasks');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
+          onClick={() => navigate('/tasks')}
           className="rounded-xl border-l-4 border-l-[#A08C5A] bg-gradient-to-br from-white to-[#A08C5A]/5 p-4 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 relative overflow-hidden text-left"
           style={{ border: '1px solid #e5e7eb', borderLeftWidth: '4px', borderLeftColor: '#A08C5A' }}
         >
@@ -138,13 +132,7 @@ export function DashboardToday() {
         {/* Overdue */}
         <button
           type="button"
-          onClick={() => {
-            setShowOverdueOnly(true);
-            setTimeout(() => {
-              const el = document.getElementById('todays-tasks');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }, 50);
-          }}
+          onClick={() => navigate('/tasks?filter=overdue')}
           className={`rounded-xl border-l-4 p-4 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 relative overflow-hidden text-left ${
             overdueCount > 0
               ? 'border-l-red-500 bg-gradient-to-br from-white to-red-50'
@@ -185,60 +173,37 @@ export function DashboardToday() {
           </div>
           <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Upcoming</p>
           <p className="text-2xl font-bold tracking-tight text-center" style={{ color: urgentDeadlines.length > 0 ? '#d97706' : NAVY }}>{urgentDeadlines.length}</p>
-          <p className="text-xs text-[#1E2D4D]/50 text-center">deadlines this week</p>
+          <p className="text-xs text-[#1E2D4D]/50 text-center">Deadlines this week</p>
         </button>
       </div>
 
       {/* Today's Tasks / Overdue Items */}
       <div id="todays-tasks" className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>
-            {showOverdueOnly ? 'Overdue Items' : "Today's Tasks"}
-          </h3>
-          {showOverdueOnly ? (
+          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Today's Tasks</h3>
+          <span className="text-xs font-medium" style={{ color: NAVY }}>{doneCount}/{tasks.length} complete</span>
+        </div>
+        {tasks.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="text-4xl mb-3">🎯</div>
+            <p className="font-semibold text-lg" style={{ color: '#1E2D4D' }}>You're all caught up!</p>
+            <p className="text-sm text-[#1E2D4D]/30 mt-1">No tasks scheduled for today. Enjoy the calm.</p>
             <button
               type="button"
-              onClick={() => setShowOverdueOnly(false)}
-              className="text-xs font-medium cursor-pointer hover:underline"
-              style={{ color: NAVY }}
+              onClick={() => navigate('/tasks')}
+              className="mt-4 inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              style={{ background: NAVY, color: 'white' }}
             >
-              Show all tasks
+              View all tasks
             </button>
-          ) : (
-            <span className="text-xs font-medium" style={{ color: NAVY }}>{doneCount}/{tasks.length} complete</span>
-          )}
-        </div>
-        {(() => {
-          const visibleTasks = showOverdueOnly ? tasks.filter(t => t.status === 'overdue') : tasks;
-          if (visibleTasks.length === 0) return (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-3">{showOverdueOnly ? '✅' : '🎯'}</div>
-              <p className="font-semibold text-lg" style={{ color: '#1E2D4D' }}>
-                {showOverdueOnly ? 'No overdue items' : "You're all caught up!"}
-              </p>
-              <p className="text-sm text-[#1E2D4D]/30 mt-1">
-                {showOverdueOnly ? 'All tasks are on track.' : 'No tasks scheduled for today. Enjoy the calm.'}
-              </p>
-              {showOverdueOnly && (
-                <button
-                  type="button"
-                  onClick={() => setShowOverdueOnly(false)}
-                  className="mt-3 text-sm font-medium cursor-pointer hover:underline"
-                  style={{ color: NAVY }}
-                >
-                  Show all tasks
-                </button>
-              )}
-            </div>
-          );
-          return (
-            <div>
-              {visibleTasks.map(task => (
-                <TaskRow key={task.id} task={task} navigate={navigate} />
-              ))}
-            </div>
-          );
-        })()}
+          </div>
+        ) : (
+          <div>
+            {tasks.map(task => (
+              <TaskRow key={task.id} task={task} navigate={navigate} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Upcoming Deadlines */}
