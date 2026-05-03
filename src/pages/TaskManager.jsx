@@ -150,20 +150,21 @@ export default function TaskManager() {
         </div>
       )}
 
-      {/* Tab bar */}
-      <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ backgroundColor: 'var(--bg-panel)' }}>
+      {/* Tab bar — underlined pattern matching CA / Incident modals */}
+      <div className="flex border-b border-[#1E2D4D]/10 mb-4">
         {visibleTabs.map((t) => {
           const Icon = t.icon;
+          const isActive = tab === t.id;
           return (
             <button
               key={t.id}
+              type="button"
               onClick={() => setTab(t.id)}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-              style={{
-                backgroundColor: tab === t.id ? 'var(--bg-card)' : 'transparent',
-                color: tab === t.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                boxShadow: tab === t.id ? '0 1px 2px rgba(0,0,0,.06)' : 'none',
-              }}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                isActive
+                  ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+              }`}
             >
               <Icon className="w-4 h-4" />
               {t.label}
