@@ -16,6 +16,7 @@ import {
   Shield,
   ArrowDown,
   Download,
+  Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -124,6 +125,43 @@ export function CorrectiveActions() {
 
   // AI Assist tracking
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+  const [aiDraftApplied, setAiDraftApplied] = useState(false);
+
+  // E1 — Hardcoded drafts keyed on category. E3 will replace with ai-text-assist
+  // call that uses linked incident context.
+  const CA_AI_DRAFT_DATA: Record<CACategory, { title: string; description: string; rootCause: string }> = {
+    food_safety: {
+      title: 'Cold-chain temperature excursion — corrective response',
+      description: 'Walk-in cooler recorded above 41°F threshold during routine monitoring. TCS items in unit assessed for safety. Affected products evaluated against FDA Food Code 4-hour limit.',
+      rootCause: 'Door gasket deterioration and compressor cycling suggest mechanical wear. Closing shift door discipline also a contributing factor based on prior temperature pattern.',
+    },
+    fire_safety: {
+      title: 'Hood / suppression system inspection lapse — corrective response',
+      description: 'Annual fire suppression inspection certificate expired. NFPA 96 requires current certification on file. Vendor contracted for re-inspection. Affected hood line documented.',
+      rootCause: 'Vendor service agreement lapsed without automated renewal. No reminder system in place for fire safety certification expirations.',
+    },
+    facility_safety: {
+      title: 'Facility safety finding — corrective response',
+      description: 'Facility safety finding identified during routine inspection. Issue documented with photo evidence. Affected area secured pending corrective action.',
+      rootCause: 'Maintenance schedule gap and lack of automated reminders. Contributing factors being evaluated for preventive action.',
+    },
+    operational: {
+      title: 'Operational deviation — corrective response',
+      description: 'Operational deviation identified during routine review. Issue documented and assigned for resolution. Standard operating procedure under review.',
+      rootCause: 'Process deviation likely due to staffing changes, training gap, or procedure ambiguity. Contributing factors being evaluated.',
+    },
+  };
+
+  const handleAiDraft = () => {
+    const draft = CA_AI_DRAFT_DATA[createForm.category] || CA_AI_DRAFT_DATA.operational;
+    setCreateForm(f => ({
+      ...f,
+      title: f.title || draft.title,
+      description: draft.description,
+      rootCause: draft.rootCause,
+    }));
+    setAiDraftApplied(true);
+  };
 
   // Local actions state (user-created actions in this session)
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
@@ -350,6 +388,7 @@ export function CorrectiveActions() {
       setShowCreateModal(false);
       setCreateForm(EMPTY_FORM);
       setAiFields(new Set());
+      setAiDraftApplied(false);
       toast.success('Corrective action created');
       // If processing items from self-inspection, advance to next
       if (inspectionItems.length > 0) {
@@ -584,9 +623,19 @@ export function CorrectiveActions() {
             {/* Modal header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10 flex-shrink-0">
               <h2 className="text-lg font-bold" style={{ color: NAVY }}>New Corrective Action</h2>
-              <button onClick={() => setShowCreateModal(false)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleAiDraft}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                  style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  AI Draft
+                </button>
+                <button onClick={() => setShowCreateModal(false)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             {/* Tab toggle — always visible regardless of active tab */}
@@ -695,6 +744,13 @@ export function CorrectiveActions() {
                       >
                         Change
                       </button>
+                    </div>
+                  )}
+
+                  {aiDraftApplied && (
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
+                      <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                      <span>AI-generated draft — review and edit before saving</span>
                     </div>
                   )}
 
