@@ -1890,23 +1890,26 @@ export function IncidentLog() {
               </div>
             </label>
 
-            <div className="flex gap-3">
-              <button
-                onClick={resetCreateForm}
-                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={handleCreateIncident}
-                disabled={!newTitle.trim() || !newDescription.trim()}
-                className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] disabled:opacity-40"
-              >
-                {t('incidents.reportIncident')}
-              </button>
-            </div>
+            <button
+              onClick={handleCreateIncident}
+              disabled={!newTitle.trim() || !newDescription.trim()}
+              className="w-full px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] disabled:opacity-40"
+            >
+              {t('incidents.reportIncident')}
+            </button>
           </div>
         )}
+      </div>
+
+      {/* Persistent footer — Cancel always visible regardless of active tab */}
+      <div className="flex justify-end px-6 py-3 border-t border-[#1E2D4D]/10 flex-shrink-0">
+        <button
+          type="button"
+          onClick={resetCreateForm}
+          className="text-sm text-[#1E2D4D]/60 hover:text-[#1E2D4D] px-3 py-1"
+        >
+          {t('common.cancel')}
+        </button>
       </div>
     </Modal>
   );
