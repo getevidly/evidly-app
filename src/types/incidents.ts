@@ -19,6 +19,7 @@ export interface IncidentTemplate {
   suggested_root_cause?: string | null;
   regulation_reference?: string | null;
   recommended_timeframe_days?: number | null;
+  default_incident_type?: string | null;
   is_system: boolean;
   is_active: boolean;
   archived_at?: string | null;
