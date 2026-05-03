@@ -5,6 +5,7 @@ import {
   ChevronDown, ChevronRight, ArrowLeft, Filter, Download, MessageSquare,
   Thermometer, ClipboardList, Bug, Wrench, ShieldAlert, Users as UsersIcon,
   AlertCircle, FileText, Camera, Sparkles, Loader2, CheckCircle,
+  BookOpen, PenLine, Shield, X,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -22,6 +23,7 @@ import { EmptyState } from '../components/EmptyState';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { GhostInput } from '../components/ai/GhostInput';
 import { usePageTitle } from '../hooks/usePageTitle';
+import type { IncidentTemplate } from '../types/incidents';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -519,6 +521,66 @@ export function IncidentLog() {
   const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
   const [aiDraftApplied, setAiDraftApplied] = useState(false);
   const [newRegulatoryRequired, setNewRegulatoryRequired] = useState(false);
+
+  // Template tab state (D2)
+  const [createTab, setCreateTab] = useState<'template' | 'scratch'>('template');
+  const [templateCategory, setTemplateCategory] = useState<'all' | 'food_safety' | 'fire_safety' | 'operational'>('all');
+  const [incidentTemplates, setIncidentTemplates] = useState<IncidentTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+
+  // Fetch templates when modal opens
+  useEffect(() => {
+    if (!showCreateForm) return;
+    let cancelled = false;
+    setTemplatesLoading(true);
+    supabase
+      .from('incident_templates')
+      .select('*')
+      .eq('is_active', true)
+      .order('category', { ascending: true })
+      .order('title', { ascending: true })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error('Error fetching incident templates:', error);
+          setIncidentTemplates([]);
+        } else {
+          setIncidentTemplates((data as IncidentTemplate[]) || []);
+        }
+        setTemplatesLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [showCreateForm]);
+
+  // Map template severity (critical|high|medium|low) to modal Severity (critical|major|minor)
+  const mapTemplateSeverity = (s: string): Severity => {
+    if (s === 'critical') return 'critical';
+    if (s === 'high' || s === 'medium') return 'major';
+    return 'minor';
+  };
+
+  const handleSelectTemplate = (tpl: IncidentTemplate) => {
+    setSelectedTemplateId(tpl.id);
+    setNewTitle(tpl.title);
+    setNewDescription(tpl.description || '');
+    setNewSeverity(mapTemplateSeverity(tpl.severity));
+    if (tpl.default_incident_type) {
+      setNewType(tpl.default_incident_type as IncidentType);
+    }
+    setCreateTab('scratch');
+  };
+
+  const filteredTemplates = templateCategory === 'all'
+    ? incidentTemplates
+    : incidentTemplates.filter(t => t.category === templateCategory);
+
+  const templateCounts = {
+    all: incidentTemplates.length,
+    food_safety: incidentTemplates.filter(t => t.category === 'food_safety').length,
+    fire_safety: incidentTemplates.filter(t => t.category === 'fire_safety').length,
+    operational: incidentTemplates.filter(t => t.category === 'operational').length,
+  };
 
   // Action form
   const [actionText, setActionText] = useState('');
@@ -1549,11 +1611,37 @@ export function IncidentLog() {
   }
 
   // ── Create Incident Modal ──────────────────────────────────────
+  const resetCreateForm = () => {
+    setShowCreateForm(false);
+    setNewTitle('');
+    setNewDescription('');
+    setNewPhotos([]);
+    setAiDraftApplied(false);
+    setNewRegulatoryRequired(false);
+    setCreateTab('template');
+    setTemplateCategory('all');
+    setSelectedTemplateId(null);
+  };
+
+  const CATEGORY_LABELS: Record<'food_safety' | 'fire_safety' | 'operational', string> = {
+    food_safety: 'Food Safety',
+    fire_safety: 'Fire Safety',
+    operational: 'Operational',
+  };
+
+  const SEVERITY_PILL: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    critical: { label: 'CRITICAL', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+    high:     { label: 'HIGH',     color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+    medium:   { label: 'MEDIUM',   color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
+    low:      { label: 'LOW',      color: '#6b7280', bg: '#f9fafb', border: '#e5e7eb' },
+  };
+
   const CreateModal = (
-    <Modal isOpen={!!showCreateForm} onClose={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }} size="lg">
-      <div className="p-4 sm:p-6">
-        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-          <h3 className="text-xl font-bold text-[#1E2D4D]">{t('incidents.reportNewIncident')}</h3>
+    <Modal isOpen={!!showCreateForm} onClose={resetCreateForm} size="lg" className="flex flex-col">
+      {/* Modal header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10 flex-shrink-0">
+        <h2 className="text-lg font-bold text-[#1E2D4D]">Report New Incident</h2>
+        <div className="flex items-center gap-2">
           <button
             onClick={handleAiDraft}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
@@ -1562,127 +1650,263 @@ export function IncidentLog() {
             <Sparkles className="h-4 w-4" />
             AI Draft
           </button>
+          <button onClick={resetCreateForm} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
+            <X size={20} />
+          </button>
         </div>
-        {aiDraftApplied && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg mb-4 text-sm" style={{ backgroundColor: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
-            <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
-            <span>AI-generated draft — review and edit before saving</span>
-          </div>
-        )}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.incidentType')}</label>
-            <select
-              value={newType}
-              onChange={e => setNewType(e.target.value as IncidentType)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-            >
-              {INCIDENT_TYPES.map(tp => (
-                <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.severity')}</label>
-            <div className="flex gap-2">
-              {SEVERITIES.map(s => (
+      </div>
+
+      {/* Tab toggle */}
+      <div className="flex flex-shrink-0 border-b border-[#1E2D4D]/10 px-6">
+        <button
+          type="button"
+          onClick={() => setCreateTab('template')}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+            createTab === 'template'
+              ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+              : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+          }`}
+        >
+          <BookOpen size={14} />
+          From Template
+        </button>
+        <button
+          type="button"
+          onClick={() => setCreateTab('scratch')}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+            createTab === 'scratch'
+              ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+              : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+          }`}
+        >
+          <PenLine size={14} />
+          From Scratch
+        </button>
+      </div>
+
+      {/* Modal body */}
+      <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4">
+        {createTab === 'template' ? (
+          <div className="space-y-4">
+            {/* Category chips */}
+            <div className="flex flex-wrap gap-2">
+              {(['all', 'food_safety', 'fire_safety', 'operational'] as const).map(cat => (
                 <button
-                  key={s.value}
-                  type="button"
-                  onClick={() => setNewSeverity(s.value)}
-                  className="flex-1 py-2 rounded-lg text-sm font-medium border-2 transition-all"
-                  style={{
-                    borderColor: newSeverity === s.value ? s.color : '#e5e7eb',
-                    backgroundColor: newSeverity === s.value ? s.bg : 'white',
-                    color: newSeverity === s.value ? s.color : '#6b7280',
-                  }}
+                  key={cat}
+                  onClick={() => setTemplateCategory(cat)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    templateCategory === cat
+                      ? 'text-white'
+                      : 'text-[#1E2D4D]/70 bg-[#1E2D4D]/5 hover:bg-[#1E2D4D]/10'
+                  }`}
+                  style={templateCategory === cat ? { backgroundColor: '#1E2D4D' } : undefined}
                 >
-                  {severityLabels[s.label] || s.label}
+                  {cat === 'all' ? 'All Templates' : CATEGORY_LABELS[cat]}
+                  <span className="ml-1 opacity-70">({templateCounts[cat]})</span>
                 </button>
               ))}
             </div>
+
+            {/* Template grid */}
+            {templatesLoading ? (
+              <div className="flex items-center justify-center py-12 text-sm text-[#1E2D4D]/50">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Loading templates...
+              </div>
+            ) : filteredTemplates.length === 0 ? (
+              <div className="text-center py-12 text-sm text-[#1E2D4D]/50">
+                No templates in this category yet.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-2 max-h-[50vh] overflow-y-auto">
+                {filteredTemplates.map(tpl => {
+                  const sev = SEVERITY_PILL[tpl.severity] || SEVERITY_PILL.medium;
+                  return (
+                    <button
+                      key={tpl.id}
+                      onClick={() => handleSelectTemplate(tpl)}
+                      className="text-left p-3 rounded-xl border border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15 transition-all"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-sm font-semibold text-[#1E2D4D] truncate">{tpl.title}</h4>
+                            <span
+                              className="text-xs font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0"
+                              style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
+                            >
+                              {sev.label}
+                            </span>
+                          </div>
+                          {tpl.description && (
+                            <p className="text-xs text-[#1E2D4D]/50 line-clamp-1">{tpl.description}</p>
+                          )}
+                          <div className="flex items-center gap-3 mt-1.5 text-xs text-[#1E2D4D]/30">
+                            {tpl.regulation_reference && (
+                              <span className="flex items-center gap-1">
+                                <Shield size={10} />
+                                {tpl.regulation_reference}
+                              </span>
+                            )}
+                            {tpl.recommended_timeframe_days != null && (
+                              <span>{tpl.recommended_timeframe_days}d timeframe</span>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight size={14} className="text-[#1E2D4D]/30 shrink-0 mt-1" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
-            <select
-              value={newLocation}
-              onChange={e => setNewLocation(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-            >
-              {locationOptions.map(l => (
-                <option key={l} value={l}>{l}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-              {t('incidents.titleField')} <span className="text-red-600">*</span>
-            </label>
-            <GhostInput
-              value={newTitle}
-              onChange={e => setNewTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-              placeholder={t('incidents.titlePlaceholder')}
-              fieldLabel="Incident Title"
-              formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
-              entityType="incident"
-            />
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-[#1E2D4D]/80">
-                {t('incidents.descriptionField')} <span className="text-red-600">*</span>
+        ) : (
+          /* From Scratch / Form view */
+          <div className="space-y-4">
+            {selectedTemplateId && (
+              <div className="flex items-center justify-between text-xs bg-indigo-50 px-3 py-2 rounded-lg">
+                <div className="flex items-center gap-2 text-[#1E2D4D]/70">
+                  <BookOpen size={12} className="text-indigo-500" />
+                  Using template: <span className="font-semibold text-[#1E2D4D]">{newTitle}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setSelectedTemplateId(null); setCreateTab('template'); }}
+                  className="text-indigo-600 hover:text-indigo-800 font-medium"
+                >
+                  Change
+                </button>
+              </div>
+            )}
+
+            {aiDraftApplied && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
+                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <span>AI-generated draft — review and edit before saving</span>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.incidentType')}</label>
+              <select
+                value={newType}
+                onChange={e => setNewType(e.target.value as IncidentType)}
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              >
+                {INCIDENT_TYPES.map(tp => (
+                  <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.severity')}</label>
+              <div className="flex gap-2">
+                {SEVERITIES.map(s => (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => setNewSeverity(s.value)}
+                    className="flex-1 py-2 rounded-lg text-sm font-medium border-2 transition-all"
+                    style={{
+                      borderColor: newSeverity === s.value ? s.color : '#e5e7eb',
+                      backgroundColor: newSeverity === s.value ? s.bg : 'white',
+                      color: newSeverity === s.value ? s.color : '#6b7280',
+                    }}
+                  >
+                    {severityLabels[s.label] || s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
+              <select
+                value={newLocation}
+                onChange={e => setNewLocation(e.target.value)}
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              >
+                {locationOptions.map(l => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
+                {t('incidents.titleField')} <span className="text-red-600">*</span>
               </label>
-              <AIAssistButton
-                fieldLabel="Description"
-                context={{ title: newTitle, severity: newSeverity, location: newLocation }}
-                currentValue={newDescription}
-                onGenerated={(text) => { setNewDescription(text); setAiFields(prev => new Set(prev).add('newDescription')); }}
+              <GhostInput
+                value={newTitle}
+                onChange={e => setNewTitle(e.target.value)}
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                placeholder={t('incidents.titlePlaceholder')}
+                fieldLabel="Incident Title"
+                formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
+                entityType="incident"
               />
             </div>
-            <textarea
-              value={newDescription}
-              onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
-              rows={3}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-              placeholder={t('incidents.descriptionPlaceholder')}
-            />
-            {aiFields.has('newDescription') && <AIGeneratedIndicator />}
-          </div>
-          <PhotoEvidence
-            photos={newPhotos}
-            onChange={setNewPhotos}
-            label={t('incidents.photoOfIncident')}
-          />
-          {/* Regulatory report flag */}
-          <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-xl cursor-pointer hover:bg-[#FAF7F0]">
-            <input
-              type="checkbox"
-              checked={newRegulatoryRequired}
-              onChange={e => setNewRegulatoryRequired(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[#1E2D4D]/15 text-red-600 focus:ring-red-500"
-            />
+
             <div>
-              <span className="text-sm font-medium text-[#1E2D4D]/80">Requires regulatory report</span>
-              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Check if this incident requires notification to health department or AHJ</p>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-[#1E2D4D]/80">
+                  {t('incidents.descriptionField')} <span className="text-red-600">*</span>
+                </label>
+                <AIAssistButton
+                  fieldLabel="Description"
+                  context={{ title: newTitle, severity: newSeverity, location: newLocation }}
+                  currentValue={newDescription}
+                  onGenerated={(text) => { setNewDescription(text); setAiFields(prev => new Set(prev).add('newDescription')); }}
+                />
+              </div>
+              <textarea
+                value={newDescription}
+                onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
+                rows={3}
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                placeholder={t('incidents.descriptionPlaceholder')}
+              />
+              {aiFields.has('newDescription') && <AIGeneratedIndicator />}
             </div>
-          </label>
-          <div className="flex gap-3">
-            <button
-              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }}
-              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-            >
-              {t('common.cancel')}
-            </button>
-            <button
-              onClick={handleCreateIncident}
-              disabled={!newTitle.trim() || !newDescription.trim()}
-              className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-bold hover:bg-[#162340] disabled:opacity-40"
-            >
-              {t('incidents.reportIncident')}
-            </button>
+
+            <PhotoEvidence
+              photos={newPhotos}
+              onChange={setNewPhotos}
+              label={t('incidents.photoOfIncident')}
+            />
+
+            <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-xl cursor-pointer hover:bg-[#FAF7F0]">
+              <input
+                type="checkbox"
+                checked={newRegulatoryRequired}
+                onChange={e => setNewRegulatoryRequired(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-[#1E2D4D]/15 text-red-600 focus:ring-red-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-[#1E2D4D]/80">Requires regulatory report</span>
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Check if this incident requires notification to health department or AHJ</p>
+              </div>
+            </label>
+
+            <div className="flex gap-3">
+              <button
+                onClick={resetCreateForm}
+                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={handleCreateIncident}
+                disabled={!newTitle.trim() || !newDescription.trim()}
+                className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] disabled:opacity-40"
+              >
+                {t('incidents.reportIncident')}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </Modal>
   );
