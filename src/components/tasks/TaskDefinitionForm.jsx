@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 
 const TASK_TYPES = [
@@ -43,6 +43,9 @@ const labelClass = 'block text-xs font-semibold text-[var(--text-secondary)] mb-
 
 export function TaskDefinitionForm({ definition, onSave, onClose }) {
   const isEdit = !!definition;
+
+  // H2 — Tab state. Edits skip Template tab and land on Scratch.
+  const [createTab, setCreateTab] = useState(isEdit ? 'scratch' : 'template');
 
   const [form, setForm] = useState({
     name: '',
@@ -132,7 +135,63 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
+          {/* Tab toggle — hidden when editing (edits always work in scratch form) */}
+          {!isEdit && (
+            <div className="flex flex-shrink-0 border-b border-[#1E2D4D]/10 px-5">
+              <button
+                type="button"
+                onClick={() => setCreateTab('template')}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                  createTab === 'template'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                From Template
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreateTab('scratch')}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                  createTab === 'scratch'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                }`}
+              >
+                <PenLine className="w-3.5 h-3.5" />
+                From Scratch
+              </button>
+            </div>
+          )}
+
+          {/* From Template empty state — shown only when on Template tab */}
+          {!isEdit && createTab === 'template' && (
+            <div className="flex flex-col items-center justify-center text-center px-5 py-10 flex-1 min-h-0">
+              <ClipboardList className="w-10 h-10 mb-3 text-[var(--text-tertiary)]" />
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">No starter templates yet</h3>
+              <p className="text-xs text-[var(--text-tertiary)] mb-4 max-w-sm">
+                Pre-built task templates for common kitchen operations are coming soon. For now, build your own from scratch.
+              </p>
+              <button
+                type="button"
+                onClick={() => setCreateTab('scratch')}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white"
+                style={{ backgroundColor: '#1E2D4D' }}
+              >
+                <PenLine className="w-4 h-4" />
+                Build From Scratch
+              </button>
+            </div>
+          )}
+
+          {/* From Scratch form — original form, now gated to scratch tab */}
+          <form
+            onSubmit={handleSubmit}
+            className={`p-5 space-y-4 overflow-y-auto flex-1 min-h-0 ${
+              !isEdit && createTab === 'template' ? 'hidden' : ''
+            }`}
+          >
           {/* Name */}
           <div>
             <label className={labelClass}>Task Name *</label>
