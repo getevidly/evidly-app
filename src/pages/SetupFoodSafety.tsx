@@ -16,7 +16,19 @@ export function SetupFoodSafety() {
   // Step navigation lives here in 3d-3 as local state.
   // 3d-6 replaces this with the useSetupWizard reducer hook
   // (handles persistence, resume, dependency unlocking).
-  const [currentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1);
+
+    const handleNext = () => {
+      setCurrentStep((s) => Math.min(s + 1, TOTAL_STEPS));
+    };
+
+    const handleBack = () => {
+      setCurrentStep((s) => Math.max(s - 1, 1));
+    };
+
+    const handleStepClick = (step: number) => {
+      setCurrentStep(step);
+    };
 
   const handleSaveExit = () => {
     navigate('/dashboard');
@@ -28,7 +40,10 @@ export function SetupFoodSafety() {
       title="Set up your food safety records"
       currentStep={currentStep}
       totalSteps={TOTAL_STEPS}
+      onBack={handleBack}
+      onNext={handleNext}
       onSaveExit={handleSaveExit}
+      onStepClick={handleStepClick}
       isBackHidden={currentStep === 1}
       nextLabel="Next"
     >
