@@ -45,7 +45,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
   const isEdit = !!definition;
 
   // H2 — Tab state. Edits skip Template tab and land on Scratch.
-  const [createTab, setCreateTab] = useState(isEdit ? 'scratch' : 'template');
+  const [createTab, setCreateTab] = useState('scratch');
 
   const [aiDraftApplied, setAiDraftApplied] = useState(false);
 
