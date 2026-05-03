@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList } from 'lucide-react';
+import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList, Sparkles } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 
 const TASK_TYPES = [
@@ -46,6 +46,91 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
 
   // H2 — Tab state. Edits skip Template tab and land on Scratch.
   const [createTab, setCreateTab] = useState(isEdit ? 'scratch' : 'template');
+
+  const [aiDraftApplied, setAiDraftApplied] = useState(false);
+
+  // H3 — Hardcoded drafts keyed on task_type. Refactor to ai-text-assist later.
+  const AI_DRAFT_DATA = {
+    temperature_log: {
+      name: 'Walk-in cooler temperature check',
+      description: 'Record walk-in cooler temperature using calibrated thermometer. Verify reading is at or below 41°F per FDA Food Code 3-501.16.',
+      task_type: 'temperature_log',
+      schedule_type: 'daily',
+      schedule_shifts: ['morning', 'evening'],
+      due_time: '07:00',
+      assigned_to_role: 'kitchen_staff',
+    },
+    checklist: {
+      name: 'Opening checklist',
+      description: 'Complete the daily opening checklist: sanitizer concentration, handwashing stations stocked, hot/cold holding temperatures verified, prep area clean.',
+      task_type: 'checklist',
+      schedule_type: 'daily',
+      schedule_shifts: ['morning'],
+      due_time: '06:30',
+      assigned_to_role: 'kitchen_staff',
+    },
+    corrective_action: {
+      name: 'Review open corrective actions',
+      description: 'Review all open corrective actions, update status, verify completion of overdue items. Escalate any stalled actions to manager.',
+      task_type: 'corrective_action',
+      schedule_type: 'weekly',
+      schedule_days: [1],
+      due_time: '09:00',
+      assigned_to_role: 'kitchen_manager',
+    },
+    document_upload: {
+      name: 'Upload weekly compliance documents',
+      description: 'Upload weekly hood cleaning certificate, pest control service report, and any inspection findings to the document repository.',
+      task_type: 'document_upload',
+      schedule_type: 'weekly',
+      schedule_days: [5],
+      due_time: '15:00',
+      assigned_to_role: 'kitchen_manager',
+    },
+    equipment_check: {
+      name: 'Equipment safety check',
+      description: 'Inspect equipment for damage, leaks, electrical issues, and proper guarding. Verify thermometer calibration and refrigeration gauge readings.',
+      task_type: 'equipment_check',
+      schedule_type: 'weekly',
+      schedule_days: [1],
+      due_time: '08:00',
+      assigned_to_role: 'kitchen_manager',
+    },
+    vendor_service: {
+      name: 'Schedule next vendor service',
+      description: 'Confirm upcoming vendor services (hood cleaning, pest control, fire suppression) are scheduled and certificates of insurance are current.',
+      task_type: 'vendor_service',
+      schedule_type: 'weekly',
+      schedule_days: [1],
+      due_time: '10:00',
+      assigned_to_role: 'kitchen_manager',
+    },
+    custom: {
+      name: 'New recurring task',
+      description: 'Description of what needs to be done, why it matters, and what evidence to capture.',
+      task_type: 'custom',
+      schedule_type: 'daily',
+      due_time: '09:00',
+      assigned_to_role: 'kitchen_staff',
+    },
+  };
+
+  const handleAiDraft = () => {
+    const draft = AI_DRAFT_DATA[form.task_type] || AI_DRAFT_DATA.custom;
+    setForm((prev) => ({
+      ...prev,
+      name: prev.name || draft.name,
+      description: draft.description,
+      task_type: draft.task_type,
+      schedule_type: draft.schedule_type,
+      schedule_days: draft.schedule_days || prev.schedule_days,
+      schedule_shifts: draft.schedule_shifts || prev.schedule_shifts,
+      due_time: draft.due_time,
+      assigned_to_role: draft.assigned_to_role,
+    }));
+    setAiDraftApplied(true);
+    setCreateTab('scratch');
+  };
 
   const [form, setForm] = useState({
     name: '',
@@ -130,9 +215,22 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           <h2 className="text-base font-bold text-[var(--text-primary)]">
             {isEdit ? 'Edit Task Template' : 'New Task Template'}
           </h2>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-[var(--bg-panel)]">
-            <X className="w-5 h-5 text-[var(--text-tertiary)]" />
-          </button>
+          <div className="flex items-center gap-2">
+            {!isEdit && (
+              <button
+                type="button"
+                onClick={handleAiDraft}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
+              >
+                <Sparkles className="h-4 w-4" />
+                AI Draft
+              </button>
+            )}
+            <button onClick={onClose} className="p-1 rounded-lg hover:bg-[var(--bg-panel)]">
+              <X className="w-5 h-5 text-[var(--text-tertiary)]" />
+            </button>
+          </div>
         </div>
 
           {/* Tab toggle — hidden when editing (edits always work in scratch form) */}
@@ -192,6 +290,13 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
               !isEdit && createTab === 'template' ? 'hidden' : ''
             }`}
           >
+            {aiDraftApplied && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
+                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <span>AI-generated draft — review and edit before saving</span>
+              </div>
+            )}
+
           {/* Name */}
           <div>
             <label className={labelClass}>Task Name *</label>
