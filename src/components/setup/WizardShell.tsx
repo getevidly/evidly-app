@@ -25,6 +25,7 @@ export interface WizardShellProps {
   isNextDisabled?: boolean;
   isBackHidden?: boolean;
   nextLabel?: string;
+  onStepClick?: (step: number) => void;
 }
 
 export function WizardShell({
@@ -39,6 +40,7 @@ export function WizardShell({
   isNextDisabled = false,
   isBackHidden = false,
   nextLabel = 'Next',
+  onStepClick,
 }: WizardShellProps) {
   const stepNumbers = Array.from({ length: totalSteps }, (_, i) => i + 1);
 
@@ -75,20 +77,25 @@ export function WizardShell({
                 key={n}
                 className="flex items-center gap-1.5 sm:gap-2 flex-1 last:flex-none"
               >
-                <div
-                  className="rounded-full flex items-center justify-center font-medium flex-shrink-0"
+                <button
+                  type="button"
+                  onClick={onStepClick ? () => onStepClick(n) : undefined}
+                  disabled={!onStepClick}
+                  className="rounded-full flex items-center justify-center font-medium flex-shrink-0 transition-opacity disabled:cursor-default enabled:hover:opacity-80 enabled:cursor-pointer"
                   style={{
                     width: 26,
                     height: 26,
                     fontSize: 12,
                     background: n === currentStep ? GOLD : STEP_INACTIVE_BG,
                     color: n === currentStep ? 'white' : STEP_INACTIVE_TEXT,
+                    border: 'none',
+                    padding: 0,
                   }}
                   aria-current={n === currentStep ? 'step' : undefined}
-                  aria-label={`Step ${n}${n === currentStep ? ' (current)' : ''}`}
+                  aria-label={`Go to step ${n}${n === currentStep ? ' (current)' : ''}`}
                 >
                   {n}
-                </div>
+                </button>
                 {i < stepNumbers.length - 1 && (
                   <div className="flex-1 h-0.5" style={{ background: STEP_TRACK }} />
                 )}
