@@ -61,6 +61,8 @@ interface TempCheckCompletion {
   equipment_id: string;
   equipment_name: string;
   equipment_type: string;
+  menu_item_id?: string | null;
+  menu_item_name?: string | null;
   temperature_value: number;
   is_within_range: boolean;
   recorded_by_name: string;
@@ -592,7 +594,10 @@ export function TempLogs() {
           logged_by,
           input_method,
           shift,
-          log_type
+          log_type,
+          menu_item_id,
+          menu_items:menu_item_id(name),
+          user_profiles:logged_by(full_name)
         `)
         .order('reading_time', { ascending: false })
         .limit(200);
@@ -604,14 +609,21 @@ export function TempLogs() {
         const eqMap = new Map(equipment.map(e => [e.id, e]));
         const formattedHistory = data.map((item: any) => {
           const eq = eqMap.get(item.equipment_id);
+          const menuItemName = item.menu_items?.name ?? null;
+          const userFullName = item.user_profiles?.full_name ?? null;
+          const fallbackName = item.input_method === 'iot_sensor'
+            ? 'IoT Sensor'
+            : item.logged_by ? 'Staff' : 'System';
           return {
             id: item.id,
             equipment_id: item.equipment_id,
             equipment_name: eq?.name || 'Unknown',
             equipment_type: eq?.equipment_type || '',
+            menu_item_id: item.menu_item_id,
+            menu_item_name: menuItemName,
             temperature_value: item.temperature,
             is_within_range: item.temp_pass,
-            recorded_by_name: item.logged_by ? 'Staff' : 'IoT Sensor',
+            recorded_by_name: userFullName ?? fallbackName,
             corrective_action: item.corrective_action,
             created_at: item.reading_time,
             input_method: item.input_method,
@@ -2185,7 +2197,12 @@ export function TempLogs() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <Thermometer className="h-5 w-5 text-[#1E2D4D]/30 mr-2" />
-                              <span className="text-sm font-medium text-[#1E2D4D]">{log.equipment_name}</span>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium text-[#1E2D4D]">{log.equipment_name}</span>
+                                {log.menu_item_name && (
+                                  <span className="text-xs text-[#1E2D4D]/60">{log.menu_item_name}</span>
+                                )}
+                              </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1E2D4D]">
