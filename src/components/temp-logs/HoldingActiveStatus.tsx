@@ -548,12 +548,14 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     >
                       {methodLabel}
                     </span>
-                    <span
-                      className="text-[11px] ml-auto whitespace-nowrap"
-                      style={{ color: cfg.fg, fontWeight: isFail ? 500 : 400 }}
-                    >
-                      {cfg.label}
-                    </span>
+                    {eq.status !== 'setup' && (
+                      <span
+                        className="text-[11px] ml-auto whitespace-nowrap"
+                        style={{ color: cfg.fg, fontWeight: isFail ? 500 : 400 }}
+                      >
+                        {cfg.label}
+                      </span>
+                    )}
                   </div>
                   <div className="relative h-3.5 rounded-full overflow-hidden flex">
                     <div
