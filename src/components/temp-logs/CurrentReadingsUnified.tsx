@@ -166,6 +166,59 @@ export function CurrentReadingsUnified() {
           {summary.totalUnits} units · {summary.totalFoodHeld} food items held
         </span>
       </div>
+      {(() => {
+        const failingRows = [
+          ...rows.hot, ...rows.cold, ...rows.cooldown, ...rows.receiving,
+        ].filter(r => r.status === 'fail');
+        if (failingRows.length === 0) return null;
+        return (
+          <div className="px-4 py-3" style={{ backgroundColor: '#FCEBEB', borderBottom: `0.5px solid ${colors.danger}` }}>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[11px] font-medium uppercase tracking-wider flex-1" style={{ color: '#501313' }}>
+                Failing now
+              </span>
+              <span className="text-[10px]" style={{ color: '#791F1F' }}>
+                {failingRows.length} unit{failingRows.length === 1 ? '' : 's'} need disposition
+              </span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {failingRows.map(row => {
+                const tempStr = row.temperature_value != null ? `${row.temperature_value}\u00B0F` : '--';
+                return (
+                  <div key={`fail-${row.equipment_id}`}>
+                    <div
+                      className="rounded-lg flex items-center gap-3 px-3 py-2"
+                      style={{ backgroundColor: colors.white, border: `0.5px solid ${colors.danger}` }}
+                    >
+                      <span
+                        className="w-2 h-2 rounded-sm flex-shrink-0"
+                        style={{ backgroundColor: VARIANT_DOT_COLOR[row.variant] }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate" style={{ color: colors.textPrimary }}>
+                          {row.equipment_name}
+                        </p>
+                        <p className="text-[11px] truncate" style={{ color: colors.textSecondary }}>
+                          {row.equipment_type.replace(/_/g, ' ')}{row.held_food_count > 0 ? ` \u00B7 ${row.held_food_count} food held` : ''}
+                        </p>
+                      </div>
+                      <RangeBar row={row} />
+                      <span className="text-sm font-medium whitespace-nowrap" style={{ color: colors.danger, minWidth: '48px', textAlign: 'right' }}>
+                        {tempStr}
+                      </span>
+                    </div>
+                    <div className="mt-1 px-3 py-2 rounded-md" style={{ backgroundColor: 'transparent' }}>
+                      <p className="text-[11px]" style={{ color: '#791F1F' }}>
+                        Disposition needed · {row.held_food_count > 0 ? `${row.held_food_count} food item${row.held_food_count === 1 ? '' : 's'} at risk` : 'unit ambient out of range'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
       <VariantSection variant="hot" rows={rows.hot} />
       <VariantSection variant="cold" rows={rows.cold} />
       <VariantSection variant="cooldown" rows={rows.cooldown} />
