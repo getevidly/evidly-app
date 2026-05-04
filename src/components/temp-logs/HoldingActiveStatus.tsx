@@ -203,7 +203,6 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
   useEffect(() => {
     const fetchMenuItems = async () => {
       const orgId = profile?.organization_id;
-      console.log('[HoldingActiveStatus] menu_items effect fired', { variant, orgId, hasProfile: !!profile });
       if (!orgId) return;
       const { data, error } = await supabase
         .from('menu_items')
@@ -212,7 +211,6 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
         .eq('is_active', true)
         .eq('category', variant === 'hot' ? 'hot' : 'cold')
         .order('name', { ascending: true });
-      console.log('[HoldingActiveStatus] menu_items result', { count: data?.length, error: error?.message });
       if (error) {
         console.warn('[HoldingActiveStatus] menu_items fetch error:', error.message);
         return;
