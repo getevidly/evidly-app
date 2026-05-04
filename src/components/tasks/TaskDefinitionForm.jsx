@@ -10,6 +10,8 @@ import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList, Sparkles, UserCircle
 import { Modal } from '../ui/Modal';
 import { useOrgMembers, getMemberName } from '../../hooks/useOrgMembers';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTaskTemplates } from '../../hooks/useTaskTemplates';
+import { useNavigate } from 'react-router-dom';
 
 const TASK_TYPES = [
   { value: 'temperature_log', label: 'Temperature Log' },
@@ -28,6 +30,11 @@ const SCHEDULE_TYPES = [
   { value: 'once', label: 'One Time' },
 ];
 
+const formatRoleLabel = (role) => {
+  if (!role) return '';
+  return role.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+};
+
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SHIFTS = ['morning', 'midday', 'evening', 'closing'];
 
@@ -38,6 +45,9 @@ const labelClass = 'block text-xs font-semibold text-[var(--text-secondary)] mb-
 export function TaskDefinitionForm({ definition, onSave, onClose }) {
   const isEdit = !!definition;
   const { members } = useOrgMembers();
+  const { templates } = useTaskTemplates();
+  const navigate = useNavigate();
+  const [selectedTemplateRole, setSelectedTemplateRole] = useState(null);
   const { user } = useAuth();
   const currentUserId = user?.id ?? null;
 
@@ -142,6 +152,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
     due_soon_minutes: 15,
     escalation_config: { enabled: true, levels: [{ delay_minutes: 30, notify_user_id: '' }] },
     is_active: true,
+    template_id: null,
   });
 
   useEffect(() => {
@@ -159,6 +170,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
         due_soon_minutes: definition.due_soon_minutes ?? 15,
         escalation_config: definition.escalation_config || { enabled: true, levels: [] },
         is_active: definition.is_active ?? true,
+        template_id: definition.template_id || null,
       });
     }
   }, [definition]);
@@ -260,23 +272,79 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
             </div>
           )}
 
-          {/* From Template empty state — shown only when on Template tab */}
+          {/* From Template grid — system templates with in-use detection */}
           {!isEdit && createTab === 'template' && (
-            <div className="flex flex-col items-center justify-center text-center px-5 py-10 flex-1 min-h-0">
-              <ClipboardList className="w-10 h-10 mb-3 text-[var(--text-tertiary)]" />
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">No starter templates yet</h3>
-              <p className="text-xs text-[var(--text-tertiary)] mb-4 max-w-sm">
-                Pre-built task templates for common kitchen operations are coming soon. For now, build your own from scratch.
-              </p>
-              <button
-                type="button"
-                onClick={() => setCreateTab('scratch')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white"
-                style={{ backgroundColor: '#1E2D4D' }}
-              >
-                <PenLine className="w-4 h-4" />
-                Build From Scratch
-              </button>
+            <div className="px-5 py-4 overflow-y-auto flex-1 min-h-0">
+              {templates.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center py-10">
+                  <ClipboardList className="w-10 h-10 mb-3 text-[var(--text-tertiary)]" />
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Loading templates…</h3>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {templates.map((tpl) => {
+                    const scheduleLabel = SCHEDULE_TYPES.find((s) => s.value === tpl.schedule_type)?.label || tpl.schedule_type;
+                    if (tpl.inUse) {
+                      return (
+                        <button
+                          key={tpl.id}
+                          type="button"
+                          onClick={() => {
+                            navigate(`/tasks?edit=${tpl.existingDefinitionId}`);
+                            onClose?.();
+                          }}
+                          className="text-left p-3 rounded-lg border border-[var(--border)] opacity-50 hover:opacity-70 transition-opacity"
+                          style={{ backgroundColor: 'var(--bg-panel)' }}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-1.5">
+                            <span className="text-sm font-semibold text-[var(--text-primary)]">{tpl.name}</span>
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#1E2D4D', color: 'white' }}>{scheduleLabel}</span>
+                          </div>
+                          <p className="text-xs text-[var(--text-tertiary)] line-clamp-1 mb-1.5">{tpl.description}</p>
+                          <div className="text-[11px] font-medium text-[var(--text-tertiary)]">Currently in use</div>
+                        </button>
+                      );
+                    }
+                    return (
+                      <button
+                        key={tpl.id}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({
+                            ...prev,
+                            name: tpl.name,
+                            description: tpl.description || '',
+                            task_type: tpl.task_type || prev.task_type,
+                            schedule_type: tpl.schedule_type || prev.schedule_type,
+                            schedule_days: tpl.schedule_days || [],
+                            schedule_shifts: tpl.schedule_shifts || [],
+                            due_time: tpl.due_time || prev.due_time,
+                            reminder_minutes: tpl.reminder_minutes ?? prev.reminder_minutes,
+                            due_soon_minutes: tpl.due_soon_minutes ?? prev.due_soon_minutes,
+                            escalation_config: tpl.escalation_config || prev.escalation_config,
+                            template_id: tpl.id,
+                          }));
+                          setSelectedTemplateRole(tpl.assigned_to_role || null);
+                          setCreateTab('scratch');
+                        }}
+                        className="text-left p-3 rounded-lg border border-[var(--border)] hover:border-[#1E2D4D] transition-colors"
+                        style={{ backgroundColor: 'var(--bg-panel)' }}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <span className="text-sm font-semibold text-[var(--text-primary)]">{tpl.name}</span>
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#1E2D4D', color: 'white' }}>{scheduleLabel}</span>
+                        </div>
+                        <p className="text-xs text-[var(--text-tertiary)] line-clamp-1 mb-1.5">{tpl.description}</p>
+                        {tpl.regulation_reference && (
+                          <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}>
+                            {tpl.regulation_reference}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -393,6 +461,9 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
             </div>
             <div>
               <label className={labelClass}>Assign to Person</label>
+              {selectedTemplateRole && (
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">Suggested for: {formatRoleLabel(selectedTemplateRole)}</p>
+              )}
               <select className={inputClass} value={form.assigned_to_user_id} onChange={(e) => set('assigned_to_user_id', e.target.value)}>
                 <option value="">Unassigned</option>
                 {members.map((m) => <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>)}
