@@ -448,15 +448,15 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                   <div key={idx} className="flex items-center gap-2">
                     <input
                       type="number"
-                      className={inputClass + ' w-20'}
+                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 w-20 flex-shrink-0"
                       value={level.delay_minutes}
                       onChange={(e) => updateEscalationLevel(idx, 'delay_minutes', e.target.value)}
                       min={1}
                       placeholder="min"
                     />
-                    <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">min →</span>
+                    <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap flex-shrink-0">min →</span>
                     <select
-                      className={inputClass + ' flex-1'}
+                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 flex-1 min-w-0"
                       value={level.notify_role}
                       onChange={(e) => updateEscalationLevel(idx, 'notify_role', e.target.value)}
                     >
@@ -465,7 +465,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                     <button
                       type="button"
                       onClick={() => removeEscalationLevel(idx)}
-                      className="p-1 rounded hover:bg-red-50"
+                      className="p-1 rounded hover:bg-red-50 flex-shrink-0"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
