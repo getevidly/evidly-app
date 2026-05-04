@@ -75,7 +75,7 @@ export function LogHoldingCheck({ open, onClose, equipment, heldItems, queuedIte
         temp_pass: inRange(ambientTemp),
         reading_time: readingTime,
         log_type: isHot ? 'hot_holding' : 'cold_holding',
-        ccp_number: 2,
+
         input_method: 'typed',
         logged_by: profile?.id ?? null,
         menu_item_id: null,
@@ -94,7 +94,7 @@ export function LogHoldingCheck({ open, onClose, equipment, heldItems, queuedIte
           temp_pass: inRange(t),
           reading_time: readingTime,
           log_type: isHot ? 'hot_holding' : 'cold_holding',
-          ccp_number: 2,
+  
           input_method: 'typed',
           logged_by: profile?.id ?? null,
           menu_item_id: item.menu_item_id,
