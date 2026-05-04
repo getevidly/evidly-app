@@ -238,18 +238,6 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
             <div className="flex flex-shrink-0 border-b border-[#1E2D4D]/10 px-5">
               <button
                 type="button"
-                onClick={() => setCreateTab('template')}
-                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
-                  createTab === 'template'
-                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
-                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                From Template
-              </button>
-              <button
-                type="button"
                 onClick={() => setCreateTab('scratch')}
                 className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
                   createTab === 'scratch'
@@ -259,6 +247,18 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
               >
                 <PenLine className="w-3.5 h-3.5" />
                 From Scratch
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreateTab('template')}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                  createTab === 'template'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D] font-semibold'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                From Template
               </button>
             </div>
           )}
