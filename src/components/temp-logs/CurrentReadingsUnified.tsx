@@ -71,7 +71,8 @@ function RangeBar({ row }: { row: UnifiedReadingRow }) {
 function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadingRow[] }) {
   if (rows.length === 0) return null;
   const passing = rows.filter(r => r.status === 'pass').length;
-  const total = rows.length;
+  const measured = rows.filter(r => r.status !== 'awaiting').length;
+  const awaiting = rows.length - measured;
   return (
     <div className="px-4 py-3">
       <div className="flex items-center gap-2 mb-2">
@@ -79,7 +80,9 @@ function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadi
           {VARIANT_LABELS[variant]}
         </span>
         <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-          {passing}/{total} in range
+          {measured === 0
+            ? `${awaiting} awaiting first reading`
+            : `${passing}/${measured} in range${awaiting > 0 ? ` \u00B7 ${awaiting} awaiting` : ''}`}
         </span>
       </div>
       <div className="flex flex-col gap-2">
