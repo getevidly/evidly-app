@@ -63,8 +63,38 @@ export interface TaskDefinition {
   is_active: boolean;
   archived_at?: string | null;
   created_by?: string | null;
+  template_id?: string | null;
   created_at: string;
   updated_at: string;
+}
+
+/** Maps to public.task_definition_templates — derived from PROD schema 2026-05-03. */
+export interface TaskDefinitionTemplate {
+  id: string;
+  name: string;
+  description?: string | null;
+  task_type: TaskType;
+  pillar: TaskPillar;
+  schedule_type: TaskScheduleType;
+  schedule_days?: number[] | null;
+  schedule_shifts?: string[] | null;
+  due_time?: string | null;
+  due_offset_minutes?: number | null;
+  assigned_to_role?: string | null;
+  reminder_minutes: number;
+  due_soon_minutes: number;
+  escalation_config: EscalationConfig;
+  regulation_reference?: string | null;
+  is_system: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Augmented template with usage state for the From Template grid (I1). */
+export interface TaskDefinitionTemplateWithUsage extends TaskDefinitionTemplate {
+  inUse: boolean;
+  existingDefinitionId: string | null;
 }
 
 /** Maps to public.task_instances — derived from PROD schema 2026-04-27. */
