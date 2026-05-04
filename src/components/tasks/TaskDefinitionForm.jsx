@@ -6,8 +6,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList, Sparkles } from 'lucide-react';
+import { X, Plus, Trash2, BookOpen, PenLine, ClipboardList, Sparkles, UserCircle2 } from 'lucide-react';
 import { Modal } from '../ui/Modal';
+import { useOrgMembers, getMemberName } from '../../hooks/useOrgMembers';
+import { useAuth } from '../../contexts/AuthContext';
 
 const TASK_TYPES = [
   { value: 'temperature_log', label: 'Temperature Log' },
@@ -29,32 +31,15 @@ const SCHEDULE_TYPES = [
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SHIFTS = ['morning', 'midday', 'evening', 'closing'];
 
-// Roles that can be assigned a task (includes kitchen_staff — they do the work)
-const ASSIGNABLE_ROLES = [
-  { value: 'chef', label: 'Chef' },
-  { value: 'compliance_manager', label: 'Compliance Manager' },
-  { value: 'executive', label: 'Executive' },
-  { value: 'facilities_manager', label: 'Facilities Manager' },
-  { value: 'kitchen_manager', label: 'Kitchen Manager' },
-  { value: 'kitchen_staff', label: 'Kitchen Staff' },
-  { value: 'owner_operator', label: 'Owner/Operator' },
-];
-
-// Roles that can be escalated TO (excludes kitchen_staff — escalation only goes up)
-const ESCALATION_ROLES = [
-  { value: 'chef', label: 'Chef' },
-  { value: 'compliance_manager', label: 'Compliance Manager' },
-  { value: 'executive', label: 'Executive' },
-  { value: 'facilities_manager', label: 'Facilities Manager' },
-  { value: 'kitchen_manager', label: 'Kitchen Manager' },
-  { value: 'owner_operator', label: 'Owner/Operator' },
-];
 
 const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
 const labelClass = 'block text-xs font-semibold text-[var(--text-secondary)] mb-1';
 
 export function TaskDefinitionForm({ definition, onSave, onClose }) {
   const isEdit = !!definition;
+  const { members } = useOrgMembers();
+  const { user } = useAuth();
+  const currentUserId = user?.id ?? null;
 
   // H2 — Tab state. Edits skip Template tab and land on Scratch.
   const [createTab, setCreateTab] = useState('scratch');
@@ -70,7 +55,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'daily',
       schedule_shifts: ['morning', 'evening'],
       due_time: '07:00',
-      assigned_to_role: 'kitchen_staff',
+      assigned_to_role: '',
     },
     checklist: {
       name: 'Opening checklist',
@@ -79,7 +64,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'daily',
       schedule_shifts: ['morning'],
       due_time: '06:30',
-      assigned_to_role: 'kitchen_staff',
+      assigned_to_role: '',
     },
     corrective_action: {
       name: 'Review open corrective actions',
@@ -88,7 +73,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'weekly',
       schedule_days: [1],
       due_time: '09:00',
-      assigned_to_role: 'kitchen_manager',
+      assigned_to_role: '',
     },
     document_upload: {
       name: 'Upload weekly compliance documents',
@@ -97,7 +82,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'weekly',
       schedule_days: [5],
       due_time: '15:00',
-      assigned_to_role: 'kitchen_manager',
+      assigned_to_role: '',
     },
     equipment_check: {
       name: 'Equipment safety check',
@@ -106,7 +91,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'weekly',
       schedule_days: [1],
       due_time: '08:00',
-      assigned_to_role: 'kitchen_manager',
+      assigned_to_role: '',
     },
     vendor_service: {
       name: 'Schedule next vendor service',
@@ -115,7 +100,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_type: 'weekly',
       schedule_days: [1],
       due_time: '10:00',
-      assigned_to_role: 'kitchen_manager',
+      assigned_to_role: '',
     },
     custom: {
       name: 'New recurring task',
@@ -123,7 +108,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       task_type: 'custom',
       schedule_type: 'daily',
       due_time: '09:00',
-      assigned_to_role: 'kitchen_staff',
+      assigned_to_role: '',
     },
   };
 
@@ -138,7 +123,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
       schedule_days: draft.schedule_days || prev.schedule_days,
       schedule_shifts: draft.schedule_shifts || prev.schedule_shifts,
       due_time: draft.due_time,
-      assigned_to_role: draft.assigned_to_role,
+      assigned_to_user_id: '',
     }));
     setAiDraftApplied(true);
     setCreateTab('scratch');
@@ -152,10 +137,10 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
     schedule_days: [],
     schedule_shifts: [],
     due_time: '',
-    assigned_to_role: '',
+    assigned_to_user_id: '',
     reminder_minutes: 30,
     due_soon_minutes: 15,
-    escalation_config: { enabled: true, levels: [{ delay_minutes: 30, notify_role: 'kitchen_manager' }] },
+    escalation_config: { enabled: true, levels: [{ delay_minutes: 30, notify_user_id: '' }] },
     is_active: true,
   });
 
@@ -169,7 +154,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
         schedule_days: definition.schedule_days || [],
         schedule_shifts: definition.schedule_shifts || [],
         due_time: definition.due_time || '',
-        assigned_to_role: definition.assigned_to_role || '',
+        assigned_to_user_id: definition.assigned_to_user_id || '',
         reminder_minutes: definition.reminder_minutes ?? 30,
         due_soon_minutes: definition.due_soon_minutes ?? 15,
         escalation_config: definition.escalation_config || { enabled: true, levels: [] },
@@ -195,7 +180,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
   };
 
   const addEscalationLevel = () => {
-    const levels = [...form.escalation_config.levels, { delay_minutes: 60, notify_role: 'owner_operator' }];
+    const levels = [...form.escalation_config.levels, { delay_minutes: 60, notify_user_id: '' }];
     set('escalation_config', { ...form.escalation_config, levels });
   };
 
@@ -407,10 +392,10 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
               />
             </div>
             <div>
-              <label className={labelClass}>Assign to Role</label>
-              <select className={inputClass} value={form.assigned_to_role} onChange={(e) => set('assigned_to_role', e.target.value)}>
-                <option value="">Anyone</option>
-                {ASSIGNABLE_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+              <label className={labelClass}>Assign to Person</label>
+              <select className={inputClass} value={form.assigned_to_user_id} onChange={(e) => set('assigned_to_user_id', e.target.value)}>
+                <option value="">Unassigned</option>
+                {members.map((m) => <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>)}
               </select>
             </div>
           </div>
@@ -469,10 +454,18 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                     <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap flex-shrink-0">min →</span>
                     <select
                       className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 flex-1 min-w-0"
-                      value={level.notify_role}
-                      onChange={(e) => updateEscalationLevel(idx, 'notify_role', e.target.value)}
+                      value={level.notify_user_id}
+                      onChange={(e) => updateEscalationLevel(idx, 'notify_user_id', e.target.value)}
                     >
-                      {ESCALATION_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                      <option value="">Select person…</option>
+                      {members
+                        .filter((m) => {
+                          if (m.id === currentUserId) return false;
+                          if (m.id === form.assigned_to_user_id) return false;
+                          const earlierIds = form.escalation_config.levels.slice(0, idx).map((l) => l.notify_user_id);
+                          return !earlierIds.includes(m.id);
+                        })
+                        .map((m) => <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>)}
                     </select>
                     <button
                       type="button"
@@ -483,13 +476,22 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                     </button>
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={addEscalationLevel}
-                  className="flex items-center gap-1 text-xs text-[#1E2D4D] font-medium hover:underline"
-                >
-                  <Plus className="w-3.5 h-3.5" /> Add Level
-                </button>
+                {(() => {
+                  const usedIds = new Set(form.escalation_config.levels.map((l) => l.notify_user_id).filter(Boolean));
+                  if (currentUserId) usedIds.add(currentUserId);
+                  if (form.assigned_to_user_id) usedIds.add(form.assigned_to_user_id);
+                  const eligible = members.filter((m) => !usedIds.has(m.id));
+                  return (
+                    <button
+                      type="button"
+                      onClick={addEscalationLevel}
+                      disabled={eligible.length === 0}
+                      className="flex items-center gap-1 text-xs text-[#1E2D4D] font-medium hover:underline disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Level
+                    </button>
+                  );
+                })()}
               </div>
             )}
           </div>
