@@ -37,6 +37,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 import { isStorageEquipment, isFreezerType } from '../lib/equipmentHelpers';
 import { HoldingActiveStatus } from '../components/temp-logs/HoldingActiveStatus';
+import { CurrentReadingsUnified } from '../components/temp-logs/CurrentReadingsUnified';
 
 interface TemperatureEquipment {
   id: string;
@@ -1500,168 +1501,9 @@ export function TempLogs() {
           ))}
         </div>
 
-        {/* Equipment Tab */}
-        {activeTab === 'equipment' && (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${colors.navy}10` }}>
-                <Gauge className="h-5 w-5" style={{ color: colors.navy }} />
-              </div>
-              <div className="flex items-center gap-1">
-                <h2 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.navy }}>Current Readings</h2>
-                <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
-              </div>
-            </div>
-            {/* Filters Section */}
-            <div data-demo-allow style={{ background: colors.white, borderRadius: radius.xl, border: `1px solid ${colors.borderLight}`, boxShadow: shadows.sm, padding: 16 }}>
-              <div className="flex flex-wrap gap-4 items-end">
-                <div className="flex-1 min-w-0 sm:min-w-[200px]">
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
-                  <select
-                    value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  >
-                    <option value="all">{t('common.allLocations')}</option>
-                    {locations.map(loc => (
-                      <option key={loc} value={loc}>{loc}</option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="flex-1 min-w-0 sm:min-w-[200px]">
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.sortBy')}</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  >
-                    <option value="outOfRange">{t('tempLogs.outOfRangeFirst')}</option>
-                    <option value="alphabetical">{t('tempLogs.alphabetical')}</option>
-                    <option value="mostRecent">{t('tempLogs.mostRecent')}</option>
-                  </select>
-                </div>
-
-                <button
-                  onClick={() => setShowAddCurrentModal(true)}
-                  className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium shadow-sm flex items-center space-x-2"
-                >
-                  <Pencil className="h-4 w-4" />
-                  <span>Add Reading</span>
-                </button>
-                <button
-                  onClick={handleOpenBatchLog}
-                  className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium shadow-sm flex items-center space-x-2"
-                >
-                  <Plus className="h-5 w-5" />
-                  <span>{t('tempLogs.batchLog')}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Logging Progress */}
-            {isDemoMode && (
-              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[#1E2D4D]/80">Today's Progress</span>
-                  <span className="text-sm font-bold text-[#1E2D4D]">{getLoggedTodayCount()} of {getStorageEquipmentCount()} logged</span>
-                </div>
-                <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2.5">
-                  <div
-                    className="h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${getStorageEquipmentCount() > 0 ? (getLoggedTodayCount() / getStorageEquipmentCount()) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === getStorageEquipmentCount() ? '#16a34a' : '#A08C5A' }}
-                  />
-                </div>
-                {getLoggedTodayCount() === getStorageEquipmentCount() && (
-                  <p className="text-xs text-green-600 font-medium mt-1">All equipment logged — great job!</p>
-                )}
-              </div>
-            )}
-
-            {/* Status Legend */}
-            <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50">
-              <span className="flex items-center gap-1">
-                <Check className="h-3.5 w-3.5 text-green-600" />
-                <span className="font-medium text-green-700">In Range</span>
-                <InfoTooltip content="Reading falls within the safe temperature range for this equipment type." />
-              </span>
-            </div>
-
-            {/* Equipment Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {getSortedEquipment().map((eq) => {
-                const eqState = getEquipmentState(eq);
-                return (
-                <div key={eq.id} className={`bg-white rounded-xl border border-[#1E2D4D]/10 p-6 ${
-                  eqState === 'logged' ? 'border-2 border-green-300' :
-                  eqState === 'outOfRange' ? 'border-2 border-red-300' :
-                  'border-2 border-amber-300'
-                }`}>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-3 rounded-lg" style={{ backgroundColor: '#e8f0f5' }}>
-                        {getEquipmentIcon(eq.equipment_type)}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{eq.name}</h3>
-                        <p className="text-sm text-[#1E2D4D]/50 capitalize">{eq.equipment_type.replace('_', ' ')}</p>
-                        {eq.location && <p className="text-xs text-[#1E2D4D]/30">{eq.location}</p>}
-                      </div>
-                    </div>
-                  </div>
-
-                  {eq.last_check && (
-                    <div className="mb-3">
-                      <div className="text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">
-                        {eq.last_check.temperature_value}°{eq.unit}
-                      </div>
-                      <p className="text-xs text-[#1E2D4D]/50">
-                        {eq.last_check.recorded_by_name && (
-                          <span className="font-medium text-[#1E2D4D]/70">{eq.last_check.recorded_by_name}</span>
-                        )}
-                        {eq.last_check.recorded_by_name && ' · '}
-                        {getRelativeTime(eq.last_check.created_at)}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="mb-4">{getStatusBadge(eq)}</div>
-
-                  <div className="text-sm text-[#1E2D4D]/70 mb-4">
-                    {isFreezerType(eq.equipment_type)
-                      ? `Must remain: 0°${eq.unit} or below`
-                      : `${t('tempLogs.range')} ${eq.min_temp}°${eq.unit} - ${eq.max_temp}°${eq.unit}`
-                    }
-                  </div>
-
-                  <button
-                    onClick={() => handleLogTemp(eq)}
-                    className={`w-full px-4 py-2 min-h-[44px] text-white rounded-lg transition-colors font-medium shadow-sm ${
-                      eqState === 'outOfRange' ? 'bg-red-600 hover:bg-red-700' :
-                      eqState === 'pending' ? 'bg-amber-500 hover:bg-amber-600' :
-                      'bg-[#1E2D4D] hover:bg-[#162340]'
-                    }`}
-                  >
-                    {eqState === 'outOfRange' ? t('tempLogs.logTempNowWarning') :
-                     eqState === 'pending' ? 'Log Now' :
-                     t('tempLogs.logTemp')}
-                  </button>
-                </div>
-              );
-              })}
-
-              {equipment.length === 0 && (
-                <div className="col-span-full">
-                  <EmptyState
-                    icon={Thermometer}
-                    title={!isDemoMode ? 'No temperature logs yet' : 'No equipment configured yet'}
-                    description={!isDemoMode ? 'Start logging to track trends.' : 'Add temperature monitoring equipment to start logging readings.'}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Equipment Tab — unified Current Readings */}
+        {activeTab === 'equipment' && <CurrentReadingsUnified />}
 
         {/* Receiving Tab */}
         {activeTab === 'receiving' && (
