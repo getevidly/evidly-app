@@ -190,7 +190,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
 
     const { data: eqData, error: eqError } = await supabase
       .from('temperature_equipment')
-      .select('id, name, equipment_type, min_temp, max_temp, unit, location')
+      .select('id, name, equipment_type, min_temp, max_temp, unit')
       .eq('location_id', locationId)
       .eq('is_active', true);
 
