@@ -382,7 +382,10 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     );
   } else {
     const passCount = equipmentWithStatus.filter(e => e.status === 'pass').length;
+    const measuredCount = equipmentWithStatus.filter(e => e.last_check?.temperature_value != null).length;
     const totalActive = equipmentWithStatus.length;
+    const allMeasured = measuredCount === totalActive;
+    const noneMeasured = measuredCount === 0;
 
     content = (
       <div className="space-y-4">
@@ -421,11 +424,21 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
               <span
                 className="px-2.5 py-1 rounded-full text-xs font-semibold"
                 style={{
-                  backgroundColor: passCount === totalActive ? colors.successSoft : colors.warningSoft,
-                  color: passCount === totalActive ? colors.success : colors.warning,
+                  backgroundColor: noneMeasured
+                    ? colors.bgPanel
+                    : (allMeasured && passCount === totalActive)
+                      ? colors.successSoft
+                      : colors.warningSoft,
+                  color: noneMeasured
+                    ? colors.textSecondary
+                    : (allMeasured && passCount === totalActive)
+                      ? colors.success
+                      : colors.warning,
                 }}
               >
-                {passCount}/{totalActive} In Range
+                {noneMeasured
+                  ? `Awaiting readings`
+                  : `${passCount}/${measuredCount} in range`}
               </span>
             </div>
           </div>
@@ -489,8 +502,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     <div
                       className="flex items-center justify-center text-[9px] font-medium tracking-wide"
                       style={{
-                        backgroundColor: '#F09595',
-                        color: '#501313',
+                        backgroundColor: isHot ? '#F09595' : '#C0DD97',
+                        color: isHot ? '#501313' : '#173404',
                         flex: isHot ? '0 0 35%' : '1',
                       }}
                     >
@@ -499,8 +512,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     <div
                       className="flex items-center justify-center text-[9px] font-medium tracking-wide"
                       style={{
-                        backgroundColor: '#C0DD97',
-                        color: '#173404',
+                        backgroundColor: isHot ? '#C0DD97' : '#F09595',
+                        color: isHot ? '#173404' : '#501313',
                         flex: isHot ? '1' : '0 0 35%',
                       }}
                     >
