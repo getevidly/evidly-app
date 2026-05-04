@@ -76,7 +76,7 @@ export function LogHoldingCheck({ open, onClose, equipment, heldItems, queuedIte
         reading_time: readingTime,
         log_type: isHot ? 'hot_holding' : 'cold_holding',
         step: isHot ? 'hot_holding' : 'cold_holding',
-        input_method: 'typed',
+        input_method: 'manual',
         logged_by: profile?.id ?? null,
         menu_item_id: null,
       });
@@ -95,7 +95,7 @@ export function LogHoldingCheck({ open, onClose, equipment, heldItems, queuedIte
           reading_time: readingTime,
           log_type: isHot ? 'hot_holding' : 'cold_holding',
           step: isHot ? 'hot_holding' : 'cold_holding',
-          input_method: 'typed',
+          input_method: 'manual',
           logged_by: profile?.id ?? null,
           menu_item_id: item.menu_item_id,
         });
