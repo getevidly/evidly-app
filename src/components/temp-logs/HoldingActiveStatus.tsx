@@ -190,7 +190,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
 
     const { data: eqData, error: eqError } = await supabase
       .from('temperature_equipment')
-      .select('id, name, equipment_type, min_temp, max_temp, unit')
+      .select('id, name, equipment_type, min_temp, max_temp, unit, default_input_method')
       .eq('location_id', locationId)
       .eq('is_active', true);
 
@@ -434,59 +434,89 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
           <div className="space-y-2">
             {equipmentWithStatus.map(eq => {
               const cfg = STATUS_CONFIG[eq.status];
+              const tempValue = eq.last_check?.temperature_value;
+              const hasReading = tempValue != null;
+              const tempColor = eq.status === 'pass' ? colors.success
+                              : eq.status === 'fail' ? colors.danger
+                              : colors.textSecondary;
+              const isFail = eq.status === 'fail' || eq.status === 'overdue';
+              const threshold = isHot ? 135 : 41;
+              const barMin = isHot ? 100 : 20;
+              const barMax = isHot ? 180 : 60;
+              const dotPercent = hasReading
+                ? Math.max(2, Math.min(98, ((tempValue - barMin) / (barMax - barMin)) * 100))
+                : null;
+              const methodLabel = (eq.default_input_method || 'typed').charAt(0).toUpperCase() + (eq.default_input_method || 'typed').slice(1);
               return (
                 <div
                   key={eq.id}
-                  className="rounded-xl border px-3 py-2.5 flex flex-col sm:flex-row sm:items-center gap-2"
+                  className="rounded-xl border p-4 flex flex-col gap-3"
                   style={{
                     backgroundColor: colors.white,
-                    borderColor: eq.status === 'fail' || eq.status === 'overdue'
-                      ? `${colors.danger}40`
-                      : colors.border,
+                    borderColor: isFail ? `${colors.danger}80` : colors.border,
+                    borderWidth: isFail ? '1px' : '0.5px',
                   }}
                 >
-                  {/* Left: name + age */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: colors.textPrimary }}>
+                  <div className="flex items-start gap-3">
+                    <p className="text-base font-medium flex-1 min-w-0 truncate" style={{ color: colors.textPrimary }}>
                       {eq.name}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
-                      <Clock className="inline h-3 w-3 mr-1" />
-                      {formatTimeSince(eq.lastReadingAge)}
-                    </p>
-                  </div>
-
-                  {/* Middle: temperature */}
-                  <div className="text-right sm:text-center px-2">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{
-                        color: eq.status === 'pass' ? colors.success
-                             : eq.status === 'fail' ? colors.danger
-                             : colors.textSecondary,
-                      }}
-                    >
-                      {eq.last_check?.temperature_value != null
-                        ? `${eq.last_check.temperature_value}\u00B0F`
-                        : '--'}
+                    <span className="text-xl font-semibold whitespace-nowrap" style={{ color: tempColor }}>
+                      {hasReading ? `${tempValue}\u00B0F` : '--'}
                     </span>
                   </div>
-
-                  {/* Right: status pill + log button */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
-                      className="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap min-w-[5.5rem] text-center"
-                      style={{ backgroundColor: cfg.bg, color: cfg.fg }}
+                      className="px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap"
+                      style={{ backgroundColor: colors.bgPanel, color: colors.textSecondary }}
+                    >
+                      {eq.equipment_type.replace(/_/g, ' ')}
+                    </span>
+                    <span
+                      className="px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap"
+                      style={{ backgroundColor: '#E1F5EE', color: '#0F6E56' }}
+                    >
+                      {methodLabel}
+                    </span>
+                    <span
+                      className="text-[11px] ml-auto whitespace-nowrap"
+                      style={{ color: cfg.fg, fontWeight: isFail ? 500 : 400 }}
                     >
                       {cfg.label}
                     </span>
-                    <button
-                      onClick={() => handleRowLog(eq.id)}
-                      className="px-2.5 py-1 text-xs font-semibold rounded-lg whitespace-nowrap transition-all active:scale-[0.98]"
-                      style={{ backgroundColor: colors.navy, color: colors.white }}
+                  </div>
+                  <div className="relative h-3.5 rounded-full overflow-hidden flex">
+                    <div
+                      className="flex items-center justify-center text-[9px] font-medium tracking-wide"
+                      style={{
+                        backgroundColor: '#F09595',
+                        color: '#501313',
+                        flex: isHot ? '0 0 35%' : '1',
+                      }}
                     >
-                      + Log
-                    </button>
+                      {isHot ? 'UNSAFE' : `SAFE \u2264 ${threshold}\u00B0F`}
+                    </div>
+                    <div
+                      className="flex items-center justify-center text-[9px] font-medium tracking-wide"
+                      style={{
+                        backgroundColor: '#C0DD97',
+                        color: '#173404',
+                        flex: isHot ? '1' : '0 0 35%',
+                      }}
+                    >
+                      {isHot ? `SAFE \u2265 ${threshold}\u00B0F` : 'UNSAFE'}
+                    </div>
+                    {dotPercent != null && (
+                      <div
+                        className="absolute w-5 h-5 rounded-full bg-white"
+                        style={{
+                          top: '-3px',
+                          left: `${dotPercent}%`,
+                          transform: 'translateX(-50%)',
+                          border: `2px solid ${colors.textPrimary}`,
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               );
