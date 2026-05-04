@@ -38,7 +38,7 @@ export function useOrgMembers() {
     try {
       const { data, error } = await supabase
         .from('user_location_access')
-        .select('user_id, role, profiles:user_id(full_name, email)')
+        .select('user_id, role, user_profiles:user_id(full_name, email)')
         .eq('organization_id', orgId);
 
       if (error) {
@@ -53,14 +53,14 @@ export function useOrgMembers() {
       for (const row of (data ?? []) as Array<{
         user_id: string;
         role: string | null;
-        profiles: { full_name: string | null; email: string | null } | null;
+        user_profiles: { full_name: string | null; email: string | null } | null;
       }>) {
         if (seen.has(row.user_id)) continue;
         seen.add(row.user_id);
         result.push({
           id: row.user_id,
-          full_name: row.profiles?.full_name ?? null,
-          email: row.profiles?.email ?? null,
+          full_name: row.user_profiles?.full_name ?? null,
+          email: row.user_profiles?.email ?? null,
           role: row.role,
         });
       }
