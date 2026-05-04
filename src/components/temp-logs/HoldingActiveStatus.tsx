@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Thermometer, Clock, AlertTriangle, Loader2, Plus, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useRole } from '../../contexts/RoleContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useApiQuery } from '../../hooks/api/useApiQuery';
 import { useLogTemperature } from '../../hooks/api/useTemperatureLogs';
 import { isHoldingCold, isHoldingHot } from '../../lib/equipmentHelpers';
@@ -9,6 +10,7 @@ import { TEMP_CHECK_INTERVALS } from '../../config/tempConfig';
 import { colors, shadows } from '../../lib/designSystem';
 import { EmptyState } from '../EmptyState';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from './AddHoldingReadingModal';
+import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import type { TemperatureEquipment } from './types';
 
@@ -173,6 +175,7 @@ interface HoldingActiveStatusProps {
 
 export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
   const { getAccessibleLocations } = useRole();
+  const { profile } = useAuth();
   const locationId = getAccessibleLocations()[0]?.locationId ?? '';
 
   // Modal state
@@ -187,6 +190,35 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
   // Expanded unit ids — smart default: 1-2 units expanded, 3+ collapsed, failures always expanded
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Queued items per unit (added but not yet probed) — equipmentId → array of menu_items
+  const [queuedItems, setQueuedItems] = useState<Map<string, Array<{ menu_item_id: string; menu_item_name: string }>>>(new Map());
+
+  // Active picker state — which unit's add-item picker is open
+  const [pickerEquipmentId, setPickerEquipmentId] = useState<string | null>(null);
+
+  // Menu items for this org filtered by category matching variant
+  const [menuItems, setMenuItems] = useState<Array<{ id: string; name: string; category: string }>>([]);
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      const orgId = profile?.organization_id;
+      if (!orgId) return;
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('id, name, category')
+        .eq('organization_id', orgId)
+        .eq('is_active', true)
+        .eq('category', variant === 'hot' ? 'hot' : 'cold')
+        .order('name', { ascending: true });
+      if (error) {
+        console.warn('[HoldingActiveStatus] menu_items fetch error:', error.message);
+        return;
+      }
+      setMenuItems(data ?? []);
+    };
+    fetchMenuItems();
+  }, [variant, profile?.organization_id]);
 
   // Fetch holding equipment for this location
   const queryFn = useCallback(async (): Promise<TemperatureEquipment[]> => {
@@ -674,10 +706,83 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                             );
                           })}
                         </div>
-                      ) : (
-                        <p className="text-xs" style={{ color: colors.textMuted }}>
-                          Nothing held in this unit right now.
-                        </p>
+                      ) : (eq.held_items && eq.held_items.length === 0 && (queuedItems.get(eq.id)?.length ?? 0) === 0) ? (
+                        <div className="flex flex-col items-center py-3">
+                          <p className="text-xs mb-2" style={{ color: colors.textMuted }}>
+                            Nothing held in this unit right now
+                          </p>
+                          <button
+                            type="button"
+                            className="px-4 py-2 rounded-lg text-xs font-medium"
+                            style={{
+                              border: `1px dashed ${colors.border}`,
+                              color: colors.navy,
+                              backgroundColor: 'transparent',
+                              minHeight: '44px',
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPickerEquipmentId(eq.id);
+                            }}
+                          >
+                            + Add first item
+                          </button>
+                        </div>
+                      ) : null}
+
+                      {(queuedItems.get(eq.id)?.length ?? 0) > 0 && (
+                        <div className="mt-2 flex flex-col gap-1.5">
+                          {queuedItems.get(eq.id)!.map((q) => (
+                            <div
+                              key={q.menu_item_id}
+                              className="flex items-center gap-2 px-2 py-1.5 rounded-md"
+                              style={{ backgroundColor: `${colors.navy}06` }}
+                            >
+                              <span className="text-sm flex-1" style={{ color: colors.textPrimary }}>
+                                {q.menu_item_name}
+                              </span>
+                              <span className="text-[10px] uppercase tracking-wide" style={{ color: colors.textMuted }}>
+                                Queued
+                              </span>
+                              <button
+                                type="button"
+                                className="text-[10px] px-1.5"
+                                style={{ color: colors.textMuted }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQueuedItems(prev => {
+                                    const next = new Map(prev);
+                                    const arr = (next.get(eq.id) ?? []).filter(x => x.menu_item_id !== q.menu_item_id);
+                                    if (arr.length === 0) next.delete(eq.id);
+                                    else next.set(eq.id, arr);
+                                    return next;
+                                  });
+                                }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {((eq.held_items && eq.held_items.length > 0) || (queuedItems.get(eq.id)?.length ?? 0) > 0) && (
+                        <button
+                          type="button"
+                          className="mt-3 px-3 py-2 rounded-lg text-xs font-medium w-full"
+                          style={{
+                            border: `1px dashed ${colors.border}`,
+                            color: colors.navy,
+                            backgroundColor: 'transparent',
+                            minHeight: '44px',
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPickerEquipmentId(eq.id);
+                          }}
+                        >
+                          + Add another item
+                        </button>
                       )}
                     </div>
                   )}
@@ -713,6 +818,58 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
         onSave={handleSaveReading}
         defaultEquipmentId={defaultEquipmentId}
       />
+      <Modal
+        isOpen={pickerEquipmentId !== null}
+        onClose={() => setPickerEquipmentId(null)}
+        size="sm"
+      >
+        <div className="p-5">
+          <h3 className="text-base font-semibold mb-1" style={{ color: colors.textPrimary }}>
+            Add item to {equipment?.find(e => e.id === pickerEquipmentId)?.name ?? 'unit'}
+          </h3>
+          <p className="text-xs mb-4" style={{ color: colors.textMuted }}>
+            Pick what's currently in this unit. You'll probe each item when you log the next check.
+          </p>
+          {menuItems.length === 0 ? (
+            <p className="text-sm py-4 text-center" style={{ color: colors.textMuted }}>
+              No {variant} menu items configured yet.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-1 max-h-[60vh] overflow-y-auto">
+              {menuItems
+                .filter((item) => {
+                  const queued = queuedItems.get(pickerEquipmentId ?? '') ?? [];
+                  return !queued.some(q => q.menu_item_id === item.id);
+                })
+                .map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="text-left px-3 py-3 rounded-md text-sm"
+                  style={{
+                    border: `0.5px solid ${colors.border}`,
+                    color: colors.textPrimary,
+                    backgroundColor: 'transparent',
+                    minHeight: '44px',
+                  }}
+                  onClick={() => {
+                    if (!pickerEquipmentId) return;
+                    setQueuedItems(prev => {
+                      const next = new Map(prev);
+                      const existing = next.get(pickerEquipmentId) ?? [];
+                      next.set(pickerEquipmentId, [...existing, { menu_item_id: item.id, menu_item_name: item.name }]);
+                      return next;
+                    });
+                    setPickerEquipmentId(null);
+                  }}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
     </>
   );
 }
