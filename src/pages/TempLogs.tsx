@@ -212,9 +212,11 @@ export function TempLogs() {
       if (isDemoMode) {
         loadDemoData();
       } else if (profile?.organization_id) {
-        fetchEquipment();
-        fetchUsers();
-        fetchHistory();
+        (async () => {
+          await fetchEquipment();
+          await fetchUsers();
+          await fetchHistory();
+        })();
       } else {
         // Live mode but no org — show empty state
         setEquipment([]);
