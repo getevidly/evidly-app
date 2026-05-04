@@ -36,7 +36,7 @@ export function MyTasksToday() {
           <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>My Tasks Today</h3>
         </div>
         <p className="text-xs" style={{ color: TEXT_TERTIARY }}>
-          No tasks assigned. Task Manager will generate tasks from active templates.
+          No tasks assigned. Tasks will be generated from active templates.
         </p>
       </div>
     );

@@ -87,7 +87,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
   },
   taskManager: {
-    id: 'task-manager', label: 'Task Manager', path: '/tasks', icon: '📝',    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
+    id: 'task-manager', label: 'Tasks', path: '/tasks', icon: '📝',    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
   },
   correctiveActions: {
     id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',

@@ -114,7 +114,7 @@ export default function TaskManager() {
             <ClipboardList className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Task Manager</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Tasks</h1>
             <p className="text-sm text-[var(--text-secondary)]">
               {isDemoMode
                 ? 'Task scheduling and assignment'
