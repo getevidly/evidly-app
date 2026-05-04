@@ -201,6 +201,16 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
   // Active log-check sheet state — which unit's log sheet is open
   const [logCheckEquipmentId, setLogCheckEquipmentId] = useState<string | null>(null);
 
+  // In-picker selection (uncommitted) — menu_item_ids checked in the open picker
+  const [pickerSelection, setPickerSelection] = useState<Set<string>>(new Set());
+
+  // Reset selection whenever picker closes
+  useEffect(() => {
+    if (pickerEquipmentId === null) {
+      setPickerSelection(new Set());
+    }
+  }, [pickerEquipmentId]);
+
   // Menu items for this org filtered by category matching variant
   const [menuItems, setMenuItems] = useState<Array<{ id: string; name: string; category: string }>>([]);
 
@@ -422,6 +432,21 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
   const handleAddReading = () => {
     setDefaultEquipmentId(undefined);
     setShowAddModal(true);
+  };
+
+  const handlePickerDone = () => {
+    if (!pickerEquipmentId || pickerSelection.size === 0) return;
+    const eqId = pickerEquipmentId;
+    const selected = menuItems.filter(item => pickerSelection.has(item.id));
+    const additions = selected.map(item => ({ menu_item_id: item.id, menu_item_name: item.name }));
+    setQueuedItems(prev => {
+      const next = new Map(prev);
+      const existing = next.get(eqId) ?? [];
+      next.set(eqId, [...existing, ...additions]);
+      return next;
+    });
+    setPickerEquipmentId(null);
+    setLogCheckEquipmentId(eqId);
   };
 
   // ── Theme ──────────────────────────────────────
@@ -860,52 +885,127 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
         onClose={() => setPickerEquipmentId(null)}
         size="sm"
       >
-        <div className="p-5">
-          <h3 className="text-base font-semibold mb-1" style={{ color: colors.textPrimary }}>
-            Add item to {equipment?.find(e => e.id === pickerEquipmentId)?.name ?? 'unit'}
-          </h3>
-          <p className="text-xs mb-4" style={{ color: colors.textMuted }}>
-            Pick what's currently in this unit. You'll probe each item when you log the next check.
-          </p>
-          {menuItems.length === 0 ? (
-            <p className="text-sm py-4 text-center" style={{ color: colors.textMuted }}>
-              No {variant} menu items configured yet.
-            </p>
-          ) : (
-            <div className="flex flex-col gap-1 max-h-[60vh] overflow-y-auto">
-              {menuItems
-                .filter((item) => {
-                  const queued = queuedItems.get(pickerEquipmentId ?? '') ?? [];
-                  return !queued.some(q => q.menu_item_id === item.id);
-                })
-                .map((item) => (
+        {(() => {
+          const eq = equipment?.find(e => e.id === pickerEquipmentId);
+          const alreadyQueuedIds = new Set(
+            (queuedItems.get(pickerEquipmentId ?? '') ?? []).map(q => q.menu_item_id)
+          );
+          const availableItems = menuItems.filter(item => !alreadyQueuedIds.has(item.id));
+          return (
+            <div className="flex flex-col" style={{ maxHeight: '80vh' }}>
+              <div className="p-5 pb-3">
+                <p className="text-[10px] uppercase tracking-wide font-medium mb-1" style={{ color: colors.textSecondary }}>
+                  Add items to
+                </p>
+                <h3 className="text-base font-semibold mb-1" style={{ color: colors.textPrimary }}>
+                  {eq?.name ?? 'unit'}
+                </h3>
+                <p className="text-xs" style={{ color: colors.textMuted }}>
+                  Select items currently in this unit. Tap Done to queue them for the next log check.
+                </p>
+              </div>
+              <div className="flex-1 overflow-y-auto px-5">
+                {availableItems.length === 0 && alreadyQueuedIds.size === 0 ? (
+                  <p className="text-sm py-6 text-center" style={{ color: colors.textMuted }}>
+                    No items available
+                  </p>
+                ) : availableItems.length === 0 && alreadyQueuedIds.size > 0 ? (
+                  <p className="text-sm py-6 text-center" style={{ color: colors.textMuted }}>
+                    All items already queued
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-1">
+                    {availableItems.map(item => {
+                      const isSelected = pickerSelection.has(item.id);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className="text-left px-3 py-3 rounded-md text-sm flex items-center gap-3"
+                          style={{
+                            border: isSelected ? `0.5px solid ${colors.info}` : `0.5px solid ${colors.border}`,
+                            borderLeft: isSelected ? `3px solid ${colors.info}` : `3px solid transparent`,
+                            color: colors.textPrimary,
+                            backgroundColor: isSelected ? colors.infoSoft : 'transparent',
+                            minHeight: '44px',
+                          }}
+                          onClick={() => {
+                            setPickerSelection(prev => {
+                              const next = new Set(prev);
+                              if (next.has(item.id)) next.delete(item.id);
+                              else next.add(item.id);
+                              return next;
+                            });
+                          }}
+                        >
+                          <span
+                            className="w-4 h-4 rounded-sm flex items-center justify-center flex-shrink-0"
+                            style={{
+                              border: isSelected ? 'none' : `1.5px solid ${colors.textSecondary}`,
+                              backgroundColor: isSelected ? colors.info : 'transparent',
+                            }}
+                          >
+                            {isSelected && (
+                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            )}
+                          </span>
+                          {item.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {alreadyQueuedIds.size > 0 && availableItems.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-[10px] uppercase tracking-wide font-medium mb-2" style={{ color: colors.textTertiary }}>
+                      Already queued
+                    </p>
+                    <div className="flex flex-col gap-1">
+                      {menuItems.filter(item => alreadyQueuedIds.has(item.id)).map(item => (
+                        <div
+                          key={item.id}
+                          className="px-3 py-3 rounded-md text-sm flex items-center gap-3 opacity-50"
+                          style={{ border: `0.5px solid ${colors.border}`, minHeight: '44px' }}
+                        >
+                          <span
+                            className="w-4 h-4 rounded-sm flex-shrink-0"
+                            style={{ border: `1.5px solid ${colors.textMuted}` }}
+                          />
+                          <span className="flex-1" style={{ color: colors.textSecondary }}>{item.name}</span>
+                          <span className="text-[10px]" style={{ color: colors.textMuted }}>already queued</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div
+                className="px-5 py-3 flex items-center justify-between"
+                style={{ borderTop: `0.5px solid ${colors.border}` }}
+              >
+                <span className="text-xs" style={{ color: colors.textSecondary }}>
+                  {pickerSelection.size} selected
+                </span>
                 <button
-                  key={item.id}
                   type="button"
-                  className="text-left px-3 py-3 rounded-md text-sm"
+                  className="px-4 py-2 rounded-md text-sm font-medium"
                   style={{
-                    border: `0.5px solid ${colors.border}`,
-                    color: colors.textPrimary,
-                    backgroundColor: 'transparent',
+                    backgroundColor: pickerSelection.size === 0 ? `${colors.navy}40` : colors.navy,
+                    color: 'white',
                     minHeight: '44px',
+                    cursor: pickerSelection.size === 0 ? 'not-allowed' : 'pointer',
                   }}
-                  onClick={() => {
-                    if (!pickerEquipmentId) return;
-                    setQueuedItems(prev => {
-                      const next = new Map(prev);
-                      const existing = next.get(pickerEquipmentId) ?? [];
-                      next.set(pickerEquipmentId, [...existing, { menu_item_id: item.id, menu_item_name: item.name }]);
-                      return next;
-                    });
-                    setPickerEquipmentId(null);
-                  }}
+                  disabled={pickerSelection.size === 0}
+                  onClick={handlePickerDone}
                 >
-                  {item.name}
+                  Done
                 </button>
-              ))}
+              </div>
             </div>
-          )}
-        </div>
+          );
+        })()}
       </Modal>
     </>
   );
