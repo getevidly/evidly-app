@@ -10,6 +10,7 @@ import { TEMP_CHECK_INTERVALS } from '../../config/tempConfig';
 import { colors, shadows } from '../../lib/designSystem';
 import { EmptyState } from '../EmptyState';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from './AddHoldingReadingModal';
+import { LogHoldingCheck } from './LogHoldingCheck';
 import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import type { TemperatureEquipment } from './types';
@@ -196,6 +197,9 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
 
   // Active picker state — which unit's add-item picker is open
   const [pickerEquipmentId, setPickerEquipmentId] = useState<string | null>(null);
+
+  // Active log-check sheet state — which unit's log sheet is open
+  const [logCheckEquipmentId, setLogCheckEquipmentId] = useState<string | null>(null);
 
   // Menu items for this org filtered by category matching variant
   const [menuItems, setMenuItems] = useState<Array<{ id: string; name: string; category: string }>>([]);
@@ -767,22 +771,39 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       )}
 
                       {((eq.held_items && eq.held_items.length > 0) || (queuedItems.get(eq.id)?.length ?? 0) > 0) && (
-                        <button
-                          type="button"
-                          className="mt-3 px-3 py-2 rounded-lg text-xs font-medium w-full"
-                          style={{
-                            border: `1px dashed ${colors.border}`,
-                            color: colors.navy,
-                            backgroundColor: 'transparent',
-                            minHeight: '44px',
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPickerEquipmentId(eq.id);
-                          }}
-                        >
-                          + Add another item
-                        </button>
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            type="button"
+                            className="flex-1 px-3 py-2 rounded-lg text-sm font-medium"
+                            style={{
+                              backgroundColor: colors.navy,
+                              color: 'white',
+                              minHeight: '44px',
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setLogCheckEquipmentId(eq.id);
+                            }}
+                          >
+                            Log Check
+                          </button>
+                          <button
+                            type="button"
+                            className="px-3 py-2 rounded-lg text-xs font-medium"
+                            style={{
+                              border: `1px dashed ${colors.border}`,
+                              color: colors.navy,
+                              backgroundColor: 'transparent',
+                              minHeight: '44px',
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPickerEquipmentId(eq.id);
+                            }}
+                          >
+                            + Add item
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
@@ -817,6 +838,22 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
         isHoldingHot={isHoldingHot}
         onSave={handleSaveReading}
         defaultEquipmentId={defaultEquipmentId}
+      />
+      <LogHoldingCheck
+        open={logCheckEquipmentId !== null}
+        onClose={() => setLogCheckEquipmentId(null)}
+        equipment={equipment?.find(e => e.id === logCheckEquipmentId) ?? null}
+        heldItems={equipmentWithStatus.find(e => e.id === logCheckEquipmentId)?.held_items ?? []}
+        queuedItems={queuedItems.get(logCheckEquipmentId ?? '') ?? []}
+        variant={variant}
+        onSaved={() => {
+          setQueuedItems(prev => {
+            const next = new Map(prev);
+            if (logCheckEquipmentId) next.delete(logCheckEquipmentId);
+            return next;
+          });
+          refetch?.();
+        }}
       />
       <Modal
         isOpen={pickerEquipmentId !== null}
