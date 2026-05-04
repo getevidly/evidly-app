@@ -2476,6 +2476,7 @@ export function TempLogs() {
 
           // Weekly compliance trend
           const weeklyData: { week: string; rate: number; count: number }[] = [];
+          const weekFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           for (let w = 3; w >= 0; w--) {
             const weekStart = new Date();
             weekStart.setDate(weekStart.getDate() - (w + 1) * 7);
@@ -2486,8 +2487,10 @@ export function TempLogs() {
               return d >= weekStart && d < weekEnd;
             });
             const weekPass = weekLogs.filter(h => h.is_within_range).length;
+            const labelEnd = new Date(weekEnd);
+            labelEnd.setDate(labelEnd.getDate() - 1);
             weeklyData.push({
-              week: `Week ${4 - w}`,
+              week: w === 0 ? `This week` : `${weekFmt(weekStart)}–${weekFmt(labelEnd)}`,
               rate: weekLogs.length > 0 ? Math.round((weekPass / weekLogs.length) * 100) : 0,
               count: weekLogs.length,
             });
