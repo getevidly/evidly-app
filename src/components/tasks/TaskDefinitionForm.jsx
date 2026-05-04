@@ -29,8 +29,18 @@ const SCHEDULE_TYPES = [
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SHIFTS = ['morning', 'midday', 'evening', 'closing'];
 
-const ROLES = [
+// Roles that can be assigned a task (includes kitchen_staff — they do the work)
+const ASSIGNABLE_ROLES = [
   { value: 'kitchen_staff', label: 'Kitchen Staff' },
+  { value: 'chef', label: 'Chef' },
+  { value: 'kitchen_manager', label: 'Kitchen Manager' },
+  { value: 'owner_operator', label: 'Owner/Operator' },
+  { value: 'compliance_manager', label: 'Compliance Manager' },
+  { value: 'facilities_manager', label: 'Facilities Manager' },
+];
+
+// Roles that can be escalated TO (excludes kitchen_staff — escalation only goes up)
+const ESCALATION_ROLES = [
   { value: 'chef', label: 'Chef' },
   { value: 'kitchen_manager', label: 'Kitchen Manager' },
   { value: 'owner_operator', label: 'Owner/Operator' },
@@ -398,7 +408,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
               <label className={labelClass}>Assign to Role</label>
               <select className={inputClass} value={form.assigned_to_role} onChange={(e) => set('assigned_to_role', e.target.value)}>
                 <option value="">Anyone</option>
-                {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                {ASSIGNABLE_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
           </div>
@@ -460,7 +470,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                       value={level.notify_role}
                       onChange={(e) => updateEscalationLevel(idx, 'notify_role', e.target.value)}
                     >
-                      {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                      {ESCALATION_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                     </select>
                     <button
                       type="button"
