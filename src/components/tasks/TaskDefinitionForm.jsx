@@ -31,21 +31,23 @@ const SHIFTS = ['morning', 'midday', 'evening', 'closing'];
 
 // Roles that can be assigned a task (includes kitchen_staff — they do the work)
 const ASSIGNABLE_ROLES = [
-  { value: 'kitchen_staff', label: 'Kitchen Staff' },
   { value: 'chef', label: 'Chef' },
-  { value: 'kitchen_manager', label: 'Kitchen Manager' },
-  { value: 'owner_operator', label: 'Owner/Operator' },
   { value: 'compliance_manager', label: 'Compliance Manager' },
+  { value: 'executive', label: 'Executive' },
   { value: 'facilities_manager', label: 'Facilities Manager' },
+  { value: 'kitchen_manager', label: 'Kitchen Manager' },
+  { value: 'kitchen_staff', label: 'Kitchen Staff' },
+  { value: 'owner_operator', label: 'Owner/Operator' },
 ];
 
 // Roles that can be escalated TO (excludes kitchen_staff — escalation only goes up)
 const ESCALATION_ROLES = [
   { value: 'chef', label: 'Chef' },
+  { value: 'compliance_manager', label: 'Compliance Manager' },
+  { value: 'executive', label: 'Executive' },
+  { value: 'facilities_manager', label: 'Facilities Manager' },
   { value: 'kitchen_manager', label: 'Kitchen Manager' },
   { value: 'owner_operator', label: 'Owner/Operator' },
-  { value: 'compliance_manager', label: 'Compliance Manager' },
-  { value: 'facilities_manager', label: 'Facilities Manager' },
 ];
 
 const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
