@@ -205,16 +205,44 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
       variant === 'hot' ? isHoldingHot(eq.equipment_type) : isHoldingCold(eq.equipment_type)
     );
 
+    const heldWindowMs = (variant === 'hot' ? 4 : 8) * 60 * 60 * 1000;
+    const heldCutoff = new Date(Date.now() - heldWindowMs).toISOString();
+
     const withChecks = await Promise.all(
       filtered.map(async (eq) => {
         const { data: lastCheck } = await supabase
           .from('temperature_logs')
           .select('temperature, reading_time, temp_pass')
           .eq('equipment_id', eq.id)
+          .is('menu_item_id', null)
           .is('superseded_by_log_id', null)
           .order('reading_time', { ascending: false })
           .limit(1)
           .maybeSingle();
+
+        const { data: foodLogs } = await supabase
+          .from('temperature_logs')
+          .select('temperature, reading_time, temp_pass, menu_item_id, menu_items:menu_item_id(name)')
+          .eq('equipment_id', eq.id)
+          .not('menu_item_id', 'is', null)
+          .is('superseded_by_log_id', null)
+          .gte('reading_time', heldCutoff)
+          .order('reading_time', { ascending: false });
+
+        const seenItems = new Set<string>();
+        const held_items = (foodLogs ?? [])
+          .filter((row: { menu_item_id: string | null; menu_items: { name: string } | null }) => {
+            if (!row.menu_item_id || seenItems.has(row.menu_item_id)) return false;
+            seenItems.add(row.menu_item_id);
+            return true;
+          })
+          .map((row: { temperature: number; reading_time: string; temp_pass: boolean; menu_item_id: string; menu_items: { name: string } | null }) => ({
+            menu_item_id: row.menu_item_id,
+            menu_item_name: row.menu_items?.name ?? 'Unknown item',
+            temperature: row.temperature,
+            reading_time: row.reading_time,
+            temp_pass: row.temp_pass,
+          }));
 
         return {
           ...eq,
@@ -225,6 +253,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                 is_within_range: lastCheck.temp_pass,
               }
             : undefined,
+          held_items,
         } as TemperatureEquipment;
       })
     );
@@ -596,9 +625,60 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       style={{ borderColor: colors.border }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <p className="text-xs" style={{ color: colors.textMuted }}>
-                        Food items held in this unit will appear here.
+                      <p className="text-[10px] uppercase tracking-wide font-medium mb-2" style={{ color: colors.textTertiary }}>
+                        Food held in this unit
                       </p>
+                      {(eq.held_items && eq.held_items.length > 0) ? (
+                        <div className="flex flex-col gap-2">
+                          {eq.held_items.map((item) => {
+                            const itemAgeMin = (Date.now() - new Date(item.reading_time).getTime()) / (1000 * 60);
+                            const itemDotPercent = Math.max(2, Math.min(98, ((item.temperature - barMin) / (barMax - barMin)) * 100));
+                            const itemColor = item.temp_pass ? colors.success : colors.danger;
+                            return (
+                              <div key={item.menu_item_id} className="py-1">
+                                <div className="flex items-center gap-3 mb-1.5">
+                                  <span className="text-sm flex-1 min-w-0 truncate" style={{ color: colors.textPrimary }}>
+                                    {item.menu_item_name}
+                                  </span>
+                                  <span className="text-sm font-medium whitespace-nowrap" style={{ color: itemColor }}>
+                                    {item.temperature}°F
+                                  </span>
+                                  <span className="text-[10px] whitespace-nowrap" style={{ color: colors.textMuted }}>
+                                    {formatTimeSince(itemAgeMin)}
+                                  </span>
+                                </div>
+                                <div className="relative h-2.5 rounded-full overflow-hidden flex">
+                                  <div
+                                    style={{
+                                      backgroundColor: isHot ? '#F09595' : '#C0DD97',
+                                      flex: isHot ? '0 0 35%' : '1',
+                                    }}
+                                  />
+                                  <div
+                                    style={{
+                                      backgroundColor: isHot ? '#C0DD97' : '#F09595',
+                                      flex: isHot ? '1' : '0 0 35%',
+                                    }}
+                                  />
+                                  <div
+                                    className="absolute w-3.5 h-3.5 rounded-full bg-white"
+                                    style={{
+                                      top: '-2px',
+                                      left: `${itemDotPercent}%`,
+                                      transform: 'translateX(-50%)',
+                                      border: `1.5px solid ${colors.textPrimary}`,
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-xs" style={{ color: colors.textMuted }}>
+                          Nothing held in this unit right now.
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

@@ -1,3 +1,11 @@
+export interface HeldFoodItem {
+  menu_item_id: string;
+  menu_item_name: string;
+  temperature: number;
+  reading_time: string;
+  temp_pass: boolean;
+}
+
 export interface TemperatureEquipment {
   id: string;
   name: string;
@@ -6,12 +14,14 @@ export interface TemperatureEquipment {
   max_temp: number;
   unit: string;
   location?: string;
+  default_input_method?: string;
   last_check?: {
     temperature_value: number;
     created_at: string;
     is_within_range: boolean;
     recorded_by_name?: string;
   };
+  held_items?: HeldFoodItem[];
 }
 
 export interface User {
