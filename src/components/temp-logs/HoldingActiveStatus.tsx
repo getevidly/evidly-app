@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Thermometer, Clock, AlertTriangle, Loader2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Thermometer, Clock, AlertTriangle, Loader2, Plus, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useRole } from '../../contexts/RoleContext';
 import { useApiQuery } from '../../hooks/api/useApiQuery';
@@ -184,6 +184,10 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     Map<string, { temp: number; time: string; pass: boolean }>
   >(new Map());
 
+  // Expanded unit ids — smart default: 1-2 units expanded, 3+ collapsed, failures always expanded
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [hasInitialized, setHasInitialized] = useState(false);
+
   // Fetch holding equipment for this location
   const queryFn = useCallback(async (): Promise<TemperatureEquipment[]> => {
     if (!locationId) return [];
@@ -262,6 +266,37 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
       };
     });
   }, [equipment, optimisticUpdates]);
+
+  // Initial expansion: 1-2 units → all expanded, 3+ → all collapsed, failures always expanded
+  useEffect(() => {
+    if (hasInitialized || equipmentWithStatus.length === 0) return;
+    const initial = new Set<string>();
+    const totalUnits = equipmentWithStatus.length;
+    const expandAll = totalUnits <= 2;
+    equipmentWithStatus.forEach(eq => {
+      const isFailing = eq.status === 'fail' || eq.status === 'overdue';
+      if (expandAll || isFailing) initial.add(eq.id);
+    });
+    setExpandedIds(initial);
+    setHasInitialized(true);
+  }, [equipmentWithStatus, hasInitialized]);
+
+  // Auto-expand any unit that newly enters fail/overdue after initial render
+  useEffect(() => {
+    if (!hasInitialized) return;
+    setExpandedIds(prev => {
+      let changed = false;
+      const next = new Set(prev);
+      equipmentWithStatus.forEach(eq => {
+        const isFailing = eq.status === 'fail' || eq.status === 'overdue';
+        if (isFailing && !next.has(eq.id)) {
+          next.add(eq.id);
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [equipmentWithStatus, hasInitialized]);
 
   // Handle log save — optimistic + persist
   const handleSaveReading = async (data: HoldingReadingSaveData) => {
@@ -447,6 +482,15 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
           <div className="space-y-2">
             {equipmentWithStatus.map(eq => {
               const cfg = STATUS_CONFIG[eq.status];
+              const expanded = expandedIds.has(eq.id);
+              const toggleExpanded = () => {
+                setExpandedIds(prev => {
+                  const next = new Set(prev);
+                  if (next.has(eq.id)) next.delete(eq.id);
+                  else next.add(eq.id);
+                  return next;
+                });
+              };
               const tempValue = eq.last_check?.temperature_value;
               const hasReading = tempValue != null;
               const tempColor = eq.status === 'pass' ? colors.success
@@ -463,11 +507,20 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
               return (
                 <div
                   key={eq.id}
-                  className="rounded-xl border p-4 flex flex-col gap-3"
+                  className="rounded-xl border p-4 flex flex-col gap-3 cursor-pointer"
                   style={{
                     backgroundColor: colors.white,
                     borderColor: isFail ? `${colors.danger}80` : colors.border,
                     borderWidth: isFail ? '1px' : '0.5px',
+                  }}
+                  onClick={toggleExpanded}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleExpanded();
+                    }
                   }}
                 >
                   <div className="flex items-start gap-3">
@@ -477,6 +530,10 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     <span className="text-xl font-semibold whitespace-nowrap" style={{ color: tempColor }}>
                       {hasReading ? `${tempValue}\u00B0F` : '--'}
                     </span>
+                    {expanded
+                      ? <ChevronDown className="h-4 w-4 flex-shrink-0" style={{ color: colors.textTertiary }} />
+                      : <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: colors.textTertiary }} />
+                    }
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
@@ -531,6 +588,17 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       />
                     )}
                   </div>
+                  {expanded && (
+                    <div
+                      className="pt-3 mt-1 border-t"
+                      style={{ borderColor: colors.border }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <p className="text-xs" style={{ color: colors.textMuted }}>
+                        Food items held in this unit will appear here.
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}
