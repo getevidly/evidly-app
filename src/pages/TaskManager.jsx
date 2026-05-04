@@ -16,6 +16,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useTaskInstances } from '../hooks/useTaskInstances';
 import { useTaskDefinitions } from '../hooks/useTaskDefinitions';
+import { useOrgMembers, getMemberName } from '../hooks/useOrgMembers';
 import { TaskInstanceCard } from '../components/tasks/TaskInstanceCard';
 import { TaskDefinitionForm } from '../components/tasks/TaskDefinitionForm';
 import { NotificationPrefs } from '../components/tasks/NotificationPrefs';
@@ -45,6 +46,7 @@ export default function TaskManager() {
 
   const { tasks, myTasks, unassignedTasks, overdueTasks, loading, startTask, completeTask, skipTask } = useTaskInstances();
   const { definitions, loading: defsLoading, create, update, toggleActive } = useTaskDefinitions();
+  const { members } = useOrgMembers();
 
   const [tab, setTab] = useState('today');
   const [filter, setFilter] = useState('all');
@@ -366,7 +368,7 @@ export default function TaskManager() {
                     <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
                       <span className="capitalize">{def.schedule_type}</span>
                       <span>{def.task_type.replace('_', ' ')}</span>
-                      {def.assigned_to_role && <span>→ {def.assigned_to_role.replace('_', ' ')}</span>}
+                      {def.assigned_to_user_id && <span>→ {getMemberName(members, def.assigned_to_user_id)}</span>}
                     </div>
                   </div>
                   <button
