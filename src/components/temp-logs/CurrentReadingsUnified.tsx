@@ -7,6 +7,7 @@
  * empty styling (FU1.6), and variant tab drill-downs land in later slices.
  */
 
+import { Link } from 'react-router-dom';
 import { useUnifiedCurrentReadings, type UnifiedReadingRow } from '../../hooks/useUnifiedCurrentReadings';
 import { useCurrentReadingsSummary } from '../../hooks/useCurrentReadingsSummary';
 import { Loader2 } from 'lucide-react';
@@ -135,6 +136,28 @@ export function CurrentReadingsUnified() {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
+      </div>
+    );
+  }
+
+  if (summary.totalUnits === 0) {
+    return (
+      <div className="rounded-xl flex flex-col items-center justify-center text-center py-16 px-4"
+        style={{ backgroundColor: colors.white, border: `0.5px solid ${colors.border}` }}
+      >
+        <p className="text-sm font-medium mb-1" style={{ color: colors.textPrimary }}>
+          No temperature equipment configured yet
+        </p>
+        <p className="text-xs mb-4 max-w-sm" style={{ color: colors.textSecondary }}>
+          Add holding equipment, walk-ins, and cooldown stations to start tracking temperatures here.
+        </p>
+        <Link
+          to="/admin/equipment"
+          className="px-4 py-2 rounded-md text-sm font-medium inline-flex items-center"
+          style={{ backgroundColor: colors.navy, color: 'white', minHeight: '44px' }}
+        >
+          Configure equipment
+        </Link>
       </div>
     );
   }
