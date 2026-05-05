@@ -479,10 +479,29 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     );
   } else {
     const passCount = equipmentWithStatus.filter(e => e.status === 'pass').length;
-    const measuredCount = equipmentWithStatus.filter(e => e.last_check?.temperature_value != null).length;
+    const failCount = equipmentWithStatus.filter(e => e.status === 'fail').length;
+    const overdueCount = equipmentWithStatus.filter(e => e.status === 'overdue').length;
+    const staleCount = equipmentWithStatus.filter(e => e.status === 'stale').length;
+    const setupCount = equipmentWithStatus.filter(e => e.status === 'setup').length;
+    const measuredCount = passCount + failCount;
     const totalActive = equipmentWithStatus.length;
     const allMeasured = measuredCount === totalActive;
     const noneMeasured = measuredCount === 0;
+
+    let headerLabel: string;
+    if (measuredCount > 0) {
+      const parts = [`${passCount}/${measuredCount} in range`];
+      if (overdueCount > 0) parts.push(`${overdueCount} awaiting reading`);
+      if (staleCount > 0) parts.push(`${staleCount} stale`);
+      if (setupCount > 0) parts.push(`${setupCount} awaiting first reading`);
+      headerLabel = parts.join(' \u00B7 ');
+    } else {
+      const parts: string[] = [];
+      if (overdueCount > 0) parts.push(`${overdueCount} awaiting reading`);
+      if (staleCount > 0) parts.push(`${staleCount} stale`);
+      if (setupCount > 0) parts.push(`${setupCount} awaiting first reading`);
+      headerLabel = parts.length > 0 ? parts.join(' \u00B7 ') : 'No equipment configured';
+    }
 
     content = (
       <div className="space-y-4">
@@ -533,9 +552,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       : colors.warning,
                 }}
               >
-                {noneMeasured
-                  ? `Awaiting readings`
-                  : `${passCount}/${measuredCount} in range`}
+                {headerLabel}
               </span>
             </div>
           </div>
