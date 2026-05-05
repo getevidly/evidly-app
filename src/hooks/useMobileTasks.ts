@@ -97,8 +97,8 @@ export function useMobileTasks(orgId: string | undefined, role: UserRole): UseMo
                 .limit(20),
               supabase
                 .from('temperature_logs')
-                .select('equipment_id')
-                .eq('facility_id', orgId)
+                .select('equipment_id, temperature_equipment!inner(organization_id)')
+                .eq('temperature_equipment.organization_id', orgId)
                 .gte('reading_time', today + 'T00:00:00')
                 .lte('reading_time', today + 'T23:59:59'),
             ]);

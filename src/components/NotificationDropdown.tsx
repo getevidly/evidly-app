@@ -156,8 +156,8 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
 
     const { data: todayLogs } = await supabase
       .from('temperature_logs')
-      .select('*')
-      .eq('facility_id', orgId)
+      .select('*, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order('reading_time', { ascending: false })
       .limit(3);

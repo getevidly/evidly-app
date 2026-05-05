@@ -127,8 +127,8 @@ export default function FoodSafetyAnalysis() {
 
     let query = supabase
       .from('temperature_logs')
-      .select('temp_pass, reading_time')
-      .eq('facility_id', orgId)
+      .select('temp_pass, reading_time, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', priorStart);
 
     const { data } = await query;
@@ -240,8 +240,8 @@ export default function FoodSafetyAnalysis() {
 
     const { data } = await supabase
       .from('temperature_logs')
-      .select('log_type, temp_pass, reading_time')
-      .eq('facility_id', orgId)
+      .select('log_type, temp_pass, reading_time, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', priorStart);
 
     if (!data || data.length === 0) {
@@ -278,8 +278,8 @@ export default function FoodSafetyAnalysis() {
 
     const { data } = await supabase
       .from('temperature_logs')
-      .select('equipment_id, log_type, reading_time')
-      .eq('facility_id', orgId)
+      .select('equipment_id, log_type, reading_time, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .eq('temp_pass', false)
       .gte('reading_time', periodStart)
       .order('reading_time', { ascending: false });

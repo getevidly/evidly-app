@@ -136,8 +136,8 @@ export default function FoodSafetyTrajectory() {
     // Temperature logs (all are "scheduled" in the sense they were recorded)
     const { data: tempData } = await supabase
       .from('temperature_logs')
-      .select('temp_pass')
-      .eq('facility_id', orgId)
+      .select('temp_pass, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', periodStart);
 
     const clTotal = clData ? clData.length : 0;
@@ -216,8 +216,8 @@ export default function FoodSafetyTrajectory() {
 
     const { data } = await supabase
       .from('temperature_logs')
-      .select('temp_pass')
-      .eq('facility_id', orgId)
+      .select('temp_pass, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', periodStart);
 
     if (!data || data.length === 0) {
@@ -244,8 +244,8 @@ export default function FoodSafetyTrajectory() {
 
     const { data: tempData } = await supabase
       .from('temperature_logs')
-      .select('temp_pass, reading_time')
-      .eq('facility_id', orgId)
+      .select('temp_pass, reading_time, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', orgId)
       .gte('reading_time', periodStart);
 
     // Build daily data points

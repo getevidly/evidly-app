@@ -74,8 +74,8 @@ export async function fetchComplianceScores(organizationId?: string): Promise<Co
     // Check if there is any real temp_log data for this org
     const { count: tempCount } = await supabase
       .from('temperature_logs')
-      .select('id', { count: 'exact', head: true })
-      .eq('facility_id', organizationId);
+      .select('id, temperature_equipment!inner(organization_id)', { count: 'exact', head: true })
+      .eq('temperature_equipment.organization_id', organizationId);
 
     // If no real data exists, return empty scores
     if (!tempCount || tempCount === 0) {
@@ -183,8 +183,8 @@ export async function fetchTodaysProgress(organizationId?: string): Promise<Prog
 
     const { count: tempCount } = await supabase
       .from('temperature_logs')
-      .select('id', { count: 'exact', head: true })
-      .eq('facility_id', organizationId)
+      .select('id, temperature_equipment!inner(organization_id)', { count: 'exact', head: true })
+      .eq('temperature_equipment.organization_id', organizationId)
       .gte('reading_time', todayStart.toISOString());
 
     const { count: checkCount } = await supabase
@@ -229,8 +229,8 @@ export async function fetchRecentActivity(organizationId?: string): Promise<Acti
   try {
     const { data: tempLogs } = await supabase
       .from('temperature_logs')
-      .select('id, equipment_id, temperature, temp_pass, reading_time, logged_by')
-      .eq('facility_id', organizationId)
+      .select('id, equipment_id, temperature, temp_pass, reading_time, logged_by, temperature_equipment!inner(organization_id)')
+      .eq('temperature_equipment.organization_id', organizationId)
       .order('reading_time', { ascending: false })
       .limit(5);
 
