@@ -20,6 +20,7 @@ export interface TemperatureEquipment {
     created_at: string;
     is_within_range: boolean;
     recorded_by_name?: string;
+    input_method?: string;
   };
   held_items?: HeldFoodItem[];
 }

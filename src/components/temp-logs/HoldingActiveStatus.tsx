@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Thermometer, Clock, AlertTriangle, Loader2, Plus, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { Thermometer, Clock, AlertTriangle, Loader2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,6 +11,7 @@ import { colors, shadows } from '../../lib/designSystem';
 import { EmptyState } from '../EmptyState';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from './AddHoldingReadingModal';
 import { LogHoldingCheck } from './LogHoldingCheck';
+import { ReadingDetailModal } from './ReadingDetailModal';
 import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import type { TemperatureEquipment } from './types';
@@ -188,9 +189,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     Map<string, { temp: number; time: string; pass: boolean }>
   >(new Map());
 
-  // Expanded unit ids — smart default: 1-2 units expanded, 3+ collapsed, failures always expanded
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const [hasInitialized, setHasInitialized] = useState(false);
+  // Reading detail modal — which unit's detail is open
+  const [detailEquipmentId, setDetailEquipmentId] = useState<string | null>(null);
 
   // Queued items per unit (added but not yet probed) — equipmentId → array of menu_items
   const [queuedItems, setQueuedItems] = useState<Map<string, Array<{ menu_item_id: string; menu_item_name: string }>>>(new Map());
@@ -258,7 +258,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
       filtered.map(async (eq) => {
         const { data: lastCheck } = await supabase
           .from('temperature_logs')
-          .select('temperature, reading_time, temp_pass')
+          .select('temperature, reading_time, temp_pass, logged_by, input_method, user_profiles:logged_by(full_name)')
           .eq('equipment_id', eq.id)
           .is('menu_item_id', null)
           .is('superseded_by_log_id', null)
@@ -297,6 +297,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                 temperature_value: lastCheck.temperature,
                 created_at: lastCheck.reading_time,
                 is_within_range: lastCheck.temp_pass,
+                recorded_by_name: lastCheck.user_profiles?.full_name,
+                input_method: lastCheck.input_method,
               }
             : undefined,
           held_items,
@@ -342,36 +344,6 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     });
   }, [equipment, optimisticUpdates]);
 
-  // Initial expansion: 1-2 units → all expanded, 3+ → all collapsed, failures always expanded
-  useEffect(() => {
-    if (hasInitialized || equipmentWithStatus.length === 0) return;
-    const initial = new Set<string>();
-    const totalUnits = equipmentWithStatus.length;
-    const expandAll = totalUnits <= 2;
-    equipmentWithStatus.forEach(eq => {
-      const isFailing = eq.status === 'fail' || eq.status === 'overdue';
-      if (expandAll || isFailing) initial.add(eq.id);
-    });
-    setExpandedIds(initial);
-    setHasInitialized(true);
-  }, [equipmentWithStatus, hasInitialized]);
-
-  // Auto-expand any unit that newly enters fail/overdue after initial render
-  useEffect(() => {
-    if (!hasInitialized) return;
-    setExpandedIds(prev => {
-      let changed = false;
-      const next = new Set(prev);
-      equipmentWithStatus.forEach(eq => {
-        const isFailing = eq.status === 'fail' || eq.status === 'overdue';
-        if (isFailing && !next.has(eq.id)) {
-          next.add(eq.id);
-          changed = true;
-        }
-      });
-      return changed ? next : prev;
-    });
-  }, [equipmentWithStatus, hasInitialized]);
 
   // Handle log save — optimistic + persist
   const handleSaveReading = async (data: HoldingReadingSaveData) => {
@@ -572,21 +544,13 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
           <div className="space-y-2">
             {equipmentWithStatus.map(eq => {
               const cfg = STATUS_CONFIG[eq.status];
-              const expanded = expandedIds.has(eq.id);
-              const toggleExpanded = () => {
-                setExpandedIds(prev => {
-                  const next = new Set(prev);
-                  if (next.has(eq.id)) next.delete(eq.id);
-                  else next.add(eq.id);
-                  return next;
-                });
-              };
               const tempValue = eq.last_check?.temperature_value;
               const hasReading = tempValue != null;
               const tempColor = eq.status === 'pass' ? colors.success
                               : eq.status === 'fail' ? colors.danger
                               : colors.textSecondary;
               const isFail = eq.status === 'fail' || eq.status === 'overdue';
+              const isSetup = eq.status === 'setup';
               const threshold = isHot ? 135 : 41;
               const barMin = isHot ? 100 : 20;
               const barMax = isHot ? 180 : 60;
@@ -594,6 +558,12 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                 ? Math.max(2, Math.min(98, ((tempValue - barMin) / (barMax - barMin)) * 100))
                 : null;
               const methodLabel = (eq.default_input_method || 'typed').charAt(0).toUpperCase() + (eq.default_input_method || 'typed').slice(1);
+              const cardClick = isSetup
+                ? () => setPickerEquipmentId(eq.id)
+                : () => setDetailEquipmentId(eq.id);
+              const ageMin = eq.last_check
+                ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60)
+                : null;
               return (
                 <div
                   key={eq.id}
@@ -603,32 +573,34 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     borderColor: isFail ? `${colors.danger}80` : colors.border,
                     borderWidth: isFail ? '1px' : '0.5px',
                   }}
-                  onClick={toggleExpanded}
+                  onClick={cardClick}
                   role="button"
                   tabIndex={0}
+                  aria-label={isSetup ? `Add first item to ${eq.name}` : `View reading detail for ${eq.name}`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      toggleExpanded();
+                      cardClick();
                     }
                   }}
                 >
                   <div className="flex items-start gap-3">
-                    <p className="text-base font-medium flex-1 min-w-0 truncate" style={{ color: colors.textPrimary }}>
-                      {eq.name}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-base font-medium truncate" style={{ color: colors.textPrimary }}>
+                        {eq.name}
+                      </p>
+                      <p className="text-[11px]" style={{ color: colors.textMuted }}>
+                        {isSetup ? 'no readings yet' : (ageMin != null ? formatTimeSince(ageMin) : '\u2014')}
+                      </p>
+                    </div>
                     <span className="text-xl font-semibold whitespace-nowrap" style={{ color: tempColor }}>
                       {hasReading ? `${tempValue}\u00B0F` : '--'}
                     </span>
-                    {expanded
-                      ? <ChevronDown className="h-4 w-4 flex-shrink-0" style={{ color: colors.textTertiary }} />
-                      : <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: colors.textTertiary }} />
-                    }
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className="px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap"
-                      style={{ backgroundColor: colors.bgPanel, color: colors.textSecondary }}
+                      style={{ backgroundColor: `${colors.navy}08`, color: colors.textSecondary }}
                     >
                       {eq.equipment_type.replace(/_/g, ' ')}
                     </span>
@@ -638,7 +610,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     >
                       {methodLabel}
                     </span>
-                    {eq.status !== 'setup' && (
+                    {!isSetup && (
                       <span
                         className="text-[11px] ml-auto whitespace-nowrap"
                         style={{ color: cfg.fg, fontWeight: isFail ? 500 : 400 }}
@@ -680,13 +652,17 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       />
                     )}
                   </div>
-                  {expanded && (
+                  {isSetup ? (
+                    <div className="text-center py-3 text-sm" style={{ color: colors.textSecondary }}>
+                      Tap to add the first item
+                    </div>
+                  ) : (
                     <div
                       className="pt-3 mt-1 border-t"
                       style={{ borderColor: colors.border }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <p className="text-[10px] uppercase tracking-wide font-medium mb-2" style={{ color: colors.textTertiary }}>
+                      <p className="text-[10px] uppercase tracking-wide font-medium mb-2" style={{ color: colors.textMuted }}>
                         Food held in this unit
                       </p>
                       {(eq.held_items && eq.held_items.length > 0) ? (
@@ -736,27 +712,9 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                           })}
                         </div>
                       ) : (eq.held_items && eq.held_items.length === 0 && (queuedItems.get(eq.id)?.length ?? 0) === 0) ? (
-                        <div className="flex flex-col items-center py-3">
-                          <p className="text-xs mb-2" style={{ color: colors.textMuted }}>
-                            Nothing held in this unit right now
-                          </p>
-                          <button
-                            type="button"
-                            className="px-4 py-2 rounded-lg text-xs font-medium"
-                            style={{
-                              border: `1px dashed ${colors.border}`,
-                              color: colors.navy,
-                              backgroundColor: 'transparent',
-                              minHeight: '44px',
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPickerEquipmentId(eq.id);
-                            }}
-                          >
-                            + Add first item
-                          </button>
-                        </div>
+                        <p className="text-xs py-3 text-center" style={{ color: colors.textMuted }}>
+                          Nothing held in this unit right now
+                        </p>
                       ) : null}
 
                       {(queuedItems.get(eq.id)?.length ?? 0) > 0 && (
@@ -795,7 +753,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                         </div>
                       )}
 
-                      {((eq.held_items && eq.held_items.length > 0) || (queuedItems.get(eq.id)?.length ?? 0) > 0) && (
+                      {eq.status !== 'setup' && (
                         <div className="mt-3 flex gap-2">
                           <button
                             type="button"
@@ -1022,6 +980,12 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
           );
         })()}
       </Modal>
+      <ReadingDetailModal
+        isOpen={detailEquipmentId !== null}
+        onClose={() => setDetailEquipmentId(null)}
+        equipment={detailEquipmentId ? equipment?.find(e => e.id === detailEquipmentId) ?? null : null}
+        variant={variant}
+      />
     </>
   );
 }
