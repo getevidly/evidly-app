@@ -7,6 +7,12 @@ export type IncidentPillar = 'food_safety' | 'fire_safety';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
 
+/** Statuses where an incident is still open (needs attention). */
+export const OPEN_INCIDENT_STATUSES = ['open', 'investigating'] as const;
+
+/** Statuses where an incident is closed/complete. */
+export const CLOSED_INCIDENT_STATUSES = ['resolved', 'verified'] as const;
+
 /** Maps to public.incident_templates — derived from PROD schema 2026-04-27. */
 export interface IncidentTemplate {
   id: string;

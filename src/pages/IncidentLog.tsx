@@ -880,7 +880,7 @@ export function IncidentLog() {
         return;
       }
       await supabase.from('incidents').update({
-        status: 'in_progress',
+        status: 'investigating',
         corrective_action: actionText,
         action_chips: actionChips,
         updated_at: new Date().toISOString(),
@@ -889,7 +889,7 @@ export function IncidentLog() {
       await supabase.from('incident_timeline').insert({
         incident_id: selectedIncident.dbId,
         action: `Corrective action: ${actionText}${estLabel}`,
-        status: 'in_progress',
+        status: 'investigating',
         performed_by: user?.id ?? null,
         photos: actionPhotos.length > 0 ? actionPhotos : [],
       });

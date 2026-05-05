@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { OPEN_INCIDENT_STATUSES } from '../types/incidents';
 import type { UserRole } from '../contexts/RoleContext';
 import type { MobileAlert } from '../data/mobileDemoData';
 
@@ -86,7 +87,7 @@ export function useMobileAlerts(orgId: string | undefined, role: UserRole): UseM
             .from('incidents')
             .select('id', { count: 'exact', head: true })
             .eq('organization_id', orgId)
-            .in('status', ['open', 'investigating'])
+            .in('status', [...OPEN_INCIDENT_STATUSES])
             .lte('created_at', yesterday.toISOString());
 
           if (count && count > 0) {

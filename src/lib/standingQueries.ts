@@ -6,6 +6,7 @@
  */
 
 import { supabase } from './supabase';
+import { OPEN_INCIDENT_STATUSES } from '../types/incidents';
 import {
   DEMO_LOCATIONS,
   DEMO_ATTENTION_ITEMS,
@@ -236,13 +237,13 @@ async function fetchLiveStandings(orgId: string): Promise<LocationStanding[]> {
       .from('incidents')
       .select('location_id, severity')
       .in('type', ['temperature_violation', 'checklist_failure', 'health_citation', 'customer_complaint'])
-      .in('status', ['reported', 'assigned', 'in_progress']),
+      .in('status', [...OPEN_INCIDENT_STATUSES]),
     // Open fire safety incidents
     supabase
       .from('incidents')
       .select('location_id, severity')
       .in('type', ['equipment_failure'])
-      .in('status', ['reported', 'assigned', 'in_progress']),
+      .in('status', [...OPEN_INCIDENT_STATUSES]),
     // Facility equipment with overdue maintenance
     supabase
       .from('equipment')
@@ -435,7 +436,7 @@ async function fetchLiveAttention(orgId: string): Promise<AttentionItem[]> {
   const { data: openIncidents } = await supabase
     .from('incidents')
     .select('id, title, location_id, severity')
-    .in('status', ['reported', 'assigned', 'in_progress'])
+    .in('status', [...OPEN_INCIDENT_STATUSES])
     .in('severity', ['critical', 'major'])
     .order('created_at', { ascending: false })
     .limit(10);

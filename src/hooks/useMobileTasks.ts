@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { OPEN_INCIDENT_STATUSES } from '../types/incidents';
 import type { UserRole } from '../contexts/RoleContext';
 import type { MobileTask } from '../data/mobileDemoData';
 
@@ -202,7 +203,7 @@ export function useMobileTasks(orgId: string | undefined, role: UserRole): UseMo
               .from('incidents')
               .select('id, title, type, severity, status, created_at')
               .eq('organization_id', orgId)
-              .in('status', ['open', 'investigating', 'in_progress'])
+              .in('status', [...OPEN_INCIDENT_STATUSES])
               .order('created_at', { ascending: false })
               .limit(5);
 
