@@ -4,7 +4,7 @@
  * View: task_manager_feed.
  */
 
-export type TaskPillar = 'food_safety' | 'facility_safety';
+export type TaskPillar = 'food_safety' | 'fire_safety';
 
 export type TaskType =
   | 'temperature_log'

@@ -5,7 +5,7 @@
 
 import type { HistoryEntry } from './incidents';
 
-export type CAPillar = 'food_safety' | 'facility_safety';
+export type CAPillar = 'food_safety' | 'fire_safety';
 export type CACategory = 'food_safety' | 'facility_safety' | 'operational';
 export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
 export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual' | 'incident';

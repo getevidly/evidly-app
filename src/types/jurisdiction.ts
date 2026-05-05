@@ -95,7 +95,7 @@ export interface FireJurisdictionConfig {
 // A single authority (either food safety or fire safety)
 export interface AuthorityRecord {
   id: string;
-  pillar: 'food_safety' | 'facility_safety';
+  pillar: 'food_safety' | 'fire_safety';
   agency_name: string;
   agency_phone: string | null;
   agency_website: string | null;
@@ -133,7 +133,7 @@ export interface LocationJurisdiction {
 
 // Score for a single authority
 export interface AuthorityScore {
-  pillar: 'food_safety' | 'facility_safety';
+  pillar: 'food_safety' | 'fire_safety';
   authority: AuthorityRecord;
   grade: string | null;
   gradeDisplay: string | null;

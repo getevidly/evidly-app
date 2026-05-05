@@ -3,7 +3,7 @@
  * Tables: incidents, incident_timeline, incident_comments, incident_templates.
  */
 
-export type IncidentPillar = 'food_safety' | 'facility_safety';
+export type IncidentPillar = 'food_safety' | 'fire_safety';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
 
