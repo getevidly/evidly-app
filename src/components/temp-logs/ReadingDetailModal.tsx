@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../ui/Modal';
 import { colors } from '../../lib/designSystem';
 import type { TemperatureEquipment } from './types';
@@ -43,6 +43,8 @@ function formatTimeSince(iso: string): string {
 
 export function ReadingDetailModal({ isOpen, onClose, equipment, variant }: ReadingDetailModalProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isOnTempLogs = location.pathname.startsWith('/temp-logs');
 
   if (!equipment || !equipment.last_check) return null;
 
@@ -163,19 +165,21 @@ export function ReadingDetailModal({ isOpen, onClose, equipment, variant }: Read
         >
           Close
         </button>
-        <button
-          type="button"
-          className="px-4 py-2 rounded-md text-sm font-medium"
-          style={{
-            color: colors.navy,
-            border: `0.5px solid ${colors.navy}`,
-            backgroundColor: 'transparent',
-            minHeight: '44px',
-          }}
-          onClick={handleCTA}
-        >
-          Open in Temperature Logs
-        </button>
+        {!isOnTempLogs && (
+          <button
+            type="button"
+            className="px-4 py-2 rounded-md text-sm font-medium"
+            style={{
+              color: colors.navy,
+              border: `0.5px solid ${colors.navy}`,
+              backgroundColor: 'transparent',
+              minHeight: '44px',
+            }}
+            onClick={handleCTA}
+          >
+            Open in Temperature Logs
+          </button>
+        )}
       </div>
       </div>
     </Modal>
