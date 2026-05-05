@@ -61,7 +61,9 @@ export function ReadingDetailModal({ isOpen, onClose, equipment, variant }: Read
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
+      <div className="flex flex-col max-h-[calc(100vh-4rem)]">
       {/* 1. Accent strip */}
+      <div className="flex-1 overflow-y-auto min-h-0">
       <div style={{ height: '4px', backgroundColor: accentColor, width: '100%' }} />
 
       {/* 2. Header */}
@@ -142,9 +144,10 @@ export function ReadingDetailModal({ isOpen, onClose, equipment, variant }: Read
         )}
       </div>
 
+      </div>
       {/* 6. Footer */}
       <div
-        className="px-5 py-3 flex justify-between gap-2"
+        className="px-5 py-3 flex justify-between gap-2 flex-shrink-0"
         style={{ borderTop: `0.5px solid ${colors.border}` }}
       >
         <button
@@ -171,8 +174,9 @@ export function ReadingDetailModal({ isOpen, onClose, equipment, variant }: Read
           }}
           onClick={handleCTA}
         >
-          Open in Temp Logs
+          Open in Temperature Logs
         </button>
+      </div>
       </div>
     </Modal>
   );
