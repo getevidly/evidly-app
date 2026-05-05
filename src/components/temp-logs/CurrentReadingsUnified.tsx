@@ -71,8 +71,25 @@ function RangeBar({ row }: { row: UnifiedReadingRow }) {
 function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadingRow[] }) {
   if (rows.length === 0) return null;
   const passing = rows.filter(r => r.status === 'pass').length;
-  const measured = rows.filter(r => r.status !== 'awaiting').length;
-  const awaiting = rows.length - measured;
+  const failing = rows.filter(r => r.status === 'fail').length;
+  const overdueCount = rows.filter(r => r.status === 'overdue').length;
+  const awaitingFirst = rows.filter(r => r.status === 'awaiting').length;
+  const measured = passing + failing;
+
+  let label: string;
+  if (measured > 0) {
+    const parts = [`${passing}/${measured} in range`];
+    if (overdueCount > 0) parts.push(`${overdueCount} awaiting reading`);
+    if (awaitingFirst > 0) parts.push(`${awaitingFirst} awaiting first reading`);
+    label = parts.join(' \u00B7 ');
+  } else if (overdueCount > 0 && awaitingFirst > 0) {
+    label = `${overdueCount} awaiting reading \u00B7 ${awaitingFirst} awaiting first reading`;
+  } else if (overdueCount > 0) {
+    label = `${overdueCount} awaiting reading`;
+  } else {
+    label = `${awaitingFirst} awaiting first reading`;
+  }
+
   return (
     <div className="px-4 py-3">
       <div className="flex items-center gap-2 mb-2">
@@ -80,9 +97,7 @@ function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadi
           {VARIANT_LABELS[variant]}
         </span>
         <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-          {measured === 0
-            ? `${awaiting} awaiting first reading`
-            : `${passing}/${measured} in range${awaiting > 0 ? ` \u00B7 ${awaiting} awaiting` : ''}`}
+          {label}
         </span>
       </div>
       <div className="flex flex-col gap-2">
