@@ -125,7 +125,7 @@ const FACILITIES_DOC_TITLES = new Set([
 
 function mapPillarToCategory(pillar: string): string {
   switch (pillar) {
-    case 'facility_safety': return 'Certificate';
+    case 'fire_safety': return 'Certificate';
     case 'food_safety': return 'Permit';
     case 'vendor': return 'Insurance';
     case 'facility': return 'License';

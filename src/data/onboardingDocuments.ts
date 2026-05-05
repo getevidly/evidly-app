@@ -5,7 +5,7 @@
 export interface OnboardingDocument {
   id: string;
   name: string;
-  pillar: 'facility_safety' | 'food_safety' | 'vendor' | 'facility';
+  pillar: 'fire_safety' | 'food_safety' | 'vendor' | 'facility';
   required: boolean;
   description: string;
   whoProvides: string;
@@ -21,7 +21,7 @@ export const PILLAR_META: Record<
   OnboardingDocument['pillar'],
   { label: string; icon: string }
 > = {
-  facility_safety: { label: 'Fire Safety', icon: '🔥' },
+  fire_safety: { label: 'Fire Safety', icon: '🔥' },
   food_safety: { label: 'Food Safety', icon: '🍽️' },
   vendor: { label: 'Vendor Documents', icon: '👥' },
   facility: { label: 'Facility Documents', icon: '🏢' },
@@ -36,7 +36,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'hood_cleaning_cert',
     name: 'Hood Cleaning Certificate',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: true,
     description:
       'Proof that kitchen exhaust hoods, ducts, and fans have been professionally cleaned and degreased to NFPA 96 standards.',
@@ -48,7 +48,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'fire_suppression_report',
     name: 'Fire Suppression Inspection Report',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: true,
     description:
       'Documented inspection of the kitchen fire suppression system confirming all nozzles, links, and agent levels meet code.',
@@ -60,7 +60,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'fire_extinguisher_tags',
     name: 'Fire Extinguisher Inspection Tags',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: true,
     description:
       'Current inspection tags on all portable fire extinguishers showing they have been serviced and are in working order.',
@@ -72,7 +72,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'ansul_cert',
     name: 'Ansul System Certification',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: true,
     description:
       'Certification that the Ansul (or equivalent) wet-chemical fire suppression system has been inspected and recharged as needed.',
@@ -84,7 +84,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'building_fire_inspection',
     name: 'Building Fire Inspection Report',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Report from the local fire department after a scheduled or surprise inspection of the building and kitchen areas.',
@@ -96,7 +96,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'exhaust_fan_service',
     name: 'Exhaust Fan Service Record',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Service records for rooftop and inline exhaust fans, including belt replacement, bearing lubrication, and hinge-kit cleaning.',
@@ -110,7 +110,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'elevator_inspection_cert',
     name: 'Elevator Inspection Certificate',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Current inspection certificate from a licensed elevator inspector confirming the elevator meets ASME A17.1 safety standards.',
@@ -122,7 +122,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'elevator_maintenance_record',
     name: 'Elevator Maintenance Record',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Maintenance logs documenting routine elevator service, repairs, and safety checks performed by a licensed elevator technician.',
@@ -134,7 +134,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'elevator_permit',
     name: 'Elevator Operating Permit',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Operating permit issued by the state or local jurisdiction allowing the elevator to carry passengers.',
@@ -148,7 +148,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'pest_control_contract',
     name: 'Pest Control Service Contract',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Active service contract with a licensed pest control operator covering regular inspections, treatments, and emergency callbacks.',
@@ -160,7 +160,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'pest_activity_log',
     name: 'Pest Activity Log',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Internal log tracking pest sightings, trap counts, and corrective actions taken between scheduled pest control visits.',
@@ -174,7 +174,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'grease_trap_pumping_receipt',
     name: 'Grease Trap Pumping Receipt / Manifest',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: true,
     description:
       'Service manifest from grease trap pumping showing date, gallons collected, hauler license, and receiving facility — required chain of custody for FOG compliance.',
@@ -186,7 +186,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'grease_trap_inspection_report',
     name: 'Grease Trap Inspection Report',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Periodic inspection report documenting trap condition, lid integrity, baffles, and structural integrity of grease traps or interceptors.',
@@ -198,7 +198,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'grease_interceptor_maintenance_log',
     name: 'Grease Interceptor Maintenance Log',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Ongoing maintenance log for large grease interceptors, tracking pumping frequency, volumes collected, and fill rate trends.',
@@ -210,7 +210,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'fog_compliance_report',
     name: 'FOG Compliance Report',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Compliance report for the local sewer district demonstrating proper Fats, Oil, and Grease management including disposal manifests and maintenance records.',
@@ -224,7 +224,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'backflow_preventer_certification',
     name: 'Backflow Preventer Certification',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Annual certification that all backflow prevention devices (RPZ valves, double check valves) on your potable water supply are functioning correctly.',
@@ -236,7 +236,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'backflow_compliance_letter',
     name: 'Backflow Annual Compliance Letter',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     required: false,
     description:
       'Letter from the water district confirming your backflow prevention devices have been tested and are in compliance for the current year.',

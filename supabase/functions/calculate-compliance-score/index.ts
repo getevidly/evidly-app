@@ -138,7 +138,7 @@ serve(async (req: Request) => {
     for (const lj of locationJurisdictions) {
       const jurisdiction = (lj as any).jurisdictions;
       const layer = (lj as any).jurisdiction_layer;
-      const pillar = layer.includes('fire') ? 'facility_safety' : 'food_safety';
+      const pillar = layer.includes('fire') ? 'fire_safety' : 'food_safety';
 
       const opsWeight = jurisdiction.ops_weight / 100;
       const docsWeight = jurisdiction.docs_weight / 100;
@@ -214,15 +214,15 @@ serve(async (req: Request) => {
     const fireWeight = mrJurisdiction.facility_safety_weight / 100;
 
     const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
-    const fireResults = results.filter(r => r.pillar === 'facility_safety' && r.subComponent === 'combined');
+    const fireResults = results.filter(r => r.pillar === 'fire_safety' && r.subComponent === 'combined');
 
     const foodScore = foodResults.length > 0 ? Math.min(...foodResults.map(r => r.normalizedScore)) : 100;
     const fireScore = fireResults.length > 0 ? Math.min(...fireResults.map(r => r.normalizedScore)) : 100;
 
     const foodOps = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'operations');
     const foodDocs = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'documentation');
-    const fireOps = results.find(r => r.pillar === 'facility_safety' && r.subComponent === 'operations');
-    const fireDocs = results.find(r => r.pillar === 'facility_safety' && r.subComponent === 'documentation');
+    const fireOps = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'operations');
+    const fireDocs = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'documentation');
 
     const overallScore: OverallScore = {
       locationId: location_id,

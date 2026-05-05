@@ -1950,7 +1950,7 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     facilitySafety: {
       id: 'fresno-fire',
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_name: 'City of Fresno Fire Department',
       agency_phone: '(559) 621-4120',
       agency_website: 'https://www.fresno.gov/fire/',
@@ -1991,7 +1991,7 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     facilitySafety: {
       id: 'merced-fire',
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_name: 'City of Merced Fire Department',
       agency_phone: '(209) 385-6891',
       agency_website: 'https://www.cityofmerced.org/departments/fire',
@@ -2032,7 +2032,7 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     facilitySafety: {
       id: 'modesto-fire',
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_name: 'Modesto Fire Department, Fire Prevention Division',
       agency_phone: '(209) 577-5232',
       agency_website: 'https://www.modestogov.com/170/Fire-Prevention',
@@ -2079,7 +2079,7 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     facilitySafety: {
       id: 'mariposa-calfire',
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_name: 'CAL FIRE Madera-Mariposa-Merced Unit (MMU)',
       agency_phone: '(209) 966-3622',
       agency_website: 'https://www.fire.ca.gov/locations/madera-mariposa-merced-unit',
@@ -2113,7 +2113,7 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFireOverlay: {
       id: 'nps-yosemite-fire',
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_name: 'National Park Service \u2014 Yosemite Structural Fire',
       agency_phone: '(209) 372-0200',
       agency_website: 'https://www.nps.gov/yose/',

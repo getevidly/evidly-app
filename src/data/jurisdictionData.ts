@@ -3,7 +3,7 @@ export interface JurisdictionScore {
   agencyName: string;
   county: string;
   state: string;
-  pillar: 'food_safety' | 'facility_safety';
+  pillar: 'food_safety' | 'fire_safety';
   gradingScale: string;
   passingThreshold: string;
   inspectionFrequency: string;
@@ -61,7 +61,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'fresno_city_fire',
     agencyName: 'City of Fresno Fire Department — Fire Prevention Bureau',
-    county: 'Fresno', state: 'CA', pillar: 'facility_safety',
+    county: 'Fresno', state: 'CA', pillar: 'fire_safety',
     gradingScale: 'Pass / Fail / Conditional',
     passingThreshold: 'Pass — all NFPA 96 requirements met',
     inspectionFrequency: 'Annual + complaint-triggered',
@@ -101,7 +101,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'merced_city_fire',
     agencyName: 'City of Merced Fire Department — Fire Prevention',
-    county: 'Merced', state: 'CA', pillar: 'facility_safety',
+    county: 'Merced', state: 'CA', pillar: 'fire_safety',
     gradingScale: 'Pass / Fail',
     passingThreshold: 'Pass',
     inspectionFrequency: 'Annual',
@@ -138,7 +138,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'modesto_fire',
     agencyName: 'City of Modesto Fire Department — Fire Prevention Division',
-    county: 'Stanislaus', state: 'CA', pillar: 'facility_safety',
+    county: 'Stanislaus', state: 'CA', pillar: 'fire_safety',
     gradingScale: 'Pass / Fail / Conditional',
     passingThreshold: 'Pass',
     inspectionFrequency: 'Annual',
@@ -166,7 +166,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'mariposa_calfire',
     agencyName: 'CAL FIRE Madera-Mariposa-Merced Unit (MMU)',
-    county: 'Mariposa', state: 'CA', pillar: 'facility_safety',
+    county: 'Mariposa', state: 'CA', pillar: 'fire_safety',
     gradingScale: 'Pass / Fail',
     passingThreshold: 'Pass — all CFC / NFPA 96 requirements met',
     inspectionFrequency: 'Annual + complaint-triggered',
@@ -195,7 +195,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'nps_yosemite_fire',
     agencyName: 'National Park Service — Yosemite Structural Fire',
-    county: 'Mariposa', state: 'CA', pillar: 'facility_safety',
+    county: 'Mariposa', state: 'CA', pillar: 'fire_safety',
     gradingScale: 'Compliant / Non-Compliant',
     passingThreshold: 'Compliant — NFPA 96 + NPS Director\'s Order 58',
     inspectionFrequency: 'Annual (NPS fire management)',

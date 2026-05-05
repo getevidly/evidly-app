@@ -142,7 +142,7 @@ function getJurisdictionDataForCounty(countyField: string): { food?: Jurisdictio
   const countyName = countyField.replace(/\s*County\s*$/i, '').trim();
   return {
     food: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'food_safety'),
-    fire: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'facility_safety'),
+    fire: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'fire_safety'),
   };
 }
 
@@ -227,7 +227,7 @@ function getJurisdictionOptions() {
   }
   return Array.from(countyMap.entries()).map(([county, entries]) => {
     const foodEntry = entries.find(e => e.pillar === 'food_safety');
-    const fireEntry = entries.find(e => e.pillar === 'facility_safety');
+    const fireEntry = entries.find(e => e.pillar === 'fire_safety');
     return {
       county,
       state: entries[0].state,

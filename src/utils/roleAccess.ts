@@ -24,13 +24,13 @@ export function canViewDemoSwitcher(role: UserRole): boolean {
 }
 
 // Default pillar focus per role
-export function getDefaultPillar(role: UserRole): 'all' | 'food_safety' | 'facility_safety' {
+export function getDefaultPillar(role: UserRole): 'all' | 'food_safety' | 'fire_safety' {
   switch (role) {
     case 'chef':
     case 'kitchen_manager':
       return 'food_safety';
     case 'facilities_manager':
-      return 'facility_safety';
+      return 'fire_safety';
     default:
       return 'all';
   }

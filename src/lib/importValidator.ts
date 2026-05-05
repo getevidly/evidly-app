@@ -190,7 +190,7 @@ const FACILITY_SAFETY_TYPES = new Set([
 
 function assignEquipmentPillar(data: Record<string, string>): void {
   const eqType = (data.type ?? '').toLowerCase();
-  data.pillar = FACILITY_SAFETY_TYPES.has(eqType) ? 'facility_safety' : 'food_safety';
+  data.pillar = FACILITY_SAFETY_TYPES.has(eqType) ? 'fire_safety' : 'food_safety';
 }
 
 // ---------------------------------------------------------------------------

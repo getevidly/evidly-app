@@ -117,7 +117,7 @@ export function DocumentChecklist() {
     return grouped;
   }, [documents]);
 
-  const PILLAR_DISPLAY_ORDER = ['facility_safety', 'food_safety', 'vendor', 'facility'];
+  const PILLAR_DISPLAY_ORDER = ['fire_safety', 'food_safety', 'vendor', 'facility'];
   const pillarOrder = useMemo(
     () => PILLAR_DISPLAY_ORDER.filter((k) => k in PILLAR_META),
     [],

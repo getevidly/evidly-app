@@ -73,7 +73,7 @@ async function fetchLiveJurisdiction(locationId: string): Promise<LocationJurisd
       inspection_frequency: config.food_inspection_frequency || null,
     },
     facilitySafety: {
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       agency_id: config.fire_agency_id || config.id,
       agency_name: config.fire_agency_name || config.agency_name,
       authority_type: config.fire_authority_type || 'fire_marshal',

@@ -7,7 +7,7 @@
 
 // --------------- Pillar & Component Weights ---------------
 
-export type InspectionPillar = 'food_safety' | 'facility_safety';
+export type InspectionPillar = 'food_safety' | 'fire_safety';
 
 export const COMPONENT_WEIGHTS = {
   operations: 0.50,

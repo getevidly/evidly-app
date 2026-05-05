@@ -80,7 +80,7 @@ interface EquipmentItem {
   usefulLifeYears: number;
   replacementCost: number;
   status?: EquipmentStatus;
-  pillar?: 'facility_safety' | 'food_safety';
+  pillar?: 'fire_safety' | 'food_safety';
   notes: string;
   serviceHistory: ServiceRecord[];
   schedule: ScheduleItem[];
@@ -202,8 +202,8 @@ const DEFAULT_LIFESPANS: Record<string, number> = {
 
 const FACILITY_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Fire Extinguisher', 'Exhaust Fan']);
 
-function getEquipmentPillar(item: EquipmentItem): 'facility_safety' | 'food_safety' {
-  return item.pillar || (FACILITY_SAFETY_TYPES.has(item.type) ? 'facility_safety' : 'food_safety');
+function getEquipmentPillar(item: EquipmentItem): 'fire_safety' | 'food_safety' {
+  return item.pillar || (FACILITY_SAFETY_TYPES.has(item.type) ? 'fire_safety' : 'food_safety');
 }
 
 // ── Demo Data ──────────────────────────────────────────────────────
@@ -611,7 +611,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     location: 'Location 1', installDate: '2024-03-15',
     warrantyExpiry: '2029-03-15', condition: 'Excellent',
     nextMaintenanceDue: '2026-09-15', lastServiceDate: '2026-03-10',
-    pillar: 'facility_safety' as const,
+    pillar: 'fire_safety' as const,
     linkedVendor: 'Fire Suppression Vendor', usefulLifeYears: 12, replacementCost: 450,
     notes: 'K-Class — near fryers. Annual professional inspection by Fire Suppression Vendor. Monthly visual by staff.',
     serviceHistory: [
@@ -631,7 +631,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     location: 'Location 2', installDate: '2023-06-01',
     warrantyExpiry: '2029-06-01', condition: 'Good',
     nextMaintenanceDue: '2026-06-01', lastServiceDate: '2025-06-05',
-    pillar: 'facility_safety' as const,
+    pillar: 'fire_safety' as const,
     linkedVendor: 'Fire Suppression Vendor', usefulLifeYears: 12, replacementCost: 320,
     notes: 'ABC dry chemical — hallway near exit. Covers common areas.',
     serviceHistory: [
@@ -663,8 +663,8 @@ export function Equipment() {
   const ttEquipmentOverdue = useTooltip('equipmentOverdue', userRole);
   usePageTitle('Equipment');
   const [locationFilter, setLocationFilter] = useState('all');
-  const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>(() =>
-    categoryParam ? 'facility_safety' : 'all'
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'fire_safety' | 'food_safety'>(() =>
+    categoryParam ? 'fire_safety' : 'all'
   );
   const [search, setSearch] = useState(() => CATEGORY_SEARCH_MAP[categoryParam || ''] || '');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
@@ -850,11 +850,11 @@ export function Equipment() {
             </select>
             <select
               value={pillarFilter}
-              onChange={e => setPillarFilter(e.target.value as 'all' | 'facility_safety' | 'food_safety')}
+              onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
               className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">{t('pages.equipment.allPillars')}</option>
-              <option value="facility_safety">{t('pages.equipment.facilitySafety')}</option>
+              <option value="fire_safety">{t('pages.equipment.facilitySafety')}</option>
               <option value="food_safety">{t('pages.equipment.foodSafety')}</option>
             </select>
             <button
@@ -960,7 +960,7 @@ export function Equipment() {
                     <div className="flex items-center gap-1.5">
                       {(() => {
                         const p = getEquipmentPillar(eq);
-                        const isF = p === 'facility_safety';
+                        const isF = p === 'fire_safety';
                         return (
                           <span style={{ ...badge(isF ? 'Fire' : 'Food', isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                             {isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}
@@ -1042,7 +1042,7 @@ export function Equipment() {
                 <p className="text-sm text-[#1E2D4D]/70">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
-                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'facility_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety')}</span>; })()}
+                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'fire_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety')}</span>; })()}
                   <span style={badge(selected.condition, conditionStyle(selected.condition).color, conditionStyle(selected.condition).bg)}>{selected.condition}</span>
                   <span style={badge(warrantyInfo(selected.warrantyExpiry).label, warrantyInfo(selected.warrantyExpiry).color, warrantyInfo(selected.warrantyExpiry).bg)}>
                     {t('pages.equipment.warranty')}: {warrantyInfo(selected.warrantyExpiry).label}
@@ -1811,7 +1811,7 @@ export function Equipment() {
                             maintenance_interval: formData.get('maintenance_interval') || 'Quarterly',
                             linked_vendor: formData.get('linked_vendor') || '',
                             notes: formData.get('notes') || '',
-                            compliance_pillar: 'facility_safety',
+                            compliance_pillar: 'fire_safety',
                           });
                           if (error) {
                             console.error('Error saving equipment:', error);

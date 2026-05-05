@@ -202,7 +202,7 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
   hood_cleaning: {
     documentType: 'hood_cleaning_cert',
     documentLabel: 'Hood Cleaning Certificate',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     vendorName: 'Cleaning Pros Plus',
     serviceDate: '2026-02-08',
     expiryDate: '2026-05-08',
@@ -213,7 +213,7 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
   fire_suppression: {
     documentType: 'fire_suppression_report',
     documentLabel: 'Fire Suppression Inspection Report',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     vendorName: 'Fire Systems Inc',
     serviceDate: '2026-01-15',
     expiryDate: '2026-07-15',
@@ -224,7 +224,7 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
   fire_extinguisher: {
     documentType: 'fire_extinguisher_tag',
     documentLabel: 'Fire Extinguisher Inspection Tag',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     vendorName: 'Cintas',
     serviceDate: '2026-02-03',
     expiryDate: '2027-02-03',
@@ -301,7 +301,7 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
   fog_manifest: {
     documentType: 'grease_trap_pumping_receipt',
     documentLabel: 'FOG Pumping Manifest',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     vendorName: 'Central Valley Grease Services',
     serviceDate: '2026-01-25',
     expiryDate: '2026-02-25',
@@ -312,7 +312,7 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
   backflow: {
     documentType: 'backflow_preventer_certification',
     documentLabel: 'Backflow Preventer Certification',
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     vendorName: 'Valley Backflow Testing',
     serviceDate: '2026-01-10',
     expiryDate: '2027-01-10',
@@ -401,7 +401,7 @@ export function getConfidenceIcon(confidence: number): string {
 // ---------------------------------------------------------------------------
 
 export const PILLAR_OPTIONS = [
-  { value: 'facility_safety', label: 'Fire Safety', icon: '🔥' },
+  { value: 'fire_safety', label: 'Fire Safety', icon: '🔥' },
   { value: 'food_safety', label: 'Food Safety', icon: '🍽️' },
   { value: 'vendor', label: 'Vendor', icon: '🤝' },
   { value: 'facility', label: 'Facility & General', icon: '🏢' },
@@ -409,28 +409,28 @@ export const PILLAR_OPTIONS = [
 
 export const DOCUMENT_TYPE_OPTIONS = [
   // Fire Safety
-  { value: 'hood_cleaning_cert', label: 'Hood Cleaning Certificate', pillar: 'facility_safety' },
-  { value: 'fire_suppression_report', label: 'Fire Suppression Report', pillar: 'facility_safety' },
-  { value: 'fire_extinguisher_tag', label: 'Fire Extinguisher Tag', pillar: 'facility_safety' },
-  { value: 'ansul_cert', label: 'Ansul Certification', pillar: 'facility_safety' },
-  { value: 'exhaust_fan_service', label: 'Exhaust Fan Service', pillar: 'facility_safety' },
-  { value: 'building_fire_inspection', label: 'Fire Department Inspection', pillar: 'facility_safety' },
-  { value: 'elevator_inspection_cert', label: 'Elevator Inspection Certificate', pillar: 'facility_safety' },
-  { value: 'elevator_maintenance_record', label: 'Elevator Maintenance Record', pillar: 'facility_safety' },
-  { value: 'elevator_permit', label: 'Elevator Operating Permit', pillar: 'facility_safety' },
-  { value: 'pest_control_contract', label: 'Pest Control Contract', pillar: 'facility_safety' },
-  { value: 'pest_activity_log', label: 'Pest Activity Log', pillar: 'facility_safety' },
-  { value: 'grease_trap_pumping_receipt', label: 'Grease Trap Pumping Manifest', pillar: 'facility_safety' },
-  { value: 'grease_trap_inspection_report', label: 'Grease Trap Inspection Report', pillar: 'facility_safety' },
-  { value: 'grease_interceptor_maintenance_log', label: 'Grease Interceptor Maintenance Log', pillar: 'facility_safety' },
-  { value: 'fog_compliance_report', label: 'FOG Compliance Report', pillar: 'facility_safety' },
-  { value: 'backflow_preventer_certification', label: 'Backflow Preventer Certification', pillar: 'facility_safety' },
-  { value: 'backflow_compliance_letter', label: 'Backflow Compliance Letter', pillar: 'facility_safety' },
+  { value: 'hood_cleaning_cert', label: 'Hood Cleaning Certificate', pillar: 'fire_safety' },
+  { value: 'fire_suppression_report', label: 'Fire Suppression Report', pillar: 'fire_safety' },
+  { value: 'fire_extinguisher_tag', label: 'Fire Extinguisher Tag', pillar: 'fire_safety' },
+  { value: 'ansul_cert', label: 'Ansul Certification', pillar: 'fire_safety' },
+  { value: 'exhaust_fan_service', label: 'Exhaust Fan Service', pillar: 'fire_safety' },
+  { value: 'building_fire_inspection', label: 'Fire Department Inspection', pillar: 'fire_safety' },
+  { value: 'elevator_inspection_cert', label: 'Elevator Inspection Certificate', pillar: 'fire_safety' },
+  { value: 'elevator_maintenance_record', label: 'Elevator Maintenance Record', pillar: 'fire_safety' },
+  { value: 'elevator_permit', label: 'Elevator Operating Permit', pillar: 'fire_safety' },
+  { value: 'pest_control_contract', label: 'Pest Control Contract', pillar: 'fire_safety' },
+  { value: 'pest_activity_log', label: 'Pest Activity Log', pillar: 'fire_safety' },
+  { value: 'grease_trap_pumping_receipt', label: 'Grease Trap Pumping Manifest', pillar: 'fire_safety' },
+  { value: 'grease_trap_inspection_report', label: 'Grease Trap Inspection Report', pillar: 'fire_safety' },
+  { value: 'grease_interceptor_maintenance_log', label: 'Grease Interceptor Maintenance Log', pillar: 'fire_safety' },
+  { value: 'fog_compliance_report', label: 'FOG Compliance Report', pillar: 'fire_safety' },
+  { value: 'backflow_preventer_certification', label: 'Backflow Preventer Certification', pillar: 'fire_safety' },
+  { value: 'backflow_compliance_letter', label: 'Backflow Compliance Letter', pillar: 'fire_safety' },
   // PSE-Relevant Documents
-  { value: 'suppression_inspection_report', label: 'Suppression System Inspection Report', pillar: 'facility_safety' },
-  { value: 'fire_alarm_inspection_cert', label: 'Fire Alarm Inspection Certificate', pillar: 'facility_safety' },
-  { value: 'sprinkler_inspection_report', label: 'Sprinkler Inspection Report', pillar: 'facility_safety' },
-  { value: 'hood_cleaning_service_record', label: 'Hood Cleaning Service Record (NFPA 96)', pillar: 'facility_safety' },
+  { value: 'suppression_inspection_report', label: 'Suppression System Inspection Report', pillar: 'fire_safety' },
+  { value: 'fire_alarm_inspection_cert', label: 'Fire Alarm Inspection Certificate', pillar: 'fire_safety' },
+  { value: 'sprinkler_inspection_report', label: 'Sprinkler Inspection Report', pillar: 'fire_safety' },
+  { value: 'hood_cleaning_service_record', label: 'Hood Cleaning Service Record (NFPA 96)', pillar: 'fire_safety' },
   // Food Safety
   { value: 'health_permit', label: 'Health Department Permit', pillar: 'food_safety' },
   { value: 'food_handler_cert', label: 'Food Handler Certification', pillar: 'food_safety' },

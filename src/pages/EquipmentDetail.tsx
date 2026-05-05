@@ -30,7 +30,7 @@ interface EquipmentItem {
   warrantyExpiry: string; warrantyProvider: string; warrantyTerms: string; warrantyContact?: string;
   condition: Condition; nextMaintenanceDue: string; maintenanceInterval: string;
   linkedVendor: string; usefulLifeYears: number; replacementCost: number;
-  status?: EquipmentStatus; pillar?: 'facility_safety' | 'food_safety';
+  status?: EquipmentStatus; pillar?: 'fire_safety' | 'food_safety';
   notes: string; serviceHistory: ServiceRecord[]; schedule: ScheduleItem[];
 }
 
@@ -48,7 +48,7 @@ const FIRE_TYPES = new Set([
   'Grease Trap', 'Grease Interceptor', 'Backflow Preventer',
   'Wood-Fired Oven', 'Charcoal Grill', 'Wood Smoker', 'Pellet Smoker',
 ]);
-function getPillar(eq: EquipmentItem): 'facility_safety' | 'food_safety' { return eq.pillar || (FIRE_TYPES.has(eq.type) ? 'facility_safety' : 'food_safety'); }
+function getPillar(eq: EquipmentItem): 'fire_safety' | 'food_safety' { return eq.pillar || (FIRE_TYPES.has(eq.type) ? 'fire_safety' : 'food_safety'); }
 
 const badge = (text: string, color: string, bg: string): React.CSSProperties => ({
   fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '6px',
@@ -94,7 +94,7 @@ export function EquipmentDetail() {
   }
 
   const pillar = getPillar(equipment);
-  const isFire = pillar === 'facility_safety';
+  const isFire = pillar === 'fire_safety';
   const st = statusInfo(equipment.status);
   const w = warrantyInfo(equipment.warrantyExpiry);
   const m = maintenanceInfo(equipment.nextMaintenanceDue);

@@ -363,7 +363,7 @@ export function ComplianceOverview() {
           .from('inspection_reports')
           .select('pillar, inspection_date, raw_result, raw_result_type, inspection_type')
           .eq('organization_id', orgId)
-          .eq('pillar', 'facility_safety')
+          .eq('pillar', 'fire_safety')
           .order('inspection_date', { ascending: false })
           .limit(1);
         if (locationFilter) q.eq('location_id', locationFilter);
@@ -393,7 +393,7 @@ export function ComplianceOverview() {
           .from('corrective_actions')
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', orgId)
-          .eq('pillar', 'facility_safety')
+          .eq('pillar', 'fire_safety')
           .in('status', openStatuses);
         if (locationFilter) q.eq('location_id', locationFilter);
         const { count } = await q;

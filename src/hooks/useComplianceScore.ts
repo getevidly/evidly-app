@@ -83,7 +83,7 @@ function buildFacilitySafetyScore(
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {
     return {
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       authority: jurisdiction.facilitySafety,
       grade: override.facilitySafety.grade,
       gradeDisplay: override.facilitySafety.gradeDisplay,
@@ -108,7 +108,7 @@ function buildFacilitySafetyScore(
   const operationalPermitValid = loc ? loc.facilitySafety.ops >= 70 : true;
 
   return {
-    pillar: 'facility_safety',
+    pillar: 'fire_safety',
     authority: jurisdiction.facilitySafety,
     grade: operationalPermitValid ? 'Pass' : 'Fail',
     gradeDisplay: operationalPermitValid
@@ -144,7 +144,7 @@ function buildEmptyScore(
       details: null,
     },
     facilitySafety: {
-      pillar: 'facility_safety',
+      pillar: 'fire_safety',
       authority: jurisdiction.facilitySafety,
       grade: null,
       gradeDisplay: null,
