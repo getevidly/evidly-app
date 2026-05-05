@@ -29,6 +29,7 @@ import {
   SEVERITY_CONFIG,
   SEVERITY_ORDER,
   DEMO_TEAM_MEMBERS,
+  OPEN_CORRECTIVE_ACTION_STATUSES,
   type CAStatus,
   type CASeverity,
 } from '../constants/correctiveActionStatus';
@@ -285,7 +286,7 @@ export function CorrectiveActions() {
       : 0;
 
     return {
-      open: actions.filter(i => ['reported', 'assigned', 'in_progress'].includes(i.status)).length,
+      open: actions.filter(i => (OPEN_CORRECTIVE_ACTION_STATUSES as readonly string[]).includes(i.status)).length,
       overdue: actions.filter(i => isOverdue(i)).length,
       avgResolve: avgResolveDays,
       verified: actions.filter(i => i.status === 'verified').length,

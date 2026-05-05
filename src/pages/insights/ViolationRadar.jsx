@@ -6,6 +6,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { ViolationRadarCard } from '../../components/superpowers/ViolationRadarCard';
 import { computeViolationRisks } from '../../lib/violationRadar';
 import { supabase } from '../../lib/supabase';
+import { OPEN_CORRECTIVE_ACTION_STATUSES } from '../../constants/correctiveActionStatus';
 import { Target } from 'lucide-react';
 
 export function ViolationRadar() {
@@ -31,7 +32,7 @@ export function ViolationRadar() {
 
         // Parallel queries
         const [caRes, tempRes, docRes, serviceRes] = await Promise.all([
-          supabase.from('corrective_actions').select('status, due_date').eq('organization_id', orgId).in('status', ['open', 'in_progress']),
+          supabase.from('corrective_actions').select('status, due_date').eq('organization_id', orgId).in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES]),
           supabase.from('temperature_logs').select('temp_pass, reading_time').eq('organization_id', orgId).gte('reading_time', sevenDaysAgo),
           supabase.from('documents').select('expiration_date').eq('organization_id', orgId).lt('expiration_date', today).is('archived_at', null),
           supabase.from('vendor_service_records').select('next_due_date').eq('organization_id', orgId).lt('next_due_date', today),

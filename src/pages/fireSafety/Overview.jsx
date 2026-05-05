@@ -19,8 +19,8 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
 import { colors } from '../../lib/designSystem';
+import { OPEN_CORRECTIVE_ACTION_STATUSES } from '../../constants/correctiveActionStatus';
 
-const OPEN_STATUSES = ['open', 'in_progress', 'assigned', 'pending'];
 const SEVERITY_ORDER = { critical: 0, high: 1, medium: 2 };
 const QUERY_TIMEOUT = 5000;
 
@@ -151,7 +151,7 @@ export default function FireSafetyOverview() {
             .select('id', { count: 'exact', head: true })
             .eq('organization_id', orgId)
             .eq('pillar', 'fire_safety')
-            .in('status', OPEN_STATUSES);
+            .in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES]);
           if (locationFilter.length > 0 && locationFilter.length < orgLocations.length) {
             q.in('location_id', locationFilter);
           }
@@ -174,7 +174,7 @@ export default function FireSafetyOverview() {
           .select('id, title, severity, status, due_date')
           .eq('organization_id', orgId)
           .eq('pillar', 'fire_safety')
-          .in('status', OPEN_STATUSES)
+          .in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES])
           .in('severity', ['critical', 'high', 'medium'])
           .order('due_date', { ascending: true })
           .limit(15);

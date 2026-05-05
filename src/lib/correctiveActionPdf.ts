@@ -14,7 +14,7 @@ import {
 } from './pdfExport';
 import type { CorrectiveActionItem } from '../data/correctiveActionsDemoData';
 import { isOverdue, SEVERITY_LABELS, CATEGORY_LABELS } from '../data/correctiveActionsDemoData';
-import { CA_STATUS_MAP } from '../constants/correctiveActionStatus';
+import { CA_STATUS_MAP, OPEN_CORRECTIVE_ACTION_STATUSES } from '../constants/correctiveActionStatus';
 
 // ---------------------------------------------------------------------------
 // Export
@@ -40,7 +40,7 @@ export function exportCorrectiveActionsPdf(
   y += 4;
 
   // ── Summary Stats ──
-  const openCount = actions.filter(i => ['reported', 'assigned', 'in_progress'].includes(i.status)).length;
+  const openCount = actions.filter(i => (OPEN_CORRECTIVE_ACTION_STATUSES as readonly string[]).includes(i.status)).length;
   const overdueCount = actions.filter(i => isOverdue(i)).length;
   const verifiedCount = actions.filter(i => i.status === 'verified').length;
   const resolvedItems = actions.filter(i => i.resolvedAt);

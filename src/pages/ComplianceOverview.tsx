@@ -20,6 +20,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { colors } from '../lib/designSystem';
+import { OPEN_CORRECTIVE_ACTION_STATUSES } from '../constants/correctiveActionStatus';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -372,7 +373,6 @@ export function ComplianceOverview() {
       }
 
       // Open corrective actions by pillar
-      const openStatuses = ['open', 'in_progress', 'assigned', 'pending'];
       let foodCount = 0;
       let fireCount = 0;
 
@@ -382,7 +382,7 @@ export function ComplianceOverview() {
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', orgId)
           .eq('pillar', 'food_safety')
-          .in('status', openStatuses);
+          .in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES]);
         if (locationFilter) q.eq('location_id', locationFilter);
         const { count } = await q;
         foodCount = count || 0;
@@ -394,7 +394,7 @@ export function ComplianceOverview() {
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', orgId)
           .eq('pillar', 'fire_safety')
-          .in('status', openStatuses);
+          .in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES]);
         if (locationFilter) q.eq('location_id', locationFilter);
         const { count } = await q;
         fireCount = count || 0;

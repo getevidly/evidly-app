@@ -8,6 +8,8 @@
  * Priority: 1 = critical, 2 = warning, 3 = positive/informational
  */
 
+import { OPEN_CORRECTIVE_ACTION_STATUSES, CLOSED_CORRECTIVE_ACTION_STATUSES } from '../constants/correctiveActionStatus';
+
 const FOUR_SAFEGUARDS = ['hood_cleaning', 'fire_suppression', 'fire_alarm', 'sprinklers'];
 const SAFEGUARD_LABELS = {
   hood_cleaning: 'Hood Cleaning',
@@ -219,8 +221,8 @@ export async function generateCAInsights(orgId, supabase) {
 
   if (!actions || actions.length === 0) return insights;
 
-  const open = actions.filter(a => ['created', 'in_progress'].includes(a.status));
-  const closedStatuses = ['completed', 'verified', 'closed'];
+  const open = actions.filter(a => [...OPEN_CORRECTIVE_ACTION_STATUSES].includes(a.status));
+  const closedStatuses = [...CLOSED_CORRECTIVE_ACTION_STATUSES];
 
   // Aging: open CAs older than 14 days
   const aged14 = open.filter(a => daysSince(a.created_at) > 14);
@@ -582,7 +584,7 @@ export async function generateLocationInsights(orgId, supabase) {
     .from('corrective_actions')
     .select('location_id, status')
     .eq('organization_id', orgId)
-    .in('status', ['created', 'in_progress'])
+    .in('status', [...OPEN_CORRECTIVE_ACTION_STATUSES])
     .in('location_id', locationIds);
 
   if (cas && cas.length > 0) {

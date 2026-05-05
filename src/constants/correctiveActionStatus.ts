@@ -88,6 +88,12 @@ export const CA_STATUS_ORDER: Record<CAStatus, number> = {
   reported: 0, assigned: 1, in_progress: 2, resolved: 3, verified: 4,
 };
 
+/** Statuses where a corrective action is still open (needs work). */
+export const OPEN_CORRECTIVE_ACTION_STATUSES = ['reported', 'assigned', 'in_progress'] as const;
+
+/** Statuses where a corrective action is closed/complete. */
+export const CLOSED_CORRECTIVE_ACTION_STATUSES = ['resolved', 'verified', 'closed', 'archived'] as const;
+
 // ── Severity Config ──────────────────────────────────────────
 
 export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
