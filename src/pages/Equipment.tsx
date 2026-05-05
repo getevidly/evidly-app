@@ -676,7 +676,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  const locations = isDemoMode ? DEMO_LOCATIONS : [];
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>(isDemoMode ? DEMO_LOCATIONS : []);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
@@ -709,13 +709,16 @@ export function Equipment() {
         return;
       }
 
-      // Map location IDs to names
+      // Fetch active locations: used both for ID-to-name mapping and the form/filter dropdowns
       const { data: locData } = await supabase
         .from('locations')
         .select('id, name')
-        .eq('organization_id', profile!.organization_id);
+        .eq('organization_id', profile!.organization_id)
+        .eq('status', 'active')
+        .order('name', { ascending: true });
       const locMap: Record<string, string> = {};
       (locData || []).forEach((l: any) => { locMap[l.id] = l.name; });
+      setLocations(locData || []);
 
       const mapped: EquipmentItem[] = (data || []).map((e: any) => ({
         id: e.id,
