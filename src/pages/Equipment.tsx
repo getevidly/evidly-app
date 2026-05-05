@@ -88,7 +88,7 @@ interface EquipmentItem {
 
 // ── Constants ──────────────────────────────────────────────────────
 
-const NOW = new Date('2026-02-09');
+const NOW = new Date();
 const DEMO_LOCATIONS = [
   { id: '1', name: 'Location 1' }, // demo
   { id: '2', name: 'Location 2' }, // demo

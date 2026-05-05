@@ -35,7 +35,7 @@ interface EquipmentItem {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
-const NOW = new Date('2026-02-09');
+const NOW = new Date();
 function daysBetween(a: string | Date, b: string | Date): number { return Math.ceil((new Date(b).getTime() - new Date(a).getTime()) / 86400000); }
 function ageLabel(d: string): string { const m = Math.floor((NOW.getTime() - new Date(d).getTime()) / (30.44 * 86400000)); return `${Math.floor(m / 12)} yr${Math.floor(m / 12) !== 1 ? 's' : ''} ${m % 12} mo`; }
 function conditionColor(c: string) { const m: Record<string, string> = { Excellent: '#16a34a', Good: '#22c55e', Fair: '#d97706', Poor: '#f97316', Critical: '#dc2626' }; return m[c] || '#6b7280'; }
