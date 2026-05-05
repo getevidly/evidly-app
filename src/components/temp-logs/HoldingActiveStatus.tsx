@@ -799,7 +799,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                         <div className="mt-3 flex gap-2">
                           <button
                             type="button"
-                            className="flex-1 px-3 py-2 rounded-lg text-sm font-medium"
+                            className="flex-[0.65] px-3 py-2 rounded-lg text-sm font-medium"
                             style={{
                               backgroundColor: colors.navy,
                               color: 'white',
@@ -814,7 +814,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                           </button>
                           <button
                             type="button"
-                            className="px-3 py-2 rounded-lg text-xs font-medium"
+                            className="flex-[0.35] px-3 py-2 rounded-lg text-xs font-medium"
                             style={{
                               border: `1px dashed ${colors.border}`,
                               color: colors.navy,
@@ -988,20 +988,35 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                 <span className="text-xs" style={{ color: colors.textSecondary }}>
                   {pickerSelection.size} selected
                 </span>
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded-md text-sm font-medium"
-                  style={{
-                    backgroundColor: pickerSelection.size === 0 ? `${colors.navy}40` : colors.navy,
-                    color: 'white',
-                    minHeight: '44px',
-                    cursor: pickerSelection.size === 0 ? 'not-allowed' : 'pointer',
-                  }}
-                  disabled={pickerSelection.size === 0}
-                  onClick={handlePickerDone}
-                >
-                  Done
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded-md text-sm"
+                    style={{
+                      border: `0.5px solid ${colors.border}`,
+                      color: colors.textPrimary,
+                      backgroundColor: 'transparent',
+                      minHeight: '44px',
+                    }}
+                    onClick={() => setPickerEquipmentId(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded-md text-sm font-medium"
+                    style={{
+                      backgroundColor: pickerSelection.size === 0 ? `${colors.navy}40` : colors.navy,
+                      color: 'white',
+                      minHeight: '44px',
+                      cursor: pickerSelection.size === 0 ? 'not-allowed' : 'pointer',
+                    }}
+                    disabled={pickerSelection.size === 0}
+                    onClick={handlePickerDone}
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             </div>
           );
