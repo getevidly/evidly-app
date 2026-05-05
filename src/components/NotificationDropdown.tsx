@@ -173,12 +173,23 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
       });
     }
 
-    const { data: recentCompletions } = await supabase
-      .from('temperature_logs')
-      .select('*, user_profiles(full_name)')
-      .eq('facility_id', orgId)
-      .order('reading_time', { ascending: false })
-      .limit(2);
+    const { data: orgEquipment } = await supabase
+      .from('temperature_equipment')
+      .select('id')
+      .eq('organization_id', orgId);
+
+    const orgEquipIds = (orgEquipment || []).map((e: any) => e.id);
+
+    let recentCompletions: any[] | null = null;
+    if (orgEquipIds.length > 0) {
+      const { data } = await supabase
+        .from('temperature_logs')
+        .select('*, user_profiles(full_name)')
+        .in('equipment_id', orgEquipIds)
+        .order('reading_time', { ascending: false })
+        .limit(2);
+      recentCompletions = data;
+    }
 
     if (recentCompletions) {
       recentCompletions.forEach((completion) => {
