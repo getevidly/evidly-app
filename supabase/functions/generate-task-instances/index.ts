@@ -35,7 +35,7 @@ Deno.serve(async (req: Request) => {
       .select("*")
       .eq("is_active", true);
     if (body.orgId) {
-      query = query.eq("org_id", body.orgId);
+      query = query.eq("organization_id", body.orgId);
     }
 
     const { data: definitions, error: defError } = await query;
@@ -96,7 +96,8 @@ Deno.serve(async (req: Request) => {
           .from("task_instances")
           .insert({
             definition_id: def.id,
-            org_id: def.org_id,
+            organization_id: def.organization_id,
+            pillar: def.pillar,
             location_id: def.location_id,
             assigned_to: def.assigned_to_user_id,
             title: def.name,
