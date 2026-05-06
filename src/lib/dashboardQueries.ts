@@ -49,6 +49,7 @@ export interface DashboardData {
   vendors: Vendor[];
   needsAttention: NeedsAttentionItem[];
   scoreImpact: ScoreImpactItem[];
+  timezone: string | null;
 }
 
 // ── Empty results for live mode (no data yet) ───────────
@@ -325,11 +326,27 @@ export async function fetchScoreImpact(organizationId?: string): Promise<ScoreIm
 }
 
 // ────────────────────────────────────────────────────────
+// Fetch organization metadata — timezone for canonical hook consumers
+// ────────────────────────────────────────────────────────
+export async function fetchOrganizationMeta(
+  organizationId?: string,
+): Promise<{ timezone: string | null }> {
+  if (!organizationId) return { timezone: null };
+  const { data, error } = await supabase
+    .from('organizations')
+    .select('timezone')
+    .eq('id', organizationId)
+    .single();
+  if (error || !data) return { timezone: null };
+  return { timezone: data.timezone };
+}
+
+// ────────────────────────────────────────────────────────
 // Master loader — runs all queries in parallel
 // ────────────────────────────────────────────────────────
 
 export async function loadDashboardData(organizationId?: string): Promise<DashboardData> {
-  const [complianceData, locs, progress, activity, vendorData, needsAttention, scoreImpact] = await Promise.all([
+  const [complianceData, locs, progress, activity, vendorData, needsAttention, scoreImpact, orgMeta] = await Promise.all([
     fetchComplianceScores(organizationId),
     fetchLocations(organizationId),
     fetchTodaysProgress(organizationId),
@@ -337,6 +354,7 @@ export async function loadDashboardData(organizationId?: string): Promise<Dashbo
     fetchVendorServices(organizationId),
     fetchNeedsAttention(organizationId),
     fetchScoreImpact(organizationId),
+    fetchOrganizationMeta(organizationId),
   ]);
 
   return {
@@ -347,6 +365,7 @@ export async function loadDashboardData(organizationId?: string): Promise<Dashbo
     vendors: vendorData,
     needsAttention,
     scoreImpact,
+    timezone: orgMeta.timezone,
   };
 }
 

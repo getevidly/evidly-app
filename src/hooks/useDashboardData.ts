@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
+import { useTaskState } from '../lib/canonicalQueries/task-state';
 import { pushComplianceUpdate } from '../lib/intelligenceBridge';
 import {
   loadDashboardData,
@@ -101,6 +102,7 @@ export interface DashboardPayload {
   moduleStatuses: ModuleStatus[];
   trendData: TrendDataPoint[];
   weights: DashboardWeights;
+  timezone: string | null;
 }
 
 // ── Demo Data ──────────────────────────────────────────
@@ -297,6 +299,7 @@ function buildDemoPayload(): DashboardPayload {
       ops: 50,
       docs: 50,
     },
+    timezone: 'America/Los_Angeles',
   };
 }
 
@@ -314,6 +317,7 @@ function buildEmptyPayload(): DashboardPayload {
     moduleStatuses: [],
     trendData: [],
     weights: { ops: 50, docs: 50 },
+    timezone: null,
   };
 }
 
@@ -367,6 +371,12 @@ export function useDashboardData(): {
   const [loading, setLoading] = useState(!isDemoMode);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+
+  // Canonical task state — bails internally on empty orgId or tz
+  const taskStateResult = useTaskState({
+    orgId: orgId ?? '',
+    tz: data.timezone ?? '',
+  });
 
   const fetchData = useCallback(async () => {
     // Only serve demo data when genuinely in demo mode (/demo route)
@@ -427,6 +437,7 @@ export function useDashboardData(): {
           ops: 50,
           docs: 50,
         },
+        timezone: result.timezone,
       });
     } catch (err) {
       if (!mountedRef.current) return;
@@ -468,5 +479,12 @@ export function useDashboardData(): {
     }).catch(() => {}); // fire and forget
   }, [isDemoMode, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
 
-  return { data, loading, error, refresh: fetchData };
+  return {
+    data,
+    loading,
+    error,
+    refresh: fetchData,
+    overdueCount: taskStateResult.data?.overdueCount ?? null,
+    tasksTodayCount: taskStateResult.data?.todayCounts.total ?? null,
+  };
 }

@@ -82,7 +82,7 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: 
 
 export function DashboardToday() {
   const navigate = useNavigate();
-  const { data } = useDashboardData();
+  const { data, overdueCount, tasksTodayCount } = useDashboardData();
   const tasks = data.tasks ?? [];
   const deadlines = data.deadlines ?? [];
   const todayStr = new Date().toLocaleDateString('en-US', {
@@ -90,7 +90,6 @@ export function DashboardToday() {
   });
 
   const doneCount = tasks.filter(t => t.status === 'done').length;
-  const overdueCount = tasks.filter(t => t.status === 'overdue').length;
   const urgentDeadlines = deadlines.filter(d => d.severity === 'critical' || d.severity === 'warning');
 
   return (
@@ -120,11 +119,13 @@ export function DashboardToday() {
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A08C5A" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           </div>
           <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Tasks Today</p>
-          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: NAVY }}>{tasks.length}</p>
+          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: NAVY }}>{tasksTodayCount ?? '—'}</p>
           <p className="text-xs text-center">
-            {doneCount === 0 && tasks.length === 0
-              ? <span className="text-sm text-green-600 font-medium">All clear</span>
-              : <span className="text-green-600">{doneCount} completed</span>
+            {tasksTodayCount === null
+              ? <span className="text-sm text-[#1E2D4D]/40">Loading…</span>
+              : tasksTodayCount === 0
+                ? <span className="text-sm text-green-600 font-medium">All clear</span>
+                : <span className="text-green-600">{doneCount} completed</span>
             }
           </p>
         </button>
@@ -134,29 +135,31 @@ export function DashboardToday() {
           type="button"
           onClick={() => navigate('/tasks?filter=overdue')}
           className={`rounded-xl border-l-4 p-4 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 relative overflow-hidden text-left ${
-            overdueCount > 0
+            (overdueCount ?? 0) > 0
               ? 'border-l-red-500 bg-gradient-to-br from-white to-red-50'
               : 'border-l-green-500 bg-gradient-to-br from-white to-green-50'
           }`}
           style={{
             border: '1px solid #e5e7eb',
             borderLeftWidth: '4px',
-            borderLeftColor: overdueCount > 0 ? '#ef4444' : '#22c55e',
+            borderLeftColor: (overdueCount ?? 0) > 0 ? '#ef4444' : '#22c55e',
           }}
         >
           <div className="absolute top-3 right-3 opacity-10">
-            {overdueCount === 0 ? (
+            {(overdueCount ?? 0) === 0 ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             )}
           </div>
           <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Overdue</p>
-          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: overdueCount > 0 ? '#dc2626' : NAVY }}>{overdueCount}</p>
+          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: (overdueCount ?? 0) > 0 ? '#dc2626' : NAVY }}>{overdueCount ?? '—'}</p>
           <p className="text-xs text-center">
-            {overdueCount > 0
-              ? <span className="text-sm text-red-600 font-medium animate-pulse">Needs attention</span>
-              : <span className="text-sm text-green-600 font-medium">All on track</span>
+            {overdueCount === null
+              ? <span className="text-sm text-[#1E2D4D]/40">Loading…</span>
+              : overdueCount > 0
+                ? <span className="text-sm text-red-600 font-medium animate-pulse">Needs attention</span>
+                : <span className="text-sm text-green-600 font-medium">All on track</span>
             }
           </p>
         </button>
