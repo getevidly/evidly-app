@@ -171,7 +171,7 @@ const SystemMessages = lazy(() => import('./pages/admin/SystemMessages'));
 const AdminK2C = lazy(() => import('./pages/admin/AdminK2C'));
 const DatabaseBackup = lazy(() => import('./pages/admin/DatabaseBackup'));
 const MaintenanceMode = lazy(() => import('./pages/admin/MaintenanceMode'));
-const DocumentVault = lazy(() => import('./pages/admin/DocumentVault'));
+const EvidlyVault = lazy(() => import('./pages/admin/EvidlyVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
@@ -765,7 +765,7 @@ function AppRoutes() {
           <Route path="/admin/assessments" element={<Navigate to="/admin/kitchen-checkup" replace />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/home" element={<Navigate to="/admin" replace />} />
-          <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/demo/dashboard" element={<DemoDashboard />} />
           <Route path="/admin/command-center" element={<CommandCenter />} />
           <Route path="/admin/guided-tours" element={<SalesGuard><GuidedTours /></SalesGuard>} />
@@ -781,7 +781,8 @@ function AppRoutes() {
           <Route path="/admin/backup" element={<DatabaseBackup />} />
           <Route path="/admin/maintenance" element={<MaintenanceMode />} />
           <Route path="/admin/security-settings" element={<SecuritySettings />} />
-          <Route path="/admin/vault" element={<DocumentVault />} />
+          <Route path="/admin/evidly-vault" element={<EvidlyVault />} />
+          <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} />
           <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
           <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
