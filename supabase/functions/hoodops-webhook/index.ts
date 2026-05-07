@@ -108,28 +108,23 @@ Deno.serve(async (req: Request) => {
   const eventId = data.event_id ||
     `${organization_id}-${location_id}-${service_type_code}-${effectiveDate}`;
 
-  // AUDIT-FIX-07 / H-4: Audit logging helper
+  // H-4: Audit logging helper — platform_audit_log created in Sprint A commit 1
   const logAudit = async (success: boolean, errorMessage?: string) => {
-    // platform_audit_log table does not yet exist — see Sprint Zero
-    // verification doc tracking item #5. Silent failure is intentional
-    // pre-launch; before launch, the table is created and this fallback
-    // becomes a true no-op.
-    try {
-      await supabase.from("platform_audit_log").insert({
-        action: "edge_fn.hoodops_webhook",
-        resource_type: "vendor_service_record",
-        resource_id: eventId,
-        success,
-        error_message: errorMessage || null,
-        metadata: {
-          event,
-          service_type_code,
-          location_id,
-          organization_id,
-        },
-      });
-    } catch {
-      // Audit table may not exist yet — swallow silently
+    const { error } = await supabase.from("platform_audit_log").insert({
+      organization_id,
+      action: "edge_fn.hoodops_webhook",
+      resource_type: "vendor_service_record",
+      resource_id: eventId,
+      success,
+      error_message: errorMessage || null,
+      metadata: {
+        event,
+        service_type_code,
+        location_id,
+      },
+    });
+    if (error) {
+      console.error("[hoodops-webhook] Audit log insert failed:", error.message);
     }
   };
 
