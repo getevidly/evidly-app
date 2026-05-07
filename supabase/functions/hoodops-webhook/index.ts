@@ -18,15 +18,13 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
 
-const VALID_SERVICE_CODES = ["KEC", "FPM", "GFX", "RGC", "FS"];
-
-// Maps HoodOps service_type_code → PSE safeguard_type (null = not a PSE safeguard)
-const SERVICE_CODE_TO_SAFEGUARD: Record<string, string | null> = {
+// Maps HoodOps service_type_code → PSE safeguard_type
+const SERVICE_CODE_TO_SAFEGUARD: Record<string, string> = {
   KEC: "hood_cleaning",
-  FS:  "fire_suppression",
-  FPM: null,
-  GFX: null,
-  RGC: null,
+  FPM: "hood_cleaning",
+  GFX: "hood_cleaning",
+  RGC: "hood_cleaning",
+  // FS removed — fire suppression integrates via future dedicated app
 };
 
 const FREQUENCY_DAYS: Record<string, number> = {
@@ -105,13 +103,6 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  if (!VALID_SERVICE_CODES.includes(service_type_code)) {
-    return new Response(
-      JSON.stringify({ error: `Invalid service_type_code: ${service_type_code}` }),
-      { status: 400, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
   // AUDIT-FIX-07 / H-3: Deterministic event_id for idempotency
   const effectiveDate = service_date || new Date().toISOString().split("T")[0];
   const eventId = data.event_id ||
@@ -136,8 +127,21 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (event === "service.completed") {
+      // Unmapped codes: log and acknowledge with 200 (never 4xx) to prevent retry loop
+      const safeguardType = SERVICE_CODE_TO_SAFEGUARD[service_type_code];
+      if (safeguardType === undefined) {
+        console.log(
+          `[hoodops-webhook] Unmapped service_type_code: ${service_type_code}. ` +
+          `Acknowledging with 200 to prevent retry loop. Event will not be persisted.`
+        );
+        await logAudit(false, `Unmapped service_type_code: ${service_type_code}`);
+        return new Response(
+          JSON.stringify({ received: true, processed: false, reason: "unmapped_service_type_code" }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        );
+      }
+
       // AUDIT-FIX-07 / H-3: Upsert with event_id for idempotency (was insert)
-      const safeguardType = SERVICE_CODE_TO_SAFEGUARD[service_type_code] ?? null;
       const { error: upsertRecordError } = await supabase
         .from("vendor_service_records")
         .upsert({
@@ -146,14 +150,13 @@ Deno.serve(async (req: Request) => {
           location_id,
           service_type_code,
           safeguard_type: safeguardType,
-          service_type: data.service_name || service_type_code,
           vendor_name: vendor_name || "HoodOps Partner",
           technician_name: technician_name || null,
           service_date: effectiveDate,
           price_charged: price_charged || null,
           certificate_url: certificate_url || null,
           notes: notes || null,
-          source: "hoodops_webhook",
+          source: "hoodops",
           webhook_payload: body,
         }, { onConflict: "event_id" });
 
