@@ -64,7 +64,7 @@ export function LeaderboardPreview() {
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
-            Start Free Trial {'→'}
+            Get Founder Pricing {'→'}
           </a>
           <a href="/login" style={{ background: 'transparent', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 600, fontSize: 12, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>
             Log In
@@ -279,7 +279,7 @@ export function LeaderboardPreview() {
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 14, textDecoration: 'none' }}>
-            Start Free {'—'} Founder Pricing {'→'}
+            Get Founder Pricing {'→'}
           </a>
           <a href="https://getevidly.com" style={{ background: 'transparent', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>
             Learn More

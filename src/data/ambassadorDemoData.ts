@@ -32,6 +32,6 @@ export const SHARE_MESSAGES = {
     "We use EvidLY to stay inspection-ready every day. If you run a commercial kitchen in California, this is worth 14 minutes of your time.",
   email_subject: "Tool I've been using for our kitchen compliance",
   email_body:
-    "Hey,\n\nWe've been using EvidLY for our kitchen and it's changed how we prepare for inspections.\n\nThought you'd find it useful: {referralUrl}\n\nFree 14-day trial.",
-  sms: "Using EvidLY for our kitchen — tracks compliance, flags service gaps, tells you what your inspector looks for. Free trial: {referralUrl}",
+    "Hey,\n\nWe've been using EvidLY for our kitchen and it's changed how we prepare for inspections.\n\nThought you'd find it useful: {referralUrl}\n\nFounder pricing — $99/mo through Aug 7, 2026.",
+  sms: "Using EvidLY for our kitchen — tracks compliance, flags service gaps, tells you what your inspector looks for. Founder pricing: {referralUrl}",
 };

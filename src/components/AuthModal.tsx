@@ -71,7 +71,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
             </span>
           </div>
           <h2 style={{ fontSize:'24px',fontWeight:'bold',color:'#111',margin:'0' }}>{mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>
-          <p style={{ fontSize:'14px',color:'#6b7280',marginTop:'4px' }}>{mode === 'login' ? 'Sign in to your compliance dashboard' : 'Start your free trial'}</p>
+          <p style={{ fontSize:'14px',color:'#6b7280',marginTop:'4px' }}>{mode === 'login' ? 'Sign in to your compliance dashboard' : 'Get started with Founder pricing'}</p>
         </div>
         {success && mode === 'signup' ? (
           <div style={{ padding:'0 32px 32px' }}>

@@ -152,7 +152,7 @@ export default function KitchenToCommunity() {
               className="px-6 py-3 rounded-xl font-semibold text-white transition-colors hover:opacity-90 flex items-center justify-center gap-2"
               style={{ backgroundColor: '#1E2D4D' }}
             >
-              Start your free trial <ArrowRight className="w-4 h-4" />
+              Lock in Founder pricing <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate('/demo')}
@@ -162,7 +162,7 @@ export default function KitchenToCommunity() {
               See EvidLY in action <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month after 30-day free trial. Cancel anytime.</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month — Founder pricing locked through Aug 7, 2026.</p>
         </div>
       </section>
 

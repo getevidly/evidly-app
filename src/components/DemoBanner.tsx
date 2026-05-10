@@ -23,7 +23,7 @@ export function DemoBanner() {
           className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-[#1E2D4D]/5"
           style={{ backgroundColor: 'white', color: '#1E2D4D' }}
         >
-          Start Free Trial
+          Get Founder Pricing
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>

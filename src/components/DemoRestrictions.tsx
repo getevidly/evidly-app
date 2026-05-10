@@ -58,7 +58,7 @@ export function DemoRestrictions() {
       @media print {
         body.demo-mode * { display: none !important; }
         body.demo-mode::after {
-          content: 'Printing is available on the paid plan. Start your free trial at evidly.com';
+          content: 'Printing is available on paid plans. Get Founder pricing at evidly.com';
           display: block !important;
           padding: 40px;
           font-size: 18px;

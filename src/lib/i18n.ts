@@ -1445,7 +1445,7 @@ const en = {
   demo: {
     demoMode: 'Demo Mode',
     viewingSampleData: "You're viewing sample data to preview the interface. Sign in to access your actual data.",
-    printAvailableOnPaid: 'Printing is available on the paid plan. Start your free trial!',
+    printAvailableOnPaid: 'Printing is available on paid plans. Get Founder pricing at evidly.com',
   },
 };
 

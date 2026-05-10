@@ -52,7 +52,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
         <div className="px-6 py-6">
           <p className="text-[#1E2D4D]/80 text-sm leading-relaxed mb-2">
             <span className="font-semibold capitalize">{action}</span> is not available in demo mode.
-            {featureName && <> Start a free trial to unlock <span className="font-semibold">{featureName}</span>.</>}
+            {featureName && <> Get Founder pricing to unlock <span className="font-semibold">{featureName}</span>.</>}
           </p>
           <p className="text-[#1E2D4D]/50 text-xs mb-5">
             Get full access to all features with your own data.
@@ -63,7 +63,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
               href="/signup"
               className="flex-1 py-2.5 px-4 bg-[#1E2D4D] hover:bg-[#162340] text-white font-medium rounded-lg transition-colors text-sm text-center"
             >
-              Start Free Trial
+              Get Founder Pricing
             </a>
             <button
               type="button"

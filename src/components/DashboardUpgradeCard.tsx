@@ -34,7 +34,7 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
             className="px-5 py-2.5 rounded-lg font-bold text-sm transition-colors hover:brightness-110"
             style={{ backgroundColor: '#A08C5A', color: '#0A3D6B' }}
           >
-            Start Free Trial — $99/month
+            Lock in Founder Pricing — $99/month
           </button>
           <button
             onClick={() => {
@@ -49,15 +49,11 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
             <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
-            No credit card required
+            Founder pricing through Aug 7
           </span>
           <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
             <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
-            14-day free trial
-          </span>
-          <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
-            <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
-            Cancel anytime
+            Price locked forever
           </span>
         </div>
       </div>

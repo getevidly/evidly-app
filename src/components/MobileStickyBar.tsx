@@ -41,7 +41,7 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
           className="w-full max-w-sm py-2.5 rounded-lg font-bold text-sm transition-colors hover:bg-[#1E2D4D]/5"
           style={{ backgroundColor: 'white', color: '#1E2D4D' }}
         >
-          Start Free Trial — $99/mo
+          Lock in Founder Pricing — $99/mo
         </button>
       </div>
     );

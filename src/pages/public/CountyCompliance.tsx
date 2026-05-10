@@ -505,7 +505,7 @@ export function CountyCompliance() {
                 className="px-6 py-2.5 rounded-lg font-medium text-sm bg-white"
                 style={{ color: '#1E2D4D' }}
               >
-                Start Free Trial
+                Get Founder Pricing
               </Link>
             </div>
           </div>

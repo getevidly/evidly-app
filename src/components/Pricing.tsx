@@ -122,13 +122,16 @@ export default function Pricing() {
             <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>Risk-Free Guarantee</h3>
           </div>
           <p className="text-[#1E2D4D]/80 max-w-xl mx-auto leading-relaxed">
-            Try EvidLY <strong>free for 30 days</strong> with full access to every feature.
+            Try EvidLY with full access to every feature.
             Not convinced? Get a <strong>full refund within 45 days</strong> of your first payment. No questions asked.
           </p>
+          <p className="text-[#1E2D4D]/60 text-xs max-w-md mx-auto mt-2">
+            Account setup required within 15 days for Risk-Free Guarantee to apply (allows ops data collection).
+          </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-[#1E2D4D]/70">
-            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />30-day free trial</span>
-            <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />45-day money-back</span>
-            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />Cancel anytime</span>
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />45-day money-back</span>
+            <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />Founder price lock</span>
+            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />No setup fees</span>
           </div>
         </div>
 
@@ -141,7 +144,7 @@ export default function Pricing() {
                   Best Value
                 </span>
                 <span className="px-4 py-2 bg-[#16a34a] text-white text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
-                  30 Days Free
+                  Founder Price Lock
                 </span>
               </div>
 
@@ -210,9 +213,9 @@ export default function Pricing() {
                   onClick={() => { trackEvent('cta_click', { cta: 'pricing_founder_single', page: 'landing', billing: billingCycle }); navigate('/signup'); }}
                   className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1E2D4D] text-white hover:bg-[#162340] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  Start Free Trial
+                  Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">30 days free, then ${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`}. Cancel anytime.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`} — price locked forever when you start before Aug 7.</p>
               </div>
             </div>
           </div>
@@ -253,9 +256,9 @@ export default function Pricing() {
                   onClick={() => { trackEvent('cta_click', { cta: 'pricing_founder_multi', page: 'landing', billing: billingCycle }); navigate('/signup'); }}
                   className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1E2D4D] text-white hover:bg-[#162340] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  Start Free Trial
+                  Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">30 days free. Price locked forever.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">Price locked forever.</p>
               </div>
             </div>
           </div>
@@ -319,7 +322,7 @@ export default function Pricing() {
         {/* Trust Statement */}
         <div className="text-center mt-12">
           <p className="text-sm text-[#1E2D4D]/50">
-            30-day free trial &bull; 45-day money-back guarantee &bull; No setup fees &bull; Cancel anytime
+            45-day money-back guarantee &bull; No setup fees &bull; Price locked forever
           </p>
         </div>
       </div>

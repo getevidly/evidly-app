@@ -37,7 +37,7 @@ export function SidebarUpgradeBadge() {
         className="w-full py-2 px-3 rounded-md text-xs font-bold transition-colors hover:brightness-110"
         style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
       >
-        Start Free Trial
+        Get Founder Pricing
       </button>
       <p className="text-xs text-[#1E2D4D]/30 text-center mt-1.5">Limited time offer</p>
     </div>

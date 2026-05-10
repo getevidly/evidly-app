@@ -26,7 +26,7 @@ export function DemoCTABar() {
             className="px-4 py-2 text-sm font-semibold text-[#1E2D4D] rounded-lg transition-colors hover:opacity-90"
             style={{ backgroundColor: '#A08C5A' }}
           >
-            {isAuthenticatedDemo ? 'Upgrade to Full Account' : 'Start Free Trial'}
+            {isAuthenticatedDemo ? 'Upgrade to Full Account' : 'Get Founder Pricing'}
           </button>
           {showBooking && (
             <a

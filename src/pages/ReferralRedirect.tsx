@@ -75,7 +75,7 @@ export default function ReferralRedirect() {
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
           >
-            Start Free Trial
+            Get Founder Pricing
             <ArrowRight className="h-4 w-4" />
           </button>
 
@@ -85,7 +85,7 @@ export default function ReferralRedirect() {
         </div>
 
         <p className="text-xs text-[#1E2D4D]/30 mt-6">
-          30-day free trial. No credit card required.
+          Founder pricing through Aug 7, 2026. $99/mo.
         </p>
       </div>
     </div>

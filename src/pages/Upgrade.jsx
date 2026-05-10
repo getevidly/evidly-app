@@ -162,15 +162,9 @@ export function Upgrade() {
             </p>
           </div>
           <div>
-            <p className="text-sm font-medium text-[#1E2D4D]/90">Can I cancel anytime?</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">
-              Yes. Cancel anytime and you'll revert to CPP Free. Your hood cleaning data stays intact.
-            </p>
-          </div>
-          <div>
             <p className="text-sm font-medium text-[#1E2D4D]/90">What is Founder pricing?</p>
             <p className="text-xs text-[#1E2D4D]/50 mt-1">
-              Early adopters lock in $99/mo. This rate is guaranteed through August 7, 2026 — the price goes up after that.
+              Early adopters lock in $99/mo forever. This rate is only available through August 7, 2026 — price increases after that.
             </p>
           </div>
         </div>
