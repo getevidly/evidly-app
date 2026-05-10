@@ -1,16 +1,14 @@
 /**
- * TRIAL-EMAIL-ADMIN-01 — Resend Webhook Handler
+ * Resend Webhook Handler
  *
  * Receives webhook events from Resend (email.delivered, email.opened,
- * email.clicked, email.bounced) and updates the trial_email_log table
- * with delivery/engagement timestamps.
+ * email.clicked, email.bounced). Acknowledges all events.
  *
  * Endpoint: POST /functions/v1/resend-webhook
  * Auth: Resend webhook signature validation
  */
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 let corsHeaders = getCorsHeaders(null);
 
@@ -20,14 +18,6 @@ function jsonResponse(data: Record<string, unknown>, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
-
-// Column to update per Resend event type
-const EVENT_COLUMN_MAP: Record<string, string> = {
-  "email.delivered": "delivered_at",
-  "email.opened": "opened_at",
-  "email.clicked": "clicked_at",
-  "email.bounced": "bounced_at",
-};
 
 Deno.serve(async (req) => {
   corsHeaders = getCorsHeaders(req.headers.get('origin'));
@@ -57,38 +47,8 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const eventType: string = payload.type;
 
-    // Only process known event types
-    const column = EVENT_COLUMN_MAP[eventType];
-    if (!column) {
-      // Acknowledge unknown events so Resend doesn't retry
-      return jsonResponse({ ok: true, skipped: eventType });
-    }
-
-    const messageId: string | undefined = payload.data?.email_id;
-    if (!messageId) {
-      return jsonResponse({ ok: true, skipped: "no_message_id" });
-    }
-
-    // Service-role client for direct DB access (bypasses RLS)
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const now = new Date().toISOString();
-
-    const { error } = await supabase
-      .from("trial_email_log")
-      .update({ [column]: now })
-      .eq("resend_message_id", messageId);
-
-    if (error) {
-      console.error(`[resend-webhook] DB update failed for ${messageId}:`, error);
-      // Still return 200 — retries won't help if the row doesn't exist
-      return jsonResponse({ ok: false, error: error.message });
-    }
-
-    console.log(`[resend-webhook] ${eventType} → ${column} for ${messageId}`);
-    return jsonResponse({ ok: true, event: eventType, messageId });
+    console.log(`[resend-webhook] ${eventType} received`);
+    return jsonResponse({ ok: true, event: eventType });
   } catch (err) {
     console.error("[resend-webhook] Handler error:", err);
     // Return 200 to prevent Resend from retrying on parse errors
