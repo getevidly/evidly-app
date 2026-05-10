@@ -8,6 +8,8 @@
 
 import { useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { uploadFile, BUCKETS } from '../../lib/storage';
 import { useApiQuery, useApiMutation, type ApiQueryResult, type ApiMutationResult } from './useApiQuery';
 
 // ── Types ─────────────────────────────────────────────────────
@@ -82,6 +84,7 @@ export interface CreateEquipmentInput {
   name: string;
   equipmentType: string;
   locationId: string;
+  category?: 'food_safety' | 'fire_safety' | 'facility_services';
   manufacturer?: string;
   model?: string;
   serialNumber?: string;
@@ -91,8 +94,9 @@ export interface CreateEquipmentInput {
   customFields?: Record<string, unknown>;
 }
 
-export interface UpdateEquipmentInput extends Partial<CreateEquipmentInput> {
+export interface UpdateEquipmentInput extends Partial<Omit<CreateEquipmentInput, 'category'>> {
   id: string;
+  category?: 'food_safety' | 'fire_safety' | 'facility_services';
   condition?: EquipmentCondition;
   status?: EquipmentStatus;
 }
@@ -303,9 +307,36 @@ export function useEquipmentDocuments(id: string | undefined): ApiQueryResult<Eq
 // ── Mutations ─────────────────────────────────────────────────
 
 export function useCreateEquipment(): ApiMutationResult<CreateEquipmentInput, EquipmentItem> {
-  const mutationFn = useCallback(async (_args: CreateEquipmentInput): Promise<EquipmentItem> => {
-    throw new Error('Not implemented');
-  }, []);
+  const { profile } = useAuth();
+
+  const mutationFn = useCallback(async (args: CreateEquipmentInput): Promise<EquipmentItem> => {
+    const orgId = profile?.organization_id;
+    if (!orgId) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase
+      .from('equipment')
+      .insert({
+        organization_id: orgId,
+        location_id: args.locationId,
+        category: args.category ?? 'fire_safety',
+        name: args.name,
+        equipment_type: args.equipmentType,
+        manufacturer: args.manufacturer ?? '',
+        model: args.model ?? '',
+        serial_number: args.serialNumber ?? '',
+        install_date: args.installDate ?? null,
+        installed_area: args.installedArea ?? '',
+        notes: args.notes ?? '',
+        custom_fields: args.customFields ?? {},
+        location_name: '',
+        customer_name: '',
+      })
+      .select('*')
+      .single();
+
+    if (error) throw new Error(error.message);
+    return mapEquipmentRow(data);
+  }, [profile?.organization_id]);
 
   const demoFn = useCallback((args: CreateEquipmentInput): EquipmentItem => ({
     id: `eq-${Date.now()}`,
@@ -336,25 +367,80 @@ export function useCreateEquipment(): ApiMutationResult<CreateEquipmentInput, Eq
 }
 
 export function useUpdateEquipment(): ApiMutationResult<UpdateEquipmentInput> {
-  const mutationFn = useCallback(async (_args: UpdateEquipmentInput): Promise<void> => {
-    throw new Error('Not implemented');
+  const mutationFn = useCallback(async (args: UpdateEquipmentInput): Promise<void> => {
+    const { id, ...fields } = args;
+    const payload: Record<string, unknown> = {};
+    if (fields.name !== undefined) payload.name = fields.name;
+    if (fields.equipmentType !== undefined) payload.equipment_type = fields.equipmentType;
+    if (fields.locationId !== undefined) payload.location_id = fields.locationId;
+    if (fields.manufacturer !== undefined) payload.manufacturer = fields.manufacturer;
+    if (fields.model !== undefined) payload.model = fields.model;
+    if (fields.serialNumber !== undefined) payload.serial_number = fields.serialNumber;
+    if (fields.installDate !== undefined) payload.install_date = fields.installDate;
+    if (fields.installedArea !== undefined) payload.installed_area = fields.installedArea;
+    if (fields.notes !== undefined) payload.notes = fields.notes;
+    if (fields.customFields !== undefined) payload.custom_fields = fields.customFields;
+    if (fields.condition !== undefined) payload.condition = fields.condition;
+    if (fields.status !== undefined) payload.status = fields.status;
+    if (fields.category !== undefined) payload.category = fields.category;
+
+    const { error } = await supabase
+      .from('equipment')
+      .update(payload)
+      .eq('id', id);
+
+    if (error) throw new Error(error.message);
   }, []);
+
   const demoFn = useCallback((_args: UpdateEquipmentInput): void => {}, []);
   return useApiMutation(mutationFn, demoFn);
 }
 
 export function useDeleteEquipment(): ApiMutationResult<string> {
-  const mutationFn = useCallback(async (_id: string): Promise<void> => {
-    throw new Error('Not implemented');
+  const mutationFn = useCallback(async (id: string): Promise<void> => {
+    const { error } = await supabase
+      .from('equipment')
+      .update({ archived_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw new Error(error.message);
   }, []);
+
   const demoFn = useCallback((_id: string): void => {}, []);
   return useApiMutation(mutationFn, demoFn);
 }
 
 export function useUploadEquipmentDocument(): ApiMutationResult<{ equipmentId: string; file: File; documentType: string }, EquipmentDocument> {
-  const mutationFn = useCallback(async (_args: { equipmentId: string; file: File; documentType: string }): Promise<EquipmentDocument> => {
-    throw new Error('Not implemented');
-  }, []);
+  const { profile } = useAuth();
+
+  const mutationFn = useCallback(async (args: { equipmentId: string; file: File; documentType: string }): Promise<EquipmentDocument> => {
+    const orgId = profile?.organization_id;
+    if (!orgId) throw new Error('Not authenticated');
+
+    // 1. Upload file to storage: {org_id}/{equipment_id}/{timestamp}_{filename}
+    const path = `${orgId}/${args.equipmentId}/${Date.now()}_${args.file.name}`;
+    await uploadFile(BUCKETS.EQUIPMENT_DOCUMENTS, path, args.file, {
+      contentType: args.file.type || undefined,
+    });
+
+    // 2. Insert document metadata row
+    const { data, error } = await supabase
+      .from('equipment_documents')
+      .insert({
+        organization_id: orgId,
+        equipment_id: args.equipmentId,
+        document_type: args.documentType,
+        name: args.file.name,
+        storage_path: path,
+        mime_type: args.file.type || null,
+        size_bytes: args.file.size,
+      })
+      .select('*')
+      .single();
+
+    if (error) throw new Error(error.message);
+    return mapDocumentRow(data);
+  }, [profile?.organization_id]);
 
   const demoFn = useCallback((args: { equipmentId: string; file: File; documentType: string }): EquipmentDocument => ({
     id: `doc-${Date.now()}`,

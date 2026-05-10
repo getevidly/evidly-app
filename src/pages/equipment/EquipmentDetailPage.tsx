@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Edit, MoreHorizontal, QrCode, Power, Trash2, Loader2 } from 'lucide-react';
-import { useEquipmentItem } from '../../hooks/api/useEquipment';
+import { useEquipmentItem, useUpdateEquipment, useDeleteEquipment } from '../../hooks/api/useEquipment';
 import { EquipmentOverview } from '../../components/equipment/EquipmentOverview';
 import { EquipmentServiceHistory } from '../../components/equipment/EquipmentServiceHistory';
 import { EquipmentDeficiencies } from '../../components/equipment/EquipmentDeficiencies';
@@ -41,7 +41,9 @@ const EQUIPMENT_ICONS: Record<string, string> = {
 export function EquipmentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: equipment, isLoading } = useEquipmentItem(id);
+  const { data: equipment, isLoading, refetch } = useEquipmentItem(id);
+  const { mutate: updateEquipment } = useUpdateEquipment();
+  const { mutate: deleteEquipment } = useDeleteEquipment();
 
   const [activeTab, setActiveTab] = useState<TabKey>('Overview');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -128,10 +130,10 @@ export function EquipmentDetailPage() {
               <button onClick={() => { setShowQRPrint(true); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: NAVY }}>
                 <QrCode className="w-4 h-4" /> Print QR Code
               </button>
-              <button onClick={() => { alert('Equipment deactivated (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#D97706' }}>
+              <button onClick={async () => { if (!equipment) return; try { await updateEquipment({ id: equipment.id, status: 'inactive' }); refetch(); } catch {} setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#D97706' }}>
                 <Power className="w-4 h-4" /> Deactivate
               </button>
-              <button onClick={() => { alert('Equipment deleted (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#DC2626' }}>
+              <button onClick={async () => { if (!equipment || !confirm('Delete this equipment? This action cannot be undone.')) return; try { await deleteEquipment(equipment.id); navigate('/equipment'); } catch {} setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#DC2626' }}>
                 <Trash2 className="w-4 h-4" /> Delete
               </button>
             </div>
@@ -163,7 +165,7 @@ export function EquipmentDetailPage() {
       {activeTab === 'Documents' && <EquipmentDocuments equipmentId={equipment.id} />}
 
       {/* Modals */}
-      {showEditModal && <EquipmentFormModal equipment={equipment} onClose={() => setShowEditModal(false)} />}
+      {showEditModal && <EquipmentFormModal equipment={equipment} onClose={() => setShowEditModal(false)} onSuccess={refetch} />}
       {showQRPrint && <QRCodePrintModal equipment={equipment} onClose={() => setShowQRPrint(false)} />}
     </div>
   );

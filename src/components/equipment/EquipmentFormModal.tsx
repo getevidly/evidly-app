@@ -45,9 +45,10 @@ const CUSTOM_FIELDS_BY_TYPE: Record<string, { key: string; label: string; type: 
 interface EquipmentFormModalProps {
   equipment?: EquipmentItem;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalProps) {
+export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentFormModalProps) {
   const isEdit = !!equipment;
   const { mutate: create, isLoading: creating } = useCreateEquipment();
   const { mutate: update, isLoading: updating } = useUpdateEquipment();
@@ -66,6 +67,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
     Object.fromEntries(Object.entries(equipment?.customFields || {}).map(([k, v]) => [k, String(v)]))
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const customFieldDefs = CUSTOM_FIELDS_BY_TYPE[equipmentType] || [];
 
@@ -96,14 +98,18 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
       ),
     };
 
+    setSubmitError(null);
     try {
       if (isEdit) {
         await update({ id: equipment.id, ...input });
       } else {
         await create(input);
       }
+      onSuccess?.();
       onClose();
-    } catch { /* hook handles error */ }
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Failed to save equipment. Please try again.');
+    }
   };
 
   return (
@@ -222,6 +228,13 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
             />
           </Field>
         </div>
+
+        {/* Submit error */}
+        {submitError && (
+          <div className="mx-5 mb-0 px-3 py-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
+            {submitError}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex justify-end gap-3 p-5 border-t flex-shrink-0" style={{ borderColor: CARD_BORDER }}>

@@ -2,11 +2,12 @@ import { supabase } from './supabase';
 
 // Canonical bucket names — matches Supabase storage exactly
 export const BUCKETS = {
-  DOCUMENTS:         'documents',
-  VAULT:             'vault',
-  UPLOADS:           'uploads',
-  COMPLIANCE_PHOTOS: 'compliance-photos',
-  REPORTS:           'reports',
+  DOCUMENTS:            'documents',
+  VAULT:                'vault',
+  UPLOADS:              'uploads',
+  COMPLIANCE_PHOTOS:    'compliance-photos',
+  REPORTS:              'reports',
+  EQUIPMENT_DOCUMENTS:  'equipment-documents',
 } as const;
 
 export type BucketName = typeof BUCKETS[keyof typeof BUCKETS];

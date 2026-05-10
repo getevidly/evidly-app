@@ -245,7 +245,7 @@ export function EquipmentPage() {
       )}
 
       {/* Modals */}
-      {showAddModal && <EquipmentFormModal onClose={() => setShowAddModal(false)} />}
+      {showAddModal && <EquipmentFormModal onClose={() => setShowAddModal(false)} onSuccess={refetch} />}
       {showBulkQR && <BulkQRPrintModal items={filtered} onClose={() => setShowBulkQR(false)} />}
     </div>
   );
