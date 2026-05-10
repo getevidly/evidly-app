@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, Crown, ExternalLink, Loader2, Gift, Clock } from 'lucide-react';
+import { CheckCircle2, Crown, ExternalLink, Loader2, AlertTriangle } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,8 +12,9 @@ export function BillingPanel() {
   const [loading, setLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
-  // Read current plan from profile or default to 'free'
-  const currentPlan = (profile as any)?.plan || 'free';
+  // Read current plan from profile — no 'free' or 'trial' state exists
+  const currentPlan = (profile as any)?.plan || 'founder_single';
+  const isSubscribed = currentPlan !== 'free' && currentPlan !== 'none';
 
   const handleSubscribe = async (plan: Plan) => {
     if (isDemoMode) {
@@ -60,16 +61,10 @@ export function BillingPanel() {
     }
   };
 
-  // Demo trial state — simulates a user on day 12 of their 30-day trial
-  const demoTrialActive = isDemoMode;
-  const demoTrialDaysLeft = 18;
-  const demoGuaranteeDaysLeft = 33;
-  const demoTrialEndDate = new Date(Date.now() + demoTrialDaysLeft * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
   const getButtonLabel = (plan: Plan) => {
     if (plan.id === currentPlan) return 'Current Plan';
     if (plan.id === 'enterprise') return 'Contact Sales';
-    return 'Start Free Trial';
+    return 'Subscribe';
   };
 
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan;
@@ -87,14 +82,17 @@ export function BillingPanel() {
       <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-5 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-[#1E2D4D]/20">Current Plan</p>
+            <p className="text-sm text-white/50">Current Plan</p>
             <h4 className="text-lg font-semibold tracking-tight mt-0.5">
-              {currentPlan === 'free'
-                ? 'Free Trial'
-                : PLANS.find((p) => p.id === currentPlan)?.name || currentPlan}
+              {isSubscribed
+                ? (PLANS.find((p) => p.id === currentPlan)?.name || 'Founder') + ' — Rate Locked'
+                : 'No Active Subscription'}
             </h4>
+            {isSubscribed && (
+              <p className="text-xs text-white/60 mt-1">Founder pricing locked for the lifetime of your subscription</p>
+            )}
           </div>
-          {currentPlan !== 'free' && (
+          {isSubscribed && (
             <button
               onClick={handleManageSubscription}
               disabled={portalLoading}
@@ -111,46 +109,33 @@ export function BillingPanel() {
         </div>
       </div>
 
-      {/* Trial Status Banner */}
-      {demoTrialActive && (
-        <div className="rounded-xl border-2 border-[#16a34a] bg-[#f0fdf4] p-5">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#16a34a] flex items-center justify-center flex-shrink-0">
-              <Gift className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-lg font-bold text-[#166534]">Free Trial Active</h4>
-              <p className="text-sm text-[#166534] mt-1">
-                You have <strong>{demoTrialDaysLeft} days remaining</strong> in your free trial (ends {demoTrialEndDate}).
-                Full access to all features — no charge until your trial ends.
-              </p>
-              <div className="flex flex-wrap items-center gap-4 mt-3">
-                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
-                  <Clock className="h-4 w-4" />
-                  <span>{demoTrialDaysLeft} days left in trial</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
-                  <EvidlyIcon size={16} />
-                  <span>{demoGuaranteeDaysLeft} days left on money-back guarantee</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 45-Day Guarantee Info */}
+      {/* Risk-Free Guarantee Info */}
       <div className="rounded-xl p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-        <div className="flex items-center gap-3">
-          <EvidlyIcon size={20} className="flex-shrink-0" />
+        <div className="flex items-start gap-3">
+          <EvidlyIcon size={20} className="flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>45-Day Money-Back Guarantee</p>
+            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>45-Day Risk-Free Guarantee</p>
             <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
-              Not satisfied within 45 days of your first payment? Get a full refund — no questions asked.
+              Complete account setup within 15 days of signup. If dissatisfied within 45 days of your first payment, request a full refund.
             </p>
           </div>
         </div>
       </div>
+
+      {/* Cancellation forfeiture warning */}
+      {isSubscribed && (
+        <div className="rounded-xl p-4 border border-amber-200 bg-amber-50">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-sm text-amber-900">Founder Pricing Forfeiture</p>
+              <p className="text-xs mt-0.5 text-amber-800">
+                Canceling your subscription permanently forfeits your locked Founder rate. Re-subscribing after cancellation will be at the then-current Standard pricing.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Plan cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -218,12 +203,12 @@ export function BillingPanel() {
       </div>
 
       {/* Manage billing link for active subscribers */}
-      {currentPlan !== 'free' && (
+      {isSubscribed && (
         <div className="border border-[#1E2D4D]/10 rounded-xl p-4 flex items-center justify-between">
           <div>
             <h4 className="text-sm font-semibold text-[#1E2D4D]">Need to update payment method or cancel?</h4>
             <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
-              Manage invoices, payment methods, and cancellation through the Stripe billing portal.
+              Manage invoices, payment methods, and cancellation through the Stripe billing portal. Cancellation takes effect at the end of your current billing cycle.
             </p>
           </div>
           <button

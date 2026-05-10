@@ -136,7 +136,7 @@ export function OperationsIntelligence() {
   const insightsTab = insights.filter(i => !['document_currency', 'service_currency'].includes(i.category));
   const currencyTab = insights.filter(i => ['document_currency', 'service_currency', 'certification_gap'].includes(i.category));
 
-  const showUpsell = !isDemoMode && ['trial', 'founder', 'standard'].includes(currentTier);
+  const showUpsell = !isDemoMode && ['founder', 'standard'].includes(currentTier);
 
   return (
     <div className="p-4 lg:p-6 max-w-5xl mx-auto">

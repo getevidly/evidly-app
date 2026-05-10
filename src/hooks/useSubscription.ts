@@ -12,7 +12,6 @@ export function useSubscription() {
     return {
       currentTier: 'enterprise' as PlanTier,
       isActive: true,
-      trialDaysLeft: null,
     };
   }
 
@@ -21,7 +20,6 @@ export function useSubscription() {
     return {
       currentTier: 'professional' as PlanTier,
       isActive: true,
-      trialDaysLeft: null,
     };
   }
 
@@ -29,7 +27,7 @@ export function useSubscription() {
   const currentTier: PlanTier = (profile as any)?.plan || 'founder';
   const isActive = true;
 
-  return { currentTier, isActive, trialDaysLeft: null };
+  return { currentTier, isActive };
 }
 
 export function useFeatureAccess(featureId: string): {

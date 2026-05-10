@@ -68,7 +68,7 @@ const ROLES = [
   'facilities_manager', 'kitchen_manager', 'kitchen_staff',
 ];
 
-const PLAN_TIERS = ['trial', 'founder', 'professional', 'enterprise'];
+const PLAN_TIERS = ['founder', 'professional', 'enterprise'];
 
 const CRITERIA_CATEGORIES = ['Date', 'Data', 'Action', 'Plan/Role', 'Risk Signal'];
 

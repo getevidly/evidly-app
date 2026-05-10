@@ -179,28 +179,8 @@ Deno.serve(async (req: Request) => {
         break;
       }
 
-      case "customer.subscription.trial_will_end": {
-        // Trial ending in 3 days — Stripe sends this automatically
-        const subscription = event.data.object;
-        const userId = subscription.metadata?.supabase_user_id;
-
-        if (userId) {
-          // Record trial ending notification for in-app display
-          await supabase.from("notifications").insert({
-            user_id: userId,
-            type: "trial_ending",
-            title: "Your free trial ends in 3 days",
-            message: "Your 30-day free trial is ending soon. Your card will be charged automatically. You can cancel anytime from Settings > Billing.",
-            read: false,
-            created_at: new Date().toISOString(),
-          });
-          console.log(`Trial ending notification created for user ${userId}`);
-        }
-        break;
-      }
-
       case "invoice.paid": {
-        // First payment after trial — start 45-day guarantee window
+        // Payment received — start 45-day guarantee window
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
 

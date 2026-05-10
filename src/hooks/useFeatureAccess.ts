@@ -6,7 +6,7 @@
  *
  * Demo mode: returns full access (isPaid=true).
  * CPP Free: limited access (hood cleaning + My Vendors + service requests only).
- * Trial/Founder/Standard/Enterprise: full access.
+ * Founder/Standard/Enterprise: full access.
  */
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
@@ -92,7 +92,7 @@ export function useFeatureAccess(): FeatureAccessFlags {
       .eq('id', profile.organization_id)
       .maybeSingle()
       .then(({ data }) => {
-        setOrgData(data ? { plan_tier: data.plan_tier || 'trial', is_cpp_client: !!data.is_cpp_client } : null);
+        setOrgData(data ? { plan_tier: data.plan_tier || 'founder', is_cpp_client: !!data.is_cpp_client } : null);
         setLoading(false);
       });
   }, [isDemoMode, profile?.organization_id]);
@@ -108,7 +108,7 @@ export function useFeatureAccess(): FeatureAccessFlags {
   const plan = orgData.plan_tier;
   const isCPPFree = plan === 'cpp_free';
   const isPaid = ['founder', 'standard', 'enterprise'].includes(plan);
-  const hasAccess = isPaid || plan === 'trial';
+  const hasAccess = isPaid;
 
   return {
     loading: false,
@@ -124,7 +124,7 @@ export function useFeatureAccess(): FeatureAccessFlags {
     canRequestService: true,
     canReadForum: true,
 
-    // Paid (or trial) only
+    // Paid only
     canLogTemperature: hasAccess,
     canUseChecklists: hasAccess,
     canUseHACCP: hasAccess,

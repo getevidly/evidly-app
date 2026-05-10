@@ -96,7 +96,6 @@ Deno.serve(async (req: Request) => {
     params.set("mode", "subscription");
     params.set("line_items[0][price]", priceId);
     params.set("line_items[0][quantity]", "1");
-    params.set("subscription_data[trial_period_days]", "30");
     params.set("subscription_data[metadata][supabase_user_id]", user.id);
     params.set("subscription_data[metadata][tier]", tier || "founder_single");
     params.set("success_url", `${appUrl}/settings?tab=billing&session_id={CHECKOUT_SESSION_ID}`);

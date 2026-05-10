@@ -38,7 +38,7 @@ export function useCrispIdentify(user: {
       Crisp.session.setData({
         role: user.role ?? 'unknown',
         org_id: user.orgId ?? '',
-        plan: user.plan ?? 'trial',
+        plan: user.plan ?? 'founder',
         platform: 'EvidLY',
       });
     } catch {

@@ -91,7 +91,7 @@ export default function MockInspection() {
   }, [locationJurisdiction]);
 
   // Plan tier check (demo mode = founder for testing)
-  const userTier: PlanTier = isDemoMode ? 'founder' : 'trial';
+  const userTier: PlanTier = 'founder';
   const hasFeatureAccess = hasAccess(userTier, 'founder', 'mock-inspection');
 
   // Phase state

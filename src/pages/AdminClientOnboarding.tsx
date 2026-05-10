@@ -108,7 +108,7 @@ export function AdminClientOnboarding() {
         primary_contact_email: ownerEmail,
         primary_contact_phone: ownerPhone || null,
         status: 'pending',
-        plan: 'trial',
+        plan: 'founder',
       };
 
       if (isTribal) {
