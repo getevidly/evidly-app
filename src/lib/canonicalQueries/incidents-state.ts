@@ -3,14 +3,14 @@
  *
  * Single source of truth for incident state across the org. Returns
  * full open incident list with pre-aggregated counts (status, severity,
- * pillar, urgency_label) plus a "needs attention" sort.
+ * category, urgency_label) plus a "needs attention" sort.
  *
  * Reads:
- *   - incidents (full list, server-filtered by org/pillar/status,
- *     client-aggregated by severity/pillar/urgency)
+ *   - incidents (full list, server-filtered by org/category/status,
+ *     client-aggregated by severity/category/urgency)
  *
  * Architectural rules enforced:
- *   - Pillars (food_safety, fire_safety) always separate, never blended
+ *   - Categories (food_safety, fire_safety, facility_services) always separate, never blended
  *   - Filter archived_at IS NULL on every read (soft-delete)
  *   - Use canonical OPEN_INCIDENT_STATUSES / CLOSED_INCIDENT_STATUSES
  *     constants from src/types/incidents.ts
@@ -51,7 +51,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 // Types (verified against PROD CHECK constraints)
 // ─────────────────────────────────────────────────────────────────────
 
-export type Pillar = 'food_safety' | 'fire_safety';
+export type IncidentCategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentUrgency =
@@ -67,7 +67,7 @@ export interface IncidentLite {
   location_id: string | null;
   location_name: string | null;
   incident_number: string;
-  pillar: Pillar;
+  category: IncidentCategory;
   type: string;
   status: IncidentStatus;
   severity: IncidentSeverity;
@@ -86,7 +86,7 @@ export interface IncidentCounts {
   total: number;
   byStatus: Record<IncidentStatus, number>;
   bySeverity: Record<IncidentSeverity, number>;
-  byPillar: Record<Pillar, number>;
+  byCategory: Record<IncidentCategory, number>;
   byUrgency: Record<IncidentUrgency, number>;
   requiresRegulatoryReport: number;
 }
@@ -106,7 +106,7 @@ export interface IncidentsState {
 export interface UseIncidentsStateArgs {
   orgId: string;
   tz: string;
-  pillarFilter?: Pillar;
+  categoryFilter?: IncidentCategory;
   locationFilter?: string | string[];
   needsAttentionLimit?: number;
 }
@@ -169,7 +169,7 @@ function emptyCounts(): IncidentCounts {
     total: 0,
     byStatus,
     bySeverity,
-    byPillar: { food_safety: 0, fire_safety: 0 },
+    byCategory: { food_safety: 0, fire_safety: 0, facility_services: 0 },
     byUrgency,
     requiresRegulatoryReport: 0,
   };
@@ -181,7 +181,7 @@ function aggregateCounts(rows: IncidentLite[]): IncidentCounts {
   for (const row of rows) {
     if (row.status in counts.byStatus) counts.byStatus[row.status]++;
     if (row.severity in counts.bySeverity) counts.bySeverity[row.severity]++;
-    if (row.pillar in counts.byPillar) counts.byPillar[row.pillar]++;
+    if (row.category in counts.byCategory) counts.byCategory[row.category]++;
     if (row.urgency_label && row.urgency_label in counts.byUrgency) {
       counts.byUrgency[row.urgency_label]++;
     }
@@ -197,7 +197,7 @@ function decorate(
     location_id: string | null;
     location_name: string | null;
     incident_number: string;
-    pillar: Pillar;
+    category: IncidentCategory;
     type: string;
     status: IncidentStatus;
     severity: IncidentSeverity;
@@ -270,7 +270,7 @@ const invalidationListeners = new Map<string, Set<() => void>>();
 function cacheKey(
   orgId: string,
   tz: string,
-  pillarFilter: Pillar | undefined,
+  categoryFilter: IncidentCategory | undefined,
   locationFilter: string | string[] | undefined,
   needsAttentionLimit: number
 ): string {
@@ -279,7 +279,7 @@ function cacheKey(
       ? `[${[...locationFilter].sort().join(',')}]`
       : locationFilter
     : 'all';
-  return `${orgId}::${tz}::${pillarFilter ?? 'both'}::${filterPart}::${needsAttentionLimit}`;
+  return `${orgId}::${tz}::${categoryFilter ?? 'all'}::${filterPart}::${needsAttentionLimit}`;
 }
 
 function invalidateOrg(orgId: string): void {
@@ -325,7 +325,7 @@ function releaseSubscription(orgId: string): void {
 
 async function fetchIncidentsState(
   orgId: string,
-  pillarFilter: Pillar | undefined,
+  categoryFilter: IncidentCategory | undefined,
   locationFilter: string | string[] | undefined,
   needsAttentionLimit: number
 ): Promise<IncidentsState> {
@@ -334,15 +334,15 @@ async function fetchIncidentsState(
   let q = supabase
     .from('incidents')
     .select(
-      'id, organization_id, location_id, location_name, incident_number, pillar, type, status, severity, urgency_label, title, assigned_to, reported_by, requires_regulatory_report, linked_corrective_action_id, created_at, resolved_at'
+      'id, organization_id, location_id, location_name, incident_number, category, type, status, severity, urgency_label, title, assigned_to, reported_by, requires_regulatory_report, linked_corrective_action_id, created_at, resolved_at'
     )
     .eq('organization_id', orgId)
     .is('archived_at', null)
     .in('status', [...OPEN_INCIDENT_STATUSES])
     .order('created_at', { ascending: false });
 
-  if (pillarFilter) {
-    q = q.eq('pillar', pillarFilter);
+  if (categoryFilter) {
+    q = q.eq('category', categoryFilter);
   }
 
   q = applyLocationFilter(q, locationFilter);
@@ -389,7 +389,7 @@ async function fetchIncidentsState(
 export function useIncidentsState({
   orgId,
   tz,
-  pillarFilter,
+  categoryFilter,
   locationFilter,
   needsAttentionLimit = 5,
 }: UseIncidentsStateArgs): UseIncidentsStateResult {
@@ -398,7 +398,7 @@ export function useIncidentsState({
   const [error, setError] = useState<Error | null>(null);
   const mountedRef = useRef(true);
 
-  const key = cacheKey(orgId, tz, pillarFilter, locationFilter, needsAttentionLimit);
+  const key = cacheKey(orgId, tz, categoryFilter, locationFilter, needsAttentionLimit);
 
   const load = async (force = false): Promise<void> => {
     if (!orgId || !tz) return;
@@ -421,7 +421,7 @@ export function useIncidentsState({
     try {
       const fetched = await fetchIncidentsState(
         orgId,
-        pillarFilter,
+        categoryFilter,
         locationFilter,
         needsAttentionLimit
       );

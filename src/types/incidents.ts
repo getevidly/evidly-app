@@ -3,7 +3,7 @@
  * Tables: incidents, incident_timeline, incident_comments, incident_templates.
  */
 
-export type IncidentPillar = 'food_safety' | 'fire_safety';
+export type IncidentCategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
 
@@ -17,7 +17,7 @@ export const CLOSED_INCIDENT_STATUSES = ['resolved', 'verified'] as const;
 export interface IncidentTemplate {
   id: string;
   organization_id?: string | null;
-  pillar: IncidentPillar;
+  pillar: IncidentCategory;
   category: string;
   title: string;
   description?: string | null;
@@ -57,7 +57,7 @@ export interface Incident {
   organization_id: string;
   template_id?: string | null;
   incident_number: string;
-  pillar: IncidentPillar;
+  category: IncidentCategory;
   type: string;
   severity: IncidentSeverity;
   status: IncidentStatus;

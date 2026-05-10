@@ -23,7 +23,7 @@ import { EmptyState } from '../components/EmptyState';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { GhostInput } from '../components/ai/GhostInput';
 import { usePageTitle } from '../hooks/usePageTitle';
-import type { IncidentTemplate, IncidentStatus } from '../types/incidents';
+import type { IncidentTemplate, IncidentStatus, IncidentCategory } from '../types/incidents';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -61,6 +61,7 @@ interface Comment {
 interface Incident {
   id: string;
   dbId?: string; // Actual Supabase incidents.id uuid — used for FK writes. id holds the human-readable incident_number.
+  category: IncidentCategory;
   type: IncidentType;
   severity: Severity;
   title: string;
@@ -101,6 +102,21 @@ const INCIDENT_TYPES: { value: IncidentType; label: string; icon: typeof AlertTr
   { value: 'customer_complaint', label: 'Customer Complaint', icon: MessageSquare },
   { value: 'staff_safety', label: 'Staff Safety', icon: UsersIcon },
   { value: 'other', label: 'Other', icon: AlertCircle },
+];
+
+// Type → category auto-inference. Types not listed require manual selection.
+const TYPE_CATEGORY_MAP: Partial<Record<IncidentType, IncidentCategory>> = {
+  temperature_violation: 'food_safety',
+  checklist_failure: 'food_safety',
+  health_citation: 'food_safety',
+  pest_sighting: 'food_safety',
+  staff_safety: 'facility_services',
+};
+
+const CATEGORY_OPTIONS: { value: IncidentCategory; label: string }[] = [
+  { value: 'food_safety', label: 'Food Safety' },
+  { value: 'fire_safety', label: 'Fire Safety' },
+  { value: 'facility_services', label: 'Facility Services' },
 ];
 
 const SEVERITIES: { value: Severity; label: string; color: string; bg: string }[] = [
@@ -146,6 +162,7 @@ const d = (days: number) => new Date(now - days * 86400000).toISOString();
 const DEMO_INCIDENTS: Incident[] = [
   {
     id: 'INC-001',
+    category: 'food_safety',
     type: 'temperature_violation',
     severity: 'critical',
     title: 'Walk-in Cooler temperature at 47°F',
@@ -175,6 +192,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-002',
+    category: 'food_safety',
     type: 'checklist_failure',
     severity: 'major',
     title: 'Closing checklist — floor drains not cleaned',
@@ -207,6 +225,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-003',
+    category: 'food_safety',
     type: 'health_citation',
     severity: 'critical',
     title: 'Health inspector citation — improper food storage',
@@ -243,6 +262,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-004',
+    category: 'food_safety',
     type: 'equipment_failure',
     severity: 'major',
     title: 'Hot holding unit not reaching 135°F',
@@ -263,6 +283,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-005',
+    category: 'food_safety',
     type: 'pest_sighting',
     severity: 'critical',
     title: 'Rodent droppings found in dry storage',
@@ -289,6 +310,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-006',
+    category: 'food_safety',
     type: 'customer_complaint',
     severity: 'minor',
     title: 'Customer reported lukewarm soup',
@@ -316,6 +338,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-007',
+    category: 'facility_services',
     type: 'staff_safety',
     severity: 'minor',
     title: 'Wet floor near dishwash station — no sign posted',
@@ -346,6 +369,7 @@ const DEMO_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-008',
+    category: 'food_safety',
     type: 'temperature_violation',
     severity: 'major',
     title: 'Prep cooler temp at 44°F during morning check',
@@ -505,6 +529,7 @@ export function IncidentLog() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [assigneeFilter, setAssigneeFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState<'all' | '24h' | '7d' | '30d'>('all');
@@ -512,6 +537,7 @@ export function IncidentLog() {
 
   // Create form
   const [newType, setNewType] = useState<IncidentType>('temperature_violation');
+  const [newCategory, setNewCategory] = useState<IncidentCategory>(TYPE_CATEGORY_MAP['temperature_violation']!);
   const [newSeverity, setNewSeverity] = useState<Severity>('major');
   const [newLocation, setNewLocation] = useState(locationOptions[0] || '');
   const [newTitle, setNewTitle] = useState('');
@@ -522,7 +548,7 @@ export function IncidentLog() {
 
   // Template tab state (D2)
   const [createTab, setCreateTab] = useState<'template' | 'scratch'>('template');
-  const [templateCategory, setTemplateCategory] = useState<'all' | 'food_safety' | 'fire_safety' | 'operational'>('all');
+  const [templateCategory, setTemplateCategory] = useState<'all' | 'food_safety' | 'fire_safety' | 'facility_services'>('all');
   const [incidentTemplates, setIncidentTemplates] = useState<IncidentTemplate[]>([]);
   const [templatesLoading, setTemplatesLoading] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
@@ -577,7 +603,7 @@ export function IncidentLog() {
     all: incidentTemplates.length,
     food_safety: incidentTemplates.filter(t => t.category === 'food_safety').length,
     fire_safety: incidentTemplates.filter(t => t.category === 'fire_safety').length,
-    operational: incidentTemplates.filter(t => t.category === 'operational').length,
+    facility_services: incidentTemplates.filter(t => t.category === 'facility_services').length,
   };
 
   // Action form
@@ -627,6 +653,7 @@ export function IncidentLog() {
       const mapped: Incident[] = (data || []).map((row: any) => ({
         id: row.incident_number || row.id,
         dbId: row.id,
+        category: (row.category || 'food_safety') as IncidentCategory,
         type: row.type as IncidentType,
         severity: row.severity as Severity,
         title: row.title,
@@ -706,6 +733,7 @@ export function IncidentLog() {
     if (statusFilter !== 'all') list = list.filter(i => i.status === statusFilter);
     if (severityFilter !== 'all') list = list.filter(i => i.severity === severityFilter);
     if (typeFilter !== 'all') list = list.filter(i => i.type === typeFilter);
+    if (categoryFilter !== 'all') list = list.filter(i => i.category === categoryFilter);
     if (locationFilter !== 'all') list = list.filter(i => i.location === locationFilter);
     if (assigneeFilter !== 'all') list = list.filter(i => i.assignedTo === assigneeFilter);
     if (dateRange !== 'all') {
@@ -728,7 +756,7 @@ export function IncidentLog() {
       }); break;
     }
     return list;
-  }, [incidents, statusFilter, severityFilter, typeFilter, locationFilter, assigneeFilter, dateRange, sortBy]);
+  }, [incidents, statusFilter, severityFilter, typeFilter, categoryFilter, locationFilter, assigneeFilter, dateRange, sortBy]);
 
   // ── AI Draft auto-fill ──────────────────────────────────────────
   const AI_DRAFT_DATA: Record<IncidentType, { title: string; description: string; severity: Severity }> = {
@@ -798,6 +826,7 @@ export function IncidentLog() {
       const { data: inserted, error } = await supabase.from('incidents').insert({
         organization_id: profile.organization_id,
         incident_number: incNumber,
+        category: newCategory,
         type: newType,
         severity: newSeverity,
         title: newTitle,
@@ -829,6 +858,7 @@ export function IncidentLog() {
     const newIncident: Incident = {
       id: incNumber,
       dbId: insertedDbId,
+      category: newCategory,
       type: newType,
       severity: newSeverity,
       title: newTitle,
@@ -850,7 +880,7 @@ export function IncidentLog() {
     };
     setIncidents(prev => [newIncident, ...prev]);
     setShowCreateForm(false);
-    setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false);
+    setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); setNewCategory(TYPE_CATEGORY_MAP[newType] ?? 'food_safety');
     setSelectedIncident(newIncident);
     showToast('Incident reported successfully.');
   };
@@ -1621,10 +1651,10 @@ export function IncidentLog() {
     setSelectedTemplateId(null);
   };
 
-  const CATEGORY_LABELS: Record<'food_safety' | 'fire_safety' | 'operational', string> = {
+  const CATEGORY_LABELS: Record<'food_safety' | 'fire_safety' | 'facility_services', string> = {
     food_safety: 'Food Safety',
     fire_safety: 'Fire Safety',
-    operational: 'Operational',
+    facility_services: 'Facility Services',
   };
 
   const SEVERITY_PILL: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -1688,7 +1718,7 @@ export function IncidentLog() {
           <div className="space-y-4">
             {/* Category chips */}
             <div className="flex flex-wrap gap-2">
-              {(['all', 'food_safety', 'fire_safety', 'operational'] as const).map(cat => (
+              {(['all', 'food_safety', 'fire_safety', 'facility_services'] as const).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setTemplateCategory(cat)}
@@ -1789,13 +1819,37 @@ export function IncidentLog() {
               <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.incidentType')}</label>
               <select
                 value={newType}
-                onChange={e => setNewType(e.target.value as IncidentType)}
+                onChange={e => {
+                  const t = e.target.value as IncidentType;
+                  setNewType(t);
+                  const inferred = TYPE_CATEGORY_MAP[t];
+                  if (inferred) setNewCategory(inferred);
+                }}
                 className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               >
                 {INCIDENT_TYPES.map(tp => (
                   <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
+                Category <span className="text-red-600">*</span>
+              </label>
+              <select
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value as IncidentCategory)}
+                disabled={!!TYPE_CATEGORY_MAP[newType]}
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-gray-50 disabled:text-[#1E2D4D]/50"
+              >
+                {CATEGORY_OPTIONS.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+              {TYPE_CATEGORY_MAP[newType] && (
+                <p className="text-xs text-[#1E2D4D]/40 mt-1">Auto-assigned from incident type</p>
+              )}
             </div>
 
             <div>
@@ -1989,6 +2043,10 @@ export function IncidentLog() {
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('incidents.allTypes')}</option>
               {INCIDENT_TYPES.map(tp => <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>)}
+            </select>
+            <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+              <option value="all">All Categories</option>
+              {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
             <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
               <option value="all">{t('common.allLocations')}</option>
