@@ -117,6 +117,7 @@ export function CorrectiveActions() {
   const [filterStatus, setFilterStatus] = useState<'all' | CAStatus>('all');
   const [filterLocation, setFilterLocation] = useState<string>(urlLocation);
   const [filterSeverity, setFilterSeverity] = useState<'all' | CASeverity>('all');
+  const [filterCategory, setFilterCategory] = useState<'all' | CACategory>('all');
   const [sortBy, setSortBy] = useState<SortOption>('due_date');
 
   // Modal state
@@ -142,20 +143,15 @@ export function CorrectiveActions() {
       description: 'Annual fire suppression inspection certificate expired. NFPA 96 requires current certification on file. Vendor contracted for re-inspection. Affected hood line documented.',
       rootCause: 'Vendor service agreement lapsed without automated renewal. No reminder system in place for fire safety certification expirations.',
     },
-    facility_safety: {
-      title: 'Facility safety finding — corrective response',
-      description: 'Facility safety finding identified during routine inspection. Issue documented with photo evidence. Affected area secured pending corrective action.',
-      rootCause: 'Maintenance schedule gap and lack of automated reminders. Contributing factors being evaluated for preventive action.',
-    },
-    operational: {
-      title: 'Operational deviation — corrective response',
-      description: 'Operational deviation identified during routine review. Issue documented and assigned for resolution. Standard operating procedure under review.',
-      rootCause: 'Process deviation likely due to staffing changes, training gap, or procedure ambiguity. Contributing factors being evaluated.',
+    facility_services: {
+      title: 'Facility services finding — corrective response',
+      description: 'Facility services finding identified during routine review. Issue documented and assigned for resolution. Vendor service or maintenance schedule under review.',
+      rootCause: 'Maintenance schedule gap, vendor coordination lapse, or process ambiguity. Contributing factors being evaluated for preventive action.',
     },
   };
 
   const handleAiDraft = () => {
-    const draft = CA_AI_DRAFT_DATA[createForm.category] || CA_AI_DRAFT_DATA.operational;
+    const draft = CA_AI_DRAFT_DATA[createForm.category] || CA_AI_DRAFT_DATA.facility_services;
     setCreateForm(f => ({
       ...f,
       title: f.title || draft.title,
@@ -193,7 +189,7 @@ export function CorrectiveActions() {
           severity: sevMap[first.severity] || 'medium',
           regulationReference: first.citation || '',
           source: 'Self-Inspection',
-          category: first.section?.toLowerCase().includes('facility') || first.section?.toLowerCase().includes('fire') || first.section?.toLowerCase().includes('suppression') ? 'facility_safety' : 'food_safety',
+          category: first.section?.toLowerCase().includes('facility') || first.section?.toLowerCase().includes('fire') || first.section?.toLowerCase().includes('suppression') ? 'fire_safety' : 'food_safety',
           dueDate: (() => {
             const d = new Date();
             d.setDate(d.getDate() + (first.severity === 'critical' ? 1 : first.severity === 'major' ? 2 : 7));
@@ -225,7 +221,7 @@ export function CorrectiveActions() {
       severity: sevMap[next.severity] || 'medium',
       regulationReference: next.citation || '',
       source: 'Self-Inspection',
-      category: next.section?.toLowerCase().includes('facility') || next.section?.toLowerCase().includes('fire') || next.section?.toLowerCase().includes('suppression') ? 'facility_safety' : 'food_safety',
+      category: next.section?.toLowerCase().includes('facility') || next.section?.toLowerCase().includes('fire') || next.section?.toLowerCase().includes('suppression') ? 'fire_safety' : 'food_safety',
       dueDate: (() => {
         const d = new Date();
         d.setDate(d.getDate() + (next.severity === 'critical' ? 1 : next.severity === 'major' ? 2 : 7));
@@ -241,9 +237,6 @@ export function CorrectiveActions() {
     if (userRole === 'kitchen_staff') {
       return allActions.filter(i => i.assignee === KITCHEN_STAFF_NAME);
     }
-    if (userRole === 'facilities_manager') {
-      return allActions.filter(i => i.category === 'facility_safety');
-    }
     return allActions;
   }, [allActions, userRole]);
 
@@ -255,6 +248,7 @@ export function CorrectiveActions() {
     if (filterStatus !== 'all') items = items.filter(i => i.status === filterStatus);
     if (filterLocation !== 'all') items = items.filter(i => i.locationId === filterLocation);
     if (filterSeverity !== 'all') items = items.filter(i => i.severity === filterSeverity);
+    if (filterCategory !== 'all') items = items.filter(i => i.category === filterCategory);
 
     // Sort
     items = [...items].sort((a, b) => {
@@ -518,6 +512,17 @@ export function CorrectiveActions() {
           <option value="medium">Medium</option>
           <option value="low">Low</option>
         </select>
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value as any)}
+          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+          style={{ fontSize: 16 }}
+        >
+          <option value="all">All Categories</option>
+          {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </select>
         <div className="flex items-center gap-1.5 ml-auto">
           <ArrowDown size={12} className="text-[#1E2D4D]/30" />
           <select
@@ -674,7 +679,7 @@ export function CorrectiveActions() {
                 <div className="space-y-4">
                   {/* Category chips */}
                   <div className="flex flex-wrap gap-2">
-                    {(['all', 'food_safety', 'facility_safety', 'operational'] as const).map(cat => (
+                    {(['all', 'food_safety', 'fire_safety', 'facility_services'] as const).map(cat => (
                       <button
                         key={cat}
                         onClick={() => setTemplateCategory(cat)}

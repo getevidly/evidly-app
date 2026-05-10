@@ -13,7 +13,7 @@ export type { CAStatus, CASeverity };
 
 // ── Types ─────────────────────────────────────────────────────
 
-export type CACategory = 'food_safety' | 'facility_safety' | 'operational';
+export type CACategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual' | 'incident';
 
 export interface CANote {
@@ -190,7 +190,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-01', title: 'Fire Suppression System Inspection Overdue',
     description: 'Annual fire suppression system inspection certificate has expired. Schedule re-inspection with certified vendor immediately.',
-    category: 'facility_safety', severity: 'critical',
+    category: 'fire_safety', severity: 'critical',
     suggested_root_cause: 'Vendor scheduling oversight, expired contract, or vendor unavailability',
     regulation_reference: 'NFPA 96', recommended_timeframe_days: 3,
     is_system: true, is_active: true,
@@ -198,7 +198,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-02', title: 'Fire Extinguisher Inspection Overdue',
     description: 'Monthly visual inspection or annual service inspection for fire extinguisher(s) is overdue. Inspect and tag all units.',
-    category: 'facility_safety', severity: 'high',
+    category: 'fire_safety', severity: 'high',
     suggested_root_cause: 'Inspection schedule not tracked, inspector not available',
     regulation_reference: 'NFPA 10', recommended_timeframe_days: 7,
     is_system: true, is_active: true,
@@ -206,7 +206,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-03', title: 'Emergency Exit Blocked or Obstructed',
     description: 'Emergency exit found blocked by equipment, boxes, or other obstructions. Clear immediately and verify all exit paths.',
-    category: 'facility_safety', severity: 'critical',
+    category: 'fire_safety', severity: 'critical',
     suggested_root_cause: 'Storage overflow, delivery staging, or staff unaware of requirement',
     regulation_reference: 'OSHA 29 CFR 1910.37', recommended_timeframe_days: 1,
     is_system: true, is_active: true,
@@ -214,7 +214,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-04', title: 'Slip/Trip Hazard Identified',
     description: 'Wet floor, damaged flooring, loose mats, or cables creating slip/trip hazard. Address immediately and post warning signage.',
-    category: 'facility_safety', severity: 'high',
+    category: 'fire_safety', severity: 'high',
     suggested_root_cause: 'Spill not cleaned, damaged floor tile, or missing floor mat',
     regulation_reference: 'OSHA 29 CFR 1910.22', recommended_timeframe_days: 1,
     is_system: true, is_active: true,
@@ -222,7 +222,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-05', title: 'Pest Evidence Found',
     description: 'Evidence of pest activity (droppings, gnaw marks, live insects) found in food prep or storage area. Contact pest control vendor.',
-    category: 'facility_safety', severity: 'high',
+    category: 'fire_safety', severity: 'high',
     suggested_root_cause: 'Gap in pest exclusion, sanitation issue, or door propped open',
     regulation_reference: 'FDA Food Code 6-501.111', recommended_timeframe_days: 2,
     is_system: true, is_active: true,
@@ -230,7 +230,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-06', title: 'Hood Cleaning Certificate Expired',
     description: 'Kitchen exhaust hood cleaning certificate has expired. Schedule cleaning with certified vendor per NFPA 96 frequency requirements.',
-    category: 'facility_safety', severity: 'high',
+    category: 'fire_safety', severity: 'high',
     suggested_root_cause: 'Cleaning schedule not tracked, vendor contract lapsed',
     regulation_reference: 'NFPA 96', recommended_timeframe_days: 7,
     is_system: true, is_active: true,
@@ -238,7 +238,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-07', title: 'Grease Trap Maintenance Overdue',
     description: 'Grease trap / interceptor maintenance is past due. Schedule pumping and cleaning per local code requirements.',
-    category: 'facility_safety', severity: 'medium',
+    category: 'fire_safety', severity: 'medium',
     suggested_root_cause: 'Maintenance schedule not tracked, vendor scheduling issue',
     regulation_reference: 'Local plumbing code', recommended_timeframe_days: 7,
     is_system: true, is_active: true,
@@ -246,7 +246,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-08', title: 'Lighting Deficiency in Prep Area',
     description: 'Lighting in food prep, cooking, or warewashing area below minimum required foot-candles. Replace bulbs or fixtures.',
-    category: 'facility_safety', severity: 'medium',
+    category: 'fire_safety', severity: 'medium',
     suggested_root_cause: 'Burned out bulbs, broken fixture, or shield missing',
     regulation_reference: 'FDA Food Code 6-303.11', recommended_timeframe_days: 3,
     is_system: true, is_active: true,
@@ -254,7 +254,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-09', title: 'Ventilation System Not Operating',
     description: 'Kitchen ventilation / exhaust system not operating properly. Check fan belts, filters, and motor.',
-    category: 'facility_safety', severity: 'high',
+    category: 'fire_safety', severity: 'high',
     suggested_root_cause: 'Fan motor failure, clogged filters, or electrical issue',
     regulation_reference: 'OSHA / Local building code', recommended_timeframe_days: 2,
     is_system: true, is_active: true,
@@ -262,7 +262,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-fac-10', title: 'First Aid Kit Missing or Incomplete',
     description: 'First aid kit not present or missing required supplies. Restock and verify contents meet OSHA requirements.',
-    category: 'facility_safety', severity: 'low',
+    category: 'fire_safety', severity: 'low',
     suggested_root_cause: 'Supplies used and not restocked, kit relocated',
     regulation_reference: 'OSHA 29 CFR 1910.151', recommended_timeframe_days: 7,
     is_system: true, is_active: true,
@@ -271,7 +271,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-op-01', title: 'Pest Control Service Overdue',
     description: 'Scheduled pest control service visit is overdue. Contact vendor to reschedule.',
-    category: 'operational', severity: 'medium',
+    category: 'facility_services', severity: 'medium',
     suggested_root_cause: 'Vendor scheduling conflict, contract renewal pending',
     regulation_reference: 'Vendor SLA / FDA Food Code', recommended_timeframe_days: 3,
     is_system: true, is_active: true,
@@ -279,7 +279,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-op-02', title: 'Equipment Calibration Overdue',
     description: 'Thermometer or other measuring equipment calibration is overdue. Calibrate using ice-point or boiling-point method and document.',
-    category: 'operational', severity: 'medium',
+    category: 'facility_services', severity: 'medium',
     suggested_root_cause: 'Calibration schedule not maintained, thermometer damaged',
     regulation_reference: 'FDA Food Code 4-502.11', recommended_timeframe_days: 7,
     is_system: true, is_active: true,
@@ -287,7 +287,7 @@ export const CA_SYSTEM_TEMPLATES: CATemplate[] = [
   {
     id: 'tpl-op-03', title: 'Training Documentation Gap',
     description: 'Required training records missing or incomplete for one or more employees. Update training log and schedule any needed sessions.',
-    category: 'operational', severity: 'low',
+    category: 'facility_services', severity: 'low',
     suggested_root_cause: 'New hire onboarding incomplete, records not filed after training',
     regulation_reference: 'FDA Food Code 2-103.11', recommended_timeframe_days: 14,
     is_system: true, is_active: true,
@@ -310,8 +310,8 @@ export function getTemplateById(id: string): CATemplate | undefined {
 
 export const CATEGORY_LABELS: Record<CACategory, string> = {
   food_safety: 'Food Safety',
-  facility_safety: 'Fire Safety',
-  operational: 'Operational',
+  fire_safety: 'Fire Safety',
+  facility_services: 'Facility Services',
 };
 
 export const SEVERITY_LABELS: Record<CASeverity, string> = {

@@ -6,7 +6,7 @@
 import type { HistoryEntry } from './incidents';
 
 export type CAPillar = 'food_safety' | 'fire_safety';
-export type CACategory = 'food_safety' | 'facility_safety' | 'operational';
+export type CACategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
 export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual' | 'incident';
 export type CAStatus = 'reported' | 'assigned' | 'in_progress' | 'resolved' | 'verified' | 'closed' | 'archived';
