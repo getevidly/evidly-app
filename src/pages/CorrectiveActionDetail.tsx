@@ -31,9 +31,9 @@ import {
   CA_STATUS_MAP,
   CA_STATUS_ORDER,
   SEVERITY_CONFIG,
-  DEMO_TEAM_MEMBERS,
   type CAStatus,
 } from '../constants/correctiveActionStatus';
+import { useOrgMembers } from '../hooks/useOrgMembers';
 import {
   CATEGORY_LABELS,
   SEVERITY_LABELS,
@@ -70,6 +70,7 @@ export function CorrectiveActionDetail() {
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
+  const { members: orgMembers } = useOrgMembers();
   const { triggerConfetti } = useConfetti();
   const { pendingMilestone, checkMilestone, dismissMilestone } = useMilestoneCheck();
 
@@ -360,8 +361,8 @@ export function CorrectiveActionDetail() {
               className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-1.5 text-[#1E2D4D]/80 w-full sm:w-auto"
             >
               <option value="">Select team member...</option>
-              {DEMO_TEAM_MEMBERS.filter(m => m.name !== item.assignee).map(m => (
-                <option key={m.id} value={m.name}>{m.name}</option>
+              {orgMembers.filter(m => (m.full_name || m.email) !== item.assignee).map(m => (
+                <option key={m.id} value={m.full_name || m.email || m.id}>{m.full_name || m.email || 'Unknown'}</option>
               ))}
             </select>
           </div>

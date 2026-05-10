@@ -28,11 +28,11 @@ import {
   CA_STATUS_ORDER,
   SEVERITY_CONFIG,
   SEVERITY_ORDER,
-  DEMO_TEAM_MEMBERS,
   OPEN_CORRECTIVE_ACTION_STATUSES,
   type CAStatus,
   type CASeverity,
 } from '../constants/correctiveActionStatus';
+import { useOrgMembers } from '../hooks/useOrgMembers';
 import {
   CA_SYSTEM_TEMPLATES,
   getTemplatesByCategory,
@@ -109,6 +109,7 @@ export function CorrectiveActions() {
   const [searchParams] = useSearchParams();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
+  const { members: orgMembers } = useOrgMembers();
 
   // URL param pre-filter
   const urlLocation = searchParams.get('location') || 'all';
@@ -832,8 +833,8 @@ export function CorrectiveActions() {
                         className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2"
                       >
                         <option value="">Unassigned</option>
-                        {DEMO_TEAM_MEMBERS.map(m => (
-                          <option key={m.id} value={m.name}>{m.name}</option>
+                        {orgMembers.map(m => (
+                          <option key={m.id} value={m.full_name || m.email || m.id}>{m.full_name || m.email || 'Unknown'}</option>
                         ))}
                       </select>
                     </div>

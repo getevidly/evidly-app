@@ -111,16 +111,3 @@ export const SEVERITY_ORDER: Record<CASeverity, number> = {
   critical: 0, high: 1, medium: 2, low: 3,
 };
 
-// ── Demo Team Members ────────────────────────────────────────
-
-export const DEMO_TEAM_MEMBERS = [
-  { id: 'd1', name: 'David Kim' },
-  { id: 'd2', name: 'Sofia Chen' },
-  { id: 'd3', name: 'Ana Torres' },
-  { id: 'd4', name: 'Michael Torres' },
-  { id: 'd5', name: 'Lisa Nguyen' },
-  { id: 'd6', name: 'Maria Garcia' },
-  { id: 'd7', name: 'James Rodriguez' },
-  { id: 'd8', name: 'Carlos Perez' },
-  { id: 'd9', name: 'Marcus Johnson' },
-];
