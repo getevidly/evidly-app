@@ -84,6 +84,7 @@ export interface CreateEquipmentInput {
   name: string;
   equipmentType: string;
   locationId: string;
+  locationName?: string;
   category?: 'food_safety' | 'fire_safety' | 'facility_services';
   manufacturer?: string;
   model?: string;
@@ -328,7 +329,7 @@ export function useCreateEquipment(): ApiMutationResult<CreateEquipmentInput, Eq
         installed_area: args.installedArea ?? '',
         notes: args.notes ?? '',
         custom_fields: args.customFields ?? {},
-        location_name: '',
+        location_name: args.locationName ?? '',
         customer_name: '',
       })
       .select('*')

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { X, Loader2, Wrench } from 'lucide-react';
 import { useCreateEquipment, useUpdateEquipment } from '../../hooks/api/useEquipment';
 import type { EquipmentItem, CreateEquipmentInput } from '../../hooks/api/useEquipment';
+import { useLocations } from '../../hooks/api/useLocations';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 import { Modal } from '../ui/Modal';
 
@@ -52,6 +53,7 @@ export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentF
   const isEdit = !!equipment;
   const { mutate: create, isLoading: creating } = useCreateEquipment();
   const { mutate: update, isLoading: updating } = useUpdateEquipment();
+  const { data: locations } = useLocations();
   const saving = creating || updating;
 
   const [name, setName] = useState(equipment?.name || '');
@@ -83,10 +85,12 @@ export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentF
   const handleSave = async () => {
     if (!validate()) return;
 
+    const selectedLocation = (locations ?? []).find(l => l.id === locationId);
     const input: CreateEquipmentInput = {
       name: name.trim(),
       equipmentType,
       locationId: locationId.trim(),
+      locationName: selectedLocation?.name ?? '',
       manufacturer: manufacturer.trim() || undefined,
       model: model.trim() || undefined,
       serialNumber: serialNumber.trim() || undefined,
@@ -131,13 +135,17 @@ export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentF
         <div className="p-5 space-y-4 overflow-y-auto flex-1">
           {/* Location */}
           <Field label="Location" required error={errors.locationId}>
-            <input
+            <select
               value={locationId}
               onChange={e => setLocationId(e.target.value)}
-              placeholder="Search for a location..."
               className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.locationId ? '#DC2626' : CARD_BORDER, color: NAVY }}
-            />
+            >
+              <option value="">Select location...</option>
+              {(locations ?? []).map(loc => (
+                <option key={loc.id} value={loc.id}>{loc.name}</option>
+              ))}
+            </select>
           </Field>
 
           {/* Equipment Type */}
