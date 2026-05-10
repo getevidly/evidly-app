@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Activity, AlertTriangle, BarChart3, BookOpen, Bot, Brain, Bug, Building,
+  Activity, AlertTriangle, BarChart3, Bell, BookOpen, Bot, Brain, Bug, Building,
   Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock,
   DollarSign, Download, FileEdit, FileText, Flame, GraduationCap, Hammer,
-  Handshake, HardHat, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
+  Handshake, HardHat, Heart, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
   Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
   Shield, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
@@ -29,6 +29,7 @@ import {
 } from '../../config/sidebarConfig';
 import { useUnreadSignals } from '../../hooks/useUnreadSignals';
 import { colors, typography } from '../../lib/designSystem';
+import { supabase } from '../../lib/supabase';
 
 // ── Emoji → Lucide Icon Map ─────────────────────────────
 // Maps sidebar emoji strings to lucide-react components for a professional look.
@@ -84,6 +85,16 @@ const SIDEBAR_ICONS: Record<string, any> = {
   '🔌': Plug,
   '⚡': Zap,
   '🕷️': Bug,
+  '🏠': Home,
+  '❤️': Heart,
+  '🍽️': UtensilsCrossed,
+  '🔔': Bell,
+  '👥': Users,
+  '📍': MapPin,
+  '⚙️': Settings,
+  '📥': Download,
+  '👨‍🍳': ChefHat,
+  '🏢': Building,
   '🚀': Rocket,
   '💬': MessageSquare,
   '❓': HelpCircle,
@@ -433,6 +444,20 @@ export function Sidebar() {
   const { kitchenType } = useKitchenType();
   const { unreadCount: intelUnread } = useUnreadSignals();
 
+  // ── Feature-flag sidebar gating (AUDIT-1) ──
+  const [disabledFlags, setDisabledFlags] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (isDemoMode) { setDisabledFlags(new Set()); return; }
+    supabase
+      .from('feature_flags')
+      .select('key')
+      .eq('is_enabled', false)
+      .then(({ data }) => {
+        if (data) setDisabledFlags(new Set(data.map((r: { key: string }) => r.key)));
+      });
+  }, [isDemoMode]);
+
   const handleLogout = async () => {
     await signOut();
     navigate('/login');
@@ -446,13 +471,24 @@ export function Sidebar() {
   const topLevelItems = roleConfig.topLevelItems ?? [];
   const sections = roleConfig.sections;
 
+  // ── Flag-filtered sections (AUDIT-1: hide sections/items with is_enabled=false) ──
+  const filteredSections = useMemo(() => {
+    return sections
+      .filter(section => !disabledFlags.has(section.id))
+      .map(section => ({
+        ...section,
+        items: section.items.filter(item => !disabledFlags.has(item.id)),
+      }))
+      .filter(section => section.items.length > 0);
+  }, [sections, disabledFlags]);
+
   // ── Flat list of visible item IDs for test API ──
   const visibleItemIds = useMemo(() => {
     const ids = [homeItem.id];
     topLevelItems.forEach(i => ids.push(i.id));
-    sections.forEach(s => s.items.forEach(i => ids.push(i.id)));
+    filteredSections.forEach(s => s.items.forEach(i => ids.push(i.id)));
     return ids;
-  }, [homeItem, topLevelItems, sections]);
+  }, [homeItem, topLevelItems, filteredSections]);
 
   // ── Collapsible section state (accordion — one section at a time) ──
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
@@ -645,7 +681,7 @@ export function Sidebar() {
           <div className="my-2 border-t border-white/10 mx-1" />
 
           {/* Sections */}
-          {sections.map(section => {
+          {filteredSections.map(section => {
             const isCollapsed = collapsed[section.id] !== false;
             const tooltipData = getSectionTooltip(section);
             const hasActiveChild = section.items.some(
