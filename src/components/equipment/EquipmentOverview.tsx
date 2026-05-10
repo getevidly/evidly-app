@@ -3,10 +3,38 @@
  * Two-column layout: location/specs/compliance on left, QR/status/notes on right.
  */
 import { useState } from 'react';
-import { MapPin, Cpu, Shield, QrCode, Activity, StickyNote, Printer, Download, Calendar, AlertTriangle } from 'lucide-react';
+import { MapPin, Cpu, Shield, QrCode, Activity, StickyNote, Printer, Download, Calendar, AlertTriangle, Loader2 } from 'lucide-react';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
+import { useUpdateEquipment } from '../../hooks/api/useEquipment';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
+
+function downloadQRAsPng(name: string, qrCodeId: string) {
+  const container = document.querySelector('[data-qr-container]');
+  const svgEl = container?.querySelector('svg') as SVGElement | null;
+  if (!svgEl) return;
+
+  const svgData = new XMLSerializer().serializeToString(svgEl);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const img = new Image();
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const link = document.createElement('a');
+    link.download = `evidly-equipment-${slug}-${qrCodeId}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+}
 
 interface EquipmentOverviewProps {
   equipment: EquipmentItem;
@@ -16,6 +44,9 @@ interface EquipmentOverviewProps {
 export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewProps) {
   const [notes, setNotes] = useState(equipment.notes || '');
   const [editingNotes, setEditingNotes] = useState(false);
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesError, setNotesError] = useState<string | null>(null);
+  const { mutate: updateEquipment } = useUpdateEquipment();
 
   const daysUntilDue = equipment.nextDueDate
     ? Math.ceil((new Date(equipment.nextDueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -90,7 +121,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
               <Printer className="w-3.5 h-3.5" /> Print
             </button>
             <button
-              onClick={() => alert('QR download (demo)')}
+              onClick={() => downloadQRAsPng(equipment.name, equipment.qrCodeId)}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
@@ -122,16 +153,35 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
+              {notesError && (
+                <p className="text-xs text-red-600">{notesError}</p>
+              )}
               <div className="flex gap-2">
                 <button
-                  onClick={() => { setEditingNotes(false); alert('Notes saved (demo)'); }}
-                  className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg"
-                  style={{ background: '#1E2D4D' }}
+                  onClick={async () => {
+                    setNotesError(null);
+                    setNotesSaving(true);
+                    const prev = equipment.notes || '';
+                    setEditingNotes(false);
+                    try {
+                      await updateEquipment({ id: equipment.id, notes: notes.trim() });
+                    } catch (err: any) {
+                      setNotes(prev);
+                      setEditingNotes(true);
+                      setNotesError(err?.message || 'Failed to save notes.');
+                    } finally {
+                      setNotesSaving(false);
+                    }
+                  }}
+                  disabled={notesSaving}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg"
+                  style={{ background: notesSaving ? '#9CA3AF' : '#1E2D4D' }}
                 >
-                  Save
+                  {notesSaving && <Loader2 className="w-3 h-3 animate-spin" />}
+                  {notesSaving ? 'Saving...' : 'Save'}
                 </button>
                 <button
-                  onClick={() => { setNotes(equipment.notes || ''); setEditingNotes(false); }}
+                  onClick={() => { setNotes(equipment.notes || ''); setEditingNotes(false); setNotesError(null); }}
                   className="px-3 py-1.5 text-xs font-medium rounded-xl border"
                   style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
                 >

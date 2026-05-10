@@ -14,7 +14,7 @@ export function QRCodeDisplay({ value, size = 128, showLogo = true }: QRCodeDisp
   const scanUrl = `${window.location.origin}/equipment/scan/${value}`;
 
   return (
-    <div className="inline-flex items-center justify-center p-3 bg-white rounded-xl">
+    <div className="inline-flex items-center justify-center p-3 bg-white rounded-xl" data-qr-container>
       <QRCodeSVG
         value={scanUrl}
         size={size}

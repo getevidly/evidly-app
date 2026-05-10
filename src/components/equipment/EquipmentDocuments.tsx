@@ -1,9 +1,10 @@
 /**
  * EquipmentDocuments — Document list with upload for an equipment item.
  */
-import { useRef } from 'react';
-import { FileText, Award, BookOpen, Shield, File, Upload, Download, Plus } from 'lucide-react';
-import { useEquipmentDocuments } from '../../hooks/api/useEquipment';
+import { useRef, useState } from 'react';
+import { FileText, Award, BookOpen, Shield, File, Upload, Download, Loader2 } from 'lucide-react';
+import { useEquipmentDocuments, useUploadEquipmentDocument } from '../../hooks/api/useEquipment';
+import { getSignedUrl, BUCKETS } from '../../lib/storage';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
 const DOC_TYPE_META: Record<string, { icon: typeof FileText; label: string; color: string }> = {
@@ -25,8 +26,11 @@ interface EquipmentDocumentsProps {
 }
 
 export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
-  const { data: documents, isLoading } = useEquipmentDocuments(equipmentId);
+  const { data: documents, isLoading, refetch } = useEquipmentDocuments(equipmentId);
+  const { mutate: uploadDocument } = useUploadEquipmentDocument();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -43,13 +47,39 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
 
   const items = documents || [];
 
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        await uploadDocument({ equipmentId, file, documentType: 'other' });
+      }
+      refetch();
+    } catch (err: any) {
+      setUploadError(err?.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
 
   const handleFileDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    alert('File upload (demo) — requires live backend');
+    handleFiles(e.dataTransfer.files);
+  };
+
+  const handleDownload = async (url: string, fileName: string) => {
+    try {
+      const signedUrl = await getSignedUrl(BUCKETS.EQUIPMENT_DOCUMENTS, url);
+      window.open(signedUrl, '_blank');
+    } catch (err: any) {
+      setUploadError(err?.message || 'Failed to generate download link.');
+    }
   };
 
   return (
@@ -62,11 +92,24 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
         onDragOver={e => e.preventDefault()}
         onDrop={handleFileDrop}
       >
-        <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: TEXT_TERTIARY }} />
-        <p className="text-sm font-medium" style={{ color: NAVY }}>Drop files here or click to upload</p>
+        {uploading ? (
+          <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" style={{ color: '#1E2D4D' }} />
+        ) : (
+          <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: TEXT_TERTIARY }} />
+        )}
+        <p className="text-sm font-medium" style={{ color: NAVY }}>
+          {uploading ? 'Uploading...' : 'Drop files here or click to upload'}
+        </p>
         <p className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>PDF, images, and documents up to 10MB</p>
-        <input ref={fileInputRef} type="file" className="hidden" multiple onChange={() => alert('File upload (demo)')} />
+        <input ref={fileInputRef} type="file" className="hidden" multiple onChange={e => handleFiles(e.target.files)} />
       </div>
+
+      {/* Upload error */}
+      {uploadError && (
+        <div className="px-3 py-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
+          {uploadError}
+        </div>
+      )}
 
       {/* Document list */}
       {items.length === 0 ? (
@@ -102,7 +145,7 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
                   </div>
                 </div>
                 <button
-                  onClick={() => alert('Download (demo)')}
+                  onClick={() => handleDownload(doc.url, doc.name)}
                   className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
                 >
                   <Download className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />

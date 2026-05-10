@@ -1,5 +1,5 @@
 /**
- * Equipment API hooks — reads wired to Supabase, mutations stubbed.
+ * Equipment API hooks — reads and mutations wired to Supabase.
  *
  * Tables: equipment, equipment_service_records, equipment_deficiencies,
  *         equipment_documents (created in migration 20260814000000).
