@@ -6,7 +6,8 @@ export function TermsOfService() {
       <Breadcrumb items={[{ label: 'Terms of Service' }]} />
       <div className="max-w-3xl mx-auto py-8 px-4">
         <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Terms of Service</h1>
-        <p className="text-sm text-[#1E2D4D]/70 mb-8">Last updated: February 14, 2026</p>
+        <p className="text-sm text-[#1E2D4D]/70 mb-1">Last updated: May 10, 2026</p>
+        <p className="text-sm text-[#1E2D4D]/70 mb-8">Effective: May 10, 2026</p>
 
         <div className="prose prose-sm max-w-none text-[#1E2D4D]/80 space-y-6">
           <section>
@@ -26,7 +27,21 @@ export function TermsOfService() {
 
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">4. Subscription and Billing</h2>
-            <p>Access to EvidLY requires a paid subscription after the free trial period. Subscription fees are billed monthly or annually as selected during signup. All fees are non-refundable except as required by law. EvidLY reserves the right to modify pricing with 30 days notice.</p>
+            <p>Access to EvidLY requires a paid subscription. Subscription begins immediately upon signup — there is no free trial period.</p>
+            <p className="mt-3"><strong>Founder Pricing.</strong> Accounts created before August 7, 2026 receive Founder Pricing, which locks the subscription rate at the price in effect at the time of signup for the lifetime of the continuous subscription. Founder Pricing is forfeited upon cancellation; re-subscription after cancellation will be at the then-current Standard pricing.</p>
+            <p className="mt-3"><strong>Billing.</strong> Subscription fees are billed monthly or annually as selected during signup. Annual billing provides a discount equivalent to two months free compared to monthly billing. Annual subscriptions commit the subscriber for a 12-month term. Monthly subscriptions renew each calendar month. Annual subscribers who cancel mid-term forfeit any remaining months but are not issued a refund; the subscription continues to run, and the subscriber retains access, through the end of the paid 12-month term.</p>
+            <p className="mt-3"><strong>Risk-Free Guarantee.</strong> New subscribers who complete the following within 15 calendar days of signup and remain dissatisfied with the Service may request a 100% refund within 45 calendar days of their initial payment:</p>
+            <p className="mt-2 pl-4">(a) <strong>Team member setup.</strong> Subscribers must invite and activate team members per the following thresholds based on total user accounts on the subscription plan:</p>
+            <ul className="list-disc pl-10 mt-1 space-y-1">
+              <li>1 to 5 accounts: 100% of accounts invited and activated</li>
+              <li>6 to 9 accounts: 75% of accounts invited and activated</li>
+              <li>10 or more accounts: 50% of accounts invited and activated</li>
+            </ul>
+            <p className="pl-4 mt-1">Solo-operator subscriptions (1 account) satisfy this requirement upon activation of the owner's account.</p>
+            <p className="mt-2 pl-4">(b) <strong>Food safety activity.</strong> Subscribers must log food safety activity on at least 12 of the first 15 days. Food safety activity is defined as: a temperature log entry OR a checklist entry. Temperature logs and checklists feed downstream incident generation, so these activities reflect genuine operational use of the Service.</p>
+            <p className="mt-2 pl-4">(c) <strong>Setup completion.</strong> All criteria above must be completed within 15 calendar days of signup.</p>
+            <p className="mt-3">Eligibility status is tracked automatically by the Service. Subscribers may check their current eligibility status at any time within the 15-day window. If any criterion is not met within the 15-day window, the Risk-Free Guarantee is forfeited. Outside the Risk-Free Guarantee window, or if the Guarantee is forfeited, all fees are non-refundable except as required by law.</p>
+            <p className="mt-3"><strong>Price Changes.</strong> EvidLY reserves the right to modify Standard pricing with 30 days written notice. Founder Pricing rates are not subject to increases for the duration of continuous subscription.</p>
           </section>
 
           <section>
@@ -56,7 +71,9 @@ export function TermsOfService() {
 
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">10. Termination</h2>
-            <p>Either party may terminate the subscription at any time. Upon termination, your access to the Service will end, but you may export your data within 30 days. EvidLY reserves the right to suspend or terminate accounts that violate these Terms.</p>
+            <p><strong>Cancellation by Subscriber.</strong> You may cancel your subscription at any time. Cancellation takes effect at the end of your current billing cycle (month or annual term). You retain full access to the Service until the end of that cycle. Upon cancellation, Founder Pricing is permanently forfeited — any future subscription will be at the then-current Standard pricing.</p>
+            <p className="mt-3"><strong>Data Export.</strong> Upon termination, you may export your data for 30 days following the end of your final billing cycle. After 30 days, data may be permanently deleted.</p>
+            <p className="mt-3"><strong>Termination by EvidLY.</strong> EvidLY reserves the right to suspend or terminate accounts that violate these Terms, engage in fraudulent activity, or fail to pay subscription fees after 14 days of a failed payment attempt.</p>
           </section>
 
           <section>
