@@ -162,7 +162,7 @@ export const featureExplanations: Record<string, string> = {
   '/benchmarks': 'See how your kitchen compares to others in your region and industry. Identify areas where you are leading and where you can improve.',
   '/dashboard': 'Your compliance command center. At a glance, see your overall score, urgent items, and today\'s progress across all locations.',
   '/calendar': 'View upcoming deadlines, scheduled services, document expirations, and checklist schedules in a calendar format.',
-  '/marketplace': 'Find and connect with vetted service providers in your area. Compare ratings, pricing, and availability.',
+  '/vendors': 'Find and connect with vetted service providers in your area. Compare ratings, pricing, and availability.',
   '/reports': 'Generate compliance reports for inspectors, insurance companies, and internal review. Download or share directly from EvidLY.',
   '/health-dept-report': 'Generate inspection-ready reports formatted for your local health department. Includes all required documentation.',
   '/audit-trail': 'Every action in EvidLY is logged. View who did what, when, for complete accountability and inspection readiness.',

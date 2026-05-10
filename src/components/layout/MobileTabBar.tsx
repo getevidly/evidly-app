@@ -85,8 +85,8 @@ const PATH_ICON: Record<string, any> = {
   '/team': Users,
   '/dashboard/training': GraduationCap,
   '/vendors': Store,
-  '/vendors/review': FileText,
-  '/marketplace': Store,
+
+
   '/help': HelpCircle,
   '/allergen-tracking': AlertTriangle,
   '/cooling-logs': Snowflake,
@@ -100,9 +100,11 @@ const PATH_ICON: Record<string, any> = {
   '/k12': School,
   '/usda/production-records': School,
   '/copilot': Brain,
-  '/voice-help': Mic,
+
+
   '/tasks': ClipboardList,
-  '/vendor-connect': Handshake,
+
+
   '/upgrade': Star,
   '/insights/inspection-forecast': Calendar,
   '/insights/violation-radar': Target,

@@ -195,11 +195,11 @@ function ProductionVendorProfile() {
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor not found</h2>
         <p className="text-[#1E2D4D]/70 mb-4">The vendor you are looking for does not exist or has been removed.</p>
         <button
-          onClick={() => navigate('/marketplace')}
+          onClick={() => navigate('/vendors')}
           className="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg"
           style={{ color: '#1E2D4D' }}
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+          <ArrowLeft className="h-4 w-4" /> Back to Vendor Network
         </button>
       </div>
     );
@@ -209,17 +209,17 @@ function ProductionVendorProfile() {
     <div className="min-h-screen bg-[#FAF7F0]">
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Marketplace', href: '/marketplace' },
+        { label: 'Vendor Network', href: '/vendors' },
         { label: vendor.company_name },
       ]} />
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto">
         <button
-          onClick={() => navigate('/marketplace')}
+          onClick={() => navigate('/vendors')}
           className="flex items-center gap-1 text-sm hover:underline mb-4"
           style={{ color: '#1E2D4D' }}
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+          <ArrowLeft className="h-4 w-4" /> Back to Vendor Network
         </button>
 
         {/* Profile Header */}
@@ -477,11 +477,11 @@ export function VendorProfile() {
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor not found</h2>
         <p className="text-[#1E2D4D]/70 mb-4">The vendor you are looking for does not exist or has been removed.</p>
         <button
-          onClick={() => navigate('/marketplace')}
+          onClick={() => navigate('/vendors')}
           className="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg"
           style={{ color: '#1E2D4D' }}
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+          <ArrowLeft className="h-4 w-4" /> Back to Vendor Network
         </button>
       </div>
     );
@@ -525,18 +525,18 @@ export function VendorProfile() {
       {/* Breadcrumb */}
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Marketplace', href: '/marketplace' },
+        { label: 'Vendor Network', href: '/vendors' },
         { label: vendor.companyName },
       ]} />
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto">
         {/* Back link */}
         <button
-          onClick={() => navigate('/marketplace')}
+          onClick={() => navigate('/vendors')}
           className="flex items-center gap-1 text-sm hover:underline mb-4"
           style={{ color: '#1E2D4D' }}
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+          <ArrowLeft className="h-4 w-4" /> Back to Vendor Network
         </button>
 
         {/* ─── Profile Header ──────────────────────────────── */}

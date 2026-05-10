@@ -40,6 +40,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/self-inspection': { label: 'Self-Inspection', parent: '/compliance' },
   '/services': { label: 'Vendor Services', parent: '/compliance' },
   '/jurisdiction': { label: 'Jurisdiction Settings', parent: '/compliance' },
+  '/jurisdiction-intelligence': { label: 'Jurisdiction Intelligence', parent: '/dashboard' },
   '/health-dept-report': { label: 'Health Dept Report', parent: '/compliance' },
   '/audit-report': { label: 'Inspection Report', parent: '/compliance' },
 
@@ -63,7 +64,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   // ── Tools children ──
   '/calendar': { label: 'Calendar', parent: '/facility-safety' },
   '/vendors': { label: 'Vendor Management', parent: '/tools' },
-  '/marketplace': { label: 'Marketplace', parent: '/tools' },
+  '/marketplace': { label: 'Vendor Network', parent: '/tools' },
   '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },
   // /checkup removed — Kitchen Checkup is a marketing-only lead magnet, not an in-app page
   '/self-diagnosis': { label: 'Self-Diagnosis', parent: '/tools' },
@@ -120,7 +121,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
 // ── Dynamic route patterns ───────────────────────────────
 const DYNAMIC_PATTERNS: { pattern: RegExp; parent: string; label: string }[] = [
   { pattern: /^\/vendors\/[^/]+$/, parent: '/vendors', label: 'Vendor Detail' },
-  { pattern: /^\/marketplace\/[^/]+$/, parent: '/marketplace', label: 'Vendor Profile' },
+  { pattern: /^\/marketplace\/[^/]+$/, parent: '/vendors', label: 'Vendor Profile' },
   { pattern: /^\/training\/course\/[^/]+$/, parent: '/training', label: 'Course' },
   { pattern: /^\/training\/employee\/[^/]+$/, parent: '/training', label: 'Employee Certifications' },
   { pattern: /^\/playbooks\/active\/[^/]+$/, parent: '/playbooks', label: 'Active Playbook' },

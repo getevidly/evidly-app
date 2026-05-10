@@ -93,7 +93,7 @@ const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m =>
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
 const ComplianceOverview = lazy(() => import('./pages/ComplianceOverview').then(m => ({ default: m.ComplianceOverview })));
 const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
-const VendorMarketplace = lazy(() => import('./pages/VendorMarketplace').then(m => ({ default: m.VendorMarketplace })));
+
 const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
 const MarketplaceLanding = lazy(() => import('./pages/MarketplaceLanding').then(m => ({ default: m.MarketplaceLanding })));
 const Suspended = lazy(() => import('./pages/Suspended').then(m => ({ default: m.Suspended })));
@@ -141,7 +141,7 @@ const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m =>
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
-const VoiceHelp = lazy(() => import('./pages/VoiceHelp').then(m => ({ default: m.VoiceHelp })));
+
 const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
@@ -638,7 +638,7 @@ function AppRoutes() {
           <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
-          <Route path="/marketplace" element={<VendorMarketplace />} />
+
 
           <Route path="/upgrade" element={<Upgrade />} />
           <Route path="/marketplace/vendor/:vendorSlug" element={<VendorProfile />} />
@@ -823,10 +823,11 @@ function AppRoutes() {
           <Route path="/insights/operations-intelligence" element={<OperationsIntelligencePage />} />
           {/* Stub routes for upcoming features */}
           <Route path="/tasks" element={<TaskManager />} />
-          <Route path="/vendors/review" element={<VendorDocumentReview />} />
+          <Route path="/vendors/review" element={<Navigate to="/documents?tab=vendor-business&status=pending" replace />} />
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
-          <Route path="/voice-help" element={<VoiceHelp />} />
+
+
           <Route path="/deficiencies" element={<Deficiencies />} />
           <Route path="/deficiencies/:deficiencyId" element={<DeficiencyDetail />} />
           {/* Blueprint route aliases — FIX-03 */}
