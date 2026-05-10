@@ -25,6 +25,7 @@ import {
   SEVERITY_ORDER,
   daysOpen,
   type DeficiencyItem,
+  type DefCategory,
   type DefSeverity,
   type DefStatus,
 } from '../data/deficienciesDemoData';
@@ -54,6 +55,7 @@ export function Deficiencies() {
 
   const statusFilter = (searchParams.get('status') || 'all') as DefStatus | 'all';
   const severityFilter = (searchParams.get('severity') || 'all') as DefSeverity | 'all';
+  const categoryFilter = (searchParams.get('category') || 'all') as DefCategory | 'all';
   const searchQuery = searchParams.get('q') || '';
   const sortBy = (searchParams.get('sort') || 'severity') as SortKey;
 
@@ -95,6 +97,7 @@ export function Deficiencies() {
     let items = [...localRecords];
     if (statusFilter !== 'all') items = items.filter(d => d.status === statusFilter);
     if (severityFilter !== 'all') items = items.filter(d => d.severity === severityFilter);
+    if (categoryFilter !== 'all') items = items.filter(d => d.category === categoryFilter);
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       items = items.filter(d =>
@@ -110,11 +113,11 @@ export function Deficiencies() {
       return daysOpen(b) - daysOpen(a);
     });
     return items;
-  }, [localRecords, statusFilter, severityFilter, searchQuery, sortBy]);
+  }, [localRecords, statusFilter, severityFilter, categoryFilter, searchQuery, sortBy]);
 
   // ── Add Deficiency Handler ────────────────────────────────
   const handleAddDeficiency = (data: {
-    code: string; title: string; description: string;
+    category: DefCategory; code: string; title: string; description: string;
     locationDescription: string; locationId: string;
     severity: DefSeverity; estimatedCost: number | null;
   }) => {
@@ -122,6 +125,7 @@ export function Deficiencies() {
       const loc = data.locationId;
       const newDef: DeficiencyItem = {
         id: `def-new-${Date.now()}`,
+        category: data.category,
         code: data.code,
         title: data.title,
         description: data.description,
@@ -235,6 +239,18 @@ export function Deficiencies() {
           <option value="major">Major</option>
           <option value="minor">Minor</option>
           <option value="advisory">Advisory</option>
+        </select>
+
+        <select
+          value={categoryFilter}
+          onChange={(e) => setFilter('category', e.target.value)}
+          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+          style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
+        >
+          <option value="all">All Categories</option>
+          <option value="food_safety">Food Safety</option>
+          <option value="fire_safety">Fire Safety</option>
+          <option value="facility_services">Facility Services</option>
         </select>
 
         <div className="relative flex-1 min-w-[200px]">

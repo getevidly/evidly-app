@@ -7,6 +7,7 @@
 
 // ── Types ─────────────────────────────────────────────────────
 
+export type DefCategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type DefSeverity = 'critical' | 'major' | 'minor' | 'advisory';
 export type DefStatus = 'open' | 'acknowledged' | 'in_progress' | 'resolved' | 'deferred';
 
@@ -20,6 +21,7 @@ export interface DeficiencyTimelineEntry {
 
 export interface DeficiencyItem {
   id: string;
+  category: DefCategory;
   code: string;
   title: string;
   description: string;
@@ -101,6 +103,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── OPEN (3) ────────────────────────────────────────────────
   {
     id: 'def-1',
+    category: 'fire_safety',
     code: 'NFPA96-T12.4',
     title: 'Grease buildup exceeds acceptable depth on hood filters',
     description: 'Kitchen exhaust hood filters show grease accumulation exceeding 1/4 inch depth, creating fire hazard per NFPA 96 Table 12.4.',
@@ -134,6 +137,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-2',
+    category: 'fire_safety',
     code: 'NFPA96-10.2.1',
     title: 'Fire suppression system nozzle misaligned',
     description: 'Kitchen fire suppression nozzle above the charbroiler has shifted from its aimed position, potentially reducing coverage area per NFPA 96 Section 10.2.1.',
@@ -167,6 +171,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-3',
+    category: 'food_safety',
     code: 'CalCode-114099',
     title: 'Wall-mounted thermometer missing from walk-in cooler',
     description: 'Required wall-mounted thermometer not present in walk-in cooler per California Retail Food Code Section 114099.',
@@ -202,6 +207,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── ACKNOWLEDGED (2) ────────────────────────────────────────
   {
     id: 'def-4',
+    category: 'fire_safety',
     code: 'NFPA96-11.6.2',
     title: 'Access panel screws missing on exhaust duct',
     description: 'Two access panel screws missing on horizontal exhaust duct section, preventing proper seal per NFPA 96 Section 11.6.2.',
@@ -236,6 +242,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-5',
+    category: 'food_safety',
     code: 'CalCode-114039',
     title: 'Floor tile cracked in food prep area',
     description: 'Cracked floor tile in food preparation area creating potential harborage point for bacteria per California Retail Food Code Section 114039.',
@@ -272,6 +279,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── IN PROGRESS (2) ─────────────────────────────────────────
   {
     id: 'def-6',
+    category: 'fire_safety',
     code: 'NFPA96-7.8.1',
     title: 'Rooftop grease containment system overflow',
     description: 'Rooftop grease containment unit has overflowed, causing grease runoff onto roof surface per NFPA 96 Section 7.8.1.',
@@ -307,6 +315,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-7',
+    category: 'food_safety',
     code: 'CalCode-114097',
     title: 'Handwashing sign missing at prep sink',
     description: 'Required handwashing signage missing at food preparation area handwashing station per California Retail Food Code Section 114097.',
@@ -344,6 +353,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── RESOLVED (3) ────────────────────────────────────────────
   {
     id: 'def-8',
+    category: 'fire_safety',
     code: 'NFPA96-T12.4',
     title: 'Grease drip tray not properly seated',
     description: 'Hood grease drip tray found unseated, allowing grease to bypass collection system per NFPA 96 Table 12.4.',
@@ -380,6 +390,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-9',
+    category: 'food_safety',
     code: 'CalCode-114099',
     title: 'Thermometer out of calibration in hot holding',
     description: 'Hot holding unit thermometer reading 8 degrees high compared to reference thermometer per California Retail Food Code Section 114099.',
@@ -416,6 +427,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   },
   {
     id: 'def-10',
+    category: 'fire_safety',
     code: 'NFPA96-10.5.1',
     title: 'Manual pull station obstructed by shelving',
     description: 'Fire suppression manual pull station partially blocked by shelving unit per NFPA 96 Section 10.5.1.',
@@ -454,6 +466,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── DEFERRED (1) ────────────────────────────────────────────
   {
     id: 'def-11',
+    category: 'food_safety',
     code: 'CalCode-114271',
     title: 'Ceiling tile stained above dish area',
     description: 'Ceiling tile above dish washing area showing water stain. Not currently leaking but indicates past moisture intrusion per California Retail Food Code Section 114271.',
@@ -491,6 +504,7 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── ADVISORY / AI-DETECTED (1) ──────────────────────────────
   {
     id: 'def-12',
+    category: 'fire_safety',
     code: 'NFPA96-T12.4',
     title: 'Potential grease accumulation pattern detected',
     description: 'AI analysis of recent service records and temperature patterns suggests accelerated grease accumulation rate on the hood system, which may require increased cleaning frequency per NFPA 96 Table 12.4.',

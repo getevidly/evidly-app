@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { X, Plus } from 'lucide-react';
-import type { DefSeverity } from '../../data/deficienciesDemoData';
+import type { DefSeverity, DefCategory } from '../../data/deficienciesDemoData';
 
 // Locations are populated dynamically from org data — empty for now
 const LOCATIONS: { id: string; name: string }[] = [];
+
+const CATEGORIES: { value: DefCategory; label: string }[] = [
+  { value: 'food_safety', label: 'Food Safety' },
+  { value: 'fire_safety', label: 'Fire Safety' },
+  { value: 'facility_services', label: 'Facility Services' },
+];
 
 const SEVERITIES: { value: DefSeverity; label: string }[] = [
   { value: 'critical', label: 'Critical' },
@@ -16,6 +22,7 @@ const SEVERITIES: { value: DefSeverity; label: string }[] = [
 interface AddDeficiencyModalProps {
   onClose: () => void;
   onSubmit: (data: {
+    category: DefCategory;
     code: string;
     title: string;
     description: string;
@@ -27,6 +34,7 @@ interface AddDeficiencyModalProps {
 }
 
 export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProps) {
+  const [category, setCategory] = useState<DefCategory | ''>('');
   const [code, setCode] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -35,11 +43,12 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
   const [severity, setSeverity] = useState<DefSeverity>('major');
   const [costStr, setCostStr] = useState('');
 
-  const canSubmit = code.trim() && title.trim() && description.trim() && locationId;
+  const canSubmit = category && code.trim() && title.trim() && description.trim() && locationId;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     onSubmit({
+      category: category as DefCategory,
       code: code.trim(),
       title: title.trim(),
       description: description.trim(),
@@ -63,6 +72,23 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
         </div>
 
         <div className="px-6 py-5 space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>
+              Category <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as DefCategory)}
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
+            >
+              <option value="">Select category...</option>
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>
