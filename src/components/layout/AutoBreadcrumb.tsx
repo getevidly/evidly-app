@@ -12,7 +12,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   // ── Category hubs (parent = dashboard) ──
   '/food-safety': { label: 'Food Safety', parent: '/dashboard' },
   '/facility-safety': { label: 'Fire Safety', parent: '/dashboard' },
-  '/compliance': { label: 'Compliance', parent: '/dashboard' },
+  '/operations': { label: 'Operations', parent: '/dashboard' },
   '/insights': { label: 'Insights', parent: '/dashboard' },
   '/tools': { label: 'Tools', parent: '/dashboard' },
   '/admin': { label: 'Administration', parent: '/dashboard' },
@@ -23,7 +23,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/temp-logs': { label: 'Temperature Readings', parent: '/food-safety' },
   '/checklists': { label: 'Checklists', parent: '/food-safety' },
   '/haccp': { label: 'HACCP Management', parent: '/food-safety' },
-  '/corrective-actions': { label: 'Corrective Actions', parent: '/food-safety' },
+  '/corrective-actions': { label: 'Corrective Actions', parent: '/operations' },
   '/scoring-breakdown': { label: 'Food Safety Overview', parent: '/food-safety' },
 
   // ── Top-level pages ──
@@ -33,10 +33,11 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/compliance-index': { label: 'Compliance Index', parent: '/compliance' },
   '/documents': { label: 'Documents', parent: '/compliance' },
   '/document-checklist': { label: 'Document Checklist', parent: '/compliance' },
-  '/incidents': { label: 'Incident Log', parent: '/food-safety' },
+  '/incidents': { label: 'Incident Log', parent: '/operations' },
+  '/deficiencies': { label: 'Deficiencies', parent: '/operations' },
   '/regulatory-alerts': { label: 'Regulatory Updates', parent: '/compliance' },
   '/reports': { label: 'Reports', parent: '/compliance' },
-  '/self-inspection': { label: 'Self-Inspection', parent: '/compliance' },
+  '/self-inspection': { label: 'Self-Inspection', parent: '/operations' },
   '/services': { label: 'Vendor Services', parent: '/compliance' },
   '/jurisdiction': { label: 'Jurisdiction Settings', parent: '/compliance' },
   '/jurisdiction-intelligence': { label: 'Jurisdiction Intelligence', parent: '/dashboard' },
@@ -168,6 +169,9 @@ function getQueryContext(search: string): string | null {
   return null;
 }
 
+// ── Non-linkable hub routes (label-only, no page exists) ─
+const NO_LINK_ROUTES = new Set(['/operations']);
+
 // ── Build breadcrumb by walking up parent chain ─────────
 
 interface BreadcrumbItem {
@@ -233,7 +237,11 @@ function buildBreadcrumb(pathname: string, search: string, state?: any): Breadcr
     visited.add(parentPath);
     const parentEntry = ROUTE_HIERARCHY[parentPath];
     if (!parentEntry) break;
-    items.push({ label: parentEntry.label, href: parentPath });
+    items.push(
+      NO_LINK_ROUTES.has(parentPath)
+        ? { label: parentEntry.label }
+        : { label: parentEntry.label, href: parentPath },
+    );
     parentPath = parentEntry.parent;
   }
 
