@@ -142,6 +142,7 @@ const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default:
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
 const VoiceHelp = lazy(() => import('./pages/VoiceHelp').then(m => ({ default: m.VoiceHelp })));
+const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
@@ -226,7 +227,7 @@ const ScoreTableCountyDetail = lazy(() => import('./pages/public/ScoreTableCount
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
 const VendorScheduleResponse = lazy(() => import('./pages/VendorScheduleResponse').then(m => ({ default: m.VendorScheduleResponse })));
-const VendorConnectPage = lazy(() => import('./pages/VendorConnect').then(m => ({ default: m.VendorConnect })));
+
 const VendorConnectApply = lazy(() => import('./pages/VendorConnectApply').then(m => ({ default: m.VendorConnectApply })));
 const VendorPartnerDashboard = lazy(() => import('./pages/VendorPartnerDashboard').then(m => ({ default: m.VendorPartnerDashboard })));
 const Upgrade = lazy(() => import('./pages/Upgrade').then(m => ({ default: m.Upgrade })));
@@ -250,7 +251,7 @@ const SetupMFA = lazy(() => import('./pages/SetupMFA').then(m => ({ default: m.S
 const MFAChallenge = lazy(() => import('./pages/MFAChallenge').then(m => ({ default: m.MFAChallenge })));
 const FoodSafetyOverview = lazy(() => import('./pages/foodSafety/Overview'));
 const FireSafetyOverview = lazy(() => import('./pages/fireSafety/Overview'));
-const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
+
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
 const InspectionForecastPage = lazy(() => import('./pages/insights/InspectionForecast').then(m => ({ default: m.InspectionForecast })));
 const ViolationRadarPage = lazy(() => import('./pages/insights/ViolationRadar').then(m => ({ default: m.ViolationRadar })));
@@ -624,7 +625,7 @@ function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/food-safety" element={<Navigate to="/food-safety/overview" replace />} />
           <Route path="/food-safety/overview" element={<FoodSafetyOverview />} />
-          <Route path="/compliance" element={<ComplianceHub />} />
+
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
           <Route path="/admin" element={<AdminRoute />} />
@@ -638,7 +639,7 @@ function AppRoutes() {
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
           <Route path="/marketplace" element={<VendorMarketplace />} />
-          <Route path="/vendor-connect" element={<VendorConnectPage />} />
+
           <Route path="/upgrade" element={<Upgrade />} />
           <Route path="/marketplace/vendor/:vendorSlug" element={<VendorProfile />} />
           <Route path="/marketplace/:vendorSlug" element={<VendorProfile />} />
@@ -687,6 +688,7 @@ function AppRoutes() {
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
           <Route path="/jurisdiction" element={<JurisdictionSettings />} />
+          <Route path="/jurisdiction-intelligence" element={<JurisdictionIntelligenceUser />} />
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/scoring-breakdown" element={<ScoringBreakdown />} />
           <Route path="/benchmarks" element={<Benchmarks />} />
@@ -699,6 +701,13 @@ function AppRoutes() {
           <Route path="/iot/setup" element={<SensorSetupWizard />} />
           <Route path="/migrate" element={<VendorMigration />} />
 
+          {/* User routes unwrapped from RequireAdmin — AUDIT-3 */}
+          <Route path="/integrations" element={<IntegrationHub />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
+          <Route path="/self-audit" element={<SelfAudit />} />
+          <Route path="/self-inspection" element={<SelfAudit />} />
+
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
@@ -707,7 +716,6 @@ function AppRoutes() {
           <Route path="/sensors" element={<SensorHub />} />
           <Route path="/sensors/add" element={<SensorSetupWizard />} />
           <Route path="/sensors/:id" element={<SensorDetail />} />
-          <Route path="/integrations" element={<IntegrationHub />} />
           <Route path="/settings/integrations" element={<SettingsIntegrationsPage />} />
           <Route path="/settings/api-keys" element={<IntegrationHub />} />
           <Route path="/settings/webhooks" element={<IntegrationHub />} />
@@ -728,10 +736,6 @@ function AppRoutes() {
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/shift-handoff" element={<ShiftHandoff />} />
           <Route path="/inspector-mode" element={<InspectorMode />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
-          <Route path="/self-audit" element={<SelfAudit />} />
-          <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/mock-inspection" element={<MockInspection />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
