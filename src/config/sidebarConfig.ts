@@ -38,835 +38,497 @@ export interface RoleSidebarConfig {
   sections: SidebarSection[];
 }
 
-// ── Nav Item Registry ────────────────────────────────────
-// Define every possible nav item once. Roles field is vestigial
-// since visibility is now determined by per-role configs below.
+// ══════════════════════════════════════════════════════════
+// CENTRALIZED NAV ITEM REGISTRY
+// Every nav item defined once. Visibility is determined by
+// ROLE_SECTIONS + ROLE_ITEM_HIDES below, not per-item roles.
+// ══════════════════════════════════════════════════════════
 
 const I: Record<string, NavItem> = {
-  // ── Daily Operations ──
-  checklists: {
-    id: 'checklists', label: 'Checklists', path: '/checklists', icon: '✓',
-    roles: [], description: 'Opening, closing, food safety, and custom daily task lists with completion tracking.',
-  },
-  temperatures: {
-    id: 'temperatures', label: 'Temperature Readings', path: '/temp-logs', icon: '🌡️',
-    roles: [], description: 'Record temperatures manually, via QR Code scan, or from Internet of Things sensors — storage, receiving, and cooking.',
-  },
-  incidents: {
-    id: 'incidents', label: 'Incidents', path: '/incidents', icon: '⚠️',
-    roles: [], description: 'Log and track food safety or compliance incidents with timestamped, immutable records.',
-  },
-  incidentsViewOnly: {
-    id: 'incidents', label: 'Incidents 👁', path: '/incidents', icon: '⚠️',
-    roles: [], description: '(View) Review incident reports and compliance issues across locations.', // demo
-  },
-  temperaturesViewOnly: {
-    id: 'temperatures', label: 'Temperature Readings 👁', path: '/temp-logs', icon: '🌡️',
-    roles: [], description: '(View) Review temperature monitoring records and compliance history.',
-  },
 
-  // ── Compliance ──
-  documents: {
-    id: 'documents', label: 'Documents', path: '/documents', icon: '📋',
-    roles: [], description: 'Compliance certificates, inspection reports, permits, and signed documentation — organized and searchable.',
-  },
-  selfInspection: {
-    id: 'self-inspection', label: 'Self-Inspection', path: '/self-inspection', icon: '🔍',
-    roles: [], description: 'Run a self-inspection using the same criteria your health department or fire authority applies.',
-  },
-  mockInspection: {
-    id: 'mock-inspection', label: 'Mock Inspection', path: '/mock-inspection', icon: '🎯',
-    roles: [], description: 'Practice with an AI-simulated inspector using your jurisdiction\'s criteria.',
-  },
-  regulatory: {
-    id: 'regulatory', label: 'Regulatory Tracking', path: '/regulatory-alerts', icon: '📅',
-    roles: [], description: 'Track upcoming inspections, permit renewals, certificate expirations, and regulatory deadlines.',
-  },
-  reporting: {
-    id: 'reporting', label: 'Reporting', path: '/reports', icon: '📊',
-    roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
-  },
-  taskManager: {
-    id: 'task-manager', label: 'Tasks', path: '/tasks', icon: '📝',    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
-  },
-  correctiveActions: {
-    id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
-    roles: [], description: 'Track and resolve compliance violations with documented corrective action plans and follow-up verification.',
-  },
-  facilitySafety: {
-    id: 'facility-safety', label: 'Fire Safety', path: '/facility-safety', icon: '🔥',
-    roles: [], description: 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
-  },
-  deficiencies: {
-    id: 'deficiencies', label: 'Deficiencies', path: '/deficiencies', icon: '⚠️',
-    roles: [], description: 'Track compliance code violations found during service visits — severity, status, remediation, and resolution.',
-  },
-  workforceRisk: {
-    id: 'workforce-risk', label: 'Workforce Risk', path: '/workforce-risk', icon: '👷',
-    roles: [], description: 'Employee certification status, training compliance gaps, and staffing risk signals.',
-  },
-  cicPse: {
-    id: 'cic-pse', label: 'CIC / PSE', path: '/cic-pse', icon: '🛡️',
-    roles: [], description: 'Compliance Intelligence Center, Protective Safeguards Endorsement records, and insurance program.',
-  },
+  // ── Top-level items (outside sections) ──────────────────
 
-  // ── Insights ──
-  intelligence: {
-    id: 'intelligence', label: 'Compliance Intelligence', path: '/intelligence', icon: '🧠',
-    roles: [], description: 'EvidLY Intelligence — cross-location pattern detection, predictive risk scoring, and proactive compliance recommendations.',
-     },
-  rfpIntelligence: {
-    id: 'rfp-intelligence', label: 'RFP Monitor', path: '/admin/rfp-intelligence', icon: '📋',
-    roles: [], description: 'Government RFP and procurement opportunity monitoring with AI-powered relevance classification.',
-     },
-  aiInsights: {
-    id: 'ai-insights', label: 'Artificial Intelligence Insights', path: '/ai-advisor', icon: '🤖',
-    roles: [], description: 'Artificial Intelligence-powered compliance advisor — ask questions, get recommendations, and analyze trends.',
+  dashboard: {
+    id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: '🏠',
+    roles: [], description: 'Your compliance overview — scores, open items, alerts, and priorities.',
   },
-  copilotInsights: {
-    id: 'copilot-insights', label: 'Copilot Insights', path: '/copilot', icon: '🤖',
-    roles: [], description: 'Proactive AI-generated insights — anomaly detection, predictive alerts, and compliance recommendations.',
-     },
-  analytics: {
-    id: 'analytics', label: 'Predictive Analytics', path: '/analysis', icon: '📈',
-    roles: [], description: 'Trend data for compliance scores, incident frequency, and checklist completion across locations and time.',
+  complianceOverview: {
+    id: 'complianceOverview', label: 'Compliance Overview', path: '/compliance-overview', icon: '🛡️',
+    roles: [], description: 'Side-by-side Food Safety and Fire Safety scores with jurisdiction status and operational metrics.',
   },
-  foodSafetyAnalysis: {
-    id: 'food-safety-analysis', label: 'Analysis', path: '/food-safety/analysis', icon: '📊',
-    roles: [], description: 'Temperature pass rates, checklist completion, corrective actions, and equipment failure data for food safety.',
-  },
-  foodSafetyTrajectory: {
-    id: 'food-safety-trajectory', label: 'Trajectory', path: '/food-safety/trajectory', icon: '📈',
-    roles: [], description: 'Activity completion trends, incident resolution times, and per-location performance over time.',
-  },
-  fireSafetyAnalysis: {
-    id: 'fire-safety-analysis', label: 'Analysis', path: '/fire-safety/analysis', icon: '📊',
-    roles: [], description: 'Big 4 PSE status, open findings, findings trend, and priority findings for fire safety.',
-  },
-  fireSafetyTrajectory: {
-    id: 'fire-safety-trajectory', label: 'Trajectory', path: '/fire-safety/trajectory', icon: '📈',
-    roles: [], description: 'PSE test completion trends, findings resolution times, and per-location fire safety performance.',
-  },
-  complianceTrends: {
-    id: 'compliance-trends', label: 'Compliance Trends', path: '/compliance-trends', icon: '📊',
-    roles: [], description: '30/60/90-day compliance score trajectories with per-category breakdown across locations.',
-  },
-  auditLog: {
-    id: 'audit-log', label: 'Inspection Trail & Chain of Custody', path: '/audit-trail', icon: '🔒',
-    roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
-  },
-  benchmarks: {
-    id: 'benchmarks', label: 'Benchmarks', path: '/benchmarks', icon: '🏆',
-    roles: [], description: 'Compare your compliance performance against industry benchmarks, peer operators, and your own historical baseline.',
-  },
-  iotDashboard: {
-    id: 'iot-dashboard', label: 'Internet of Things Dashboard', path: '/iot-monitoring', icon: '📡',
-    roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
-  },
-  clientIntelligence: {
-    id: 'client-intelligence', label: 'Business Intelligence', path: '/insights/intelligence', icon: '📡',
-    roles: [], description: 'Actionable intelligence from 80+ regulatory, legislative, and industry sources — filtered to your jurisdictions.',
-     },
-  clientReports: {
-    id: 'client-reports', label: 'Reports', path: '/insights/reports', icon: '📋',
-    roles: [], description: 'Compliance, insurance, and operational reports generated for your organization.',
-     },
-  predictions: {
-    id: 'predictions', label: 'Predictive Analysis', path: '/insights/predictions', icon: '🔮',
-    roles: [], description: 'Risk predictions by location — rules-based scoring from checklist rate, temp compliance, service recency, and open corrective actions.',
-  },
-  inspectionForecast: {
-    id: 'inspection-forecast', label: 'Inspection Forecast', path: '/insights/inspection-forecast', icon: '📅',
-    roles: [], description: 'Predict your next inspection window based on county patterns and historical frequency.',
-     },
-  violationRadar: {
-    id: 'violation-radar', label: 'Violation Risk Radar', path: '/insights/violation-radar', icon: '🎯',
-    roles: [], description: 'See what an inspector would find right now — ranked risks with probability estimates.',
-     },
-  complianceTrajectory: {
-    id: 'compliance-trajectory', label: 'Compliance Trajectory', path: '/insights/trajectory', icon: '📈',
-    roles: [], description: '30/60/90 day readiness score trend with projected trajectory.',
-     },
-  vendorPerformance: {
-    id: 'vendor-performance', label: 'Vendor Performance', path: '/insights/vendor-performance', icon: '🏆',
-    roles: [], description: 'Grade your vendors A-F on timeliness, certs, and reliability.',
-     },
-  jurisdictionSignals: {
-    id: 'jurisdiction-signals', label: 'Jurisdiction Signals', path: '/insights/signals', icon: '📡',
-    roles: [], description: 'Real-time regulatory signals for your county from 80+ sources.',
-     },
-  teamLeaderboard: {
-    id: 'team-leaderboard', label: 'Team Leaderboard', path: '/insights/leaderboard', icon: '🏅',
-    roles: [], description: 'Staff ranked by compliance task performance — checklists, temp logs, and corrective actions.',
-     },
-  operationsIntelligence: {
-    id: 'operations-intelligence', label: 'Ops Intelligence', path: '/insights/operations-intelligence', icon: '✨',
-    roles: [], description: 'Proactive insights from all your data sources — answers before you ask.',
-     },
-  jurisdictionIntelligence: {
-    id: 'jurisdiction-intelligence', label: 'Know Your Inspector', path: '/jurisdiction', icon: '⚖️',
-    roles: [], description: "Your jurisdiction's scoring system, inspector priorities, and violation patterns.",
-  },
-
-  // ── Tools ──
-  selfDiagnosis: {
-    id: 'self-diagnosis', label: 'Self-Diagnosis', path: '/self-diagnosis', icon: '🔧',
-    roles: [], description: 'Troubleshoot equipment issues, get resolution steps, attach photo + video, and notify your vendor — in under 2 minutes.',
+  tasks: {
+    id: 'tasks', label: 'Tasks', path: '/tasks', icon: '📝',
+    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
   },
   calendar: {
     id: 'calendar', label: 'Calendar', path: '/calendar', icon: '📅',
     roles: [], description: 'Inspections, permit renewals, service appointments, and compliance deadlines in one view.',
   },
-  inspectorArrival: {
-    id: 'inspector-arrival', label: 'Inspector Arrival Mode', path: '/inspector-view', icon: '🏛️',
-    roles: [], description: 'Instant access mode when an inspector arrives — shows documents, recent logs, and compliance status.',
+  documents: {
+    id: 'documents', label: 'Documents', path: '/documents', icon: '📄',
+    roles: [], description: 'Compliance certificates, inspection reports, permits, and signed documentation — organized and searchable.',
   },
-  iotSensors: {
-    id: 'iot-sensors', label: 'Manage Sensors', path: '/sensors', icon: '📡',
-    roles: [], description: 'Add, configure, and manage Internet of Things temperature sensors across your locations.',
+  kitchenToCommunity: {
+    id: 'kitchenToCommunity', label: 'Kitchen to Community', path: '/kitchen-to-community', icon: '❤️',
+    roles: [], description: 'Cross-org participation and referral program — Kitchen to Community.',
   },
-  connectSensors: {
-    id: 'connect-sensors', label: 'Connect Sensors', path: '/iot/platform', icon: '📶',
-    roles: [], description: 'Hardware-agnostic sensor platform — connect any WiFi, Bluetooth, LoRaWAN, or MQTT sensor to EvidLY.',
-     },
-  importData: {
-    id: 'import-data', label: 'Import Data', path: '/migrate', icon: '📥',
-    roles: [], description: 'Import temperature logs and compliance data from Zenput, Squadle, ComplianceMate, or CSV exports.',
-  },
-  foodSafetyOverview: {
-    id: 'food-safety-overview', label: 'Overview', path: '/food-safety/overview', icon: '🍽️',
+
+  // ── Food Safety section items ───────────────────────────
+
+  'fs-overview': {
+    id: 'fs-overview', label: 'Overview', path: '/food-safety/overview', icon: '🍽️',
     roles: [], description: 'Food safety compliance scoring, critical control points, and inspection readiness overview.',
   },
-  fireSafetyOverview: {
-    id: 'fire-safety-overview', label: 'Overview', path: '/fire-safety/overview', icon: '🔥',
+  'fs-temp': {
+    id: 'fs-temp', label: 'Temperatures', path: '/temp-logs', icon: '🌡️',
+    roles: [], description: 'Record temperatures manually, via QR Code scan, or from IoT sensors — storage, receiving, and cooking.',
+  },
+  'fs-checklists': {
+    id: 'fs-checklists', label: 'Checklists', path: '/checklists', icon: '✓',
+    roles: [], description: 'Opening, closing, food safety, and custom daily task lists with completion tracking.',
+  },
+  'fs-haccp': {
+    id: 'fs-haccp', label: 'HACCP', path: '/haccp', icon: '🎯',
+    roles: [], description: 'Monitor critical control points, hazard analysis, and HACCP plan compliance.',
+  },
+  'fs-incidents': {
+    id: 'fs-incidents', label: 'Incidents', path: '/incidents?pillar=food', icon: '⚠️',
+    roles: [], description: 'Log and track food safety incidents with timestamped, immutable records.',
+  },
+  'fs-corrective': {
+    id: 'fs-corrective', label: 'Corrective Actions', path: '/corrective-actions?pillar=food', icon: '🔧',
+    roles: [], description: 'Track and resolve food safety violations with documented corrective action plans.',
+  },
+  'fs-self': {
+    id: 'fs-self', label: 'Self-Inspection', path: '/self-inspection?pillar=food', icon: '🔍',
+    roles: [], description: 'Run a self-inspection using the same criteria your health department applies.',
+  },
+
+  // ── Operations section items ───────────────────────────
+
+  'op-self': {
+    id: 'op-self', label: 'Self-Inspection', path: '/self-inspection', icon: '🔍',
+    roles: [], description: 'Run a self-inspection using the same criteria your health department applies.',
+  },
+  'op-incidents': {
+    id: 'op-incidents', label: 'Incidents', path: '/incidents', icon: '⚠️',
+    roles: [], description: 'Log and track incidents with timestamped, immutable records.',
+  },
+  'op-deficiencies': {
+    id: 'op-deficiencies', label: 'Deficiencies', path: '/deficiencies', icon: '⚠️',
+    roles: [], description: 'Track compliance code violations found during service visits — severity, status, and remediation.',
+  },
+  'op-corrective': {
+    id: 'op-corrective', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
+    roles: [], description: 'Track and resolve violations with documented corrective action plans.',
+  },
+
+  // ── Fire Safety section items ───────────────────────────
+
+  'fr-overview': {
+    id: 'fr-overview', label: 'Overview', path: '/fire-safety/overview', icon: '🔥',
     roles: [], description: 'PSE status, open findings, and fire system compliance overview.',
   },
-  complianceOverview: {
-    id: 'compliance-overview', label: 'Compliance Overview', path: '/compliance-overview', icon: '📊',
-    roles: [], description: 'Side-by-side Food Safety and Fire Safety scores with jurisdiction status and operational metrics.',
+  'fr-calendar': {
+    id: 'fr-calendar', label: 'Calendar', path: '/calendar', icon: '📅',
+    roles: [], description: 'Fire safety service schedules, inspections, and compliance deadlines.',
   },
-  services: {
-    id: 'services', label: 'Vendor Services', path: '/services', icon: '🛠️',
-    roles: [], description: 'Log and track vendor-provided service records — hood cleaning, Heating Ventilation and Air Conditioning, pest control, and fire suppression.',
+  'fr-incidents': {
+    id: 'fr-incidents', label: 'Incidents', path: '/incidents?pillar=fire', icon: '⚠️',
+    roles: [], description: 'Log and track fire safety incidents with timestamped, immutable records.',
+  },
+  'fr-corrective': {
+    id: 'fr-corrective', label: 'Corrective Actions', path: '/corrective-actions?pillar=fire', icon: '🔧',
+    roles: [], description: 'Track and resolve fire safety violations with documented corrective action plans.',
+  },
+  'fr-deficiencies': {
+    id: 'fr-deficiencies', label: 'Deficiencies', path: '/deficiencies?pillar=fire', icon: '⚠️',
+    roles: [], description: 'Track compliance code violations found during service visits — severity, status, and remediation.',
   },
 
-  // ── Equipment (Facilities subcategories) ──
-  allEquipment: {
-    id: 'all-equipment', label: 'All Equipment', path: '/equipment', icon: '📦',
-    roles: [], description: 'Full equipment registry — all kitchen assets, service history, and maintenance schedules.',
+  // ── Programs section items (org-conditional) ────────────
+
+  'pg-sb1383': {
+    id: 'pg-sb1383', label: 'SB 1383', path: '/sb1383', icon: '♻️',
+    roles: [], description: 'SB 1383 organic waste diversion and edible food recovery — two tabs, one law.',
   },
-  equipment: {
-    id: 'equipment', label: 'Equipment', path: '/equipment', icon: '⚙️',
+  'pg-k12': {
+    id: 'pg-k12', label: 'K-12 Compliance', path: '/k12', icon: '🎓',
+    roles: [], description: 'Audit readiness dashboard — USDA + County EH dual authority, meal metrics, NSLP claims.',
+  },
+  'pg-usda': {
+    id: 'pg-usda', label: 'USDA Production', path: '/usda/production-records', icon: '📊',
+    roles: [], description: 'USDA Child Nutrition Program meal production records and CN label tracking.',
+  },
+
+  // ── Jurisdiction section items ──────────────────────────
+
+  'ju-intel': {
+    id: 'ju-intel', label: 'Jurisdiction Intelligence', path: '/jurisdiction-intelligence', icon: '🧠',
+    roles: [], description: 'Your applicable food and fire safety authorities, inspection requirements, and recent regulatory changes.',
+  },
+  'ju-regulatory': {
+    id: 'ju-regulatory', label: 'Regulatory Updates', path: '/regulatory-alerts', icon: '🔔',
+    roles: [], description: 'Track upcoming inspections, permit renewals, certificate expirations, and regulatory deadlines.',
+  },
+  'ju-signals': {
+    id: 'ju-signals', label: 'Jurisdiction Signals', path: '/insights/signals', icon: '📡',
+    roles: [], description: 'Real-time regulatory signals for your county from 80+ sources.',
+  },
+
+  // ── Vendors section items ───────────────────────────────
+
+  've-network': {
+    id: 've-network', label: 'Vendor Network', path: '/vendors', icon: '👥',
+    roles: [], description: 'EvidLY\'s vetted ecosystem of approved vendors — connect, manage, and track service providers.',
+  },
+  've-services': {
+    id: 've-services', label: 'Vendor Services', path: '/services', icon: '🛠️',
+    roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
+  },
+
+  // ── Insights section items ──────────────────────────────
+
+  'in-ai': {
+    id: 'in-ai', label: 'AI Insights', path: '/ai-advisor', icon: '✨',
+    roles: [], description: 'AI-powered compliance advisor — ask questions, get recommendations, and analyze trends.',
+  },
+  'in-forecast': {
+    id: 'in-forecast', label: 'Inspection Forecast', path: '/insights/inspection-forecast', icon: '🎯',
+    roles: [], description: 'Predict your next inspection window based on county patterns and historical frequency.',
+  },
+  'in-trends': {
+    id: 'in-trends', label: 'Compliance Trends', path: '/compliance-trends', icon: '📈',
+    roles: [], description: '30/60/90-day compliance score trajectories with per-category breakdown across locations.',
+  },
+  'in-bench': {
+    id: 'in-bench', label: 'Benchmarks', path: '/benchmarks', icon: '🏆',
+    roles: [], description: 'Compare your compliance performance against industry benchmarks and your own historical baseline.',
+  },
+  'in-leader': {
+    id: 'in-leader', label: 'Team Leaderboard', path: '/insights/leaderboard', icon: '🏅',
+    roles: [], description: 'Staff ranked by compliance task performance — checklists, temp logs, and corrective actions.',
+  },
+  'in-reports': {
+    id: 'in-reports', label: 'Reporting', path: '/reports', icon: '📊',
+    roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
+  },
+  'in-audit': {
+    id: 'in-audit', label: 'Audit Log', path: '/audit-trail', icon: '🔒',
+    roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
+  },
+  'in-iot': {
+    id: 'in-iot', label: 'IoT Dashboard', path: '/iot-monitoring', icon: '📡',
+    roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
+  },
+
+  // ── Tools section items ─────────────────────────────────
+
+  'to-inspector': {
+    id: 'to-inspector', label: 'Inspector Arrival', path: '/inspector-view', icon: '🏛️',
+    roles: [], description: 'Instant access mode when an inspector arrives — documents, recent logs, and compliance status.',
+  },
+  'to-diagnosis': {
+    id: 'to-diagnosis', label: 'Self-Diagnosis', path: '/self-diagnosis', icon: '🔧',
+    roles: [], description: 'Troubleshoot equipment issues, get resolution steps, attach photo + video, and notify your vendor.',
+  },
+
+  // ── Administration section items ────────────────────────
+
+  'ad-equipment': {
+    id: 'ad-equipment', label: 'Equipment', path: '/equipment', icon: '⚙️',
     roles: [], description: 'Asset register for all kitchen equipment with service history, maintenance dates, and warranty tracking.',
   },
-
-  // ── Service (Facilities) ──
-  serviceReporting: {
-    id: 'service-reporting', label: 'Reporting', path: '/reports', icon: '📊',
-    roles: [], description: 'Service history reports, maintenance compliance summaries, and vendor performance data.',
-  },
-  vendors: {
-    id: 'vendors', label: 'Vendors', path: '/vendors', icon: '🤝',
-    roles: [], description: 'Service providers on file — hood cleaning, Heating Ventilation and Air Conditioning, pest, plumbing, roofing, and fire suppression.',
-  },
-  vendorDocReview: {
-    id: 'vendor-doc-review', label: 'Document Review', path: '/vendors/review', icon: '📄',    roles: [], description: 'Review and approve vendor-uploaded documents with AI-powered validation.',
-  },
-  vendorMarketplace: {
-    id: 'vendor-marketplace', label: 'Vendor Marketplace', path: '/marketplace', icon: '🏪',
-    roles: [], description: 'Discover and compare EvidLY-verified service vendors — hood cleaning, fire suppression, pest control, and more.',
-  },
-  vendorConnect: {
-    id: 'vendor-connect', label: 'Vendor Connect', path: '/vendor-connect', icon: '🤝',
-    roles: [], description: 'CPP-vetted service providers — invitation-only partner marketplace with verified vendors.',
-     },
-  upgrade: {
-    id: 'upgrade', label: 'Upgrade', path: '/upgrade', icon: '⭐',
-    roles: [], description: 'Compare plans and upgrade to EvidLY Standard for full compliance coverage.',
-  },
-
-  // ── Food Recovery (SB 1383) ──
-  foodRecovery: {
-    id: 'food-recovery', label: 'Food Recovery', path: '/food-recovery', icon: '♻️',
-    roles: [], description: 'SB 1383 organic waste diversion tracking, food recovery agreements, and CalRecycle compliance.',
-     },
-  sb1383: {
-    id: 'sb1383', label: 'SB 1383 Compliance', path: '/sb1383', icon: '♻️',
-    roles: [], description: 'Full SB 1383 organic waste reduction module — log entries, hauler records, annual reports.',
-     },
-
-  // ── K-12 Food Safety ──
-  k12Compliance: {
-    id: 'k12-compliance', label: 'K-12 Food Safety', path: '/k12', icon: '🏫',
-    roles: [], description: 'Audit readiness dashboard — USDA + County EH dual authority, meal metrics, NSLP claims.',
-     },
-  usdaProductionRecords: {
-    id: 'usda-production-records', label: 'USDA Production Records', path: '/usda/production-records', icon: '🏫',
-    roles: [], description: 'USDA Child Nutrition Program meal production records, meal pattern compliance, and CN label tracking.',
-     },
-
-  // ── insurance, fleet, emergencyInfo removed — HoodOps concepts, not EvidLY ──
-
-  // ── Voice ──
-  voiceHelp: {
-    id: 'voice-help', label: 'Voice Commands', path: '/voice-help', icon: '🎤',
-    roles: [], description: 'Reference guide for hands-free voice commands.',
-  },
-
-  // ── bonuses, performanceMetrics, myPerformance, callbacks, inventory,
-  //    inventoryRequests, equipmentIncidents, safetyIncidents, myAvailability,
-  //    teamAvailability, availabilityApprovals, clockReminders, timecardAlterations
-  //    removed — HoodOps concepts, not EvidLY ──
-
-  // ── Food Safety (Chef) ──
-  haccp: {
-    id: 'haccp', label: 'Hazard Analysis Critical Control Points', path: '/haccp', icon: '🛡️',
-    roles: [], description: 'Monitor critical control points, hazard analysis, and Hazard Analysis Critical Control Points plan compliance.',
-  },
-
-  // ── Administration ──
-  locations: {
-    id: 'locations', label: 'Locations', path: '/org-hierarchy', icon: '📍',
+  'ad-locations': {
+    id: 'ad-locations', label: 'Locations', path: '/org-hierarchy', icon: '📍',
     roles: [], description: 'Add, edit, or configure locations including jurisdiction mapping and compliance requirements.',
   },
-  settings: {
-    id: 'settings', label: 'Settings', path: '/settings', icon: '⚙️',
-    roles: [], description: 'Account preferences, notification settings, language, and platform configuration.',
-  },
-  team: {
-    id: 'team', label: 'Team', path: '/team', icon: '👥',
+  'ad-team': {
+    id: 'ad-team', label: 'Team', path: '/team', icon: '👥',
     roles: [], description: 'Manage staff roles, access levels, and location assignments across your organization.',
   },
-  trainingRecords: {
-    id: 'training-records', label: 'Training Records', path: '/dashboard/training', icon: '🎓',
-    roles: [], description: 'Employee certifications, training completion, and compliance tracking per team member.',
-  },
-  trainingCatalog: {
-    id: 'training-catalog', label: 'Training Catalog', path: '/dashboard/training-catalog', icon: '📚',
-    roles: [], description: 'Library of all required and recommended training courses with certification requirements and renewal schedules.',
-  },
-  // ── timecards, employees removed — HoodOps concepts, not EvidLY ──
-
-  // ── Permissions ──
-  rolesPermissions: {
-    id: 'roles-permissions', label: 'Role Permissions', path: '/settings/roles-permissions', icon: '🔐',
+  'ad-roles': {
+    id: 'ad-roles', label: 'Role Permissions', path: '/settings/roles-permissions', icon: '🔐',
     roles: [], description: 'Manage role-based permissions and user exceptions across your organization.',
   },
-
-  // ── Command Center (Admin) ──
-  commandCenter: {
-    id: 'command-center', label: 'Command Center', path: '/admin/command-center', icon: '🎛️',
-    roles: [], description: 'Platform operations health — live events, crawl status, open tickets, and system diagnostics.',
-     },
-
-  // ── Demo Generator (Admin) ──
-  demoGenerator: {
-    id: 'demo-generator', label: 'Demo Generator', path: '/admin/demo-generator', icon: '✨',
-    roles: [], description: 'Generate personalized, jurisdiction-accurate demo environments for sales prospects.',
-     },
-  demoPipeline: {
-    id: 'demo-pipeline', label: 'Demo Pipeline', path: '/admin/demos', icon: '🎯',
-    roles: [], description: 'Manage prospect demo pipeline — scheduling, generation, live demos, and conversion.',
-     },
-
-  // ── Email & Trial (Admin) ──
-  emailSequences: {
-    id: 'email-sequences', label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧',
-    roles: [], description: 'Manage trial email sequences, vendor outreach pipeline, and referral tracking.',
-     },
-  trialHealth: {
-    id: 'trial-health', label: 'Trial Health', path: '/admin/trial-health', icon: '💊',
-    roles: [], description: 'Trial cohort analytics, email funnel metrics, and expiring trial management.',
-     },
-
-  // ── Assessment (Admin) ──
-  assessmentLeads: {
-    id: 'assessment-leads', label: 'Leads', path: '/admin/assessments', icon: '📊',
-    roles: [], description: 'View and analyze compliance assessment leads, risk scores, and business impact estimates.',
-     },
-
-  // ── Insurance API Keys (Admin) ──
-  apiKeys: {
-    id: 'api-keys', label: 'API Keys', path: '/admin/api-keys', icon: '🔑',
-    roles: [], description: 'Manage insurance partner API keys, view request logs, and configure data export permissions.',
-     },
-
-  // ── Integrations Hub ──
-  integrations: {
-    id: 'integrations', label: 'Integrations', path: '/integrations', icon: '🔌',
+  'ad-iot': {
+    id: 'ad-iot', label: 'IoT Sensors', path: '/settings/sensors', icon: '📡',
+    roles: [], description: 'Add, configure, and manage IoT temperature sensors across your locations.',
+  },
+  'ad-integrations': {
+    id: 'ad-integrations', label: 'Integrations', path: '/integrations', icon: '🔌',
     roles: [], description: 'Connect EvidLY with POS, accounting, HR, IoT, insurance, and 25+ other platforms.',
   },
-
-  // ── System (Admin) ──
-  edgeFunctions: {
-    id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
-    roles: [], description: 'Health monitoring, invocation timeline, error logs, and manual invoke for all 18 Supabase Edge Functions.',
-     },
-  crawlMonitor: {
-    id: 'crawl-monitor', label: 'Crawl Monitor', path: '/admin/intelligence', icon: '🕷️',
-    roles: [], description: 'Intelligence crawl health, source uptime, and execution logs from the Command Center.',
+  'ad-import': {
+    id: 'ad-import', label: 'Import Data', path: '/import', icon: '📥',
+    roles: [], description: 'Import temperature logs and compliance data from Zenput, Squadle, ComplianceMate, or CSV exports.',
   },
-  adminDashboard: {
-    id: 'admin-dashboard', label: 'Admin Dashboard', path: '/admin/dashboard', icon: '📊',
-    roles: [], description: 'Platform admin dashboard — crawl monitor, event log, API keys, leads, demo sessions, K2C tracking, and usage analytics.',
-     },
-
-  verification: {
-    id: 'verification', label: 'Verification', path: '/admin/verification', icon: '🛡️',
-    roles: [], description: 'Platform-wide content verification coverage, audit log, and source health monitoring.',
-  },
-
-  // ── Demo ──
-  demoLauncher: {
-    id: 'demo-launcher', label: 'Demo Launcher', path: '/admin/demo-launcher', icon: '🚀',
-    roles: [], description: 'Pre-demo control panel: configure prospect, launch emotional trigger flows, fire demo signals.',
-  },
-  partnerDemos: {
-    id: 'partner-demos', label: 'Partner Demos', path: '/admin/partner-demos', icon: '🤝',
-    roles: [], description: 'Create and manage partner demo environments for vendor, association, carrier, and integration partners.',
-  },
-
-  // ── Growth ──
-  adminTestimonials: {
-    id: 'admin-testimonials', label: 'Testimonials', path: '/admin/testimonials', icon: '💬',
-    roles: [], description: 'Manage operator testimonials displayed on ScoreTable county pages.',
-  },
-
-  // ── Baseline ──
-  featureBaseline: {
-    id: 'feature-baseline', label: 'Feature Baseline', path: '/admin/feature-baseline', icon: '📐',
-    roles: [], description: 'Complete audit of 124 features — verdicts, unlisted code, anti-patterns, and codebase health.',
-     },
-
-  // ── Help ──
-  help: {
-    id: 'help', label: 'Help', path: '/help', icon: '❓',
-    roles: [], description: 'Documentation, training guides, support chat, and contact options.',
+  'ad-settings': {
+    id: 'ad-settings', label: 'Settings', path: '/settings', icon: '⚙️',
+    roles: [], description: 'Account preferences, notification settings, language, and platform configuration.',
   },
 };
 
-// ── Section builder helper ───────────────────────────────
+// ══════════════════════════════════════════════════════════
+// SECTION DEFINITIONS
+// ══════════════════════════════════════════════════════════
 
-function section(
-  id: string, label: string, icon: string,
-  tooltipTitle: string, tooltipDescription: string,
-  items: NavItem[],
-  path?: string,
-): SidebarSection {
-  return { id, label, icon, roles: [], tooltipTitle, tooltipDescription, items, ...(path ? { path } : {}) };
+interface SectionDef {
+  id: string;
+  label: string;
+  icon: string;
+  tooltipTitle: string;
+  tooltipDescription: string;
+  itemIds: string[];
+  path?: string;
 }
 
-// ── Per-Role Sidebar Configurations ──────────────────────
+const SECTION_DEFS: Record<string, SectionDef> = {
+  operations: {
+    id: 'operations', label: 'Operations', icon: '📋',
+    tooltipTitle: 'Operations',
+    tooltipDescription: 'Self-inspections, incidents, deficiencies, and corrective actions across all pillars.',
+    itemIds: ['op-self', 'op-incidents', 'op-deficiencies', 'op-corrective'],
+  },
+  foodSafety: {
+    id: 'food-safety', label: 'Food Safety', icon: '🍽️',
+    tooltipTitle: 'Food Safety',
+    tooltipDescription: 'Checklists, temperature monitoring, and HACCP plans.',
+    itemIds: ['fs-overview', 'fs-temp', 'fs-checklists', 'fs-haccp'],
+    path: '/food-safety',
+  },
+  fireSafety: {
+    id: 'fire-safety', label: 'Fire Safety', icon: '🔥',
+    tooltipTitle: 'Fire Safety',
+    tooltipDescription: 'Fire safety compliance overview and calendar.',
+    itemIds: ['fr-overview', 'fr-calendar'],
+    path: '/fire-safety',
+  },
+  programs: {
+    id: 'programs', label: 'Programs', icon: '♻️',
+    tooltipTitle: 'Programs',
+    tooltipDescription: 'SB 1383 organic waste and food recovery, K-12 compliance, and USDA production records.',
+    itemIds: ['pg-sb1383', 'pg-k12', 'pg-usda'],
+  },
+  jurisdiction: {
+    id: 'jurisdiction', label: 'Jurisdiction', icon: '🧠',
+    tooltipTitle: 'Jurisdiction',
+    tooltipDescription: 'Your applicable authorities, regulatory updates, and jurisdiction signals.',
+    itemIds: ['ju-intel', 'ju-regulatory', 'ju-signals'],
+  },
+  vendors: {
+    id: 'vendors', label: 'Vendors', icon: '👥',
+    tooltipTitle: 'Vendors',
+    tooltipDescription: 'Vendor network, service records, and performance tracking.',
+    itemIds: ['ve-network', 've-services'],
+  },
+  insights: {
+    id: 'insights', label: 'Insights', icon: '✨',
+    tooltipTitle: 'Insights',
+    tooltipDescription: 'AI insights, inspection forecast, compliance trends, benchmarks, leaderboard, reporting, audit log, and IoT.',
+    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-reports', 'in-audit', 'in-iot'],
+    path: '/insights',
+  },
+  tools: {
+    id: 'tools', label: 'Tools', icon: '🔧',
+    tooltipTitle: 'Tools',
+    tooltipDescription: 'Inspector arrival mode and self-diagnosis.',
+    itemIds: ['to-inspector', 'to-diagnosis'],
+    path: '/tools',
+  },
+  admin: {
+    id: 'administration', label: 'Administration', icon: '⚙️',
+    tooltipTitle: 'Administration',
+    tooltipDescription: 'Equipment, locations, team, role permissions, IoT sensors, integrations, import, and settings.',
+    itemIds: ['ad-equipment', 'ad-locations', 'ad-team', 'ad-roles', 'ad-iot', 'ad-integrations', 'ad-import', 'ad-settings'],
+    path: '/admin',
+  },
+};
 
-const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+/** Section render order */
+const SECTION_ORDER = [
+  'operations', 'foodSafety', 'fireSafety', 'programs', 'jurisdiction',
+  'vendors', 'insights', 'tools', 'admin',
+] as const;
 
-  // ── PLATFORM ADMIN (Arthur — software owner) ──────────
+// ══════════════════════════════════════════════════════════
+// TOP-LEVEL ITEM IDS (rendered above sections, not in any section)
+// These appear in ROLE_SECTIONS to gate per-role visibility.
+// Calendar is ALWAYS visible and not gated by ROLE_SECTIONS.
+// ══════════════════════════════════════════════════════════
+
+const TOP_LEVEL_IDS = [
+  'complianceOverview', 'tasks', 'documents', 'kitchenToCommunity',
+] as const;
+
+// ══════════════════════════════════════════════════════════
+// ROLE_SECTIONS — section-level + top-level-item visibility
+// ══════════════════════════════════════════════════════════
+
+const ROLE_SECTIONS: Record<UserRole, string[]> = {
+  platform_admin:     ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'complianceOverview', 'tasks', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  kitchen_manager:    ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
+  chef:               ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
+  kitchen_staff:      ['dashboard',                       'tasks', 'operations', 'foodSafety',                                                                                                       'tools'],
+};
+
+// ══════════════════════════════════════════════════════════
+// ROLE_ITEM_HIDES — per-item hiding within visible sections
+// Stale entries (referencing killed items) are harmless.
+// ══════════════════════════════════════════════════════════
+
+const ROLE_ITEM_HIDES: Record<string, string[]> = {
+  kitchen_staff:   ['fs-deficiencies', 'op-self', 'fs-mock', 'fs-analysis', 'fs-trajectory', 'fs-haccp', 'op-deficiencies'],
+  chef:            ['fs-mock', 'fs-trajectory'],
+  kitchen_manager: ['ad-roles'],
+};
+
+// ══════════════════════════════════════════════════════════
+// PROGRAMS ORG-TYPE FILTER
+// Each Programs item is visible only for specific org types.
+// ══════════════════════════════════════════════════════════
+
+const PROGRAMS_ORG_FILTER: Record<string, string[]> = {
+  'pg-sb1383': ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
+  'pg-k12':    ['k12_school'],
+  'pg-usda':   ['k12_school'],
+};
+
+// ══════════════════════════════════════════════════════════
+// PER-ROLE HOME DEFINITIONS
+// ══════════════════════════════════════════════════════════
+
+const ROLE_HOMES: Record<UserRole, RoleHomeItem> = {
   platform_admin: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '🛡️',
-      description: 'Platform admin — full access to every feature, every location, every tool.',
-      descriptionEs: 'Administrador de plataforma — acceso total a todas las funciones.',
-    },
-    topLevelItems: [],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, task management, and incident tracking.',
-        [I.foodSafetyOverview, I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.incidents],
-        '/food-safety',
-      ),
-      section('facility-safety', 'Fire Safety', '🔥',
-        'Fire Safety', 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
-        [I.fireSafetyOverview, I.calendar], '/facility-safety',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documents, inspections, insurance risk, regulatory tracking, vendor marketplace, and more.',
-        [I.complianceOverview, I.deficiencies, I.documents, I.inspectorArrival, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
-        '/compliance',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence advisor, analytics, compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things.',
-        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Self-diagnosis and inspector arrival mode.',
-        [I.inspectorArrival, I.selfDiagnosis],
-        '/tools',
-      ),
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.demoLauncher, I.partnerDemos, I.adminTestimonials, I.featureBaseline],
-        '/admin',
-      ),
-      // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '🛡️',
+    description: 'Platform admin — full access to every feature, every location, every tool.',
+    descriptionEs: 'Administrador de plataforma — acceso total a todas las funciones.',
   },
-
-  // ── STAFF ─────────────────────────────────────────────
-  kitchen_staff: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '🏠',
-      description: 'Your daily tasks, checklists, and priorities at a glance.',
-      descriptionEs: 'Sus tareas diarias, listas de verificación y prioridades.',
-    },
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Your assigned checklists, temperature logs, and tasks.',
-        [I.temperatures, I.checklists, I.incidents, I.correctiveActions],
-        '/food-safety',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment diagnosis and voice commands.',
-        [I.selfDiagnosis, I.voiceHelp],
-        '/tools',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
-  },
-
-  // ── CHEF ──────────────────────────────────────────────
-  chef: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '👨‍🍳',
-      description: 'Kitchen operations dashboard — tasks, temps, and team overview.',
-      descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
-    },
-    topLevelItems: [I.taskManager],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.foodSafetyOverview, I.temperatures, I.checklists, I.incidents, I.correctiveActions, I.haccp],
-        '/food-safety',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence-powered analysis and recommendations.',
-        [I.aiInsights, I.copilotInsights, I.inspectionForecast, I.violationRadar, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting and voice commands.',
-        [I.selfDiagnosis, I.voiceHelp],
-        '/tools',
-      ),
-      // safety section removed — safetyIncidents was HoodOps
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Team management and training records.',
-        [I.team, I.trainingRecords],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
-  },
-
-  // ── MANAGER (kitchen_manager) ─────────────────────────
-  kitchen_manager: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '🏠',
-      description: 'Your compliance overview — scores, open items, alerts, and priorities.',
-      descriptionEs: 'Su resumen de cumplimiento — puntuaciones, alertas y prioridades.',
-    },
-    topLevelItems: [I.complianceOverview, I.taskManager],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.foodSafetyOverview, I.temperatures, I.checklists, I.incidents, I.correctiveActions, I.haccp],
-        '/food-safety',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documentation, incidents, regulatory tracking, reporting, self-inspection, services, and vendor marketplace.',
-        [I.deficiencies, I.documents, I.incidents, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace],
-        '/compliance',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence-powered analysis, compliance trends, and recommendations.',
-        [I.aiInsights, I.copilotInsights, I.complianceTrends, I.predictions, I.inspectionForecast, I.violationRadar, I.teamLeaderboard, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting and voice commands.',
-        [I.selfDiagnosis, I.voiceHelp],
-        '/tools',
-      ),
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Account settings, team management, and training records.',
-        [I.settings, I.team, I.trainingRecords],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
-  },
-
-  // ── COMPLIANCE MANAGER ────────────────────────────────
-  compliance_manager: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '🏠',
-      description: 'Compliance overview — scoring, regulatory status, and inspection readiness.',
-      descriptionEs: 'Resumen de cumplimiento — puntuaciones, estado regulatorio y preparación.',
-    },
-    topLevelItems: [I.complianceOverview, I.taskManager],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and task management.',
-        [I.foodSafetyOverview, I.temperaturesViewOnly, I.checklists, I.incidents, I.correctiveActions, I.haccp],
-        '/food-safety',
-      ),
-      section('facility-safety', 'Fire Safety', '🔥',
-        'Fire Safety', 'Fire safety compliance and fire inspection readiness.',
-        [I.fireSafetyOverview, I.calendar], '/facility-safety',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documentation, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, services, and vendor marketplace.',
-        [I.deficiencies, I.documents, I.incidentsViewOnly, I.inspectorArrival, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
-        '/compliance',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence-powered analysis — audit logs, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.auditLog, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting tools.',
-        [],
-        '/tools',
-      ),
-      // safety section removed — safetyIncidents was HoodOps
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Account settings and training records.',
-        [I.settings, I.trainingRecords],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
-  },
-
-  // ── FACILITIES MANAGER ────────────────────────────────
-  facilities_manager: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '⚙️',
-      description: 'Equipment status, maintenance schedules, and vendor services.',
-      descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
-    },
-    topLevelItems: [I.taskManager],
-    sections: [
-      section('facility-safety', 'Fire Safety', '🔥',
-        'Fire Safety', 'Fire safety compliance, incidents, and inspection readiness.',
-        [I.fireSafetyOverview, I.calendar, I.incidents, I.correctiveActions, I.inspectorArrival], '/facility-safety',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Compliance reporting, documentation, workforce risk, and vendor marketplace.',
-        [I.deficiencies, I.reporting, I.workforceRisk, I.cicPse, I.vendorMarketplace, I.vendorConnect],
-        '/compliance',
-      ),
-      section('service', 'Service', '🤝',
-        'Service', 'Reporting, vendor services, and vendor management.',
-        [I.serviceReporting, I.services, I.vendors, I.vendorDocReview],
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting.',
-        [I.selfDiagnosis],
-        '/tools',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Internet of Things sensor monitoring and vendor performance.',
-        [I.iotDashboard, I.inspectionForecast, I.vendorPerformance, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, account settings, team management, and vendors.',
-        [I.equipment, I.iotSensors, I.connectSensors, I.importData, I.settings, I.team, I.vendors, I.vendorDocReview],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
-  },
-
-  // ── OWNER / OPERATOR ──────────────────────────────────
   owner_operator: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '🏢',
-      description: 'Multi-location compliance overview — alerts, tasks, and operational status.',
-      descriptionEs: 'Resumen de cumplimiento multi-ubicación — alertas, tareas y estado operativo.',
-    },
-    topLevelItems: [I.complianceOverview, I.taskManager],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and food safety overview.',
-        [I.foodSafetyOverview, I.temperatures, I.checklists, I.incidents, I.correctiveActions, I.haccp],
-        '/food-safety',
-      ),
-      section('facility-safety', 'Fire Safety', '🔥',
-        'Fire Safety', 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
-        [I.fireSafetyOverview, I.calendar], '/facility-safety',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documents, incidents, insurance risk, regulatory tracking, reporting, self-inspection, vendor services, and vendor marketplace.',
-        [I.deficiencies, I.documents, I.incidents, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
-        '/compliance',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence-powered analysis, compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Inspector arrival mode, self-diagnosis, and voice commands.',
-        [I.inspectorArrival, I.selfDiagnosis, I.voiceHelp],
-        '/tools',
-      ),
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '🏢',
+    description: 'Multi-location compliance overview — alerts, tasks, and operational status.',
+    descriptionEs: 'Resumen de cumplimiento multi-ubicación — alertas, tareas y estado operativo.',
   },
-
-  // ── EXECUTIVE ─────────────────────────────────────────
   executive: {
-    home: {
-      label: 'Dashboard', labelEs: 'Panel',
-      path: '/dashboard', icon: '📊',
-      description: 'Organization-wide analytics, benchmarks, and strategic compliance insights.',
-      descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
-    },
-    topLevelItems: [I.complianceOverview, I.taskManager],
-    sections: [
-      section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Food safety scoring and compliance overview.',
-        [I.foodSafetyOverview, I.temperatures, I.checklists, I.incidents, I.correctiveActions, I.haccp],
-        '/food-safety',
-      ),
-      section('facility-safety', 'Fire Safety', '🔥',
-        'Fire Safety', 'Fire safety compliance and fire inspection readiness.',
-        [I.fireSafetyOverview, I.calendar], '/facility-safety',
-      ),
-      section('insights', 'Insights', '💡',
-        'Insights', 'Artificial Intelligence-powered analysis — compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
-        '/insights',
-      ),
-      section('compliance', 'Compliance', '📋',
-        'Compliance', 'Incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, vendor services, and vendor marketplace.',
-        [I.correctiveActions, I.deficiencies, I.incidentsViewOnly, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
-        '/compliance',
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Inspector arrival mode and operational tools.',
-        [],
-        '/tools',
-      ),
-      // safety section removed — safetyIncidents was HoodOps
-      section('administration', 'Administration', '⚙️',
-        'Administration', 'Account settings, integrations, role permissions, and training records.',
-        [I.integrations, I.settings, I.rolesPermissions, I.trainingRecords],
-        '/admin',
-      ),
-      section('help', 'Help', '❓',
-        'Help', 'Documentation, support, and contact options.',
-        [], '/help',
-      ),
-    ],
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '📊',
+    description: 'Organization-wide analytics, benchmarks, and strategic compliance insights.',
+    descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
+  },
+  compliance_manager: {
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '🏠',
+    description: 'Compliance overview — scoring, regulatory status, and inspection readiness.',
+    descriptionEs: 'Resumen de cumplimiento — puntuaciones, estado regulatorio y preparación.',
+  },
+  facilities_manager: {
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '⚙️',
+    description: 'Equipment status, maintenance schedules, and vendor services.',
+    descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
+  },
+  kitchen_manager: {
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '🏠',
+    description: 'Your compliance overview — scores, open items, alerts, and priorities.',
+    descriptionEs: 'Su resumen de cumplimiento — puntuaciones, alertas y prioridades.',
+  },
+  chef: {
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '👨‍🍳',
+    description: 'Kitchen operations dashboard — tasks, temps, and team overview.',
+    descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
+  },
+  kitchen_staff: {
+    label: 'Dashboard', labelEs: 'Panel',
+    path: '/dashboard', icon: '🏠',
+    description: 'Your daily tasks, checklists, and priorities at a glance.',
+    descriptionEs: 'Sus tareas diarias, listas de verificación y prioridades.',
   },
 };
 
-// ── Org-Type Section Overlays ────────────────────────────
-// Additional sidebar sections injected when the org matches a specific industry type.
-// Appended before the 'administration' section (or at the end if none).
+// ══════════════════════════════════════════════════════════
+// PUBLIC API
+// ══════════════════════════════════════════════════════════
 
-interface OrgTypeSectionOverlay {
-  orgTypes: string[];
-  roles: UserRole[];
-  section: SidebarSection;
-}
-
-const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
-  {
-    orgTypes: ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
-    roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager'],
-    section: section('food-recovery', 'Food Recovery', '♻️',
-      'Food Recovery (SB 1383)',
-      'Organic waste diversion tracking, food recovery agreements, and CalRecycle SB 1383 compliance.',
-      [I.foodRecovery, I.sb1383],
-    ),
-  },
-  {
-    orgTypes: ['k12_school'],
-    roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef'],
-    section: section('usda-k12', 'K-12 Food Safety', '🏫',
-      'K-12 Food Safety & USDA',
-      'Audit readiness, dual authority dashboard, meal metrics, NSLP claims, and USDA production records.',
-      [I.k12Compliance, I.usdaProductionRecords],
-    ),
-  },
-];
-
-// ── Public API ───────────────────────────────────────────
-
-/** Get the full sidebar configuration for a role, optionally filtered by kitchen type */
+/** Build the full sidebar configuration for a role, optionally filtered by kitchen/org type */
 export function getRoleConfig(role: UserRole, kitchenType?: string | null): RoleSidebarConfig {
-  const base = ROLE_CONFIGS[role];
-  if (!kitchenType) return base;
+  const allowed = ROLE_SECTIONS[role] || [];
+  const hiddenIds = ROLE_ITEM_HIDES[role] || [];
 
-  const extraSections = ORG_TYPE_OVERLAYS
-    .filter(o => o.orgTypes.includes(kitchenType) && o.roles.includes(role))
-    .map(o => o.section);
+  // ── Top-level items ──
+  // Calendar is always visible to every role
+  const topItems: NavItem[] = [];
+  for (const id of TOP_LEVEL_IDS) {
+    if (allowed.includes(id) && I[id]) {
+      topItems.push(I[id]);
+    }
+  }
+  topItems.push(I.calendar);
 
-  if (extraSections.length === 0) return base;
+  // ── Sections ──
+  const sections: SidebarSection[] = [];
 
-  // Insert before 'administration' and 'help' sections
-  const adminIdx = base.sections.findIndex(s => s.id === 'administration');
-  const insertIdx = adminIdx >= 0 ? adminIdx : base.sections.length;
+  for (const sectionKey of SECTION_ORDER) {
+    if (!allowed.includes(sectionKey)) continue;
+
+    const def = SECTION_DEFS[sectionKey];
+    if (!def) continue;
+
+    let itemIds = def.itemIds;
+
+    // Programs section: filter items by org type
+    if (sectionKey === 'programs') {
+      if (!kitchenType) continue; // Unknown org type → skip Programs entirely
+      itemIds = itemIds.filter(id => {
+        const orgFilter = PROGRAMS_ORG_FILTER[id];
+        return !orgFilter || orgFilter.includes(kitchenType);
+      });
+    }
+
+    // Filter out role-hidden items
+    const items = itemIds
+      .filter(id => !hiddenIds.includes(id))
+      .map(id => I[id])
+      .filter(Boolean) as NavItem[];
+
+    if (items.length === 0) continue; // Skip empty sections
+
+    sections.push({
+      id: def.id,
+      label: def.label,
+      icon: def.icon,
+      roles: [],
+      tooltipTitle: def.tooltipTitle,
+      tooltipDescription: def.tooltipDescription,
+      items,
+      ...(def.path ? { path: def.path } : {}),
+    });
+  }
 
   return {
-    ...base,
-    sections: [
-      ...base.sections.slice(0, insertIdx),
-      ...extraSections,
-      ...base.sections.slice(insertIdx),
-    ],
+    home: ROLE_HOMES[role],
+    topLevelItems: topItems.length > 0 ? topItems : undefined,
+    sections,
   };
 }
 
 /** Get the home/dashboard NavItem for a role (with role-specific label) */
 export function getHomeItemForRole(role: UserRole): NavItem {
-  const config = ROLE_CONFIGS[role];
+  const home = ROLE_HOMES[role];
   return {
     id: 'dashboard',
-    label: config.home.label,
-    path: config.home.path,
-    icon: config.home.icon,
+    label: home.label,
+    path: home.path,
+    icon: home.icon,
     roles: ['all'],
-    description: config.home.description,
+    description: home.description,
   };
 }
 
@@ -876,7 +538,7 @@ export const getSectionsForRole = (role: string, kitchenType?: string | null): S
   return config ? config.sections : [];
 };
 
-// ── Backward compat — DASHBOARD_ITEM (deprecated, use getHomeItemForRole) ──
+// ── Backward compat — DASHBOARD_ITEM ─────────────────────
 
 export const DASHBOARD_ITEM: NavItem = {
   id: 'dashboard',

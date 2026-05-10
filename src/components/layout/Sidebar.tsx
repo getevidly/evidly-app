@@ -196,7 +196,7 @@ const NAV_I18N: Record<string, string> = {
   'temperatures': 'nav.temperatures',
   'incidents': 'nav.incidents',
   'documents': 'nav.documents',
-  'self-inspection': 'nav.selfAudit',
+  'self-inspection': 'nav.selfInspection',
   'regulatory': 'nav.regulatoryUpdates',
   'reporting': 'nav.reporting',
   'benchmarks': 'nav.benchmarks',

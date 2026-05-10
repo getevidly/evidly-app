@@ -121,8 +121,8 @@ export const helpDocs: Record<string, HelpDoc> = {
     ],
     tips: 'HACCP plans are required for certain food processing operations. Even if not required, they demonstrate a systematic approach to food safety.',
   },
-  selfAudit: {
-    id: 'selfAudit',
+  selfInspection: {
+    id: 'selfInspection',
     title: 'Self-Inspection',
     steps: [
       'Navigate to Self-Inspection from the sidebar',
@@ -158,7 +158,7 @@ export const featureExplanations: Record<string, string> = {
   '/ai-advisor': 'Your AI compliance advisor. Ask questions about food code, get predictive alerts about expiring documents, and receive weekly compliance insights.',
   '/vendors': 'Track your service providers — hood cleaning, pest control, fire suppression. See when services are due and manage certifications.',
   '/haccp': 'Hazard Analysis Critical Control Points documentation. Required for certain food processing operations. EvidLY provides templates and tracking.',
-  '/self-audit': 'Run a mock inspection before the real one. See exactly what an inspector would see and fix issues proactively.',
+  '/self-inspection': 'Run a mock inspection before the real one. See exactly what an inspector would see and fix issues proactively.',
   '/benchmarks': 'See how your kitchen compares to others in your region and industry. Identify areas where you are leading and where you can improve.',
   '/dashboard': 'Your compliance command center. At a glance, see your overall score, urgent items, and today\'s progress across all locations.',
   '/calendar': 'View upcoming deadlines, scheduled services, document expirations, and checklist schedules in a calendar format.',

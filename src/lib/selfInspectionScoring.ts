@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // src/lib/selfInspectionScoring.ts
 // Jurisdiction-native scoring engine for the self-inspection module.
-// Replaces the hardcoded computeScore() in SelfAudit.tsx.
+// Replaces the hardcoded computeScore() in SelfInspection.tsx.
 // Scoring weights are ALWAYS pulled from the jurisdiction config —
 // never hardcoded in the component.
 // ═══════════════════════════════════════════════════════════════════

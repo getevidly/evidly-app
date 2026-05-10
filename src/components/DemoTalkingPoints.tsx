@@ -46,8 +46,8 @@ const ROUTE_HINTS: Record<string, TalkingPoint[]> = {
   '/mock-inspection': [
     { hint: 'Mock inspection simulates the real thing', detail: 'Say: "Run this monthly — your team will be ready when the inspector walks in."' },
   ],
-  '/self-audit': [
-    { hint: 'CalCode self-audit covers 41+ items', detail: 'Say: "This is the same checklist your inspector uses."' },
+  '/self-inspection': [
+    { hint: 'CalCode self-inspection covers 41+ items', detail: 'Say: "This is the same checklist your inspector uses."' },
   ],
   '/facility-safety': [
     { hint: 'Fire Safety tracks fire suppression, hood cleaning, extinguishers', detail: 'Say: "Your fire marshal checks the same things — now you have proof."' },

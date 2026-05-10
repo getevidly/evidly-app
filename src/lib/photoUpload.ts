@@ -6,7 +6,7 @@ export interface PhotoUploadParams {
   dataUrl: string;
   orgId: string;
   locationId: string;
-  recordType: 'temp_log' | 'checklist' | 'incident' | 'vendor_delivery' | 'equipment' | 'self_audit' | 'inspection' | 'corrective_action' | 'general';
+  recordType: 'temp_log' | 'checklist' | 'incident' | 'vendor_delivery' | 'equipment' | 'self_inspection' | 'inspection' | 'corrective_action' | 'general';
   recordId?: string;
   latitude?: number | null;
   longitude?: number | null;

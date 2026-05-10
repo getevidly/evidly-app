@@ -20,7 +20,7 @@ export interface InspectionItemDef {
   citation: string;
   fdaCitation?: string; // FDA Food Code 2022 equivalent (for NPS overlay)
   defaultSeverity: 'critical' | 'major' | 'minor';
-  category: 'food_safety' | 'facility_safety';
+  category: 'food_safety' | 'fire_safety' | 'facility_services';
 }
 
 export interface JurisdictionVariance {
@@ -41,7 +41,7 @@ export interface InspectionSectionDef {
   name: string;
   defaultCitation: string;
   iconName: string; // lucide icon name
-  category: 'food_safety' | 'facility_safety';
+  category: 'food_safety' | 'fire_safety' | 'facility_services';
   itemIds: string[];
 }
 
@@ -287,7 +287,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     codeBasis: 'nfpa_96_2024',
     citation: 'NFPA 96 \u00A712.4',
     defaultSeverity: 'critical',
-    category: 'facility_safety',
+    category: 'fire_safety',
   },
   'facility-002': {
     id: 'facility-002',
@@ -296,7 +296,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     codeBasis: 'nfpa_96_2024',
     citation: 'NFPA 10 (2022) \u00A77.2',
     defaultSeverity: 'critical',
-    category: 'facility_safety',
+    category: 'fire_safety',
   },
   'facility-003': {
     id: 'facility-003',
@@ -305,7 +305,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     codeBasis: 'nfpa_96_2024',
     citation: 'NFPA 96 Table 12.4',
     defaultSeverity: 'major',
-    category: 'facility_safety',
+    category: 'fire_safety',
   },
   'facility-004': {
     id: 'facility-004',
@@ -314,7 +314,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     codeBasis: 'nfpa_96_2024',
     citation: 'NFPA 17A (2025) \u00A710.1',
     defaultSeverity: 'critical',
-    category: 'facility_safety',
+    category: 'fire_safety',
   },
   'facility-005': {
     id: 'facility-005',
@@ -323,7 +323,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     codeBasis: 'nfpa_96_2024',
     citation: 'CFC 2022 \u00A71031',
     defaultSeverity: 'critical',
-    category: 'facility_safety',
+    category: 'fire_safety',
   },
 
   // ── Section 6: Facility & Pest Control ──────────────────────
@@ -567,7 +567,7 @@ export const INSPECTION_SECTIONS: InspectionSectionDef[] = [
     name: 'Fire Safety & Suppression',
     defaultCitation: 'NFPA 96 \u00A712.4',
     iconName: 'Flame',
-    category: 'facility_safety',
+    category: 'fire_safety',
     itemIds: ['facility-001', 'facility-002', 'facility-003', 'facility-004', 'facility-005'],
   },
   {

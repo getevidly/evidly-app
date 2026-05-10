@@ -36,7 +36,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/incidents': { label: 'Incident Log', parent: '/food-safety' },
   '/regulatory-alerts': { label: 'Regulatory Updates', parent: '/compliance' },
   '/reports': { label: 'Reports', parent: '/compliance' },
-  '/self-audit': { label: 'Self-Inspection', parent: '/compliance' },
   '/self-inspection': { label: 'Self-Inspection', parent: '/compliance' },
   '/services': { label: 'Vendor Services', parent: '/compliance' },
   '/jurisdiction': { label: 'Jurisdiction Settings', parent: '/compliance' },

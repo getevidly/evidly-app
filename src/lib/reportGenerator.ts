@@ -5,7 +5,7 @@
 // - County-specific templates (LA, San Diego, Kern, Orange, Sacramento, generic)
 // - 7 report sections (Facility, Food Safety, Employee, Fire, Vendor, Corrective, Score)
 // - Missing documentation alerts
-// - Pre-inspection self-audit checklists
+// - Pre-inspection self-inspection checklists
 // - Trend analytics
 // ============================================================
 
@@ -138,7 +138,7 @@ export interface MissingDocAlert {
   requiredBy: string;
 }
 
-export interface SelfAuditItem {
+export interface SelfInspectionItem {
   id: string;
   section: string;
   item: string;
@@ -182,7 +182,7 @@ export interface HealthDeptReport {
   correctiveActions: CorrectiveAction[];
   complianceScore: ComplianceScoreSection;
   missingDocs: MissingDocAlert[];
-  selfAudit: SelfAuditItem[];
+  selfInspection: SelfInspectionItem[];
   trendData: TrendDataPoint[];
 }
 
@@ -496,7 +496,7 @@ function generateMissingDocs(locationUrlId: string): MissingDocAlert[] {
   return alerts[locationUrlId] || alerts['downtown'];
 }
 
-function generateSelfAudit(locationUrlId: string): SelfAuditItem[] {
+function generateSelfInspection(locationUrlId: string): SelfInspectionItem[] {
   const scores = locationScores[locationUrlId];
   const isGood = scores?.foodSafety >= 90;
   const isMedium = scores?.foodSafety >= 70;
@@ -602,7 +602,7 @@ export function generateHealthDeptReport(
       };
     })(),
     missingDocs: generateMissingDocs(config.locationId),
-    selfAudit: generateSelfAudit(config.locationId),
+    selfInspection: generateSelfInspection(config.locationId),
     trendData: generateTrendData(config.locationId),
   };
 }

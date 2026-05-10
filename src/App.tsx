@@ -145,7 +145,7 @@ const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ defa
 const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
-const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
+const SelfInspection = lazy(() => import('./pages/SelfInspection').then(m => ({ default: m.SelfInspection })));
 const MockInspection = lazy(() => import('./pages/MockInspection'));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
 const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
@@ -705,8 +705,8 @@ function AppRoutes() {
           <Route path="/integrations" element={<IntegrationHub />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
-          <Route path="/self-audit" element={<SelfAudit />} />
-          <Route path="/self-inspection" element={<SelfAudit />} />
+          <Route path="/self-inspection" element={<SelfInspection />} />
+          <Route path="/self-audit" element={<Navigate to="/self-inspection" replace />} />
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
@@ -837,7 +837,7 @@ function AppRoutes() {
           <Route path="/analytics" element={<Navigate to="/food-safety/analysis" replace />} />
           <Route path="/daily-operations" element={<Navigate to="/dashboard" replace />} />
           <Route path="/locations" element={<Navigate to="/org-hierarchy" replace />} />
-          <Route path="/inspections" element={<Navigate to="/self-audit" replace />} />
+          <Route path="/inspections" element={<Navigate to="/self-inspection" replace />} />
           <Route path="/certifications" element={<Navigate to="/training/certificates" replace />} />
           <Route path="/sensor-dashboard" element={<Navigate to="/sensors" replace />} />
         </Route>

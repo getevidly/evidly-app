@@ -39,7 +39,7 @@ const QUICK_LINKS = [
   { label: 'AI Advisor',       path: '/ai-advisor' },
   { label: 'Copilot',          path: '/copilot' },
   { label: 'Mock Inspection',  path: '/mock-inspection' },
-  { label: 'Self Audit',       path: '/self-audit' },
+  { label: 'Self-Inspection',   path: '/self-inspection' },
   { label: 'Vendors',          path: '/vendors' },
   { label: 'Documents',        path: '/documents' },
   { label: 'Temp Logs',        path: '/temp-logs' },

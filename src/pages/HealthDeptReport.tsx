@@ -22,7 +22,7 @@ import {
   type HealthDeptReport as ReportType,
   type LiveScoreData,
   type JurisdictionTemplateData,
-  type SelfAuditItem,
+  type SelfInspectionItem,
   type MissingDocAlert,
   type ReportHistory,
 } from '../lib/reportGenerator';
@@ -100,7 +100,7 @@ function CountBadge({ count, color }: { count: number; color: string }) {
 export function HealthDeptReport() {
   const { isDemoMode } = useDemo();
   const locations = isDemoMode ? demoLocations : [];
-  const [activeView, setActiveView] = useState<'generate' | 'preview' | 'history' | 'self-audit'>('generate');
+  const [activeView, setActiveView] = useState<'generate' | 'preview' | 'history' | 'self-inspection'>('generate');
   const [selectedLocation, setSelectedLocation] = useState(locations[0]?.urlId || 'downtown');
   const [countyTemplate, setCountyTemplate] = useState<CountyTemplate>('generic');
   const [dateRange, setDateRange] = useState<'30' | '60' | '90' | 'custom'>('30');
@@ -315,7 +315,7 @@ export function HealthDeptReport() {
           {[
             { id: 'generate', label: 'Generate Report', icon: <FileText className="h-4 w-4" /> },
             { id: 'preview', label: 'Report Preview', icon: <Eye className="h-4 w-4" /> },
-            { id: 'self-audit', label: 'Self-Inspection Checklist', icon: <ClipboardCheck className="h-4 w-4" /> },
+            { id: 'self-inspection', label: 'Self-Inspection Checklist', icon: <ClipboardCheck className="h-4 w-4" /> },
             { id: 'history', label: 'Report History', icon: <History className="h-4 w-4" /> },
           ].map(tab => (
             <button
@@ -952,8 +952,8 @@ export function HealthDeptReport() {
           </>
         )}
 
-        {/* ── Self-Audit Checklist Tab ────────────────── */}
-        {activeView === 'self-audit' && (
+        {/* ── Self-Inspection Checklist Tab ────────────────── */}
+        {activeView === 'self-inspection' && (
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
@@ -974,7 +974,7 @@ export function HealthDeptReport() {
 
               {/* Summary Cards */}
               {(() => {
-                const audit = preCheckReport.selfAudit;
+                const audit = preCheckReport.selfInspection;
                 const passCount = audit.filter(i => i.status === 'pass').length;
                 const failCount = audit.filter(i => i.status === 'fail').length;
                 const reviewCount = audit.filter(i => i.status === 'needs-review').length;
@@ -1010,8 +1010,8 @@ export function HealthDeptReport() {
 
               {/* Checklist Grouped by Section */}
               {(() => {
-                const audit = preCheckReport.selfAudit;
-                const grouped: Record<string, SelfAuditItem[]> = {};
+                const audit = preCheckReport.selfInspection;
+                const grouped: Record<string, SelfInspectionItem[]> = {};
                 audit.forEach(item => {
                   if (!grouped[item.section]) grouped[item.section] = [];
                   grouped[item.section].push(item);

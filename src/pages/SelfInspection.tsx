@@ -94,7 +94,7 @@ interface HistoryAudit {
 // Constants
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = 'evidly_self_audit_progress';
+const STORAGE_KEY = 'evidly_self_inspection_progress';
 const stateLabel = getStateLabel('CA');
 
 const SECTION_ICONS = [
@@ -302,10 +302,10 @@ function correctiveAction(item: AuditItem, sectionName: string): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export function SelfAudit() {
+export function SelfInspection() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const navigate = useNavigate();
-  usePageTitle('Self Audit');
+  usePageTitle('Self-Inspection');
 
   // Jurisdiction awareness
   const [searchParams] = useSearchParams();
@@ -356,6 +356,7 @@ export function SelfAudit() {
   // View state
   const [activeTab, setActiveTab] = useState<'audit' | 'history'>('audit');
   const [auditPhase, setAuditPhase] = useState<'overview' | 'walkthrough' | 'results'>('overview');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'food_safety' | 'fire_safety' | 'facility_services'>('all');
 
   // Audit state
   const [sections, setSections] = useState<AuditSection[]>(() => buildSections(false));
@@ -655,6 +656,20 @@ export function SelfAudit() {
     return gradeInspection(score, demoJurisdiction);
   }, [score, demoJurisdiction]);
   const answered = answeredCount(sections);
+  const filteredSections = useMemo(() => {
+    if (filterCategory === 'all') return sections;
+    return sections
+      .filter(s => {
+        const sectionDef = INSPECTION_SECTIONS.find(sd => sd.name === s.name);
+        return sectionDef ? sectionDef.category === filterCategory : true;
+      })
+      .map(s => ({
+        ...s,
+        items: s.items.filter(i => !i.category || i.category === filterCategory),
+      }))
+      .filter(s => s.items.length > 0);
+  }, [sections, filterCategory]);
+
   const total = totalItemCount(sections);
   const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
   const completedSections = sections.filter((s) => s.items.every((i) => i.status !== null)).length;
@@ -688,9 +703,31 @@ export function SelfAudit() {
           <h2 className="text-xl font-bold text-[#1E2D4D]">Self-Inspection Checklist</h2>
         </div>
         <p className="text-sm text-[#1E2D4D]/70 mb-4">
-          Walk through 7 compliance sections covering {total} checklist items. Score your location
+          Walk through {filterCategory === 'all' ? '7' : filteredSections.length} compliance sections covering {filterCategory === 'all' ? total : totalItemCount(filteredSections)} checklist items. Score your location
           using <span className="font-medium">{scoringConfig.agencyName}</span> inspection criteria.
         </p>
+
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {([
+            { key: 'all' as const, label: 'All Categories' },
+            { key: 'food_safety' as const, label: 'Food Safety' },
+            { key: 'fire_safety' as const, label: 'Fire Safety' },
+            { key: 'facility_services' as const, label: 'Facility Services' },
+          ]).map(opt => (
+            <button
+              key={opt.key}
+              onClick={() => setFilterCategory(opt.key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                filterCategory === opt.key
+                  ? 'text-white bg-[#1E2D4D]'
+                  : 'text-[#1E2D4D]/70 bg-[#1E2D4D]/5 hover:bg-[#1E2D4D]/10'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
 
         {/* Dual-jurisdiction track selection for Yosemite */}
         {isDualJurisdiction ? (
