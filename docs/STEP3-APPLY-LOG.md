@@ -375,4 +375,89 @@ ORDER BY conname;
 
 ---
 
+## Phase 1.5 — CHECK Constraint Updates (2026-05-10)
+
+**File:** `20260810000014_phase15_check_updates.sql`
+
+### Pre-Flight
+
+```sql
+SELECT
+  (SELECT count(*) FROM compliance_document_activity_log) AS activity_log_rows,
+  (SELECT count(*) FROM compliance_document_send_records) AS send_records_rows;
+```
+
+| activity_log_rows | send_records_rows |
+|---|---|
+| 0 | 0 |
+
+**Result: ✅ Both tables empty — safe to replace CHECKs**
+
+```sql
+SELECT conname, pg_get_constraintdef(oid)
+FROM pg_constraint
+WHERE conrelid IN ('public.compliance_document_activity_log'::regclass, 'public.compliance_document_send_records'::regclass)
+  AND contype = 'c';
+```
+
+| conname | pg_get_constraintdef |
+|---|---|
+| compliance_document_activity_log_event_type_check | CHECK ((event_type = ANY (ARRAY['requested'::text, 'request_resent'::text, 'request_cancelled'::text, 'submitted'::text, 'viewed'::text, 'accepted'::text, 'rejected'::text, 'archived'::text, 'expired'::text, 'expiring_warning'::text, 'renewed'::text, 'sent_to_third_party'::text, 'send_revoked'::text, 'noted'::text]))) |
+| compliance_document_send_records_recipient_type_check | CHECK ((recipient_type = ANY (ARRAY['government'::text, 'insurance'::text, 'property'::text, 'custom'::text]))) |
+
+### Apply
+
+Single transaction, two ALTER TABLE blocks.
+
+**activity_log.event_type:** 14 values → 12 values (locked set: requested, viewed, accepted, rejected, resent, shared, viewed_share, downloaded_share, expired, overdue, uploaded, noted)
+
+Values dropped (0 rows, no data loss): request_resent, request_cancelled, submitted, archived, expiring_warning, renewed, sent_to_third_party, send_revoked
+
+Values added: resent, shared, viewed_share, downloaded_share, overdue, uploaded (6 new)
+
+**send_records.recipient_type:** 4 generic values → 6 specific values (ehd, ahj, insurance_broker, insurance_carrier, auditor, client_legal)
+
+### Verification
+
+```sql
+SELECT conname, pg_get_constraintdef(oid)
+FROM pg_constraint
+WHERE conrelid = 'public.compliance_document_activity_log'::regclass
+  AND conname = 'compliance_document_activity_log_event_type_check';
+```
+
+| conname | pg_get_constraintdef |
+|---|---|
+| compliance_document_activity_log_event_type_check | CHECK ((event_type = ANY (ARRAY['requested'::text, 'viewed'::text, 'accepted'::text, 'rejected'::text, 'resent'::text, 'shared'::text, 'viewed_share'::text, 'downloaded_share'::text, 'expired'::text, 'overdue'::text, 'uploaded'::text, 'noted'::text]))) |
+
+**Result: ✅ PASS — 12 values, matches locked set exactly**
+
+```sql
+SELECT conname, pg_get_constraintdef(oid)
+FROM pg_constraint
+WHERE conrelid = 'public.compliance_document_send_records'::regclass
+  AND conname = 'compliance_document_send_records_recipient_type_check';
+```
+
+| conname | pg_get_constraintdef |
+|---|---|
+| compliance_document_send_records_recipient_type_check | CHECK ((recipient_type = ANY (ARRAY['ehd'::text, 'ahj'::text, 'insurance_broker'::text, 'insurance_carrier'::text, 'auditor'::text, 'client_legal'::text]))) |
+
+**Result: ✅ PASS — 6 values, matches share_recommendation_rules + UI Contract exactly**
+
+### Rollback (if needed)
+
+```sql
+BEGIN;
+ALTER TABLE compliance_document_activity_log DROP CONSTRAINT compliance_document_activity_log_event_type_check;
+ALTER TABLE compliance_document_activity_log ADD CONSTRAINT compliance_document_activity_log_event_type_check
+  CHECK (event_type IN ('requested', 'request_resent', 'request_cancelled', 'submitted', 'viewed', 'accepted', 'rejected', 'archived', 'expired', 'expiring_warning', 'renewed', 'sent_to_third_party', 'send_revoked', 'noted'));
+ALTER TABLE compliance_document_send_records DROP CONSTRAINT compliance_document_send_records_recipient_type_check;
+ALTER TABLE compliance_document_send_records ADD CONSTRAINT compliance_document_send_records_recipient_type_check
+  CHECK (recipient_type IN ('government', 'insurance', 'property', 'custom'));
+COMMIT;
+```
+
+---
+
 *End of STEP3-APPLY-LOG.md*
