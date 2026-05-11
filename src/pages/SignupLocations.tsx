@@ -372,6 +372,14 @@ export function SignupLocations() {
             >
               {isSubmitting ? 'Saving...' : 'Continue to Checkout'}
             </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/signup')}
+              className="w-full mt-3 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
+            >
+              Back to sign up
+            </button>
           </div>
         )}
       </div>

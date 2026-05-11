@@ -40,6 +40,7 @@ import {
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
 import { MetricCardRow } from './shared/MetricCardRow';
 import { RiskFreeWidget } from './RiskFreeWidget';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 
 // ================================================================
@@ -166,7 +167,9 @@ export default function OwnerOperatorDashboard() {
 
       {/* Risk-Free Guarantee banner — transient, above all other content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4">
-        <RiskFreeWidget />
+        <ErrorBoundary level="widget" fallback={null}>
+          <RiskFreeWidget />
+        </ErrorBoundary>
       </div>
 
       {/* Error state */}

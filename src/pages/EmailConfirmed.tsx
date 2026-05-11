@@ -98,6 +98,7 @@ async function provisionNewUser(userId: string, meta: Record<string, string>): P
 export function EmailConfirmed() {
   const [status, setStatus] = useState<Status>('verifying');
   const [errorMsg, setErrorMsg] = useState('');
+  const [verifyingSlow, setVerifyingSlow] = useState(false);
   const navigate = useNavigate();
   const provisioningRef = useRef(false);
 
@@ -190,6 +191,11 @@ export function EmailConfirmed() {
     // Also check immediately (in case session already exists)
     handleSession();
 
+    // After 5 seconds of verifying, show "still working" hint
+    const slowTimer = setTimeout(() => {
+      setVerifyingSlow(true);
+    }, 5000);
+
     // Timeout: if nothing happens in 15 seconds, show error
     const timeout = setTimeout(() => {
       setStatus(prev => {
@@ -203,6 +209,7 @@ export function EmailConfirmed() {
 
     return () => {
       subscription.unsubscribe();
+      clearTimeout(slowTimer);
       clearTimeout(timeout);
     };
   }, [navigate]);
@@ -266,7 +273,11 @@ export function EmailConfirmed() {
           <>
             <Loader className="h-12 w-12 text-[#1E2D4D] animate-spin mx-auto mb-4" />
             <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Verifying your email...</h2>
-            <p className="text-[#1E2D4D]/70">Just a moment.</p>
+            <p className="text-[#1E2D4D]/70">
+              {verifyingSlow
+                ? 'Still verifying — check your spam folder if you haven\'t received the email.'
+                : 'Just a moment.'}
+            </p>
           </>
         )}
 

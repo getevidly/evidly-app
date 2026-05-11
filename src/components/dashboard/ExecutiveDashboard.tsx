@@ -70,7 +70,9 @@ export default function ExecutiveDashboard() {
 
       {/* Risk-Free Guarantee banner — transient, above all other content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
-        <RiskFreeWidget />
+        <ErrorBoundary level="widget" fallback={null}>
+          <RiskFreeWidget />
+        </ErrorBoundary>
       </div>
 
       {/* 1. HERO */}
