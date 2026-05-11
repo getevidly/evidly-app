@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Building, Building2, Plus, Minus, Phone, Mail, Layers } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 export function SignupLocations() {
   const [selectedType, setSelectedType] = useState<'single' | 'multiple' | 'enterprise' | null>(null);
   const [locationCount, setLocationCount] = useState(2);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const navigate = useNavigate();
+  const { profile } = useAuth();
 
   const calculatePricing = () => {
     const standardBasePrice = 199;
@@ -58,7 +61,17 @@ export function SignupLocations() {
 
   const pricing = calculatePricing();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    const count = selectedType === 'single' ? 1 : locationCount;
+    if (profile?.organization_id) {
+      const { error } = await supabase
+        .from('organizations')
+        .update({ planned_location_count: count })
+        .eq('id', profile.organization_id);
+      if (error) {
+        console.error('Failed to persist planned_location_count:', error.message);
+      }
+    }
     navigate('/onboarding');
   };
 
