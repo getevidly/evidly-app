@@ -47,7 +47,7 @@ export function useRiskFreeEligibility() {
 
     const now = new Date();
     const windowEnd = new Date(elig.guarantee_window_end);
-    const windowStart = new Date(elig.guarantee_window_start);
+    const windowStart = new Date(elig.signup_date);
     const msPerDay = 86400000;
     const daysRemaining = Math.max(0, Math.ceil((windowEnd.getTime() - now.getTime()) / msPerDay));
     const daysElapsed = Math.min(
@@ -60,13 +60,13 @@ export function useRiskFreeEligibility() {
       criterion_a_status: elig.criterion_a_status,
       criterion_a_met_at: elig.criterion_a_met_at,
       criterion_b_status: elig.criterion_b_status,
-      criterion_b_activity_days: elig.criterion_b_activity_days ?? 0,
-      criterion_b_required_days: requiredDays,
-      guarantee_window_start: elig.guarantee_window_start,
+      criterion_b_activity_days: elig.activity_days ?? 0,
+      criterion_b_required_days: elig.required_activity_days ?? requiredDays,
+      guarantee_window_start: elig.signup_date,
       guarantee_window_end: elig.guarantee_window_end,
-      setup_deadline: elig.setup_deadline,
-      locations_entered: elig.locations_entered ?? 0,
-      locations_required: elig.locations_required ?? 1,
+      setup_deadline: elig.setup_window_end,
+      locations_entered: elig.actual_location_count ?? 0,
+      locations_required: elig.declared_location_count ?? 1,
       days_remaining: daysRemaining,
       days_elapsed: daysElapsed,
     };
