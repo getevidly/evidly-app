@@ -288,6 +288,9 @@ export function Team() {
 
       const organizationName = orgData?.name || 'EvidLY';
 
+      let emailFailed = false;
+      let smsFailed = false;
+
       if (sendMethod === 'email' || (sendMethod === 'both' && !method)) {
         if (invitation.email) {
           const { error: emailError } = await supabase.functions.invoke('send-team-invite', {
@@ -300,6 +303,7 @@ export function Team() {
           });
 
           const emailStatus = emailError ? 'failed' : 'sent';
+          if (emailError) emailFailed = true;
           await supabase
             .from('user_invitations')
             .update({ email_status: emailStatus })
@@ -319,6 +323,7 @@ export function Team() {
           });
 
           const smsStatus = smsError ? 'failed' : 'sent';
+          if (smsError) smsFailed = true;
           await supabase
             .from('user_invitations')
             .update({ sms_status: smsStatus })
@@ -333,9 +338,16 @@ export function Team() {
         .update({ expires_at: newExpiry })
         .eq('id', invitation.id);
 
+      if (emailFailed || smsFailed) {
+        toast.error('Failed to resend invitation email. Please try again.');
+      } else {
+        toast.success(`Invitation resent to ${invitation.email || invitation.phone}`);
+      }
+
       fetchInvitations();
     } catch (error) {
       console.error('Error resending invitation:', error);
+      toast.error('Failed to resend invitation. Please try again.');
     }
   };
 

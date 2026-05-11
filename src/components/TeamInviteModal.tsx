@@ -108,6 +108,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
       let sent = 0;
       let failed = 0;
+      let emailFailed = 0;
 
       for (const addr of emails) {
         try {
@@ -148,6 +149,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             .update({ email_status: emailError ? 'failed' : 'sent' })
             .eq('id', invitation.id);
 
+          if (emailError) emailFailed++;
           sent++;
         } catch {
           failed++;
@@ -155,7 +157,9 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
       }
 
       if (failed > 0) {
-        toast.success(`${sent} sent, ${failed} failed`);
+        toast.warning(`${sent} created, ${failed} failed to save`);
+      } else if (emailFailed > 0) {
+        toast.warning(`${sent} invitation${sent > 1 ? 's' : ''} created, but ${emailFailed} email${emailFailed > 1 ? 's' : ''} failed to send. You can resend from the team page.`);
       } else {
         toast.success(`${sent} invitation${sent > 1 ? 's' : ''} sent`);
       }
@@ -263,9 +267,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
         .eq('id', invitation.id);
 
       if (emailError) {
-        console.error('Error sending invite email:', emailError);
+        // Invitation row exists but email failed — keep modal open, show error
+        setError('Invitation created but the email could not be sent. The invite link has been saved — you can resend it from the team page.');
+        onInviteSent();
+        setLoading(false);
+        return;
       }
 
+      toast.success(`Invitation sent to ${fullName.trim()}`);
       resetForm();
       onInviteSent();
       onClose();
