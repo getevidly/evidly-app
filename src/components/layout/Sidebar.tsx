@@ -706,7 +706,7 @@ export function Sidebar() {
                       style={{ background: 'none', border: 'none' }}
                     >
                       <span style={{
-                        color: location.pathname === section.path ? '#ffffff' : colors.gold,
+                        color: location.pathname === section.path ? '#ffffff' : colors.cream,
                         fontSize: 9, fontWeight: 800,
                         textTransform: 'uppercase' as const,
                         letterSpacing: '1.2px', fontFamily: typography.family.body,
@@ -719,7 +719,7 @@ export function Sidebar() {
                     <div className="w-full flex items-center justify-between px-3 py-1.5 mt-1">
                       <span
                         style={{
-                          color: hasActiveChild ? '#ffffff' : colors.gold,
+                          color: hasActiveChild ? '#ffffff' : colors.cream,
                           fontSize: 9, fontWeight: 800,
                           textTransform: 'uppercase' as const,
                           letterSpacing: '1.2px', fontFamily: typography.family.body,
@@ -750,7 +750,7 @@ export function Sidebar() {
                       style={{ background: 'none', border: 'none' }}
                     >
                       <span style={{
-                        color: hasActiveChild ? '#ffffff' : colors.gold,
+                        color: hasActiveChild ? '#ffffff' : colors.cream,
                         fontSize: 9, fontWeight: 800,
                         textTransform: 'uppercase' as const,
                         letterSpacing: '1.2px', fontFamily: typography.family.body,

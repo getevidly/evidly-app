@@ -53,7 +53,7 @@ export const DEFAULT_BRANDING: BrandingConfig = {
     primaryLight: '#2A3F6B',
     primaryDark: '#141E33',
     accent: '#A08C5A',
-    sidebarBg: '#0f1f35',
+    sidebarBg: '#1E2D4D',
     sidebarText: '#ffffff',
   },
   loginWelcomeText: 'Welcome to EvidLY',
