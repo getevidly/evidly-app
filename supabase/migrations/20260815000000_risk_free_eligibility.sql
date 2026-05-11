@@ -131,7 +131,7 @@ RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 DECLARE
   _config              RECORD;
   _org                 RECORD;
@@ -327,7 +327,7 @@ BEGIN
     last_calculated_at     = EXCLUDED.last_calculated_at
   WHERE risk_free_eligibility.admin_override = 'none';
 END;
-$$;
+$rfe$;
 
 -- 5. TRIGGERS (6 total: 1 for locations criterion, 5 for activity sources)
 
@@ -337,12 +337,12 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 BEGIN
   PERFORM recalc_risk_free_eligibility(NEW.organization_id);
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_locations
   AFTER INSERT ON locations
@@ -354,7 +354,7 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 DECLARE
   _org_id uuid;
 BEGIN
@@ -365,7 +365,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_temperature_logs
   AFTER INSERT ON temperature_logs
@@ -377,12 +377,12 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 BEGIN
   PERFORM recalc_risk_free_eligibility(NEW.organization_id);
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_receiving_temp_logs
   AFTER INSERT ON receiving_temp_logs
@@ -394,7 +394,7 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 DECLARE
   _org_id uuid;
 BEGIN
@@ -405,7 +405,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_cooldown_temp_checks
   AFTER INSERT ON cooldown_temp_checks
@@ -417,7 +417,7 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 DECLARE
   _org_id uuid;
 BEGIN
@@ -428,7 +428,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_checklist_completions
   AFTER INSERT ON checklist_completions
@@ -440,12 +440,12 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $rfe$
 BEGIN
   PERFORM recalc_risk_free_eligibility(NEW.organization_id);
   RETURN NEW;
 END;
-$$;
+$rfe$;
 
 CREATE TRIGGER trg_rfe_checklist_template_completions
   AFTER INSERT ON checklist_template_completions
@@ -466,7 +466,7 @@ SELECT
 FROM organizations
 ON CONFLICT DO NOTHING;
 
-DO $$
+DO $backfill$
 DECLARE
   _org_id uuid;
 BEGIN
@@ -474,4 +474,4 @@ BEGIN
     PERFORM recalc_risk_free_eligibility(_org_id);
   END LOOP;
 END;
-$$;
+$backfill$;
