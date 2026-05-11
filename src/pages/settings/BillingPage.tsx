@@ -3,6 +3,9 @@ import { CreditCard, Download, AlertTriangle, Users, Building2, HardDrive, FileT
 import { Navigate } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
 import { useBillingInfo, useInvoices, type PlanTier } from '../../hooks/api/useSettings';
+import { useRiskFreeEligibility } from '../../hooks/api/useRiskFreeEligibility';
+import { RiskFreeStatusModal } from '../../components/RiskFreeStatusModal';
+import { EvidlyIcon } from '../../components/ui/EvidlyIcon';
 import Button from '../../components/ui/Button';
 
 const PLAN_INFO: Record<PlanTier, { name: string; price: string; perLocation: string; features: string[] }> = {
@@ -31,6 +34,8 @@ export function BillingPage() {
   const { data: billing, isLoading: billingLoading } = useBillingInfo();
   const { data: invoices, isLoading: invoicesLoading } = useInvoices();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showRiskFreeModal, setShowRiskFreeModal] = useState(false);
+  const { data: riskFreeEligibility } = useRiskFreeEligibility();
 
   if (userRole !== 'owner_operator' && userRole !== 'platform_admin') {
     return <Navigate to="/settings/company" replace />;
@@ -85,6 +90,29 @@ export function BillingPage() {
         )}
       </div>
 
+      {/* Risk-Free Guarantee Info */}
+      <div className="rounded-xl p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+        <div className="flex items-start gap-3">
+          <EvidlyIcon size={20} className="flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>60-Day Risk-Free Guarantee</p>
+            <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
+              Complete account setup within 15 days of signup. Use the platform for 45 days. If dissatisfied within 60 days, request a 100% refund of subscription fees. Setup fees ($250 Founder / $500 Standard) are non-refundable.
+            </p>
+            {riskFreeEligibility && (
+              <button
+                type="button"
+                onClick={() => setShowRiskFreeModal(true)}
+                className="mt-2 text-xs font-semibold hover:underline transition-colors"
+                style={{ color: '#1E2D4D', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Check My Risk-Free Status &rarr;
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Usage */}
       <div className="bg-white border border-navy/10 rounded-xl p-6">
         <h2 className="text-base font-bold text-navy mb-4">Usage</h2>
@@ -102,7 +130,6 @@ export function BillingPage() {
               <div className="text-xs text-navy/40 mt-0.5">
                 {item.limit > 0 ? `of ${item.limit}${item.suffix ? ` ${item.suffix}` : ''} included` : item.label}
               </div>
-              <div className="text-xs text-navy/30 mt-0.5">{item.label}</div>
             </div>
           ))}
         </div>
@@ -228,6 +255,12 @@ export function BillingPage() {
           </button>
         )}
       </div>
+
+      <RiskFreeStatusModal
+        isOpen={showRiskFreeModal}
+        onClose={() => setShowRiskFreeModal(false)}
+        eligibility={riskFreeEligibility}
+      />
     </div>
   );
 }
