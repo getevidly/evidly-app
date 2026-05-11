@@ -9,8 +9,10 @@ export function SignupLocations() {
   const [selectedType, setSelectedType] = useState<'single' | 'multiple' | 'enterprise' | null>(null);
   const [locationCount, setLocationCount] = useState(2);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
 
   const calculatePricing = () => {
     const standardBasePrice = 199;
@@ -63,15 +65,27 @@ export function SignupLocations() {
   const pricing = calculatePricing();
 
   const handleContinue = async () => {
+    setSubmitError('');
+    if (!profile?.organization_id) {
+      setSubmitError('Account setup incomplete. Please refresh the page and try again.');
+      return;
+    }
+    setIsSubmitting(true);
     const count = selectedType === 'single' ? 1 : locationCount;
-    if (profile?.organization_id) {
+    try {
       const { error } = await supabase
         .from('organizations')
         .update({ planned_location_count: count })
         .eq('id', profile.organization_id);
       if (error) {
-        console.error('Failed to persist planned_location_count:', error.message);
+        setSubmitError('Failed to save your location selection. Please try again.');
+        setIsSubmitting(false);
+        return;
       }
+    } catch {
+      setSubmitError('A network error occurred. Please check your connection and try again.');
+      setIsSubmitting(false);
+      return;
     }
     navigate('/onboarding');
   };
@@ -345,11 +359,18 @@ export function SignupLocations() {
               </div>
             </div>
 
+            {submitError && (
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {submitError}
+              </div>
+            )}
+
             <button
               onClick={handleContinue}
-              className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-all duration-150 active:scale-[0.98] shadow-sm"
+              disabled={loading || isSubmitting || !selectedType}
+              className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-all duration-150 active:scale-[0.98] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continue to Checkout
+              {isSubmitting ? 'Saving...' : 'Continue to Checkout'}
             </button>
           </div>
         )}
