@@ -122,15 +122,42 @@ export function EmailConfirmed() {
 
         setStatus('provisioning');
 
-        // Check if profile already exists (e.g. user refreshed page after success)
+        // Check if profile already exists (trigger creates one with domain-based org)
         const { data: existingProfile } = await supabase
           .from('user_profiles')
-          .select('id')
+          .select('id, organization_id')
           .eq('id', user.id)
           .maybeSingle();
 
         if (existingProfile) {
-          // Already provisioned — just redirect
+          // Trigger created profile with domain-based org — patch with form data
+          setStatus('provisioning');
+
+          if (existingProfile.organization_id) {
+            // Update org with real business name + state from signup form
+            const { error: orgUpErr } = await supabase
+              .from('organizations')
+              .update({ name: meta.org_name, state: meta.state || '' })
+              .eq('id', existingProfile.organization_id);
+            if (orgUpErr) console.error('Failed to update org name:', orgUpErr.message);
+
+            // Update profile with phone + terms from signup form
+            const { error: profUpErr } = await supabase
+              .from('user_profiles')
+              .update({
+                full_name: meta.full_name || undefined,
+                phone: meta.phone || '',
+                terms_accepted_at: meta.terms_accepted_at || new Date().toISOString(),
+              })
+              .eq('id', user.id);
+            if (profUpErr) console.error('Failed to update profile:', profUpErr.message);
+          }
+
+          // Clean up transient signup metadata
+          await supabase.auth.updateUser({
+            data: { org_name: null, state: null, phone: null, terms_accepted_at: null },
+          });
+
           setStatus('success');
           setTimeout(() => navigate('/signup/locations', { replace: true }), 1500);
           return;

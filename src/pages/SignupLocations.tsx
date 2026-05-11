@@ -3,6 +3,7 @@ import { Building, Building2, Plus, Minus, Phone, Mail, Layers } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { CALENDLY_URL } from '../lib/config';
 
 export function SignupLocations() {
   const [selectedType, setSelectedType] = useState<'single' | 'multiple' | 'enterprise' | null>(null);
@@ -213,7 +214,7 @@ export function SignupLocations() {
                 </div>
               </div>
             </div>
-            <button className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-all duration-150 active:scale-[0.98] shadow-sm min-h-[44px]">
+            <button onClick={() => window.open(CALENDLY_URL, '_blank')} className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-all duration-150 active:scale-[0.98] shadow-sm min-h-[44px]">
               Schedule a Demo
             </button>
           </div>
