@@ -3,6 +3,10 @@
 -- 2-criteria model per ToS commit 1589c76:
 --   (a) Locations entered within 15 days
 --   (b) Food safety activity on 36 of 60 days
+--
+-- Activity sources (5 tables):
+--   temperature_logs, receiving_temp_logs, cooldown_temp_checks,
+--   checklist_completions, checklist_template_completions
 -- ═══════════════════════════════════════════
 
 -- 1. ELIGIBILITY TABLE (one row per org)
@@ -169,20 +173,30 @@ BEGIN
       FROM locations WHERE organization_id = p_org_id;
 
     SELECT COUNT(DISTINCT activity_date) INTO _activity_days FROM (
-      SELECT DATE(recorded_at) AS activity_date FROM temp_logs
-       WHERE organization_id = p_org_id
-         AND recorded_at BETWEEN _org.created_at AND _guarantee_window_end
-      UNION
-      SELECT DATE(tl.reading_time) FROM temperature_logs tl
+      -- temperature_logs (equipment readings)
+      SELECT DATE(tl.reading_time) AS activity_date FROM temperature_logs tl
         JOIN locations l ON tl.facility_id = l.id
        WHERE l.organization_id = p_org_id
          AND tl.reading_time BETWEEN _org.created_at AND _guarantee_window_end
       UNION
+      -- receiving_temp_logs (delivery receiving)
+      SELECT DATE(rtl.created_at) FROM receiving_temp_logs rtl
+       WHERE rtl.organization_id = p_org_id
+         AND rtl.created_at BETWEEN _org.created_at AND _guarantee_window_end
+      UNION
+      -- cooldown_temp_checks (FDA cooling)
+      SELECT DATE(ctc.check_time) FROM cooldown_temp_checks ctc
+        JOIN cooldown_logs cl ON ctc.cooldown_log_id = cl.id
+       WHERE cl.organization_id = p_org_id
+         AND ctc.check_time BETWEEN _org.created_at AND _guarantee_window_end
+      UNION
+      -- checklist_completions
       SELECT DATE(cc.completed_at) FROM checklist_completions cc
         JOIN checklists c ON cc.checklist_id = c.id
        WHERE c.organization_id = p_org_id
          AND cc.completed_at BETWEEN _org.created_at AND _guarantee_window_end
       UNION
+      -- checklist_template_completions
       SELECT DATE(completed_at) FROM checklist_template_completions
        WHERE organization_id = p_org_id
          AND completed_at BETWEEN _org.created_at AND _guarantee_window_end
@@ -227,21 +241,33 @@ BEGIN
   END IF;
 
   -- Criterion (b): Food safety activity days within 60-day window
+  -- Sources: temperature_logs, receiving_temp_logs, cooldown_temp_checks,
+  --          checklist_completions, checklist_template_completions
   SELECT COUNT(DISTINCT activity_date) INTO _activity_days FROM (
-    SELECT DATE(recorded_at) AS activity_date FROM temp_logs
-     WHERE organization_id = p_org_id
-       AND recorded_at BETWEEN _org.created_at AND _guarantee_window_end
-    UNION
-    SELECT DATE(tl.reading_time) FROM temperature_logs tl
+    -- temperature_logs (equipment readings)
+    SELECT DATE(tl.reading_time) AS activity_date FROM temperature_logs tl
       JOIN locations l ON tl.facility_id = l.id
      WHERE l.organization_id = p_org_id
        AND tl.reading_time BETWEEN _org.created_at AND _guarantee_window_end
     UNION
+    -- receiving_temp_logs (delivery receiving)
+    SELECT DATE(rtl.created_at) FROM receiving_temp_logs rtl
+     WHERE rtl.organization_id = p_org_id
+       AND rtl.created_at BETWEEN _org.created_at AND _guarantee_window_end
+    UNION
+    -- cooldown_temp_checks (FDA cooling)
+    SELECT DATE(ctc.check_time) FROM cooldown_temp_checks ctc
+      JOIN cooldown_logs cl ON ctc.cooldown_log_id = cl.id
+     WHERE cl.organization_id = p_org_id
+       AND ctc.check_time BETWEEN _org.created_at AND _guarantee_window_end
+    UNION
+    -- checklist_completions
     SELECT DATE(cc.completed_at) FROM checklist_completions cc
       JOIN checklists c ON cc.checklist_id = c.id
      WHERE c.organization_id = p_org_id
        AND cc.completed_at BETWEEN _org.created_at AND _guarantee_window_end
     UNION
+    -- checklist_template_completions
     SELECT DATE(completed_at) FROM checklist_template_completions
      WHERE organization_id = p_org_id
        AND completed_at BETWEEN _org.created_at AND _guarantee_window_end
@@ -303,9 +329,9 @@ BEGIN
 END;
 $$;
 
--- 5. TRIGGERS
+-- 5. TRIGGERS (6 total: 1 for locations criterion, 5 for activity sources)
 
--- locations (direct org_id)
+-- locations (direct org_id) — criterion (a)
 CREATE OR REPLACE FUNCTION public.trg_rfe_on_locations()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -321,23 +347,6 @@ $$;
 CREATE TRIGGER trg_rfe_locations
   AFTER INSERT ON locations
   FOR EACH ROW EXECUTE FUNCTION trg_rfe_on_locations();
-
--- temp_logs (direct org_id)
-CREATE OR REPLACE FUNCTION public.trg_rfe_on_temp_logs()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  PERFORM recalc_risk_free_eligibility(NEW.organization_id);
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_rfe_temp_logs
-  AFTER INSERT ON temp_logs
-  FOR EACH ROW EXECUTE FUNCTION trg_rfe_on_temp_logs();
 
 -- temperature_logs (org via locations.id)
 CREATE OR REPLACE FUNCTION public.trg_rfe_on_temperature_logs()
@@ -361,6 +370,46 @@ $$;
 CREATE TRIGGER trg_rfe_temperature_logs
   AFTER INSERT ON temperature_logs
   FOR EACH ROW EXECUTE FUNCTION trg_rfe_on_temperature_logs();
+
+-- receiving_temp_logs (direct org_id)
+CREATE OR REPLACE FUNCTION public.trg_rfe_on_receiving_temp_logs()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  PERFORM recalc_risk_free_eligibility(NEW.organization_id);
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_rfe_receiving_temp_logs
+  AFTER INSERT ON receiving_temp_logs
+  FOR EACH ROW EXECUTE FUNCTION trg_rfe_on_receiving_temp_logs();
+
+-- cooldown_temp_checks (org via cooldown_logs.id)
+CREATE OR REPLACE FUNCTION public.trg_rfe_on_cooldown_temp_checks()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  _org_id uuid;
+BEGIN
+  SELECT organization_id INTO _org_id
+    FROM cooldown_logs WHERE id = NEW.cooldown_log_id;
+  IF _org_id IS NOT NULL THEN
+    PERFORM recalc_risk_free_eligibility(_org_id);
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_rfe_cooldown_temp_checks
+  AFTER INSERT ON cooldown_temp_checks
+  FOR EACH ROW EXECUTE FUNCTION trg_rfe_on_cooldown_temp_checks();
 
 -- checklist_completions (org via checklists.id)
 CREATE OR REPLACE FUNCTION public.trg_rfe_on_checklist_completions()
