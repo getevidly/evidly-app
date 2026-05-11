@@ -128,6 +128,8 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
 
   // Track whether auto-detection has run at least once
   const autoDetectRanRef = useRef(false);
+  // Guard: only write onboarding_completed once per session
+  const completionWrittenRef = useRef(false);
 
   // ── Load org profile + persisted state ────────────────
   useEffect(() => {
@@ -255,6 +257,30 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [isDemo, runCompletionChecks]);
+
+  // ── Narrow-trigger: mark org onboarding complete ──────
+  // When all 4 core setup steps are completed or skipped, write
+  // organizations.onboarding_completed = true so send-reminders
+  // stops nagging and the Checklist Card auto-dismisses on reload.
+  const REQUIRED_SETUP_STEPS = ['profile', 'setup_locations', 'register_equipment', 'upload_documents'];
+
+  useEffect(() => {
+    if (isDemo || !orgId || loading || completionWrittenRef.current) return;
+
+    const allDone = REQUIRED_SETUP_STEPS.every(
+      id => completedIds.has(id) || skippedIds.has(id),
+    );
+    if (!allDone) return;
+
+    completionWrittenRef.current = true;
+    supabase
+      .from('organizations')
+      .update({ onboarding_completed: true })
+      .eq('id', orgId)
+      .then(({ error }) => {
+        if (error) console.error('[useOnboardingChecklist] Failed to write onboarding_completed:', error.message);
+      });
+  }, [isDemo, orgId, loading, completedIds, skippedIds]);
 
   // ── Flat step list with completion + skipped status ────
   const steps = useMemo(

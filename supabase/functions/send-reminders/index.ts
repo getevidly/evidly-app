@@ -165,7 +165,7 @@ async function sendReminderEmail(
     recipientName: name,
     bodyHtml: template.bodyHtml,
     ctaText: "Complete Setup →",
-    ctaUrl: `${appUrl}/onboarding`,
+    ctaUrl: `${appUrl}/dashboard`,
     footerNote: "You're receiving this because you signed up for EvidLY. If this wasn't you, you can safely ignore this email.",
   });
 

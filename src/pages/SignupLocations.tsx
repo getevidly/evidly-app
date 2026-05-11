@@ -87,7 +87,7 @@ export function SignupLocations() {
       setIsSubmitting(false);
       return;
     }
-    navigate('/onboarding');
+    navigate('/dashboard');
   };
 
   return (

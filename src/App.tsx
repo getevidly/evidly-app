@@ -31,7 +31,6 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then(m => ({ 
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const EmailConfirmed = lazy(() => import('./pages/EmailConfirmed').then(m => ({ default: m.EmailConfirmed })));
 const DemoWizard = lazy(() => import('./pages/DemoWizard').then(m => ({ default: m.DemoWizard })));
-const Onboarding = lazy(() => import('./pages/Onboarding').then(m => ({ default: m.Onboarding })));
 const SetupFoodSafety = lazy(() => import('./pages/SetupFoodSafety').then(m => ({ default: m.SetupFoodSafety })));
 const SetupFoodSafetyEntry = lazy(() => import('./pages/SetupFoodSafetyEntry').then(m => ({ default: m.SetupFoodSafetyEntry })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -610,7 +609,7 @@ function AppRoutes() {
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
         {/* /business-intelligence now handled by /insights/intelligence */}
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/onboarding" element={<Navigate to="/dashboard" replace />} />
         <Route path="/setup/food-safety" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafetyEntry /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/setup/food-safety/:locationId" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafety /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
