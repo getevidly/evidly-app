@@ -39,6 +39,7 @@ import {
 } from './shared/insights';
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
 import { MetricCardRow } from './shared/MetricCardRow';
+import { RiskFreeWidget } from './RiskFreeWidget';
 
 
 // ================================================================
@@ -162,6 +163,11 @@ export default function OwnerOperatorDashboard() {
 
   return (
     <div style={{ ...FONT, backgroundColor: '#FAF7F0', minHeight: '100vh', paddingBottom: 80 }}>
+
+      {/* Risk-Free Guarantee banner — transient, above all other content */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4">
+        <RiskFreeWidget />
+      </div>
 
       {/* Error state */}
       {error && (

@@ -18,6 +18,7 @@ import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import { MetricCardRow } from './shared/MetricCardRow';
 import { useAuth } from '../../contexts/AuthContext';
+import { RiskFreeWidget } from './RiskFreeWidget';
 
 
 export default function ExecutiveDashboard() {
@@ -66,6 +67,11 @@ export default function ExecutiveDashboard() {
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
+
+      {/* Risk-Free Guarantee banner — transient, above all other content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
+        <RiskFreeWidget />
+      </div>
 
       {/* 1. HERO */}
       <DashboardHero

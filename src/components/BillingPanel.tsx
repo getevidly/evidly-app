@@ -5,12 +5,16 @@ import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { PLANS, createCheckoutSession, createPortalSession, type Plan } from '../lib/stripe';
+import { useRiskFreeEligibility } from '../hooks/api/useRiskFreeEligibility';
+import { RiskFreeStatusModal } from './RiskFreeStatusModal';
 
 export function BillingPanel() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const [loading, setLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [showRiskFreeModal, setShowRiskFreeModal] = useState(false);
+  const { data: riskFreeEligibility } = useRiskFreeEligibility();
 
   // Read current plan from profile — no 'free' or 'trial' state exists
   const currentPlan = (profile as any)?.plan || 'founder_single';
@@ -114,10 +118,20 @@ export function BillingPanel() {
         <div className="flex items-start gap-3">
           <EvidlyIcon size={20} className="flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>45-Day Risk-Free Guarantee</p>
+            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>60-Day Risk-Free Guarantee</p>
             <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
-              Complete account setup within 15 days of signup. If dissatisfied within 45 days of your first payment, request a full refund.
+              Complete account setup within 15 days of signup. Use the platform for 45 days. If dissatisfied within 60 days, request a 100% refund of subscription fees. Setup fees ($250 Founder / $500 Standard) are non-refundable.
             </p>
+            {riskFreeEligibility && (
+              <button
+                type="button"
+                onClick={() => setShowRiskFreeModal(true)}
+                className="mt-2 text-xs font-semibold hover:underline transition-colors"
+                style={{ color: '#1E2D4D', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Check My Risk-Free Status &rarr;
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -225,6 +239,12 @@ export function BillingPanel() {
           </button>
         </div>
       )}
+
+      <RiskFreeStatusModal
+        isOpen={showRiskFreeModal}
+        onClose={() => setShowRiskFreeModal(false)}
+        eligibility={riskFreeEligibility}
+      />
     </div>
   );
 }

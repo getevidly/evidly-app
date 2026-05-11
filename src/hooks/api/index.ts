@@ -284,3 +284,7 @@ export type {
   InvestigateInput,
 } from './useIncidents';
 
+// Risk-Free Eligibility
+export { useRiskFreeEligibility } from './useRiskFreeEligibility';
+export type { RiskFreeEligibility } from './useRiskFreeEligibility';
+
