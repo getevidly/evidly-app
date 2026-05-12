@@ -13,6 +13,7 @@ import { DocumentsList } from '../components/documents/DocumentsList';
 import { EmptyTabContent } from '../components/documents/EmptyTabContent';
 import { DocumentDetailModal } from '../components/documents/modals/DocumentDetailModal';
 import { SendToThirdPartyModal } from '../components/documents/modals/SendToThirdPartyModal';
+import { AddVendorDocumentModal } from '../components/documents/modals/AddVendorDocumentModal';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 
 const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
@@ -49,6 +50,7 @@ export function DocumentsPage() {
   const [openDoc, setOpenDoc] = useState<EnrichedDocument | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [showSendWizard, setShowSendWizard] = useState(false);
+  const [showAddVendorDoc, setShowAddVendorDoc] = useState(false);
 
   const handleTabChange = useCallback((tab: DocumentTabId) => {
     setSearchParams({ tab });
@@ -169,6 +171,7 @@ export function DocumentsPage() {
         locations={locations}
         vendors={vendors}
         onUpload={() => setShowUpload(true)}
+        onAddVendorDoc={() => setShowAddVendorDoc(true)}
       />
 
       {loading ? (
@@ -176,7 +179,7 @@ export function DocumentsPage() {
       ) : hasAnyTabDocs ? (
         <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
       ) : (
-        <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} />
+        <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />
       )}
 
       {openDoc && (
@@ -192,6 +195,14 @@ export function DocumentsPage() {
 
       {showSendWizard && (
         <SendToThirdPartyModal onClose={() => setShowSendWizard(false)} />
+      )}
+
+      {showAddVendorDoc && (
+        <AddVendorDocumentModal
+          onClose={() => setShowAddVendorDoc(false)}
+          onUploadSelf={() => { setShowAddVendorDoc(false); setShowUpload(true); }}
+          onSendToVendor={() => { setShowAddVendorDoc(false); setShowSendWizard(true); }}
+        />
       )}
     </>
   );

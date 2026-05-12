@@ -1,4 +1,4 @@
-import { Search, Upload } from 'lucide-react';
+import { Search, Upload, Plus } from 'lucide-react';
 import type { DocumentTabId } from './DocumentsTabs';
 
 interface DocumentsToolbarProps {
@@ -14,6 +14,7 @@ interface DocumentsToolbarProps {
   locations: string[];
   vendors: string[];
   onUpload: () => void;
+  onAddVendorDoc: () => void;
 }
 
 const selectClass =
@@ -32,6 +33,7 @@ export function DocumentsToolbar({
   locations,
   vendors,
   onUpload,
+  onAddVendorDoc,
 }: DocumentsToolbarProps) {
   const showVendor = activeTab === 'service' || activeTab === 'business';
 
@@ -86,15 +88,27 @@ export function DocumentsToolbar({
         <option value="overdue">Overdue</option>
       </select>
 
-      <button
-        type="button"
-        onClick={onUpload}
-        className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
-        style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-      >
-        <Upload size={14} />
-        Upload Document
-      </button>
+      {activeTab === 'kitchen' ? (
+        <button
+          type="button"
+          onClick={onUpload}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
+          style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+        >
+          <Upload size={14} />
+          Upload Document
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={onAddVendorDoc}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
+          style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+        >
+          <Plus size={14} />
+          Add Document
+        </button>
+      )}
     </div>
   );
 }

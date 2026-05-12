@@ -4,28 +4,30 @@ import type { DocumentTabId } from './DocumentsTabs';
 interface EmptyTabContentProps {
   activeTab: DocumentTabId;
   onUpload: () => void;
+  onAddVendorDoc: () => void;
 }
 
-const TAB_EMPTY: Record<DocumentTabId, { message: string; cta: string; icon: 'upload' | 'request' }> = {
+const TAB_EMPTY: Record<DocumentTabId, { message: string; cta: string; icon: 'upload' | 'send' }> = {
   kitchen: {
     message: 'Upload your first kitchen record to start tracking.',
-    cta: 'Upload Document',
+    cta: 'Upload document',
     icon: 'upload',
   },
   service: {
-    message: 'Request a service record from a vendor.',
-    cta: 'Request from vendor',
-    icon: 'request',
+    message: 'Service records arrive here when vendors submit them.',
+    cta: 'Send to vendor',
+    icon: 'send',
   },
   business: {
-    message: 'Request vendor business records (COI, W-9, etc).',
-    cta: 'Request from vendor',
-    icon: 'request',
+    message: 'Vendor business records (COI, W-9, license) land here.',
+    cta: 'Send to vendor',
+    icon: 'send',
   },
 };
 
-export function EmptyTabContent({ activeTab, onUpload }: EmptyTabContentProps) {
+export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc }: EmptyTabContentProps) {
   const { message, cta, icon } = TAB_EMPTY[activeTab];
+  const handler = activeTab === 'kitchen' ? onUpload : onAddVendorDoc;
 
   return (
     <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
@@ -33,7 +35,7 @@ export function EmptyTabContent({ activeTab, onUpload }: EmptyTabContentProps) {
       <p className="text-[13px] text-[#8A93A6] mb-4">{message}</p>
       <button
         type="button"
-        onClick={onUpload}
+        onClick={handler}
         className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
         style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
       >
