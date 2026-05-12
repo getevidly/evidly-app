@@ -18,9 +18,10 @@ interface PillarSectionProps {
 export function PillarSection({ pillar, requirements, choices, suggestions, missingRoles, onChoose, onBulkApply }: PillarSectionProps) {
   const committedCount = requirements.filter(r => choices[r.requirement_code] !== null && choices[r.requirement_code] !== undefined).length;
 
-  // Show banners only for suggestions matching this pillar's requirements
-  const pillarSuggestions = suggestions.filter(s =>
-    requirements.some(r => r.typical_role === s.role && !choices[r.requirement_code])
+  // Suggestions are already scoped to this pillar by the hook.
+  // Only show banners for roles that still have uncommitted items in this pillar.
+  const activeSuggestions = suggestions.filter(s =>
+    s.pendingItems.some(item => !choices[item.requirement_code])
   );
 
   return (
@@ -33,7 +34,7 @@ export function PillarSection({ pillar, requirements, choices, suggestions, miss
         />
       </div>
 
-      {pillarSuggestions.map(suggestion => (
+      {activeSuggestions.map(suggestion => (
         <BulkApplyBanner
           key={suggestion.role}
           suggestion={suggestion}

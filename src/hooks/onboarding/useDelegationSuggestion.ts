@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTeamRoles } from './useTeamRoles';
 import { usePillarRequirements, type PillarRequirement } from './usePillarRequirements';
 
@@ -10,7 +10,8 @@ export interface DelegationSuggestion {
 }
 
 interface UseDelegationSuggestionReturn {
-  suggestions: DelegationSuggestion[];
+  /** Get suggestions scoped to a single pillar (>=3 threshold) */
+  getSuggestionsForPillar: (pillar: 'food_safety' | 'fire_safety') => DelegationSuggestion[];
   hasSuggestions: boolean;
   /** Roles that have no active member or pending invite */
   missingRoles: string[];
@@ -31,10 +32,10 @@ const ROLE_LABELS: Record<string, string> = {
 
 /**
  * Identifies roles that have 3+ pending onboarding items assigned to them
- * but no team member filling that role. Returns invite suggestions.
+ * within a SINGLE pillar, but no team member filling that role.
  *
- * Rule: If 3+ items share a missing typical_role, show an invite banner
- * for that role during onboarding.
+ * Scoping rule: counts are per-pillar, not global. A role must have >=3
+ * items within the requested pillar to trigger a banner.
  */
 export function useDelegationSuggestion(): UseDelegationSuggestionReturn {
   const { missingRoles, filledRoles, loading: teamLoading } = useTeamRoles();
@@ -42,30 +43,39 @@ export function useDelegationSuggestion(): UseDelegationSuggestionReturn {
 
   const loading = teamLoading || reqLoading;
 
-  const suggestions = useMemo(() => {
-    if (loading || requirements.length === 0) return [];
+  const getSuggestionsForPillar = useCallback(
+    (pillar: 'food_safety' | 'fire_safety'): DelegationSuggestion[] => {
+      if (loading || requirements.length === 0) return [];
 
-    const result: DelegationSuggestion[] = [];
+      const pillarReqs = requirements.filter(r => r.pillar === pillar);
+      const result: DelegationSuggestion[] = [];
 
-    for (const role of missingRoles) {
-      const items = requirements.filter(r => r.typical_role === role);
-      if (items.length >= 3) {
-        result.push({
-          role,
-          roleLabel: ROLE_LABELS[role] || role,
-          pendingItems: items,
-          count: items.length,
-        });
+      for (const role of missingRoles) {
+        const items = pillarReqs.filter(r => r.typical_role === role);
+        if (items.length >= 3) {
+          result.push({
+            role,
+            roleLabel: ROLE_LABELS[role] || role,
+            pendingItems: items,
+            count: items.length,
+          });
+        }
       }
-    }
 
-    // Sort by most items first
-    return result.sort((a, b) => b.count - a.count);
-  }, [missingRoles, requirements, loading]);
+      return result.sort((a, b) => b.count - a.count);
+    },
+    [missingRoles, requirements, loading]
+  );
+
+  // hasSuggestions = true if either pillar has at least one suggestion
+  const hasSuggestions = useMemo(() => {
+    return getSuggestionsForPillar('food_safety').length > 0
+      || getSuggestionsForPillar('fire_safety').length > 0;
+  }, [getSuggestionsForPillar]);
 
   return {
-    suggestions,
-    hasSuggestions: suggestions.length > 0,
+    getSuggestionsForPillar,
+    hasSuggestions,
     missingRoles,
     filledRoles,
     loading,
