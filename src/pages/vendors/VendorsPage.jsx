@@ -45,13 +45,13 @@ export default function VendorsPage() {
           className="uppercase tracking-wider mb-1"
           style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
         >
-          Vendor management
+          Vendor network
         </p>
         <h1
           className="leading-tight"
           style={{ fontSize: '22px', fontWeight: 500, color: '#1E2D4D' }}
         >
-          Vendors
+          Vendor Network
         </h1>
       </div>
 
