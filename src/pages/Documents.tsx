@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Layout } from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { uploadFile, BUCKETS } from '../lib/storage';
@@ -149,7 +148,7 @@ export function DocumentsPage() {
   const hasAnyTabDocs = tabDocs.length > 0;
 
   return (
-    <Layout title="Documents">
+    <>
       <DocumentsHeader stats={stats} onSendToThirdParty={() => setShowSendWizard(true)} />
       <DocumentsTabs
         activeTab={activeTab}
@@ -194,7 +193,7 @@ export function DocumentsPage() {
       {showSendWizard && (
         <SendToThirdPartyModal onClose={() => setShowSendWizard(false)} />
       )}
-    </Layout>
+    </>
   );
 }
 
