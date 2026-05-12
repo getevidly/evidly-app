@@ -114,6 +114,7 @@ const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m 
 const VendorMigration = lazy(() => import('./pages/VendorMigration').then(m => ({ default: m.VendorMigration })));
 
 
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const TaskManager = lazy(() => import('./pages/TaskManager'));
 const VendorDocumentReview = lazy(() => import('./pages/VendorDocumentReview'));
@@ -609,7 +610,7 @@ function AppRoutes() {
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
         {/* /business-intelligence now handled by /insights/intelligence */}
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/onboarding" element={<Navigate to="/dashboard" replace />} />
+        {/* /onboarding now inside ProtectedLayout */}
         <Route path="/setup/food-safety" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafetyEntry /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/setup/food-safety/:locationId" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafety /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
@@ -621,6 +622,7 @@ function AppRoutes() {
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
+          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/food-safety" element={<Navigate to="/food-safety/overview" replace />} />
           <Route path="/food-safety/overview" element={<FoodSafetyOverview />} />

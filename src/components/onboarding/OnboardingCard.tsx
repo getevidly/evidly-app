@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { usePillarRequirements } from '../../hooks/onboarding/usePillarRequirements';
@@ -19,21 +20,26 @@ export function OnboardingCard() {
 
   const [activeTab, setActiveTab] = useState<OnboardingTabId>('responsibilities');
   const [responsibilitiesLocked, setResponsibilitiesLocked] = useState(false);
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
-  // Check if responsibilities are already locked
+  // Check if responsibilities are already locked + onboarding completed
   useEffect(() => {
     if (!orgId) return;
 
     async function checkLockState() {
       const { data } = await supabase
         .from('organizations')
-        .select('metadata')
+        .select('metadata, onboarding_completed')
         .eq('id', orgId)
         .maybeSingle();
 
       const meta = (data?.metadata as Record<string, unknown>) || {};
       if (meta.responsibilities_locked === true) {
         setResponsibilitiesLocked(true);
+      }
+      if (data?.onboarding_completed === true) {
+        setOnboardingComplete(true);
       }
     }
 
@@ -89,6 +95,23 @@ export function OnboardingCard() {
 
   const { title, subtitle } = headerConfig[activeTab];
 
+  // Auto-collapse when onboarding is complete
+  if (onboardingComplete && collapsed) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] px-4 py-3 flex items-center gap-3">
+        <CheckCircle2 size={18} className="text-[#2E7D32]" />
+        <span className="text-sm font-medium text-[#1E2D4D]">Setup complete</span>
+        <button
+          type="button"
+          onClick={() => setCollapsed(false)}
+          className="ml-auto text-xs text-[#1E2D4D] hover:underline"
+        >
+          Expand
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] overflow-hidden flex flex-col max-h-[80vh]">
       <OnboardingHeader title={title} subtitle={subtitle} progress={progressText} />
@@ -105,7 +128,7 @@ export function OnboardingCard() {
           />
         )}
         {activeTab === 'summary' && (
-          <SummaryTab />
+          <SummaryTab onSwitchToResponsibilities={() => setActiveTab('responsibilities')} />
         )}
       </div>
     </div>

@@ -6,6 +6,7 @@ import { uploadFile, BUCKETS, getSignedUrl } from '../../../../lib/storage';
 import { supabase } from '../../../../lib/supabase';
 import { toast } from 'sonner';
 import { REQUIREMENT_TO_DOC_CATEGORY } from '../workConstants';
+import { evaluateOnboardingComplete } from '../../../../lib/onboarding/completionDetection';
 import type { PillarRequirement } from '../../../../hooks/onboarding/usePillarRequirements';
 
 interface UploadDocumentModalProps {
@@ -135,6 +136,7 @@ export function UploadDocumentModal({ isOpen, onClose, requirement, organization
       }
 
       toast.success(`${requirement.label} uploaded`);
+      evaluateOnboardingComplete(organizationId);
       resetState();
       onComplete();
       onClose();

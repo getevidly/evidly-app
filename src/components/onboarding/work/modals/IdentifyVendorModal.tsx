@@ -5,6 +5,7 @@ import { useCreateVendor } from '../../../../hooks/useCreateVendor';
 import { toast } from 'sonner';
 import { Building2, Search, AlertTriangle, ChevronRight } from 'lucide-react';
 import { REQUIREMENT_TO_SERVICE_CODE, REQUIREMENT_TO_VENDOR_SERVICE, FREQUENCY_OPTIONS } from '../workConstants';
+import { evaluateOnboardingComplete } from '../../../../lib/onboarding/completionDetection';
 import type { PillarRequirement } from '../../../../hooks/onboarding/usePillarRequirements';
 
 interface IdentifyVendorModalProps {
@@ -204,6 +205,7 @@ function PathAForm({ requirement, organizationId, onComplete, onClose, onRequest
     }
 
     toast.success(`${companyName} added as your vendor`);
+    evaluateOnboardingComplete(organizationId);
     onComplete();
     onClose();
   }, [companyName, contactEmail, phone, frequency, requestCOI, requirement, organizationId, createVendor, onComplete, onClose, onRequestCOI]);
@@ -311,6 +313,7 @@ function PathBList({ requirement, organizationId, onComplete, onClose }: {
 
     const vendor = vendors.find(v => v.id === vendorId);
     toast.success(`${vendor?.company_name || 'Vendor'} selected`);
+    evaluateOnboardingComplete(organizationId);
     setSelecting(null);
     onComplete();
     onClose();

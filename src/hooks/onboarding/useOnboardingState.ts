@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePillarRequirements, type PillarRequirement } from './usePillarRequirements';
 import { REQUIREMENT_TO_SERVICE_CODE } from '../../components/onboarding/work/workConstants';
+import { evaluateOnboardingComplete } from '../../lib/onboarding/completionDetection';
 
 export type RequirementStatus = 'done' | 'pending' | 'skipped';
 
@@ -201,6 +202,7 @@ export function useOnboardingState(): UseOnboardingStateReturn {
       .from('organizations')
       .update({ onboarding_skipped_items: updated })
       .eq('id', orgId);
+    evaluateOnboardingComplete(orgId);
   }, [orgId, skippedItems]);
 
   const unskipItem = useCallback(async (requirementCode: string) => {
