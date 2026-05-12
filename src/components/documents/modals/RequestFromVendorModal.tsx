@@ -4,6 +4,8 @@ import { Send, ChevronRight, User } from 'lucide-react';
 import { Modal } from '../../ui/Modal';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useCreateVendor } from '../../../hooks/useCreateVendor';
+import { VendorCaptureForm, type VendorCaptureData } from '../../vendor/VendorCaptureForm';
 
 interface RequestFromVendorModalProps {
   onClose: () => void;
@@ -66,8 +68,7 @@ export function RequestFromVendorModal({
   const [vendorName, setVendorName] = useState(preSelectedVendor?.name || '');
   const [vendorEmail, setVendorEmail] = useState(preSelectedVendor?.email || '');
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const [customName, setCustomName] = useState('');
-  const [customEmail, setCustomEmail] = useState('');
+  const { createVendor, isLoading: creatingVendor } = useCreateVendor();
 
   // Data
   const [linkedVendors, setLinkedVendors] = useState<LinkedVendor[]>([]);
@@ -163,13 +164,37 @@ export function RequestFromVendorModal({
     setStep(2);
   };
 
-  const submitCustomVendor = () => {
-    if (!customName.trim() || !customEmail.trim()) return;
-    setVendorId('');
-    setVendorName(customName.trim());
-    setVendorEmail(customEmail.trim());
-    setStep(2);
-  };
+  const handleVendorCapture = useCallback(async (data: VendorCaptureData) => {
+    if (!orgId) return;
+    const newId = await createVendor({
+      company_name: data.companyName,
+      contact_name: data.primaryContactName,
+      email: data.primaryContactEmail,
+      phone: data.phone,
+      contact_phone: null,
+      service_type: data.serviceTypeCodes[0] || '',
+      status: 'active',
+      invite_status: 'added',
+      license_cert_number: null,
+      has_insurance_coi: false,
+      notes: data.notes || null,
+      location_ids: null,
+      primary_contact_name: data.primaryContactName,
+      primary_contact_email: data.primaryContactEmail,
+      address: data.address || null,
+      service_area: data.serviceArea || null,
+      service_type_codes: data.serviceTypeCodes,
+    }, orgId);
+
+    if (newId) {
+      setVendorId(newId);
+      setVendorName(data.companyName);
+      setVendorEmail(data.primaryContactEmail);
+      setStep(2);
+    } else {
+      toast.error('Failed to create vendor');
+    }
+  }, [orgId, createVendor]);
 
   const docTypes = sourceTab === 'service' ? SERVICE_DOC_TYPES : BUSINESS_DOC_TYPES;
 
@@ -324,7 +349,7 @@ export function RequestFromVendorModal({
               <div className="text-center py-6 text-[13px] text-[#8A93A6]">Loading vendors\u2026</div>
             )}
 
-            {/* Custom vendor */}
+            {/* Custom vendor — full capture form */}
             {!showCustomForm ? (
               <button
                 type="button"
@@ -335,30 +360,16 @@ export function RequestFromVendorModal({
                 Add a new vendor
               </button>
             ) : (
-              <div className="border border-[#E2DDD4] rounded-md p-3.5 space-y-2.5">
-                <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider">New vendor</div>
-                <input
-                  type="text"
-                  placeholder="Vendor name *"
-                  value={customName}
-                  onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
+              <div className="border border-[#E2DDD4] rounded-md p-3.5">
+                <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2.5">New vendor</div>
+                <VendorCaptureForm
+                  onSubmit={handleVendorCapture}
+                  onCancel={() => setShowCustomForm(false)}
+                  compactMode
+                  orgId={orgId}
+                  submitLabel="Save & continue"
+                  isLoading={creatingVendor}
                 />
-                <input
-                  type="email"
-                  placeholder="Vendor email *"
-                  value={customEmail}
-                  onChange={(e) => setCustomEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
-                />
-                <button
-                  type="button"
-                  onClick={submitCustomVendor}
-                  disabled={!customName.trim() || !customEmail.trim()}
-                  className="px-4 py-2 bg-[#1E2D4D] text-[#FAF7F0] text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-40"
-                >
-                  Continue {'\u2192'}
-                </button>
               </div>
             )}
           </>

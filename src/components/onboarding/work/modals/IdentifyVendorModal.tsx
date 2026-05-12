@@ -4,8 +4,9 @@ import { supabase } from '../../../../lib/supabase';
 import { useCreateVendor } from '../../../../hooks/useCreateVendor';
 import { toast } from 'sonner';
 import { Building2, Search, AlertTriangle, ChevronRight } from 'lucide-react';
-import { REQUIREMENT_TO_SERVICE_CODE, REQUIREMENT_TO_VENDOR_SERVICE, FREQUENCY_OPTIONS } from '../workConstants';
+import { REQUIREMENT_TO_SERVICE_CODE, REQUIREMENT_TO_VENDOR_SERVICE } from '../workConstants';
 import { evaluateOnboardingComplete } from '../../../../lib/onboarding/completionDetection';
+import { VendorCaptureForm, type VendorCaptureData } from '../../../vendor/VendorCaptureForm';
 import type { PillarRequirement } from '../../../../hooks/onboarding/usePillarRequirements';
 
 interface IdentifyVendorModalProps {
@@ -132,7 +133,7 @@ function OptionCard({ icon, title, isSelected, onClick }: {
   );
 }
 
-/** Path A — enter vendor info manually */
+/** Path A — enter vendor info via shared capture form */
 function PathAForm({ requirement, organizationId, onComplete, onClose, onRequestCOI }: {
   requirement: PillarRequirement;
   organizationId: string;
@@ -141,34 +142,29 @@ function PathAForm({ requirement, organizationId, onComplete, onClose, onRequest
   onRequestCOI?: (vendorId: string, vendorEmail: string, vendorName: string) => void;
 }) {
   const { createVendor, isLoading } = useCreateVendor();
-  const [companyName, setCompanyName] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [frequency, setFrequency] = useState('quarterly');
-  const [requestCOI, setRequestCOI] = useState(false);
 
-  const handleSubmit = useCallback(async () => {
-    if (!companyName.trim() || !contactEmail.trim()) {
-      toast.error('Company name and email are required');
-      return;
-    }
-
+  const handleSubmit = useCallback(async (data: VendorCaptureData) => {
     const serviceTerms = REQUIREMENT_TO_VENDOR_SERVICE[requirement.requirement_code];
-    const serviceType = serviceTerms?.[0] || requirement.label;
+    const serviceType = data.serviceTypeCodes[0] || serviceTerms?.[0] || requirement.label;
 
     const vendorId = await createVendor({
-      company_name: companyName.trim(),
-      contact_name: '',
-      email: contactEmail.trim(),
-      phone: phone.trim() || null,
+      company_name: data.companyName,
+      contact_name: data.primaryContactName,
+      email: data.primaryContactEmail,
+      phone: data.phone || null,
       contact_phone: null,
       service_type: serviceType,
       status: 'active',
       invite_status: 'added',
       license_cert_number: null,
       has_insurance_coi: false,
-      notes: null,
+      notes: data.notes || null,
       location_ids: null,
+      primary_contact_name: data.primaryContactName,
+      primary_contact_email: data.primaryContactEmail,
+      address: data.address || null,
+      service_area: data.serviceArea || null,
+      service_type_codes: data.serviceTypeCodes,
     }, organizationId);
 
     if (!vendorId) {
@@ -192,7 +188,7 @@ function PathAForm({ requirement, organizationId, onComplete, onClose, onRequest
         location_id: locData.id,
         vendor_id: vendorId,
         service_type_code: serviceCode,
-        frequency,
+        frequency: 'quarterly',
         is_active: true,
       }, { onConflict: 'organization_id,location_id,service_type_code' });
     } else if (!locData?.id) {
@@ -200,51 +196,26 @@ function PathAForm({ requirement, organizationId, onComplete, onClose, onRequest
     }
 
     // COI request
-    if (requestCOI && onRequestCOI) {
-      onRequestCOI(vendorId, contactEmail.trim(), companyName.trim());
+    if (onRequestCOI) {
+      onRequestCOI(vendorId, data.primaryContactEmail, data.companyName);
     }
 
-    toast.success(`${companyName} added as your vendor`);
+    toast.success(`${data.companyName} added as your vendor`);
     evaluateOnboardingComplete(organizationId);
     onComplete();
     onClose();
-  }, [companyName, contactEmail, phone, frequency, requestCOI, requirement, organizationId, createVendor, onComplete, onClose, onRequestCOI]);
+  }, [requirement, organizationId, createVendor, onComplete, onClose, onRequestCOI]);
 
   return (
-    <div className="ml-4 pl-4 border-l-2 border-[#E2DDD4] space-y-3 py-2">
-      <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#8A93A6] font-medium">Company name *</label>
-        <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)}
-          className="w-full mt-0.5 px-3 py-1.5 text-sm border border-[#E2DDD4] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30 text-[#1E2D4D]"
-          placeholder="e.g. Bay Area Hood Cleaning" />
-      </div>
-      <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#8A93A6] font-medium">Contact email *</label>
-        <input type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)}
-          className="w-full mt-0.5 px-3 py-1.5 text-sm border border-[#E2DDD4] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30 text-[#1E2D4D]"
-          placeholder="vendor@example.com" />
-      </div>
-      <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#8A93A6] font-medium">Phone (optional)</label>
-        <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-          className="w-full mt-0.5 px-3 py-1.5 text-sm border border-[#E2DDD4] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30 text-[#1E2D4D]" />
-      </div>
-      <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#8A93A6] font-medium">Service frequency</label>
-        <select value={frequency} onChange={e => setFrequency(e.target.value)}
-          className="w-full mt-0.5 px-3 py-1.5 text-sm border border-[#E2DDD4] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30 text-[#1E2D4D] bg-white">
-          {FREQUENCY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-      </div>
-      <label className="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" checked={requestCOI} onChange={e => setRequestCOI(e.target.checked)}
-          className="rounded border-[#E2DDD4]" />
-        <span className="text-xs text-[#1E2D4D]">Request proof of insurance now</span>
-      </label>
-      <button type="button" onClick={handleSubmit} disabled={isLoading || !companyName.trim() || !contactEmail.trim()}
-        className="w-full px-4 py-2.5 bg-[#1E2D4D] text-[#FAF7F0] text-sm font-medium rounded-lg hover:bg-[#1E2D4D]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-        {isLoading ? 'Saving...' : 'Save vendor'}
-      </button>
+    <div className="ml-4 pl-4 border-l-2 border-[#E2DDD4] py-2">
+      <VendorCaptureForm
+        onSubmit={handleSubmit}
+        onCancel={onClose}
+        compactMode
+        orgId={organizationId}
+        submitLabel="Save vendor"
+        isLoading={isLoading}
+      />
     </div>
   );
 }

@@ -21,6 +21,11 @@ interface VendorInsert {
   has_insurance_coi: boolean;
   notes: string | null;
   location_ids: string[] | null;
+  primary_contact_name?: string | null;
+  primary_contact_email?: string | null;
+  address?: string | null;
+  service_area?: string | null;
+  service_type_codes?: string[] | null;
 }
 
 export function useCreateVendor() {

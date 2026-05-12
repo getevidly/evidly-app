@@ -7,9 +7,9 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { id: 'kitchen',  label: 'Kitchen & Employee', desc: 'Health permits, food handler cards, ServSafe certs, and employee records.' },
-  { id: 'service',  label: 'Vendor Service',     desc: 'Hood cleaning reports, fire suppression tests, pest control, and grease trap logs.' },
-  { id: 'business', label: 'Vendor Business',    desc: 'COIs, W-9s, business licenses, and MSAs from your vendors.' },
+  { id: 'kitchen',  label: 'Kitchen & Employee',         desc: 'Health permits, food handler cards, ServSafe certs, and employee records.' },
+  { id: 'service',  label: 'Vendor Service Records',     desc: 'Hood cleaning reports, fire suppression tests, pest control, grease trap logs, and fan performance records.' },
+  { id: 'business', label: 'Vendor Business Information', desc: 'Vendor compliance posture \u2014 COI, W-9, licenses, workers comp.' },
 ];
 
 interface DocumentsTabsProps {

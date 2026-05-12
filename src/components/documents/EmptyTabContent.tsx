@@ -14,14 +14,14 @@ const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta
     icon: 'upload',
   },
   service: {
-    message: 'Service records arrive here when vendors submit them.',
-    subtitle: 'EvidLY watches for hood cleaning reports, suppression tests, pest control logs, and more \u2014 and tells you what\u2019s missing.',
+    message: 'Track your vendors\u2019 service work',
+    subtitle: 'EvidLY watches for hood cleaning reports, suppression tests, pest control logs, fire alarm inspections \u2014 and tells you what\u2019s missing.',
     cta: 'Request from vendor',
     icon: 'send',
   },
   business: {
-    message: 'Vendor business records (COI, W-9, license) land here.',
-    subtitle: 'EvidLY tracks COI expirations, surfaces vendors missing required documents, and alerts you before coverage gaps.',
+    message: 'Track your vendors\u2019 business compliance',
+    subtitle: 'EvidLY requests COIs, W-9s, and licenses directly from your vendors \u2014 and alerts you before coverage gaps.',
     cta: 'Request from vendor',
     icon: 'send',
   },

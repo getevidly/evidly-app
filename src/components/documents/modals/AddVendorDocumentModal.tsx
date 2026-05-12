@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Upload, Send, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Upload, Send, Users, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import { Modal } from '../../ui/Modal';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
+import { useCreateVendor } from '../../../hooks/useCreateVendor';
+import { VendorCaptureForm, type VendorCaptureData } from '../../vendor/VendorCaptureForm';
 
 interface PreSelectedVendor {
   id: string;
@@ -30,6 +33,8 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
   const [linkedVendors, setLinkedVendors] = useState<LinkedVendor[]>([]);
   const [expandedC, setExpandedC] = useState(false);
   const [loadingVendors, setLoadingVendors] = useState(true);
+  const [showNewVendorForm, setShowNewVendorForm] = useState(false);
+  const { createVendor, isLoading: creatingVendor } = useCreateVendor();
 
   useEffect(() => {
     if (!orgId) { setLoadingVendors(false); return; }
@@ -58,6 +63,36 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
         setLoadingVendors(false);
       });
   }, [orgId]);
+
+  async function handleNewVendorCapture(data: VendorCaptureData) {
+    if (!orgId) return;
+    const newId = await createVendor({
+      company_name: data.companyName,
+      contact_name: data.primaryContactName,
+      email: data.primaryContactEmail,
+      phone: data.phone,
+      contact_phone: null,
+      service_type: data.serviceTypeCodes[0] || '',
+      status: 'active',
+      invite_status: 'added',
+      license_cert_number: null,
+      has_insurance_coi: false,
+      notes: data.notes || null,
+      location_ids: null,
+      primary_contact_name: data.primaryContactName,
+      primary_contact_email: data.primaryContactEmail,
+      address: data.address || null,
+      service_area: data.serviceArea || null,
+      service_type_codes: data.serviceTypeCodes,
+    }, orgId);
+
+    if (newId) {
+      onClose();
+      onRequestFromVendor({ id: newId, name: data.companyName, email: data.primaryContactEmail });
+    } else {
+      toast.error('Failed to create vendor');
+    }
+  }
 
   function fmtDate(iso: string | null): string {
     if (!iso) return 'No service logged';
@@ -133,6 +168,29 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
                     </button>
                   </div>
                 ))}
+
+                {/* Add new vendor inline */}
+                {!showNewVendorForm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowNewVendorForm(true)}
+                    className="w-full flex items-center gap-2 py-2 px-2 text-[12px] font-semibold text-[#1E2D4D] rounded hover:bg-[#FAF7F0] transition-colors border-t border-dashed border-[#E2DDD4] mt-1.5 pt-2.5"
+                  >
+                    <Plus size={12} />
+                    Add a new vendor
+                  </button>
+                ) : (
+                  <div className="border-t border-dashed border-[#E2DDD4] mt-1.5 pt-3">
+                    <VendorCaptureForm
+                      onSubmit={handleNewVendorCapture}
+                      onCancel={() => setShowNewVendorForm(false)}
+                      compactMode
+                      orgId={orgId}
+                      submitLabel="Save & request"
+                      isLoading={creatingVendor}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
