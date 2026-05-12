@@ -608,7 +608,7 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
   },
   {
     role: 'compliance_manager',
-    label: 'Compliance Manager',
+    label: 'Compliance Officer',
     description: 'Food safety scoring, self-inspections, regulatory tracking',
     i18nKey: 'topBar.complianceManager',
     i18nDescKey: 'topBar.roleDescComplianceManager',

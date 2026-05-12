@@ -705,7 +705,7 @@ const en = {
     kitchenManager: 'Kitchen Manager',
     kitchenStaff: 'Kitchen Staff',
     facilitiesManager: 'Facilities Manager',
-    complianceManager: 'Compliance Manager',
+    complianceManager: 'Compliance Officer',
     chef: 'Chef',
     updatePassword: 'Update Password',
     updateYourPassword: 'Update your account password',

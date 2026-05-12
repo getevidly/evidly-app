@@ -22,7 +22,7 @@ const ROLE_LABELS: Record<string, string> = {
   platform_admin: 'Platform Admin',
   owner_operator: 'Owner / Operator',
   executive: 'Executive',
-  compliance_manager: 'Compliance Manager',
+  compliance_manager: 'Compliance Officer',
   chef: 'Chef',
   facilities_manager: 'Facilities Manager',
   kitchen_manager: 'Kitchen Manager',

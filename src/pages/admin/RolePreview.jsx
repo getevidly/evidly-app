@@ -430,7 +430,7 @@ const PD={
     ["Role Configuration",null,
       ["d","🔑","Owner / Operator","1 user · Full access — all locations, all reports, billing",null,null,"Edit"],
       ["d","🔑","Executive","1 user · Read-only portfolio view, no configuration",null,null,"Edit"],
-      ["d","🔑","Compliance Manager","1 user · Compliance data, inspection records, violations",null,null,"Edit"],
+      ["d","🔑","Compliance Officer","1 user · Compliance data, inspection records, violations",null,null,"Edit"],
       ["d","🔑","Facilities Manager","1 user · Equipment, fire safety, vendor records",null,null,"Edit"],
       ["d","🔑","Chef","1 user · Food safety, temp logs, HACCP checklists",null,null,"Edit"],
       ["d","🔑","Kitchen Manager","1 user · Daily ops, staff tasks, checklists",null,null,"Edit"],
@@ -678,7 +678,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
 const ROLES=[
   {id:"owner_operator",lbl:"Owner / Operator",desc:"Full access — all locations, all reports, billing"},
   {id:"executive",lbl:"Executive",desc:"Read-only portfolio view, no configuration"},
-  {id:"compliance_manager",lbl:"Compliance Manager",desc:"Compliance data, inspection records, violations"},
+  {id:"compliance_manager",lbl:"Compliance Officer",desc:"Compliance data, inspection records, violations"},
   {id:"facilities",lbl:"Facilities Manager",desc:"Equipment, fire safety, vendor records"},
   {id:"chef",lbl:"Chef",desc:"Food safety, temp logs, HACCP checklists"},
   {id:"kitchen_manager",lbl:"Kitchen Manager",desc:"Daily ops, staff tasks, checklists"},
