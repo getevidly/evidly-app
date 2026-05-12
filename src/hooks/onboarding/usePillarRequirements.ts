@@ -10,7 +10,7 @@ export interface PillarRequirement {
   label: string;
   description: string | null;
   citation: string | null;
-  action_type: 'upload' | 'route_out' | 'confirm' | 'invite';
+  action_type: 'upload' | 'route_out' | 'confirm' | 'invite' | 'identify_vendor';
   typical_role: string;
   sort_order: number;
 }

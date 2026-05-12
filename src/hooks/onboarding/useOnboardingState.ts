@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePillarRequirements, type PillarRequirement } from './usePillarRequirements';
+import { REQUIREMENT_TO_SERVICE_CODE } from '../../components/onboarding/work/workConstants';
 
 export type RequirementStatus = 'done' | 'pending' | 'skipped';
 
@@ -126,6 +127,22 @@ export function useOnboardingState(): UseOnboardingStateReturn {
             // Confirm items are "done" when explicitly confirmed via skipped_items
             // (confirm = user clicks "I have this" without uploading)
             map[req.requirement_code] = skipped.includes(req.requirement_code);
+            break;
+          }
+          case 'identify_vendor': {
+            const serviceCode = REQUIREMENT_TO_SERVICE_CODE[req.requirement_code];
+            if (!serviceCode) {
+              map[req.requirement_code] = false;
+              break;
+            }
+            const { count: schedCount } = await supabase
+              .from('location_service_schedules')
+              .select('id', { count: 'exact', head: true })
+              .eq('organization_id', orgId)
+              .eq('service_type_code', serviceCode)
+              .not('vendor_id', 'is', null);
+            if (cancelled) return;
+            map[req.requirement_code] = (schedCount ?? 0) > 0;
             break;
           }
           case 'invite': {
