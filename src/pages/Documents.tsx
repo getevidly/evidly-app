@@ -6,11 +6,17 @@ import { supabase } from '../lib/supabase';
 import { uploadFile, BUCKETS } from '../lib/storage';
 import { useDocumentsByTab, type EnrichedDocument } from '../hooks/documents/useDocumentsByTab';
 import { computeStats } from '../hooks/documents/useDocumentsStats';
+import { useVendorBusinessIntelligence } from '../hooks/documents/useVendorBusinessIntelligence';
+import { useVendorServiceIntelligence } from '../hooks/documents/useVendorServiceIntelligence';
+import { useKitchenEmployeeIntelligence } from '../hooks/documents/useKitchenEmployeeIntelligence';
 import { DocumentsHeader } from '../components/documents/DocumentsHeader';
 import { DocumentsTabs, type DocumentTabId } from '../components/documents/DocumentsTabs';
 import { DocumentsToolbar } from '../components/documents/DocumentsToolbar';
 import { DocumentsList } from '../components/documents/DocumentsList';
 import { EmptyTabContent } from '../components/documents/EmptyTabContent';
+import { VendorBusinessIntelligenceState } from '../components/documents/VendorBusinessIntelligenceState';
+import { VendorServiceIntelligenceState } from '../components/documents/VendorServiceIntelligenceState';
+import { KitchenEmployeeIntelligenceBanner } from '../components/documents/KitchenEmployeeIntelligenceBanner';
 import { DocumentDetailModal } from '../components/documents/modals/DocumentDetailModal';
 import { SendToThirdPartyModal } from '../components/documents/modals/SendToThirdPartyModal';
 import { AddVendorDocumentModal } from '../components/documents/modals/AddVendorDocumentModal';
@@ -41,7 +47,12 @@ export function DocumentsPage() {
 
   const { documents, loading, refetch } = useDocumentsByTab(orgId);
 
-  // Filter + search state (reset on tab change)
+  // Intelligence hooks
+  const businessIntel = useVendorBusinessIntelligence(orgId);
+  const serviceIntel = useVendorServiceIntelligence(orgId);
+  const kitchenIntel = useKitchenEmployeeIntelligence(documents);
+
+  // Filter + search state
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
@@ -115,7 +126,7 @@ export function DocumentsPage() {
     return Array.from(set).sort();
   }, [tabDocs]);
 
-  // SmartUploadModal onSave: upload to storage + INSERT into compliance_documents
+  // SmartUploadModal onSave
   const handleUploadSave = useCallback(async (files: ClassifiedFile[]) => {
     setShowUpload(false);
     if (!orgId) return;
@@ -149,8 +160,70 @@ export function DocumentsPage() {
     refetch();
   }, [orgId, refetch]);
 
-  // Has unfiltered data for this tab (to distinguish "no docs at all" vs "no filter match")
+  const openRequestModal = useCallback(() => {
+    setShowAddVendorDoc(false);
+    setShowRequestFromVendor(true);
+  }, []);
+
   const hasAnyTabDocs = tabDocs.length > 0;
+
+  // Render intelligence state for vendor tabs when no docs exist (replaces basic EmptyTabContent)
+  const renderTabContent = () => {
+    if (loading) {
+      return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents{'\u2026'}</div>;
+    }
+
+    // Kitchen tab: show intelligence banner above list when populated
+    if (activeTab === 'kitchen') {
+      if (!hasAnyTabDocs) {
+        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+      }
+      return (
+        <>
+          <KitchenEmployeeIntelligenceBanner intel={kitchenIntel} />
+          <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
+        </>
+      );
+    }
+
+    // Service tab: intelligence state replaces empty, banner above list when populated
+    if (activeTab === 'service') {
+      if (serviceIntel.state === 'empty' || serviceIntel.state === 'no_docs') {
+        return <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} />;
+      }
+      if (!hasAnyTabDocs) {
+        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+      }
+      return (
+        <>
+          {serviceIntel.urgentCount > 0 && (
+            <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} />
+          )}
+          <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
+        </>
+      );
+    }
+
+    // Business tab: same pattern
+    if (activeTab === 'business') {
+      if (businessIntel.state === 'empty' || businessIntel.state === 'no_docs') {
+        return <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} />;
+      }
+      if (!hasAnyTabDocs) {
+        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+      }
+      return (
+        <>
+          {businessIntel.urgentCount > 0 && (
+            <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} />
+          )}
+          <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
+        </>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -177,13 +250,7 @@ export function DocumentsPage() {
         onAddVendorDoc={() => setShowAddVendorDoc(true)}
       />
 
-      {loading ? (
-        <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>
-      ) : hasAnyTabDocs ? (
-        <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
-      ) : (
-        <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />
-      )}
+      {renderTabContent()}
 
       {openDoc && (
         <DocumentDetailModal doc={openDoc} onClose={() => setOpenDoc(null)} onRefresh={refetch} />

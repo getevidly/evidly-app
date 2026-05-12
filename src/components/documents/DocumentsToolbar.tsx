@@ -106,7 +106,7 @@ export function DocumentsToolbar({
           style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
         >
           <Send size={14} />
-          Request from Vendor
+          Send Request
         </button>
       )}
     </div>

@@ -632,7 +632,7 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
   { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '2' },
-  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
+  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Send Request', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
 
   // ─── Location 3 ─── Operational (62/100)
   { status: 'overdue', label: '5 Temperature Checks Missed This Week', impact: '+10 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },

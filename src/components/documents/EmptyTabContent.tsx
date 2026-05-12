@@ -16,13 +16,13 @@ const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta
   service: {
     message: 'Track your vendors\u2019 service work',
     subtitle: 'EvidLY watches for hood cleaning reports, suppression tests, pest control logs, fire alarm inspections \u2014 and tells you what\u2019s missing.',
-    cta: 'Request from vendor',
+    cta: 'Send request',
     icon: 'send',
   },
   business: {
     message: 'Track your vendors\u2019 business compliance',
     subtitle: 'EvidLY requests COIs, W-9s, and licenses directly from your vendors \u2014 and alerts you before coverage gaps.',
-    cta: 'Request from vendor',
+    cta: 'Send request',
     icon: 'send',
   },
 };

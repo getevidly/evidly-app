@@ -322,7 +322,7 @@ export function deriveScoreImpactItems(
       ? 'Vendor Certificates (All Current)'
       : `Vendor Certificates (${snapshot.vendors.overdueVendors} overdue)`,
     impact: `${snapshot.vendors.documentsCurrent} of ${snapshot.vendors.documentsTotal} current`,
-    action: vendorStatus !== 'current' ? 'Request from Vendor' : null,
+    action: vendorStatus !== 'current' ? 'Send Request' : null,
     actionLink: vendorStatus !== 'current' ? '/vendors' : null,
     pillar: 'Food Safety',
     locationId: numericLocId,
