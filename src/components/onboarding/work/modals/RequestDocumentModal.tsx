@@ -44,7 +44,7 @@ export function RequestDocumentModal({
 
     try {
       const secureToken = crypto.randomUUID();
-      const expiresAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
+      const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
       // Step 1: Create placeholder compliance_document with status='requested'
       const { data: doc, error: docErr } = await supabase
@@ -116,7 +116,7 @@ export function RequestDocumentModal({
           Request {requirementLabel} from {vendorName}
         </h2>
         <p className="text-xs text-[#8A93A6] mb-4">
-          EvidLY sends a secure link to the vendor. They can upload directly without creating an account. Link expires in 5 days.
+          EvidLY sends a secure link to the vendor. They can upload directly without creating an account. Link expires in 14 days.
         </p>
 
         <div className="space-y-3">
