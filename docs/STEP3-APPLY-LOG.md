@@ -460,4 +460,177 @@ COMMIT;
 
 ---
 
+## Phase 2 — Schema Gap Closure for Answer-Line Pattern (2026-05-11)
+
+**Source plan:** `docs/PHASE-2-SCHEMA-MIGRATION-PLAN.md`
+**Gaps closed:** G1, G2, G3 (a+b), G4, G7
+
+### Pre-Apply Calendar Context
+
+```
+Calendar.tsx (line 234) queries supabase.from('calendar_events').select('*')
+Error handling: NONE — { data: customCalRes } without error capture
+Fallback: (customCalRes || []) — null response → empty array → empty calendar
+User sees: Calendar grid with zero events (no 404, no error, no mock data)
+M19 impact: Zero change to UX (table created empty → same empty state)
+```
+
+---
+
+### M15 — acknowledged_at on location_service_schedules (G1)
+
+**Applied:** `ALTER TABLE location_service_schedules ADD COLUMN acknowledged_at TIMESTAMPTZ`
+
+**Verification:**
+
+| column_name | data_type | is_nullable |
+|---|---|---|
+| acknowledged_at | timestamp with time zone | YES |
+
+**Result: ✅ PASS**
+
+---
+
+### M16 — deferred_until + deferred_reason on location_service_schedules (G2)
+
+**Applied:** `ALTER TABLE location_service_schedules ADD COLUMN deferred_until DATE, ADD COLUMN deferred_reason TEXT`
+
+**Verification:**
+
+| column_name | data_type | is_nullable |
+|---|---|---|
+| deferred_reason | text | YES |
+| deferred_until | date | YES |
+
+**Result: ✅ PASS**
+
+---
+
+### M17 — completed_count on location_service_schedules (G3a)
+
+**Applied:** `ALTER TABLE location_service_schedules ADD COLUMN completed_count INTEGER NOT NULL DEFAULT 0` + partial index `idx_lss_completed_count_zero`
+
+**Verification (column):**
+
+| column_name | data_type | is_nullable | column_default |
+|---|---|---|---|
+| completed_count | integer | NO | 0 |
+
+**Verification (index):**
+
+| indexname |
+|---|
+| idx_lss_completed_count_zero |
+
+**Result: ✅ PASS**
+
+---
+
+### M18 — completed_count trigger (G3b)
+
+**Applied:** `CREATE FUNCTION fn_update_lss_completed_count()` + `CREATE TRIGGER trg_vsr_completed_count ON vendor_service_records`
+
+**Trigger uses composite key match:** `(organization_id, location_id, service_type_code)` — no `schedule_id` FK exists on vendor_service_records.
+
+**Verification (trigger):**
+
+| tgname | tgenabled |
+|---|---|
+| trg_vsr_completed_count | O |
+
+**Verification (function):**
+
+| proname |
+|---|
+| fn_update_lss_completed_count |
+
+**Functional test:** DO block inserted test LSS row (service_type_code='KEC'), inserted test VSR row (triggered increment), deleted VSR row (triggered decrement), deleted LSS row (cleanup). Block completed without error. 0 test rows remain.
+
+**Result: ✅ PASS**
+
+---
+
+### M19 — CREATE TABLE calendar_events (G4)
+
+**Applied:** Full CREATE TABLE with 17 columns (original + lifecycle), 3 CHECK constraints, RLS policy, 3 indexes.
+
+**CRITICAL:** Table did not previously exist in PROD. Migration `20260301000000_calendar_events.sql` was never applied. M19 supersedes it.
+
+**Verification (columns):** 17 columns confirmed.
+
+**Verification (CHECK constraints):**
+
+| conname | pg_get_constraintdef |
+|---|---|
+| calendar_events_completed_requires_fields | CHECK (status <> 'completed' OR (completed_at IS NOT NULL AND completed_by IS NOT NULL)) |
+| calendar_events_rescheduled_requires_from | CHECK (status <> 'rescheduled' OR rescheduled_from IS NOT NULL) |
+| calendar_events_status_check | CHECK (status IN ('scheduled', 'in_progress', 'completed', 'missed', 'rescheduled')) |
+
+**Verification (RLS):**
+
+| policyname | cmd |
+|---|---|
+| Users can manage calendar events in their org | ALL |
+
+**Verification (indexes):**
+
+| indexname |
+|---|
+| calendar_events_pkey |
+| idx_calendar_events_org_date |
+| idx_calendar_events_org_status |
+
+**Result: ✅ PASS**
+
+---
+
+### M20 — CREATE VIEW v_documents_enriched (G7)
+
+**Applied:** `CREATE VIEW v_documents_enriched WITH (security_invoker = true)` — JOINs compliance_documents + vendors + user_profiles + latest compliance_document_requests (lateral subquery) + 3 derived columns (request_stage, request_token_days_remaining, days_until_expiry).
+
+**Verification (view exists):**
+
+| table_name | table_type |
+|---|---|
+| v_documents_enriched | VIEW |
+
+**Verification (column count):** 34 columns
+
+**Verification (security_invoker):**
+
+| relname | reloptions |
+|---|---|
+| v_documents_enriched | {security_invoker=true} |
+
+**Verification (service_role query):** `SELECT count(*) FROM v_documents_enriched` → 0 rows (correct — no documents exist)
+
+**Result: ✅ PASS**
+
+---
+
+### Consolidated Phase 2 Summary
+
+| Metric | Expected | Actual | Status |
+|---|---|---|---|
+| G1 acknowledged_at | 1 column | 1 | ✅ |
+| G2 deferred cols | 2 columns | 2 | ✅ |
+| G3a completed_count | 1 column | 1 | ✅ |
+| G3b trigger | 1 trigger | 1 | ✅ |
+| G4 calendar_events cols | 17 | 17 | ✅ |
+| G4 calendar_events CHECKs | 3 | 3 | ✅ |
+| G7 view exists | 1 | 1 | ✅ |
+| G7 view cols | 34 | 34 | ✅ |
+
+### Deferred Items
+
+| Item | Reason |
+|---|---|
+| vendor_service_records.schedule_id FK | Composite trigger acceptable for now |
+| compliance_document_send_records.document_id FK | Separate ticket — blocks share JOIN in view |
+| G5 Quick Action context queries | Code-only — Phase 3 UI build |
+| G6 Share state client-side derivation | Code-only — needs send_records FK first |
+| M13 Cron registration | Still deferred until edge function deployed |
+
+---
+
 *End of STEP3-APPLY-LOG.md*
