@@ -19,7 +19,7 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { foodSafety, fireSafety, requirements, loading: reqLoading, stateCode } = usePillarRequirements();
-  const { suggestions } = useDelegationSuggestion();
+  const { suggestions, missingRoles } = useDelegationSuggestion();
 
   const [choices, setChoices] = useState<Record<string, ChipChoice>>({});
   const [locking, setLocking] = useState(false);
@@ -154,6 +154,7 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
           requirements={foodSafety}
           choices={choices}
           suggestions={suggestions}
+          missingRoles={missingRoles}
           onChoose={handleChoose}
           onBulkApply={handleBulkApply}
         />
@@ -162,6 +163,7 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
           requirements={fireSafety}
           choices={choices}
           suggestions={suggestions}
+          missingRoles={missingRoles}
           onChoose={handleChoose}
           onBulkApply={handleBulkApply}
         />

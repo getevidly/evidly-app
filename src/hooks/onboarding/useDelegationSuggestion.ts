@@ -12,6 +12,10 @@ export interface DelegationSuggestion {
 interface UseDelegationSuggestionReturn {
   suggestions: DelegationSuggestion[];
   hasSuggestions: boolean;
+  /** Roles that have no active member or pending invite */
+  missingRoles: string[];
+  /** Roles that have an active member or pending invite */
+  filledRoles: Set<string>;
   loading: boolean;
 }
 
@@ -33,7 +37,7 @@ const ROLE_LABELS: Record<string, string> = {
  * for that role during onboarding.
  */
 export function useDelegationSuggestion(): UseDelegationSuggestionReturn {
-  const { missingRoles, loading: teamLoading } = useTeamRoles();
+  const { missingRoles, filledRoles, loading: teamLoading } = useTeamRoles();
   const { requirements, loading: reqLoading } = usePillarRequirements();
 
   const loading = teamLoading || reqLoading;
@@ -62,6 +66,8 @@ export function useDelegationSuggestion(): UseDelegationSuggestionReturn {
   return {
     suggestions,
     hasSuggestions: suggestions.length > 0,
+    missingRoles,
+    filledRoles,
     loading,
   };
 }

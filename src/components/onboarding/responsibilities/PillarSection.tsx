@@ -9,11 +9,13 @@ interface PillarSectionProps {
   requirements: PillarRequirement[];
   choices: Record<string, ChipChoice>;
   suggestions: DelegationSuggestion[];
+  /** Roles missing from team — used to show fallback owner hint on chips */
+  missingRoles: string[];
   onChoose: (requirementCode: string, choice: 'me' | 'invite' | 'skip', skipReason?: string) => void;
   onBulkApply: (role: string) => void;
 }
 
-export function PillarSection({ pillar, requirements, choices, suggestions, onChoose, onBulkApply }: PillarSectionProps) {
+export function PillarSection({ pillar, requirements, choices, suggestions, missingRoles, onChoose, onBulkApply }: PillarSectionProps) {
   const committedCount = requirements.filter(r => choices[r.requirement_code] !== null && choices[r.requirement_code] !== undefined).length;
 
   // Show banners only for suggestions matching this pillar's requirements
@@ -45,6 +47,7 @@ export function PillarSection({ pillar, requirements, choices, suggestions, onCh
             key={req.id}
             requirement={req}
             currentChoice={choices[req.requirement_code] ?? null}
+            roleMissing={missingRoles.includes(req.typical_role)}
             onChoose={(choice, skipReason) => onChoose(req.requirement_code, choice, skipReason)}
           />
         ))}

@@ -8,6 +8,8 @@ export type ChipChoice = 'me' | 'invite' | 'skip' | null;
 interface RequirementChipRowProps {
   requirement: PillarRequirement;
   currentChoice: ChipChoice;
+  /** Whether the typical_role for this requirement is missing from the team */
+  roleMissing: boolean;
   onChoose: (choice: 'me' | 'invite' | 'skip', skipReason?: string) => void;
 }
 
@@ -21,12 +23,14 @@ const ROLE_LABELS: Record<string, string> = {
   kitchen_staff: 'Kitchen Staff',
 };
 
-export function RequirementChipRow({ requirement, currentChoice, onChoose }: RequirementChipRowProps) {
+export function RequirementChipRow({ requirement, currentChoice, roleMissing, onChoose }: RequirementChipRowProps) {
   const [showSkipModal, setShowSkipModal] = useState(false);
   const [showChatPopover, setShowChatPopover] = useState(false);
 
   const roleLabel = ROLE_LABELS[requirement.typical_role] || requirement.typical_role;
   const isPending = currentChoice === null;
+  // Behavior rule: typical_role is a hint. If the role is missing, [Me] defaults to owner handling it.
+  const meLabel = roleMissing ? 'Me (Owner)' : 'Me';
 
   const chipBase = 'px-3 py-1.5 text-xs font-medium rounded-full border transition-all cursor-pointer select-none';
   const chipSelected = 'bg-[#1E2D4D] text-[#FAF7F0] border-[#1E2D4D]';
@@ -55,7 +59,7 @@ export function RequirementChipRow({ requirement, currentChoice, onChoose }: Req
                 onClick={() => onChoose('me')}
                 className={`${chipBase} ${currentChoice === 'me' ? chipSelected : chipUnselected}`}
               >
-                Me
+                {meLabel}
               </button>
               <button
                 type="button"

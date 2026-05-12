@@ -61,3 +61,33 @@
 - `DashboardToday.tsx` imports `OnboardingCard` + `useNewOnboarding`
 - Conditional render: `{useNewOnb ? <OnboardingCard /> : <OnboardingChecklistCard />}`
 - Legacy card untouched
+
+### Seed Reconciliation (post-Checkpoint 1)
+
+4 typical_role updates applied to PROD:
+
+| requirement_code | Before | After |
+|-----------------|--------|-------|
+| health_permit | owner_operator | compliance_manager |
+| food_manager_cert | compliance_manager | kitchen_manager |
+| haccp_plan | compliance_manager | chef |
+| temperature_logs | chef | kitchen_manager |
+
+Updated role distribution:
+
+| typical_role | Count | Banner (>=3) |
+|-------------|-------|--------------|
+| facilities_manager | 6 | YES |
+| kitchen_manager | 3 | YES |
+| compliance_manager | 2 | no |
+| chef | 1 | no |
+
+### Behavior Rule (locked)
+
+typical_role is a hint only. When the role does not exist on the team:
+- [Me (Owner)] chip shows fallback label indicating owner/operator handles it
+- [Invite X] chip still surfaces for one-click invite of the missing role
+- RequirementChipRow receives `roleMissing` prop from PillarSection
+- useDelegationSuggestion now exports `missingRoles` and `filledRoles`
+
+Migration file `20260810000021_onboarding_phase1_schema.sql` updated to reflect reconciled seed values.
