@@ -92,9 +92,9 @@ export function OnboardingCard() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] overflow-hidden flex flex-col max-h-[80vh]">
       <OnboardingHeader title={title} subtitle={subtitle} progress={progressText} />
-      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} responsibilitiesLocked={responsibilitiesLocked} />
 
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         {activeTab === 'responsibilities' && (
           <ResponsibilitiesTab onLocked={handleLocked} />
         )}

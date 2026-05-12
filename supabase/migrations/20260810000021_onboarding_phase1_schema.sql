@@ -53,7 +53,7 @@ INSERT INTO onboarding_pillar_requirements (state_code, pillar, requirement_code
 ('CA', 'food_safety', 'food_manager_cert', 'Food Manager Certification', 'At least one certified food safety manager per facility (ServSafe, NRFSP, or equivalent)', 'CalCode 113947.1', 'upload', 'kitchen_manager', 2),
 ('CA', 'food_safety', 'food_handler_cards', 'Food Handler Cards', 'All food handlers must complete ANSI-accredited training within 30 days of hire', 'CalCode 113948', 'confirm', 'kitchen_manager', 3),
 ('CA', 'food_safety', 'haccp_plan', 'HACCP Plan', 'Written HACCP plan required for facilities with specialized processes', 'CalCode 114419', 'route_out', 'chef', 4),
-('CA', 'food_safety', 'temperature_logs', 'Temperature Monitoring', 'Time/temperature control for safety foods — continuous monitoring required', 'CalCode 114000', 'route_out', 'kitchen_manager', 5),
+('CA', 'food_safety', 'temperature_logs', 'Temperature Logging', 'Time/temperature control for safety foods — continuous monitoring required', 'CalCode 114000', 'route_out', 'kitchen_manager', 5),
 ('CA', 'food_safety', 'pest_control', 'Pest Control Contract', 'Facility must prevent entrance and harborage of vermin; commercial pest control contract recommended', 'CalCode 114259.1', 'upload', 'facilities_manager', 6),
 ('CA', 'fire_safety', 'hood_cleaning', 'Hood Cleaning Schedule', 'Commercial kitchen exhaust systems cleaned per NFPA 96 frequency schedule', 'NFPA 96', 'upload', 'facilities_manager', 1),
 ('CA', 'fire_safety', 'fire_suppression', 'Fire Suppression Inspection', 'Kitchen fire suppression system inspected semi-annually by certified technician', 'NFPA 17A', 'upload', 'facilities_manager', 2),

@@ -35,7 +35,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   }
 
   return (
-    <div className="overflow-y-auto">
+    <div className="flex-1 min-h-0 overflow-y-auto">
       {!responsibilitiesLocked && (
         <div className="mx-4 mt-3 mb-2 px-4 py-3 bg-[#F7F5EE] border-l-2 border-[#1E2D4D] rounded-r-lg">
           <p className="text-xs text-[#1E2D4D]/80 mb-2">

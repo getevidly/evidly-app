@@ -147,8 +147,8 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
   const pendingCount = requirements.filter(r => !choices[r.requirement_code]).length;
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         <PillarSection
           pillar="food_safety"
           requirements={foodSafety}
