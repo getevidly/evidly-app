@@ -5,12 +5,12 @@ import { usePillarRequirements } from '../../hooks/onboarding/usePillarRequireme
 import { OnboardingHeader } from './OnboardingHeader';
 import { OnboardingTabs, type OnboardingTabId } from './OnboardingTabs';
 import { ResponsibilitiesTab } from './responsibilities/ResponsibilitiesTab';
+import { WorkTab } from './work/WorkTab';
+import { SummaryTab } from './summary/SummaryTab';
 
 /**
  * Root onboarding card — tab orchestration.
- * Responsibilities tab is default.
- * Work tab locked until responsibilities locked.
- * Summary tab always available.
+ * All three tabs render at all times with real content.
  */
 export function OnboardingCard() {
   const { profile } = useAuth();
@@ -18,7 +18,7 @@ export function OnboardingCard() {
   const { requirements } = usePillarRequirements();
 
   const [activeTab, setActiveTab] = useState<OnboardingTabId>('responsibilities');
-  const [workLocked, setWorkLocked] = useState(true);
+  const [responsibilitiesLocked, setResponsibilitiesLocked] = useState(false);
 
   // Check if responsibilities are already locked
   useEffect(() => {
@@ -33,7 +33,7 @@ export function OnboardingCard() {
 
       const meta = (data?.metadata as Record<string, unknown>) || {};
       if (meta.responsibilities_locked === true) {
-        setWorkLocked(false);
+        setResponsibilitiesLocked(true);
       }
     }
 
@@ -41,7 +41,7 @@ export function OnboardingCard() {
   }, [orgId]);
 
   const handleLocked = useCallback(() => {
-    setWorkLocked(false);
+    setResponsibilitiesLocked(true);
     setActiveTab('work');
   }, []);
 
@@ -59,7 +59,6 @@ export function OnboardingCard() {
 
       const teamInvited = (data?.onboarding_team_invited as unknown[]) || [];
       const skipped = (data?.onboarding_skipped_items as string[]) || [];
-      // Unique requirement codes that have been committed
       const codes = new Set([
         ...teamInvited.map((t: any) => t.requirement_code),
         ...skipped,
@@ -73,7 +72,6 @@ export function OnboardingCard() {
   const totalItems = requirements.length;
   const progressText = totalItems > 0 ? `${committedCount} of ${totalItems} set` : '';
 
-  // Tab titles/subtitles per active tab
   const headerConfig: Record<OnboardingTabId, { title: string; subtitle: string }> = {
     responsibilities: {
       title: 'Set responsibilities',
@@ -94,21 +92,20 @@ export function OnboardingCard() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] overflow-hidden flex flex-col max-h-[80vh]">
       <OnboardingHeader title={title} subtitle={subtitle} progress={progressText} />
-      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} workLocked={workLocked} />
+      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="flex-1 min-h-0 overflow-hidden">
         {activeTab === 'responsibilities' && (
           <ResponsibilitiesTab onLocked={handleLocked} />
         )}
         {activeTab === 'work' && (
-          <div className="flex items-center justify-center py-12 text-sm text-[#8A93A6]">
-            Work tab — Checkpoint 2
-          </div>
+          <WorkTab
+            responsibilitiesLocked={responsibilitiesLocked}
+            onGoToResponsibilities={() => setActiveTab('responsibilities')}
+          />
         )}
         {activeTab === 'summary' && (
-          <div className="flex items-center justify-center py-12 text-sm text-[#8A93A6]">
-            Summary tab — Checkpoint 3
-          </div>
+          <SummaryTab />
         )}
       </div>
     </div>

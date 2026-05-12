@@ -1,46 +1,16 @@
-import { Lock } from 'lucide-react';
-
 export type OnboardingTabId = 'responsibilities' | 'work' | 'summary';
 
 interface OnboardingTabsProps {
   activeTab: OnboardingTabId;
   onTabChange: (tab: OnboardingTabId) => void;
-  workLocked: boolean;
 }
 
-export function OnboardingTabs({ activeTab, onTabChange, workLocked }: OnboardingTabsProps) {
+export function OnboardingTabs({ activeTab, onTabChange }: OnboardingTabsProps) {
   return (
     <div className="flex border-b border-[#E2DDD4]">
-      {/* Responsibilities */}
-      <TabButton
-        label="Responsibilities"
-        isActive={activeTab === 'responsibilities'}
-        onClick={() => onTabChange('responsibilities')}
-      />
-      {/* Work — locked until responsibilities committed */}
-      {workLocked ? (
-        <div
-          className="flex-1 px-3 py-2.5 text-xs font-medium text-[#8A93A6] relative select-none"
-          title="Available after responsibilities are locked"
-        >
-          <span className="flex items-center justify-center gap-1">
-            Work
-            <Lock size={12} className="text-[#8A93A6]" />
-          </span>
-        </div>
-      ) : (
-        <TabButton
-          label="Work"
-          isActive={activeTab === 'work'}
-          onClick={() => onTabChange('work')}
-        />
-      )}
-      {/* Summary — always available */}
-      <TabButton
-        label="Summary"
-        isActive={activeTab === 'summary'}
-        onClick={() => onTabChange('summary')}
-      />
+      <TabButton label="Responsibilities" isActive={activeTab === 'responsibilities'} onClick={() => onTabChange('responsibilities')} />
+      <TabButton label="Work" isActive={activeTab === 'work'} onClick={() => onTabChange('work')} />
+      <TabButton label="Summary" isActive={activeTab === 'summary'} onClick={() => onTabChange('summary')} />
     </div>
   );
 }
