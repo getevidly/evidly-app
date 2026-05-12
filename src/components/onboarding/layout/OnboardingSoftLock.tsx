@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -7,7 +7,17 @@ import { useNewOnboarding } from '../../../lib/onboarding/featureFlag';
 
 const SOFT_LOCK_ROUTES = ['/documents', '/vendors', '/services', '/calendar', '/tasks'];
 
-export function OnboardingSoftLock() {
+interface OnboardingSoftLockProps {
+  children: ReactNode;
+}
+
+/**
+ * Wraps page content inside the Layout scroll area.
+ * When soft-lock is active (feature flag on, responsibilities NOT locked,
+ * current route is one of the 5 protected routes), replaces all page content
+ * with a centered banner. Otherwise passes children through unchanged.
+ */
+export function OnboardingSoftLock({ children }: OnboardingSoftLockProps) {
   const isNew = useNewOnboarding();
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
@@ -34,30 +44,43 @@ export function OnboardingSoftLock() {
     return () => { cancelled = true; };
   }, [orgId, isNew]);
 
-  // Self-gate: render null unless all conditions met
-  if (!isNew) return null;
-  if (!orgId) return null;
-  if (locked !== false) return null;
-  if (!SOFT_LOCK_ROUTES.includes(pathname)) return null;
+  // Soft-lock active when: feature flag on, orgId exists, NOT locked, on target route
+  const softLockActive = isNew && !!orgId && locked === false && SOFT_LOCK_ROUTES.includes(pathname);
 
+  if (!softLockActive) {
+    return <>{children}</>;
+  }
+
+  // Replace entire page content with the soft-lock banner
   return (
-    <div
-      className="mx-4 sm:mx-6 lg:mx-8 mt-4 mb-0 max-w-[1200px] rounded-lg flex items-center gap-3 px-4 py-3 text-sm"
-      style={{
-        backgroundColor: '#FAF7F0',
-        borderLeft: '3px solid #1E2D4D',
-      }}
-    >
-      <Info size={16} className="text-[#1E2D4D] flex-shrink-0" />
-      <span className="text-[#1E2D4D] flex-1">
-        Finish onboarding to start working here.
-      </span>
-      <Link
-        to="/onboarding"
-        className="text-[#1E2D4D] font-medium hover:underline whitespace-nowrap"
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-24">
+      <div
+        className="w-full max-w-md rounded-lg px-6 py-6"
+        style={{
+          backgroundColor: '#FAF7F0',
+          borderLeft: '3px solid #1E2D4D',
+          boxShadow: '0 1px 4px rgba(30,45,77,0.08)',
+        }}
       >
-        Return to onboarding &rarr;
-      </Link>
+        <div className="flex items-start gap-3">
+          <Info size={20} className="text-[#1E2D4D] flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-[#1E2D4D] mb-1">
+              Finish onboarding to start working here.
+            </p>
+            <p className="text-xs text-[#5A6478] mb-4">
+              Complete your setup to unlock this page.
+            </p>
+            <Link
+              to="/onboarding"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-opacity hover:opacity-90"
+              style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+            >
+              Return to onboarding {'\u2192'}
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
