@@ -40,6 +40,10 @@ const ChecklistCompletionDetail = lazy(() => import('./pages/ChecklistCompletion
 const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m.Documents })));
 const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
+const VendorsPage = lazy(() => import('./pages/vendors/VendorsPage'));
+const ServiceDetail = lazy(() => import('./pages/vendors/ServiceDetail'));
+const RequestDetail = lazy(() => import('./pages/vendors/RequestDetail'));
+const DocumentReviewDetail = lazy(() => import('./pages/vendors/DocumentReviewDetail'));
 const HACCP = lazy(() => import('./pages/HACCP').then(m => ({ default: m.HACCP })));
 const Alerts = lazy(() => import('./pages/Alerts').then(m => ({ default: m.Alerts })));
 const AIAdvisor = lazy(() => import('./pages/AIAdvisor').then(m => ({ default: m.AIAdvisor })));
@@ -637,8 +641,11 @@ function AppRoutes() {
           <Route path="/checklists/history/:completionId" element={<ChecklistCompletionDetail />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
-          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/vendors" element={<VendorsPage />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
+          <Route path="/vendors/services/:serviceId" element={<ServiceDetail />} />
+          <Route path="/vendors/requests/:requestId" element={<RequestDetail />} />
+          <Route path="/vendors/documents/:docId" element={<DocumentReviewDetail />} />
 
 
           <Route path="/upgrade" element={<Upgrade />} />

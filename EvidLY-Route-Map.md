@@ -562,8 +562,11 @@
 
 | Route | Component | Auth | Description |
 |-------|-----------|------|-------------|
-| `/vendors` | `Vendors.tsx` | Protected | Vendor list — 3 tabs (List, Services, Scorecard) |
-| `/vendors/:vendorId` | `VendorDetail.tsx` | Protected | Vendor detail — docs, contacts, services |
+| `/vendors` | `vendors/VendorsPage.jsx` | Protected | Vendor management — 5 tabs (Vendors, Services, Performance, Requests, Document review) |
+| `/vendors/:vendorId` | `VendorDetail.tsx` | Protected | Vendor profile — contact, contract, coverage, KPI |
+| `/vendors/services/:serviceId` | `vendors/ServiceDetail.jsx` | Protected | Service detail — location coverage, cadence, vendor, docs |
+| `/vendors/requests/:requestId` | `vendors/RequestDetail.jsx` | Protected | Request detail — thread, timeline, fulfillment |
+| `/vendors/documents/:docId` | `vendors/DocumentReviewDetail.jsx` | Protected | Document review detail — preview, AI flags, approve/reject |
 | `/marketplace` | `VendorMarketplace.tsx` | Protected | Vendor marketplace — browse providers |
 | `/marketplace/vendor/:vendorSlug` | `VendorProfile.tsx` | Protected | Vendor profile in marketplace |
 | `/marketplace/:vendorSlug` | `VendorProfile.tsx` | Protected | Vendor profile (alternate path) |
