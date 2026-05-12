@@ -14,6 +14,8 @@ import {
 import { useDashboardData, type TaskItem, type DeadlineItem } from '../../hooks/useDashboardData';
 import { NAVY, BODY_TEXT, FONT } from './shared/constants';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { OnboardingCard } from '../onboarding/OnboardingCard';
+import { useNewOnboarding } from '../../lib/onboarding/featureFlag';
 
 const STATUS_COLORS: Record<TaskItem['status'], { dot: string; text: string }> = {
   done: { dot: '#16a34a', text: '#16a34a' },
@@ -83,6 +85,7 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: 
 export function DashboardToday() {
   const navigate = useNavigate();
   const { data, overdueCount, tasksTodayCount } = useDashboardData();
+  const useNewOnb = useNewOnboarding();
   const tasks = data.tasks ?? [];
   const deadlines = data.deadlines ?? [];
   const todayStr = new Date().toLocaleDateString('en-US', {
@@ -103,7 +106,7 @@ export function DashboardToday() {
 
       {/* Onboarding Checklist */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <OnboardingChecklistCard />
+        {useNewOnb ? <OnboardingCard /> : <OnboardingChecklistCard />}
       </div>
 
       {/* Summary strip — centered */}
