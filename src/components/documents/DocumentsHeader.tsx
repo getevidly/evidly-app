@@ -26,7 +26,7 @@ export function DocumentsHeader({ stats, onSendToThirdParty }: DocumentsHeaderPr
           type="button"
           onClick={onSendToThirdParty}
           className="px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+          style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
         >
           Send to Third Party {'\u2192'}
         </button>

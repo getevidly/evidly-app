@@ -4,10 +4,16 @@ import { Modal } from '../../ui/Modal';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
 
+interface PreSelectedVendor {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface AddVendorDocumentModalProps {
   onClose: () => void;
   onUploadSelf: () => void;
-  onSendToVendor: () => void;
+  onRequestFromVendor: (preSelectedVendor?: PreSelectedVendor) => void;
 }
 
 interface LinkedVendor {
@@ -17,7 +23,7 @@ interface LinkedVendor {
   last_service_date: string | null;
 }
 
-export function AddVendorDocumentModal({ onClose, onUploadSelf, onSendToVendor }: AddVendorDocumentModalProps) {
+export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVendor }: AddVendorDocumentModalProps) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
 
@@ -78,10 +84,10 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onSendToVendor }
           </div>
         </button>
 
-        {/* Option B — Send secure link */}
+        {/* Option B — Request via secure link */}
         <button
           type="button"
-          onClick={() => { onClose(); onSendToVendor(); }}
+          onClick={() => { onClose(); onRequestFromVendor(); }}
           className="w-full flex items-start gap-3 text-left px-4 py-3.5 border border-[#E2DDD4] rounded-lg hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
         >
           <Send size={18} className="text-[#1E2D4D] mt-0.5 flex-shrink-0" />
@@ -119,7 +125,7 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onSendToVendor }
                     </div>
                     <button
                       type="button"
-                      onClick={() => { onClose(); onSendToVendor(); }}
+                      onClick={() => { onClose(); onRequestFromVendor({ id: v.vendor_id, name: v.vendor_name, email: '' }); }}
                       className="flex-shrink-0 ml-3 px-3 py-1.5 text-[11px] font-bold rounded-md transition-opacity hover:opacity-90"
                       style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
                     >

@@ -7,7 +7,7 @@ interface EmptyTabContentProps {
   onAddVendorDoc: () => void;
 }
 
-const TAB_EMPTY: Record<DocumentTabId, { message: string; cta: string; icon: 'upload' | 'send' }> = {
+const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta: string; icon: 'upload' | 'send' }> = {
   kitchen: {
     message: 'Upload your first kitchen record to start tracking.',
     cta: 'Upload document',
@@ -15,24 +15,27 @@ const TAB_EMPTY: Record<DocumentTabId, { message: string; cta: string; icon: 'up
   },
   service: {
     message: 'Service records arrive here when vendors submit them.',
-    cta: 'Send to vendor',
+    subtitle: 'EvidLY watches for hood cleaning reports, suppression tests, pest control logs, and more \u2014 and tells you what\u2019s missing.',
+    cta: 'Request from vendor',
     icon: 'send',
   },
   business: {
     message: 'Vendor business records (COI, W-9, license) land here.',
-    cta: 'Send to vendor',
+    subtitle: 'EvidLY tracks COI expirations, surfaces vendors missing required documents, and alerts you before coverage gaps.',
+    cta: 'Request from vendor',
     icon: 'send',
   },
 };
 
 export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc }: EmptyTabContentProps) {
-  const { message, cta, icon } = TAB_EMPTY[activeTab];
+  const { message, subtitle, cta, icon } = TAB_EMPTY[activeTab];
   const handler = activeTab === 'kitchen' ? onUpload : onAddVendorDoc;
 
   return (
     <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
       <FileText size={32} className="text-[#B0B8C8] mb-3" />
-      <p className="text-[13px] text-[#8A93A6] mb-4">{message}</p>
+      <p className="text-[13px] text-[#8A93A6] mb-2">{message}</p>
+      {subtitle && <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">{subtitle}</p>}
       <button
         type="button"
         onClick={handler}

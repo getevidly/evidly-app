@@ -14,6 +14,7 @@ import { EmptyTabContent } from '../components/documents/EmptyTabContent';
 import { DocumentDetailModal } from '../components/documents/modals/DocumentDetailModal';
 import { SendToThirdPartyModal } from '../components/documents/modals/SendToThirdPartyModal';
 import { AddVendorDocumentModal } from '../components/documents/modals/AddVendorDocumentModal';
+import { RequestFromVendorModal } from '../components/documents/modals/RequestFromVendorModal';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 
 const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
@@ -51,6 +52,8 @@ export function DocumentsPage() {
   const [showUpload, setShowUpload] = useState(false);
   const [showSendWizard, setShowSendWizard] = useState(false);
   const [showAddVendorDoc, setShowAddVendorDoc] = useState(false);
+  const [showRequestFromVendor, setShowRequestFromVendor] = useState(false);
+  const [preSelectedVendor, setPreSelectedVendor] = useState<{ id: string; name: string; email: string } | null>(null);
 
   const handleTabChange = useCallback((tab: DocumentTabId) => {
     setSearchParams({ tab });
@@ -201,7 +204,16 @@ export function DocumentsPage() {
         <AddVendorDocumentModal
           onClose={() => setShowAddVendorDoc(false)}
           onUploadSelf={() => { setShowAddVendorDoc(false); setShowUpload(true); }}
-          onSendToVendor={() => { setShowAddVendorDoc(false); setShowSendWizard(true); }}
+          onRequestFromVendor={(vendor) => { setShowAddVendorDoc(false); setPreSelectedVendor(vendor || null); setShowRequestFromVendor(true); }}
+        />
+      )}
+
+      {showRequestFromVendor && (
+        <RequestFromVendorModal
+          onClose={() => { setShowRequestFromVendor(false); setPreSelectedVendor(null); }}
+          onComplete={refetch}
+          sourceTab={activeTab === 'kitchen' ? 'service' : (activeTab as 'service' | 'business')}
+          preSelectedVendor={preSelectedVendor}
         />
       )}
     </>

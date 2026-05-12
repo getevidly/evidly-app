@@ -1,4 +1,4 @@
-import { Search, Upload, Plus } from 'lucide-react';
+import { Search, Upload, Send } from 'lucide-react';
 import type { DocumentTabId } from './DocumentsTabs';
 
 interface DocumentsToolbarProps {
@@ -105,8 +105,8 @@ export function DocumentsToolbar({
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
           style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
         >
-          <Plus size={14} />
-          Add Document
+          <Send size={14} />
+          Request from Vendor
         </button>
       )}
     </div>
