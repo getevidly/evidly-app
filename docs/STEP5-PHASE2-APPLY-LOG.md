@@ -91,3 +91,45 @@ typical_role is a hint only. When the role does not exist on the team:
 - useDelegationSuggestion now exports `missingRoles` and `filledRoles`
 
 Migration file `20260810000021_onboarding_phase1_schema.sql` updated to reflect reconciled seed values.
+
+---
+
+## PROD Deploy — Checkpoint 1
+
+**Deployed:** 2026-05-11
+**PROD URL:** https://app.getevidly.com
+**Vercel deployment:** evidly-os9umw536-evidly.vercel.app
+
+### Pre-flight Regression Results
+
+| Check | Result |
+|-------|--------|
+| Legacy OnboardingChecklistCard wired as fallback | PASS — imported line 16, rendered line 109 as else-branch |
+| useNewOnboarding() returns false when flag absent | PASS — useState(false), undefined !== true |
+| TypeScript (npx tsc --noEmit) | PASS — zero errors |
+| Vite build (npx vite build) | PASS — built in 55s |
+
+### Post-deploy Verification
+
+| Org | metadata.new_onboarding_enabled | Expected Render | Verified |
+|-----|-------------------------------|-----------------|----------|
+| Test Food (18309b08-...) | absent (empty {}) | Legacy OnboardingChecklistCard | PASS |
+| __SYSTEM_TEMPLATES__ (00000000-...) | absent (empty {}) | Legacy OnboardingChecklistCard | PASS |
+| EvidLY (3df66b3b-...) | absent (empty {}) | Legacy OnboardingChecklistCard | PASS |
+| EvidLY_Phase2_Test (aaaaaaaa-...) | true | New OnboardingCard | PASS |
+
+App loads at https://app.getevidly.com — landing page, schema.org markup, pricing intact.
+
+### Safety Net
+
+- Feature flag is the ONLY gate between legacy and new onboarding
+- Flag requires explicit `metadata.new_onboarding_enabled = true` on the org row
+- All existing trial orgs have `metadata = {}` (no flag)
+- Rollback command: `npx vercel rollback`
+
+### TODO: Staging Instance (separate ticket)
+
+- Spin up new staging instance (separate Vercel project or branch deploy)
+- Configure DNS for evidly-staging.vercel.app or alternative alias
+- Update deploy script to auto-alias future staging deploys
+- Blocked: not required for Checkpoint 2 development
