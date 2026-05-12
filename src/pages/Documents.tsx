@@ -189,7 +189,7 @@ export function DocumentsPage() {
     // Service tab: intelligence state replaces empty, banner above list when populated
     if (activeTab === 'service') {
       if (serviceIntel.state === 'empty' || serviceIntel.state === 'no_docs') {
-        return <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} />;
+        return <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} onVendorAdded={() => { serviceIntel.refetch(); refetch(); }} />;
       }
       if (!hasAnyTabDocs) {
         return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
@@ -197,7 +197,7 @@ export function DocumentsPage() {
       return (
         <>
           {serviceIntel.urgentCount > 0 && (
-            <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} />
+            <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} onVendorAdded={() => { serviceIntel.refetch(); refetch(); }} />
           )}
           <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
         </>
@@ -207,7 +207,7 @@ export function DocumentsPage() {
     // Business tab: same pattern
     if (activeTab === 'business') {
       if (businessIntel.state === 'empty' || businessIntel.state === 'no_docs') {
-        return <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} />;
+        return <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} onVendorAdded={() => { businessIntel.refetch(); refetch(); }} />;
       }
       if (!hasAnyTabDocs) {
         return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
@@ -215,7 +215,7 @@ export function DocumentsPage() {
       return (
         <>
           {businessIntel.urgentCount > 0 && (
-            <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} />
+            <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} onVendorAdded={() => { businessIntel.refetch(); refetch(); }} />
           )}
           <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />
         </>

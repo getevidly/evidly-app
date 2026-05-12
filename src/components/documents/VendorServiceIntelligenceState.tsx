@@ -1,42 +1,105 @@
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Clock, Send, Wrench, Building2, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
+import { AlertTriangle, Clock, Send, Wrench, Building2, ChevronRight, Plus } from 'lucide-react';
 import { relativeTime, expiryLabel } from '../../lib/relativeTime';
 import { StatusPill } from './StatusPill';
+import { Modal } from '../ui/Modal';
+import { VendorCaptureForm, type VendorCaptureData } from '../vendor/VendorCaptureForm';
+import { useCreateVendor } from '../../hooks/useCreateVendor';
+import { useAuth } from '../../contexts/AuthContext';
 import type { VendorServiceIntelligence, VendorServiceRow } from '../../hooks/documents/useVendorServiceIntelligence';
 
 interface Props {
   intel: VendorServiceIntelligence;
   onSendRequest: () => void;
+  onVendorAdded?: () => void;
 }
 
-export function VendorServiceIntelligenceState({ intel, onSendRequest }: Props) {
-  const navigate = useNavigate();
+export function VendorServiceIntelligenceState({ intel, onSendRequest, onVendorAdded }: Props) {
+  const [showAddVendor, setShowAddVendor] = useState(false);
+  const { createVendor, isLoading: creatingVendor } = useCreateVendor();
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
+
+  const handleVendorSubmit = useCallback(async (data: VendorCaptureData) => {
+    if (!orgId) return;
+    const vendorId = await createVendor({
+      company_name: data.companyName,
+      contact_name: data.primaryContactName,
+      email: data.primaryContactEmail,
+      phone: data.phone || null,
+      contact_phone: null,
+      service_type: data.serviceTypeCodes[0] || '',
+      status: 'active',
+      invite_status: 'added',
+      license_cert_number: null,
+      has_insurance_coi: false,
+      notes: data.notes || null,
+      location_ids: null,
+      primary_contact_name: data.primaryContactName,
+      primary_contact_email: data.primaryContactEmail,
+      address: data.address || null,
+      service_area: data.serviceArea || null,
+      service_type_codes: data.serviceTypeCodes,
+    }, orgId);
+
+    if (vendorId) {
+      toast.success(`${data.companyName} added as your vendor`);
+      setShowAddVendor(false);
+      onVendorAdded?.();
+    } else {
+      toast.error('Failed to create vendor');
+    }
+  }, [orgId, createVendor, onVendorAdded]);
 
   if (intel.loading) {
     return (
-      <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading intelligence\u2026</div>
+      <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading intelligence{'\u2026'}</div>
     );
   }
 
-  // State: no vendors
+  // State: no vendors — inline "Add your first vendor" CTA
   if (intel.state === 'empty') {
     return (
-      <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
-        <Building2 size={32} className="text-[#B0B8C8] mb-3" />
-        <p className="text-[13px] text-[#8A93A6] mb-2">No vendors linked to your account yet</p>
-        <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
-          Add a vendor during onboarding or from the Vendors page, then come back here to track service records.
-        </p>
-        <button
-          type="button"
-          onClick={() => navigate('/vendors')}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-        >
-          <Building2 size={14} />
-          Go to Vendors
-        </button>
-      </div>
+      <>
+        <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
+          <Building2 size={32} className="text-[#B0B8C8] mb-3" />
+          <p className="text-[13px] text-[#8A93A6] mb-2">
+            EvidLY sees {'\u00B7'} No vendors linked to your kitchen yet
+          </p>
+          <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
+            Add a vendor {'\u2014'} for hood cleaning, fire suppression, pest control, or any service {'\u2014'} and EvidLY will start tracking service records automatically.
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowAddVendor(true)}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+          >
+            <Plus size={14} />
+            Add your first vendor
+          </button>
+        </div>
+
+        <Modal isOpen={showAddVendor} onClose={() => setShowAddVendor(false)} size="md">
+          <div className="px-5 py-4 border-b border-[#E2DDD4]">
+            <h2 className="text-[16px] font-bold text-[#1E2D4D]">Add your first vendor</h2>
+            <p className="text-[11px] text-[#8A93A6] mt-1">
+              EvidLY will begin tracking their service records once linked.
+            </p>
+          </div>
+          <div className="px-5 py-4">
+            <VendorCaptureForm
+              onSubmit={handleVendorSubmit}
+              onCancel={() => setShowAddVendor(false)}
+              orgId={orgId}
+              submitLabel="Add vendor"
+              isLoading={creatingVendor}
+            />
+          </div>
+        </Modal>
+      </>
     );
   }
 

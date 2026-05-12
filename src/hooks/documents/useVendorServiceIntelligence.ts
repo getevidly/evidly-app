@@ -25,6 +25,7 @@ export interface VendorServiceIntelligence {
   state: 'loading' | 'empty' | 'no_docs' | 'populated';
   urgentCount: number;
   loading: boolean;
+  refetch: () => void;
 }
 
 export function useVendorServiceIntelligence(orgId: string | undefined): VendorServiceIntelligence {
@@ -104,5 +105,5 @@ export function useVendorServiceIntelligence(orgId: string | undefined): VendorS
   else if (vendors.length === 0) state = 'no_docs';
   else state = 'populated';
 
-  return { vendors, state, urgentCount, loading };
+  return { vendors, state, urgentCount, loading, refetch: fetch };
 }

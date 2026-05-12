@@ -28,6 +28,7 @@ export interface VendorBusinessIntelligence {
   state: 'loading' | 'empty' | 'no_docs' | 'populated';
   urgentCount: number;
   loading: boolean;
+  refetch: () => void;
 }
 
 export function useVendorBusinessIntelligence(orgId: string | undefined): VendorBusinessIntelligence {
@@ -114,5 +115,5 @@ export function useVendorBusinessIntelligence(orgId: string | undefined): Vendor
   else if (vendors.length === 0) state = 'no_docs';
   else state = 'populated';
 
-  return { vendors, state, urgentCount, loading };
+  return { vendors, state, urgentCount, loading, refetch: fetch };
 }
