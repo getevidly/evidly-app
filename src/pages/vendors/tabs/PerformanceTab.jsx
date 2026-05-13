@@ -11,12 +11,21 @@ export function PerformanceTab() {
 
   if (vendors.length === 0) {
     return (
-      <div className="text-center py-10">
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
-          No performance data yet
+      <div
+        className="bg-white rounded-lg px-4 py-4"
+        style={{ border: '1px solid #E2DDD4' }}
+      >
+        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          The lens on how your vendors actually deliver — on-time rate,
+          response time, document compliance, incident history. Each
+          vendor scored against your network average and against their
+          own past, so the comparison is yours, not an industry benchmark
+          you didn't ask for.
         </p>
-        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
-          Vendor performance metrics will appear here once vendors are added and service history accumulates.
+        <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          Performance signals build up as vendors complete services,
+          respond to requests, and submit documents. The first scorecards
+          appear once you have at least one vendor logging activity.
         </p>
       </div>
     );

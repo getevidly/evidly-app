@@ -3,11 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { Building2, Wrench, TrendingUp, Send, FileCheck } from 'lucide-react';
 
 const TABS = [
-  { id: 'vendors',    label: 'Vendors',         icon: Building2 },
-  { id: 'services',   label: 'Services',        icon: Wrench },
-  { id: 'performance',label: 'Performance',      icon: TrendingUp },
-  { id: 'requests',   label: 'Requests',         icon: Send },
-  { id: 'documents',  label: 'Document review',  icon: FileCheck },
+  { id: 'vendors',    label: 'Roster',            icon: Building2 },
+  { id: 'services',   label: 'Services',          icon: Wrench },
+  { id: 'requests',   label: 'Service requests',  icon: Send },
+  { id: 'documents',  label: 'Document review',   icon: FileCheck },
+  { id: 'performance',label: 'Performance',        icon: TrendingUp },
 ];
 
 /* Lazy tab imports — filled in Commits 2-3 */

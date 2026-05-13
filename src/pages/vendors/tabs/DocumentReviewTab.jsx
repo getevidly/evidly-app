@@ -13,12 +13,21 @@ export function DocumentReviewTab() {
 
   if (docs.length === 0) {
     return (
-      <div className="text-center py-10">
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
-          No documents to review
+      <div
+        className="bg-white rounded-lg px-4 py-4"
+        style={{ border: '1px solid #E2DDD4' }}
+      >
+        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          Every document a vendor sends lands here for review before it's
+          filed against your compliance record. EvidLY pre-screens for
+          anomalies — coverage limit shortfalls, expired credentials,
+          date discrepancies, missing signatures — so what reads as
+          routine actually is, and what isn't, you see immediately.
         </p>
-        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
-          Vendor-submitted documents will appear here for AI-assisted review and approval.
+        <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          Routine documents can be batch-approved with a single
+          confirmation. Flagged documents open into a side-by-side review
+          with a drafted correction request, ready to send.
         </p>
       </div>
     );

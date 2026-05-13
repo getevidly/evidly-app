@@ -13,12 +13,21 @@ export function RequestsTab() {
 
   if (requests.length === 0) {
     return (
-      <div className="text-center py-10">
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
-          No requests yet
+      <div
+        className="bg-white rounded-lg px-4 py-4"
+        style={{ border: '1px solid #E2DDD4' }}
+      >
+        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          Send a document or information request to any vendor — insurance
+          certificate, service log, inspection report, scope clarification,
+          anything. The thread tracks who's responded, who's overdue, and
+          which conversations have stalled long enough to warrant an
+          escalation.
         </p>
-        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
-          Document requests, quote requests, and renewal reminders will appear here once sent.
+        <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+          Auto-reminders fire on the cadence you set. Stalled-thread
+          detection surfaces the requests that need a different contact
+          at the vendor. Nothing falls through.
         </p>
       </div>
     );

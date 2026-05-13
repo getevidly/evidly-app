@@ -76,12 +76,20 @@ export function ServicesTab() {
 
 function DayOneServices() {
   return (
-    <div className="text-center py-10">
-      <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
-        No services tracked yet
+    <div
+      className="bg-white rounded-lg px-4 py-4"
+      style={{ border: '1px solid #E2DDD4' }}
+    >
+      <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+        Every recurring service across every location, tracked at the
+        service level — hood cleaning quarterly, pest control monthly,
+        grease collection on cadence, linen weekly. The view shows
+        what's on schedule, what's overdue, and where your network has
+        coverage gaps before they become audit findings.
       </p>
-      <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
-        Add a vendor to begin tracking service schedules, compliance cadences, and documentation.
+      <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
+        Services populate automatically once vendors are in your Roster
+        and start logging visits. No vendors yet, no services yet.
       </p>
     </div>
   );
