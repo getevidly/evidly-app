@@ -114,6 +114,19 @@ export function OnboardingCard() {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] overflow-hidden flex flex-col max-h-[80vh]">
+      {onboardingComplete && (
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-[#E2DDD4] bg-[#F6FFF6]">
+          <CheckCircle2 size={16} className="text-[#2E7D32]" />
+          <span className="text-xs font-medium text-[#2E7D32]">Setup complete</span>
+          <button
+            type="button"
+            onClick={() => setCollapsed(true)}
+            className="ml-auto text-xs text-[#1E2D4D] hover:underline"
+          >
+            Collapse
+          </button>
+        </div>
+      )}
       <OnboardingHeader title={title} subtitle={subtitle} progress={progressText} />
       <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} responsibilitiesLocked={responsibilitiesLocked} />
 
