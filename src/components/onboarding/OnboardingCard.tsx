@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { checkOnboardingConditions } from '../../lib/onboarding/completionDetection';
 import { usePillarRequirements } from '../../hooks/onboarding/usePillarRequirements';
 import { OnboardingHeader } from './OnboardingHeader';
 import { OnboardingTabs, type OnboardingTabId } from './OnboardingTabs';
@@ -30,7 +31,7 @@ export function OnboardingCard() {
     async function checkLockState() {
       const { data } = await supabase
         .from('organizations')
-        .select('metadata, onboarding_completed')
+        .select('metadata')
         .eq('id', orgId)
         .maybeSingle();
 
@@ -38,9 +39,10 @@ export function OnboardingCard() {
       if (meta.responsibilities_locked === true) {
         setResponsibilitiesLocked(true);
       }
-      if (data?.onboarding_completed === true) {
-        setOnboardingComplete(true);
-      }
+
+      // Live-evaluate 4 conditions instead of trusting latched flag
+      const complete = await checkOnboardingConditions(orgId!);
+      setOnboardingComplete(complete);
     }
 
     checkLockState();

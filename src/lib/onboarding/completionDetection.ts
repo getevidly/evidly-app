@@ -11,18 +11,16 @@ const FIRE_SAFETY_CODES = [
 ];
 
 /**
- * Evaluates whether the 4 onboarding completion conditions are met.
- * If all pass, idempotently sets organizations.onboarding_completed = true.
+ * Read-only check: are the 4 onboarding conditions met?
+ * Does NOT write to the database.
  *
  * Conditions:
  * 1. user_profiles has ≥1 row with role != 'member' AND full_name != ''
  * 2. ≥1 location exists
  * 3. Food Safety: ≥1 item done or skipped
  * 4. Fire Safety: ≥1 item done or skipped
- *
- * Safe to call multiple times (fire-and-forget). Only flips false → true.
  */
-export async function evaluateOnboardingComplete(orgId: string): Promise<boolean> {
+export async function checkOnboardingConditions(orgId: string): Promise<boolean> {
   try {
     // Condition 1: user_profiles with meaningful role + name
     const { count: profileCount } = await supabase
@@ -110,16 +108,25 @@ export async function evaluateOnboardingComplete(orgId: string): Promise<boolean
       if (!fireDone) return false;
     }
 
-    // All 4 conditions pass — flip onboarding_completed (idempotent)
+    return true;
+  } catch (err) {
+    console.error('[completionDetection] Error checking conditions:', err);
+    return false;
+  }
+}
+
+/**
+ * Evaluates conditions + idempotently sets organizations.onboarding_completed = true.
+ * Safe to call multiple times (fire-and-forget). Only flips false → true.
+ */
+export async function evaluateOnboardingComplete(orgId: string): Promise<boolean> {
+  const complete = await checkOnboardingConditions(orgId);
+  if (complete) {
     await supabase
       .from('organizations')
       .update({ onboarding_completed: true })
       .eq('id', orgId)
       .eq('onboarding_completed', false);
-
-    return true;
-  } catch (err) {
-    console.error('[completionDetection] Error evaluating completion:', err);
-    return false;
   }
+  return complete;
 }
