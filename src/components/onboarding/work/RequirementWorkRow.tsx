@@ -9,6 +9,8 @@ export interface CommitEntry {
   choice: 'me' | 'invite' | 'skip';
   invite_role?: string;
   skip_reason?: string;
+  assigned_to_user_id?: string;
+  assigned_to_name?: string;
 }
 
 export interface InviteInfo {
@@ -57,8 +59,9 @@ function deriveSublabel(
     return reason ? `Skipped — ${reason}` : 'Skipped';
   }
   if (commitEntry?.choice === 'invite') {
-    const name = inviteInfo?.full_name || inviteInfo?.email || 'invitee';
+    const name = commitEntry.assigned_to_name || inviteInfo?.full_name || inviteInfo?.email || 'invitee';
     if (isComplete) return `Done by ${name}`;
+    if (commitEntry.assigned_to_user_id) return `Assigned to ${name}`;
     if (!inviteInfo || inviteInfo.status === 'pending') return `Awaiting ${name}`;
     if (inviteInfo.status === 'accepted') return `Assigned to ${name}`;
   }

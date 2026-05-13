@@ -76,6 +76,8 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
       requirementCode,
       choice,
       skipReason,
+      assignedToUserId: choice === 'me' ? profile?.id : undefined,
+      assignedToName: choice === 'me' ? (profile?.full_name || undefined) : undefined,
     });
 
     if (error) {
@@ -96,7 +98,7 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
     setInviteModalOpen(true);
   }, [orgId, requirements, choices]);
 
-  const handleInviteSent = useCallback(() => {
+  const handleInviteSent = useCallback((inviteeName?: string) => {
     // Mark all pending invite items as 'invite'
     const updated = { ...choices };
     for (const code of pendingInviteItems) {
@@ -111,6 +113,7 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
         requirementCode: code,
         choice: 'invite',
         inviteRole,
+        assignedToName: inviteeName || undefined,
       });
     }
 

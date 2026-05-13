@@ -20,6 +20,8 @@ interface CommitEntry {
   choice: string;
   invite_role?: string;
   skip_reason?: string;
+  assigned_to_user_id?: string;
+  assigned_to_name?: string;
 }
 
 interface DocDetail {
@@ -170,16 +172,25 @@ export function SummaryTab({ onSwitchToResponsibilities }: SummaryTabProps) {
       let ownerText = 'Not yet assigned';
       let ownerAmber = true;
       if (commit?.choice === 'me') {
-        ownerText = `${profile?.full_name || 'Me'} (Me)`;
+        const name = commit.assigned_to_name || profile?.full_name || 'Me';
+        ownerText = `${name} (Me)`;
         ownerAmber = false;
       } else if (commit?.choice === 'invite') {
-        const inv = invites.find(i => i.role === commit.invite_role);
-        if (inv && inv.status === 'accepted') {
+        if (commit.assigned_to_user_id && commit.assigned_to_name) {
           const roleLabel = commit.invite_role ? (ROLE_LABELS[commit.invite_role] || commit.invite_role) : '';
-          ownerText = `${inv.full_name || inv.email}${roleLabel ? ` (${roleLabel})` : ''}`;
+          ownerText = `${commit.assigned_to_name}${roleLabel ? ` (${roleLabel})` : ''}`;
           ownerAmber = false;
+        } else if (commit.assigned_to_name) {
+          ownerText = `${commit.assigned_to_name} (invited)`;
         } else {
-          ownerText = 'Invite pending';
+          const inv = invites.find(i => i.role === commit.invite_role);
+          if (inv && inv.status === 'accepted') {
+            const roleLabel = commit.invite_role ? (ROLE_LABELS[commit.invite_role] || commit.invite_role) : '';
+            ownerText = `${inv.full_name || inv.email}${roleLabel ? ` (${roleLabel})` : ''}`;
+            ownerAmber = false;
+          } else {
+            ownerText = 'Invite pending';
+          }
         }
       } else if (commit?.choice === 'skip' || onbStatus === 'skipped') {
         ownerText = '\u2014';
@@ -210,14 +221,20 @@ export function SummaryTab({ onSwitchToResponsibilities }: SummaryTabProps) {
           detailText = 'Done';
         }
       } else if (detailStatus === 'assigned') {
-        const inv = invites.find(i => i.role === commit?.invite_role);
-        if (inv && inv.status === 'accepted') {
-          detailText = `${inv.full_name || inv.email} joined \u00b7 in progress`;
-        } else if (inv) {
-          const ago = formatDistanceToNow(new Date(inv.created_at), { addSuffix: true });
-          detailText = `Invited ${ago} \u00b7 awaiting acceptance`;
+        if (commit?.assigned_to_user_id && commit?.assigned_to_name) {
+          detailText = `${commit.assigned_to_name} joined \u00b7 in progress`;
+        } else if (commit?.assigned_to_name) {
+          detailText = `${commit.assigned_to_name} invited \u00b7 awaiting acceptance`;
         } else {
-          detailText = 'Invited \u00b7 awaiting acceptance';
+          const inv = invites.find(i => i.role === commit?.invite_role);
+          if (inv && inv.status === 'accepted') {
+            detailText = `${inv.full_name || inv.email} joined \u00b7 in progress`;
+          } else if (inv) {
+            const ago = formatDistanceToNow(new Date(inv.created_at), { addSuffix: true });
+            detailText = `Invited ${ago} \u00b7 awaiting acceptance`;
+          } else {
+            detailText = 'Invited \u00b7 awaiting acceptance';
+          }
         }
       } else if (detailStatus === 'skipped') {
         const reason = commit?.skip_reason;

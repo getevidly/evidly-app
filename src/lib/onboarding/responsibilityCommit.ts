@@ -8,6 +8,8 @@ export interface ResponsibilityCommitPayload {
   choice: ResponsibilityChoice;
   skipReason?: string;
   inviteRole?: string;
+  assignedToUserId?: string;
+  assignedToName?: string;
 }
 
 /**
@@ -17,7 +19,7 @@ export interface ResponsibilityCommitPayload {
  * - 'skip': adds to organizations.onboarding_skipped_items with reason
  */
 export async function commitResponsibility(payload: ResponsibilityCommitPayload): Promise<{ error: string | null }> {
-  const { organizationId, requirementCode, choice, skipReason, inviteRole } = payload;
+  const { organizationId, requirementCode, choice, skipReason, inviteRole, assignedToUserId, assignedToName } = payload;
 
   if (choice === 'skip') {
     // Add to skipped items
@@ -80,6 +82,8 @@ export async function commitResponsibility(payload: ResponsibilityCommitPayload)
     requirement_code: requirementCode,
     choice,
     invite_role: choice === 'invite' ? inviteRole : undefined,
+    assigned_to_user_id: assignedToUserId || null,
+    assigned_to_name: assignedToName || null,
     committed_at: new Date().toISOString(),
   });
 

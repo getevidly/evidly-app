@@ -13,7 +13,7 @@ interface TeamInviteModalProps {
   isOpen: boolean;
   onClose: () => void;
   organizationId: string;
-  onInviteSent: () => void;
+  onInviteSent: (inviteeName?: string) => void;
   mode?: 'single' | 'bulk';
   locations?: LocationOption[];
 }
@@ -276,7 +276,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
       toast.success(`Invitation sent to ${fullName.trim()}`);
       resetForm();
-      onInviteSent();
+      onInviteSent(fullName.trim());
       onClose();
     } catch (err: any) {
       setError(err.message || 'Failed to send invitation');

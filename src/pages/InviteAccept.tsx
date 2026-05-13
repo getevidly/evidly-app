@@ -150,6 +150,44 @@ export function InviteAccept() {
           })
           .eq('id', invitation.id);
 
+        // Backfill onboarding_team_invited with this user's assignment
+        try {
+          const { data: orgData } = await supabase
+            .from('organizations')
+            .select('onboarding_team_invited')
+            .eq('id', invitation.organization_id)
+            .maybeSingle();
+
+          if (orgData?.onboarding_team_invited) {
+            const entries = orgData.onboarding_team_invited as Array<Record<string, unknown>>;
+            let changed = false;
+            const updated = entries.map(entry => {
+              if (
+                entry.choice === 'invite' &&
+                entry.invite_role === invitation.role.toLowerCase() &&
+                !entry.assigned_to_user_id
+              ) {
+                changed = true;
+                return {
+                  ...entry,
+                  assigned_to_user_id: authData.user!.id,
+                  assigned_to_name: fullName,
+                };
+              }
+              return entry;
+            });
+
+            if (changed) {
+              await supabase
+                .from('organizations')
+                .update({ onboarding_team_invited: updated })
+                .eq('id', invitation.organization_id);
+            }
+          }
+        } catch (backfillErr) {
+          console.error('Onboarding assignment backfill error:', backfillErr);
+        }
+
         navigate('/dashboard');
       }
     } catch (err: any) {
