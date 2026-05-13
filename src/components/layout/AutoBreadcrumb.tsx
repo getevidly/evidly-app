@@ -52,12 +52,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
   '/intelligence': { label: 'Intelligence Hub', parent: '/insights' },
   '/copilot': { label: 'Compliance Copilot', parent: '/insights' },
-  '/iot-monitoring': { label: 'IoT Dashboard', parent: '/insights' },
   '/audit-trail': { label: 'Audit Trail', parent: '/insights' },
   '/weekly-digest': { label: 'Weekly Digest', parent: '/insights' },
-  '/sensors': { label: 'Manage Sensors', parent: '/admin' },
-  '/sensors/add': { label: 'Add Sensor', parent: '/sensors' },
-  '/iot-platform': { label: 'IoT Platform', parent: '/insights' },
 
   // ── Tools children ──
   '/calendar': { label: 'Calendar', parent: '/facility-safety' },
@@ -78,7 +74,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/team': { label: 'Team', parent: '/admin' },
   '/settings': { label: 'Settings', parent: '/admin' },
   '/settings/branding': { label: 'Branding', parent: '/settings' },
-  '/settings/sensors': { label: 'Sensors', parent: '/settings' },
   '/settings/integrations': { label: 'Integrations', parent: '/settings' },
   '/settings/api-keys': { label: 'API Keys', parent: '/settings' },
   '/settings/webhooks': { label: 'Webhooks', parent: '/settings' },
@@ -125,7 +120,6 @@ const DYNAMIC_PATTERNS: { pattern: RegExp; parent: string; label: string }[] = [
   { pattern: /^\/training\/employee\/[^/]+$/, parent: '/training', label: 'Employee Certifications' },
   { pattern: /^\/playbooks\/active\/[^/]+$/, parent: '/playbooks', label: 'Active Playbook' },
   { pattern: /^\/playbooks\/history\/[^/]+$/, parent: '/playbooks', label: 'Playbook History' },
-  { pattern: /^\/sensors\/(?!add)[^/]+$/, parent: '/sensors', label: 'Sensor Detail' },
   { pattern: /^\/dashboard\/training\/[^/]+$/, parent: '/dashboard/training', label: 'Employee Profile' },
   { pattern: /^\/reports\/[^/]+$/, parent: '/reports', label: 'Report' },
   { pattern: /^\/equipment\/[^/]+\/service\/new$/, parent: '/equipment', label: 'New Service Record' },

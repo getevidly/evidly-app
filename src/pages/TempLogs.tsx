@@ -1431,17 +1431,7 @@ export function TempLogs() {
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em', color: colors.navy }}>{t('tempLogs.title')}</h1>
-              {/* Sensor Ready badge — shows when user has equipment but no active IoT sensors */}
-              {isDemoMode && equipment.length > 0 && (
-                <button
-                  onClick={() => navigate('/iot/platform')}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition-colors"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Sensor Ready — Connect anytime
-                </button>
-              )}
-            </div>
+              </div>
             <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4 }}>{t('tempLogs.subtitle')}</p>
           </div>
           <button

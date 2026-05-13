@@ -209,10 +209,6 @@ const I: Record<string, NavItem> = {
     id: 'in-audit', label: 'Audit Log', path: '/audit-trail', icon: '🔒',
     roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
   },
-  'in-iot': {
-    id: 'in-iot', label: 'IoT Dashboard', path: '/iot-monitoring', icon: '📡',
-    roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
-  },
 
   // ── Tools section items ─────────────────────────────────
 
@@ -242,10 +238,6 @@ const I: Record<string, NavItem> = {
   'ad-roles': {
     id: 'ad-roles', label: 'Role Permissions', path: '/settings/roles-permissions', icon: '🔐',
     roles: [], description: 'Manage role-based permissions and user exceptions across your organization.',
-  },
-  'ad-iot': {
-    id: 'ad-iot', label: 'IoT Sensors', path: '/settings/sensors', icon: '📡',
-    roles: [], description: 'Add, configure, and manage IoT temperature sensors across your locations.',
   },
   'ad-integrations': {
     id: 'ad-integrations', label: 'Integrations', path: '/integrations', icon: '🔌',
@@ -318,7 +310,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'insights', label: 'Insights', icon: '✨',
     tooltipTitle: 'Insights',
     tooltipDescription: 'AI insights, inspection forecast, compliance trends, benchmarks, leaderboard, reporting, audit log, and IoT.',
-    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-reports', 'in-audit', 'in-iot'],
+    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-reports', 'in-audit'],
     path: '/insights',
   },
   tools: {
@@ -332,7 +324,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'administration', label: 'Administration', icon: '⚙️',
     tooltipTitle: 'Administration',
     tooltipDescription: 'Equipment, locations, team, role permissions, IoT sensors, integrations, import, and settings.',
-    itemIds: ['ad-equipment', 'ad-locations', 'ad-team', 'ad-roles', 'ad-iot', 'ad-integrations', 'ad-import', 'ad-settings'],
+    itemIds: ['ad-equipment', 'ad-locations', 'ad-team', 'ad-roles', 'ad-integrations', 'ad-import', 'ad-settings'],
     path: '/admin',
   },
 };

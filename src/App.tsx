@@ -108,12 +108,6 @@ const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m 
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
 const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub').then(m => ({ default: m.IntelligenceHub })));
-const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
-const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
-const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
-const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
-const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
-const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 const VendorMigration = lazy(() => import('./pages/VendorMigration').then(m => ({ default: m.VendorMigration })));
 
 
@@ -207,7 +201,6 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ 
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
 const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ default: m.TempLogScan })));
-const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
 const SelfDiagnosis = lazy(() => import('./pages/SelfDiagnosis').then(m => ({ default: m.SelfDiagnosis })));
 const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
@@ -554,7 +547,6 @@ function AppRoutes() {
         <Route path="/partners/insurance" element={<Suspense fallback={<PageSkeleton />}><CarrierPartnership /></Suspense>} />
         <Route path="/providers" element={<Suspense fallback={<PageSkeleton />}><MarketplaceLanding /></Suspense>} />
         <Route path="/enterprise" element={<Suspense fallback={<PageSkeleton />}><EnterpriseLanding /></Suspense>} />
-        <Route path="/iot" element={<Suspense fallback={<PageSkeleton />}><IoTSensorLanding /></Suspense>} />
         <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><TermsOfService /></Suspense>} />
         <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><PrivacyPolicy /></Suspense>} />
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
@@ -611,7 +603,6 @@ function AppRoutes() {
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
         {/* /business-intelligence now handled by /insights/intelligence */}
-        <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         {/* /onboarding now inside ProtectedLayout */}
         <Route path="/setup/food-safety" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafetyEntry /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/setup/food-safety/:locationId" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><SetupFoodSafety /></Suspense></ErrorBoundary></ProtectedRoute>} />
@@ -634,7 +625,6 @@ function AppRoutes() {
           <Route path="/admin" element={<AdminRoute />} />
           <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/temp-logs" element={<TempLogs />} />
-          <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
           <Route path="/checklists/history/:completionId" element={<ChecklistCompletionDetail />} />
           <Route path="/documents" element={<Documents />} />
@@ -670,7 +660,6 @@ function AppRoutes() {
             <Route path="billing" element={<BillingPage />} />
           </Route>
           <Route path="/settings/branding" element={<BrandingSettings />} />
-          <Route path="/settings/sensors" element={<IoTSensorHub />} />
           <Route path="/settings/roles-permissions" element={<RolesPermissions />} />
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
@@ -702,9 +691,6 @@ function AppRoutes() {
           <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
-          {/* IoT Sensor Platform + Vendor Migration (all authenticated users) */}
-          <Route path="/iot/platform" element={<IoTSensorPlatform />} />
-          <Route path="/iot/setup" element={<SensorSetupWizard />} />
           <Route path="/migrate" element={<VendorMigration />} />
 
           {/* User routes unwrapped from RequireAdmin — AUDIT-3 */}
@@ -718,10 +704,6 @@ function AppRoutes() {
           <Route element={<RequireAdmin />}>
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
-          <Route path="/iot-platform" element={<IoTSensorPlatform />} />
-          <Route path="/sensors" element={<SensorHub />} />
-          <Route path="/sensors/add" element={<SensorSetupWizard />} />
-          <Route path="/sensors/:id" element={<SensorDetail />} />
           <Route path="/settings/integrations" element={<SettingsIntegrationsPage />} />
           <Route path="/settings/api-keys" element={<IntegrationHub />} />
           <Route path="/settings/webhooks" element={<IntegrationHub />} />
@@ -844,7 +826,6 @@ function AppRoutes() {
           <Route path="/locations" element={<Navigate to="/org-hierarchy" replace />} />
           <Route path="/inspections" element={<Navigate to="/self-inspection" replace />} />
           <Route path="/certifications" element={<Navigate to="/training/certificates" replace />} />
-          <Route path="/sensor-dashboard" element={<Navigate to="/sensors" replace />} />
         </Route>
         <Route path="*" element={<Suspense fallback={null}><NotFound /></Suspense>} />
       </Routes>
