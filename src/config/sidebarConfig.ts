@@ -320,7 +320,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'vendors', label: 'Vendors', icon: '👥',
     tooltipTitle: 'Vendors',
     tooltipDescription: 'Vendor network, service records, and performance tracking.',
-    itemIds: ['ve-network', 've-services'],
+    itemIds: ['ve-services', 've-network'],
   },
   insights: {
     id: 'insights', label: 'Insights', icon: '✨',
