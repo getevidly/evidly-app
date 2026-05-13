@@ -30,6 +30,7 @@ interface RequirementWorkRowProps {
   onConfirm: () => void;
   onResume: () => void;
   onResendInvite: () => void;
+  hideOwnerControls?: boolean;
 }
 
 type RowVariant = 'active' | 'done' | 'muted';
@@ -92,6 +93,7 @@ export function RequirementWorkRow({
   onConfirm,
   onResume,
   onResendInvite,
+  hideOwnerControls,
 }: RequirementWorkRowProps) {
   const navigate = useNavigate();
   const variant = deriveVariant(commitEntry, inviteInfo, isComplete, isSkipped);
@@ -158,8 +160,8 @@ export function RequirementWorkRow({
             </div>
           )}
 
-          {/* Resend link for pending invites */}
-          {variant === 'muted' && commitEntry?.choice === 'invite' && !isComplete && (
+          {/* Resend link for pending invites — owner only */}
+          {!hideOwnerControls && variant === 'muted' && commitEntry?.choice === 'invite' && !isComplete && (
             <button
               type="button"
               onClick={onResendInvite}
@@ -169,8 +171,8 @@ export function RequirementWorkRow({
             </button>
           )}
 
-          {/* Resume link for skipped items */}
-          {isSkipped && (
+          {/* Resume link for skipped items — owner only */}
+          {!hideOwnerControls && isSkipped && (
             <button
               type="button"
               onClick={onResume}

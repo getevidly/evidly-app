@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useOnboardingView } from '../../contexts/OnboardingViewContext';
 import { supabase } from '../../lib/supabase';
 import { checkOnboardingConditions } from '../../lib/onboarding/completionDetection';
 import { usePillarRequirements } from '../../hooks/onboarding/usePillarRequirements';
@@ -18,8 +19,10 @@ export function OnboardingCard() {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { requirements } = usePillarRequirements();
+  const { viewMode, assignedRequirementCodes, loading: viewLoading } = useOnboardingView();
+  const isInvitee = viewMode === 'invitee';
 
-  const [activeTab, setActiveTab] = useState<OnboardingTabId>('responsibilities');
+  const [activeTab, setActiveTab] = useState<OnboardingTabId>(isInvitee ? 'work' : 'responsibilities');
   const [responsibilitiesLocked, setResponsibilitiesLocked] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -97,6 +100,16 @@ export function OnboardingCard() {
 
   const { title, subtitle } = headerConfig[activeTab];
 
+  // Invitee empty state — no assigned items
+  if (!viewLoading && isInvitee && assignedRequirementCodes.size === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] px-6 py-8 text-center">
+        <p className="text-sm font-medium text-[#1E2D4D]">No items assigned to you yet</p>
+        <p className="text-xs text-[#8A93A6] mt-1">Your team owner hasn't assigned onboarding tasks to you.</p>
+      </div>
+    );
+  }
+
   // Auto-collapse when onboarding is complete
   if (onboardingComplete && collapsed) {
     return (
@@ -130,19 +143,19 @@ export function OnboardingCard() {
         </div>
       )}
       <OnboardingHeader title={title} subtitle={subtitle} progress={progressText} />
-      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} responsibilitiesLocked={responsibilitiesLocked} />
+      <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} responsibilitiesLocked={responsibilitiesLocked} viewMode={viewMode} />
 
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-        {activeTab === 'responsibilities' && (
+        {!isInvitee && activeTab === 'responsibilities' && (
           <ResponsibilitiesTab onLocked={handleLocked} />
         )}
         {activeTab === 'work' && (
           <WorkTab
-            responsibilitiesLocked={responsibilitiesLocked}
+            responsibilitiesLocked={isInvitee || responsibilitiesLocked}
             onGoToResponsibilities={() => setActiveTab('responsibilities')}
           />
         )}
-        {activeTab === 'summary' && (
+        {!isInvitee && activeTab === 'summary' && (
           <SummaryTab onSwitchToResponsibilities={() => setActiveTab('responsibilities')} />
         )}
       </div>

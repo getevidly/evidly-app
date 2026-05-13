@@ -14,6 +14,7 @@ interface PillarWorkCardProps {
   onConfirm: (requirementCode: string) => void;
   onResume: (requirementCode: string) => void;
   onResendInvite: (requirementCode: string) => void;
+  hideOwnerControls?: boolean;
 }
 
 export function PillarWorkCard({
@@ -27,6 +28,7 @@ export function PillarWorkCard({
   onConfirm,
   onResume,
   onResendInvite,
+  hideOwnerControls,
 }: PillarWorkCardProps) {
   const doneCount = pillarState.filter(s => s.status === 'done').length;
   const pendingCount = pillarState.filter(s => s.status === 'pending').length;
@@ -66,6 +68,7 @@ export function PillarWorkCard({
               onConfirm={() => onConfirm(req.requirement_code)}
               onResume={() => onResume(req.requirement_code)}
               onResendInvite={() => onResendInvite(req.requirement_code)}
+              hideOwnerControls={hideOwnerControls}
             />
           );
         })}

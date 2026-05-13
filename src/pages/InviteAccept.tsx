@@ -188,7 +188,7 @@ export function InviteAccept() {
           console.error('Onboarding assignment backfill error:', backfillErr);
         }
 
-        navigate('/dashboard');
+        navigate('/onboarding');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to accept invitation');

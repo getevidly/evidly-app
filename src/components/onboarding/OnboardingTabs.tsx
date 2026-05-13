@@ -7,33 +7,41 @@ interface OnboardingTabsProps {
   activeTab: OnboardingTabId;
   onTabChange: (tab: OnboardingTabId) => void;
   responsibilitiesLocked: boolean;
+  viewMode?: 'owner' | 'invitee';
 }
 
-export function OnboardingTabs({ activeTab, onTabChange, responsibilitiesLocked }: OnboardingTabsProps) {
-  const workTooltip = responsibilitiesLocked
-    ? 'Execute the items you\u2019ve committed to'
-    : 'Preview what EvidLY will help you handle once responsibilities are locked';
+export function OnboardingTabs({ activeTab, onTabChange, responsibilitiesLocked, viewMode = 'owner' }: OnboardingTabsProps) {
+  const isInvitee = viewMode === 'invitee';
+  const workTooltip = isInvitee
+    ? 'Complete the items assigned to you'
+    : responsibilitiesLocked
+      ? 'Execute the items you\u2019ve committed to'
+      : 'Preview what EvidLY will help you handle once responsibilities are locked';
 
   return (
     <div className="flex border-b border-[#E2DDD4]">
-      <TabButton
-        label="Responsibilities"
-        isActive={activeTab === 'responsibilities'}
-        onClick={() => onTabChange('responsibilities')}
-        tooltip="Decide who owns each item before EvidLY starts working"
-      />
+      {!isInvitee && (
+        <TabButton
+          label="Responsibilities"
+          isActive={activeTab === 'responsibilities'}
+          onClick={() => onTabChange('responsibilities')}
+          tooltip="Decide who owns each item before EvidLY starts working"
+        />
+      )}
       <TabButton
         label="Work"
         isActive={activeTab === 'work'}
         onClick={() => onTabChange('work')}
         tooltip={workTooltip}
       />
-      <TabButton
-        label="Summary"
-        isActive={activeTab === 'summary'}
-        onClick={() => onTabChange('summary')}
-        tooltip="See every decision and its current state in one place"
-      />
+      {!isInvitee && (
+        <TabButton
+          label="Summary"
+          isActive={activeTab === 'summary'}
+          onClick={() => onTabChange('summary')}
+          tooltip="See every decision and its current state in one place"
+        />
+      )}
     </div>
   );
 }

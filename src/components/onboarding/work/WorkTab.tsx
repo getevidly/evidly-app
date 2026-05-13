@@ -7,6 +7,7 @@ import { useOnboardingState } from '../../../hooks/onboarding/useOnboardingState
 import { PillarHeader } from '../shared/PillarHeader';
 import { EmptyStateMessage } from '../shared/EmptyStateMessage';
 import { PillarWorkCard } from './PillarWorkCard';
+import { useOnboardingView } from '../../../contexts/OnboardingViewContext';
 import type { CommitEntry, InviteInfo } from './RequirementWorkRow';
 import { UploadDocumentModal } from './modals/UploadDocumentModal';
 import { IdentifyVendorModal } from './modals/IdentifyVendorModal';
@@ -38,8 +39,20 @@ interface COIRequest {
 export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: WorkTabProps) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
-  const { foodSafety: fsReqs, fireSafety: firReqs, requirements, loading: reqLoading, stateCode } = usePillarRequirements();
+  const { foodSafety: fsReqsAll, fireSafety: firReqsAll, requirements: allRequirements, loading: reqLoading, stateCode } = usePillarRequirements();
+  const { viewMode, assignedRequirementCodes } = useOnboardingView();
   const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, refreshState, loading: stateLoading } = useOnboardingState();
+
+  // Scope requirements to assigned items for invitees
+  const requirements = viewMode === 'invitee'
+    ? allRequirements.filter(r => assignedRequirementCodes.has(r.requirement_code))
+    : allRequirements;
+  const fsReqs = viewMode === 'invitee'
+    ? fsReqsAll.filter(r => assignedRequirementCodes.has(r.requirement_code))
+    : fsReqsAll;
+  const firReqs = viewMode === 'invitee'
+    ? firReqsAll.filter(r => assignedRequirementCodes.has(r.requirement_code))
+    : firReqsAll;
 
   const [commits, setCommits] = useState<CommitEntry[]>([]);
   const [invites, setInvites] = useState<InviteInfo[]>([]);
@@ -176,6 +189,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
         onConfirm={handleConfirm}
         onResume={handleResume}
         onResendInvite={handleResendInvite}
+        hideOwnerControls={viewMode === 'invitee'}
       />
       <PillarWorkCard
         pillar="fire_safety"
@@ -188,6 +202,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
         onConfirm={handleConfirm}
         onResume={handleResume}
         onResendInvite={handleResendInvite}
+        hideOwnerControls={viewMode === 'invitee'}
       />
 
       {activeModal?.type === 'upload' && (
