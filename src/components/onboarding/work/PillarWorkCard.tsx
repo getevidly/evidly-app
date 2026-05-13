@@ -1,5 +1,6 @@
 import type { PillarRequirement } from '../../../hooks/onboarding/usePillarRequirements';
 import type { RequirementState } from '../../../hooks/onboarding/useOnboardingState';
+import type { EvidenceThreadSummary } from '../../../hooks/onboarding/useItemEvidenceTrail';
 import { PillarHeader } from '../shared/PillarHeader';
 import { RequirementWorkRow, type CommitEntry, type InviteInfo } from './RequirementWorkRow';
 
@@ -15,6 +16,7 @@ interface PillarWorkCardProps {
   onResume: (requirementCode: string) => void;
   onResendInvite: (requirementCode: string) => void;
   hideOwnerControls?: boolean;
+  evidenceSummaries?: Record<string, EvidenceThreadSummary>;
 }
 
 export function PillarWorkCard({
@@ -29,6 +31,7 @@ export function PillarWorkCard({
   onResume,
   onResendInvite,
   hideOwnerControls,
+  evidenceSummaries,
 }: PillarWorkCardProps) {
   const doneCount = pillarState.filter(s => s.status === 'done').length;
   const pendingCount = pillarState.filter(s => s.status === 'pending').length;
@@ -69,6 +72,7 @@ export function PillarWorkCard({
               onResume={() => onResume(req.requirement_code)}
               onResendInvite={() => onResendInvite(req.requirement_code)}
               hideOwnerControls={hideOwnerControls}
+              evidenceSummary={evidenceSummaries?.[req.requirement_code] ?? null}
             />
           );
         })}

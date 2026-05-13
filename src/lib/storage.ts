@@ -8,6 +8,7 @@ export const BUCKETS = {
   COMPLIANCE_PHOTOS:    'compliance-photos',
   REPORTS:              'reports',
   EQUIPMENT_DOCUMENTS:  'equipment-documents',
+  EVIDENCE_ATTACHMENTS: 'evidence-attachments',
 } as const;
 
 export type BucketName = typeof BUCKETS[keyof typeof BUCKETS];

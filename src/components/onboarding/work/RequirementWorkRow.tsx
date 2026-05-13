@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, ExternalLink, UserPlus, Send } from 'lucide-react';
+import { Upload, ExternalLink, UserPlus, Send, ShieldCheck } from 'lucide-react';
+import type { EvidenceThreadSummary } from '../../../hooks/onboarding/useItemEvidenceTrail';
+import { EvidenceTrail } from '../evidence/EvidenceTrail';
 import type { PillarRequirement } from '../../../hooks/onboarding/usePillarRequirements';
 import { StatusIcon } from '../shared/StatusIcon';
 import { ACTION_LABELS, ROLE_LABELS } from './workConstants';
@@ -31,6 +34,7 @@ interface RequirementWorkRowProps {
   onResume: () => void;
   onResendInvite: () => void;
   hideOwnerControls?: boolean;
+  evidenceSummary?: EvidenceThreadSummary | null;
 }
 
 type RowVariant = 'active' | 'done' | 'muted';
@@ -95,7 +99,9 @@ export function RequirementWorkRow({
   onResume,
   onResendInvite,
   hideOwnerControls,
+  evidenceSummary,
 }: RequirementWorkRowProps) {
+  const [evidenceExpanded, setEvidenceExpanded] = useState(false);
   const navigate = useNavigate();
   const variant = deriveVariant(commitEntry, inviteInfo, isComplete, isSkipped);
   const sublabel = deriveSublabel(commitEntry, inviteInfo, isComplete, isSkipped, hideOwnerControls);
@@ -113,77 +119,104 @@ export function RequirementWorkRow({
   };
 
   return (
-    <div className={`px-4 py-3 border-b border-[#E2DDD4]/50 ${variant === 'muted' ? 'opacity-60' : ''}`}>
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex-shrink-0">
-          <StatusIcon state={iconState} size={18} />
-        </div>
+    <div className={`border-b border-[#E2DDD4]/50 ${variant === 'muted' ? 'opacity-60' : ''}`}>
+      <div className="px-4 py-3">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex-shrink-0">
+            <StatusIcon state={iconState} size={18} />
+          </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium text-[#1E2D4D] ${isSkipped ? 'line-through' : ''}`}>
-              {requirement.label}
-            </span>
-            {requirement.citation && (
-              <span className="text-[10px] text-[#8A93A6] font-mono">{requirement.citation}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-medium text-[#1E2D4D] ${isSkipped ? 'line-through' : ''}`}>
+                {requirement.label}
+              </span>
+              {requirement.citation && (
+                <span className="text-[10px] text-[#8A93A6] font-mono">{requirement.citation}</span>
+              )}
+            </div>
+
+            {sublabel && (
+              <p className={`text-xs mt-0.5 ${
+                variant === 'done' ? 'text-[#1E2D4D]/70' : 'text-[#8A93A6]'
+              }`}>
+                {sublabel}
+              </p>
+            )}
+
+            {/* Action buttons — only when row is active */}
+            {canAct && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {requirement.action_type === 'upload' && (
+                  <ActionButton icon={<Upload size={12} />} label="Upload" onClick={() => onAction('upload')} />
+                )}
+                {requirement.action_type === 'identify_vendor' && (
+                  <ActionButton icon={<UserPlus size={12} />} label="Identify vendor" onClick={() => onAction('identify_vendor')} />
+                )}
+                {requirement.action_type === 'route_out' && requirement.requirement_code === 'temperature_logs' && (
+                  <ActionButton icon={<ExternalLink size={12} />} label="Go to Temperatures" onClick={handleRouteOut} />
+                )}
+                {requirement.action_type === 'route_out' && requirement.requirement_code === 'haccp_plan' && (
+                  <>
+                    <ActionButton icon={<Upload size={12} />} label="Upload" onClick={() => onAction('upload')} />
+                    <ActionButton icon={<ExternalLink size={12} />} label="Build" onClick={handleRouteOut} />
+                  </>
+                )}
+                {requirement.action_type === 'confirm' && (
+                  <ActionButton icon={null} label="Confirm ✓" onClick={onConfirm} />
+                )}
+              </div>
+            )}
+
+            {/* Resend link for pending invites — owner only */}
+            {!hideOwnerControls && variant === 'muted' && commitEntry?.choice === 'invite' && !isComplete && (
+              <button
+                type="button"
+                onClick={onResendInvite}
+                className="text-[10px] text-[#1E2D4D]/60 hover:text-[#1E2D4D] underline mt-1"
+              >
+                Resend invite
+              </button>
+            )}
+
+            {/* Resume link for skipped items — owner only */}
+            {!hideOwnerControls && isSkipped && (
+              <button
+                type="button"
+                onClick={onResume}
+                className="text-[10px] text-[#1E2D4D] hover:underline mt-1 font-medium"
+              >
+                Resume
+              </button>
             )}
           </div>
 
-          {sublabel && (
-            <p className={`text-xs mt-0.5 ${
-              variant === 'done' ? 'text-[#1E2D4D]/70' : 'text-[#8A93A6]'
-            }`}>
-              {sublabel}
-            </p>
-          )}
-
-          {/* Action buttons — only when row is active */}
-          {canAct && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {requirement.action_type === 'upload' && (
-                <ActionButton icon={<Upload size={12} />} label="Upload" onClick={() => onAction('upload')} />
-              )}
-              {requirement.action_type === 'identify_vendor' && (
-                <ActionButton icon={<UserPlus size={12} />} label="Identify vendor" onClick={() => onAction('identify_vendor')} />
-              )}
-              {requirement.action_type === 'route_out' && requirement.requirement_code === 'temperature_logs' && (
-                <ActionButton icon={<ExternalLink size={12} />} label="Go to Temperatures" onClick={handleRouteOut} />
-              )}
-              {requirement.action_type === 'route_out' && requirement.requirement_code === 'haccp_plan' && (
-                <>
-                  <ActionButton icon={<Upload size={12} />} label="Upload" onClick={() => onAction('upload')} />
-                  <ActionButton icon={<ExternalLink size={12} />} label="Build" onClick={handleRouteOut} />
-                </>
-              )}
-              {requirement.action_type === 'confirm' && (
-                <ActionButton icon={null} label="Confirm ✓" onClick={onConfirm} />
-              )}
-            </div>
-          )}
-
-          {/* Resend link for pending invites — owner only */}
-          {!hideOwnerControls && variant === 'muted' && commitEntry?.choice === 'invite' && !isComplete && (
-            <button
-              type="button"
-              onClick={onResendInvite}
-              className="text-[10px] text-[#1E2D4D]/60 hover:text-[#1E2D4D] underline mt-1"
-            >
-              Resend invite
-            </button>
-          )}
-
-          {/* Resume link for skipped items — owner only */}
-          {!hideOwnerControls && isSkipped && (
-            <button
-              type="button"
-              onClick={onResume}
-              className="text-[10px] text-[#1E2D4D] hover:underline mt-1 font-medium"
-            >
-              Resume
-            </button>
-          )}
+          {/* Evidence trail button */}
+          <button
+            type="button"
+            onClick={() => setEvidenceExpanded(!evidenceExpanded)}
+            className="flex-shrink-0 mt-0.5 relative flex items-center gap-1 text-[#8A93A6] hover:text-[#1E2D4D] transition-colors"
+          >
+            <ShieldCheck size={14} />
+            {(evidenceSummary?.messageCount ?? 0) > 0 && (
+              <span className="text-[10px]">{evidenceSummary!.messageCount}</span>
+            )}
+            {(evidenceSummary?.unreadCount ?? 0) > 0 && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#C62828] rounded-full" />
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Expanded evidence trail */}
+      {evidenceExpanded && (
+        <EvidenceTrail
+          requirementCode={requirement.requirement_code}
+          pillar={requirement.pillar as 'food_safety' | 'fire_safety'}
+          requirementLabel={requirement.label}
+          onCollapse={() => setEvidenceExpanded(false)}
+        />
+      )}
     </div>
   );
 }

@@ -202,6 +202,28 @@ export function CorrectiveActions() {
     } catch { /* ignore */ }
   }, [isFromInspection]);
 
+  // ── Evidence Trail CA Handoff ──────────────────────────────
+  const isFromEvidence = searchParams.get('from') === 'evidence-trail';
+  useEffect(() => {
+    if (!isFromEvidence) return;
+    try {
+      const raw = sessionStorage.getItem('evidence_ca_context');
+      if (!raw) return;
+      const ctx = JSON.parse(raw);
+      setCreateForm({
+        ...EMPTY_FORM,
+        title: ctx.title || '',
+        description: ctx.description || '',
+        severity: ctx.severity || 'medium',
+        category: ctx.category || 'food_safety',
+        source: ctx.source || 'Evidence Trail',
+      });
+      setCreateTab('scratch');
+      setShowCreateModal(true);
+      sessionStorage.removeItem('evidence_ca_context');
+    } catch { /* ignore */ }
+  }, [isFromEvidence]);
+
   const advanceInspectionItem = useCallback(() => {
     const nextIdx = inspectionIdx + 1;
     if (nextIdx >= inspectionItems.length) {

@@ -14,6 +14,7 @@ import { IdentifyVendorModal } from './modals/IdentifyVendorModal';
 import { RequestDocumentModal } from './modals/RequestDocumentModal';
 import { InviteRoleModal } from './modals/InviteRoleModal';
 import { toast } from 'sonner';
+import { useEvidenceThreadSummaries } from '../../../hooks/onboarding/useItemEvidenceTrail';
 
 interface WorkTabProps {
   responsibilitiesLocked: boolean;
@@ -42,6 +43,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   const { foodSafety: fsReqsAll, fireSafety: firReqsAll, requirements: allRequirements, loading: reqLoading, stateCode } = usePillarRequirements();
   const { viewMode, assignedRequirementCodes } = useOnboardingView();
   const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, refreshState, loading: stateLoading } = useOnboardingState();
+  const { summaries: evidenceSummaries } = useEvidenceThreadSummaries(responsibilitiesLocked ? orgId : undefined);
 
   // Scope requirements to assigned items for invitees
   const requirements = viewMode === 'invitee'
@@ -190,6 +192,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
         onResume={handleResume}
         onResendInvite={handleResendInvite}
         hideOwnerControls={viewMode === 'invitee'}
+        evidenceSummaries={evidenceSummaries}
       />
       <PillarWorkCard
         pillar="fire_safety"
@@ -203,6 +206,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
         onResume={handleResume}
         onResendInvite={handleResendInvite}
         hideOwnerControls={viewMode === 'invitee'}
+        evidenceSummaries={evidenceSummaries}
       />
 
       {activeModal?.type === 'upload' && (
