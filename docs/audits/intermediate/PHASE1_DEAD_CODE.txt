@@ -1,0 +1,417 @@
+================================================================================
+PHASE 1 -- DEAD CODE ANALYSIS
+Generated: 2026-05-13
+================================================================================
+
+SUMMARY
+  Dead admin pages (STUB/SHELL):    12 of 50   (24%)
+  Dead edge functions:               40 of 58   (69%)
+  Dead admin components:              1 of 7    (14%)
+  Dead database tables:             147 of 398  (36.9%)
+  Dead hook exports:                  0          (1 dead-state pattern)
+
+================================================================================
+1.1 -- DEAD ADMIN PAGES
+================================================================================
+
+CLASSIFICATION KEY:
+  LIVE   = Real queries, real mutations, real UI
+  SHELL  = UI structure but no/demo-only data connections
+  STUB   = Placeholder, hardcoded data, or "coming soon"
+
+STATUS: 38 LIVE | 8 SHELL | 4 STUB | 0 ORPHANED
+
+--- STUBS (4) ---
+
+FILE                          LINES  REASON
+EvidlyVault.tsx                  31  "Placeholder. Backing table not yet created." No queries.
+DemoDashboard.tsx               301  Visual reference of demoData.ts constants only. No queries.
+TrialHealth.tsx                 544  6 hardcoded DEMO_ arrays. Zero Supabase queries.
+FeatureBaselineTracker.jsx      595  124-item FEATURES audit array. No queries. (AUDIT TOOL)
+
+--- SHELLS (8) ---
+
+FILE                          LINES  REASON
+GtmDashboard.tsx                199  Has queries but always returns EMPTY_CHANNELS in demo mode.
+EmailSequenceManager.tsx        946  First 45 lines show DEMO_ arrays. 5 tabs, backend unclear.
+InsuranceApiKeys.tsx            561  Starts with DEMO_KEYS hardcoded array.
+AdminRegulatoryChanges.tsx      688  Implicit queries in useRegulatoryChanges hook, DEMO_SEED.
+UsageAnalytics.tsx             1045  MODULES array, SIZE_TIERS all demo data inline. No queries.
+RolePreview.jsx                 743  9 hardcoded personas. APPROVED EXCEPTION (guided tour tool).
+DemoPipeline.tsx                444  Import demoPipelineData. 5 tabs with card views. HARDCODED.
+AdminScoreTable.tsx             151  SELECT scoretable_views. Read-only SEO analytics.
+
+--- ALL LIVE PAGES (38) ---
+
+SYSTEM STATUS (13): AdminAuditLog, AdminCrawlMonitor, AdminDashboard,
+  AdminHome, CommandCenter, Configure, DatabaseBackup, EventLog,
+  MaintenanceMode, RemoteConnect, SecuritySettings, SystemMessages,
+  VerificationReport
+
+TENANT MANAGEMENT (6): AdminOrgs, AdminUsers, AdminSecurity,
+  StaffRoles, UserEmulation, UserProvisioning
+
+SALES & GROWTH (12): AssessmentLeads, AdminBilling, AdminK2C,
+  AdminReports, AdminTestimonials, DemoGenerator, DemoLauncher,
+  GuidedTours, MarketingCampaigns, SalesPipeline, ViolationOutreach,
+  DemoTours.jsx
+
+INTELLIGENCE (5): EvidLYIntelligence, FeatureFlags, IntelligenceAdmin,
+  JurisdictionIntelligence, RfpIntelligence
+
+SYSTEM & CONFIG (4): EdgeFunctions, AdminVendorConnect.jsx,
+  SupportTickets, PartnerDemos.jsx
+
+BOUNDARY (2): AdminClientOnboarding, AdminRegulatoryChanges (hook-driven)
+
+================================================================================
+1.2 -- DEAD EDGE FUNCTIONS
+================================================================================
+
+TOTAL ANALYZED: 58 potentially dead (of 151 total)
+CONFIRMED DEAD: 40 (69%)
+ACTIVE/KEEP: 9
+EXTERNAL_ONLY (cron): 9
+SCAFFOLD/AUDIT_ONLY: 5
+WEBHOOK RECEIVER: 1
+
+--- TIER 1: CONFIRMED DEAD -- SAFE TO DELETE (40 functions) ---
+
+API-V1 (5 -- all dead, no callers):
+  api-v1-locations-certificates
+  api-v1-locations-compliance
+  api-v1-locations-schedule
+  api-v1-locations-services
+  api-v1-services-photos
+
+ENTERPRISE (7 -- all dead, never wired):
+  enterprise-alert-rollup
+  enterprise-audit-export
+  enterprise-report-generate
+  enterprise-rollup-calculate
+  enterprise-scim-users
+  enterprise-sso-callback
+  enterprise-tenant-provision
+
+TRAINING (9 -- dead, UI uses only demo data):
+  training-analytics-aggregate
+  training-auto-enroll
+  training-certificate-gen
+  training-completion-handler
+  training-content-translate
+  training-enroll
+  training-progress-reminder
+  training-quiz-score
+  training-sb476-report
+
+PLAYBOOK (5 -- dead, UI uses only demo data):
+  playbook-auto-trigger
+  playbook-completion-handler
+  playbook-food-loss-calculator
+  playbook-report-generator
+  playbook-escalation-monitor
+
+VENDOR (8 -- dead, no frontend callers):
+  vendor-analytics-snapshot
+  vendor-certification-evaluate
+  vendor-connect-apply
+  vendor-credential-check
+  vendor-lead-notify
+  vendor-recommendation-engine
+  vendor-schedule-response
+  vendor-secure-upload
+
+SENSOR (3 -- dead scaffolds):
+  sensor-alert-escalate
+  sensor-compliance-aggregate
+  sensor-defrost-detect
+
+MISC DEAD (3):
+  sensor-device-health
+  sensor-threshold-evaluate
+  validate-vendor-document
+
+--- TIER 2: ACTIVE -- KEEP (14 functions) ---
+
+  pos-connect              -- Entry point for POS integration flow
+  pos-sync-all             -- Nightly cron orchestrator (2am)
+  pos-sync-locations       -- Called by pos-connect and pos-sync-all
+  pos-sync-employees       -- Called by pos-sync-all
+  vendor-contact           -- Called from src/lib/api.ts
+  vendor-document-notify   -- Called from src/lib/api.ts
+  vendor-document-reminders-- Cron-triggered reminder sender
+  vendor-notification-sender-- Cron batch dispatcher
+  vendor-partner-outreach  -- Cron outreach handler
+  benchmark-snapshot       -- Daily cron 3am
+  benchmark-aggregate      -- Weekly cron Sunday 4am
+  benchmark-badge-check    -- Weekly cron Monday 5am
+  benchmark-quarterly-report-- Quarterly cron
+  iot-sensor-webhook       -- External webhook receiver
+
+--- TIER 3: CONDITIONAL KEEP (5 functions) ---
+
+Keep only if feature is planned for launch:
+  training-ai-companion     -- Referenced in aiAccuracyAudit.ts only
+  training-ai-quiz-gen      -- Referenced in aiAccuracyAudit.ts only
+  iot-sensor-pull            -- Deno.cron polling, not yet wired
+  iot-sensor-alerts          -- Mentioned in FeatureBaselineTracker
+  playbook-ai-assistant      -- Referenced in aiAccuracyAudit.ts only
+
+--- SCOPE VIOLATION ---
+
+  hoodops-webhook            -- HoodOps PRO scope. Should not exist per CLAUDE.md.
+
+================================================================================
+1.3 -- DEAD ADMIN COMPONENTS & HOOKS
+================================================================================
+
+--- DEAD COMPONENT (1) ---
+
+  src/components/admin/StatCard.tsx
+    Status: DEAD -- zero external importers
+    Reason: Duplicate of src/components/ui/StatCard.tsx (50+ importers).
+            Only kept alive by internal StatCardRow.tsx import chain.
+    Action: Safe to delete. StatCardRow can import from ui/StatCard.
+
+--- DEAD CODE PATTERNS (1) ---
+
+  src/hooks/useRolePermissions.ts
+    Pattern: Unused loading state
+    Line 97: const [loading] = useState(false) -- never updated anywhere
+    Severity: MEDIUM -- always false, misleading to consumers
+    Action: Remove unused state or implement proper async loading
+
+--- ALL OTHER COMPONENTS: LIVE ---
+
+  KpiTile.tsx           -- 14 importers, LIVE
+  StatCardRow.tsx       -- 9 importers, LIVE
+  OrgCombobox.tsx       -- 5 importers, LIVE
+  VerificationPanel.tsx -- 3 importers, LIVE
+  EmulationPanel.tsx    -- 1 importer (AdminDashboard), LIVE
+  AdminBreadcrumb.tsx   -- 44 importers, LIVE
+
+--- ADMIN LIBRARIES: ALL LIVE ---
+
+  src/data/demoGeneratorData.ts    -- 4 importers, 7 exports, all used
+  src/lib/demoDataGenerator.ts     -- 2 importers, 12 exports, all used
+
+--- APP.TSX LAZY IMPORTS: ALL VALID ---
+
+  51 admin page lazy imports verified. No broken references.
+
+================================================================================
+1.4 -- DEAD DATABASE TABLES
+================================================================================
+
+TOTAL TABLES IN DB: 398
+REFERENCED IN CODE: 251 (63.1%)
+CONFIRMED DEAD:     147 (36.9%)
+
+--- CLAUDE.md SCOPE VIOLATIONS ---
+
+vendor_ripples             DEAD (0 refs) -- HoodOps PRO forbidden table
+compliance_badges          NOT IN MIGRATIONS -- design-only, never created
+network_scores             NOT IN MIGRATIONS -- design-only, never created
+referrals                  ACTIVE (4 refs) -- VIOLATES CLAUDE.md forbidden list
+  Referenced by: evidly-referral-signup, k2c-referral-invite, ai-estimate-submit,
+                 EmailSequenceManager.tsx
+  Decision: Arthur to adjudicate -- table is live in K2C flow
+
+--- DEAD BY DOMAIN (147 tables, grouped) ---
+
+ENTERPRISE (6 dead):
+  enterprise_api_keys, enterprise_bulk_operations,
+  enterprise_hierarchy_config, enterprise_integration_config,
+  enterprise_location_assignments, enterprise_report_schedules
+  NOTE: 8 other enterprise tables are ACTIVE but referenced only by dead fns
+
+SENSOR & IOT (19 dead):
+  sensor_alerts, sensor_calibration_log, sensor_cooling_logs,
+  sensor_csv_imports, sensor_defrost_schedules, sensor_door_events,
+  sensor_integrations, sensor_readings, sensor_webhooks,
+  iot_sensor_providers, equipment_incidents, equipment_maintenance_schedule,
+  equipment_vendor_links, grease_trap_services, cooling_logs,
+  temp_check_completions, cooldown_alert_dispatch, drift_alert_log,
+  drift_monitor_executions
+
+API & INTEGRATION (15 dead):
+  api_access_log, api_applications, api_partners, api_sandbox_keys,
+  integration_webhook_config, public.api_keys, public.api_request_log,
+  public.framework_activations, public.integration_connections,
+  public.integrations, public.permission_audit_log, public.role_permissions,
+  public.user_permission_overrides
+
+INSURANCE & RISK (10 dead):
+  insurance_api_logs, insurance_consent, insurance_reports,
+  insurance_risk_factors, insurance_score_history,
+  insurance_scoring_profiles, insurance_share_links,
+  incident_reports, external_facilities, external_violations
+
+ASSESSMENT & AUDIT (11 dead):
+  assessment_intelligence_events, assessment_responses, assessment_results,
+  audit_trail_access_log, audit_trail_reports, certification_reminders,
+  certification_requirements, document_classifications,
+  document_expiration_alerts, drift_alert_log, drift_monitor_executions
+
+PLAYBOOK & CHECKLIST (9 dead):
+  playbooks, playbook_steps, playbook_step_checklist_items,
+  playbook_step_checklist_responses, playbook_step_photos,
+  playbook_notifications, playbook_vendor_contacts,
+  checklist_assignments, checklist_items
+
+VENDOR & COLLABORATION (7 dead):
+  vendor_changes, vendor_document_notifications,
+  vendor_document_reviews, vendor_messages, vendor_subscriptions,
+  shift_handoffs, support_ticket_activity
+
+INVENTORY & SERVICE (8 dead):
+  inventory_items, inventory_request_items, inventory_requests,
+  inventory_transactions, service_action_log,
+  service_provider_client_links, service_provider_documents,
+  service_provider_profiles
+
+JURISDICTION & COMPLIANCE (9 dead):
+  external_violations, federal_overlay_jurisdictions,
+  jurisdiction_change_log, jurisdiction_config_baselines,
+  jurisdiction_scoring_profiles, location_jurisdiction_profiles,
+  location_jurisdiction_scores, regulatory_updates,
+  compliance_requirements
+
+TRAINING (5 dead):
+  training_assignments, training_catalog, training_progress,
+  k2c_referral_codes, user_milestones
+
+ADMIN & CONFIG (17 dead):
+  feature_overrides, regions, sales_goals, score_model_versions,
+  bonus_configurations, agreement_templates, client_invitations,
+  client_intelligence_feed, client_advisory_reads, clock_reminders,
+  frequency_change_log, job_callbacks, partner_demo_templates,
+  marketing_touchpoints, rfp_actions, leads (20260529 dup),
+  lead_activities
+
+BENCHMARK (2 dead):
+  benchmark_aggregates, benchmark_subcategory_stats
+
+PUBLIC SCHEMA ORPHANS (16 dead):
+  public.allergen_lists, public.allergens,
+  public.location_food_safety_profile, public.process_categories,
+  public.process_ccps, public.regulatory_frameworks,
+  public.risk_factor_evidence_definitions, public.risk_factors,
+  public.specialized_process_types, public.testimonials
+  (+ 6 others from incomplete schema redesign)
+
+OTHER DEAD (13):
+  vehicle_incidents, vehicle_maintenance, kitchen_checkups,
+  kitchen_checkup_responses, demo_leads, k2c_referrals,
+  vendor_connect_leads, corrective_action_templates,
+  deficiency_photos, deficiency_timeline, performance_metrics,
+  sync_snapshots, tour_engagement_events
+
+--- MIGRATION-ONLY (edge-fn-only, no frontend reads) ---
+
+benchmark_snapshots         -- Written by benchmark-snapshot cron, never read by frontend
+location_benchmark_ranks    -- Written by benchmark functions, never read by frontend
+benchmark_badges            -- Written by benchmark-badge-check, never read by frontend
+
+--- ENTERPRISE TABLE PARADOX ---
+
+enterprise_tenants, enterprise_sso_configs, enterprise_scim_tokens,
+enterprise_hierarchy_nodes, enterprise_user_mappings, enterprise_report_templates,
+enterprise_audit_log, enterprise_rollup_scores
+  Status: Referenced ONLY by dead enterprise-* edge functions
+  Effect: Tables are alive only through dead code (dead loop)
+
+--- KEY PATTERN: FAILED FEATURE DOMAINS ---
+
+Entire domains fully implemented in migrations but never wired:
+  IoT/Sensor monitoring:     19 dead tables
+  API marketplace:           15 dead tables
+  Insurance risk scoring:    10 dead tables
+  Jurisdiction compliance:    9 dead tables
+  Inventory management:       8 dead tables
+  Playbook engine:            9 dead tables
+
+================================================================================
+CROSS-CUTTING FINDINGS
+================================================================================
+
+1. ENTERPRISE DEAD LOOP
+   enterprise-* edge functions (7) are DEAD (no frontend callers)
+   enterprise_* tables (8) are referenced ONLY by those dead functions
+   Entire enterprise subsystem is a dead loop: tables <-> functions <-> no UI
+
+2. TRAINING DEAD LOOP
+   training-* edge functions (9-11) are DEAD
+   Training UI pages render only demo data from demoData.ts
+   Training backend is fully scaffolded but never connected
+
+3. PLAYBOOK DEAD LOOP
+   playbook-* edge functions (5-6) are DEAD
+   playbook_* tables (8) exist with full schema
+   Playbook UI renders demo data only
+   Playbook backend is fully scaffolded but never connected
+
+4. BENCHMARK PARTIAL LOOP
+   benchmark-* functions are EXTERNAL_ONLY (cron-scheduled, active)
+   benchmark tables are written to by cron jobs
+   BUT: No frontend ever reads benchmark data
+   Data is generated but never displayed
+
+5. HOODOPS SCOPE VIOLATION
+   hoodops-webhook edge function exists -- HoodOps PRO scope per CLAUDE.md
+   referrals table exists and IS ACTIVE -- CLAUDE.md says must never exist
+
+================================================================================
+SEVERITY SUMMARY
+================================================================================
+
+CRITICAL (scope violations):
+  C1. hoodops-webhook edge function (HoodOps PRO scope)
+  C2. referrals table active despite CLAUDE.md prohibition
+  C3. compliance_badges, network_scores, vendor_ripples tables (HoodOps PRO)
+
+HIGH (confirmed dead code):
+  H1. 40 dead edge functions (deploy/cold-start cost, attack surface)
+  H2. 147 dead database tables (36.9% of schema -- migration clutter, attack surface)
+  H3. 4 stub admin pages with zero backend (EvidlyVault, DemoDashboard,
+      TrialHealth, FeatureBaselineTracker)
+
+MEDIUM (dead loops / scaffolds):
+  M1. Enterprise subsystem dead loop (7 fns + 8 tables + 0 UI)
+  M2. Training subsystem dead loop (9+ fns + tables + demo-only UI)
+  M3. Playbook subsystem dead loop (5+ fns + 8 tables + demo-only UI)
+  M4. Benchmark write-only loop (4 cron fns + tables + 0 frontend reads)
+  M5. StatCard.tsx admin component (orphaned duplicate)
+  M6. useRolePermissions.ts unused loading state
+
+LOW (shells with demo fallback):
+  L1. 8 shell pages with hardcoded/demo data (GtmDashboard, UsageAnalytics,
+      EmailSequenceManager, InsuranceApiKeys, RolePreview, DemoPipeline,
+      AdminRegulatoryChanges, AdminScoreTable)
+
+================================================================================
+REMEDIATION ROADMAP
+================================================================================
+
+PHASE R1 -- Immediate cleanup (no feature impact):
+  - Delete 40 dead edge functions
+  - Delete StatCard.tsx admin component
+  - Remove unused loading state from useRolePermissions.ts
+
+PHASE R2 -- Table cleanup (migration required):
+  - Drop 147 dead tables across 12 feature domains
+  - Priority targets: vendor_ripples (scope violation), 19 sensor tables,
+    15 API tables, 10 insurance tables, 9 playbook tables
+  - Arthur decision on referrals table (active but CLAUDE.md violation)
+  - Group DROP migrations by domain for safe rollback
+
+PHASE R3 -- Subsystem decisions (Arthur to adjudicate):
+  - Enterprise: Keep or remove entire subsystem?
+  - Training: Wire to real backend or remove scaffold?
+  - Playbooks: Wire to real backend or remove scaffold?
+  - Benchmarks: Add frontend display or remove cron jobs?
+
+PHASE R4 -- Shell page decisions:
+  - Per-page decision: wire to real data or convert to explicit stubs
+  - EvidlyVault: create backing table or remove route?
+  - TrialHealth: connect to real trial data or remove?

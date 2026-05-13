@@ -1,0 +1,450 @@
+================================================================================
+PHASE 2 -- WIRED-BUT-BROKEN ANALYSIS
+Generated: 2026-05-13
+Baseline anchor: c7f06d9
+================================================================================
+
+SUMMARY
+  Total findings:           37
+  CRITICAL:                  7
+  HIGH:                     15
+  MEDIUM:                   12
+  LOW:                       3
+  Deferred (active dev):     1 (brand/copy -- Phase 15 paused)
+  Deferred (arch ground):    0
+
+================================================================================
+TOP 5 CRITICAL ITEMS -- ARTHUR EYES-ON
+================================================================================
+
+  C1. Configure.tsx AddUserModal -- logs event but never creates auth user
+  C2. Vendor doc approve/decline -- chained mutations, no transaction, partial
+      success leaves inconsistent state
+  C3. SchedulePage -- fully interactive calendar, all mutations throw
+      "Not implemented", no user-facing indicator
+  C4. TrialHealth.tsx -- "Send Reminder" calls missing edge fn, "Extend Trial"
+      mutation malformed
+  C5. GtmDashboard.tsx -- all 5 underlying tables do not exist, metrics always
+      zero
+
+================================================================================
+CRITICAL FINDINGS (7)
+================================================================================
+
+C1. CONFIGURE ADD-USER MODAL -- FACADE INVITE
+    FILE: src/pages/admin/Configure.tsx:505-511
+    EVIDENCE: handleInvite() only calls supabase.from('admin_event_log')
+      .insert(). Does NOT call supabase.auth.admin.inviteUserByEmail(),
+      does NOT create user_profiles record, does NOT assign role or org_id.
+    IMPACT: Admin sees "Invitation sent" success. No user created, no email
+      sent. Zero actual provisioning.
+    CONFIDENCE: HIGH
+
+C2. VENDOR DOC APPROVE -- CHAINED MUTATIONS WITHOUT TRANSACTION
+    FILE: src/hooks/useVendorSubmissions.ts:108-140
+    EVIDENCE: First .update() on vendor_document_submissions. Second .update()
+      on vendor_documents has no error handling. If second fails:
+      submissions = "approved", documents = still "pending".
+    IMPACT: Permanent data inconsistency. Compliance records split across
+      tables with conflicting states.
+    CONFIDENCE: HIGH
+
+C3. VENDOR DOC DECLINE -- SAME PATTERN
+    FILE: src/hooks/useVendorSubmissions.ts:143-176
+    EVIDENCE: Same chained .update() pattern. Second mutation (set status
+      "flagged") has no error check. Partial success possible.
+    IMPACT: Admin believes document flagged; system shows pending.
+    CONFIDENCE: HIGH
+
+C4. SCHEDULE PAGE -- FULLY INTERACTIVE BUT ALL STUBS
+    FILE: src/hooks/api/useSchedule.ts:104-216
+    HOOKS: useSchedule(), useUnassignedJobs(), useScheduleTechnicians(),
+      useTechnicianAvailability(), useRecurringSchedules() -- ALL return [].
+    MUTATIONS: useRescheduleJob(), useAssignJob(), useOptimizeRoute(),
+      useUpdateAvailability(), useCreateRecurringSchedule() -- ALL throw
+      "Not implemented".
+    CONSUMER: src/pages/schedule/SchedulePage.tsx
+    EVIDENCE: Calendar renders with day/week/month views, drag-drop
+      interactive, technician filter dropdown renders empty, "New Job"
+      button shows alert('New job (demo)').
+    IMPACT: Users can attempt scheduling via full interactive UI. Nothing
+      persists. No indication feature is incomplete.
+    CONFIDENCE: HIGH
+
+C5. TRIALHEALTH -- MISSING EDGE FN + MALFORMED MUTATION
+    FILE: src/pages/admin/TrialHealth.tsx:276-300
+    EVIDENCE:
+      Line 282: supabase.functions.invoke('trial-reminder') -- edge function
+        does NOT exist in supabase/functions/.
+      Line 293: .update() without .select() -- .then() receives undefined.
+    IMPACT: "Send Reminder" button silently fails. "Extend Trial" mutation
+      likely fails or returns null.
+    CONFIDENCE: HIGH
+
+C6. GTMDASHBOARD -- ALL UNDERLYING TABLES MISSING
+    FILE: src/pages/admin/GtmDashboard.tsx:54-118
+    EVIDENCE: Queries demo_sessions, sales_pipeline_deals, assessment_leads
+      tables. None confirmed to exist in current schema. All queries return
+      empty. Demo mode returns EMPTY_CHANNELS (all zeros).
+    IMPACT: Page shows zeroed metrics. Status banner says "Metrics populate
+      automatically..." but underlying tables do not exist.
+    CONFIDENCE: HIGH
+
+C7. INCIDENT REPORTS PAGE -- HARDCODED EMPTY RETURN
+    FILE: src/hooks/api/useIncidents.ts:113-143
+    HOOKS: useEquipmentIncidents() returns [], useIncidentReports() returns []
+    CONSUMER: src/pages/safety/IncidentReportsPage.tsx
+    EVIDENCE: Stats cards compute from empty array -- total: 0, injuries: 0,
+      near_misses: 0, open_investigations: 0. Empty table with no "no data"
+      message. No indication feature is incomplete.
+    IMPACT: Safety incident reporting page shows zero incidents always.
+      Users may believe there are no safety incidents when data simply
+      does not load.
+    CONFIDENCE: HIGH
+
+================================================================================
+HIGH FINDINGS (15)
+================================================================================
+
+H1. SERVICE REQUEST CONFIRM -- NO DOUBLE-CLICK PROTECTION
+    FILE: src/hooks/useServiceRequests.ts:103-138
+    EVIDENCE: acceptAlternative() has no loading state. Two sequential
+      mutations (service_requests update + calendar_events insert) without
+      button disable during async window.
+    CONSUMER: ReviewAlternativesModal.tsx:52
+    IMPACT: Double-click creates duplicate calendar events.
+    CONFIDENCE: HIGH
+
+H2. AUTO-REQUEST SETTINGS -- NO CACHE INVALIDATION
+    FILE: src/lib/api.ts:44-62
+    EVIDENCE: saveAutoRequestSettings() calls .upsert() but returns data
+      without cache invalidation mechanism. Caller has no way to refresh
+      UI state.
+    IMPACT: User toggles setting, sees success, but UI shows old value
+      until page refresh.
+    CONFIDENCE: HIGH
+
+H3. REVIEW ALTERNATIVES MODAL -- NO ERROR HANDLING
+    FILE: src/components/services/ReviewAlternativesModal.tsx:49-56
+    EVIDENCE: handleAccept() calls onAccept() without try/catch. Sets
+      confirmed state before verifying DB success.
+    IMPACT: Calendar event insert fails silently. Service request marked
+      confirmed but no calendar record exists.
+    CONFIDENCE: HIGH
+
+H4. EMAIL SEQUENCE MANAGER -- 5-TAB SHELL, NO SAVE HANDLERS
+    FILE: src/pages/admin/EmailSequenceManager.tsx:37-250
+    EVIDENCE: 5 tabs (sequences, editor, vendor-pipeline, notifications,
+      referrals). Queries 4 tables. Demo arrays populate all tabs. No
+      "Save Sequence" or "Update" mutations found.
+    IMPACT: Admin can view/edit sequences but changes never persist.
+    CONFIDENCE: HIGH
+
+H5. SUPPORT TICKETS -- STATUS CHANGE NO ERROR HANDLING
+    FILE: src/pages/admin/SupportTickets.tsx:303-313
+    EVIDENCE: handleStatusChange() awaits .update() but does not
+      destructure {error}. Optimistic state update at lines 310-311.
+    IMPACT: Status appears changed but may revert on refresh.
+    CONFIDENCE: HIGH
+
+H6. SUPPORT TICKETS -- ASSIGN CHANGE NO ERROR HANDLING
+    FILE: src/pages/admin/SupportTickets.tsx:315-322
+    EVIDENCE: handleAssignChange() same pattern -- no {error} check,
+      optimistic state update without rollback.
+    IMPACT: Assignment appears changed but may revert on refresh.
+    CONFIDENCE: HIGH
+
+H7. SUPPORT TICKETS -- RESOLVE AND CLOSE NO ERROR HANDLING
+    FILE: src/pages/admin/SupportTickets.tsx:348-366
+    EVIDENCE: handleResolveAndClose() no error check on .update().
+      Drawer closes, CSAT prompt shown based on local object not DB state.
+    IMPACT: CSAT survey shown for ticket that may not actually be closed.
+    CONFIDENCE: HIGH
+
+H8. SALES PIPELINE -- STAGE CHANGE CHAINED + PREMATURE TOAST
+    FILE: src/pages/admin/SalesPipeline.tsx:83-105
+    EVIDENCE: Two .update() calls (sales_pipeline line 93, demo_sessions
+      line 100). Neither checks {error}. toast.success() at line 103
+      fires regardless.
+    IMPACT: Deal appears moved but reverts on refresh. Metrics inaccurate.
+    CONFIDENCE: HIGH
+
+H9. SALES PIPELINE -- UPDATE NOTES PREMATURE TOAST
+    FILE: src/pages/admin/SalesPipeline.tsx:107-114
+    EVIDENCE: .update() at line 111 no error check. toast.success('Notes
+      updated') at line 112 fires unconditionally.
+    IMPACT: Notes appear saved but may revert on refresh.
+    CONFIDENCE: HIGH
+
+H10. SALES PIPELINE -- SET CLOSE DATE PREMATURE TOAST
+     FILE: src/pages/admin/SalesPipeline.tsx:116-123
+     EVIDENCE: .update() at line 120 no error check. toast.success('Close
+       date set') at line 121 fires unconditionally.
+     IMPACT: Date appears saved but may revert on refresh.
+     CONFIDENCE: HIGH
+
+H11. DEFICIENCIES HOOKS -- DEMO DATA ONLY, MUTATIONS THROW
+     FILE: src/hooks/api/useDeficiencies.ts:19-67
+     HOOKS: useDeficiencies(), useLocationDeficiencies() return
+       DEMO_DEFICIENCIES. useUpdateDeficiencyStatus() throws
+       "Not implemented" in live mode.
+     IMPACT: Deficiency pages show fake data in live mode. Status
+       update crashes.
+     CONFIDENCE: HIGH
+
+H12. SERVICE RECORDS HOOKS -- DEMO DATA ONLY, MUTATIONS THROW
+     FILE: src/hooks/api/useServiceRecords.ts:18-79
+     HOOKS: useServiceRecords(), useLocationServiceRecords() return
+       DEMO_SERVICE_RECORDS. useUpdateQaStatus() throws "Not implemented".
+     IMPACT: Service record pages show fake data. QA review crashes.
+     CONFIDENCE: HIGH
+
+H13. REPORT HOOKS -- STUB EMPTY, CONSUMERS GRACEFUL
+     FILE: src/hooks/api/useReports.ts:52-74
+     HOOKS: useReportHistory(), useScheduledReports(), useFavoriteReports()
+       all return [].
+     CONSUMER: ReportsPage.tsx -- has LoadingSkeleton and ErrorState.
+     IMPACT: "My Reports" section always empty. Page handles gracefully
+       but never surfaces data.
+     CONFIDENCE: MEDIUM-HIGH
+
+H14. BONUS/CALLBACKS HOOKS -- ALL STUB, PAGES SHOW ZEROS
+     FILE: src/hooks/api/useBonuses.ts:77-118
+     HOOKS: 5 query hooks return []/null. 2 mutations throw
+       "Not implemented".
+     CONSUMERS: BonusDashboardPage.tsx, CallbacksPage.tsx
+     EVIDENCE: All stat cards show $0/0. Action buttons show
+       alert() popups.
+     IMPACT: Pages look functional but show only zeros.
+     CONFIDENCE: HIGH
+
+H15. INVENTORY HOOKS -- ALL STUB, PAGE SHOWS ZEROS
+     FILE: src/hooks/api/useInventory.ts:87-150
+     HOOKS: 4 query hooks return []/null. 6 mutations throw
+       "Not implemented".
+     CONSUMER: InventoryPage.tsx
+     EVIDENCE: All stats show 0. Code comment line 67: "// Stubbed,
+       no demo data". "Add Item" button shows alert('not yet
+       implemented').
+     IMPACT: Full inventory UI renders with zero data.
+     CONFIDENCE: HIGH
+
+================================================================================
+MEDIUM FINDINGS (12)
+================================================================================
+
+M1. AUDIT LOG FIRE-AND-FORGET -- SILENT ERROR SWALLOW
+    FILE: src/hooks/useAuditLog.ts:18-27
+    EVIDENCE: Empty catch block on log_audit_event RPC. All audit failures
+      silently disappear. Zero observability.
+    IMPACT: Compliance audit trail incomplete without detection.
+    NOTE: Full analysis deferred to Phase 8 (security audit).
+    CONFIDENCE: HIGH
+
+M2. ROLE PERMISSIONS -- PREMATURE SUCCESS TOAST (3 mutations)
+    FILE: src/hooks/useRolePermissions.ts:183-285
+    EVIDENCE: toggleRolePermission(), addUserException(),
+      removeUserException() all: (1) update state optimistically,
+      (2) call toast.success() immediately, (3) fire Supabase upsert
+      in .then() chain. If upsert fails, user sees success then error
+      toast 500ms later. No rollback.
+    IMPACT: Confusing double-message UX. Permission changes may not persist.
+    CONFIDENCE: MEDIUM
+
+M3. ROLE PERMISSIONS -- UNUSED LOADING STATE
+    FILE: src/hooks/useRolePermissions.ts:97
+    EVIDENCE: const [loading] = useState(false) -- never updated.
+    IMPACT: Consumers checking loading always see false.
+    CONFIDENCE: HIGH
+
+M4. CONFIGURE ADD-ORG MODAL -- MISSING setSaving(false)
+    FILE: src/pages/admin/Configure.tsx:318-332
+    EVIDENCE: Success path (lines 330-331) does not call setSaving(false).
+      Error path correctly resets at line 329.
+    IMPACT: Button stays in "Creating..." spinner after successful create.
+      Modal closes with stale spinner state.
+    CONFIDENCE: HIGH
+
+M5. CONFIGURE ADD-LOC MODAL -- MISSING setSaving(false)
+    FILE: src/pages/admin/Configure.tsx:420-439
+    EVIDENCE: Same pattern as M4. Success path (lines 438-439) omits reset.
+    IMPACT: Button stuck in spinner state after success.
+    CONFIDENCE: HIGH
+
+M6. CONFIGURE ADD-VENDOR MODAL -- MISSING setSaving(false)
+    FILE: src/pages/admin/Configure.tsx:561-579
+    EVIDENCE: Same pattern. Success path (lines 578-579) omits reset.
+    IMPACT: Button stuck in spinner state after success.
+    CONFIDENCE: HIGH
+
+M7. INSURANCE API KEYS -- DEMO FALLBACK SILENT
+    FILE: src/pages/admin/InsuranceApiKeys.tsx:119-137
+    EVIDENCE: Demo mode loads DEMO_KEYS array. Live mode queries api_keys
+      table. Edge function generate-api-key exists (verified). Guards work.
+    IMPACT: Operational but demo/live boundary could confuse admin.
+    CONFIDENCE: MEDIUM
+
+M8. USAGE ANALYTICS -- PURE HARDCODED, NO QUERIES
+    FILE: src/pages/UsageAnalytics.tsx (boundary page)
+    EVIDENCE: Zero supabase references. All data from hardcoded MODULES,
+      INDUSTRIES, TIME_PERIODS, SIZE_TIERS constants. Despite line 1
+      comment: "HARDCODED DATA PROHIBITED".
+    IMPACT: Admin sees analytics dashboard with fabricated data.
+      No user-facing indication that data is not real.
+    SIDEBAR: YES (/admin/usage-analytics)
+    CONFIDENCE: HIGH
+
+M9. CUSTOM VENDORS SAVE -- OPTIMISTIC WITHOUT ROLLBACK
+    FILE: src/hooks/useCustomVendors.ts:45-58
+    EVIDENCE: setCustomVendors() called before upsert. Upsert has no
+      error handling. If fails, vendor in state but not DB.
+    IMPACT: Custom vendor appears saved, gone on next session.
+    CONFIDENCE: MEDIUM
+
+M10. SETTINGS HOOKS -- 7 STUBS (useVendorSettings etc.)
+     FILE: src/hooks/api/useSettings.ts:113-239
+     HOOKS: useVendorSettings, useRolePermissions (api version),
+       useServiceTypes, useIntegrations, useNotificationPreferences,
+       useBillingInfo, useInvoices -- all return null/[].
+     MUTATIONS: All throw "Not implemented".
+     IMPACT: Settings pages show empty forms. Severity depends on
+       whether consumer pages exist and are reachable.
+     CONFIDENCE: MEDIUM
+
+M11. ADMIN REGULATORY CHANGES -- DEMO SEED INLINE
+     FILE: src/pages/AdminRegulatoryChanges.tsx:47-110
+     EVIDENCE: DEMO_SEED array hardcoded in component. Mutations via
+       useRegulatoryChanges hook (publish/unpublish/reject/updateSummary).
+       No direct Supabase calls in component.
+     IMPACT: Hook-driven, likely functional. Demo data displayed in
+       demo mode. Low risk of broken wiring.
+     CONFIDENCE: MEDIUM
+
+M12. FETCH LIVE STANDINGS -- HYBRID, SILENT NULL FALLBACK
+     FILE: src/lib/standingQueries.ts:199-337
+     EVIDENCE: 7 parallel queries. If tables dont exist, Supabase returns
+       null. Code uses (recentTemps || []) fallback. No error surfaced.
+     IMPACT: Live mode silently returns empty standings. Demo mode works.
+     CONFIDENCE: MEDIUM
+
+================================================================================
+LOW FINDINGS (3)
+================================================================================
+
+L1. SIGNAL READ UPSERT -- NO ERROR CHECK
+    FILE: src/hooks/useMarkSignalRead.ts:18-27
+    EVIDENCE: .upsert() on signal_reads with no error handling.
+    IMPACT: Read tracking out of sync. Low severity (non-critical data).
+    CONFIDENCE: MEDIUM
+
+L2. ACTIVE BANNER DISMISS -- NO ERROR CHECK
+    FILE: src/hooks/useActiveBanner.ts:74-86
+    EVIDENCE: .upsert() on signal_reads with no error handling.
+    IMPACT: Banner re-appears on next session if upsert failed.
+    CONFIDENCE: MEDIUM
+
+L3. DEMO PIPELINE / ADMIN SCORE TABLE -- OPERATIONAL
+    FILE: src/pages/admin/DemoPipeline.tsx, AdminScoreTable.tsx
+    EVIDENCE: Both query real tables and render correctly. Minor
+      demo-data fallback patterns but functional.
+    IMPACT: Low risk.
+    CONFIDENCE: HIGH
+
+================================================================================
+DEFERRED -- ACTIVE DEVELOPMENT
+================================================================================
+
+D1. BRAND/COPY PIVOT -- "Predict Failures. Protect Costs."
+    Reason: Phase 15 (brand & copy) remains paused per standing exclusion.
+    The positioning shift toward "Predict, Prevent, Prove" framework is a
+    copy/positioning change, not structural. Any copy-related observations
+    encountered during Phase 2 analysis are deferred.
+    STATUS: Pending pivot finalization.
+
+================================================================================
+CROSS-CUTTING PATTERNS
+================================================================================
+
+PATTERN 1: FIRE-AND-FORGET MUTATIONS (12 instances)
+  Mutations that await Supabase but do not check {error} response.
+  Files: SupportTickets.tsx (3), SalesPipeline.tsx (3), useVendorSubmissions.ts
+  (2), useServiceRequests.ts (1), useCustomVendors.ts (1), useMarkSignalRead.ts
+  (1), useActiveBanner.ts (1).
+  Root cause: Missing const { error } = await pattern.
+
+PATTERN 2: PREMATURE SUCCESS TOAST (7 instances)
+  toast.success() called before or without verifying Supabase response.
+  Files: SalesPipeline.tsx (3), useRolePermissions.ts (3+), Configure.tsx (1).
+  Root cause: Toast triggered immediately after await, not after error check.
+
+PATTERN 3: OPTIMISTIC WITHOUT ROLLBACK (5 instances)
+  Local state updated before DB, no revert on failure.
+  Files: SupportTickets.tsx (3), useRolePermissions.ts (3), useCustomVendors.ts
+  (1).
+  Counter-example: useUserPreferences.ts implements correct rollback.
+
+PATTERN 4: STUB HOOKS FEEDING LIVE UI (34 hooks, 13+ pages)
+  Hooks return hardcoded [] or null. Consumer pages render full UI with
+  zero data. No user-facing indication of incomplete feature.
+  Highest-risk: SchedulePage, IncidentReportsPage, BonusDashboardPage,
+  InventoryPage, CallbacksPage.
+
+PATTERN 5: CHAINED MUTATIONS WITHOUT TRANSACTION (3 instances)
+  Multiple Supabase .update()/.insert() calls without RPC transaction.
+  Files: useVendorSubmissions.ts (2), useServiceRequests.ts (1).
+  Root cause: PostgREST does not support multi-statement transactions.
+  Fix: Wrap in Supabase RPC function for atomicity.
+
+================================================================================
+STUB HOOK INVENTORY (34 hooks across 8 files)
+================================================================================
+
+FILE                        HOOKS  PATTERN          CONSUMERS
+useIncidents.ts                3   return []         IncidentReportsPage, EquipmentIncidentsPage
+useDeficiencies.ts             3   DEMO_DATA         Deficiency pages
+useServiceRecords.ts           3   DEMO_DATA         Service pages
+useReports.ts                  3   return []         ReportsPage
+useSchedule.ts                10   return [] + throw SchedulePage
+useSettings.ts                14   return null/[]    Settings pages
+useBonuses.ts                  7   return [] + throw BonusDashboardPage, CallbacksPage
+useInventory.ts               10   return [] + throw InventoryPage
+
+TOTAL: 53 hook exports (34 queries + 19 mutations)
+  Queries returning []: 27
+  Queries returning DEMO_DATA: 6
+  Queries returning null: 4
+  Mutations throwing "Not implemented": 19
+
+================================================================================
+SHELL PAGE CLASSIFICATIONS (12 pages from Phase 1)
+================================================================================
+
+PAGE                       SIDEBAR  CLASSIFICATION       PHASE OWNER
+EvidlyVault.tsx            hidden   PURE_STUB            Phase 1
+DemoDashboard.tsx          YES      DEMO_LABELED         Phase 1
+FeatureBaselineTracker.jsx YES      PURE_STUB            Phase 1
+RolePreview.jsx            YES      DEMO_LABELED         Phase 1 (approved)
+TrialHealth.tsx            YES      PARTIAL_WIRE_BROKEN  Phase 2 (C5)
+GtmDashboard.tsx           YES      PARTIAL_WIRE_BROKEN  Phase 2 (C6)
+EmailSequenceManager.tsx   YES      PARTIAL_WIRE_BROKEN  Phase 2 (H4)
+InsuranceApiKeys.tsx       YES      PARTIAL_WIRE_WIRED   Phase 2 (M7)
+UsageAnalytics.tsx         YES      DEMO_ONLY_SILENT     Phase 2 (M8)
+AdminRegulatoryChanges.tsx YES      HOOK_DRIVEN          Phase 2 (M11)
+DemoPipeline.tsx           YES      PARTIAL_WIRE_WIRED   Phase 2 (L3)
+AdminScoreTable.tsx        YES      PARTIAL_WIRE_WIRED   Phase 2 (L3)
+
+Phase 1 owns: 4 pages
+Phase 2 owns: 8 pages (3 CRITICAL, 1 HIGH, 3 MEDIUM, 1 LOW)
+
+================================================================================
+SEVERITY DISTRIBUTION
+================================================================================
+
+  CRITICAL:  7  (C1-C7)
+  HIGH:     15  (H1-H15)
+  MEDIUM:   12  (M1-M12)
+  LOW:       3  (L1-L3)
+  TOTAL:    37
+
+  Deferred (active dev):        1
+  Deferred (arch ground truth): 0
