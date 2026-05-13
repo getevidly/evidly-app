@@ -148,7 +148,7 @@ const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ defa
 
 const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const VendorNetworkPlaceholder = lazy(() => import('./pages/vendors/VendorNetworkPlaceholder'));
 const SelfInspection = lazy(() => import('./pages/SelfInspection').then(m => ({ default: m.SelfInspection })));
 const MockInspection = lazy(() => import('./pages/MockInspection'));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
@@ -646,6 +646,7 @@ function AppRoutes() {
           <Route path="/vendors/services/:serviceId" element={<ServiceDetail />} />
           <Route path="/vendors/requests/:requestId" element={<RequestDetail />} />
           <Route path="/vendors/documents/:docId" element={<DocumentReviewDetail />} />
+          <Route path="/vendor-network" element={<VendorNetworkPlaceholder />} />
 
 
           <Route path="/upgrade" element={<Upgrade />} />
@@ -711,7 +712,7 @@ function AppRoutes() {
 
           {/* User routes unwrapped from RequireAdmin — AUDIT-3 */}
           <Route path="/integrations" element={<IntegrationHub />} />
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services" element={<Navigate to="/vendors" replace />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
           <Route path="/self-inspection" element={<SelfInspection />} />
           <Route path="/self-audit" element={<Navigate to="/self-inspection" replace />} />

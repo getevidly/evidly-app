@@ -179,11 +179,11 @@ const I: Record<string, NavItem> = {
   // ── Vendors section items ───────────────────────────────
 
   've-network': {
-    id: 've-network', label: 'Vendor Network', path: '/vendors', icon: '👥',
+    id: 've-network', label: 'Vendor Network', path: '/vendor-network', icon: '👥',
     roles: [], description: 'EvidLY\'s vetted ecosystem of approved vendors — connect, manage, and track service providers.',
   },
   've-services': {
-    id: 've-services', label: 'Vendor Services', path: '/services', icon: '🛠️',
+    id: 've-services', label: 'Vendor Services', path: '/vendors', icon: '🛠️',
     roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
   },
 

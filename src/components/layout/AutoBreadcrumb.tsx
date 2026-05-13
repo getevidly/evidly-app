@@ -63,7 +63,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
 
   // ── Tools children ──
   '/calendar': { label: 'Calendar', parent: '/facility-safety' },
-  '/vendors': { label: 'Vendor Network', parent: '/dashboard' },
+  '/vendors': { label: 'Vendor Services', parent: '/dashboard' },
+  '/vendor-network': { label: 'Vendor Network', parent: '/dashboard' },
   '/marketplace': { label: 'Vendor Network', parent: '/tools' },
   '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },
   // /checkup removed — Kitchen Checkup is a marketing-only lead magnet, not an in-app page
