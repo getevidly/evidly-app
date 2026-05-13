@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
-import { useRole } from '../../contexts/RoleContext';
 
 // ── Parent-chain route hierarchy ─────────────────────────
 // Every route has a label and optional parent route.
@@ -27,7 +26,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/scoring-breakdown': { label: 'Food Safety Overview', parent: '/food-safety' },
 
   // ── Top-level pages ──
-  '/compliance-overview': { label: 'Compliance Overview', parent: '/dashboard' },
 
   // ── Compliance children ──
   '/compliance-index': { label: 'Compliance Index', parent: '/compliance' },
@@ -260,64 +258,12 @@ function buildBreadcrumb(pathname: string, search: string, state?: any): Breadcr
 
 export function AutoBreadcrumb() {
   const location = useLocation();
-  const { userRole } = useRole();
-
-  // Dashboard: render breadcrumb + tabs on one line
-  if (location.pathname === '/dashboard' && userRole !== 'kitchen_staff') {
-    return <DashboardBreadcrumbWithTabs search={location.search} />;
-  }
 
   const items = buildBreadcrumb(location.pathname, location.search, location.state);
 
   return <BreadcrumbNav items={items} />;
 }
 
-const NAVY = '#1E2D4D';
-
-function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
-  const params = new URLSearchParams(search);
-  const activeTab = params.get('tab') || 'today';
-  const todayShort = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-  return (
-    <nav
-      aria-label="Breadcrumb"
-      className="flex items-center gap-3"
-      style={{ fontFamily: 'Inter, sans-serif' }}
-    >
-      <span
-        className="flex items-center gap-1"
-        style={{ fontSize: '0.875rem', color: '#1E2D4D', fontWeight: 600 }}
-      >
-        <Home style={{ width: 16, height: 16 }} />
-        Dashboard
-      </span>
-      <div className="h-4 w-px" style={{ backgroundColor: '#D1D5DB' }} />
-      <div className="flex gap-0.5">
-        <Link
-          to="/dashboard?tab=today"
-          className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
-          style={{
-            color: activeTab === 'today' ? NAVY : '#6b7280',
-            backgroundColor: activeTab === 'today' ? 'rgba(30,77,107,0.08)' : 'transparent',
-          }}
-        >
-          Today &mdash; {todayShort}
-        </Link>
-        <Link
-          to="/dashboard?tab=overview"
-          className="px-3 py-1 text-sm font-medium rounded-md transition-colors"
-          style={{
-            color: activeTab === 'overview' ? NAVY : '#6b7280',
-            backgroundColor: activeTab === 'overview' ? 'rgba(30,77,107,0.08)' : 'transparent',
-          }}
-        >
-          Overview
-        </Link>
-      </div>
-    </nav>
-  );
-}
 
 function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
   return (

@@ -94,7 +94,6 @@ const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m =>
 const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
 const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
-const ComplianceOverview = lazy(() => import('./pages/ComplianceOverview').then(m => ({ default: m.ComplianceOverview })));
 const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
 
 const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
@@ -120,7 +119,6 @@ const VendorMigration = lazy(() => import('./pages/VendorMigration').then(m => (
 
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const TaskManager = lazy(() => import('./pages/TaskManager'));
 const VendorDocumentReview = lazy(() => import('./pages/VendorDocumentReview'));
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
 const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
@@ -704,7 +702,6 @@ function AppRoutes() {
           <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
-          <Route path="/compliance-overview" element={<ComplianceOverview />} />
           {/* IoT Sensor Platform + Vendor Migration (all authenticated users) */}
           <Route path="/iot/platform" element={<IoTSensorPlatform />} />
           <Route path="/iot/setup" element={<SensorSetupWizard />} />
@@ -831,7 +828,6 @@ function AppRoutes() {
           <Route path="/insights/leaderboard" element={<TeamLeaderboardPage />} />
           <Route path="/insights/operations-intelligence" element={<OperationsIntelligencePage />} />
           {/* Stub routes for upcoming features */}
-          <Route path="/tasks" element={<TaskManager />} />
           <Route path="/vendors/review" element={<Navigate to="/documents?tab=vendor-business&status=pending" replace />} />
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />

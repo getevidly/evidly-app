@@ -52,14 +52,6 @@ const I: Record<string, NavItem> = {
     id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: '🏠',
     roles: [], description: 'Your compliance overview — scores, open items, alerts, and priorities.',
   },
-  complianceOverview: {
-    id: 'complianceOverview', label: 'Compliance Overview', path: '/compliance-overview', icon: '🛡️',
-    roles: [], description: 'Side-by-side Food Safety and Fire Safety scores with jurisdiction status and operational metrics.',
-  },
-  tasks: {
-    id: 'tasks', label: 'Tasks', path: '/tasks', icon: '📝',
-    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
-  },
   calendar: {
     id: 'calendar', label: 'Calendar', path: '/calendar', icon: '📅',
     roles: [], description: 'Inspections, permit renewals, service appointments, and compliance deadlines in one view.',
@@ -358,7 +350,7 @@ const SECTION_ORDER = [
 // ══════════════════════════════════════════════════════════
 
 const TOP_LEVEL_IDS = [
-  'complianceOverview', 'tasks', 'documents', 'kitchenToCommunity',
+  'documents', 'kitchenToCommunity',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -366,14 +358,14 @@ const TOP_LEVEL_IDS = [
 // ══════════════════════════════════════════════════════════
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  platform_admin:     ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  owner_operator:     ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  executive:          ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  compliance_manager: ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  facilities_manager: ['dashboard', 'complianceOverview', 'tasks', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  kitchen_manager:    ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
-  chef:               ['dashboard', 'complianceOverview', 'tasks', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
-  kitchen_staff:      ['dashboard',                       'tasks', 'operations', 'foodSafety',                                                                                                       'tools'],
+  platform_admin:     ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  kitchen_manager:    ['dashboard', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
+  chef:               ['dashboard', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
+  kitchen_staff:      ['dashboard', 'operations', 'foodSafety',                                                                                                       'tools'],
 };
 
 // ══════════════════════════════════════════════════════════
