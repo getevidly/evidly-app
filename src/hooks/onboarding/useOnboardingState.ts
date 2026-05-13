@@ -168,6 +168,34 @@ export function useOnboardingState(): UseOnboardingStateReturn {
     return () => { cancelled = true; };
   }, [orgId, requirements, reqLoading, refreshKey]);
 
+  // Realtime subscription — auto-updates when invitees complete items
+  useEffect(() => {
+    if (!orgId) return;
+
+    const channel = supabase
+      .channel(`onboarding:${orgId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'compliance_documents', filter: `organization_id=eq.${orgId}` },
+        () => setRefreshKey(k => k + 1)
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'location_service_schedules', filter: `organization_id=eq.${orgId}` },
+        () => setRefreshKey(k => k + 1)
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'organizations', filter: `id=eq.${orgId}` },
+        () => setRefreshKey(k => k + 1)
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orgId]);
+
   const buildPillarState = useCallback(
     (pillar: 'food_safety' | 'fire_safety', reqs: PillarRequirement[]): PillarState => {
       const items: RequirementState[] = reqs.map(req => {

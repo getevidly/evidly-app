@@ -81,22 +81,31 @@ export function OnboardingCard() {
   }, [orgId, activeTab]);
 
   const totalItems = requirements.length;
-  const progressText = totalItems > 0 ? `${committedCount} of ${totalItems} set` : '';
+  const progressText = isInvitee ? '' : (totalItems > 0 ? `${committedCount} of ${totalItems} set` : '');
 
-  const headerConfig: Record<OnboardingTabId, { title: string; subtitle: string }> = {
-    responsibilities: {
-      title: 'Set responsibilities',
-      subtitle: 'You set the kitchen up. EvidLY helps you invite the right people for the rest.',
-    },
-    work: {
-      title: 'Complete your work',
-      subtitle: 'Upload documents, identify vendors, and verify requirements.',
-    },
-    summary: {
-      title: 'Summary',
-      subtitle: 'Overview of your onboarding progress across both pillars.',
-    },
-  };
+  const headerConfig: Record<OnboardingTabId, { title: string; subtitle: string }> = isInvitee
+    ? {
+        responsibilities: { title: '', subtitle: '' },
+        work: {
+          title: 'Complete your tasks',
+          subtitle: 'Complete the items your team assigned to you.',
+        },
+        summary: { title: '', subtitle: '' },
+      }
+    : {
+        responsibilities: {
+          title: 'Set responsibilities',
+          subtitle: 'You set the kitchen up. EvidLY helps you invite the right people for the rest.',
+        },
+        work: {
+          title: 'Complete your work',
+          subtitle: 'Upload documents, identify vendors, and verify requirements.',
+        },
+        summary: {
+          title: 'Summary',
+          subtitle: 'Overview of your onboarding progress across both pillars.',
+        },
+      };
 
   const { title, subtitle } = headerConfig[activeTab];
 

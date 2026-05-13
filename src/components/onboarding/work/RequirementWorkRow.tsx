@@ -54,6 +54,7 @@ function deriveSublabel(
   inviteInfo: InviteInfo | null,
   isComplete: boolean,
   isSkipped: boolean,
+  hideOwnerControls?: boolean,
 ): string | null {
   if (isSkipped) {
     const reason = commitEntry?.skip_reason;
@@ -61,8 +62,8 @@ function deriveSublabel(
   }
   if (commitEntry?.choice === 'invite') {
     const name = commitEntry.assigned_to_name || inviteInfo?.full_name || inviteInfo?.email || 'invitee';
-    if (isComplete) return `Done by ${name}`;
-    if (commitEntry.assigned_to_user_id) return `Assigned to ${name}`;
+    if (isComplete) return hideOwnerControls ? 'Completed' : `Done by ${name}`;
+    if (commitEntry.assigned_to_user_id) return hideOwnerControls ? 'Your task' : `Assigned to ${name}`;
     if (!inviteInfo || inviteInfo.status === 'pending') return `Awaiting ${name}`;
     if (inviteInfo.status === 'accepted') return `Assigned to ${name}`;
   }
@@ -97,7 +98,7 @@ export function RequirementWorkRow({
 }: RequirementWorkRowProps) {
   const navigate = useNavigate();
   const variant = deriveVariant(commitEntry, inviteInfo, isComplete, isSkipped);
-  const sublabel = deriveSublabel(commitEntry, inviteInfo, isComplete, isSkipped);
+  const sublabel = deriveSublabel(commitEntry, inviteInfo, isComplete, isSkipped, hideOwnerControls);
   const iconState = deriveStatusIconState(variant, isSkipped, commitEntry, inviteInfo);
 
   const canAct = variant === 'active';
