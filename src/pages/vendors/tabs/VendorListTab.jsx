@@ -3,18 +3,13 @@ import { Plus, Search } from 'lucide-react';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { VendorRow } from '../../../components/vendors/VendorRow';
-import {
-  MOCK_VENDORS,
-  AI_MESSAGES,
-  STARTER_CATEGORIES,
-} from '../../../lib/mock/vendorsMockData';
 
 /**
  * VendorListTab — Surface 1 (populated) + Surface 13 (day-one zero vendors).
  */
 export function VendorListTab() {
   const [filter, setFilter] = useState('all');
-  const vendors = MOCK_VENDORS;
+  const vendors = [];
   const isPopulated = vendors.length > 0;
 
   /* Metrics for populated state */
@@ -40,10 +35,7 @@ export function VendorListTab() {
 
   return (
     <div>
-      {/* AI synthesis */}
-      <AISynthesisStrip message={AI_MESSAGES.vendorList} />
-
-      {/* Metrics */}
+      <AISynthesisStrip message={null} />
       <MetricsStrip cards={metricCards} />
 
       {/* Filter row */}
@@ -81,54 +73,15 @@ export function VendorListTab() {
 
 function DayOneVendorList() {
   return (
-    <div>
-      {/* AI synthesis — day-one message */}
-      <AISynthesisStrip message={AI_MESSAGES.dayOneVendorList} />
-
-      {/* Starter categories */}
-      <p
-        className="uppercase tracking-wider mb-2"
-        style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#5A6478' }}
-      >
-        Suggested categories
+    <div className="text-center py-10">
+      <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
+        No vendors yet
+      </p>
+      <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
+        Add your first vendor to start tracking compliance documents and service schedules.
       </p>
 
-      <div className="flex flex-col gap-2.5">
-        {STARTER_CATEGORIES.map(cat => (
-          <div
-            key={cat.name}
-            className="bg-white rounded-lg px-4 py-3.5"
-            style={{ border: '1px solid #E2DDD4' }}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
-                  {cat.name}
-                </p>
-                <p className="mt-0.5" style={{ fontSize: '11px', color: '#5A6478' }}>
-                  {cat.category} · {cat.cadence}
-                </p>
-                <p className="mt-1.5" style={{ fontSize: '12px', color: '#1E2D4D', lineHeight: '1.4' }}>
-                  {cat.whyRequired}
-                </p>
-                <p className="mt-1.5" style={{ fontSize: '11px', color: '#5A6478' }}>
-                  {cat.suggestedVendors.join(', ')} + {cat.moreCount} more in your area
-                </p>
-              </div>
-              <button
-                type="button"
-                className="flex-shrink-0 px-2.5 py-1 rounded-md mt-1"
-                style={{ fontSize: '11px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-              >
-                Add vendor
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Browse directory CTA */}
-      <div className="mt-4 text-center">
+      <div className="mt-4">
         <button
           type="button"
           className="px-4 py-2 rounded-md"

@@ -2,8 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Eye, Bell, Send } from 'lucide-react';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
-import { MOCK_REQUESTS } from '../../lib/mock/vendorsMockData';
-
 /**
  * RequestDetail — Surface 8.
  * Drill-down for a single request showing thread timeline,
@@ -11,7 +9,7 @@ import { MOCK_REQUESTS } from '../../lib/mock/vendorsMockData';
  */
 export default function RequestDetail() {
   const { requestId } = useParams();
-  const request = MOCK_REQUESTS.find(r => r.id === requestId);
+  const request = [].find(r => r.id === requestId);
 
   if (!request) {
     return (

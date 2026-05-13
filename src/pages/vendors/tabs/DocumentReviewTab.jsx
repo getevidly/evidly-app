@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { DocReviewRow } from '../../../components/vendors/DocReviewRow';
-import { MOCK_DOC_REVIEWS, AI_MESSAGES } from '../../../lib/mock/vendorsMockData';
 
 /**
  * DocumentReviewTab — Surface 5.
@@ -10,7 +9,20 @@ import { MOCK_DOC_REVIEWS, AI_MESSAGES } from '../../../lib/mock/vendorsMockData
  */
 export function DocumentReviewTab() {
   const [filter, setFilter] = useState('all');
-  const docs = MOCK_DOC_REVIEWS;
+  const docs = [];
+
+  if (docs.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
+          No documents to review
+        </p>
+        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
+          Vendor-submitted documents will appear here for AI-assisted review and approval.
+        </p>
+      </div>
+    );
+  }
 
   const actionCount = docs.filter(d => d.state === 'action').length;
   const attentionCount = docs.filter(d => d.state === 'attention').length;
@@ -32,7 +44,7 @@ export function DocumentReviewTab() {
 
   return (
     <div>
-      <AISynthesisStrip message={AI_MESSAGES.docReview} />
+      <AISynthesisStrip message={null} />
       <MetricsStrip cards={metricCards} />
 
       {/* Filter row */}

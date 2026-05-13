@@ -5,6 +5,8 @@ import { Sparkles } from 'lucide-react';
  * Appears below sub-tabs on every vendors surface.
  */
 export function AISynthesisStrip({ message, onAskEvidLY }) {
+  if (!message) return null;
+
   return (
     <div
       className="flex items-start gap-3 px-4 py-3.5 mb-4 rounded-lg"

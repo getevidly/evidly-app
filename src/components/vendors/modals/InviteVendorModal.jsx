@@ -24,7 +24,7 @@ export function InviteVendorModal({ isOpen, onClose, onSend }) {
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const inviteLink = 'https://app.getevidly.com/vendor-register?invite=MOCK_TOKEN';
+  const inviteLink = 'https://app.getevidly.com/vendor-register?invite=';
 
   const handleSend = () => {
     onSend?.({ email, companyName, message });

@@ -1,6 +1,5 @@
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
-import { AI_MESSAGES, MOCK_VENDORS } from '../../../lib/mock/vendorsMockData';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 /**
@@ -8,7 +7,20 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
  * Performance scorecard for all vendors with KPI comparison.
  */
 export function PerformanceTab() {
-  const vendors = MOCK_VENDORS;
+  const vendors = [];
+
+  if (vendors.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
+          No performance data yet
+        </p>
+        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
+          Vendor performance metrics will appear here once vendors are added and service history accumulates.
+        </p>
+      </div>
+    );
+  }
 
   /* Aggregate metrics */
   const avgOnTime = vendors.reduce((sum, v) => sum + parseFloat(v.kpi.onTime), 0) / vendors.length;
@@ -30,7 +42,7 @@ export function PerformanceTab() {
 
   return (
     <div>
-      <AISynthesisStrip message={AI_MESSAGES.performance} />
+      <AISynthesisStrip message={null} />
       <MetricsStrip cards={metricCards} />
 
       {/* Performance table */}

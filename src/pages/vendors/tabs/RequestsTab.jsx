@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { RequestRow } from '../../../components/vendors/RequestRow';
-import { MOCK_REQUESTS, AI_MESSAGES } from '../../../lib/mock/vendorsMockData';
 
 /**
  * RequestsTab — Surface 4.
@@ -10,7 +9,20 @@ import { MOCK_REQUESTS, AI_MESSAGES } from '../../../lib/mock/vendorsMockData';
  */
 export function RequestsTab() {
   const [filter, setFilter] = useState('all');
-  const requests = MOCK_REQUESTS;
+  const requests = [];
+
+  if (requests.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
+          No requests yet
+        </p>
+        <p className="mt-1" style={{ fontSize: '12px', color: '#5A6478' }}>
+          Document requests, quote requests, and renewal reminders will appear here once sent.
+        </p>
+      </div>
+    );
+  }
 
   const actionCount = requests.filter(r => r.state === 'action').length;
   const attentionCount = requests.filter(r => r.state === 'attention').length;
@@ -30,7 +42,7 @@ export function RequestsTab() {
 
   return (
     <div>
-      <AISynthesisStrip message={AI_MESSAGES.requests} />
+      <AISynthesisStrip message={null} />
       <MetricsStrip cards={metricCards} />
 
       {/* Filter row */}

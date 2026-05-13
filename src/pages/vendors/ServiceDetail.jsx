@@ -4,8 +4,6 @@ import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../components/vendors/MetricsStrip';
 import { StatePill } from '../../components/vendors/StatePill';
 import { StateDot } from '../../components/vendors/StateDot';
-import { MOCK_SERVICES } from '../../lib/mock/vendorsMockData';
-
 /**
  * ServiceDetail — Surface 7.
  * Drill-down for a single service showing location coverage,
@@ -13,7 +11,7 @@ import { MOCK_SERVICES } from '../../lib/mock/vendorsMockData';
  */
 export default function ServiceDetail() {
   const { serviceId } = useParams();
-  const service = MOCK_SERVICES.find(s => s.id === serviceId);
+  const service = [].find(s => s.id === serviceId);
 
   if (!service) {
     return (

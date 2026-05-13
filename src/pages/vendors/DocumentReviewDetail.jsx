@@ -2,8 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, CheckCircle, XCircle, Download } from 'lucide-react';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
-import { MOCK_DOC_REVIEWS } from '../../lib/mock/vendorsMockData';
-
 /**
  * DocumentReviewDetail — Surface 9.
  * Drill-down for a single document: preview placeholder, AI flags,
@@ -11,7 +9,7 @@ import { MOCK_DOC_REVIEWS } from '../../lib/mock/vendorsMockData';
  */
 export default function DocumentReviewDetail() {
   const { docId } = useParams();
-  const doc = MOCK_DOC_REVIEWS.find(d => d.id === docId);
+  const doc = [].find(d => d.id === docId);
 
   if (!doc) {
     return (
