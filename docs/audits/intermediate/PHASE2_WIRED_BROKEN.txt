@@ -5,13 +5,14 @@ Baseline anchor: c7f06d9
 ================================================================================
 
 SUMMARY
-  Total findings:           37
-  CRITICAL:                  7
-  HIGH:                     15
+  Total findings:           42
+  CRITICAL:                  8
+  HIGH:                     19
   MEDIUM:                   12
   LOW:                       3
   Deferred (active dev):     1 (brand/copy -- Phase 15 paused)
   Deferred (arch ground):    0
+  SUPPLEMENTAL (late-arriving agent data): 5 findings added post-commit
 
 ================================================================================
 TOP 5 CRITICAL ITEMS -- ARTHUR EYES-ON
@@ -26,9 +27,11 @@ TOP 5 CRITICAL ITEMS -- ARTHUR EYES-ON
       mutation malformed
   C5. GtmDashboard.tsx -- all 5 underlying tables do not exist, metrics always
       zero
+  C8. Audit log RPC log_audit_event DOES NOT EXIST -- every audit attempt
+      fails silently, zero compliance trail
 
 ================================================================================
-CRITICAL FINDINGS (7)
+CRITICAL FINDINGS (8)
 ================================================================================
 
 C1. CONFIGURE ADD-USER MODAL -- FACADE INVITE
@@ -233,13 +236,7 @@ H15. INVENTORY HOOKS -- ALL STUB, PAGE SHOWS ZEROS
 MEDIUM FINDINGS (12)
 ================================================================================
 
-M1. AUDIT LOG FIRE-AND-FORGET -- SILENT ERROR SWALLOW
-    FILE: src/hooks/useAuditLog.ts:18-27
-    EVIDENCE: Empty catch block on log_audit_event RPC. All audit failures
-      silently disappear. Zero observability.
-    IMPACT: Compliance audit trail incomplete without detection.
-    NOTE: Full analysis deferred to Phase 8 (security audit).
-    CONFIDENCE: HIGH
+M1. UPGRADED TO C8 (see Critical findings supplement below)
 
 M2. ROLE PERMISSIONS -- PREMATURE SUCCESS TOAST (3 mutations)
     FILE: src/hooks/useRolePermissions.ts:183-285
@@ -437,14 +434,71 @@ Phase 1 owns: 4 pages
 Phase 2 owns: 8 pages (3 CRITICAL, 1 HIGH, 3 MEDIUM, 1 LOW)
 
 ================================================================================
+SUPPLEMENT -- LATE-ARRIVING FINDINGS (original mutation agent)
+================================================================================
+
+These findings arrived after the initial report was compiled. Agent output
+files were 0 bytes due to a platform issue; data recovered via agent resume.
+
+C8. AUDIT LOG RPC -- FUNCTION DOES NOT EXIST
+    FILE: src/hooks/useAuditLog.ts:11-31
+    EVIDENCE: Calls supabase.rpc('log_audit_event'). No CREATE FUNCTION
+      definition found in ANY migration. RPC does not exist in database.
+      Empty catch block silently swallows the "function not found" error
+      on every call.
+    CONSUMER: RequireAdmin.tsx:28 (security violation logging)
+    IMPACT: ENTIRE audit trail is non-functional. Zero admin actions
+      recorded. Zero security violations logged. Compliance auditing
+      completely broken.
+    CONFIDENCE: HIGH
+    UPGRADED FROM: M1
+
+H16. VENDOR UPLOAD REQUEST RPC -- FUNCTION DOES NOT EXIST
+     FILE: src/lib/api.ts:102-114
+     EVIDENCE: Calls supabase.rpc('create_vendor_upload_request'). No
+       CREATE FUNCTION definition found in migrations. RPC does not exist.
+       Error handling throws, so caller sees failure.
+     IMPACT: Manual vendor upload request creation always fails. Feature
+       is completely non-functional.
+     CONFIDENCE: HIGH
+
+H17. CREATE VENDOR -- CHAINED INSERT, SECOND SILENT FAILURE
+     FILE: src/hooks/useCreateVendor.ts:35-64
+     EVIDENCE: First .insert() on vendors checked for error. Second
+       .insert() on vendor_client_relationships has NO error check.
+       If second fails, vendor exists but has no org relationship.
+     IMPACT: Orphaned vendor records. Vendor appears created but is
+       not accessible in org context.
+     CONFIDENCE: HIGH
+
+H18. RESCHEDULE CONFIRM -- THREE CHAINED UPDATES
+     FILE: src/hooks/useRescheduleRequests.ts:149-188
+     EVIDENCE: Three sequential .update() calls:
+       1. service_reschedule_requests status -> "confirmed"
+       2. location_service_schedules next_due_date (branch A or B)
+       None check {error}. If update 1 succeeds and 2 fails,
+       reschedule marked confirmed but schedule unchanged.
+     IMPACT: Operator thinks reschedule applied. Service schedule
+       still shows old due date.
+     CONFIDENCE: HIGH
+
+H19. RFP ACTION -- CHAINED INSERT + UPDATE
+     FILE: src/hooks/useRfpIntelligence.ts:308-334
+     EVIDENCE: .insert() on rfp_actions checked. .update() on
+       rfp_listings NOT checked. Action recorded but RFP status
+       does not change if update fails.
+     IMPACT: Action history inconsistent with RFP listing state.
+     CONFIDENCE: MEDIUM
+
+================================================================================
 SEVERITY DISTRIBUTION
 ================================================================================
 
-  CRITICAL:  7  (C1-C7)
-  HIGH:     15  (H1-H15)
-  MEDIUM:   12  (M1-M12)
+  CRITICAL:  8  (C1-C8)
+  HIGH:     19  (H1-H19)
+  MEDIUM:   11  (M2-M12, M1 upgraded to C8)
   LOW:       3  (L1-L3)
-  TOTAL:    37
+  TOTAL:    41
 
   Deferred (active dev):        1
   Deferred (arch ground truth): 0
