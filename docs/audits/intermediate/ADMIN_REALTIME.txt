@@ -1,0 +1,50 @@
+================================================================================
+PHASE 0.5 -- REALTIME CHANNEL INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL SUBSCRIPTIONS: 23
+FILES WITH SUBSCRIPTIONS: 17
+CANONICAL STATE FILES: 6
+HOOK SUBSCRIPTIONS: 8
+ADMIN PAGE SUBSCRIPTIONS: 2
+COMPONENT SUBSCRIPTIONS: 1
+
+ALL SUBSCRIPTIONS HAVE CLEANUP: YES
+ALL SUBSCRIPTIONS HAVE TENANT FILTER: YES (admin pages intentionally unfiltered)
+ALL DEPENDENCY ARRAYS CORRECT: YES
+
+CANONICAL STATE (src/lib/canonicalQueries/):
+  incidents-feed          -- incidents              org_id filter  demo-guarded  cleanup: YES
+  documents-feed          -- documents              org_id filter  demo-guarded  cleanup: YES
+  corrective-actions-feed -- corrective_actions      org_id filter  demo-guarded  cleanup: YES
+  temperature-logs-feed   -- temperature_logs        org_id filter  demo-guarded  cleanup: YES
+  tasks-feed              -- tasks                   org_id filter  demo-guarded  cleanup: YES
+  compliance-feed         -- compliance_results      org_id filter  demo-guarded  cleanup: YES
+
+ADMIN PAGES:
+  admin-events            -- admin_event_log         NO filter (admin-only route)  demo-guarded  cleanup: YES
+  event-log-realtime      -- admin_event_log         NO filter (admin-only route)  NO demo guard  cleanup: YES
+
+HOOKS:
+  task_instances_${orgId} -- task_instances           org_id filter  demo-guarded  cleanup: YES
+  reschedule-requests-rt  -- service_reschedule_req   org_id filter  demo-guarded  cleanup: YES
+  service-requests-rt     -- service_requests         org_id filter  demo-guarded  cleanup: YES
+  vendor_doc_submissions  -- vendor_doc_submissions   org_id filter  demo-guarded  cleanup: YES
+  intelligence-feed       -- intelligence_signals     org_id filter  demo-guarded  cleanup: YES
+  signal-notifications    -- notifications            org_id filter  NO demo guard (guarded by !orgId)  cleanup: YES
+  unread-signals          -- intelligence_signals     org_id filter  demo-guarded  cleanup: YES
+  active-banner           -- intelligence_signals     org_id filter  demo-guarded  cleanup: YES
+  notif-unified:${orgId}  -- notifications            org_id filter  demo-guarded  cleanup: YES
+                             (advanced: visibility handler, exponential backoff reconnection)
+
+COMPONENT:
+  iot-sensors-realtime    -- iot_sensors              org_id filter  demo-guarded  cleanup: YES
+
+POTENTIAL CONSOLIDATION:
+  intelligence_signals has 3 separate subscriptions (useIntelligenceFeed, useUnreadSignals, useActiveBanner)
+  -- Could be merged into single hook
+
+WARNINGS:
+  EventLog.tsx -- no explicit isDemoMode check (admin route guards sufficient)
+  useSignalNotifications -- no isDemoMode check (guarded by !orgId)

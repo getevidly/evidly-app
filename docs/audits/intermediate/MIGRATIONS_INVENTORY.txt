@@ -1,0 +1,33 @@
+================================================================================
+PHASE 0.7 -- MIGRATION INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL MIGRATION FILES: 373
+TOTAL SQL LINES: 17,309
+DATE RANGE: Feb 4, 2026 - Aug 16, 2026
+VELOCITY: ~1.7 migrations/day
+
+PHASES:
+  Foundation (Feb 4-5):      8 files -- Schema reset + core tables
+  Vendor/Marketplace (Feb):  12 files -- Vendor mgmt + marketplace
+  Jurisdiction (Feb-Mar):    40+ files -- CA/OR/WA/NV/AZ jurisdiction configs
+  Enterprise (Feb-Mar):      10 files -- Multi-tenant, SSO, SCIM
+  Advanced (Feb-Apr):        100+ files -- Training, playbooks, sensors, API, intelligence
+  Specialization (Apr-Aug):  150+ files -- Fire safety, checklists, incidents, violations
+  Data Management (Apr+):    40 files -- Data wipe, cleanup, backfills
+
+SCOPE VIOLATIONS (CLAUDE.md FORBIDDEN TABLES):
+  20260228000000_referral_system_tables.sql creates:
+    - referrals           (HoodOps PRO)
+    - compliance_badges   (HoodOps PRO)
+    - network_scores      (HoodOps PRO)
+    - k2c_donations       (mixed scope -- used by EvidLY K2C program)
+    - vendor_ripples      (HoodOps PRO)
+
+NOTABLE:
+  - No seed.sql file exists (config.toml references it)
+  - vendors table created twice with IF NOT EXISTS (safe)
+  - 20260401000000_data_wipe.sql truncates 67 tables
+  - Duplicate jurisdiction config migrations across 40+ files
+  - Fire safety renamed to facility safety across multiple migrations

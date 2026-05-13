@@ -1,0 +1,72 @@
+================================================================================
+PHASE 0.9 -- QUERY INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL QUERY OPERATIONS: 100+
+CANONICAL HOOKS: 6 (all with realtime + 30s cache)
+API HOOKS: 11 active + 3 stubbed/demo
+TABLES QUERIED: 30+
+UNBOUNDED QUERIES: 10+
+REALTIME-SUBSCRIBED: 8
+
+CANONICAL HOOKS (src/lib/canonicalQueries/):
+  useComplianceState       -- inspection_reports, corrective_actions (4 parallel queries)
+  useTemperatureState      -- temperature_equipment, temperature_logs (2-step join)
+  useDocumentsState        -- documents (aggregation)
+  useCorrectiveActionsState-- corrective_actions (multi-dimensional aggregation)
+  useTaskState             -- task_instances, task_definitions (3 parallel: today/overdue/upcoming)
+  useIncidentsState        -- incidents (multi-dimensional aggregation)
+
+  All canonical hooks: 30s stale-time, realtime subscriptions, org_id filter,
+  DST-safe via kitchenNow()/kitchenToday(), client-side aggregation
+
+API HOOKS (src/hooks/api/):
+  useLocations             -- locations (id, name, active, sorted)
+  useSensorDevices         -- sensor_devices (active, RLS-scoped)
+  useMenuItems             -- menu_items (active, RLS-scoped)
+  useVendorContacts        -- vendor_contacts (active, RLS-scoped)
+  useEquipment             -- equipment (filterable by type/condition/status/location/search)
+  useEquipmentItem         -- equipment (single by id)
+  useLocationEquipment     -- equipment (by location_id)
+  useEquipmentServiceHistory -- equipment_service_records (by equipment_id)
+  useEquipmentDeficiencies -- equipment_deficiencies (by equipment_id)
+  useEquipmentDocuments    -- equipment_documents (by equipment_id)
+  useTemperatureLogs       -- temperature_logs (by facility_id, limit 200)
+  useCooldownLogs          -- cooldown_logs (by location_id)
+  useCooldownTempChecks    -- cooldown_temp_checks (by cooldown_log_id)
+
+  STUBBED: useIncidents (returns []), useDeficiencies (demo data only)
+
+LIBRARY QUERIES:
+  standingQueries.ts       -- fetchLiveStandings() hybrid (demo fully implemented, live partial)
+  dashboardQueries.ts      -- fetchComplianceScores() check-query on temperature_logs
+
+TENANT SCOPING:
+  ALL queries filter by organization_id (primary) or location_id (secondary)
+  Multi-location support via optional locationFilter parameter
+  Zero cross-org queries found
+
+CACHING:
+  Canonical hooks: 30s stale-time Map cache
+  API hooks: No built-in cache (per-consumer lifecycle)
+  Library queries: Stateless (fresh each call)
+
+UNBOUNDED QUERIES (NO LIMIT):
+  corrective_actions (filtered by org+status+pillar)
+  incidents (filtered by org+status+category)
+  documents (filtered by org+status)
+  equipment (filtered by org+archived_at)
+  equipment_service_records
+  equipment_deficiencies
+  equipment_documents
+  cooldown_logs
+  checklist_templates
+  sensor_devices
+
+ARCHITECTURAL PATTERNS:
+  - Dual-path design: all hooks support demo mode + live mode
+  - Soft-delete via archived_at IS NULL (no hard deletes)
+  - All aggregation done client-side post-fetch
+  - No server-side pagination on most queries
+  - DST-safe time via kitchenNow(), kitchenToday(tz)

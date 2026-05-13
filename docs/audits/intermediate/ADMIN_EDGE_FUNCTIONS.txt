@@ -1,0 +1,59 @@
+================================================================================
+PHASE 0.4 -- EDGE FUNCTION INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL EDGE FUNCTIONS: 151
+ACTIVE (verified callers): ~72
+POTENTIALLY DEAD (no callers found): ~79
+SHARED UTILITIES (_shared/): 9 files (cors, email, auth, notify, sms, logger, invocation-logger, rateLimit, posUtils)
+
+CATEGORIES:
+  AI & Intelligence:        21 functions
+  Compliance & Scoring:      7 functions
+  Email & Notifications:    14 functions
+  Payment & Billing:         3 functions (Stripe)
+  Document Management:       6 functions
+  Vendor Management:        11 functions
+  IoT & Sensors:            10 functions
+  API & Marketplace:        11 functions
+  Admin & Platform Ops:     22 functions
+  Training & Learning:       7 functions
+  Enterprise & Multi-Tenant:10 functions
+  POS & Operational:         7 functions
+  Public/Landing:            5 functions
+  Offline & Sync:            4 functions
+  Playbook & Workflow:       6 functions
+  Reporting & Export:         7 functions
+
+SECURITY CONFIG (from config.toml):
+  verify_jwt = false (6 functions): intelligence-collect, intelligence-approve,
+    intelligence-webhook, crawl-monitor, trigger-crawl, classify-signals, violation-crawl
+    -- All validate auth internally via x-cron-secret or Bearer + email domain
+
+CORS:
+  Domain-restricted (most): app.getevidly.com, www.getevidly.com, getevidly.com + localhost
+  Public CORS (4): landing-chat, evidly-referral-signup, assessment-notify, vendor-connect-apply
+
+CRITICAL ACTIVE FUNCTIONS:
+  stripe-webhook          -- Payment processing (signature-verified)
+  stripe-create-checkout  -- Checkout session creation
+  ai-chat                 -- Claude AI advisor (rate-limited 50/day)
+  calculate-compliance-score -- Jurisdiction scoring
+  intelligence-webhook    -- Inbound intelligence signals
+  resend-webhook          -- Email event tracking
+  hoodops-webhook         -- Vendor service events
+  iot-sensor-webhook      -- Temperature/humidity data
+
+SCOPE VIOLATION:
+  hoodops-webhook -- HoodOps PRO scope, should not exist per CLAUDE.md
+
+DEAD FUNCTION CATEGORIES (no callers found):
+  All api-v1-* endpoints (4)
+  All enterprise-* functions (8)
+  All training-* functions (9)
+  All benchmark-* functions (4)
+  All playbook-* functions (6)
+  All pos-* functions (7)
+  All sensor-* functions (5, except iot-sensor-webhook)
+  Most vendor-* management functions

@@ -1,0 +1,97 @@
+================================================================================
+PHASE 0.2 -- ADMIN FILE GRAPH
+Generated: 2026-05-12
+================================================================================
+
+TOTAL ADMIN PAGES: 46 (src/pages/admin/)
+ADMIN-EXCLUSIVE COMPONENTS: 7 (src/components/admin/)
+ADMIN LAYOUT: 1 (AdminShell.tsx)
+BOUNDARY PAGES: 4 (admin-gated but in src/pages/)
+
+================================================================================
+ADMIN-EXCLUSIVE COMPONENTS (src/components/admin/)
+================================================================================
+  KpiTile.tsx              -- Metric tile, used by 14 admin pages
+  StatCard.tsx             -- Alt metric card
+  StatCardRow.tsx          -- Metric grid container, used by 9 admin pages
+  OrgCombobox.tsx          -- Organization search/create dropdown, 5 admin pages
+  VerificationPanel.tsx    -- Content gate verification UI, 3 admin pages
+  EmulationPanel.tsx       -- User emulation interface, AdminDashboard only
+  AdminBreadcrumb.tsx      -- SHARED_REACHABLE (39 admin + 4 boundary pages)
+
+================================================================================
+ADMIN LAYOUT (src/components/layout/)
+================================================================================
+  AdminShell.tsx           -- Dark navy sidebar (#0B1628), 220px width
+                              Renders only for isAdmin && (isAdminRoute || (!isEmulating && !effectiveDemoMode))
+                              6 nav sections, filtered by permission flags + salesOnly + hidden
+
+================================================================================
+ADMIN PAGES (src/pages/admin/) -- 46 files
+================================================================================
+
+SYSTEM STATUS (13):
+  AdminAuditLog.tsx, AdminCrawlMonitor.tsx, AdminDashboard.tsx,
+  AdminHome.tsx, CommandCenter.tsx, Configure.tsx, DatabaseBackup.tsx,
+  EventLog.tsx, MaintenanceMode.tsx, RemoteConnect.tsx,
+  SecuritySettings.tsx, SystemMessages.tsx, VerificationReport.tsx
+
+TENANT MANAGEMENT (6):
+  AdminOrgs.tsx, AdminUsers.tsx, AdminSecurity.tsx,
+  StaffRoles.tsx, UserEmulation.tsx, UserProvisioning.tsx
+
+SALES & GROWTH (20):
+  AssessmentLeads.tsx, AdminBilling.tsx, AdminK2C.tsx, AdminReports.tsx,
+  AdminScoreTable.tsx, AdminTestimonials.tsx, DemoGenerator.tsx,
+  DemoLauncher.tsx, DemoPipeline.tsx, DemoDashboard.tsx, DemoTours.jsx,
+  PartnerDemos.jsx, EmailSequenceManager.tsx, GuidedTours.tsx,
+  GtmDashboard.tsx, MarketingCampaigns.tsx, SalesPipeline.tsx,
+  TrialHealth.tsx, ViolationOutreach.tsx
+
+INTELLIGENCE & COMPLIANCE (7):
+  EvidLYIntelligence.tsx, EvidlyVault.tsx, FeatureFlags.tsx,
+  FeatureBaselineTracker.tsx, IntelligenceAdmin.tsx,
+  JurisdictionIntelligence.tsx, RfpIntelligence.tsx
+
+SYSTEM & CONFIG (4):
+  EdgeFunctions.tsx (system/), InsuranceApiKeys.tsx,
+  AdminVendorConnect.jsx, SupportTickets.tsx
+
+================================================================================
+BOUNDARY PAGES (src/pages/ -- not in admin/ but RequireAdmin-gated)
+================================================================================
+  AdminClientOnboarding    -- /admin/onboarding -- uses AdminBreadcrumb
+  AdminRegulatoryChanges   -- /admin/regulatory-changes -- uses AdminBreadcrumb
+  AdminIntelligenceQueue   -- /admin/intelligence-queue -- uses AdminBreadcrumb
+  UsageAnalytics           -- /admin/usage-analytics -- uses AdminBreadcrumb
+
+================================================================================
+ADMIN-EXCLUSIVE LIBRARIES (src/lib/ and src/data/)
+================================================================================
+  src/data/demoGeneratorData.ts   -- Demo seed constants (DemoGenerator, DemoPipeline)
+  src/lib/demoDataGenerator.ts    -- Demo generation logic (DemoGenerator only)
+
+================================================================================
+SHARED HOOKS & CONTEXTS (SHARED_REACHABLE_FROM_ADMIN)
+================================================================================
+  useAuth          -- 19+ admin pages + all protected routes
+  useDemo          -- 25+ admin pages + all demo routes
+  useDemoGuard     -- 44+ admin pages + 4 boundary pages
+  useRole          -- UserEmulation + non-admin pages
+  useEmulation     -- AdminDashboard + non-admin emulation flows
+  AuthContext      -- All admin + all authenticated routes
+  DemoContext      -- All admin + all demo routes
+  RoleContext      -- UserEmulation + non-admin role features
+  EmulationContext -- AdminDashboard + non-admin emulation
+
+================================================================================
+SHARED LIBRARIES (SHARED_REACHABLE_FROM_ADMIN)
+================================================================================
+  supabase            -- All pages
+  designSystem        -- AdminDashboard + Dashboard/Layout
+  intelligenceRouter  -- EvidLYIntelligence/IntelligenceAdmin + IntelligenceHub
+  cicPillars          -- EvidLYIntelligence/IntelligenceAdmin + ComplianceIntel
+  correlationEngine   -- EvidLYIntelligence + IntelligenceHub
+  assessmentScoring   -- AssessmentLeads + Kitchen Check pages
+  stateCounties       -- Configure/DemoLauncher/GuidedTours + JurisdictionSettings
+  tourModules         -- GuidedTours + all pages with tours

@@ -1,0 +1,40 @@
+================================================================================
+PHASE 0.6 -- WEBHOOK & EXTERNAL INTEGRATION INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL EXTERNAL SERVICES: 14
+BIDIRECTIONAL: 2 (Stripe, Resend)
+OUTBOUND ONLY: 7 (Anthropic, Twilio, Google Drive, reCAPTCHA, GA4, Leaflet, Crisp)
+INBOUND ONLY: 5 (Stripe webhook, Resend webhook, HoodOps, IoT sensors, Intelligence)
+
+CRITICAL (Production Revenue/Security):
+  Stripe       -- Payments: checkout, portal, webhook (HMAC-SHA256 verified)
+                  Files: src/lib/stripe.ts, supabase/functions/stripe-*/index.ts
+  Anthropic    -- AI: 8+ edge functions (ai-chat, ai-document-analysis, etc.)
+                  Auth: ANTHROPIC_API_KEY bearer token
+  Resend       -- Email: _shared/email.ts + 15+ sending functions
+                  Auth: RESEND_API_KEY + Svix signature on webhook (OPTIONAL)
+
+OPERATIONAL:
+  HoodOps      -- Vendor service events: hoodops-webhook (shared secret)
+  IoT Sensors  -- Temperature/humidity: iot-sensor-webhook (API key verified)
+  Intelligence -- Inbound signals: intelligence-webhook (shared secret)
+  Twilio       -- SMS: _shared/sms.ts (Basic auth, non-blocking)
+
+ANALYTICS & AUTH:
+  GA4          -- G-VE2QFDN5Z0 (landing), G-JRYCV8ZXTS (app)
+                  Cookie consent check, dev env skip
+  reCAPTCHA v3 -- Login.tsx, InviteAccept.tsx (silent mode)
+  Google Drive -- CloudImportPicker.tsx (OAuth2, Picker API)
+
+EMBEDDED:
+  Calendly     -- CalendlyButton.tsx: calendly.com/founders-getevidly/60min
+  Crisp        -- useCrisp.ts: live chat widget
+  Leaflet      -- LocationMap.tsx: OpenStreetMap tiles
+
+SECURITY GAPS:
+  - Resend webhook signature verification is OPTIONAL (warning logged if missing)
+  - No rate limiting on most edge functions (exception: ai-chat 50/day)
+  - No Slack/PagerDuty for critical failure escalation
+  - No API request timeout on some webhook handlers

@@ -1,0 +1,79 @@
+================================================================================
+PHASE 0.8 -- MUTATION INVENTORY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL ADMIN-RELATED MUTATIONS: 9
+ADMIN-EXCLUSIVE: 3 (audit log, auto-request settings, vendor upload request RPC)
+SHARED ADMIN+MANAGER: 6 (vendor doc approve/decline, service request confirm/cancel, vendor token, vendor contact)
+
+1. AUDIT LOG EVENT (Fire-and-Forget)
+   File: src/hooks/useAuditLog.ts:12-30
+   Op: .rpc('log_audit_event')
+   Target: audit_logs
+   Error handling: Silent catch -- never blocks UI
+   Invalidation: None
+   Double-click: None
+
+2. AUTO-REQUEST SETTINGS
+   File: src/lib/api.ts:44-62
+   Op: .upsert() on auto_request_settings
+   Fields: enabled, days_before_expiration, reminder intervals, notify_via, link_expires_days
+   Error handling: Throws on failure
+   Invalidation: Caller responsibility
+   Double-click: None
+
+3. VENDOR UPLOAD REQUEST (RPC)
+   File: src/lib/api.ts:102-114
+   Op: .rpc('create_vendor_upload_request')
+   Target: vendor_upload_requests + vendor_secure_tokens
+   Error handling: Throws
+   Double-click: None
+
+4. VENDOR SECURE TOKEN
+   File: src/lib/vendorDocumentActions.ts:27-71
+   Op: .insert() on vendor_secure_tokens
+   Error handling: Returns {success, error}
+   Double-click: Token is synchronous; RLS enforces single-use
+
+5. VENDOR CONTACT SEND
+   File: src/lib/api.ts:8-28
+   Op: POST to edge function vendor-contact
+   Error handling: Returns JSON from edge function
+   Double-click: Caller responsibility
+
+6. VENDOR DOC APPROVE
+   File: src/hooks/useVendorSubmissions.ts:108-140
+   Op: .update() x2 chained (submissions + documents)
+   Error handling: Logs error but continues to second update -- PARTIAL SUCCESS POSSIBLE
+   Invalidation: YES -- fetchSubmissions() refetch
+   Demo mode: Skipped
+
+7. VENDOR DOC DECLINE
+   File: src/hooks/useVendorSubmissions.ts:143-176
+   Op: .update() x2 chained (submissions + documents)
+   Error handling: Logs error but continues -- PARTIAL SUCCESS POSSIBLE
+   Invalidation: YES -- fetchSubmissions() refetch
+   Demo mode: Skipped
+
+8. SERVICE REQUEST CONFIRM
+   File: src/hooks/useServiceRequests.ts:103-138
+   Op: .update() + .insert() chained (service_requests + calendar_events)
+   Error handling: None -- throws on failure
+   Invalidation: YES -- fetchRequests() refetch
+   Double-click: None
+   Demo mode: Skipped
+
+9. SERVICE REQUEST CANCEL
+   File: src/hooks/useServiceRequests.ts:140-151
+   Op: .update() on service_requests
+   Error handling: None
+   Invalidation: YES -- fetchRequests() refetch
+   Double-click: None
+   Demo mode: Skipped
+
+KEY CONCERNS:
+  - Vendor doc approve/decline: chained updates without transaction (partial success possible)
+  - No double-click protection on service request confirmation
+  - No explicit admin role check in mutations (all implicit via page routing)
+  - Audit log fire-and-forget: failures invisible to user

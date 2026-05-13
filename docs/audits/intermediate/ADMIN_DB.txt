@@ -1,0 +1,179 @@
+================================================================================
+PHASE 0.3 -- ADMIN DB SURFACE
+Generated: 2026-05-12
+================================================================================
+
+TOTAL TABLES REFERENCED: 157+
+MATERIALIZED VIEWS: 3 (v_documents_enriched, v_location_leaderboard, v_platform_stats)
+RPCs: 2 (log_audit_event, create_vendor_upload_request)
+
+================================================================================
+CORE TABLES BY DOMAIN
+================================================================================
+
+ORGANIZATIONS & ACCESS:
+  organizations                    -- SELECT, UPDATE
+  locations                        -- SELECT, INSERT, UPDATE, DELETE
+  user_profiles                    -- SELECT, INSERT, UPDATE
+  user_location_access             -- SELECT
+  user_invitations                 -- SELECT, INSERT
+  role_permissions                 -- SELECT, UPSERT, DELETE
+  user_permission_overrides        -- SELECT, INSERT, UPDATE, DELETE, UPSERT
+  evidly_role_permissions          -- SELECT (read-only platform role defs)
+
+INTELLIGENCE & PLATFORM:
+  intelligence_signals             -- SELECT, INSERT, UPDATE
+  signal_reads                     -- SELECT, INSERT, UPSERT
+  intelligence_game_plans          -- SELECT, UPDATE
+  platform_updates                 -- SELECT, INSERT, UPDATE
+  client_notifications             -- SELECT, INSERT, UPDATE
+  platform_settings                -- SELECT
+  platform_metrics_daily           -- SELECT
+  v_platform_stats                 -- SELECT (materialized view)
+
+CRAWL & REGULATORY:
+  crawl_execution_log              -- SELECT
+  crawl_health                     -- SELECT
+  crawl_runs                       -- SELECT
+  regulatory_changes               -- SELECT, INSERT, UPDATE, DELETE, UPSERT
+  regulatory_sources               -- SELECT
+  regulatory_change_reads          -- SELECT, UPSERT
+  intelligence_sources             -- SELECT
+
+GTM & SALES:
+  demo_sessions                    -- SELECT
+  demo_leads                       -- INSERT
+  assessment_leads                 -- SELECT
+  sales_pipeline_deals             -- SELECT
+  demo_tours                       -- SELECT
+  demo_templates                   -- SELECT
+  guided_tour_templates            -- SELECT
+
+COMPLIANCE & INSPECTION:
+  inspections                      -- SELECT
+  external_inspections             -- SELECT
+  incidents                        -- SELECT, INSERT, UPDATE
+  incident_comments                -- SELECT, INSERT
+  incident_timeline                -- SELECT
+  incident_templates               -- SELECT
+  compliance_documents             -- SELECT, INSERT, UPDATE
+  compliance_score_snapshots       -- SELECT
+  compliance_photos                -- SELECT
+
+VENDORS & MARKETPLACE:
+  vendors                          -- SELECT, INSERT, UPDATE, DELETE
+  vendor_documents                 -- SELECT, UPDATE
+  vendor_document_submissions      -- SELECT, UPDATE
+  vendor_client_relationships      -- SELECT, INSERT
+  vendor_contacts                  -- SELECT
+  vendor_users                     -- SELECT
+  vendor_upload_requests           -- SELECT
+  vendor_service_records           -- SELECT
+  marketplace_vendors              -- SELECT
+
+EQUIPMENT & TEMPERATURE:
+  equipment                        -- SELECT, INSERT, UPDATE
+  temperature_logs                 -- SELECT, INSERT
+  temperature_equipment            -- SELECT
+  equipment_service_records        -- SELECT, INSERT
+  equipment_deficiencies           -- SELECT
+  equipment_documents              -- SELECT, INSERT
+  equipment_qr_codes              -- SELECT, INSERT
+  iot_sensors                      -- SELECT
+  cooldown_logs                    -- SELECT, INSERT
+  cooldown_temp_checks             -- SELECT, INSERT
+
+TASKS & WORKFLOWS:
+  task_definitions                 -- SELECT, INSERT, UPDATE
+  task_instances                   -- SELECT, UPDATE
+  tasks                            -- SELECT, INSERT, UPDATE, DELETE
+  checklist_templates              -- SELECT
+  checklist_template_items         -- SELECT
+  checklist_template_completions   -- SELECT
+  checklists                       -- SELECT, INSERT, UPDATE, DELETE
+  checklist_items                  -- SELECT, INSERT, UPDATE, DELETE
+  checklist_completions            -- SELECT, INSERT
+
+DOCUMENTS & COMMUNICATION:
+  documents                        -- SELECT, INSERT, UPDATE, DELETE
+  v_documents_enriched             -- SELECT (materialized view)
+  compliance_document_requests     -- SELECT, INSERT
+  compliance_document_send_items   -- SELECT, INSERT
+  compliance_document_send_records -- SELECT
+  compliance_document_activity_log -- SELECT, INSERT
+  notifications                    -- SELECT, INSERT, UPDATE
+  notification_preferences         -- SELECT, UPSERT
+  notification_settings            -- SELECT
+
+ENTERPRISE:
+  enterprise_tenants               -- SELECT
+  enterprise_sso_configs           -- SELECT, UPDATE
+  enterprise_scim_tokens           -- SELECT, INSERT, UPDATE
+  enterprise_hierarchy_nodes       -- SELECT, INSERT, UPDATE
+  enterprise_user_mappings         -- SELECT, INSERT, UPDATE
+  enterprise_report_templates      -- SELECT
+  enterprise_audit_log             -- SELECT, INSERT
+  enterprise_rollup_scores         -- SELECT
+
+TRAINING:
+  employee_certifications          -- SELECT, INSERT, UPDATE
+  user_milestones                  -- SELECT, INSERT
+
+AUDIT & LOGGING:
+  admin_audit_log                  -- INSERT (via RPC)
+  activity_logs                    -- SELECT, INSERT
+  emulation_audit_log              -- SELECT, INSERT
+  platform_audit_log               -- SELECT
+  feature_flag_audit               -- SELECT
+  content_verification_log         -- SELECT, INSERT
+  admin_event_log                  -- SELECT
+
+FEATURES & FLAGS:
+  feature_flags                    -- SELECT, INSERT, UPDATE
+  feature_flag_unlocks             -- SELECT
+  feature_flag_notifications       -- SELECT
+
+ADMIN INFRASTRUCTURE:
+  admin_api_keys                   -- SELECT, INSERT, UPDATE
+  admin_backups                    -- SELECT
+  admin_security_config            -- SELECT, UPDATE
+  edge_function_registry           -- SELECT, INSERT, UPDATE
+  edge_function_invocations        -- SELECT
+  api_keys                         -- SELECT, INSERT, UPDATE, DELETE
+  api_request_log                  -- SELECT
+
+USER PREFERENCES:
+  user_preferences                 -- SELECT, INSERT, UPDATE, UPSERT
+  user_dashboard_preferences       -- SELECT, INSERT, UPDATE
+  push_subscriptions               -- SELECT, UPSERT
+  user_sessions                    -- SELECT
+  mfa_policy                       -- SELECT
+  user_mfa_config                  -- SELECT
+  session_policy                   -- SELECT
+
+SPECIALTY:
+  k2c_donations                    -- SELECT
+  k12_school_records               -- SELECT
+  sb1383_compliance                -- SELECT
+  rfp_listings                     -- SELECT, UPDATE
+  rfp_sources                      -- SELECT
+  rfp_actions                      -- SELECT, INSERT
+  marketing_campaigns              -- SELECT
+  marketing_touchpoints            -- SELECT
+
+================================================================================
+RLS PATTERNS
+================================================================================
+  Organization-scoped: user_location_access join to org_id (most tables)
+  User-scoped: auth.uid() = user_id (profiles, preferences)
+  Service role full access: enterprise_* tables (admin edge functions)
+  Vendor self + client: vendors see own company OR clients see their vendors
+
+================================================================================
+CRITICAL ADMIN QUERY CONCENTRATIONS
+================================================================================
+  CommandCenter.tsx     -- intelligence_signals, platform_updates, client_notifications, crawl_execution_log
+  AdminDashboard.tsx    -- crawl_health, crawl_runs, admin_event_log, api_keys, assessment_leads, demo_sessions
+  GtmDashboard.tsx      -- demo_sessions, sales_pipeline_deals, assessment_leads
+  useRolePermissions.ts -- role_permissions, user_permission_overrides, user_profiles
+  AdminOrgs.tsx         -- organizations, user_profiles, locations

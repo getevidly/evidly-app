@@ -1,0 +1,142 @@
+================================================================================
+PHASE 0.1 -- ADMIN ROUTE BOUNDARY
+Generated: 2026-05-12
+================================================================================
+
+TOTAL ADMIN ROUTES: 69
+ROUTE GUARD: RequireAdmin (enforces platform_admin role)
+SECONDARY GATES: SalesGuard (sales/GTM), permission flags (perm_*)
+
+PROTECTION LAYERS:
+1. RequireAdmin -- route-level (platform_admin check)
+2. routeGuards.ts -- isRouteAllowedForRole() function
+3. SalesGuard -- canSeeSalesMarketing flag (super_admin or sales staff role)
+4. AdminShell sidebar -- filters nav items by permission flags + salesOnly
+5. AdminHome vs AdminHub split -- platform_admin gets AdminHome, tenant admins get AdminHub
+
+================================================================================
+ADMIN ROUTES (all wrapped in RequireAdmin, App.tsx:718-820)
+================================================================================
+
+SYSTEM STATUS & OPERATIONS (13 routes):
+  /admin                          -> AdminRoute (AdminHome for platform_admin, AdminHub for tenant)
+  /admin/home                     -> REDIRECT -> /admin
+  /admin/dashboard                -> AdminDashboard.tsx
+  /admin/command-center           -> CommandCenter.tsx
+  /admin/event-log                -> EventLog.tsx
+  /admin/audit-log                -> AdminAuditLog.tsx
+  /admin/crawl-monitor            -> AdminCrawlMonitor.tsx [perm: canCrawlManage]
+  /admin/backup                   -> DatabaseBackup.tsx
+  /admin/maintenance              -> MaintenanceMode.tsx
+  /admin/messages                 -> SystemMessages.tsx
+  /admin/system/edge-functions    -> EdgeFunctions.tsx
+  /admin/feature-flags            -> FeatureFlags.tsx
+  /admin/feature-baseline         -> FeatureBaselineTracker.tsx
+
+TENANT MANAGEMENT (7 routes):
+  /admin/orgs                     -> AdminOrgs.tsx
+  /admin/users                    -> AdminUsers.tsx
+  /admin/provisioning             -> UserProvisioning.tsx
+  /admin/user-provisioning        -> REDIRECT -> /admin/provisioning
+  /admin/staff                    -> StaffRoles.tsx [perm: canStaffManage]
+  /admin/onboard-client           -> REDIRECT -> /admin/onboarding
+
+SECURITY (6 routes):
+  /admin/security                 -> AdminSecurity.tsx [perm: canSecurity]
+  /admin/security-settings        -> SecuritySettings.tsx [perm: canSecurity]
+  /admin/evidly-vault             -> EvidlyVault.tsx [hidden: true]
+  /admin/vault                    -> REDIRECT -> /admin/evidly-vault
+  /admin/api-keys                 -> InsuranceApiKeys.tsx
+  /admin/emulate                  -> UserEmulation.tsx [perm: canEmulate]
+  /admin/emulation                -> REDIRECT -> /admin/emulate
+
+INTELLIGENCE (8 routes):
+  /admin/intelligence             -> EvidLYIntelligence.tsx [perm: canIntelligence]
+  /admin/intelligence-admin       -> IntelligenceAdmin.tsx [perm: canIntelligence]
+  /admin/intelligence-queue       -> REDIRECT -> /admin/intelligence-admin
+  /admin/jurisdiction-intelligence -> JurisdictionIntelligence.tsx [perm: canIntelligence]
+  /admin/regulatory-changes       -> AdminRegulatoryChanges.tsx [perm: canIntelligence]
+  /admin/regulatory               -> REDIRECT -> /admin/regulatory-changes
+  /admin/rfp-monitor              -> RfpIntelligence.tsx [perm: canIntelligence]
+  /admin/rfp-intelligence         -> REDIRECT -> /admin/rfp-monitor
+  /admin/rfp                      -> REDIRECT -> /admin/rfp-monitor
+
+SALES & GTM (all SalesGuard, 16 routes):
+  /admin/sales                    -> SalesPipeline.tsx
+  /admin/pipeline                 -> REDIRECT -> /admin/sales
+  /admin/gtm                      -> GtmDashboard.tsx
+  /admin/demo-generator           -> DemoGenerator.tsx
+  /admin/demo-launcher            -> DemoLauncher.tsx
+  /admin/demo-pipeline            -> DemoPipeline.tsx
+  /admin/demos                    -> REDIRECT -> /admin/demo-pipeline
+  /admin/demo-tours               -> DemoTours.jsx
+  /admin/demo/dashboard           -> DemoDashboard.tsx
+  /admin/partner-demos            -> PartnerDemos.jsx
+  /admin/kitchen-checkup          -> AssessmentLeads.tsx
+  /admin/assessments              -> REDIRECT -> /admin/kitchen-checkup
+  /admin/scoretable               -> AdminScoreTable.tsx
+  /admin/testimonials             -> AdminTestimonials.tsx
+  /admin/campaigns                -> MarketingCampaigns.tsx
+  /admin/leads                    -> AssessmentLeads.tsx
+
+GROWTH & ENGAGEMENT (5 routes):
+  /admin/guided-tours             -> GuidedTours.tsx
+  /admin/email-sequences          -> EmailSequenceManager.tsx
+  /admin/violation-outreach       -> ViolationOutreach.tsx
+  /admin/trial-health             -> TrialHealth.tsx
+  /admin/verification             -> VerificationReport.tsx
+
+BILLING & CONFIG (5 routes):
+  /admin/billing                  -> AdminBilling.tsx [perm: canBilling]
+  /admin/k2c                      -> AdminK2C.tsx
+  /admin/configure                -> Configure.tsx [perm: canConfigure]
+  /admin/reports                  -> AdminReports.tsx
+  /admin/support                  -> SupportTickets.tsx [perm: canSupportTickets]
+
+VENDOR & PARTNER (3 routes):
+  /admin/vendor-connect           -> AdminVendorConnect.jsx
+  /partner/vendor-demo            -> VendorDemo.tsx
+  /partner/association-demo       -> AssociationDemo.tsx
+  /partner/carrier-demo           -> CarrierDemo.tsx
+
+OTHER (4 routes):
+  /admin/remote-connect           -> RemoteConnect.tsx [perm: canRemoteConnect]
+  /admin/role-preview             -> RolePreview.jsx [perm: canEmulate]
+  /admin/usage-analytics          -> UsageAnalytics.tsx
+  /admin/jurisdiction-intel       -> REDIRECT -> /admin/jurisdiction-intelligence
+
+SHARED ROUTES INSIDE ADMIN GUARD (IoT/Sensors/Settings):
+  /iot-platform                   -> IoTPlatform.tsx
+  /sensors                        -> SensorHub.tsx
+  /sensors/add                    -> SensorSetupWizard.tsx
+  /sensors/:id                    -> SensorDetail.tsx
+  /settings/integrations          -> IntegrationSettings.tsx
+  /settings/api-keys              -> ApiKeySettings.tsx
+  /settings/webhooks              -> WebhookSettings.tsx
+
+================================================================================
+DRIFT DETECTED
+================================================================================
+1. CLAUDE.md specifies admin-only items gated by
+   if (userRole !== platform_admin) return null but actual implementation
+   uses SalesGuard (permission-flag-based, not direct role check). Same
+   practical effect but different mechanism.
+
+2. AdminShell sidebar has hidden: true on EvidlyVault -- route exists but
+   no sidebar link. Only accessible via direct URL.
+
+3. /admin/role-preview requires canEmulate permission but is not listed
+   in the CLAUDE.md admin-only items list.
+
+4. Route /admin/jurisdiction-intel is an undocumented redirect.
+
+================================================================================
+SCOPE COUNTS
+================================================================================
+  Total admin routes:          69
+  Redirect routes:             14
+  Unique page components:      ~55
+  SalesGuard-protected:        16
+  Permission-gated:            ~15
+  Admin-exclusive pages:       46 (in src/pages/admin/)
+  Boundary pages:              4 (in src/pages/ using admin components)
