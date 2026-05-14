@@ -35,23 +35,27 @@ export function VendorRow({ vendor }) {
             </p>
           </div>
           <p className="mt-0.5 truncate" style={{ fontSize: '11px', color: '#5A6478' }}>
-            {vendor.services.join(' · ')} · {vendor.coverageLine}
+            {[...(vendor.services || []), vendor.coverageLine].filter(Boolean).join(' · ')}
           </p>
 
           {/* AI answer line */}
-          <p className="mt-1.5" style={{ fontSize: '12px', color: '#1E2D4D', lineHeight: '1.4' }}>
-            {vendor.answerLine}
-          </p>
+          {vendor.answerLine ? (
+            <p className="mt-1.5" style={{ fontSize: '12px', color: '#1E2D4D', lineHeight: '1.4' }}>
+              {vendor.answerLine}
+            </p>
+          ) : null}
 
           {/* Location dots */}
-          <div className="flex items-center gap-1.5 mt-2">
-            {vendor.locationCoverage.map(loc => (
-              <StateDot key={loc.locationId} state={loc.state} locationName={loc.locationName} />
-            ))}
-            <span style={{ fontSize: '10px', color: '#5A6478', marginLeft: '4px' }}>
-              {vendor.locationCoverage.filter(l => l.state !== 'not_contracted').length} of {vendor.locationCoverage.length} locations
-            </span>
-          </div>
+          {vendor.locationCoverage?.length > 0 && (
+            <div className="flex items-center gap-1.5 mt-2">
+              {vendor.locationCoverage.map(loc => (
+                <StateDot key={loc.locationId} state={loc.state} locationName={loc.locationName} />
+              ))}
+              <span style={{ fontSize: '10px', color: '#5A6478', marginLeft: '4px' }}>
+                {vendor.locationCoverage.filter(l => l.state !== 'not_contracted').length} of {vendor.locationCoverage.length} locations
+              </span>
+            </div>
+          )}
         </div>
 
         {/* CTA + chevron */}

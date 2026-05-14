@@ -41,7 +41,7 @@ export function useCreateVendor() {
 
     const { data: vendorData, error: vendorError } = await supabase
       .from('vendors')
-      .insert(vendor)
+      .insert({ ...vendor, organization_id: organizationId })
       .select('id')
       .single();
 

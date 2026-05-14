@@ -1,15 +1,43 @@
 import { useState } from 'react';
-import { Plus, Search, Mail } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useDemo } from '../../../contexts/DemoContext';
+import { useVendors } from '../../../hooks/useVendors';
+import { useLocations } from '../../../hooks/api/useLocations';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { VendorRow } from '../../../components/vendors/VendorRow';
+import { AddVendorModal } from '../../../components/vendor/AddVendorModal';
 
 /**
  * VendorListTab — Surface 1 (populated) + Surface 13 (day-one zero vendors).
  */
 export function VendorListTab() {
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const { data: vendorRows, isLoading, refetch } = useVendors();
+  const { data: locations } = useLocations();
+  const organizationId = profile?.organization_id ?? null;
+
   const [filter, setFilter] = useState('all');
-  const vendors = [];
+  const [addOpen, setAddOpen] = useState(false);
+
+  // Map DB rows → VendorRow shape
+  const vendors = (vendorRows ?? []).map(row => {
+    const state = deriveState(row.status, row.invite_status);
+    return {
+      id: row.id,
+      name: row.company_name,
+      initials: getInitials(row.company_name),
+      services: row.service_type ? [row.service_type] : [],
+      coverageLine: '',
+      answerLine: null,
+      locationCoverage: [],
+      state,
+      cta: deriveCta(state),
+    };
+  });
+
   const isPopulated = vendors.length > 0;
 
   /* Metrics for populated state */
@@ -29,8 +57,39 @@ export function VendorListTab() {
     ? vendors
     : vendors.filter(v => v.state === filter);
 
+  // Existing emails for duplicate prevention in AddVendorModal
+  const existingEmails = (vendorRows ?? [])
+    .flatMap(r => [r.email, r.primary_contact_email])
+    .filter(Boolean);
+
+  const accessibleLocations = (locations ?? []).map(l => ({
+    locationId: l.id,
+    locationName: l.name,
+  }));
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (!isPopulated) {
-    return <DayOneVendorList />;
+    return (
+      <>
+        <DayOneVendorList onAdd={() => setAddOpen(true)} />
+        <AddVendorModal
+          isOpen={addOpen}
+          onClose={() => setAddOpen(false)}
+          onVendorAdded={() => refetch()}
+          isDemoMode={isDemoMode}
+          organizationId={organizationId}
+          accessibleLocations={accessibleLocations}
+          existingEmails={existingEmails}
+        />
+      </>
+    );
   }
 
   return (
@@ -59,19 +118,61 @@ export function VendorListTab() {
         ))}
       </div>
 
+      {/* Add action */}
+      <div className="flex items-center gap-2.5 mb-3">
+        <button
+          type="button"
+          onClick={() => setAddOpen(true)}
+          className="px-4 py-2 rounded-md flex items-center gap-1.5"
+          style={{ fontSize: '12px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+        >
+          <Plus size={14} />
+          Add vendor
+        </button>
+      </div>
+
       {/* Vendor cards */}
       <div className="flex flex-col gap-2.5">
         {filteredVendors.map(vendor => (
           <VendorRow key={vendor.id} vendor={vendor} />
         ))}
       </div>
+
+      <AddVendorModal
+        isOpen={addOpen}
+        onClose={() => setAddOpen(false)}
+        onVendorAdded={() => refetch()}
+        isDemoMode={isDemoMode}
+        organizationId={organizationId}
+        accessibleLocations={accessibleLocations}
+        existingEmails={existingEmails}
+      />
     </div>
   );
 }
 
+/* ─── Helpers ─────────────────────────────────────────────────────── */
+
+function deriveState(status, inviteStatus) {
+  if (inviteStatus === 'invited') return 'attention';
+  return 'current';
+}
+
+function deriveCta(state) {
+  if (state === 'attention') return { variant: 'secondary', label: 'Pending' };
+  return { variant: 'secondary', label: 'View' };
+}
+
+function getInitials(name) {
+  const parts = (name || '').split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return '??';
+}
+
 /* ─── Day-one state (Surface 13) ─────────────────────────────────── */
 
-function DayOneVendorList() {
+function DayOneVendorList({ onAdd }) {
   return (
     <div
       className="bg-white rounded-lg px-4 py-4"
@@ -97,19 +198,12 @@ function DayOneVendorList() {
       <div className="flex items-center gap-2.5 mt-4">
         <button
           type="button"
+          onClick={onAdd}
           className="px-4 py-2 rounded-md flex items-center gap-1.5"
           style={{ fontSize: '12px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
         >
           <Plus size={14} />
           Add vendor
-        </button>
-        <button
-          type="button"
-          className="px-4 py-2 rounded-md flex items-center gap-1.5"
-          style={{ fontSize: '12px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
-        >
-          <Mail size={14} />
-          Invite vendor
         </button>
       </div>
     </div>
