@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocationServiceSchedules } from '../../../hooks/useLocationServiceSchedules';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { ServiceRow } from '../../../components/vendors/ServiceRow';
@@ -7,8 +8,8 @@ import { ServiceRow } from '../../../components/vendors/ServiceRow';
  * ServicesTab — Surface 2 (populated) + Surface 14 (day-one zero services).
  */
 export function ServicesTab() {
+  const { services, loading, error } = useLocationServiceSchedules();
   const [filter, setFilter] = useState('all');
-  const services = [];
   const isPopulated = services.length > 0;
 
   /* Metrics for populated state */
@@ -27,6 +28,27 @@ export function ServicesTab() {
   const filteredServices = filter === 'all'
     ? services
     : services.filter(s => s.state === filter);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        className="bg-white rounded-lg px-4 py-4"
+        style={{ border: '1px solid #E2DDD4' }}
+      >
+        <p style={{ fontSize: '14px', color: '#B91C1C' }}>
+          Unable to load service schedules. Please try again.
+        </p>
+      </div>
+    );
+  }
 
   if (!isPopulated) {
     return <DayOneServices />;
