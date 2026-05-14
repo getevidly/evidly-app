@@ -10,6 +10,7 @@ const STATES = {
   attention: { label: 'Attention',       fg: '#B45309', bg: '#FFF8E1' },
   action:    { label: 'Action required', fg: '#B91C1C', bg: '#FCE8E4' },
   fulfilled: { label: 'Fulfilled',       fg: '#2E7D32', bg: '#E8F2E5' },
+  cancelled: { label: 'Cancelled',       fg: '#5A6478', bg: '#E2DDD4' },
 };
 
 export function StatePill({ state }) {

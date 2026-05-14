@@ -18,19 +18,30 @@ serve(async (req) => {
     const body = await req.json();
     const { location_id, organization_id, service_types, urgency, preferred_date, notes } = body;
 
-    if (!location_id || !organization_id) {
-      throw new Error('location_id and organization_id are required');
+    if (!location_id) {
+      throw new Error('location_id is required');
     }
 
-    // Look up vendor
+    // Resolve organization — fall back to CPP Leads pseudo-org for unassigned leads
+    let resolvedOrgId = organization_id;
+    if (!resolvedOrgId) {
+      const { data: cppLeadsOrg } = await supabase
+        .from('organizations')
+        .select('id')
+        .eq('name', 'CPP Leads')
+        .single();
+      if (!cppLeadsOrg) throw new Error('CPP Leads organization not found');
+      resolvedOrgId = cppLeadsOrg.id;
+    }
+
+    // Look up vendor (optional — may not exist for leads)
     const { data: vendor } = await supabase
       .from('vendors')
       .select('id')
       .limit(1)
       .single();
 
-    const vendorId = vendor?.id;
-    if (!vendorId) throw new Error('No vendor configured');
+    const vendorId = vendor?.id || null;
 
     // Get location details
     const { data: location } = await supabase
@@ -46,7 +57,7 @@ serve(async (req) => {
         vendor_id: vendorId,
         source: 'evidly',
         evidly_location_id: location_id,
-        organization_id,
+        organization_id: resolvedOrgId,
         location_id,
         business_name: location?.name || null,
         contact_name: location?.contact_name || null,
@@ -57,7 +68,7 @@ serve(async (req) => {
         urgency: urgency || 'normal',
         preferred_date: preferred_date || null,
         notes,
-        status: 'new',
+        status: 'pending_vendor',
       })
       .select('id')
       .single();

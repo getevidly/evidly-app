@@ -57,7 +57,7 @@ export function RequestRow({ request }) {
 
         {/* CTA + chevron */}
         <div className="flex-shrink-0 flex items-center gap-2">
-          {request.cta.variant === 'primary' ? (
+          {request.cta && (request.cta.variant === 'primary' ? (
             <span
               className="px-2.5 py-1 rounded-md"
               style={{ fontSize: '11px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
@@ -71,7 +71,7 @@ export function RequestRow({ request }) {
             >
               {request.cta.label}
             </span>
-          )}
+          ))}
           <ChevronRight size={16} style={{ color: '#5A6478' }} />
         </div>
       </div>

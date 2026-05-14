@@ -156,7 +156,7 @@ export default function RequestDetail() {
 
         {/* Actions */}
         <div className="flex flex-col gap-2">
-          {request.state !== 'fulfilled' && (
+          {request.state !== 'fulfilled' && request.cta && (
             <button
               type="button"
               className="w-full py-2.5 rounded-md"

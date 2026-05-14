@@ -26,20 +26,28 @@ serve(async (req) => {
       throw new Error('contact_name and contact_email are required');
     }
 
-    // Look up vendor (default vendor for now)
+    // Resolve CPP Leads pseudo-org for AI estimate leads
+    const { data: cppLeadsOrg } = await supabase
+      .from('organizations')
+      .select('id')
+      .eq('name', 'CPP Leads')
+      .single();
+    if (!cppLeadsOrg) throw new Error('CPP Leads organization not found');
+
+    // Look up vendor (optional — may not exist for leads)
     const { data: vendor } = await supabase
       .from('vendors')
       .select('id')
       .limit(1)
       .single();
 
-    const vendorId = vendor?.id;
-    if (!vendorId) throw new Error('No vendor configured');
+    const vendorId = vendor?.id || null;
 
     // Create service request with AI data
     const { data: request, error } = await supabase
       .from('service_requests')
       .insert({
+        organization_id: cppLeadsOrg.id,
         vendor_id: vendorId,
         source: 'ai_estimate',
         business_name,
@@ -48,7 +56,7 @@ serve(async (req) => {
         contact_phone,
         address,
         city,
-        state,
+        state_code: state,
         zip,
         service_types: service_types || [],
         preferred_date: preferred_date || null,
@@ -62,7 +70,7 @@ serve(async (req) => {
         ai_equipment_detected: ai_analysis?.equipment_detected || null,
         ai_condition_assessment: ai_analysis?.condition_assessment || null,
         ai_photos: ai_analysis?.photos || null,
-        status: 'new',
+        status: 'pending_vendor',
       })
       .select('id')
       .single();

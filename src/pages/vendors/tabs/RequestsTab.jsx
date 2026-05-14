@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useServiceRequests } from '../../../hooks/useServiceRequests';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { RequestRow } from '../../../components/vendors/RequestRow';
@@ -7,9 +8,66 @@ import { RequestRow } from '../../../components/vendors/RequestRow';
  * RequestsTab — Surface 4.
  * All outbound requests (document requests, quotes, renewals) with fulfillment tracking.
  */
+
+function deriveState(status) {
+  switch (status) {
+    case 'pending_vendor': return 'current';
+    case 'vendor_selected': return 'attention';
+    case 'vendor_proposed_alt': return 'action';
+    case 'pending_operator': return 'action';
+    case 'confirmed': return 'fulfilled';
+    case 'canceled': return 'cancelled';
+    case 'expired': return 'action';
+    default: return 'current';
+  }
+}
+
+function deriveCta(status) {
+  switch (status) {
+    case 'vendor_selected': return { variant: 'secondary', label: 'Review' };
+    case 'vendor_proposed_alt': return { variant: 'primary', label: 'Review slots' };
+    case 'pending_operator': return { variant: 'primary', label: 'Respond' };
+    case 'expired': return { variant: 'primary', label: 'Resend' };
+    default: return null;
+  }
+}
+
 export function RequestsTab() {
+  const { requests: rawRequests, loading, error } = useServiceRequests();
   const [filter, setFilter] = useState('all');
-  const requests = [];
+
+  const requests = rawRequests.map(r => ({
+    id: r.id,
+    title: r.service_type || '',
+    state: deriveState(r.status),
+    vendorName: r.vendor_name || '',
+    sentDate: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
+    answerLine: null,
+    viewedDate: null,
+    reminders: 0,
+    cta: deriveCta(r.status),
+  }));
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        className="bg-white rounded-lg px-4 py-4"
+        style={{ border: '1px solid #E2DDD4' }}
+      >
+        <p style={{ fontSize: '14px', color: '#B91C1C' }}>
+          Unable to load service requests. Please try again.
+        </p>
+      </div>
+    );
+  }
 
   if (requests.length === 0) {
     return (
@@ -37,12 +95,14 @@ export function RequestsTab() {
   const attentionCount = requests.filter(r => r.state === 'attention').length;
   const currentCount = requests.filter(r => r.state === 'current').length;
   const fulfilledCount = requests.filter(r => r.state === 'fulfilled').length;
+  const cancelledCount = requests.filter(r => r.state === 'cancelled').length;
 
   const metricCards = [
-    { label: 'Open requests', value: requests.filter(r => r.state !== 'fulfilled').length, valueColor: 'navy' },
+    { label: 'Open requests', value: requests.filter(r => r.state !== 'fulfilled' && r.state !== 'cancelled').length, valueColor: 'navy' },
     { label: 'Action required', value: actionCount, valueColor: 'action' },
     { label: 'Attention', value: attentionCount, valueColor: 'attention' },
     { label: 'Fulfilled', value: fulfilledCount, valueColor: 'current' },
+    { label: 'Cancelled', value: cancelledCount, valueColor: 'navy' },
   ];
 
   const filteredRequests = filter === 'all'
@@ -56,7 +116,7 @@ export function RequestsTab() {
 
       {/* Filter row */}
       <div className="flex items-center gap-2 mb-3 overflow-x-auto">
-        {['all', 'action', 'attention', 'current', 'fulfilled'].map(f => {
+        {['all', 'action', 'attention', 'current', 'fulfilled', 'cancelled'].map(f => {
           const count = f === 'all' ? requests.length : requests.filter(r => r.state === f).length;
           const label = f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1);
           return (
