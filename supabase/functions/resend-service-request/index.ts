@@ -6,6 +6,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { createNotification } from "../_shared/notify.ts";
+import { ensureThread, recordMessage } from "../_shared/threadMessage.ts";
+import { buildReplyAddress } from "../_shared/replyAddress.ts";
 import { logger } from "../_shared/logger.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
@@ -126,6 +128,16 @@ Deno.serve(async (req) => {
     const vendorEmail = vendor?.email as string | undefined;
 
     if (vendorEmail) {
+      // Ensure message thread
+      const thread = await ensureThread({
+        supabase,
+        organizationId: request.organization_id,
+        entityType: "service_request",
+        entityId: requestId,
+        subject: `Service Request: ${request.service_type}`,
+      });
+      const replyTo = thread ? buildReplyAddress(thread.id) : undefined;
+
       let tokenStr = "";
 
       if (request.schedule_token_id) {
@@ -213,11 +225,28 @@ Deno.serve(async (req) => {
         footerNote: "This link expires in 14 days. If you have questions, please contact your client directly.",
       });
 
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: vendorEmail,
         subject: `Service Request (Resent): ${request.service_type} — ${orgName}`,
         html: emailHtml,
+        replyTo,
       });
+
+      // Record outbound message
+      if (thread && emailResult) {
+        await recordMessage({
+          supabase,
+          threadId: thread.id,
+          organizationId: request.organization_id,
+          channel: "email",
+          direction: "outbound",
+          senderType: "system",
+          senderIdentifier: "noreply@getevidly.com",
+          subject: `Service Request (Resent): ${request.service_type} — ${orgName}`,
+          bodyHtml: emailHtml,
+          providerMessageId: emailResult.id,
+        });
+      }
     }
 
     // Notify operator

@@ -6,6 +6,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { createNotification } from "../_shared/notify.ts";
+import { ensureThread, recordMessage } from "../_shared/threadMessage.ts";
+import { buildReplyAddress } from "../_shared/replyAddress.ts";
 import { logger } from "../_shared/logger.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -265,6 +267,16 @@ Deno.serve(async (req) => {
       .update({ schedule_token_id: tokenRow.id })
       .eq("id", request.id);
 
+    // Ensure message thread for this service request
+    const thread = await ensureThread({
+      supabase: supabaseUser,
+      organizationId: organization_id,
+      entityType: "service_request",
+      entityId: request.id,
+      subject: `Service Request: ${service_type}`,
+    });
+    const replyTo = thread ? buildReplyAddress(thread.id) : undefined;
+
     // Send email to vendor
     const scheduleUrl = `${APP_URL}/vendor/schedule/${token}`;
     const slotsHtml = proposed_slots
@@ -317,17 +329,51 @@ Deno.serve(async (req) => {
         footerNote: "This link expires in 14 days. If you have questions, please contact your client directly.",
       });
 
-      await sendEmail({
+      const urgentResult = await sendEmail({
         to: vendor.email,
         subject: `${urgencyBanner.text}: ${service_type} — ${orgName}`,
         html: urgentEmailHtml,
+        replyTo,
       });
+
+      // Record outbound message
+      if (thread && urgentResult) {
+        await recordMessage({
+          supabase: supabaseUser,
+          threadId: thread.id,
+          organizationId: organization_id,
+          channel: "email",
+          direction: "outbound",
+          senderType: "system",
+          senderIdentifier: "noreply@getevidly.com",
+          subject: `${urgencyBanner.text}: ${service_type} — ${orgName}`,
+          bodyHtml: urgentEmailHtml,
+          providerMessageId: urgentResult.id,
+        });
+      }
     } else {
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: vendor.email,
         subject: `Service Request: ${service_type} — ${orgName}`,
         html: emailHtml,
+        replyTo,
       });
+
+      // Record outbound message
+      if (thread && emailResult) {
+        await recordMessage({
+          supabase: supabaseUser,
+          threadId: thread.id,
+          organizationId: organization_id,
+          channel: "email",
+          direction: "outbound",
+          senderType: "system",
+          senderIdentifier: "noreply@getevidly.com",
+          subject: `Service Request: ${service_type} — ${orgName}`,
+          bodyHtml: emailHtml,
+          providerMessageId: emailResult.id,
+        });
+      }
     }
 
     // Notify operator that request was sent
