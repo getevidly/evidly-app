@@ -119,19 +119,19 @@ export default function Pricing() {
         <div className="max-w-3xl mx-auto mb-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
           <div className="flex items-center justify-center gap-3 mb-3">
             <EvidlyIcon size={28} />
-            <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>Risk-Free Guarantee</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>60-Day Risk-Free Guarantee</h3>
           </div>
           <p className="text-[#1E2D4D]/80 max-w-xl mx-auto leading-relaxed">
-            Try EvidLY with full access to every feature.
-            Not convinced? Get a <strong>full refund within 45 days</strong> of your first payment. No questions asked.
+            Try EvidLY with full access. Complete setup within 15 days, use the platform for 45 days.
+            Not convinced? Get a <strong>100% refund of your subscription fees</strong> (setup fees are non-refundable).
           </p>
-          <p className="text-[#1E2D4D]/60 text-xs max-w-md mx-auto mt-2">
-            Account setup required within 15 days for Risk-Free Guarantee to apply (allows ops data collection).
+          <p className="text-[#1E2D4D]/60 text-sm max-w-md mx-auto mt-3 font-medium">
+            Founder: $250 setup &bull; Standard: $500 setup
           </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-[#1E2D4D]/70">
-            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />45-day money-back</span>
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />60-day money-back</span>
             <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />Founder price lock</span>
-            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />No setup fees</span>
+            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />One-time setup fee</span>
           </div>
         </div>
 
@@ -215,7 +215,7 @@ export default function Pricing() {
                 >
                   Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`} — price locked forever when you start before Aug 7.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`} + $250 one-time setup — price locked forever.</p>
               </div>
             </div>
           </div>
@@ -258,7 +258,7 @@ export default function Pricing() {
                 >
                   Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">Price locked forever.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">+ $250 one-time setup — price locked forever.</p>
               </div>
             </div>
           </div>
@@ -275,6 +275,7 @@ export default function Pricing() {
             <div className="mb-8">
               <div className="text-4xl font-extrabold text-[#1E2D4D] mb-2">Custom</div>
               <div className="text-[#1E2D4D]/70">Tailored to your needs</div>
+              <div className="text-xs text-[#1E2D4D]/50 mt-1">Setup fee: custom</div>
             </div>
 
             <ul className="space-y-3 mb-8 flex-grow">
@@ -322,7 +323,7 @@ export default function Pricing() {
         {/* Trust Statement */}
         <div className="text-center mt-12">
           <p className="text-sm text-[#1E2D4D]/50">
-            45-day money-back guarantee &bull; No setup fees &bull; Price locked forever
+            60-day money-back guarantee &bull; One-time setup fee &bull; Price locked forever
           </p>
         </div>
       </div>

@@ -90,7 +90,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Build line items — multi-location adds additional location line items
+    // Build line items — subscription + one-time setup fee
     const params = new URLSearchParams();
     params.set("customer", stripeCustomerId!);
     params.set("mode", "subscription");
@@ -102,11 +102,29 @@ Deno.serve(async (req: Request) => {
     params.set("cancel_url", `${appUrl}/settings?tab=billing`);
     params.set("metadata[supabase_user_id]", user.id);
 
+    let nextLineItem = 1;
+
+    // Add one-time setup fee line item
+    const resolvedTier = tier || "founder_single";
+    let setupPriceId: string | undefined;
+    if (resolvedTier === "founder_single" || resolvedTier === "founder_multi") {
+      setupPriceId = Deno.env.get("STRIPE_FOUNDER_SETUP_PRICE_ID");
+    } else if (resolvedTier === "standard") {
+      setupPriceId = Deno.env.get("STRIPE_STANDARD_SETUP_PRICE_ID");
+    }
+
+    if (setupPriceId) {
+      params.set(`line_items[${nextLineItem}][price]`, setupPriceId);
+      params.set(`line_items[${nextLineItem}][quantity]`, "1");
+      nextLineItem++;
+    }
+
     if (tier === "founder_multi" && locationCount && locationCount > 1) {
       const additionalPriceId = Deno.env.get("STRIPE_FOUNDER_ADDITIONAL_PRICE_ID");
       if (additionalPriceId) {
-        params.set("line_items[1][price]", additionalPriceId);
-        params.set("line_items[1][quantity]", String(locationCount - 1));
+        params.set(`line_items[${nextLineItem}][price]`, additionalPriceId);
+        params.set(`line_items[${nextLineItem}][quantity]`, String(locationCount - 1));
+        nextLineItem++;
       }
       params.set("subscription_data[metadata][location_count]", String(locationCount));
     }
