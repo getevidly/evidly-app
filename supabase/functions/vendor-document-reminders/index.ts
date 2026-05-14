@@ -72,7 +72,7 @@ Deno.serve(async (req: Request) => {
       .select(`
         *,
         vendor_documents!vendor_document_id (id, document_type, title, status, file_url),
-        vendors!vendor_id (id, name, contact_name, contact_email)
+        vendors!vendor_id (id, company_name, contact_name, email, primary_contact_email)
       `)
       .eq("resolved", false);
 
@@ -110,9 +110,9 @@ Deno.serve(async (req: Request) => {
         // Check if we've hit this stage (days until expiry <= stage days)
         // and the reminder hasn't been sent yet
         if (daysUntilExpiry <= stage.days && !(row as any)[stage.column]) {
-          const vendorEmail = vendor.contact_email;
+          const vendorEmail = vendor.email || vendor.primary_contact_email;
           if (!vendorEmail) {
-            logger.warn("No vendor contact email", { vendor_id: vendor.id, vendor_name: vendor.name });
+            logger.warn("No vendor contact email", { vendor_id: vendor.id, vendor_name: vendor.company_name });
             continue;
           }
 
@@ -155,7 +155,7 @@ Deno.serve(async (req: Request) => {
           };
 
           const emailHtml = buildEmailHtml({
-            recipientName: vendor.contact_name || vendor.name,
+            recipientName: vendor.contact_name || vendor.company_name,
             bodyHtml: `
               <p>Your <strong>${row.document_type}</strong> document ${daysText}.</p>
               <p>Please upload a current version of this document using the secure link below.</p>
@@ -203,8 +203,8 @@ Deno.serve(async (req: Request) => {
               type: "vendor_doc_expiry",
               category: "documents",
               title: stage.days >= 0
-                ? `${vendor.name}: ${row.document_type} ${daysText}`
-                : `${vendor.name}: ${row.document_type} ${daysText}`,
+                ? `${vendor.company_name}: ${row.document_type} ${daysText}`
+                : `${vendor.company_name}: ${row.document_type} ${daysText}`,
               body: `Vendor has been notified to re-upload.`,
               actionUrl: "/vendors/review",
               actionLabel: "View Documents",
@@ -233,7 +233,7 @@ Deno.serve(async (req: Request) => {
           totalSent++;
           logger.info("Expiry reminder sent", {
             tracking_id: row.id,
-            vendor: vendor.name,
+            vendor: vendor.company_name,
             document_type: row.document_type,
             stage: stage.days,
             vendor_email: vendorEmail,
