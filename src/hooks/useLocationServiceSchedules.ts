@@ -28,7 +28,7 @@ interface UseLocationServiceSchedulesResult {
   refetch: () => void;
 }
 
-function deriveState(nextDueDate: string | null): 'action' | 'attention' | 'current' {
+export function deriveScheduleState(nextDueDate: string | null): 'action' | 'attention' | 'current' {
   if (!nextDueDate) return 'current';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -72,7 +72,7 @@ export function useLocationServiceSchedules(): UseLocationServiceSchedulesResult
       } else {
         const mapped: ServiceScheduleRow[] = (data || []).map((row: Record<string, unknown>) => {
           const loc = row.locations as Record<string, unknown> | null;
-          const state = deriveState(row.next_due_date as string | null);
+          const state = deriveScheduleState(row.next_due_date as string | null);
           return {
             id: row.id as string,
             name: row.service_type_code as string,

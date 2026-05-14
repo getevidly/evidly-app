@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, Shield } from 'lucide-react';
+import { useServiceScheduleDetail } from '../../hooks/useServiceScheduleDetail';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../components/vendors/MetricsStrip';
 import { StatePill } from '../../components/vendors/StatePill';
@@ -11,7 +12,48 @@ import { StateDot } from '../../components/vendors/StateDot';
  */
 export default function ServiceDetail() {
   const { serviceId } = useParams();
-  const service = [].find(s => s.id === serviceId);
+  const { service, loading, error } = useServiceScheduleDetail(serviceId);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=services"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to services
+        </Link>
+        <div className="flex justify-center py-12">
+          <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=services"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to services
+        </Link>
+        <div
+          className="bg-white rounded-lg px-4 py-4"
+          style={{ border: '1px solid #E2DDD4' }}
+        >
+          <p style={{ fontSize: '14px', color: '#B91C1C' }}>
+            Unable to load service details. Please try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!service) {
     return (
@@ -139,25 +181,27 @@ export default function ServiceDetail() {
         </div>
 
         {/* CTA */}
-        <div className="mt-4">
-          {service.cta.variant === 'primary' ? (
-            <button
-              type="button"
-              className="w-full py-2.5 rounded-md"
-              style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-            >
-              {service.cta.label}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="w-full py-2.5 rounded-md"
-              style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
-            >
-              {service.cta.label}
-            </button>
-          )}
-        </div>
+        {service.cta && (
+          <div className="mt-4">
+            {service.cta.variant === 'primary' ? (
+              <button
+                type="button"
+                className="w-full py-2.5 rounded-md"
+                style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+              >
+                {service.cta.label}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="w-full py-2.5 rounded-md"
+                style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
+              >
+                {service.cta.label}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

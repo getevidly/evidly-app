@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useServiceRequests } from '../../../hooks/useServiceRequests';
+import { deriveState, deriveCta } from '../../../utils/serviceRequestState';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { RequestRow } from '../../../components/vendors/RequestRow';
@@ -8,29 +9,6 @@ import { RequestRow } from '../../../components/vendors/RequestRow';
  * RequestsTab — Surface 4.
  * All outbound requests (document requests, quotes, renewals) with fulfillment tracking.
  */
-
-function deriveState(status) {
-  switch (status) {
-    case 'pending_vendor': return 'current';
-    case 'vendor_selected': return 'attention';
-    case 'vendor_proposed_alt': return 'action';
-    case 'pending_operator': return 'action';
-    case 'confirmed': return 'fulfilled';
-    case 'canceled': return 'cancelled';
-    case 'expired': return 'action';
-    default: return 'current';
-  }
-}
-
-function deriveCta(status) {
-  switch (status) {
-    case 'vendor_selected': return { variant: 'secondary', label: 'Review' };
-    case 'vendor_proposed_alt': return { variant: 'primary', label: 'Review slots' };
-    case 'pending_operator': return { variant: 'primary', label: 'Respond' };
-    case 'expired': return { variant: 'primary', label: 'Resend' };
-    default: return null;
-  }
-}
 
 export function RequestsTab() {
   const { requests: rawRequests, loading, error } = useServiceRequests();

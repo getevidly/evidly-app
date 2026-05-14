@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Eye, Bell, Send } from 'lucide-react';
+import { useServiceRequestDetail } from '../../hooks/useServiceRequestDetail';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
 /**
@@ -9,7 +10,48 @@ import { StatePill } from '../../components/vendors/StatePill';
  */
 export default function RequestDetail() {
   const { requestId } = useParams();
-  const request = [].find(r => r.id === requestId);
+  const { request, loading, error } = useServiceRequestDetail(requestId);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=requests"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to requests
+        </Link>
+        <div className="flex justify-center py-12">
+          <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=requests"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to requests
+        </Link>
+        <div
+          className="bg-white rounded-lg px-4 py-4"
+          style={{ border: '1px solid #E2DDD4' }}
+        >
+          <p style={{ fontSize: '14px', color: '#B91C1C' }}>
+            Unable to load request details. Please try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!request) {
     return (
