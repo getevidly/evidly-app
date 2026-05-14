@@ -62,7 +62,7 @@ export function DocReviewRow({ doc }) {
 
         {/* CTA + chevron */}
         <div className="flex-shrink-0 flex items-center gap-2">
-          {doc.cta.variant === 'primary' ? (
+          {doc.cta && (doc.cta.variant === 'primary' ? (
             <span
               className="px-2.5 py-1 rounded-md"
               style={{ fontSize: '11px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
@@ -76,7 +76,7 @@ export function DocReviewRow({ doc }) {
             >
               {doc.cta.label}
             </span>
-          )}
+          ))}
           <ChevronRight size={16} style={{ color: '#5A6478' }} />
         </div>
       </div>

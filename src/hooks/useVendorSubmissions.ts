@@ -17,6 +17,7 @@ interface UseVendorSubmissionsReturn {
   loading: boolean;
   approve: (submissionId: string, notes?: string) => Promise<void>;
   decline: (submissionId: string, reason: string) => Promise<void>;
+  bulkApprove: (submissionIds: string[]) => Promise<{ succeeded: number; failed: number }>;
   refetch: () => void;
 }
 
@@ -175,5 +176,45 @@ export function useVendorSubmissions(
     fetchSubmissions();
   }, [isDemoMode, profile, submissions, fetchSubmissions]);
 
-  return { submissions, loading, approve, decline, refetch: fetchSubmissions };
+  const bulkApprove = useCallback(async (submissionIds: string[]): Promise<{ succeeded: number; failed: number }> => {
+    if (isDemoMode || !profile?.id) return { succeeded: 0, failed: 0 };
+    let succeeded = 0;
+    let failed = 0;
+    for (const id of submissionIds) {
+      try {
+        const { error: subError } = await supabase
+          .from('vendor_document_submissions')
+          .update({
+            review_status: 'approved',
+            reviewed_by: profile.id,
+            reviewed_at: new Date().toISOString(),
+          })
+          .eq('id', id);
+
+        if (subError) {
+          failed++;
+          continue;
+        }
+
+        const submission = submissions.find(s => s.id === id);
+        if (submission?.vendor_document_id) {
+          await supabase
+            .from('vendor_documents')
+            .update({
+              status: 'accepted',
+              reviewed_by: profile.id,
+              reviewed_at: new Date().toISOString(),
+            })
+            .eq('id', submission.vendor_document_id);
+        }
+        succeeded++;
+      } catch {
+        failed++;
+      }
+    }
+    fetchSubmissions();
+    return { succeeded, failed };
+  }, [isDemoMode, profile, submissions, fetchSubmissions]);
+
+  return { submissions, loading, approve, decline, bulkApprove, refetch: fetchSubmissions };
 }

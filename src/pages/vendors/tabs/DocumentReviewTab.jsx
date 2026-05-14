@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { DocReviewRow } from '../../../components/vendors/DocReviewRow';
+import { BulkApproveModal } from '../../../components/vendors/modals/BulkApproveModal';
+import { useVendorSubmissions } from '../../../hooks/useVendorSubmissions';
 
 /**
  * DocumentReviewTab — Surface 5.
@@ -9,7 +12,42 @@ import { DocReviewRow } from '../../../components/vendors/DocReviewRow';
  */
 export function DocumentReviewTab() {
   const [filter, setFilter] = useState('all');
-  const docs = [];
+  const [bulkApproveOpen, setBulkApproveOpen] = useState(false);
+  const { submissions, loading, bulkApprove } = useVendorSubmissions();
+
+  const docs = submissions.map(sub => {
+    const aiResult = sub.ai_validation_result;
+    let state = 'attention';
+    if (sub.review_status === 'approved') state = 'current';
+    else if (sub.review_status === 'declined') state = 'action';
+    else if (sub.ai_validation_status === 'failed') state = 'action';
+
+    let cta = null;
+    if (sub.review_status !== 'approved') {
+      if (sub.ai_validation_status === 'failed') cta = { variant: 'primary', label: 'Review' };
+      else if (sub.review_status === 'pending') cta = { variant: 'secondary', label: 'Review' };
+    }
+
+    return {
+      id: sub.id,
+      title: sub.vendor_documents?.title ?? '',
+      state,
+      aiFlagged: sub.ai_validation_status === 'failed',
+      vendorName: sub.vendors?.name ?? '',
+      uploadedDate: sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '',
+      answerLine: aiResult?.summary ?? null,
+      aiCaughtText: aiResult?.issues?.length ? aiResult.issues.join('. ') : null,
+      cta,
+    };
+  });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (docs.length === 0) {
     return (
@@ -94,6 +132,7 @@ export function DocumentReviewTab() {
           </p>
           <button
             type="button"
+            onClick={() => setBulkApproveOpen(true)}
             className="px-2.5 py-1 rounded-md"
             style={{ fontSize: '11px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
           >
@@ -108,6 +147,22 @@ export function DocumentReviewTab() {
           <DocReviewRow key={doc.id} doc={doc} />
         ))}
       </div>
+
+      <BulkApproveModal
+        isOpen={bulkApproveOpen}
+        onClose={() => setBulkApproveOpen(false)}
+        onApprove={async (docIds) => {
+          const { succeeded, failed } = await bulkApprove(docIds);
+          if (failed === 0 && succeeded > 0) {
+            toast.success(`${succeeded} approved`);
+          } else if (succeeded === 0) {
+            toast.error('Bulk approval failed');
+          } else {
+            toast.error(`${succeeded} approved, ${failed} failed`);
+          }
+        }}
+        docs={docs}
+      />
     </div>
   );
 }

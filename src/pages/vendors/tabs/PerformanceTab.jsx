@@ -1,44 +1,60 @@
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { useVendorPerformance } from '../../../hooks/useVendorPerformance';
 
 /**
  * PerformanceTab — Surface 3.
  * Performance scorecard for all vendors with KPI comparison.
  */
 export function PerformanceTab() {
-  const vendors = [];
+  const { vendors, loading } = useVendorPerformance();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (vendors.length === 0) {
     return (
       <div
         className="bg-white rounded-lg px-4 py-4"
-        style={{ border: '1px solid #E2DDD4' }}
+        style={{ border: '1px solid #E2DDD4', borderRadius: '8px' }}
       >
         <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-          The lens on how your vendors actually deliver — on-time rate,
-          response time, document compliance, incident history. Each
-          vendor scored against your network average and against their
-          own past, so the comparison is yours, not an industry benchmark
-          you didn't ask for.
+          Performance signals build as your vendors complete service visits
+          over time. On-time rate, response time, and document health appear
+          once each vendor has logged at least three service records.
         </p>
-        <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-          Performance signals build up as vendors complete services,
-          respond to requests, and submit documents. The first scorecards
-          appear once you have at least one vendor logging activity.
+        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6', marginTop: '14px' }}>
+          Until then, this view stays quiet on purpose — EvidLY doesn't
+          fabricate metrics. As records accumulate, vendors begin appearing
+          here ranked by reliability.
         </p>
       </div>
     );
   }
 
   /* Aggregate metrics */
-  const avgOnTime = vendors.reduce((sum, v) => sum + parseFloat(v.kpi.onTime), 0) / vendors.length;
-  const avgResponse = vendors.reduce((sum, v) => sum + parseFloat(v.kpi.response), 0) / vendors.length;
-  const fullDocs = vendors.filter(v => v.kpi.docsStatus.startsWith(v.kpi.docsStatus.split(' of ')[1]?.trim() || '0')).length;
+  const onTimeVendors = vendors.filter(v => v.kpi.onTime.endsWith('%'));
+  const avgOnTime = onTimeVendors.length > 0
+    ? onTimeVendors.reduce((sum, v) => sum + parseFloat(v.kpi.onTime), 0) / onTimeVendors.length
+    : 0;
+  const responseVendors = vendors.filter(v => v.kpi.response !== '—');
+  const avgResponse = responseVendors.length > 0
+    ? responseVendors.reduce((sum, v) => sum + parseFloat(v.kpi.response), 0) / responseVendors.length
+    : 0;
+  const fullDocs = vendors.filter(v => {
+    const parts = v.kpi.docsStatus.split(' of ');
+    return parts.length === 2 && parts[0].trim() === parts[1].trim() && parts[0].trim() !== '0';
+  }).length;
 
   const metricCards = [
-    { label: 'Avg on-time', value: `${Math.round(avgOnTime)}%`, valueColor: avgOnTime >= 90 ? 'current' : avgOnTime >= 70 ? 'attention' : 'action' },
-    { label: 'Avg response', value: `${avgResponse.toFixed(1)}d`, valueColor: 'navy' },
+    { label: 'Avg on-time', value: onTimeVendors.length > 0 ? `${Math.round(avgOnTime)}%` : '—', valueColor: avgOnTime >= 90 ? 'current' : avgOnTime >= 70 ? 'attention' : 'action' },
+    { label: 'Avg response', value: responseVendors.length > 0 ? `${avgResponse.toFixed(1)}d` : '—', valueColor: 'navy' },
     { label: 'Full docs', value: `${fullDocs} of ${vendors.length}`, valueColor: 'navy' },
     { label: 'Total vendors', value: vendors.length, valueColor: 'navy' },
   ];
@@ -77,8 +93,8 @@ export function PerformanceTab() {
 
         {/* Rows */}
         {vendors.map((vendor, i) => {
-          const onTimePct = parseFloat(vendor.kpi.onTime);
-          const onTimeColor = onTimePct >= 90 ? '#2E7D32' : onTimePct >= 70 ? '#B45309' : '#B91C1C';
+          const onTimePct = vendor.kpi.onTime.endsWith('%') ? parseFloat(vendor.kpi.onTime) : NaN;
+          const onTimeColor = isNaN(onTimePct) ? '#5A6478' : onTimePct >= 90 ? '#2E7D32' : onTimePct >= 70 ? '#B45309' : '#B91C1C';
 
           return (
             <div

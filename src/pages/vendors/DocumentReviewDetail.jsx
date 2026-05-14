@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, CheckCircle, XCircle, Download } from 'lucide-react';
+import { toast } from 'sonner';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
+import { DeclineDocumentModal } from '../../components/vendors/modals/DeclineDocumentModal';
+import { useDocumentReviewDetail } from '../../hooks/useDocumentReviewDetail';
 /**
  * DocumentReviewDetail — Surface 9.
  * Drill-down for a single document: preview placeholder, AI flags,
@@ -9,7 +13,50 @@ import { StatePill } from '../../components/vendors/StatePill';
  */
 export default function DocumentReviewDetail() {
   const { docId } = useParams();
-  const doc = [].find(d => d.id === docId);
+  const { doc, loading, error, approve, decline } = useDocumentReviewDetail(docId);
+  const [actionPending, setActionPending] = useState(false);
+  const [declineOpen, setDeclineOpen] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=documents"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to document review
+        </Link>
+        <div className="flex justify-center py-12">
+          <div className="w-6 h-6 border-2 border-[#1E2D4D] border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen px-4 pt-5" style={{ backgroundColor: '#F4F1EA' }}>
+        <Link
+          to="/vendors?tab=documents"
+          className="inline-flex items-center gap-1 mb-4"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#5A6478' }}
+        >
+          <ArrowLeft size={14} />
+          Back to document review
+        </Link>
+        <div
+          className="bg-white rounded-lg px-4 py-4"
+          style={{ border: '1px solid #E2DDD4' }}
+        >
+          <p style={{ fontSize: '14px', color: '#B91C1C' }}>
+            Unable to load document details. Please try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!doc) {
     return (
@@ -159,16 +206,30 @@ export default function DocumentReviewDetail() {
           <div className="flex flex-col gap-2">
             <button
               type="button"
+              disabled={actionPending}
+              onClick={async () => {
+                setActionPending(true);
+                try {
+                  await approve();
+                  toast.success('Document approved');
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : 'Failed to approve document');
+                } finally {
+                  setActionPending(false);
+                }
+              }}
               className="w-full py-2.5 rounded-md flex items-center justify-center gap-2"
-              style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+              style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0', opacity: actionPending ? 0.5 : 1 }}
             >
               <CheckCircle size={16} />
               Approve document
             </button>
             <button
               type="button"
+              disabled={actionPending}
+              onClick={() => setDeclineOpen(true)}
               className="w-full py-2.5 rounded-md flex items-center justify-center gap-2"
-              style={{ fontSize: '13px', fontWeight: 500, color: '#B91C1C', border: '1px solid #B91C1C' }}
+              style={{ fontSize: '13px', fontWeight: 500, color: '#B91C1C', border: '1px solid #B91C1C', opacity: actionPending ? 0.5 : 1 }}
             >
               <XCircle size={16} />
               Reject document
@@ -179,6 +240,10 @@ export default function DocumentReviewDetail() {
         {doc.state === 'current' && (
           <button
             type="button"
+            onClick={() => {
+              if (doc.fileUrl) window.open(doc.fileUrl, '_blank');
+              else toast.error('No file available for download');
+            }}
             className="w-full py-2.5 rounded-md flex items-center justify-center gap-2"
             style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
           >
@@ -187,6 +252,22 @@ export default function DocumentReviewDetail() {
           </button>
         )}
       </div>
+
+      <DeclineDocumentModal
+        isOpen={declineOpen}
+        onClose={() => setDeclineOpen(false)}
+        onDecline={async (reason) => {
+          setActionPending(true);
+          try {
+            await decline(reason);
+            toast.success('Document rejected');
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Failed to reject document');
+          } finally {
+            setActionPending(false);
+          }
+        }}
+      />
     </div>
   );
 }
