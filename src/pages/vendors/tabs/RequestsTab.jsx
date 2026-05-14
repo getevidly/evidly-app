@@ -22,7 +22,7 @@ export function RequestsTab() {
     sentDate: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
     answerLine: null,
     viewedDate: null,
-    reminders: 0,
+    reminders: r.reminders_count ?? 0,
     cta: deriveCta(r.status),
   }));
 

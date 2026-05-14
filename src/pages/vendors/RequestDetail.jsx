@@ -1,8 +1,13 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Eye, Bell, Send } from 'lucide-react';
+import { toast } from 'sonner';
 import { useServiceRequestDetail } from '../../hooks/useServiceRequestDetail';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
+import { ReviewAlternativesModal } from '../../components/services/ReviewAlternativesModal';
+import { ReviewVendorSelectionModal } from '../../components/vendors/modals/ReviewVendorSelectionModal';
+import { RespondToRequestModal } from '../../components/vendors/modals/RespondToRequestModal';
 /**
  * RequestDetail — Surface 8.
  * Drill-down for a single request showing thread timeline,
@@ -10,7 +15,11 @@ import { StatePill } from '../../components/vendors/StatePill';
  */
 export default function RequestDetail() {
   const { requestId } = useParams();
-  const { request, loading, error } = useServiceRequestDetail(requestId);
+  const { request, loading, error, acceptAlternative, cancelRequest, resendRequest, sendReminder } = useServiceRequestDetail(requestId);
+  const [actionPending, setActionPending] = useState(false);
+  const [reviewSelectionOpen, setReviewSelectionOpen] = useState(false);
+  const [reviewAltsOpen, setReviewAltsOpen] = useState(false);
+  const [respondOpen, setRespondOpen] = useState(false);
 
   if (loading) {
     return (
@@ -68,6 +77,59 @@ export default function RequestDetail() {
       </div>
     );
   }
+
+  const handleCtaClick = async () => {
+    if (!request.cta) return;
+    const label = request.cta.label;
+
+    if (label === 'Review') {
+      setReviewSelectionOpen(true);
+    } else if (label === 'Review slots') {
+      setReviewAltsOpen(true);
+    } else if (label === 'Respond') {
+      setRespondOpen(true);
+    } else if (label === 'Resend') {
+      setActionPending(true);
+      try {
+        await resendRequest(request.id);
+        toast.success('Request resent to vendor');
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Failed to resend request');
+      } finally {
+        setActionPending(false);
+      }
+    }
+  };
+
+  const handleSendReminder = async () => {
+    setActionPending(true);
+    try {
+      await sendReminder(request.id);
+      toast.success('Reminder sent to vendor');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send reminder');
+    } finally {
+      setActionPending(false);
+    }
+  };
+
+  const handleAccept = async (reqId, selectedSlot) => {
+    try {
+      await acceptAlternative(reqId, selectedSlot);
+      toast.success('Date confirmed');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to confirm date');
+    }
+  };
+
+  const handleCancel = async (reqId) => {
+    try {
+      await cancelRequest(reqId);
+      toast.success('Request cancelled');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to cancel request');
+    }
+  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F4F1EA' }}>
@@ -201,21 +263,52 @@ export default function RequestDetail() {
           {request.state !== 'fulfilled' && request.cta && (
             <button
               type="button"
+              onClick={handleCtaClick}
+              disabled={actionPending}
               className="w-full py-2.5 rounded-md"
-              style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+              style={{ fontSize: '13px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0', opacity: actionPending ? 0.5 : 1 }}
             >
               {request.cta.label}
             </button>
           )}
           <button
             type="button"
+            onClick={handleSendReminder}
+            disabled={actionPending}
             className="w-full py-2.5 rounded-md"
-            style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D' }}
+            style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #1E2D4D', opacity: actionPending ? 0.5 : 1 }}
           >
             Send reminder
           </button>
         </div>
       </div>
+
+      {/* Modals */}
+      <ReviewVendorSelectionModal
+        isOpen={reviewSelectionOpen}
+        onClose={() => setReviewSelectionOpen(false)}
+        request={request}
+        onConfirm={handleAccept}
+        onCancel={handleCancel}
+      />
+
+      {request.raw && (
+        <ReviewAlternativesModal
+          isOpen={reviewAltsOpen}
+          onClose={() => setReviewAltsOpen(false)}
+          request={request.raw}
+          onAccept={handleAccept}
+          onDecline={handleCancel}
+        />
+      )}
+
+      <RespondToRequestModal
+        isOpen={respondOpen}
+        onClose={() => setRespondOpen(false)}
+        request={request}
+        onConfirm={handleAccept}
+        onDecline={handleCancel}
+      />
     </div>
   );
 }

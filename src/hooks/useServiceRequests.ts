@@ -15,6 +15,8 @@ interface UseServiceRequestsResult {
   refetch: () => void;
   acceptAlternative: (requestId: string, selectedSlot: string) => Promise<void>;
   cancelRequest: (requestId: string) => Promise<void>;
+  resendRequest: (requestId: string) => Promise<void>;
+  sendReminder: (requestId: string) => Promise<void>;
 }
 
 export function useServiceRequests(statusFilter?: ServiceRequestStatus | 'all'): UseServiceRequestsResult {
@@ -151,5 +153,47 @@ export function useServiceRequests(statusFilter?: ServiceRequestStatus | 'all'):
     fetchRequests();
   };
 
-  return { requests, loading, error, refetch: fetchRequests, acceptAlternative, cancelRequest };
+  const resendRequest = async (requestId: string) => {
+    if (isDemoMode) return;
+
+    const session = (await supabase.auth.getSession()).data.session;
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/resend-service-request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ requestId }),
+      }
+    );
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to resend request');
+    fetchRequests();
+  };
+
+  const sendReminder = async (requestId: string) => {
+    if (isDemoMode) return;
+
+    const session = (await supabase.auth.getSession()).data.session;
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-service-request-reminder`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ requestId }),
+      }
+    );
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to send reminder');
+    fetchRequests();
+  };
+
+  return { requests, loading, error, refetch: fetchRequests, acceptAlternative, cancelRequest, resendRequest, sendReminder };
 }

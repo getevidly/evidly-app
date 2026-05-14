@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { deriveState, deriveCta } from '../utils/serviceRequestState';
+import type { ServiceRequest } from '../types/serviceRequest';
 
 export interface ServiceRequestDetail {
   id: string;
@@ -20,12 +21,17 @@ export interface ServiceRequestDetail {
   viewedDate: null;
   reminders: number;
   cta: { variant: 'primary' | 'secondary'; label: string } | null;
+  raw: ServiceRequest | null;
 }
 
 interface UseServiceRequestDetailResult {
   request: ServiceRequestDetail | null;
   loading: boolean;
   error: string | null;
+  acceptAlternative: (requestId: string, selectedSlot: string) => Promise<void>;
+  cancelRequest: (requestId: string) => Promise<void>;
+  resendRequest: (requestId: string) => Promise<void>;
+  sendReminder: (requestId: string) => Promise<void>;
 }
 
 export function useServiceRequestDetail(requestId: string | undefined): UseServiceRequestDetailResult {
@@ -61,6 +67,12 @@ export function useServiceRequestDetail(requestId: string | undefined): UseServi
         const r = data as Record<string, unknown>;
         const vendors = r.vendors as Record<string, unknown> | null;
 
+        const rawRequest: ServiceRequest = {
+          ...(data as ServiceRequest),
+          vendor_name: (vendors?.company_name as string) || undefined,
+          vendor_email: (vendors?.email as string) || undefined,
+        };
+
         setRequest({
           id: r.id as string,
           title: (r.service_type as string) || '',
@@ -69,8 +81,9 @@ export function useServiceRequestDetail(requestId: string | undefined): UseServi
           sentDate: r.created_at ? new Date(r.created_at as string).toLocaleDateString() : '',
           answerLine: null,
           viewedDate: null,
-          reminders: 0,
+          reminders: (r.reminders_count as number) ?? 0,
           cta: deriveCta(r.status as string),
+          raw: rawRequest,
         });
       } else {
         setRequest(null);
@@ -108,5 +121,96 @@ export function useServiceRequestDetail(requestId: string | undefined): UseServi
     return () => { supabase.removeChannel(channel); };
   }, [orgId, isDemoMode, requestId, fetchDetail]);
 
-  return { request, loading, error };
+  const acceptAlternative = async (reqId: string, selectedSlot: string) => {
+    if (isDemoMode) return;
+
+    const slotDate = new Date(selectedSlot);
+
+    await supabase
+      .from('service_requests')
+      .update({
+        confirmed_datetime: selectedSlot,
+        confirmed_by: 'operator',
+        status: 'confirmed',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', reqId);
+
+    if (request?.raw && orgId) {
+      const raw = request.raw;
+      await supabase.from('calendar_events').insert({
+        organization_id: orgId,
+        location_id: raw.location_id,
+        title: `${raw.service_type} — ${raw.vendor_name || 'Vendor'}`,
+        type: 'vendor',
+        category: raw.service_type,
+        date: slotDate.toISOString().slice(0, 10),
+        start_time: slotDate.toTimeString().slice(0, 5),
+        end_time: new Date(slotDate.getTime() + 120 * 60000).toTimeString().slice(0, 5),
+        vendor_id: raw.vendor_id,
+        vendor_name: raw.vendor_name || 'Vendor',
+        service_request_id: reqId,
+      });
+    }
+
+    fetchDetail();
+  };
+
+  const cancelRequest = async (reqId: string) => {
+    if (isDemoMode) return;
+
+    await supabase
+      .from('service_requests')
+      .update({
+        status: 'canceled',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', reqId);
+
+    fetchDetail();
+  };
+
+  const resendRequest = async (reqId: string) => {
+    if (isDemoMode) return;
+
+    const session = (await supabase.auth.getSession()).data.session;
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/resend-service-request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ requestId: reqId }),
+      }
+    );
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to resend request');
+    fetchDetail();
+  };
+
+  const sendReminder = async (reqId: string) => {
+    if (isDemoMode) return;
+
+    const session = (await supabase.auth.getSession()).data.session;
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-service-request-reminder`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ requestId: reqId }),
+      }
+    );
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to send reminder');
+    fetchDetail();
+  };
+
+  return { request, loading, error, acceptAlternative, cancelRequest, resendRequest, sendReminder };
 }
