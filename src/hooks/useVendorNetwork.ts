@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 export interface VendorNetworkFilters {
   search: string;
   county: string;
-  serviceType: string;
+  serviceCodes: string[];
   tier: string[];
   credentials: { ikeca: boolean; nfpa: boolean; insured: boolean };
   availability: string;
@@ -67,9 +67,6 @@ export function useVendorNetwork(
       if (filters.county) {
         query = query.or(`county_primary.eq.${filters.county},service_area_counties.cs.{"${filters.county}"}`);
       }
-      if (filters.serviceType) {
-        query = query.contains('service_types', [filters.serviceType]);
-      }
       if (filters.tier.length > 0) {
         query = query.in('tier', filters.tier);
       }
@@ -103,6 +100,22 @@ export function useVendorNetwork(
           const tb = tierOrder[b.tier as string] || 3;
           if (ta !== tb) return ta - tb;
           return ((b.rating as number) || 0) - ((a.rating as number) || 0);
+        });
+      }
+
+      // Filter by service codes client-side (multi-code overlap + KEC expansion)
+      if (filters.serviceCodes.length > 0) {
+        const KEC_CHILDREN = ['FPM', 'GFX', 'RGC'];
+        const hasKEC = filters.serviceCodes.includes('KEC');
+        const hasChild = filters.serviceCodes.some(c => KEC_CHILDREN.includes(c));
+        // If KEC selected without any child → expand to KEC + all children
+        const matchSet = hasKEC && !hasChild
+          ? [...filters.serviceCodes, ...KEC_CHILDREN.filter(c => !filters.serviceCodes.includes(c))]
+          : filters.serviceCodes;
+
+        vendorRows = vendorRows.filter(v => {
+          const types = (v.service_types as string[]) || [];
+          return matchSet.some(code => types.includes(code));
         });
       }
 

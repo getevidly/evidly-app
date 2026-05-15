@@ -6,14 +6,42 @@ import { VendorNetworkCard } from '../../components/vendors/VendorNetworkCard';
 import { VendorContactModal } from '../../components/vendors/modals/VendorContactModal';
 import { CA_COUNTIES_BY_REGION } from '../../data/californiaCounties';
 
-const SERVICE_TYPE_OPTIONS = [
+// ── Service taxonomy (category → top-level pills, KEC children for drilldown) ─
+
+const FIRE_SAFETY_TYPES = [
   { code: 'KEC', label: 'Hood Cleaning' },
-  { code: 'FPM', label: 'Fan Performance' },
-  { code: 'GFX', label: 'Filter Exchange' },
-  { code: 'RGC', label: 'Rooftop Containment' },
   { code: 'FS', label: 'Fire Suppression' },
   { code: 'FA', label: 'Fire Alarm' },
   { code: 'SP', label: 'Fire Sprinkler' },
+  { code: 'FE', label: 'Fire Extinguisher' },
+];
+
+const KEC_CHILDREN = [
+  { code: 'FPM', label: 'Fan Performance' },
+  { code: 'GFX', label: 'Filter Exchange' },
+  { code: 'RGC', label: 'Rooftop Containment' },
+];
+
+const FOOD_SAFETY_TYPES = [
+  { code: 'GT', label: 'Grease Trap' },
+  { code: 'PC', label: 'Pest Control' },
+  { code: 'BFT', label: 'Backflow Testing' },
+];
+
+const FACILITY_SERVICES_TYPES = [
+  { code: 'HVAC', label: 'HVAC' },
+  { code: 'PLMB', label: 'Plumbing' },
+  { code: 'ELEC', label: 'Electrical' },
+  { code: 'REFR', label: 'Refrigeration' },
+  { code: 'JANI', label: 'Janitorial' },
+  { code: 'PRES', label: 'Pressure Washing' },
+  { code: 'LOCK', label: 'Locksmith' },
+  { code: 'ROOF', label: 'Roofing' },
+  { code: 'EQRP', label: 'Equipment Repair' },
+  { code: 'WDSP', label: 'Waste Disposal' },
+  { code: 'LINN', label: 'Linen' },
+  { code: 'WINC', label: 'Window Cleaning' },
+  { code: 'LAND', label: 'Landscaping' },
 ];
 
 const TIER_OPTIONS = ['gold', 'silver', 'bronze'];
@@ -24,6 +52,48 @@ const SORT_OPTIONS = [
   { key: 'newest', label: 'Newest' },
 ];
 
+// ── Pill subcomponent (existing styling pattern) ──────────────────────────────
+
+function FilterPill({ label, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors"
+      style={{
+        fontSize: '11px',
+        fontWeight: 500,
+        backgroundColor: active ? '#1E2D4D' : '#FFFFFF',
+        color: active ? '#FAF7F0' : '#1E2D4D',
+        border: active ? 'none' : '1px solid #E2DDD4',
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+// ── Category section label ────────────────────────────────────────────────────
+
+function CategoryLabel({ children }) {
+  return (
+    <span
+      className="flex-shrink-0"
+      style={{
+        fontSize: '10px',
+        fontWeight: 500,
+        color: '#5A6478',
+        letterSpacing: '0.05em',
+        textTransform: 'uppercase',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
 export default function VendorNetworkPlaceholder() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -33,7 +103,7 @@ export default function VendorNetworkPlaceholder() {
 
   const [search, setSearch] = useState('');
   const [county, setCounty] = useState('');
-  const [serviceType, setServiceType] = useState('');
+  const [serviceCodes, setServiceCodes] = useState([]);
   const [tierFilter, setTierFilter] = useState([]);
   const [credentials, setCredentials] = useState({ ikeca: false, nfpa: false, insured: false });
   const [availability, setAvailability] = useState('');
@@ -43,21 +113,21 @@ export default function VendorNetworkPlaceholder() {
   const filters = useMemo(() => ({
     search,
     county,
-    serviceType,
+    serviceCodes,
     tier: tierFilter,
     credentials,
     availability,
-  }), [search, county, serviceType, tierFilter, credentials, availability]);
+  }), [search, county, serviceCodes, tierFilter, credentials, availability]);
 
   const { vendors, loading, error } = useVendorNetwork(filters, sort);
 
-  const hasActiveFilters = search || county || serviceType || tierFilter.length > 0 ||
+  const hasActiveFilters = search || county || serviceCodes.length > 0 || tierFilter.length > 0 ||
     credentials.ikeca || credentials.nfpa || credentials.insured || availability;
 
   const clearFilters = () => {
     setSearch('');
     setCounty('');
-    setServiceType('');
+    setServiceCodes([]);
     setTierFilter([]);
     setCredentials({ ikeca: false, nfpa: false, insured: false });
     setAvailability('');
@@ -74,6 +144,32 @@ export default function VendorNetworkPlaceholder() {
       setSearchParams({});
     }
   };
+
+  const toggleServiceCode = (code) => {
+    setServiceCodes(prev => {
+      if (prev.includes(code)) {
+        // Deselecting — also remove any KEC children if deselecting KEC
+        let next = prev.filter(c => c !== code);
+        if (code === 'KEC') {
+          next = next.filter(c => !['FPM', 'GFX', 'RGC'].includes(c));
+        }
+        return next;
+      }
+      return [...prev, code];
+    });
+  };
+
+  const toggleKecChild = (code) => {
+    setServiceCodes(prev => {
+      if (prev.includes(code)) {
+        return prev.filter(c => c !== code);
+      }
+      return [...prev, code];
+    });
+  };
+
+  const kecActive = serviceCodes.includes('KEC');
+  const hasKecChild = serviceCodes.some(c => ['FPM', 'GFX', 'RGC'].includes(c));
 
   const toggleTier = (tier) => {
     setTierFilter(prev =>
@@ -141,8 +237,8 @@ export default function VendorNetworkPlaceholder() {
           </div>
         </div>
 
-        {/* Row 2: County dropdown + Service type pills */}
-        <div className="flex items-center gap-2 mb-3 overflow-x-auto">
+        {/* Row 2: County dropdown */}
+        <div className="flex items-center gap-2 mb-3">
           <div className="relative flex-shrink-0">
             <select
               value={county}
@@ -167,26 +263,76 @@ export default function VendorNetworkPlaceholder() {
             </select>
             <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: county ? '#FAF7F0' : '#5A6478' }} />
           </div>
-          {SERVICE_TYPE_OPTIONS.map(opt => (
-            <button
+        </div>
+
+        {/* Row 3: Fire Safety category */}
+        <div className="flex items-center gap-2 mb-2 overflow-x-auto">
+          <CategoryLabel>Fire safety</CategoryLabel>
+          {FIRE_SAFETY_TYPES.map(opt => (
+            <FilterPill
               key={opt.code}
-              type="button"
-              onClick={() => setServiceType(serviceType === opt.code ? '' : opt.code)}
-              className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors"
-              style={{
-                fontSize: '11px',
-                fontWeight: 500,
-                backgroundColor: serviceType === opt.code ? '#1E2D4D' : '#FFFFFF',
-                color: serviceType === opt.code ? '#FAF7F0' : '#1E2D4D',
-                border: serviceType === opt.code ? 'none' : '1px solid #E2DDD4',
-              }}
-            >
-              {opt.label}
-            </button>
+              label={opt.label}
+              active={serviceCodes.includes(opt.code)}
+              onClick={() => toggleServiceCode(opt.code)}
+            />
           ))}
         </div>
 
-        {/* Row 3: Tier pills + Credentials checkboxes + Availability pills */}
+        {/* Hood Cleaning drilldown (only when KEC is active) */}
+        {kecActive && (
+          <div className="flex items-center gap-2 mb-2 overflow-x-auto pl-4">
+            <span
+              className="flex-shrink-0"
+              style={{ fontSize: '10px', fontWeight: 500, color: '#5A6478' }}
+            >
+              Hood cleaning detail:
+            </span>
+            <FilterPill
+              label="All hood cleaning"
+              active={!hasKecChild}
+              onClick={() => {
+                // Deselect all children to go back to broad KEC match
+                setServiceCodes(prev => prev.filter(c => !['FPM', 'GFX', 'RGC'].includes(c)));
+              }}
+            />
+            {KEC_CHILDREN.map(opt => (
+              <FilterPill
+                key={opt.code}
+                label={opt.label}
+                active={serviceCodes.includes(opt.code)}
+                onClick={() => toggleKecChild(opt.code)}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Row 4: Food Safety category */}
+        <div className="flex items-center gap-2 mb-2 overflow-x-auto">
+          <CategoryLabel>Food safety</CategoryLabel>
+          {FOOD_SAFETY_TYPES.map(opt => (
+            <FilterPill
+              key={opt.code}
+              label={opt.label}
+              active={serviceCodes.includes(opt.code)}
+              onClick={() => toggleServiceCode(opt.code)}
+            />
+          ))}
+        </div>
+
+        {/* Row 5: Facility Services category */}
+        <div className="flex items-center gap-2 mb-3 overflow-x-auto flex-wrap">
+          <CategoryLabel>Facility</CategoryLabel>
+          {FACILITY_SERVICES_TYPES.map(opt => (
+            <FilterPill
+              key={opt.code}
+              label={opt.label}
+              active={serviceCodes.includes(opt.code)}
+              onClick={() => toggleServiceCode(opt.code)}
+            />
+          ))}
+        </div>
+
+        {/* Row 6: Tier pills + Credentials checkboxes + Availability pills */}
         <div className="flex items-center gap-2 mb-3 overflow-x-auto">
           {TIER_OPTIONS.map(tier => (
             <button
