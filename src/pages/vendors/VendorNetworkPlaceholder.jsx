@@ -1,10 +1,35 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, X as XIcon, ChevronDown } from 'lucide-react';
+import {
+  Search, X as XIcon, ChevronDown, Check,
+  Wind, Fan, Filter, ShieldCheck, FlameKindling, Bell, Droplets, FireExtinguisher,
+  Droplet, Bug, ArrowDownUp, Thermometer, Wrench, Zap, Snowflake, Sparkles,
+  Waves, Lock, Home, Settings, Trash2, Shirt, Maximize, TreePine, Flame,
+  UtensilsCrossed,
+} from 'lucide-react';
 import { useVendorNetwork } from '../../hooks/useVendorNetwork';
 import { VendorNetworkCard } from '../../components/vendors/VendorNetworkCard';
 import { VendorContactModal } from '../../components/vendors/modals/VendorContactModal';
 import { CA_COUNTIES_BY_REGION } from '../../data/californiaCounties';
+
+// ── Service code → icon map ─────────────────────────────────────────────────
+
+const SERVICE_ICON_MAP = {
+  KEC: Wind, FPM: Fan, GFX: Filter, RGC: ShieldCheck,
+  FS: FlameKindling, FA: Bell, SP: Droplets, FE: FireExtinguisher,
+  GT: Droplet, PC: Bug, BFT: ArrowDownUp,
+  HVAC: Thermometer, PLMB: Wrench, ELEC: Zap, REFR: Snowflake,
+  JANI: Sparkles, PRES: Waves, LOCK: Lock, ROOF: Home,
+  EQRP: Settings, WDSP: Trash2, LINN: Shirt, WINC: Maximize, LAND: TreePine,
+};
+
+// ── Tier pill color palettes ────────────────────────────────────────────────
+
+const TIER_PILL_STYLES = {
+  gold:   { bg: '#FAEEDA', text: '#633806', border: '#F0D9A8', activeBg: '#A08C5A', activeBorder: '#A08C5A', hoverBg: '#F5DFBF' },
+  silver: { bg: '#F1EFE8', text: '#2C2C2A', border: '#D3D1C7', activeBg: '#5F5E5A', activeBorder: '#5F5E5A', hoverBg: '#E5E3DB' },
+  bronze: { bg: '#FAECE7', text: '#4A1B0C', border: '#F0C4B3', activeBg: '#993C1D', activeBorder: '#993C1D', hoverBg: '#F5DDD5' },
+};
 
 // ── Service taxonomy (category → top-level pills, KEC children for drilldown) ─
 
@@ -52,22 +77,59 @@ const SORT_OPTIONS = [
   { key: 'newest', label: 'Newest' },
 ];
 
-// ── Pill subcomponent (existing styling pattern) ──────────────────────────────
+// ── Pill subcomponent ────────────────────────────────────────────────────────
 
-function FilterPill({ label, active, onClick }) {
+function FilterPill({ label, active, onClick, icon: Icon, tierVariant, dotColor }) {
+  const tier = tierVariant ? TIER_PILL_STYLES[tierVariant] : null;
+
+  const baseBg = tier ? tier.bg : '#FFFFFF';
+  const baseText = tier ? tier.text : '#1E2D4D';
+  const baseBorder = tier ? `1px solid ${tier.border}` : '1px solid #E2DDD4';
+  const activeBg = tier ? tier.activeBg : '#1E2D4D';
+  const activeText = '#FAF7F0';
+  const activeBorder = tier ? `1px solid ${tier.activeBorder}` : 'none';
+  const hoverBg = tier ? tier.hoverBg : '#F4F1EA';
+
+  const bg = active ? activeBg : baseBg;
+  const color = active ? activeText : baseText;
+  const border = active ? activeBorder : baseBorder;
+
+  const handleMouseEnter = useCallback((e) => {
+    if (active) {
+      e.currentTarget.style.opacity = '0.92';
+    } else {
+      e.currentTarget.style.backgroundColor = hoverBg;
+    }
+  }, [active, hoverBg]);
+
+  const handleMouseLeave = useCallback((e) => {
+    e.currentTarget.style.opacity = '1';
+    e.currentTarget.style.backgroundColor = bg;
+  }, [bg]);
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full whitespace-nowrap"
       style={{
         fontSize: '11px',
         fontWeight: 500,
-        backgroundColor: active ? '#1E2D4D' : '#FFFFFF',
-        color: active ? '#FAF7F0' : '#1E2D4D',
-        border: active ? 'none' : '1px solid #E2DDD4',
+        backgroundColor: bg,
+        color,
+        border,
+        transition: 'background-color 120ms ease, opacity 120ms ease',
       }}
     >
+      {dotColor && (
+        <span
+          className="flex-shrink-0 rounded-full"
+          style={{ width: 8, height: 8, backgroundColor: dotColor }}
+        />
+      )}
+      {Icon && <Icon size={12} />}
       {label}
     </button>
   );
@@ -75,10 +137,10 @@ function FilterPill({ label, active, onClick }) {
 
 // ── Category section label ────────────────────────────────────────────────────
 
-function CategoryLabel({ children }) {
+function CategoryLabel({ children, icon: Icon, iconColor }) {
   return (
     <span
-      className="flex-shrink-0"
+      className="flex-shrink-0 inline-flex items-center gap-1.5"
       style={{
         fontSize: '10px',
         fontWeight: 500,
@@ -87,6 +149,7 @@ function CategoryLabel({ children }) {
         textTransform: 'uppercase',
       }}
     >
+      {Icon && <Icon size={14} style={{ color: iconColor || '#5A6478' }} />}
       {children}
     </span>
   );
@@ -267,11 +330,12 @@ export default function VendorNetworkPlaceholder() {
 
         {/* Row 3: Fire Safety category */}
         <div className="flex items-center gap-2 mb-2 overflow-x-auto">
-          <CategoryLabel>Fire safety</CategoryLabel>
+          <CategoryLabel icon={Flame} iconColor="#A32D2D">Fire safety</CategoryLabel>
           {FIRE_SAFETY_TYPES.map(opt => (
             <FilterPill
               key={opt.code}
               label={opt.label}
+              icon={SERVICE_ICON_MAP[opt.code]}
               active={serviceCodes.includes(opt.code)}
               onClick={() => toggleServiceCode(opt.code)}
             />
@@ -299,6 +363,7 @@ export default function VendorNetworkPlaceholder() {
               <FilterPill
                 key={opt.code}
                 label={opt.label}
+                icon={SERVICE_ICON_MAP[opt.code]}
                 active={serviceCodes.includes(opt.code)}
                 onClick={() => toggleKecChild(opt.code)}
               />
@@ -308,11 +373,12 @@ export default function VendorNetworkPlaceholder() {
 
         {/* Row 4: Food Safety category */}
         <div className="flex items-center gap-2 mb-2 overflow-x-auto">
-          <CategoryLabel>Food safety</CategoryLabel>
+          <CategoryLabel icon={UtensilsCrossed} iconColor="#0F6E56">Food safety</CategoryLabel>
           {FOOD_SAFETY_TYPES.map(opt => (
             <FilterPill
               key={opt.code}
               label={opt.label}
+              icon={SERVICE_ICON_MAP[opt.code]}
               active={serviceCodes.includes(opt.code)}
               onClick={() => toggleServiceCode(opt.code)}
             />
@@ -321,11 +387,12 @@ export default function VendorNetworkPlaceholder() {
 
         {/* Row 5: Facility Services category */}
         <div className="flex items-center gap-2 mb-3 overflow-x-auto flex-wrap">
-          <CategoryLabel>Facility</CategoryLabel>
+          <CategoryLabel icon={Wrench} iconColor="#5A6478">Facility</CategoryLabel>
           {FACILITY_SERVICES_TYPES.map(opt => (
             <FilterPill
               key={opt.code}
               label={opt.label}
+              icon={SERVICE_ICON_MAP[opt.code]}
               active={serviceCodes.includes(opt.code)}
               onClick={() => toggleServiceCode(opt.code)}
             />
@@ -335,58 +402,37 @@ export default function VendorNetworkPlaceholder() {
         {/* Row 6: Tier pills + Credentials checkboxes + Availability pills */}
         <div className="flex items-center gap-2 mb-3 overflow-x-auto">
           {TIER_OPTIONS.map(tier => (
-            <button
+            <FilterPill
               key={tier}
-              type="button"
+              label={tier.charAt(0).toUpperCase() + tier.slice(1)}
+              active={tierFilter.includes(tier)}
               onClick={() => toggleTier(tier)}
-              className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors capitalize"
-              style={{
-                fontSize: '11px',
-                fontWeight: 500,
-                backgroundColor: tierFilter.includes(tier) ? '#1E2D4D' : '#FFFFFF',
-                color: tierFilter.includes(tier) ? '#FAF7F0' : '#1E2D4D',
-                border: tierFilter.includes(tier) ? 'none' : '1px solid #E2DDD4',
-              }}
-            >
-              {tier}
-            </button>
+              tierVariant={tier}
+            />
           ))}
           <span style={{ fontSize: '10px', color: '#5A6478', margin: '0 4px' }}>|</span>
           {['ikeca', 'nfpa', 'insured'].map(key => (
-            <button
+            <FilterPill
               key={key}
-              type="button"
+              label={key.toUpperCase()}
+              icon={Check}
+              active={credentials[key]}
               onClick={() => toggleCredential(key)}
-              className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors"
-              style={{
-                fontSize: '11px',
-                fontWeight: 500,
-                backgroundColor: credentials[key] ? '#1E2D4D' : '#FFFFFF',
-                color: credentials[key] ? '#FAF7F0' : '#1E2D4D',
-                border: credentials[key] ? 'none' : '1px solid #E2DDD4',
-              }}
-            >
-              {key.toUpperCase()}
-            </button>
+            />
           ))}
           <span style={{ fontSize: '10px', color: '#5A6478', margin: '0 4px' }}>|</span>
-          {['available', 'wait_list'].map(av => (
-            <button
-              key={av}
-              type="button"
-              onClick={() => setAvailability(availability === av ? '' : av)}
-              className="px-3 py-1.5 rounded-full whitespace-nowrap transition-colors"
-              style={{
-                fontSize: '11px',
-                fontWeight: 500,
-                backgroundColor: availability === av ? '#1E2D4D' : '#FFFFFF',
-                color: availability === av ? '#FAF7F0' : '#1E2D4D',
-                border: availability === av ? 'none' : '1px solid #E2DDD4',
-              }}
-            >
-              {av === 'available' ? 'Available' : 'Wait list'}
-            </button>
-          ))}
+          <FilterPill
+            label="Available"
+            active={availability === 'available'}
+            onClick={() => setAvailability(availability === 'available' ? '' : 'available')}
+            dotColor="#2E7D32"
+          />
+          <FilterPill
+            label="Wait list"
+            active={availability === 'wait_list'}
+            onClick={() => setAvailability(availability === 'wait_list' ? '' : 'wait_list')}
+            dotColor="#B45309"
+          />
         </div>
 
         {/* Result count + Clear */}
