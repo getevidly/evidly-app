@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Mail, Phone, MapPin, Send, FileText, Clock, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Building2, Mail, Phone, MapPin, Send, FileText, Clock, ChevronRight, Pencil } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { EditVendorModal } from '../components/vendor/EditVendorModal';
 import { relativeTime, expiryLabel } from '../lib/relativeTime';
 import { StatusPill } from '../components/documents/StatusPill';
 import { RequestStateBadge } from '../components/documents/RequestStateBadge';
@@ -80,6 +81,7 @@ export default function VendorDetail() {
   const [schedules, setSchedules] = useState<ScheduleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [editOpen, setEditOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!vendorId || !orgId) { setLoading(false); return; }
@@ -198,6 +200,15 @@ export default function VendorDetail() {
             >
               {vendor.status === 'active' ? 'Active' : vendor.status}
             </span>
+            <button
+              type="button"
+              onClick={() => setEditOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium"
+              style={{ border: '1px solid #1E2D4D', color: '#1E2D4D' }}
+            >
+              <Pencil size={14} />
+              Edit
+            </button>
           </div>
         </div>
 
@@ -286,6 +297,16 @@ export default function VendorDetail() {
       {activeTab === 'activity' && (
         <ActivityTimeline entries={activity} />
       )}
+
+      <EditVendorModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        onVendorUpdated={() => { setEditOpen(false); fetchData(); }}
+        vendor={vendor}
+        organizationId={orgId || null}
+        accessibleLocations={[]}
+        existingEmails={[]}
+      />
     </div>
   );
 }
