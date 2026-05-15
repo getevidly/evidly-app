@@ -699,6 +699,7 @@ function AppRoutes() {
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
           <Route path="/self-inspection" element={<SelfInspection />} />
           <Route path="/self-audit" element={<Navigate to="/self-inspection" replace />} />
+          <Route path="/shift-handoff" element={<ShiftHandoff />} />
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
@@ -722,7 +723,6 @@ function AppRoutes() {
           <Route path="/playbooks/analytics" element={<PlaybookAnalytics />} />
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
           <Route path="/inspector-view" element={<InspectorView />} />
-          <Route path="/shift-handoff" element={<ShiftHandoff />} />
           <Route path="/inspector-mode" element={<InspectorMode />} />
           <Route path="/mock-inspection" element={<MockInspection />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />

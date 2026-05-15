@@ -114,6 +114,10 @@ const I: Record<string, NavItem> = {
     id: 'op-corrective', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
     roles: [], description: 'Track and resolve violations with documented corrective action plans.',
   },
+  'op-shift': {
+    id: 'op-shift', label: 'Shift Intelligence', path: '/shift-handoff', icon: '🤝',
+    roles: [], description: 'Shift handoff status, checklists, and transition intelligence across your operation.',
+  },
 
   // ── Fire Safety section items ───────────────────────────
 
@@ -271,8 +275,8 @@ const SECTION_DEFS: Record<string, SectionDef> = {
   operations: {
     id: 'operations', label: 'Operations', icon: '📋',
     tooltipTitle: 'Operations',
-    tooltipDescription: 'Self-inspections, incidents, deficiencies, and corrective actions across all pillars.',
-    itemIds: ['op-self', 'op-incidents', 'op-deficiencies', 'op-corrective'],
+    tooltipDescription: 'Shift intelligence, incidents, corrective actions, self-inspections, and deficiencies across all pillars.',
+    itemIds: ['op-shift', 'op-incidents', 'op-corrective', 'op-self', 'op-deficiencies'],
   },
   foodSafety: {
     id: 'food-safety', label: 'Food Safety', icon: '🍽️',

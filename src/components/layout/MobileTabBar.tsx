@@ -93,6 +93,7 @@ const PATH_ICON: Record<string, any> = {
   '/receiving-log': FileText,
   '/checklists': ClipboardList,
   '/temp-logs': Thermometer,
+  '/shift-handoff': Handshake,
   '/admin/demo-generator': Sparkles,
   '/admin/demos': Target,
   '/food-recovery': Recycle,
@@ -239,7 +240,7 @@ export function MobileTabBar() {
 
       {/* Floating voice button — voice-eligible roles only, mobile only */}
       {isVoiceRole && !isKeyboardOpen && (
-        <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
+        <div className="fixed bottom-[136px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
           <VoiceButton orgId={orgId} locationId={locationId} size="lg" />
           <span className="text-xs text-[#A08C5A] mt-1 font-medium">Voice</span>
         </div>
