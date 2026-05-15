@@ -230,15 +230,25 @@ Deno.serve(async (req) => {
     .update({ updated_at: new Date().toISOString() })
     .eq("id", thread.id);
 
-  // ── 9. Notify org operators ──────────────────────────────
+  // ── 9. Notify org operators (entity-type-aware routing) ──
+  let notifTitle = "Vendor Reply Received";
+  let notifBody = `New email reply from ${from}${subject ? `: ${subject}` : ""}`;
+  let notifUrl = `/vendors?tab=requests`;
+
+  if (thread.entity_type === "vendor_network_contact") {
+    notifTitle = "Network Vendor Replied";
+    notifBody = `Reply from ${from}${subject ? `: ${subject}` : ""}`;
+    notifUrl = `/vendor-network?vendor=${thread.entity_id}&modal=contact`;
+  }
+
   await createOrgNotification({
     supabase,
     organizationId: thread.organization_id,
     type: "vendor_replied",
     category: "vendors",
-    title: "Vendor Reply Received",
-    body: `New email reply from ${from}${subject ? `: ${subject}` : ""}`,
-    actionUrl: `/vendors?tab=requests`,
+    title: notifTitle,
+    body: notifBody,
+    actionUrl: notifUrl,
     priority: "medium",
     severity: "info",
     sourceType: "message",

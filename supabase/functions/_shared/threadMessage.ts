@@ -51,7 +51,7 @@ export async function ensureThread(
           subject: subject || null,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: "entity_type,entity_id" }
+        { onConflict: "entity_type,entity_id,organization_id" }
       )
       .select("id, organization_id")
       .single();
