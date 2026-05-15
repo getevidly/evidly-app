@@ -1,5 +1,9 @@
-﻿import { createContext, useContext, useState, ReactNode } from 'react';
+﻿import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useDemo } from './DemoContext';
+import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
+import { dayPatternToBooleans, booleansToDayPattern } from '../lib/shifts';
+import { toast } from 'sonner';
 
 export interface LocationHours {
   locationName: string;
@@ -88,9 +92,9 @@ interface OperatingHoursContextType {
   updateLocationHours: (locationName: string, hours: Partial<LocationHours>) => void;
   shifts: ShiftConfig[];
   setShifts: (shifts: ShiftConfig[]) => void;
-  addShift: (shift: Omit<ShiftConfig, 'id'>) => void;
-  removeShift: (id: string) => void;
-  updateShift: (id: string, updates: Partial<ShiftConfig>) => void;
+  addShift: (shift: Omit<ShiftConfig, 'id'>) => Promise<void>;
+  removeShift: (id: string) => Promise<void>;
+  updateShift: (id: string, updates: Partial<ShiftConfig>) => Promise<void>;
   getHoursForLocation: (locationName: string) => LocationHours | undefined;
   getShiftsForLocation: (locationName: string) => ShiftConfig[];
 }
@@ -99,24 +103,164 @@ const OperatingHoursContext = createContext<OperatingHoursContextType | undefine
 
 export function OperatingHoursProvider({ children }: { children: ReactNode }) {
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
   const [locationHours, setLocationHours] = useState<LocationHours[]>(isDemoMode ? DEMO_HOURS : []);
   const [shifts, setShifts] = useState<ShiftConfig[]>(isDemoMode ? DEMO_SHIFTS : []);
+  const locNameToIdRef = useRef<Record<string, string>>({});
+
+  // ── Fetch location map helper (used by load + stale-cache refresh) ──
+  const fetchLocationMap = useCallback(async (org: string) => {
+    const { data: locs } = await supabase
+      .from('locations')
+      .select('id, name')
+      .eq('organization_id', org);
+    const idToName: Record<string, string> = {};
+    const nameToId: Record<string, string> = {};
+    for (const loc of locs || []) {
+      idToName[loc.id] = loc.name;
+      nameToId[loc.name] = loc.id;
+    }
+    locNameToIdRef.current = nameToId;
+    return { idToName, nameToId };
+  }, []);
+
+  // ── Load shift_templates from DB (live mode only) ──
+  useEffect(() => {
+    if (isDemoMode || !orgId) return;
+    (async () => {
+      const { idToName } = await fetchLocationMap(orgId);
+
+      const { data: templates } = await supabase
+        .from('shift_templates')
+        .select('*')
+        .eq('organization_id', orgId)
+        .eq('is_active', true)
+        .order('start_time', { ascending: true });
+      if (templates && templates.length > 0) {
+        setShifts(templates.map(t => ({
+          id: t.id,
+          name: t.name,
+          locationName: idToName[t.location_id] || 'Unknown',
+          startTime: (t.start_time as string)?.slice(0, 5) || '00:00',
+          endTime: (t.end_time as string)?.slice(0, 5) || '00:00',
+          days: dayPatternToBooleans(t.day_of_week_pattern || 'MTWRFSU'),
+        })));
+      }
+    })();
+  }, [isDemoMode, orgId, fetchLocationMap]);
 
   const updateLocationHours = (locationName: string, updates: Partial<LocationHours>) => {
     setLocationHours(prev => prev.map(h => h.locationName === locationName ? { ...h, ...updates } : h));
   };
 
-  const addShift = (shift: Omit<ShiftConfig, 'id'>) => {
-    setShifts(prev => [...prev, { ...shift, id: `s-${Date.now()}` }]);
-  };
+  const addShift = useCallback(async (shift: Omit<ShiftConfig, 'id'>) => {
+    const tempId = `s-${Date.now()}`;
+    setShifts(prev => [...prev, { ...shift, id: tempId }]);
 
-  const removeShift = (id: string) => {
-    setShifts(prev => prev.filter(s => s.id !== id));
-  };
+    if (!isDemoMode && orgId) {
+      try {
+        let locationId = locNameToIdRef.current[shift.locationName];
+        if (!locationId) {
+          await fetchLocationMap(orgId);
+          locationId = locNameToIdRef.current[shift.locationName];
+        }
+        if (!locationId) {
+          throw new Error('Location not found in your organization');
+        }
+        const { data, error } = await supabase
+          .from('shift_templates')
+          .insert({
+            organization_id: orgId,
+            location_id: locationId,
+            name: shift.name,
+            start_time: shift.startTime,
+            end_time: shift.endTime,
+            day_of_week_pattern: booleansToDayPattern(shift.days),
+          })
+          .select('id')
+          .single();
+        if (error) throw error;
+        if (data) {
+          setShifts(prev => prev.map(s => s.id === tempId ? { ...s, id: data.id } : s));
+        }
+      } catch (err) {
+        console.error('[OperatingHours] addShift failed:', err);
+        toast.error(err instanceof Error ? err.message : 'Failed to save shift');
+        setShifts(prev => prev.filter(s => s.id !== tempId));
+      }
+    }
+  }, [isDemoMode, orgId, fetchLocationMap]);
 
-  const updateShift = (id: string, updates: Partial<ShiftConfig>) => {
-    setShifts(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
-  };
+  const removeShift = useCallback(async (id: string) => {
+    let removed: ShiftConfig | undefined;
+    let removedIndex = -1;
+    setShifts(prev => {
+      removedIndex = prev.findIndex(s => s.id === id);
+      removed = prev[removedIndex];
+      return prev.filter(s => s.id !== id);
+    });
+
+    if (!isDemoMode && !id.startsWith('s-')) {
+      try {
+        const { error } = await supabase
+          .from('shift_templates')
+          .update({ is_active: false, updated_at: new Date().toISOString() })
+          .eq('id', id);
+        if (error) throw error;
+      } catch (err) {
+        console.error('[OperatingHours] removeShift failed:', err);
+        toast.error(err instanceof Error ? err.message : 'Failed to remove shift');
+        if (removed) {
+          setShifts(prev => {
+            const next = [...prev];
+            next.splice(removedIndex >= 0 ? removedIndex : next.length, 0, removed!);
+            return next;
+          });
+        }
+      }
+    }
+  }, [isDemoMode]);
+
+  const updateShift = useCallback(async (id: string, updates: Partial<ShiftConfig>) => {
+    let previous: ShiftConfig | undefined;
+    setShifts(prev => prev.map(s => {
+      if (s.id === id) {
+        previous = s;
+        return { ...s, ...updates };
+      }
+      return s;
+    }));
+
+    if (!isDemoMode && !id.startsWith('s-')) {
+      try {
+        const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+        if (updates.name !== undefined) dbUpdates.name = updates.name;
+        if (updates.startTime !== undefined) dbUpdates.start_time = updates.startTime;
+        if (updates.endTime !== undefined) dbUpdates.end_time = updates.endTime;
+        if (updates.days !== undefined) dbUpdates.day_of_week_pattern = booleansToDayPattern(updates.days);
+        if (updates.locationName !== undefined) {
+          let locationId = locNameToIdRef.current[updates.locationName];
+          if (!locationId && orgId) {
+            await fetchLocationMap(orgId);
+            locationId = locNameToIdRef.current[updates.locationName];
+          }
+          if (locationId) dbUpdates.location_id = locationId;
+        }
+        const { error } = await supabase
+          .from('shift_templates')
+          .update(dbUpdates)
+          .eq('id', id);
+        if (error) throw error;
+      } catch (err) {
+        console.error('[OperatingHours] updateShift failed:', err);
+        toast.error(err instanceof Error ? err.message : 'Failed to update shift');
+        if (previous) {
+          setShifts(prev => prev.map(s => s.id === id ? previous! : s));
+        }
+      }
+    }
+  }, [isDemoMode, orgId, fetchLocationMap]);
 
   const getHoursForLocation = (locationName: string) => locationHours.find(h => h.locationName === locationName);
   const getShiftsForLocation = (locationName: string) => shifts.filter(s => s.locationName === locationName || s.locationName === 'All Locations');

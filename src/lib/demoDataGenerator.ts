@@ -36,7 +36,7 @@ export interface GeneratedTempReading {
   reading_f: number;
   recorded_at: string;
   is_excursion: boolean;
-  shift: 'morning' | 'midday' | 'evening';
+  shift: 'morning' | 'afternoon' | 'evening';
 }
 
 export interface GeneratedChecklist {
@@ -160,8 +160,8 @@ function getEquipment(opType: string) {
 function generateTempReadings(config: DemoGenerationConfig): GeneratedTempReading[] {
   const readings: GeneratedTempReading[] = [];
   const equipment = getEquipment(config.operationType);
-  const shifts: Array<'morning' | 'midday' | 'evening'> = ['morning', 'midday', 'evening'];
-  const shiftHours = { morning: 7, midday: 12, evening: 18 };
+  const shifts: Array<'morning' | 'afternoon' | 'evening'> = ['morning', 'afternoon', 'evening'];
+  const shiftHours = { morning: 7, afternoon: 12, evening: 18 };
 
   // Predetermine excursion days
   const excursionDays = new Set<number>();
@@ -176,7 +176,7 @@ function generateTempReadings(config: DemoGenerationConfig): GeneratedTempReadin
     for (const equip of equipment) {
       for (const shift of shifts) {
         const isExcursionDay = excursionDays.has(day);
-        const isExcursion = isExcursionDay && shift === 'midday' && Math.random() < 0.3;
+        const isExcursion = isExcursionDay && shift === 'afternoon' && Math.random() < 0.3;
 
         const temp = isExcursion
           ? equip.excursionTemp + randomBetween(-1, 1)
@@ -495,7 +495,7 @@ function generateCorrectiveActions(config: DemoGenerationConfig): GeneratedCorre
     {
       id: uuid(),
       title: 'Temperature Excursion — Walk-in Cooler #1',
-      description: `Walk-in cooler reached 44°F during midday check. Adjusted thermostat, verified temp returned to safe range (38°F) within 2 hours. Scheduled preventive maintenance inspection with ${config.county || config.city} HVAC vendor.`,
+      description: `Walk-in cooler reached 44°F during afternoon check. Adjusted thermostat, verified temp returned to safe range (38°F) within 2 hours. Scheduled preventive maintenance inspection with ${config.county || config.city} HVAC vendor.`,
       status: 'resolved',
       category: 'temperature',
       created_at: daysAgo(8).toISOString(),

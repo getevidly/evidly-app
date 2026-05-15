@@ -9,13 +9,10 @@ export const TEMP_CHECK_INTERVALS = {
   RECEIVING_OVERDUE_HOURS: 24,          // Daily receiving log
 } as const;
 
-/** Derive shift from current hour */
-export function getShift(): 'morning' | 'afternoon' | 'evening' {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'morning';
-  if (hour < 17) return 'afternoon';
-  return 'evening';
-}
+import { getCurrentShift } from '../lib/shifts';
+
+/** @deprecated Use getCurrentShift() from '../lib/shifts' directly */
+export const getShift = getCurrentShift;
 
 /** Map equipment context to log_type for temperature_logs table */
 export function getLogType(

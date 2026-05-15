@@ -1,6 +1,6 @@
 export type VoiceAction =
   | { type: 'LOG_TEMP'; equipment: string; temperature: number; unit: 'F' | 'C' }
-  | { type: 'START_CHECKLIST'; checklistType: 'morning' | 'midday' | 'evening' | 'closing' }
+  | { type: 'START_CHECKLIST'; checklistType: 'morning' | 'afternoon' | 'evening' | 'closing' }
   | { type: 'COMPLETE_ITEM'; itemName: string }
   | { type: 'NEXT_TASK' }
   | { type: 'OPEN_CA'; category: string; description: string }
@@ -27,13 +27,13 @@ const EQUIPMENT_MAP: Record<string, string> = {
 };
 
 // Checklist type aliases
-const CHECKLIST_MAP: Record<string, 'morning' | 'midday' | 'evening' | 'closing'> = {
+const CHECKLIST_MAP: Record<string, 'morning' | 'afternoon' | 'evening' | 'closing'> = {
   'morning': 'morning',
   'opening': 'morning',
   'breakfast': 'morning',
-  'midday': 'midday',
-  'lunch': 'midday',
-  'afternoon': 'midday',
+  'afternoon': 'afternoon',
+  'lunch': 'afternoon',
+  'midday': 'afternoon',
   'evening': 'evening',
   'dinner': 'evening',
   'night': 'evening',

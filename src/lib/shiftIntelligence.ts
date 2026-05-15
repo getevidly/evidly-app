@@ -34,8 +34,8 @@ export function computeShiftSummary(input: ShiftInput): ShiftSummary {
   const { shift, checklistsCompleted, checklistsTotal, tempLogs, correctiveActionsOpened, correctiveActionsResolved } = input;
 
   const shiftLabels: Record<string, string> = {
-    morning: 'Morning (5 AM – 1 PM)',
-    midday: 'Midday (1 PM – 5 PM)',
+    morning: 'Morning (5 AM – 12 PM)',
+    afternoon: 'Afternoon (12 PM – 5 PM)',
     evening: 'Evening (5 PM – Close)',
   };
 

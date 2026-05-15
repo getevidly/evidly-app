@@ -166,7 +166,7 @@ const TEMPLATE_CATEGORIES = [
         ] as TemplateItemDef[],
       },
       {
-        key: 'midday',
+        key: 'afternoon',
         name: 'Mid-Shift Check',
         itemCount: 6,
         estimatedTime: '10-15 min',
@@ -455,7 +455,7 @@ const PREBUILT_TEMPLATES = {
       return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
     }),
   },
-  midday: {
+  afternoon: {
     name: 'Mid-Shift Check',
     type: 'shift_change',
     frequency: 'daily',

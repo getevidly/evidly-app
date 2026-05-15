@@ -17,7 +17,7 @@ export const helpDocs: Record<string, HelpDoc> = {
       'Click Save — the reading is logged with timestamp and your name',
       'Out-of-range readings are flagged automatically with corrective action prompts',
     ],
-    tips: 'FDA Food Code requires cold holding at 41°F or below. Log temps at least 3 times daily: opening, midday, and closing.',
+    tips: 'FDA Food Code requires cold holding at 41°F or below. Log temps at least 3 times daily: opening, mid-shift, and closing.',
   },
   checklists: {
     id: 'checklists',
@@ -150,7 +150,7 @@ export const helpDocs: Record<string, HelpDoc> = {
 
 export const featureExplanations: Record<string, string> = {
   '/temp-logs': 'Track every cooler, freezer, and hot-holding unit. FDA requires cold foods at 41°F or below. EvidLY flags out-of-range readings instantly and builds a compliance record for inspections.',
-  '/checklists': 'Structured daily tasks ensure nothing gets missed. Opening, midday, and closing checklists replace paper logs and create a digital inspection trail.',
+  '/checklists': 'Structured daily tasks ensure nothing gets missed. Opening, mid-shift, and closing checklists replace paper logs and create a digital inspection trail.',
   '/scoring-breakdown': 'Jurisdiction status and operational readiness for food safety and fire safety across all your locations. Shows real inspection grades from your local health and fire authorities.',
   '/documents': 'Store and track all compliance documents — health permits, hood cleaning certificates, fire inspections. EvidLY alerts you before they expire.',
   '/equipment': 'Register every temperature-monitored piece of equipment. Track warranty, service history, and connect IoT sensors for automatic monitoring.',

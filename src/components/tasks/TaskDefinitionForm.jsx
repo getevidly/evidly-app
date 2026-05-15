@@ -36,7 +36,7 @@ const formatRoleLabel = (role) => {
 };
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const SHIFTS = ['morning', 'midday', 'evening', 'closing'];
+const SHIFTS = ['morning', 'afternoon', 'evening', 'closing'];
 
 
 const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';

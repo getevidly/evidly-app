@@ -19,16 +19,10 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ShiftSummaryCard } from '../components/superpowers/ShiftSummaryCard';
 import { computeShiftSummary } from '../lib/shiftIntelligence';
+import { getCurrentShift, getShiftLabel } from '../lib/shifts';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
-
-function getShiftName() {
-  const hour = new Date().getHours();
-  if (hour < 11) return 'Morning';
-  if (hour < 16) return 'Afternoon';
-  return 'Evening';
-}
 
 function getShiftDateLabel() {
   return new Date().toLocaleDateString('en-US', {
@@ -61,9 +55,9 @@ export function ShiftHandoff() {
 
   // Shift intelligence summary
   const shiftSummary = useMemo(() => {
-    const shiftName = getShiftName().toLowerCase();
+    const shift = getCurrentShift();
     return computeShiftSummary({
-      shift: shiftName === 'afternoon' ? 'midday' : shiftName,
+      shift,
       checklistsCompleted: stats.checklistCount,
       checklistsTotal: isDemoMode ? 2 : 0,
       tempLogs: Array.from({ length: stats.tempCount }, () => ({ temp_pass: stats.allTempsInRange })),
@@ -127,7 +121,7 @@ export function ShiftHandoff() {
           <Clock size={18} style={{ color: GOLD }} />
         </div>
         <p className="text-sm text-[#1E2D4D]/50">
-          {getShiftDateLabel()} &middot; {getShiftName()} Shift
+          {getShiftDateLabel()} &middot; {getShiftLabel(getCurrentShift())} Shift
         </p>
       </div>
 
