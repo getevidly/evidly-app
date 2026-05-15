@@ -2,7 +2,8 @@
  * ShiftHandoff — MOBILE-EMOTIONAL-01
  *
  * End-of-shift summary page. Shows shift stats (temp count, checklists,
- * CAs resolved, open items), notes field, and handoff completion.
+ * incidents, CAs resolved), PRP outlook, notes field, auto-send recipients,
+ * and handoff completion with server-side fan-out.
  *
  * Route: /shift-handoff
  * Access: kitchen_manager, chef, owner_operator
@@ -10,7 +11,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { ArrowLeft, Thermometer, CheckSquare, Wrench, AlertCircle, Send, Clock } from 'lucide-react';
+import { Thermometer, CheckSquare, Wrench, AlertTriangle, Send, Clock, Users, Mail } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useConfetti } from '../hooks/useConfetti';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,11 +19,14 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ShiftSummaryCard } from '../components/superpowers/ShiftSummaryCard';
+import { ShiftPRPBlock } from '../components/shifts/ShiftPRPBlock';
 import { computeShiftSummary } from '../lib/shiftIntelligence';
-import { getCurrentShift, getShiftLabel } from '../lib/shifts';
+import { getCurrentShift, getShiftLabel, DEFAULT_SHIFTS } from '../lib/shifts';
 import { useLocations } from '../hooks/api/useLocations';
 import { useShiftHandoffData } from '../hooks/useShiftHandoffData';
 import { useCompleteHandoff } from '../hooks/useCompleteHandoff';
+import { useShiftPRPMetrics } from '../hooks/useShiftPRPMetrics';
+import { useHandoffRecipients } from '../hooks/useHandoffRecipients';
 import { formatRelativeTime } from '../utils/format';
 
 const NAVY = '#1E2D4D';
@@ -34,6 +38,12 @@ function getShiftDateLabel() {
     month: 'long',
     day: 'numeric',
   });
+}
+
+function formatHour(hour) {
+  if (hour === 0) return '12:00 AM';
+  if (hour === 12) return '12:00 PM';
+  return `${hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}`;
 }
 
 export function ShiftHandoff() {
@@ -63,6 +73,8 @@ export function ShiftHandoff() {
     previousHandoff: livePreviousHandoff,
     existingHandoff,
     shiftTemplateId,
+    shiftStartHour,
+    shiftEndHour,
     loading: dataLoading,
   } = useShiftHandoffData(
     isDemoMode
@@ -72,11 +84,53 @@ export function ShiftHandoff() {
 
   const { complete, isSubmitting } = useCompleteHandoff();
 
+  // PRP metrics (location-scoped)
+  const { metrics: livePRPMetrics, loading: prpLoading } = useShiftPRPMetrics(
+    isDemoMode ? { locationId: null, organizationId: null } : { locationId, organizationId }
+  );
+
+  // Handoff recipients
+  const {
+    nextShiftStaff: liveNextShiftStaff,
+    emailRecipients: liveEmailRecipients,
+    nextShiftLabel: liveNextShiftLabel,
+  } = useHandoffRecipients(
+    isDemoMode
+      ? { locationId: null, organizationId: null, currentShiftName: shiftName }
+      : { locationId, organizationId, currentShiftName: shiftName }
+  );
+
   // Stats — demo preserves hardcoded values, live uses DB
   const stats = useMemo(() => {
-    if (isDemoMode) return { tempCount: 12, checklistCount: 2, caResolved: 1, openItemCount: 0, allTempsInRange: true };
+    if (isDemoMode) return { tempCount: 12, checklistCount: 2, caResolved: 1, openItemCount: 0, allTempsInRange: true, incidentCount: 0 };
     return liveStats;
   }, [isDemoMode, liveStats]);
+
+  // PRP — demo sample values
+  const prpMetrics = useMemo(() => {
+    if (isDemoMode) return { predict: 3, reduce: 1, prove: { ready: 8, total: 10, pct: 80 } };
+    return livePRPMetrics;
+  }, [isDemoMode, livePRPMetrics]);
+
+  // Recipients — demo sample
+  const nextShiftStaff = useMemo(() => {
+    if (isDemoMode) return [{ userId: 'demo-1', name: 'Maria S.', role: 'kitchen_staff', channel: 'in_app' }];
+    return liveNextShiftStaff;
+  }, [isDemoMode, liveNextShiftStaff]);
+
+  const emailRecipients = useMemo(() => {
+    if (isDemoMode) return [
+      { userId: 'demo-2', name: 'Arthur H.', role: 'owner_operator', channel: 'email' },
+      { userId: 'demo-3', name: 'Sarah K.', role: 'compliance_manager', channel: 'email' },
+    ];
+    return liveEmailRecipients;
+  }, [isDemoMode, liveEmailRecipients]);
+
+  const nextShiftLabel = isDemoMode ? 'Evening' : liveNextShiftLabel;
+
+  // Shift time window for header
+  const displayStartHour = isDemoMode ? DEFAULT_SHIFTS[shiftName].startHour : shiftStartHour;
+  const displayEndHour = isDemoMode ? DEFAULT_SHIFTS[shiftName].endHour : shiftEndHour;
 
   // Shift intelligence summary
   const shiftSummary = useMemo(() => {
@@ -126,14 +180,15 @@ export function ShiftHandoff() {
     (async () => {
       const result = await complete({
         locationId, organizationId, shiftName, shiftDate, notes,
-        stats: { tempCount: stats.tempCount, checklistCount: stats.checklistCount, caResolved: stats.caResolved },
+        stats: { tempCount: stats.tempCount, checklistCount: stats.checklistCount, caResolved: stats.caResolved, incidentCount: stats.incidentCount },
         openItems, shiftTemplateId,
       });
       if (result.success) {
         triggerConfetti();
         navigator.vibrate?.(50);
         setCompleted(true);
-        toast.success('Shift handoff completed!');
+        const d = result.dispatched ?? 0;
+        toast.success(d > 0 ? `Handoff sent to ${d} recipients` : 'Shift handoff completed!');
       } else {
         toast.error(result.error ?? 'Failed to save handoff');
       }
@@ -163,6 +218,8 @@ export function ShiftHandoff() {
     );
   }
 
+  const shiftLabel = getShiftLabel(shiftName);
+
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto space-y-5 pb-24">
       <Breadcrumb items={[
@@ -173,11 +230,16 @@ export function ShiftHandoff() {
       {/* Header */}
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-lg font-bold" style={{ color: NAVY }}>End of Shift Summary</h1>
+          <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: GOLD }}>
+            {shiftLabel} Shift
+          </p>
           <Clock size={18} style={{ color: GOLD }} />
         </div>
+        <h1 className="text-lg font-bold mb-1" style={{ color: NAVY }}>
+          End of {shiftLabel} Shift
+        </h1>
         <p className="text-sm text-[#1E2D4D]/50">
-          {getShiftDateLabel()} &middot; {getShiftLabel(shiftName)} Shift
+          {getShiftDateLabel()} &middot; {formatHour(displayStartHour)} – {formatHour(displayEndHour)}
           {locationName && <span> &middot; {locationName}</span>}
         </p>
       </div>
@@ -221,8 +283,8 @@ export function ShiftHandoff() {
           {[
             { icon: Thermometer, label: 'Temperature readings', value: stats.tempCount, color: '#1E2D4D' },
             { icon: CheckSquare, label: 'Checklists completed', value: stats.checklistCount, color: '#059669' },
-            { icon: Wrench, label: 'CAs resolved', value: stats.caResolved, color: '#d97706' },
-            { icon: AlertCircle, label: 'Items left open', value: stats.openItemCount, color: stats.openItemCount > 0 ? '#dc2626' : '#059669' },
+            { icon: AlertTriangle, label: 'Incidents reported', value: stats.incidentCount, color: stats.incidentCount > 0 ? '#dc2626' : '#059669' },
+            { icon: Wrench, label: 'Corrective Actions resolved', value: stats.caResolved, color: '#d97706' },
           ].map(item => {
             const Icon = item.icon;
             return (
@@ -243,6 +305,9 @@ export function ShiftHandoff() {
           </div>
         )}
       </div>
+
+      {/* Shift PRP Block */}
+      <ShiftPRPBlock metrics={prpMetrics} loading={isDemoMode ? false : prpLoading} />
 
       {/* Shift Intelligence Summary */}
       <ShiftSummaryCard summary={shiftSummary} />
@@ -276,6 +341,46 @@ export function ShiftHandoff() {
         />
       </div>
 
+      {/* Auto-send recipient card */}
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Auto-send summary</h3>
+          <span className="px-1.5 py-0.5 text-[11px] font-medium rounded" style={{ backgroundColor: '#E1F5EE', color: '#0F6E56' }}>
+            Automated
+          </span>
+        </div>
+        <p className="text-xs text-[#1E2D4D]/40 mb-3">
+          When you complete this handoff, the summary auto-sends to:
+        </p>
+        <div className="space-y-2">
+          {nextShiftStaff.length > 0 ? (
+            <div className="flex items-center gap-2.5 text-sm text-[#1E2D4D]/70">
+              <Users size={14} className="shrink-0 text-[#1E2D4D]/40" />
+              <span>{nextShiftLabel} shift staff ({nextShiftStaff.length})</span>
+              <span className="text-xs text-[#1E2D4D]/30 ml-auto">In-app</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2.5 text-sm text-[#1E2D4D]/40">
+              <Users size={14} className="shrink-0" />
+              <span>No next-shift staff assigned</span>
+            </div>
+          )}
+          {emailRecipients.map(r => (
+            <div key={r.userId} className="flex items-center gap-2.5 text-sm text-[#1E2D4D]/70">
+              <Mail size={14} className="shrink-0 text-[#1E2D4D]/40" />
+              <span>{r.name}</span>
+              <span className="text-xs text-[#1E2D4D]/30">{r.role === 'owner_operator' ? 'Owner' : 'Compliance'}</span>
+              <span className="text-xs text-[#1E2D4D]/30 ml-auto">Email</span>
+            </div>
+          ))}
+        </div>
+        {!isDemoMode && nextShiftStaff.length === 0 && (
+          <p className="text-xs text-[#1E2D4D]/30 mt-3">
+            Configure shift staff in Settings → Operating hours
+          </p>
+        )}
+      </div>
+
       {/* Complete button */}
       {existingHandoff && !isDemoMode ? (
         <div className="w-full flex items-center justify-center gap-2 rounded-xl font-bold"
@@ -291,7 +396,7 @@ export function ShiftHandoff() {
           style={{ backgroundColor: NAVY, height: 56, fontSize: 16 }}
         >
           <Send size={18} />
-          {isSubmitting ? 'Saving...' : 'Complete Handoff'}
+          {isSubmitting ? 'Sending...' : 'Complete & auto-send handoff'}
         </button>
       )}
 

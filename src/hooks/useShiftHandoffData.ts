@@ -25,6 +25,7 @@ export interface ShiftStats {
   caResolved: number;
   openItemCount: number;
   allTempsInRange: boolean;
+  incidentCount: number;
 }
 
 interface UseShiftHandoffDataArgs {
@@ -36,12 +37,14 @@ interface UseShiftHandoffDataArgs {
 
 export function useShiftHandoffData({ locationId, organizationId, shiftName, shiftDate }: UseShiftHandoffDataArgs) {
   const [stats, setStats] = useState<ShiftStats>({
-    tempCount: 0, checklistCount: 0, caResolved: 0, openItemCount: 0, allTempsInRange: true,
+    tempCount: 0, checklistCount: 0, caResolved: 0, openItemCount: 0, allTempsInRange: true, incidentCount: 0,
   });
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [previousHandoff, setPreviousHandoff] = useState<PreviousHandoff | null>(null);
   const [existingHandoff, setExistingHandoff] = useState<ExistingHandoff | null>(null);
   const [shiftTemplateId, setShiftTemplateId] = useState<string | null>(null);
+  const [shiftStartHour, setShiftStartHour] = useState(0);
+  const [shiftEndHour, setShiftEndHour] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,11 +80,13 @@ export function useShiftHandoffData({ locationId, organizationId, shiftName, shi
       } catch { /* shift_templates may not exist — use defaults */ }
 
       setShiftTemplateId(templateId);
+      setShiftStartHour(startHour);
+      setShiftEndHour(endHour);
 
       const startISO = `${shiftDate}T${String(startHour).padStart(2, '0')}:00:00`;
       const endISO   = `${shiftDate}T${String(endHour).padStart(2, '0')}:00:00`;
 
-      const [tempRes, doneTaskRes, openTaskRes, caRes, prevRes, dupeRes] = await Promise.all([
+      const [tempRes, doneTaskRes, openTaskRes, caRes, incidentRes, prevRes, dupeRes] = await Promise.all([
         // 1. Temperature logs (need temp_pass for allTempsInRange)
         supabase.from('temperature_logs').select('temp_pass')
           .eq('facility_id', locationId).eq('shift', shiftName)
@@ -103,7 +108,12 @@ export function useShiftHandoffData({ locationId, organizationId, shiftName, shi
           .eq('location_id', locationId)
           .gte('closed_at', startISO).lt('closed_at', endISO),
 
-        // 5. Previous handoff (most recent for this location, fetch a few to filter)
+        // 5. Incidents reported in shift window
+        supabase.from('incidents').select('id', { count: 'exact' })
+          .eq('location_id', locationId).is('archived_at', null)
+          .gte('created_at', startISO).lt('created_at', endISO),
+
+        // 6. Previous handoff (most recent for this location, fetch a few to filter)
         supabase.from('shift_handoffs')
           .select('shift_name, shift_date, completed_at, notes, open_items, handed_off_by, stats_snapshot')
           .eq('location_id', locationId)
@@ -111,7 +121,7 @@ export function useShiftHandoffData({ locationId, organizationId, shiftName, shi
           .order('created_at', { ascending: false })
           .limit(5),
 
-        // 6. Duplicate check for current shift
+        // 7. Duplicate check for current shift
         supabase.from('shift_handoffs')
           .select('id, handed_off_by, notes, completed_at')
           .eq('location_id', locationId).eq('shift_date', shiftDate).eq('shift_name', shiftName)
@@ -126,13 +136,14 @@ export function useShiftHandoffData({ locationId, organizationId, shiftName, shi
       const openTaskList = (openTaskRes.data ?? []).map(r => r.title).filter(Boolean) as string[];
 
       const caResolved = caRes.count ?? 0;
+      const incidentCount = incidentRes.count ?? 0;
 
       // Filter previous handoff: exclude current shift+date combo
       const prevRows = (prevRes.data ?? []).filter(
         r => !(r.shift_date === shiftDate && r.shift_name === shiftName)
       );
 
-      setStats({ tempCount, checklistCount, caResolved, openItemCount: openTaskList.length, allTempsInRange });
+      setStats({ tempCount, checklistCount, caResolved, openItemCount: openTaskList.length, allTempsInRange, incidentCount });
       setOpenItems(openTaskList);
       setPreviousHandoff((prevRows[0] as PreviousHandoff) ?? null);
       setExistingHandoff((dupeRes.data as ExistingHandoff) ?? null);
@@ -152,5 +163,5 @@ export function useShiftHandoffData({ locationId, organizationId, shiftName, shi
     return () => document.removeEventListener('visibilitychange', onVis);
   }, [fetchData]);
 
-  return { stats, openItems, previousHandoff, existingHandoff, shiftTemplateId, loading, error, refetch: fetchData };
+  return { stats, openItems, previousHandoff, existingHandoff, shiftTemplateId, shiftStartHour, shiftEndHour, loading, error, refetch: fetchData };
 }
