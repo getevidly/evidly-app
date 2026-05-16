@@ -137,6 +137,7 @@ const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m =>
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
+const CurrentShift = lazy(() => import('./pages/CurrentShift').then(m => ({ default: m.CurrentShift })));
 
 const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
@@ -700,6 +701,7 @@ function AppRoutes() {
           <Route path="/self-inspection" element={<SelfInspection />} />
           <Route path="/self-audit" element={<Navigate to="/self-inspection" replace />} />
           <Route path="/shift-handoff" element={<ShiftHandoff />} />
+          <Route path="/current-shift" element={<CurrentShift />} />
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>

@@ -84,10 +84,12 @@ Deno.serve(async (req) => {
     const locationName = loc?.name || "your location";
 
     const shiftLabel = SHIFT_LABELS[shiftName] || shiftName;
+    const openItemsArr = Array.isArray(handoff.open_items) ? handoff.open_items : [];
     let dispatched = 0;
 
     // ── 1. In-app notifications to next-shift staff ────────────
     const nextName = getNextShiftName(shiftName);
+    const nextShiftLabel = SHIFT_LABELS[nextName] || nextName;
     try {
       const { data: tmpl } = await supabase
         .from("shift_templates")
@@ -122,12 +124,12 @@ Deno.serve(async (req) => {
               userId: uid,
               type: "shift_handoff",
               category: "team" as NotificationCategory,
-              title: `${shiftLabel} shift handed off`,
-              body: handoff.notes
-                ? `${operatorName}: ${(handoff.notes as string).slice(0, 200)}`
-                : `${operatorName} completed the ${shiftLabel.toLowerCase()} shift handoff.`,
-              actionUrl: "/shift-handoff",
-              actionLabel: "View handoff",
+              title: `Your ${nextShiftLabel} shift is starting`,
+              body: openItemsArr.length > 0
+                ? `${operatorName} handed off ${openItemsArr.length} open item${openItemsArr.length > 1 ? "s" : ""} for your shift.`
+                : `${operatorName} completed a clean handoff — no open items.`,
+              actionUrl: "/current-shift",
+              actionLabel: "View current shift",
               priority: "medium",
               severity: "info",
               sourceType: "shift_handoff",
@@ -199,9 +201,6 @@ Deno.serve(async (req) => {
         ? `<p style="margin: 16px 0 0;"><strong>Notes:</strong></p><p style="color: #3D5068;">${handoff.notes}</p>`
         : "";
 
-      const openItemsArr = Array.isArray(handoff.open_items)
-        ? handoff.open_items
-        : [];
       const openItemsHtml =
         openItemsArr.length > 0
           ? `<p style="margin: 16px 0 0;"><strong>Open items carried forward:</strong></p><ul style="color: #3D5068; padding-left: 20px;">${openItemsArr.map((i: string) => `<li>${i}</li>`).join("")}</ul>`

@@ -10,7 +10,7 @@ import {
 const QUICK_ACTIONS = [
   { label: 'Log Temp', subtitle: 'Record a reading', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
   { label: 'Run Checklist', subtitle: 'Start a checklist', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
-  { label: 'Shift Intel', subtitle: 'Shift handoff', icon: Handshake, route: '/shift-handoff', iconBg: '#f0fdf4', iconColor: '#16a34a' },
+  { label: 'Shift Intel', subtitle: 'Current shift', icon: Handshake, route: '/current-shift', iconBg: '#f0fdf4', iconColor: '#16a34a' },
   { label: 'Report Incident', subtitle: 'Log an incident', icon: AlertTriangle, route: '/incidents', iconBg: '#fefce8', iconColor: '#d97706' },
 ] as const;
 

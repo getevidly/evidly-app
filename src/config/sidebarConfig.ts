@@ -114,9 +114,13 @@ const I: Record<string, NavItem> = {
     id: 'op-corrective', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
     roles: [], description: 'Track and resolve violations with documented corrective action plans.',
   },
+  'op-current-shift': {
+    id: 'op-current-shift', label: 'Current Shift', path: '/current-shift', icon: '📊',
+    roles: [], description: 'Live mid-shift snapshot — task progress, temperatures, incidents, and PRP outlook.',
+  },
   'op-shift': {
-    id: 'op-shift', label: 'Shift Intelligence', path: '/shift-handoff', icon: '🤝',
-    roles: [], description: 'Shift handoff status, checklists, and transition intelligence across your operation.',
+    id: 'op-shift', label: 'Shift Handoff', path: '/shift-handoff', icon: '🤝',
+    roles: [], description: 'End-of-shift handoff — stats, notes, and auto-send to next team.',
   },
 
   // ── Fire Safety section items ───────────────────────────
@@ -276,7 +280,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'operations', label: 'Operations', icon: '📋',
     tooltipTitle: 'Operations',
     tooltipDescription: 'Shift intelligence, incidents, corrective actions, self-inspections, and deficiencies across all pillars.',
-    itemIds: ['op-shift', 'op-incidents', 'op-corrective', 'op-self', 'op-deficiencies'],
+    itemIds: ['op-current-shift', 'op-shift', 'op-incidents', 'op-corrective', 'op-self', 'op-deficiencies'],
   },
   foodSafety: {
     id: 'food-safety', label: 'Food Safety', icon: '🍽️',
