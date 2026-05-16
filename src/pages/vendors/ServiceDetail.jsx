@@ -1,10 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, Shield } from 'lucide-react';
 import { useServiceScheduleDetail } from '../../hooks/useServiceScheduleDetail';
+import { useAuth } from '../../contexts/AuthContext';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../components/vendors/MetricsStrip';
 import { StatePill } from '../../components/vendors/StatePill';
 import { StateDot } from '../../components/vendors/StateDot';
+import { ThreadedConversation } from '../../components/messaging/ThreadedConversation';
 /**
  * ServiceDetail — Surface 7.
  * Drill-down for a single service showing location coverage,
@@ -12,6 +14,7 @@ import { StateDot } from '../../components/vendors/StateDot';
  */
 export default function ServiceDetail() {
   const { serviceId } = useParams();
+  const { profile } = useAuth();
   const { service, loading, error } = useServiceScheduleDetail(serviceId);
 
   if (loading) {
@@ -202,6 +205,16 @@ export default function ServiceDetail() {
             )}
           </div>
         )}
+
+        {/* Vendor Conversation */}
+        <div className="mt-4">
+          <ThreadedConversation
+            entityType="service_schedule"
+            entityId={serviceId || null}
+            organizationId={profile?.organization_id || null}
+            readOnly
+          />
+        </div>
       </div>
     </div>
   );

@@ -4,8 +4,10 @@ import { ArrowLeft, AlertTriangle, CheckCircle, XCircle, Download } from 'lucide
 import { toast } from 'sonner';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
+import { ThreadedConversation } from '../../components/messaging/ThreadedConversation';
 import { DeclineDocumentModal } from '../../components/vendors/modals/DeclineDocumentModal';
 import { useDocumentReviewDetail } from '../../hooks/useDocumentReviewDetail';
+import { useAuth } from '../../contexts/AuthContext';
 /**
  * DocumentReviewDetail — Surface 9.
  * Drill-down for a single document: preview placeholder, AI flags,
@@ -13,6 +15,7 @@ import { useDocumentReviewDetail } from '../../hooks/useDocumentReviewDetail';
  */
 export default function DocumentReviewDetail() {
   const { docId } = useParams();
+  const { profile } = useAuth();
   const { doc, loading, error, approve, decline } = useDocumentReviewDetail(docId);
   const [actionPending, setActionPending] = useState(false);
   const [declineOpen, setDeclineOpen] = useState(false);
@@ -251,6 +254,16 @@ export default function DocumentReviewDetail() {
             Download document
           </button>
         )}
+
+        {/* Vendor Conversation */}
+        <div className="mt-4">
+          <ThreadedConversation
+            entityType="vendor_document_submission"
+            entityId={docId || null}
+            organizationId={profile?.organization_id || null}
+            readOnly
+          />
+        </div>
       </div>
 
       <DeclineDocumentModal

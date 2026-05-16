@@ -239,6 +239,18 @@ Deno.serve(async (req) => {
     notifTitle = "Network Vendor Replied";
     notifBody = `Reply from ${from}${subject ? `: ${subject}` : ""}`;
     notifUrl = `/vendor-network?vendor=${thread.entity_id}&modal=contact`;
+  } else if (thread.entity_type === "service_request") {
+    notifTitle = "Service Request Reply";
+    notifBody = `Vendor replied${subject ? `: ${subject}` : ""}`;
+    notifUrl = `/vendors/requests/${thread.entity_id}`;
+  } else if (thread.entity_type === "vendor_document_submission") {
+    notifTitle = "Document Submission Reply";
+    notifBody = `Vendor replied${subject ? `: ${subject}` : ""}`;
+    notifUrl = `/vendors/documents/${thread.entity_id}`;
+  } else if (thread.entity_type === "service_schedule") {
+    notifTitle = "Service Schedule Reply";
+    notifBody = `Vendor replied${subject ? `: ${subject}` : ""}`;
+    notifUrl = `/vendors/services/${thread.entity_id}`;
   }
 
   await createOrgNotification({

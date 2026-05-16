@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
 import { X, Shield } from 'lucide-react';
-import { toast } from 'sonner';
 import { Modal } from '../../ui/Modal';
 import { useVendorContact } from '../../../hooks/useVendorContact';
 import { useAuth } from '../../../contexts/AuthContext';
+import { ThreadedConversation } from '../../messaging/ThreadedConversation';
 
 const TIER_STYLES = {
   gold: { bg: '#FAEEDA', text: '#633806' },
@@ -13,41 +12,8 @@ const TIER_STYLES = {
 
 export function VendorContactModal({ isOpen, onClose, vendorId }) {
   const { profile } = useAuth();
-  const { vendor, messages, loading, sendMessage } = useVendorContact(isOpen ? vendorId : null);
-  const [subject, setSubject] = useState('');
-  const [body, setBody] = useState('');
-  const [sending, setSending] = useState(false);
-
-  useEffect(() => {
-    if (vendor && profile) {
-      setSubject(`Inquiry from ${profile.organization_name || 'our organization'}`);
-      setBody(`Hi ${vendor.contact_name || vendor.name},\n\nWe're looking for service at our location and would like to discuss availability and pricing.\n\nThanks.`);
-    }
-  }, [vendor?.id, profile?.organization_name]);
-
-  const handleSend = async () => {
-    if (!subject.trim() || !body.trim()) return;
-    setSending(true);
-    try {
-      const success = await sendMessage(subject.trim(), body.trim());
-      if (success) {
-        toast.success('Message sent');
-        setBody('');
-      } else {
-        toast.error('Failed to send message');
-      }
-    } catch {
-      toast.error('Failed to send message');
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleClose = () => {
-    setSubject('');
-    setBody('');
-    onClose();
-  };
+  const { vendor, loading } = useVendorContact(isOpen ? vendorId : null);
+  const orgId = profile?.organization_id || null;
 
   if (!isOpen) return null;
 
@@ -55,7 +21,7 @@ export function VendorContactModal({ isOpen, onClose, vendorId }) {
   const initials = vendor ? vendor.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '';
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="md">
+    <Modal isOpen={isOpen} onClose={onClose} size="md">
       <div className="px-5 pt-5 pb-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -80,7 +46,7 @@ export function VendorContactModal({ isOpen, onClose, vendorId }) {
               </span>
             )}
           </div>
-          <button type="button" onClick={handleClose} className="p-1 rounded-md hover:bg-[#F4F1EA]">
+          <button type="button" onClick={onClose} className="p-1 rounded-md hover:bg-[#F4F1EA]">
             <X size={18} style={{ color: '#5A6478' }} />
           </button>
         </div>
@@ -140,100 +106,15 @@ export function VendorContactModal({ isOpen, onClose, vendorId }) {
               </div>
             </div>
 
-            {/* Composer */}
-            <div className="mb-4">
-              <p
-                className="uppercase tracking-wider mb-2"
-                style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#5A6478' }}
-              >
-                Contact this vendor
-              </p>
-              <input
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Subject"
-                className="w-full px-3 py-2 rounded-md mb-2"
-                style={{ fontSize: '12px', color: '#1E2D4D', border: '1px solid #E2DDD4', outline: 'none' }}
-                onFocus={(e) => { e.target.style.borderColor = '#1E2D4D'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#E2DDD4'; }}
-              />
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="Write your message..."
-                rows={5}
-                className="w-full px-3 py-2 rounded-md mb-2 resize-none"
-                style={{ fontSize: '12px', color: '#1E2D4D', border: '1px solid #E2DDD4', outline: 'none', lineHeight: '1.5' }}
-                onFocus={(e) => { e.target.style.borderColor = '#1E2D4D'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#E2DDD4'; }}
-              />
-              <div className="flex items-center justify-between">
-                <p style={{ fontSize: '10px', color: '#5A6478' }}>
-                  Sends through EvidLY. Replies tracked here.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleSend}
-                  disabled={!subject.trim() || !body.trim() || sending}
-                  className="px-4 py-2 rounded-md transition-opacity"
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    backgroundColor: '#1E2D4D',
-                    color: '#FAF7F0',
-                    opacity: subject.trim() && body.trim() && !sending ? 1 : 0.4,
-                  }}
-                >
-                  {sending ? 'Sending...' : 'Send'}
-                </button>
-              </div>
-            </div>
-
-            {/* Message history */}
-            <div>
-              <p
-                className="uppercase tracking-wider mb-2"
-                style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#5A6478' }}
-              >
-                Message history
-              </p>
-              {messages.length === 0 ? (
-                <div
-                  className="rounded-md px-3 py-3"
-                  style={{ backgroundColor: '#FCFBF8', border: '1px solid #E2DDD4' }}
-                >
-                  <p style={{ fontSize: '11px', color: '#5A6478' }}>
-                    No messages yet. Send the first message above.
-                  </p>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {messages.map(msg => (
-                    <div
-                      key={msg.id}
-                      className={`rounded-md px-3 py-2 ${msg.direction === 'outbound' ? 'ml-6' : 'mr-6'}`}
-                      style={{
-                        backgroundColor: msg.direction === 'outbound' ? '#1E2D4D' : '#F4F1EA',
-                        color: msg.direction === 'outbound' ? '#FAF7F0' : '#1E2D4D',
-                      }}
-                    >
-                      {msg.subject && (
-                        <p style={{ fontSize: '11px', fontWeight: 500, marginBottom: '2px' }}>
-                          {msg.subject}
-                        </p>
-                      )}
-                      <p style={{ fontSize: '11px', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
-                        {msg.body_text || '(no text content)'}
-                      </p>
-                      <p style={{ fontSize: '9px', opacity: 0.7, marginTop: '4px' }}>
-                        {new Date(msg.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Threaded Conversation */}
+            <ThreadedConversation
+              entityType="vendor_network_contact"
+              entityId={vendorId}
+              organizationId={orgId}
+              sendVia="vendor-network-send-message"
+              vendorEmail={vendor.email}
+              vendorName={vendor.name}
+            />
           </>
         )}
       </div>

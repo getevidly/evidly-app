@@ -3,8 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Eye, Bell, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useServiceRequestDetail } from '../../hooks/useServiceRequestDetail';
+import { useAuth } from '../../contexts/AuthContext';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
 import { StatePill } from '../../components/vendors/StatePill';
+import { ThreadedConversation } from '../../components/messaging/ThreadedConversation';
 import { ReviewAlternativesModal } from '../../components/services/ReviewAlternativesModal';
 import { ReviewVendorSelectionModal } from '../../components/vendors/modals/ReviewVendorSelectionModal';
 import { RespondToRequestModal } from '../../components/vendors/modals/RespondToRequestModal';
@@ -15,6 +17,7 @@ import { RespondToRequestModal } from '../../components/vendors/modals/RespondTo
  */
 export default function RequestDetail() {
   const { requestId } = useParams();
+  const { profile } = useAuth();
   const { request, loading, error, acceptAlternative, cancelRequest, resendRequest, sendReminder } = useServiceRequestDetail(requestId);
   const [actionPending, setActionPending] = useState(false);
   const [reviewSelectionOpen, setReviewSelectionOpen] = useState(false);
@@ -280,6 +283,16 @@ export default function RequestDetail() {
           >
             Send reminder
           </button>
+        </div>
+
+        {/* Vendor Conversation */}
+        <div className="mt-4">
+          <ThreadedConversation
+            entityType="service_request"
+            entityId={requestId || null}
+            organizationId={profile?.organization_id || null}
+            readOnly
+          />
         </div>
       </div>
 

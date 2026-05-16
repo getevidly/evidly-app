@@ -1,16 +1,16 @@
+/**
+ * useVendorContact — Fetches vendor network entry detail + delegates
+ * messaging to useThreadedConversation.
+ * Existing imports/interface preserved for backward compatibility.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { useThreadedConversation } from './useThreadedConversation';
+import type { ThreadMessage } from './useThreadedConversation';
 
-export interface ThreadMessage {
-  id: string;
-  direction: 'inbound' | 'outbound';
-  subject: string | null;
-  body_text: string | null;
-  body_html: string | null;
-  sender_identifier: string | null;
-  created_at: string;
-}
+export type { ThreadMessage };
 
 export interface VendorContactDetail {
   id: string;
@@ -38,22 +38,33 @@ interface UseVendorContactReturn {
 export function useVendorContact(vendorNetworkId: string | null): UseVendorContactReturn {
   const { profile } = useAuth();
   const [vendor, setVendor] = useState<VendorContactDetail | null>(null);
-  const [messages, setMessages] = useState<ThreadMessage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [vendorLoading, setVendorLoading] = useState(true);
+  const [vendorError, setVendorError] = useState<string | null>(null);
 
-  const orgId = profile?.organization_id;
+  const orgId = profile?.organization_id || null;
 
-  const fetchData = useCallback(async () => {
+  const {
+    messages,
+    loading: threadLoading,
+    error: threadError,
+    sendMessage,
+    refetch: threadRefetch,
+  } = useThreadedConversation({
+    entityType: 'vendor_network_contact',
+    entityId: vendorNetworkId,
+    organizationId: orgId,
+    sendVia: 'vendor-network-send-message',
+  });
+
+  const fetchVendor = useCallback(async () => {
     if (!vendorNetworkId) {
       setVendor(null);
-      setMessages([]);
-      setLoading(false);
+      setVendorLoading(false);
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setVendorLoading(true);
+    setVendorError(null);
 
     try {
       const { data: vendorData, error: vendorErr } = await supabase
@@ -63,77 +74,46 @@ export function useVendorContact(vendorNetworkId: string | null): UseVendorConta
         .single();
 
       if (vendorErr || !vendorData) {
-        setError('Vendor not found');
-        setLoading(false);
+        setVendorError('Vendor not found');
+        setVendorLoading(false);
         return;
       }
 
       setVendor({
-        id: vendorData.id,
-        name: vendorData.name,
-        contact_name: vendorData.contact_name,
-        email: vendorData.email,
-        phone: vendorData.phone,
-        county_primary: vendorData.county_primary,
-        service_area_counties: vendorData.service_area_counties || [],
-        service_types: vendorData.service_types || [],
-        tier: vendorData.tier,
-        credentials: vendorData.credentials,
-        availability: vendorData.availability,
+        id: vendorData.id as string,
+        name: vendorData.name as string,
+        contact_name: (vendorData.contact_name as string) || null,
+        email: vendorData.email as string,
+        phone: (vendorData.phone as string) || null,
+        county_primary: vendorData.county_primary as string,
+        service_area_counties: (vendorData.service_area_counties as string[]) || [],
+        service_types: (vendorData.service_types as string[]) || [],
+        tier: vendorData.tier as 'gold' | 'silver' | 'bronze',
+        credentials: vendorData.credentials as { ikeca: boolean; nfpa: boolean; insured: boolean },
+        availability: vendorData.availability as 'available' | 'wait_list',
       });
-
-      if (orgId) {
-        const { data: thread } = await supabase
-          .from('message_threads')
-          .select('id')
-          .eq('entity_type', 'vendor_network_contact')
-          .eq('entity_id', vendorNetworkId)
-          .eq('organization_id', orgId)
-          .maybeSingle();
-
-        if (thread) {
-          const { data: msgs } = await supabase
-            .from('messages')
-            .select('id, direction, subject, body_text, body_html, sender_identifier, created_at')
-            .eq('thread_id', thread.id)
-            .order('created_at', { ascending: true });
-
-          setMessages((msgs || []) as ThreadMessage[]);
-        } else {
-          setMessages([]);
-        }
-      }
     } catch {
-      setError('Failed to load vendor details');
+      setVendorError('Failed to load vendor details');
     } finally {
-      setLoading(false);
+      setVendorLoading(false);
     }
-  }, [vendorNetworkId, orgId]);
+  }, [vendorNetworkId]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchVendor();
+  }, [fetchVendor]);
 
-  const sendMessage = useCallback(async (subject: string, body: string): Promise<boolean> => {
-    if (!vendorNetworkId || !orgId || !profile?.id) return false;
+  const refetch = useCallback(() => {
+    fetchVendor();
+    threadRefetch();
+  }, [fetchVendor, threadRefetch]);
 
-    try {
-      const res = await supabase.functions.invoke('vendor-network-send-message', {
-        body: {
-          vendorNetworkId,
-          subject,
-          body,
-          organizationId: orgId,
-        },
-      });
-
-      if (res.error) return false;
-      await fetchData();
-      return true;
-    } catch {
-      return false;
-    }
-  }, [vendorNetworkId, orgId, profile, fetchData]);
-
-  return { vendor, messages, loading, error, sendMessage, refetch: fetchData };
+  return {
+    vendor,
+    messages,
+    loading: vendorLoading || threadLoading,
+    error: vendorError || threadError,
+    sendMessage,
+    refetch,
+  };
 }
