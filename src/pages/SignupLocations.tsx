@@ -15,8 +15,8 @@ export function SignupLocations() {
   const { profile, loading } = useAuth();
 
   const calculatePricing = () => {
-    const standardBasePrice = 199;
-    const standardPerLocationPrice = 99;
+    const standardBasePrice = 299;
+    const standardPerLocationPrice = 149;
     const founderBasePrice = 99;
     const founderPerLocationPrice = 49;
 

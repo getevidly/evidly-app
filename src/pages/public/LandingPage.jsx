@@ -135,49 +135,18 @@ function Eyebrow({ children, light = false }) {
 // ─────────────────────────────────────────────
 // FOUNDER URGENCY COUNTDOWN
 // ─────────────────────────────────────────────
-function FounderUrgency({ deadline = "2026-08-07" }) {
-  const [now, setNow] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-  const end = new Date(deadline + "T23:59:59");
-  const diff = Math.max(0, end - now);
-  const dd = Math.floor(diff / 86400000);
-  const hh = Math.floor((diff % 86400000) / 3600000);
-  const mm = Math.floor((diff % 3600000) / 60000);
-  const ss = Math.floor((diff % 60000) / 1000);
-  const expired = diff === 0;
-  const urgent = dd <= 7;
-  const accent = urgent ? "#ef4444" : C.gold;
+function FounderUrgency() {
   return (
-    <div style={{ background: C.navy, borderRadius: 12, padding: "18px 22px", border: `1px solid ${urgent ? "rgba(239,68,68,0.35)" : "rgba(160,140,90,0.25)"}`, position: "relative", overflow: "hidden", marginBottom: 0 }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${accent},transparent)` }} />
-      <div style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: accent, marginBottom: 10, textAlign: "center", fontFamily: FF_SANS }}>
-        {expired ? "Founder Pricing Has Ended" : urgent ? "Almost Gone — Founder Pricing" : "Founder Pricing Window Open"}
+    <div style={{ background: C.navy, borderRadius: 12, padding: "18px 22px", border: "1px solid rgba(160,140,90,0.25)", position: "relative", overflow: "hidden", marginBottom: 0 }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
+      <div style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 10, textAlign: "center", fontFamily: FF_SANS }}>
+        Founder Pricing — Limited Availability
       </div>
-      {expired ? (
-        <p style={{ textAlign: "center", fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: 0 }}>
-          This window has closed.{" "}
-          <a href="mailto:founders@getevidly.com" style={{ color: C.gold }}>Contact us</a> for current rates.
-        </p>
-      ) : (
-        <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Expires August 7, 2026</div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-              {[[dd, "Days"], [hh, "Hrs"], [mm, "Min"], [ss, "Sec"]].map(([val, label]) => (
-                <div key={label} style={{ textAlign: "center" }}>
-                  <div style={{ fontWeight: 900, fontSize: "1.4rem", color: C.white, lineHeight: 1, fontVariantNumeric: "tabular-nums", minWidth: 34, fontFamily: FF_SANS }}>{String(val).padStart(2, "0")}</div>
-                  <div style={{ fontSize: "0.58rem", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: FF_SANS }}>{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <p style={{ textAlign: "center", fontSize: "1.05rem", fontWeight: 800, color: C.white, margin: "0 0 6px", fontFamily: FF_SANS }}>
+        Only 250 Founder spots available
+      </p>
       <p style={{ textAlign: "center", fontSize: "0.7rem", color: "rgba(255,255,255,0.22)", marginTop: 10, marginBottom: 0, fontFamily: FF_SANS }}>
-        $99/mo first location + $49/mo per additional (up to 10), locked for life. After August 7 — standard rates apply.
+        $99/mo first location + $49/mo per additional (up to 10), locked for life. After 250 Founders — standard rates apply.
       </p>
     </div>
   );

@@ -1,57 +1,12 @@
 import { Check, Mail, Phone, Gift, CreditCard } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
 import K2CPricingBadge from './K2CPricingBadge';
-import { FOUNDER_PRICING_DEADLINE } from '../lib/stripe';
 import { CALENDLY_URL } from '../lib/config';
+import { FounderCounter } from './FounderCounter';
 
-function DeadlineCountdown() {
-  const [now, setNow] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  const diff = Math.max(0, FOUNDER_PRICING_DEADLINE.getTime() - now.getTime());
-  const expired = diff === 0;
-  const dd = Math.floor(diff / 86400000);
-  const hh = Math.floor((diff % 86400000) / 3600000);
-  const mm = Math.floor((diff % 3600000) / 60000);
-  const ss = Math.floor((diff % 60000) / 1000);
-
-  if (expired) {
-    return (
-      <div className="bg-gradient-to-r from-[#A08C5A]/10 to-[#A08C5A]/5 border border-[#A08C5A]/30 rounded-xl p-4 text-center">
-        <span className="text-sm font-bold text-[#1E2D4D]">Founder pricing has ended. Contact us for current rates.</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-gradient-to-r from-[#A08C5A]/10 to-[#A08C5A]/5 border border-[#A08C5A]/30 rounded-xl p-4">
-      <p className="text-sm font-bold text-[#1E2D4D] text-center mb-3">
-        Founder pricing locks in forever &mdash; offer ends August 7, 2026
-      </p>
-      <div className="flex gap-3 justify-center">
-        {[
-          [dd, 'Days'],
-          [hh, 'Hrs'],
-          [mm, 'Min'],
-          [ss, 'Sec'],
-        ].map(([val, label]) => (
-          <div key={label as string} className="text-center">
-            <div className="text-2xl font-black text-[#1E2D4D] tabular-nums leading-none min-w-[36px]">
-              {String(val).padStart(2, '0')}
-            </div>
-            <div className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider mt-1">{label as string}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -111,7 +66,7 @@ export default function Pricing() {
             Lock in founder pricing today
           </h2>
           <p className="text-[#1E2D4D]/70 mt-3 max-w-lg mx-auto">
-            Founder pricing available through August 7, 2026. Price locked forever when you sign up.
+            Limited to first 250 customers. Price locked forever when you sign up.
           </p>
         </div>
 
@@ -149,7 +104,7 @@ export default function Pricing() {
               </div>
 
               <div className="mb-4 pt-6 -mx-5 px-5 sm:-mx-8 sm:px-8">
-                <DeadlineCountdown />
+                <FounderCounter />
               </div>
 
               <div className="mb-6">

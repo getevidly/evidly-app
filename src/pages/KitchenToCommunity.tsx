@@ -162,7 +162,7 @@ export default function KitchenToCommunity() {
               See EvidLY in action <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month — Founder pricing locked through Aug 7, 2026.</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month — Founder pricing. First 250 customers.</p>
         </div>
       </section>
 

@@ -33,7 +33,7 @@ export function UpgradePrompt({ heading, subtext, cta }) {
         {cta || 'Upgrade Now'} →
       </Link>
       <p className="text-xs text-[#1E2D4D]/30 mt-3">
-        $99/mo · Founder pricing · Locked through August 7, 2026
+        $99/mo · Founder pricing · First 250 customers
       </p>
     </div>
   );

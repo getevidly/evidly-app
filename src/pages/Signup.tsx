@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { trackEvent, trackConversion } from '../utils/analytics';
-import { FOUNDER_PRICING_DEADLINE } from '../lib/stripe';
 import { useCrispHide } from '../hooks/useCrisp';
+import { FounderCounter } from '../components/FounderCounter';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 import {
   SUPPORTED_STATES,
@@ -47,40 +47,6 @@ const focusOut = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => 
   e.currentTarget.style.boxShadow = 'none';
 };
 
-// ── Founder pricing countdown banner ────────────────────────
-function FounderBanner() {
-  const [timeLeft, setTimeLeft] = useState('');
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      const diff = FOUNDER_PRICING_DEADLINE.getTime() - now.getTime();
-      if (diff <= 0) { setTimeLeft(''); return; }
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      setTimeLeft(`${days}d ${hours}h`);
-    };
-    update();
-    const interval = setInterval(update, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!timeLeft) return null;
-
-  return (
-    <div style={{
-      background: colors.gold,
-      color: colors.white,
-      textAlign: 'center',
-      padding: '10px 16px',
-      fontSize: typography.size.sm,
-      fontWeight: typography.weight.medium,
-      fontFamily: typography.family.body,
-    }}>
-      Founder pricing locked until August 7, 2026 — <span style={{ fontWeight: typography.weight.bold }}>{timeLeft} remaining</span>
-    </div>
-  );
-}
 
 export function Signup() {
   useCrispHide();
@@ -296,8 +262,10 @@ export function Signup() {
         </div>
       </div>
 
-      {/* ── Founder pricing banner ── */}
-      <FounderBanner />
+      {/* ── Founder pricing scarcity ── */}
+      <div style={{ padding: '10px 16px' }}>
+        <FounderCounter />
+      </div>
 
       {/* ── Main content ── */}
       <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '32px 16px' }}>

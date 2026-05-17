@@ -85,7 +85,7 @@ export default function ReferralRedirect() {
         </div>
 
         <p className="text-xs text-[#1E2D4D]/30 mt-6">
-          Founder pricing through Aug 7, 2026. $99/mo.
+          Founder pricing. $99/mo. First 250 customers.
         </p>
       </div>
     </div>
