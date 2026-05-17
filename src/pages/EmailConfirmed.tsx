@@ -22,6 +22,7 @@ function generateSlug(name: string) {
 async function provisionNewUser(userId: string, meta: Record<string, string>): Promise<string | null> {
   const orgName = meta.org_name;
   const state = meta.state || '';
+  const jurisdiction = meta.jurisdiction || '';
   const fullName = meta.full_name || '';
   const phone = meta.phone || '';
   const kitchenType = meta.kitchen_type || '';
@@ -33,7 +34,7 @@ async function provisionNewUser(userId: string, meta: Record<string, string>): P
     const slug = generateSlug(orgName);
     const { data: orgResult, error: orgError } = await supabase
       .from('organizations')
-      .insert([{ name: orgName, slug, state }])
+      .insert([{ name: orgName, slug, state, jurisdiction: jurisdiction || null }])
       .select('id')
       .single();
 
@@ -89,6 +90,7 @@ async function provisionNewUser(userId: string, meta: Record<string, string>): P
       state: null,
       phone: null,
       terms_accepted_at: null,
+      jurisdiction: null,
     },
   });
 

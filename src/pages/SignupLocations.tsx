@@ -216,14 +216,14 @@ export function SignupLocations() {
               <div className="flex items-center space-x-3">
                 <Phone className="h-6 w-6 text-[#A08C5A]" />
                 <div>
-                  <div className="text-sm text-[#1E2D4D]/30">Phone</div>
+                  <div className="text-sm text-white/70">Phone</div>
                   <div className="font-semibold">(855) 384-3591</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-6 w-6 text-[#A08C5A]" />
                 <div>
-                  <div className="text-sm text-[#1E2D4D]/30">Email</div>
+                  <div className="text-sm text-white/70">Email</div>
                   <div className="font-semibold">sales@getevidly.com</div>
                 </div>
               </div>
@@ -359,6 +359,14 @@ export function SignupLocations() {
               </div>
             </div>
 
+            {/* Risk-Free Guarantee notice */}
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+              <p className="text-sm font-semibold text-[#1E2D4D] mb-1">45-Day Risk-Free Guarantee</p>
+              <p className="text-xs text-[#1E2D4D]/70 leading-relaxed">
+                Try EvidLY for 45 days. If it doesn't deliver, get a full refund of your subscription fees.
+              </p>
+            </div>
+
             {submitError && (
               <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                 {submitError}
@@ -370,7 +378,7 @@ export function SignupLocations() {
               disabled={loading || isSubmitting || !selectedType}
               className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-all duration-150 active:scale-[0.98] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Saving...' : 'Continue to Checkout'}
+              {isSubmitting ? 'Saving...' : 'Continue to Setup'}
             </button>
 
             <button

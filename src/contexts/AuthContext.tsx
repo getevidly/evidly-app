@@ -27,7 +27,7 @@ interface AuthContextType {
   isEvidlyAdmin: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string, jurisdiction: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   /** Override profile.organization_id during emulation */
@@ -175,7 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, state: string, kitchenType: string, jurisdiction: string) => {
     // Store ALL form data in user_metadata — org/profile/access INSERTs
     // are deferred to EmailConfirmed.tsx where a confirmed session exists.
     const { error: authError } = await supabase.auth.signUp({
@@ -189,6 +189,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           org_name: orgName,
           state,
           kitchen_type: kitchenType,
+          jurisdiction,
           terms_accepted_at: new Date().toISOString(),
         },
       },

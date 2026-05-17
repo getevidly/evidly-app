@@ -165,7 +165,7 @@ export function Signup() {
     setLoading(true);
     trackEvent('signup_start', { method: 'email' });
 
-    const { error } = await signUp(email, password, fullName.trim(), phone, orgName.trim(), signupState, dbKitchenType);
+    const { error } = await signUp(email, password, fullName.trim(), phone, orgName.trim(), signupState, dbKitchenType, jurisdiction);
 
     if (error) {
       setError(error.message);
