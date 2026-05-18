@@ -30,7 +30,7 @@ SELECT
   cd.updated_at,
 
   -- Vendor name (LEFT JOIN — vendor_id is nullable)
-  v.name AS vendor_name,
+  v.company_name AS vendor_name,
 
   -- Subject user name (LEFT JOIN — subject_user_id is nullable, employee docs only)
   sup.full_name AS subject_user_name,
