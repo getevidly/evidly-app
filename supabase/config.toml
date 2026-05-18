@@ -375,10 +375,11 @@ allow_dynamic_registration = false
 #   trigger-crawl          — admin-invoked, validates Bearer token + email domain
 #   classify-signals       — admin-invoked, validates Bearer token + @getevidly.com
 #   violation-crawl        — cron job, no user context
+#   vendor-secure-upload   — public vendor upload, token in URL is auth
 #
 # verify_jwt = true (DEFAULT — all other functions):
 #   ai-flag-suggest, ai-text-assist, ai-chat, generate-outreach,
-#   intelligence-deliver, all stripe-*, all training-*, all vendor-*,
+#   intelligence-deliver, all stripe-*, all training-*,
 #   all enterprise-*, all api-*, all sensor/iot-*, etc.
 #
 # RULE: Any function that accepts user data or modifies DB state MUST
@@ -408,6 +409,12 @@ verify_jwt = false
 
 # Violation crawl — cron job, no user context needed
 [functions.violation-crawl]
+verify_jwt = false
+
+# Vendor secure upload — public endpoint for vendors uploading documents
+# via tokenized links. The secure_token in the URL is the auth mechanism.
+# Vendors have no Supabase auth session.
+[functions.vendor-secure-upload]
 verify_jwt = false
 
 [edge_runtime]

@@ -1,14 +1,18 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { getCorsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { createOrgNotification } from "../_shared/notify.ts";
+
 let corsHeaders = getCorsHeaders(null);
 
-// This function handles:
-// 1. GET with token → validates token, returns upload form data (what doc is needed)
-// 2. POST with token + file → uploads file to storage, creates document record, marks request complete
+// Vendor secure upload — reads tokens from compliance_document_requests,
+// writes back to compliance_documents on successful upload.
+//
+// GET  ?token=<uuid> → validate token, return upload form data
+// POST ?token=<uuid> + FormData(file, notes) → upload file, update document
 
 Deno.serve(async (req: Request) => {
-  corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -25,39 +29,85 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Token required" }, 400);
     }
 
-    // Validate token
-    const { data: tokenRecord, error: tokenError } = await supabase
-      .from("vendor_secure_tokens")
-      .select("*, vendors(id, name, contact_name), organizations(id, name)")
-      .eq("token", token)
-      .is("used_at", null)
+    // ── Token lookup (compliance_document_requests) ───────────
+    const { data: request, error: reqError } = await supabase
+      .from("compliance_document_requests")
+      .select(
+        "id, organization_id, document_id, vendor_id, secure_token_expires_at, fulfilled_at, cancelled_at, recipient_email, recipient_name"
+      )
+      .eq("secure_token", token)
       .single();
 
-    if (tokenError || !tokenRecord) {
-      return jsonResponse({ error: "Invalid or expired token" }, 404);
+    if (reqError || !request) {
+      return jsonResponse({ error: "Invalid upload link" }, 404);
     }
 
-    // Check expiration
-    if (new Date(tokenRecord.expires_at) < new Date()) {
-      return jsonResponse({ error: "This upload link has expired. Contact your client for a new link." }, 410);
+    if (request.fulfilled_at) {
+      return jsonResponse(
+        { error: "This document has already been uploaded" },
+        410
+      );
     }
 
-    // GET → Return token info for the upload form
+    if (request.cancelled_at) {
+      return jsonResponse(
+        { error: "This request has been cancelled" },
+        410
+      );
+    }
+
+    if (new Date(request.secure_token_expires_at) < new Date()) {
+      return jsonResponse(
+        {
+          error:
+            "This upload link has expired. Contact your client for a new link.",
+        },
+        410
+      );
+    }
+
+    // Fetch linked compliance_document
+    const { data: doc } = await supabase
+      .from("compliance_documents")
+      .select("id, type, name, category, vendor_id")
+      .eq("id", request.document_id)
+      .single();
+
+    // Resolve vendor name (prefer vendors table, fall back to recipient_name)
+    let vendorName = request.recipient_name || "Vendor";
+    if (doc?.vendor_id) {
+      const { data: vendor } = await supabase
+        .from("vendors")
+        .select("company_name")
+        .eq("id", doc.vendor_id)
+        .single();
+      if (vendor?.company_name) vendorName = vendor.company_name;
+    }
+
+    // Resolve organization name
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("name")
+      .eq("id", request.organization_id)
+      .single();
+
+    // ── GET → Return token info for the upload form ───────────
     if (req.method === "GET") {
       return jsonResponse({
         valid: true,
-        vendor_name: (tokenRecord as any).vendors?.name,
-        organization_name: (tokenRecord as any).organizations?.name,
-        document_type: tokenRecord.document_type,
-        expires_at: tokenRecord.expires_at,
+        document_type: doc?.type || null,
+        document_name: doc?.name || null,
+        vendor_name: vendorName,
+        organization_name: org?.name || null,
+        expires_at: request.secure_token_expires_at,
       });
     }
 
-    // POST → Handle file upload
+    // ── POST → Handle file upload ─────────────────────────────
     if (req.method === "POST") {
       const formData = await req.formData();
       const file = formData.get("file") as File;
-      const notes = formData.get("notes") as string || "";
+      const notes = (formData.get("notes") as string) || "";
 
       if (!file) {
         return jsonResponse({ error: "No file provided" }, 400);
@@ -66,28 +116,36 @@ Deno.serve(async (req: Request) => {
       // Validate file type
       const allowedTypes = [
         "application/pdf",
-        "image/jpeg", "image/png", "image/heic", "image/heif",
+        "image/jpeg",
+        "image/png",
+        "image/heic",
+        "image/heif",
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
 
       if (!allowedTypes.includes(file.type)) {
-        return jsonResponse({ error: "File type not allowed. Please upload PDF, JPG, PNG, or Word document." }, 400);
+        return jsonResponse(
+          {
+            error:
+              "File type not allowed. Please upload PDF, JPG, PNG, or Word document.",
+          },
+          400
+        );
       }
 
-      // Max 25MB
       if (file.size > 25 * 1024 * 1024) {
         return jsonResponse({ error: "File too large. Maximum 25MB." }, 400);
       }
 
       // Upload to Supabase Storage
       const fileExt = file.name.split(".").pop() || "pdf";
-      const filePath = `vendor-uploads/${tokenRecord.organization_id}/${tokenRecord.vendor_id}/${Date.now()}.${fileExt}`;
+      const storagePath = `vendor-uploads/${request.organization_id}/${doc?.vendor_id || "unknown"}/${Date.now()}.${fileExt}`;
 
       const fileBuffer = await file.arrayBuffer();
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("documents")
-        .upload(filePath, fileBuffer, {
+        .upload(storagePath, fileBuffer, {
           contentType: file.type,
           upsert: false,
         });
@@ -97,198 +155,146 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ error: "Failed to upload file" }, 500);
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from("documents")
-        .getPublicUrl(filePath);
-
-      // Create document record
-      const { data: docRecord, error: docError } = await supabase
-        .from("documents")
-        .insert({
-          organization_id: tokenRecord.organization_id,
-          title: `${tokenRecord.document_type} — ${(tokenRecord as any).vendors?.name}`,
-          category: tokenRecord.document_type,
-          file_url: publicUrl,
-          file_size: file.size,
-          file_type: file.type,
-          status: "active",
-          tags: ["vendor-upload", "auto-requested"],
-        })
-        .select()
-        .single();
-
-      // Mark token as used
-      await supabase
-        .from("vendor_secure_tokens")
+      // ── 1. UPDATE compliance_documents ──────────────────────
+      const { error: docUpdateError } = await supabase
+        .from("compliance_documents")
         .update({
-          used_at: new Date().toISOString(),
-          document_id: docRecord?.id,
-        })
-        .eq("id", tokenRecord.id);
-
-      // Mark upload request as completed
-      if (tokenRecord.upload_request_id) {
-        await supabase
-          .from("vendor_upload_requests")
-          .update({
-            status: "completed",
-            completed_at: new Date().toISOString(),
-            document_id: docRecord?.id,
-          })
-          .eq("id", tokenRecord.upload_request_id);
-      }
-
-      // ── Vendor Documents: version detection + insert ──────────
-      // Check for existing docs of same type/vendor to determine version
-      const { data: existingDocs } = await supabase
-        .from("vendor_documents")
-        .select("id, version")
-        .eq("organization_id", tokenRecord.organization_id)
-        .eq("vendor_id", tokenRecord.vendor_id)
-        .eq("document_type", tokenRecord.document_type)
-        .order("version", { ascending: false })
-        .limit(1);
-
-      const prevVersion = existingDocs?.[0];
-      const newVersion = prevVersion ? prevVersion.version + 1 : 1;
-
-      // Mark previous version as superseded
-      if (prevVersion) {
-        await supabase
-          .from("vendor_documents")
-          .update({ status: "superseded", updated_at: new Date().toISOString() })
-          .eq("id", prevVersion.id);
-      }
-
-      // Insert new vendor_documents record
-      const { data: vendorDocRecord } = await supabase
-        .from("vendor_documents")
-        .insert({
-          organization_id: tokenRecord.organization_id,
-          vendor_id: tokenRecord.vendor_id,
-          document_type: tokenRecord.document_type,
-          title: `${tokenRecord.document_type} — ${(tokenRecord as any).vendors?.name}`,
-          file_url: publicUrl,
-          file_size: file.size,
-          file_type: file.type,
           status: "pending_review",
-          version: newVersion,
-          parent_id: prevVersion?.id || null,
-          upload_method: "secure_link",
-          uploaded_by_vendor: true,
-          vendor_notes: notes || null,
+          storage_path: storagePath,
+          file_size_bytes: file.size,
+          mime_type: file.type,
+          import_source: "vendor_secure_link",
+          submitted_at: new Date().toISOString(),
         })
-        .select()
-        .single();
+        .eq("id", request.document_id);
 
-      // ── Resolve expiry tracking if this upload was triggered by an expiry reminder
-      if (tokenRecord.expiry_tracking_id && vendorDocRecord?.id) {
-        try {
-          await supabase
-            .from("vendor_document_expiry_tracking")
-            .update({
-              resolved: true,
-              resolved_at: new Date().toISOString(),
-              replacement_document_id: vendorDocRecord.id,
-            })
-            .eq("id", tokenRecord.expiry_tracking_id);
-        } catch {
-          // Silent fail — tracking resolution is non-critical
-        }
+      if (docUpdateError) {
+        console.error(
+          "[UPLOAD] compliance_documents update failed:",
+          docUpdateError
+        );
+        // Cleanup: delete the uploaded file
+        await supabase.storage.from("documents").remove([storagePath]);
+        return jsonResponse(
+          { error: "Failed to update document record" },
+          500
+        );
       }
 
-      // ── Fire-and-forget: trigger AI validation on uploaded document
-      if (vendorDocRecord?.id) {
-        try {
-          const validateUrl = `${supabaseUrl}/functions/v1/validate-vendor-document`;
-          const controller2 = new AbortController();
-          setTimeout(() => controller2.abort(), 5000);
-          fetch(validateUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${supabaseKey}`,
-            },
-            body: JSON.stringify({
-              vendor_document_id: vendorDocRecord.id,
-              organization_id: tokenRecord.organization_id,
-            }),
-            signal: controller2.signal,
-          }).catch(() => {}); // fire-and-forget
-        } catch {
-          // Silent fail
-        }
+      // ── 2. UPDATE compliance_document_requests ──────────────
+      const { error: reqUpdateError } = await supabase
+        .from("compliance_document_requests")
+        .update({ fulfilled_at: new Date().toISOString() })
+        .eq("id", request.id);
+
+      if (reqUpdateError) {
+        console.error(
+          "[UPLOAD] Request fulfillment update failed:",
+          reqUpdateError
+        );
+        // Non-fatal: document already updated, operator can see it
       }
 
-      // Fire-and-forget: notify compliance_manager + owner_operator users in org
-      // FIX (2026-03-04): Was hardcoded to team@getevidly.com — now queries
-      // user_profiles for the right roles and notifies each individually.
-      const notifyUrl = `${supabaseUrl}/functions/v1/vendor-document-notify`;
+      // ── 3. INSERT compliance_document_activity_log ──────────
       try {
-        // Look up compliance_manager and owner_operator users in the org
+        await supabase.from("compliance_document_activity_log").insert({
+          organization_id: request.organization_id,
+          document_id: request.document_id,
+          event_type: "uploaded",
+          actor_user_id: null,
+          actor_label: vendorName,
+          metadata: {
+            file_size_bytes: file.size,
+            mime_type: file.type,
+            notes: notes || null,
+            upload_method: "vendor_secure_link",
+            original_filename: file.name,
+          },
+        });
+      } catch {
+        console.error("[UPLOAD] Activity log insert failed — non-critical");
+      }
+
+      // ── 4. In-app notification ──────────────────────────────
+      try {
+        await createOrgNotification({
+          supabase,
+          organizationId: request.organization_id,
+          roleFilter: ["compliance_manager", "owner_operator"],
+          type: "vendor_document_uploaded",
+          category: "documents",
+          title: `${vendorName} uploaded ${doc?.type || "a document"}`,
+          body: `${vendorName} uploaded ${doc?.type || "a document"} via secure link. Review the document.`,
+          actionUrl: "/documents",
+          actionLabel: "View Documents",
+          priority: "medium",
+          severity: "info",
+          sourceType: "compliance_document",
+          sourceId: request.document_id,
+          deduplicate: true,
+        });
+      } catch {
+        console.error("[UPLOAD] In-app notification failed — non-critical");
+      }
+
+      // ── 5. Email notification (fire-and-forget) ─────────────
+      try {
+        const notifyUrl = `${supabaseUrl}/functions/v1/vendor-document-notify`;
+
         const { data: recipients } = await supabase
           .from("user_profiles")
           .select("id, email, full_name, role")
-          .eq("organization_id", tokenRecord.organization_id)
+          .eq("organization_id", request.organization_id)
           .in("role", ["compliance_manager", "owner_operator"])
           .not("email", "is", null);
 
-        const recipientList = recipients && recipients.length > 0
-          ? recipients.map((r: any) => ({ email: r.email, name: r.full_name || "Team" }))
-          : [{ email: "team@getevidly.com", name: (tokenRecord as any).organizations?.name || "Team" }];
+        const recipientList =
+          recipients && recipients.length > 0
+            ? recipients.map((r: any) => ({
+                email: r.email,
+                name: r.full_name || "Team",
+              }))
+            : [
+                {
+                  email: "team@getevidly.com",
+                  name: org?.name || "Team",
+                },
+              ];
 
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 8000);
 
-        // Notify each recipient (fire-and-forget, parallel)
         await Promise.allSettled(
           recipientList.map((recipient: { email: string; name: string }) =>
             fetch(notifyUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+                Authorization: `Bearer ${supabaseKey}`,
               },
               body: JSON.stringify({
                 recipientEmail: recipient.email,
                 recipientName: recipient.name,
                 notificationType: "new_upload",
-                vendorName: (tokenRecord as any).vendors?.name,
-                documentType: tokenRecord.document_type,
-                documentTitle: vendorDocRecord?.title || tokenRecord.document_type,
+                vendorName,
+                documentType: doc?.type || "Document",
+                documentTitle: doc?.name || doc?.type || "Document",
                 status: "Pending Review",
-                actionUrl: `https://app.getevidly.com/vendors/${tokenRecord.vendor_id}`,
+                actionUrl: "https://app.getevidly.com/documents",
               }),
               signal: controller.signal,
             })
           )
         );
       } catch {
-        // Silent fail — notification is non-critical
+        console.error("[UPLOAD] Email notification failed — non-critical");
       }
-
-      // Log activity
-      await supabase.from("activity_logs").insert({
-        organization_id: tokenRecord.organization_id,
-        user_id: null, // Vendor upload — no auth user
-        action_type: "vendor_upload",
-        entity_type: "document",
-        entity_id: docRecord?.id,
-        description: `${(tokenRecord as any).vendors?.name} uploaded ${tokenRecord.document_type} via secure link`,
-        metadata: {
-          vendor_id: tokenRecord.vendor_id,
-          token_id: tokenRecord.id,
-          file_name: file.name,
-          file_size: file.size,
-          notes,
-        },
-      });
 
       return jsonResponse({
         success: true,
-        message: "Document uploaded successfully! Your client has been notified.",
-        document_id: docRecord?.id,
+        message:
+          "Document uploaded successfully! Your client has been notified.",
+        document_id: request.document_id,
       });
     }
 
