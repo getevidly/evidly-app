@@ -9,6 +9,7 @@ interface DocumentRequestPayload {
   uploadUrl: string;
   coverMessage: string;
   orgName: string;
+  expiryDescription?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -18,7 +19,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { vendorEmail, vendorName, documentType, uploadUrl, coverMessage, orgName }: DocumentRequestPayload = await req.json();
+    const { vendorEmail, vendorName, documentType, uploadUrl, coverMessage, orgName, expiryDescription }: DocumentRequestPayload = await req.json();
 
     const escapedMessage = coverMessage.replace(/\n/g, '<br>');
 
@@ -29,7 +30,7 @@ Deno.serve(async (req: Request) => {
           <p style="font-weight: 600; margin: 0 0 8px 0;">${orgName} is requesting your ${documentType}</p>
           <p style="color: #475569; font-size: 14px; margin: 0;">${escapedMessage}</p>
         </div>
-        <p style="color: #64748b; font-size: 14px;">Click the button below to securely upload your document. No account needed — the link expires in 5 days.</p>
+        <p style="color: #64748b; font-size: 14px;">Click the button below to securely upload your document. No account needed — the link expires ${expiryDescription || 'in 5 days'}.</p>
       `,
       ctaText: "Upload Document →",
       ctaUrl: uploadUrl,

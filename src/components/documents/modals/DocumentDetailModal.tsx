@@ -25,17 +25,23 @@ interface ActivityEntry {
 
 const EVENT_LABELS: Record<string, string> = {
   requested: 'Request sent',
+  resent: 'Request re-sent',
   request_resent: 'Request re-sent',
   request_cancelled: 'Request cancelled',
   submitted: 'Document submitted',
+  uploaded: 'Document uploaded',
   viewed: 'Viewed by vendor',
   accepted: 'Document accepted',
   rejected: 'Document rejected',
   archived: 'Document archived',
   expired: 'Document expired',
   expiring_warning: 'Expiry warning sent',
+  overdue: 'Document overdue',
   renewed: 'Document renewed',
   sent_to_third_party: 'Sent to third party',
+  shared: 'Shared with third party',
+  viewed_share: 'Third party viewed',
+  downloaded_share: 'Third party downloaded',
   send_revoked: 'Send revoked',
   noted: 'Note added',
 };
@@ -45,6 +51,8 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
   const [rejecting, setRejecting] = useState(false);
   const [rejectMode, setRejectMode] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [resending, setResending] = useState(false);
+  const [issuingFresh, setIssuingFresh] = useState(false);
   const [activity, setActivity] = useState<ActivityEntry[]>([]);
   const [activityLoading, setActivityLoading] = useState(true);
 
@@ -62,6 +70,12 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
         setActivityLoading(false);
       });
   }, [doc.id]);
+
+  // Stale-request computation
+  const daysSinceRequest = doc.requested_at
+    ? Math.floor((Date.now() - new Date(doc.requested_at).getTime()) / 86400000)
+    : null;
+  const isStale = daysSinceRequest !== null && daysSinceRequest >= 30;
 
   const handleAccept = async () => {
     setAccepting(true);
@@ -141,6 +155,53 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
     }
   };
 
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('resend-document-request', {
+        body: { documentId: doc.id },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        const msg = result.emailed
+          ? `Re-sent to ${doc.request_recipient_email}${result.token_regenerated ? ' (new link generated)' : ''}`
+          : 'Request re-sent (email service unavailable)';
+        toast.success(msg);
+        onRefresh();
+      }
+    } catch {
+      toast.error('Failed to re-send request');
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleIssueFresh = async () => {
+    setIssuingFresh(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('issue-fresh-request', {
+        body: { documentId: doc.id },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(result.emailed
+          ? 'Fresh request sent \u2014 vendor has 14 days to upload'
+          : 'Fresh request created (email service unavailable)');
+        onRefresh();
+      }
+    } catch {
+      toast.error('Failed to issue fresh request');
+    } finally {
+      setIssuingFresh(false);
+    }
+  };
+
   // AI insight line — contextual one-liner
   const aiInsight = getInsight(doc);
 
@@ -189,13 +250,35 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
           )}
         </div>
 
-        {/* Requested status info */}
-        {doc.status === 'requested' && (
+        {/* Requested status info / stale banner */}
+        {doc.status === 'requested' && !isStale && (
           <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-[#FEF3C7] border border-[#FDE68A]">
             <Send size={13} className="text-[#B45309] mt-0.5" />
             <p className="text-[12px] text-[#92400E] font-medium">
               A secure upload link was sent to the vendor. They have 14 calendar days to upload.
             </p>
+          </div>
+        )}
+        {doc.status === 'requested' && isStale && (
+          <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg border" style={{ backgroundColor: '#FAEEDA', borderColor: '#E8D5A8' }}>
+            <Clock size={13} className="mt-0.5" style={{ color: '#BA7517' }} />
+            <div>
+              <p className="text-[12px] font-semibold" style={{ color: '#7A4D0B' }}>
+                This request is {daysSinceRequest} days old
+              </p>
+              <p className="text-[11px] mt-0.5" style={{ color: '#96630F' }}>
+                The original link has expired. Issue a fresh request to send a new 14-day upload link.
+              </p>
+              <button
+                type="button"
+                onClick={handleIssueFresh}
+                disabled={issuingFresh}
+                className="mt-2 px-3 py-1.5 text-[11px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+              >
+                {issuingFresh ? 'Issuing\u2026' : 'Issue Fresh Request'}
+              </button>
+            </div>
           </div>
         )}
 
@@ -298,14 +381,15 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
               Download
             </button>
           )}
-          {doc.status === 'requested' && (
+          {doc.status === 'requested' && !isStale && (
             <button
               type="button"
-              onClick={() => toast.info('Re-send coming soon')}
-              className="flex items-center gap-1.5 px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50"
+              onClick={handleResend}
+              disabled={resending}
+              className="flex items-center gap-1.5 px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50 disabled:opacity-50"
             >
               <RefreshCw size={13} />
-              Re-send
+              {resending ? 'Sending\u2026' : 'Re-send'}
             </button>
           )}
           {(doc.status === 'current' || doc.status === 'expired') && (
