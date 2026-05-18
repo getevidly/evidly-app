@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
@@ -264,8 +265,8 @@ export function SummaryTab({ onSwitchToResponsibilities }: SummaryTabProps) {
           actionLabel = 'Open';
           onAction = () => navigate('/onboarding');
         } else {
-          actionLabel = undefined;
-          onAction = undefined;
+          actionLabel = 'Resend';
+          onAction = () => toast.info('Resend coming soon');
         }
       } else if (detailStatus === 'skipped') {
         actionLabel = 'Resume';
