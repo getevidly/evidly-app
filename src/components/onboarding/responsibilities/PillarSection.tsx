@@ -1,5 +1,6 @@
 import type { PillarRequirement } from '../../../hooks/onboarding/usePillarRequirements';
 import type { DelegationSuggestion } from '../../../hooks/onboarding/useDelegationSuggestion';
+import type { EvidenceThreadSummary } from '../../../hooks/onboarding/useItemEvidenceTrail';
 import { PillarHeader } from '../shared/PillarHeader';
 import { RequirementChipRow, type ChipChoice } from './RequirementChipRow';
 import { BulkApplyBanner } from './BulkApplyBanner';
@@ -13,9 +14,11 @@ interface PillarSectionProps {
   missingRoles: string[];
   onChoose: (requirementCode: string, choice: 'me' | 'invite' | 'skip', skipReason?: string) => void;
   onBulkApply: (role: string) => void;
+  evidenceSummaries?: Record<string, EvidenceThreadSummary>;
+  highlightReq?: string | null;
 }
 
-export function PillarSection({ pillar, requirements, choices, suggestions, missingRoles, onChoose, onBulkApply }: PillarSectionProps) {
+export function PillarSection({ pillar, requirements, choices, suggestions, missingRoles, onChoose, onBulkApply, evidenceSummaries, highlightReq }: PillarSectionProps) {
   const committedCount = requirements.filter(r => choices[r.requirement_code] !== null && choices[r.requirement_code] !== undefined).length;
 
   // Suggestions are already scoped to this pillar by the hook.
@@ -50,6 +53,8 @@ export function PillarSection({ pillar, requirements, choices, suggestions, miss
             currentChoice={choices[req.requirement_code] ?? null}
             roleMissing={missingRoles.includes(req.typical_role)}
             onChoose={(choice, skipReason) => onChoose(req.requirement_code, choice, skipReason)}
+            evidenceSummary={evidenceSummaries?.[req.requirement_code]}
+            highlightReq={highlightReq}
           />
         ))}
       </div>

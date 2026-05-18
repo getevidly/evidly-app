@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 import type { PillarRequirement } from '../../../hooks/onboarding/usePillarRequirements';
+import type { EvidenceThreadSummary } from '../../../hooks/onboarding/useItemEvidenceTrail';
+import { EvidenceTrail } from '../evidence/EvidenceTrail';
 import { SkipReasonModal } from './SkipReasonModal';
 
 export type ChipChoice = 'me' | 'invite' | 'skip' | null;
@@ -11,6 +13,9 @@ interface RequirementChipRowProps {
   /** Whether the typical_role for this requirement is missing from the team */
   roleMissing: boolean;
   onChoose: (choice: 'me' | 'invite' | 'skip', skipReason?: string) => void;
+  evidenceSummary?: EvidenceThreadSummary | null;
+  /** When set, auto-open chat and scroll into view for this requirement_code */
+  highlightReq?: string | null;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -23,9 +28,20 @@ const ROLE_LABELS: Record<string, string> = {
   kitchen_staff: 'Kitchen Staff',
 };
 
-export function RequirementChipRow({ requirement, currentChoice, roleMissing, onChoose }: RequirementChipRowProps) {
+export function RequirementChipRow({ requirement, currentChoice, roleMissing, onChoose, evidenceSummary, highlightReq }: RequirementChipRowProps) {
   const [showSkipModal, setShowSkipModal] = useState(false);
-  const [showChatPopover, setShowChatPopover] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  // Deep-link: auto-open chat and scroll into view
+  useEffect(() => {
+    if (highlightReq && highlightReq === requirement.requirement_code) {
+      setChatOpen(true);
+      // Delay to allow render, then scroll
+      setTimeout(() => {
+        document.getElementById(`req-${requirement.requirement_code}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+    }
+  }, [highlightReq, requirement.requirement_code]);
 
   const roleLabel = ROLE_LABELS[requirement.typical_role] || requirement.typical_role;
   const isPending = currentChoice === null;
@@ -36,9 +52,15 @@ export function RequirementChipRow({ requirement, currentChoice, roleMissing, on
   const chipSelected = 'bg-[#1E2D4D] text-[#FAF7F0] border-[#1E2D4D]';
   const chipUnselected = 'bg-white text-[#1E2D4D]/70 border-[#E2DDD4] hover:border-[#1E2D4D]/30';
 
+  const unreadCount = evidenceSummary?.unreadCount ?? 0;
+  const messageCount = evidenceSummary?.messageCount ?? 0;
+
   return (
     <>
-      <div className={`relative px-4 py-3 border-b border-[#E2DDD4]/50 ${isPending ? 'bg-[#FEF8EC]' : 'bg-white'}`}>
+      <div
+        id={`req-${requirement.requirement_code}`}
+        className={`relative px-4 py-3 border-b border-[#E2DDD4]/50 ${isPending ? 'bg-[#FEF8EC]' : 'bg-white'}`}
+      >
         <div className="flex items-start gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -77,33 +99,34 @@ export function RequirementChipRow({ requirement, currentChoice, roleMissing, on
               </button>
             </div>
           </div>
-          {/* Chat icon */}
+          {/* Discussion toggle */}
           <button
             type="button"
-            onClick={() => setShowChatPopover(!showChatPopover)}
+            onClick={() => setChatOpen(!chatOpen)}
+            aria-expanded={chatOpen}
             className="p-1.5 rounded-md hover:bg-[#1E2D4D]/5 text-[#8A93A6] relative flex-shrink-0 mt-1"
-            title="Item discussion"
+            title="Discussion"
           >
             <MessageCircle size={16} />
+            {messageCount > 0 && (
+              <span className="text-[10px] text-[#8A93A6] absolute -bottom-1 -right-1">{messageCount}</span>
+            )}
+            {!chatOpen && unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#C62828] rounded-full" />
+            )}
           </button>
         </div>
-
-        {/* Chat popover placeholder */}
-        {showChatPopover && (
-          <div className="absolute right-4 top-12 z-50 w-56 bg-white border border-[#E2DDD4] rounded-lg shadow-lg p-3">
-            <p className="text-xs text-[#8A93A6] text-center">
-              Chat coming soon for this item
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowChatPopover(false)}
-              className="mt-2 w-full text-xs text-[#1E2D4D]/60 hover:text-[#1E2D4D] text-center"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Inline evidence trail panel */}
+      {chatOpen && (
+        <EvidenceTrail
+          requirementCode={requirement.requirement_code}
+          pillar={requirement.pillar as 'food_safety' | 'fire_safety'}
+          requirementLabel={requirement.label}
+          onCollapse={() => setChatOpen(false)}
+        />
+      )}
 
       <SkipReasonModal
         isOpen={showSkipModal}

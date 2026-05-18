@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePillarRequirements } from '../../../hooks/onboarding/usePillarRequirements';
 import { useDelegationSuggestion } from '../../../hooks/onboarding/useDelegationSuggestion';
+import { useEvidenceThreadSummaries } from '../../../hooks/onboarding/useItemEvidenceTrail';
 import { useAuth } from '../../../contexts/AuthContext';
 import { commitResponsibility, lockResponsibilities } from '../../../lib/onboarding/responsibilityCommit';
 import { supabase } from '../../../lib/supabase';
@@ -13,13 +14,15 @@ import { TeamInviteModal } from '../../TeamInviteModal';
 
 interface ResponsibilitiesTabProps {
   onLocked: () => void;
+  highlightReq?: string | null;
 }
 
-export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
+export function ResponsibilitiesTab({ onLocked, highlightReq }: ResponsibilitiesTabProps) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { foodSafety, fireSafety, requirements, loading: reqLoading, stateCode } = usePillarRequirements();
   const { getSuggestionsForPillar, missingRoles } = useDelegationSuggestion();
+  const { summaries: evidenceSummaries } = useEvidenceThreadSummaries(orgId || undefined);
 
   const [choices, setChoices] = useState<Record<string, ChipChoice>>({});
   const [locking, setLocking] = useState(false);
@@ -160,6 +163,8 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
           missingRoles={missingRoles}
           onChoose={handleChoose}
           onBulkApply={handleBulkApply}
+          evidenceSummaries={evidenceSummaries}
+          highlightReq={highlightReq}
         />
         <PillarSection
           pillar="fire_safety"
@@ -169,6 +174,8 @@ export function ResponsibilitiesTab({ onLocked }: ResponsibilitiesTabProps) {
           missingRoles={missingRoles}
           onChoose={handleChoose}
           onBulkApply={handleBulkApply}
+          evidenceSummaries={evidenceSummaries}
+          highlightReq={highlightReq}
         />
       </div>
 

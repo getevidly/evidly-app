@@ -15,7 +15,7 @@ import { SummaryTab } from './summary/SummaryTab';
  * Root onboarding card — tab orchestration.
  * All three tabs render at all times with real content.
  */
-export function OnboardingCard() {
+export function OnboardingCard({ highlightReq }: { highlightReq?: string | null }) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { requirements } = usePillarRequirements();
@@ -24,6 +24,13 @@ export function OnboardingCard() {
 
   const [activeTab, setActiveTab] = useState<OnboardingTabId>(isInvitee ? 'work' : 'responsibilities');
   const [responsibilitiesLocked, setResponsibilitiesLocked] = useState(false);
+
+  // Deep-link: switch to responsibilities tab when highlightReq is present
+  useEffect(() => {
+    if (highlightReq && !isInvitee) {
+      setActiveTab('responsibilities');
+    }
+  }, [highlightReq, isInvitee]);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
 
@@ -156,7 +163,7 @@ export function OnboardingCard() {
 
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         {!isInvitee && activeTab === 'responsibilities' && (
-          <ResponsibilitiesTab onLocked={handleLocked} />
+          <ResponsibilitiesTab onLocked={handleLocked} highlightReq={highlightReq} />
         )}
         {activeTab === 'work' && (
           <WorkTab
