@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
@@ -73,6 +73,33 @@ export function DocumentsPage() {
     setLocationFilter('all');
     setVendorFilter('all');
   }, [setSearchParams]);
+
+  // Deep-link: ?doc=<id> opens detail modal and switches to correct tab
+  useEffect(() => {
+    const docId = searchParams.get('doc');
+    if (!docId || loading || documents.length === 0) return;
+
+    const target = documents.find((d) => d.id === docId);
+    if (!target) return;
+
+    // Resolve which tab owns this document's category
+    const targetTab = (Object.entries(TAB_CATEGORIES) as [DocumentTabId, string[]][])
+      .find(([, cats]) => cats.includes(target.category))?.[0] || 'kitchen';
+
+    // Switch tab if needed (without resetting filters — direct setSearchParams)
+    if (activeTab !== targetTab) {
+      setSearchParams({ tab: targetTab });
+    }
+
+    setOpenDoc(target);
+
+    // Clear ?doc= so refresh doesn't re-open
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('doc');
+      return next;
+    }, { replace: true });
+  }, [searchParams, documents, loading, activeTab, setSearchParams]);
 
   // Split docs by tab
   const tabDocs = useMemo(() => {
