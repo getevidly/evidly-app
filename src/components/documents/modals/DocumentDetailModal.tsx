@@ -42,6 +42,9 @@ const EVENT_LABELS: Record<string, string> = {
 
 export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailModalProps) {
   const [accepting, setAccepting] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectMode, setRejectMode] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
   const [activity, setActivity] = useState<ActivityEntry[]>([]);
   const [activityLoading, setActivityLoading] = useState(true);
 
@@ -62,17 +65,52 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
 
   const handleAccept = async () => {
     setAccepting(true);
-    const { error } = await supabase
-      .from('compliance_documents')
-      .update({ status: 'current' })
-      .eq('id', doc.id);
-    setAccepting(false);
-    if (error) {
+    try {
+      const { data, error } = await supabase.functions.invoke('document-review-action', {
+        body: { documentId: doc.id, action: 'accept' },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success('Document accepted');
+        onRefresh();
+        onClose();
+      }
+    } catch {
       toast.error('Failed to accept document');
-    } else {
-      toast.success('Document accepted');
-      onRefresh();
-      onClose();
+    } finally {
+      setAccepting(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setRejecting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('document-review-action', {
+        body: {
+          documentId: doc.id,
+          action: 'reject',
+          rejectionReason: rejectReason.trim() || undefined,
+        },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        const msg = result.emailed
+          ? 'Document rejected \u2014 vendor notified to re-upload'
+          : 'Document rejected \u2014 use Send Request to issue a new link';
+        toast.success(msg);
+        onRefresh();
+        onClose();
+      }
+    } catch {
+      toast.error('Failed to reject document');
+    } finally {
+      setRejecting(false);
     }
   };
 
@@ -197,22 +235,57 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
         <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E2DDD4]">
           {doc.status === 'pending_review' && (
             <>
-              <button
-                type="button"
-                onClick={handleAccept}
-                disabled={accepting}
-                className="px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
-                style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-              >
-                {accepting ? 'Accepting\u2026' : 'Accept \u2713'}
-              </button>
-              <button
-                type="button"
-                onClick={() => toast.info('Rejection flow coming soon')}
-                className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50"
-              >
-                Reject
-              </button>
+              {!rejectMode && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleAccept}
+                    disabled={accepting || rejecting}
+                    className="px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                    style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+                  >
+                    {accepting ? 'Accepting\u2026' : 'Accept \u2713'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRejectMode(true)}
+                    disabled={accepting || rejecting}
+                    className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
+              {rejectMode && (
+                <div className="w-full space-y-2">
+                  <textarea
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    placeholder="Why are you rejecting this? (Optional — sent to vendor)"
+                    rows={3}
+                    className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[12px] text-[#1E2D4D] resize-y focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setRejectMode(false); setRejectReason(''); }}
+                      disabled={rejecting}
+                      className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReject}
+                      disabled={rejecting}
+                      className="px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                      style={{ backgroundColor: '#B91C1C', color: '#FFF' }}
+                    >
+                      {rejecting ? 'Rejecting\u2026' : 'Confirm Rejection'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
           {doc.storage_path && (
