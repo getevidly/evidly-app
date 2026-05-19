@@ -16,7 +16,7 @@ import { X } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { DashboardSplash } from '../components/dashboard/DashboardSplash';
 import { DashboardLoadingSkeleton } from '../components/dashboard/DashboardLoadingSkeleton';
-import { useDashboardPreferences } from '../hooks/useDashboardPreferences';
+
 
 function OutbreakBanner() {
   const { criticalNotifications } = useSignalNotifications();
@@ -86,7 +86,6 @@ export function Dashboard() {
   const [pageError, setPageError] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
-  const { loading: prefsLoading } = useDashboardPreferences();
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 1500);
@@ -106,7 +105,6 @@ export function Dashboard() {
     : (profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there');
 
   if (showSplash) return <DashboardSplash />;
-  if (prefsLoading) return <DashboardLoadingSkeleton />;
 
   if (pageError) {
     return <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />;
