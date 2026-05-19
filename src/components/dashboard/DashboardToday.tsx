@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { useDashboardData, type DeadlineItem } from '../../hooks/useDashboardData';
 import { BODY_TEXT, FONT } from './shared/constants';
-import { OnboardingCard } from '../onboarding/OnboardingCard';
 
 function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: string) => void }) {
   const color = item.severity === 'critical' ? '#dc2626' : item.severity === 'warning' ? '#d97706' : '#6b7280';
@@ -49,11 +48,6 @@ export function DashboardToday() {
         <span className="font-semibold" style={{ color: '#1E2D4D' }}>Today</span>
         <span className="mx-2 text-[#1E2D4D]/30">&middot;</span>
         <span className="text-[#1E2D4D]/50">{todayStr}</span>
-      </div>
-
-      {/* Onboarding Checklist */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <OnboardingCard />
       </div>
 
       {/* Upcoming Deadlines */}

@@ -16,6 +16,7 @@ import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
 import { RequireAdmin } from './components/auth/RequireAdmin';
+import { OnboardingGuard } from './components/auth/OnboardingGuard';
 import { supabase } from './lib/supabase';
 import { useCrisp, useCrispIdentify } from './hooks/useCrisp';
 
@@ -502,7 +503,9 @@ function ProtectedLayout() {
       }>
         <PageTransition key={location.pathname}>
           <PageExplanation />
-          <Outlet />
+          <OnboardingGuard>
+            <Outlet />
+          </OnboardingGuard>
         </PageTransition>
       </Suspense>
     </ErrorBoundary>

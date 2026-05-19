@@ -151,6 +151,9 @@ export function MobileTabBar() {
       .filter(s => s.items.length > 0);
   }, [userRole, isKitchen]);
 
+  // Hide mobile tab bar during onboarding — full-screen experience with TopBar only
+  if (location.pathname === '/onboarding') return null;
+
   const handleNavigation = (path: string) => {
     navigate(path);
     setShowMoreMenu(false);

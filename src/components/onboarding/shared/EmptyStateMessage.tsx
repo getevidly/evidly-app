@@ -13,8 +13,8 @@ export function EmptyStateMessage({ stateName }: EmptyStateMessageProps) {
         <MapPin size={24} className="text-[#1E2D4D]/40" />
       </div>
       <p className="text-sm text-[#1E2D4D]/70 max-w-sm leading-relaxed">
-        Onboarding requirements for {displayState} are coming soon. Your jurisdiction data is
-        active — scoring, recognition, and tracking all work. Reach out at{' '}
+        Onboarding requirements for {displayState} are coming soon. Your county data is
+        active — predictions, evaluations, and evidence all work. Reach out at{' '}
         <a href="mailto:founders@getevidly.com" className="underline text-[#1E2D4D]">
           founders@getevidly.com
         </a>{' '}

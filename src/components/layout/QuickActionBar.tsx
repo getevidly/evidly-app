@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AlertTriangle,
   ChevronRight,
@@ -16,6 +16,10 @@ const QUICK_ACTIONS = [
 
 export function QuickActionBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hide during onboarding — full-screen experience with TopBar only
+  if (location.pathname === '/onboarding') return null;
 
   return (
     <div

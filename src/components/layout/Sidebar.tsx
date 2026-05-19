@@ -614,6 +614,9 @@ export function Sidebar() {
     });
   }, [location.pathname, sections]);
 
+  // Hide sidebar during onboarding — full-screen experience with TopBar only
+  if (location.pathname === '/onboarding') return null;
+
   return (
     <div data-sidebar data-testid="sidebar" className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
       <div className="flex flex-col h-full min-h-0" style={{ backgroundColor: branding.colors.sidebarBg }}>

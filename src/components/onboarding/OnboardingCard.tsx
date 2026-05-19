@@ -110,7 +110,7 @@ export function OnboardingCard({ highlightReq }: { highlightReq?: string | null 
         },
         summary: {
           title: 'Summary',
-          subtitle: 'Overview of your onboarding progress across both pillars.',
+          subtitle: 'Overview of your onboarding progress across Food Safety and Fire Safety.',
         },
       };
 
