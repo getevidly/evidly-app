@@ -16,7 +16,7 @@ import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
 import { RequireAdmin } from './components/auth/RequireAdmin';
-import { OnboardingGuard } from './components/auth/OnboardingGuard';
+// import { OnboardingGuard } from './components/auth/OnboardingGuard';
 import { supabase } from './lib/supabase';
 import { useCrisp, useCrispIdentify } from './hooks/useCrisp';
 
@@ -503,9 +503,8 @@ function ProtectedLayout() {
       }>
         <PageTransition key={location.pathname}>
           <PageExplanation />
-          <OnboardingGuard>
-            <Outlet />
-          </OnboardingGuard>
+          {/* OnboardingGuard disabled pre-launch for dev/test — re-enable before July 4 launch. See src/components/auth/OnboardingGuard.tsx */}
+          <Outlet />
         </PageTransition>
       </Suspense>
     </ErrorBoundary>
