@@ -147,7 +147,6 @@ const MockInspection = lazy(() => import('./pages/MockInspection'));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
 const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
 const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
-const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
 const IntelligenceAdmin = lazy(() => import('./pages/admin/IntelligenceAdmin'));
 const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
@@ -729,7 +728,7 @@ function AppRoutes() {
           <Route path="/mock-inspection" element={<MockInspection />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
-          <Route path="/copilot" element={<CopilotInsights />} />
+          <Route path="/copilot" element={<Navigate to="/" replace />} />
           <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/regulatory-updates" element={<Navigate to="/intelligence" replace />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />

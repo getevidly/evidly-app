@@ -9,7 +9,6 @@ import { useActiveBanner } from '../hooks/useActiveBanner';
 import { getSignalRenderType, SIGNAL_TYPES } from '../constants/signalTypes';
 import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import { DashboardToday } from '../components/dashboard/DashboardToday';
-import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
@@ -130,7 +129,6 @@ export function Dashboard() {
       {!showWelcome && <PushOptInBanner />}
       <OutbreakBanner />
       <IntelligenceBanner />
-      <CopilotBriefingCard />
       <DashboardToday />
     </div>
   );

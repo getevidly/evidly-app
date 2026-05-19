@@ -93,7 +93,6 @@ const executive: MobileRoleData = {
   quickActions: [
     { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
     { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-    { id: 'trends', label: 'Trends', icon: '📈', path: '/copilot-insights' },
     { id: 'export', label: 'Export', icon: '📥', path: '/reports' },
   ],
   alerts: [
@@ -110,7 +109,6 @@ const executive: MobileRoleData = {
   bottomNav: [
     { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
     { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-    { id: 'trends', label: 'Trends', icon: '📈', path: '/copilot-insights' },
     { id: 'more', label: 'More', icon: '☰', path: '#more' },
   ],
 };

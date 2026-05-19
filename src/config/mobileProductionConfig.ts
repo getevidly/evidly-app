@@ -17,7 +17,6 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
       return [
         { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
         { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-        { id: 'trends', label: 'Trends', icon: '📈', path: '/copilot-insights' },
         { id: 'export', label: 'Export', icon: '📥', path: '/reports' },
       ];
     case 'compliance_manager':
@@ -74,7 +73,6 @@ export function getMobileBottomNav(role: UserRole): MobileNavTab[] {
       return [
         { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
         { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-        { id: 'trends', label: 'Trends', icon: '📈', path: '/copilot-insights' },
         { id: 'more', label: 'More', icon: '☰', path: '#more' },
       ];
     case 'compliance_manager':
