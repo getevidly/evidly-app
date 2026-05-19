@@ -17,9 +17,8 @@ interface OnboardingGuardProps {
  *
  * Exempt: admin users, demo mode, unauthenticated, no-org users.
  *
- * Redirect rules:
+ * Redirect rule:
  *   onboarding incomplete + not on /onboarding → redirect to /onboarding
- *   onboarding complete + on /onboarding       → redirect to /dashboard
  */
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
   const { profile, loading: authLoading, isAdmin } = useAuth();
@@ -102,11 +101,6 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   // Onboarding NOT complete → force /onboarding
   if (!orgComplete && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />;
-  }
-
-  // Onboarding complete → redirect away from /onboarding
-  if (orgComplete && location.pathname === '/onboarding') {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
