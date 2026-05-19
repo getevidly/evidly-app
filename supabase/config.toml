@@ -417,6 +417,10 @@ verify_jwt = false
 [functions.vendor-secure-upload]
 verify_jwt = false
 
+# Drift detection — cron job every 15 min, no user context
+[functions.detect-operational-drift]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
