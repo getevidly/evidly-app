@@ -421,6 +421,10 @@ verify_jwt = false
 [functions.detect-operational-drift]
 verify_jwt = false
 
+# Weekly drift report — cron job hourly, Monday 7 AM org-local detection
+[functions.generate-weekly-drift-report]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
