@@ -3,11 +3,11 @@ import { useOrgSummary } from '../../../hooks/useOrgSummary';
 import { BriefCard } from './BriefCard';
 
 export function AdvisorSingleFire() {
-  const { fire_safety } = useAdvisorBriefings();
+  const { fire_safety, staleness } = useAdvisorBriefings();
   const { timezone } = useOrgSummary();
   return (
     <div className="advisor-single">
-      <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems />
+      <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems isStale={staleness.fire_safety} />
     </div>
   );
 }

@@ -14,7 +14,7 @@ let corsHeaders = getCorsHeaders(null);
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ADVISOR_TYPES: AdvisorType[] = ['compliance_officer', 'food_safety', 'fire_safety'];
-const CACHE_LIFETIME_MS = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_LIFETIME_MS = 25 * 60 * 60 * 1000; // 25 hours
 
 // Per-advisor role gating
 const ADVISOR_ROLE_MAP: Record<AdvisorType, string[]> = {

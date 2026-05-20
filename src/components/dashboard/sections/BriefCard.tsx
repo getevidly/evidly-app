@@ -8,6 +8,7 @@ interface BriefCardProps {
   timezone: string;
   showItems?: boolean;
   showConsult?: boolean;
+  isStale?: boolean;
 }
 
 const CSS_CLASS: Record<AdvisorType, string> = {
@@ -124,7 +125,7 @@ function BriefCardSkeleton({ variant }: { variant: AdvisorType }) {
 
 /* ── Main component ────────────────────────────────────────────── */
 
-export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false }: BriefCardProps) {
+export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false }: BriefCardProps) {
   if (!briefing) return <BriefCardSkeleton variant={variant} />;
 
   const cls = CSS_CLASS[variant];
@@ -140,6 +141,7 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
         <i className={`ti ${eyebrow.icon}`} />
         {eyebrow.label}{dateLabel}
         {credentials && <span className="brief-credentials">{credentials}</span>}
+        {isStale && <span style={{fontSize: '10px', color: 'rgba(250,247,240,0.45)', marginLeft: '8px'}}>&middot; refreshing soon</span>}
       </p>
       <p className="brief-posture">
         <span className={`badge ${briefing.posture}`}>

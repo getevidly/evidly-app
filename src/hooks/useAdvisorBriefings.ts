@@ -26,12 +26,32 @@ export interface AdvisorBriefing {
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
 const ADVISOR_TYPES: AdvisorType[] = ['compliance_officer', 'food_safety', 'fire_safety'];
 
+export interface StalenessFlags {
+  compliance_officer: boolean;
+  food_safety: boolean;
+  fire_safety: boolean;
+}
+
 interface UseAdvisorBriefingsResult {
   compliance_officer: AdvisorBriefing | null;
   food_safety: AdvisorBriefing | null;
   fire_safety: AdvisorBriefing | null;
   loading: boolean;
   error: Error | null;
+  staleness: StalenessFlags;
+}
+
+function rowToBriefing(row: Record<string, unknown>): AdvisorBriefing {
+  return {
+    id: row.id as string,
+    advisor_type: row.advisor_type as AdvisorType,
+    briefing_text: row.briefing_text as string,
+    posture: row.posture as 'solid' | 'watch' | 'alarm',
+    open_items: Array.isArray(row.open_items) ? row.open_items : [],
+    generated_at: row.generated_at as string,
+    valid_until: row.valid_until as string,
+    template_version: row.template_version as number,
+  };
 }
 
 export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
@@ -42,6 +62,11 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
     food_safety: null,
     fire_safety: null,
   });
+  const [staleness, setStaleness] = useState<StalenessFlags>({
+    compliance_officer: false,
+    food_safety: false,
+    fire_safety: false,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -51,7 +76,8 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
 
     async function load() {
       try {
-        const { data, error: qErr } = await supabase
+        // Phase 1: fresh rows (valid_until > now)
+        const { data: freshData, error: freshErr } = await supabase
           .from('advisor_briefings')
           .select('*')
           .eq('org_id', orgId)
@@ -60,31 +86,50 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
           .order('generated_at', { ascending: false });
 
         if (cancelled) return;
-        if (qErr) throw new Error(qErr.message);
+        if (freshErr) throw new Error(freshErr.message);
 
         const grouped: Record<AdvisorType, AdvisorBriefing | null> = {
           compliance_officer: null,
           food_safety: null,
           fire_safety: null,
         };
+        const stale: StalenessFlags = {
+          compliance_officer: false,
+          food_safety: false,
+          fire_safety: false,
+        };
 
-        for (const row of data || []) {
+        for (const row of freshData || []) {
           const at = row.advisor_type as AdvisorType;
           if (ADVISOR_TYPES.includes(at) && !grouped[at]) {
-            grouped[at] = {
-              id: row.id,
-              advisor_type: at,
-              briefing_text: row.briefing_text,
-              posture: row.posture,
-              open_items: Array.isArray(row.open_items) ? row.open_items : [],
-              generated_at: row.generated_at,
-              valid_until: row.valid_until,
-              template_version: row.template_version,
-            };
+            grouped[at] = rowToBriefing(row);
+          }
+        }
+
+        // Phase 2: stale fallback for any missing advisor_type
+        const missing = ADVISOR_TYPES.filter(at => !grouped[at]);
+        if (missing.length > 0) {
+          for (const at of missing) {
+            const { data: staleData } = await supabase
+              .from('advisor_briefings')
+              .select('*')
+              .eq('org_id', orgId)
+              .eq('advisor_type', at)
+              .is('location_id', null)
+              .order('generated_at', { ascending: false })
+              .limit(1);
+
+            if (cancelled) return;
+
+            if (staleData && staleData.length > 0) {
+              grouped[at] = rowToBriefing(staleData[0]);
+              stale[at] = true;
+            }
           }
         }
 
         setBriefings(grouped);
+        setStaleness(stale);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
@@ -96,5 +141,5 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
     return () => { cancelled = true; };
   }, [orgId]);
 
-  return { ...briefings, loading, error };
+  return { ...briefings, loading, error, staleness };
 }
