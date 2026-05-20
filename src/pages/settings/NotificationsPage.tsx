@@ -1,28 +1,35 @@
 /**
- * NotificationsPage — NOTIFICATION-SUPER-01
+ * NotificationsPage — NOTIFICATION-SUPER-01 + C10.5 digest layer
  *
  * Per-category notification preferences with email/sms/push toggles.
+ * C10.5 additions: daily digest opt-out per category, at-least-one-channel
+ * validation, SMS_AVAILABLE gate, phone number stub.
  * Reads/writes from notification_preferences table via Supabase.
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Bell, Save, Loader2, Mail, MessageSquare, Smartphone } from 'lucide-react';
+import { Bell, Save, Loader2, Mail, MessageSquare, Smartphone, Clock, Phone, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
+import { useOrgSummary } from '../../hooks/useOrgSummary';
 import { NOTIFICATION_CATEGORIES } from '../../components/notifications/notificationConstants';
 import {
-  CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, NAVY, FONT,
+  MUTED, NAVY, FONT,
 } from '../../components/dashboard/shared/constants';
 import type { NotificationCategory } from '../../constants/statusColors';
 
 type Channel = 'email' | 'sms' | 'push';
+
+// C10.5: SMS not yet available — flip to true in C10.6 (Twilio activation)
+const SMS_AVAILABLE = false;
 
 interface CategoryPreference {
   category: NotificationCategory;
   email_enabled: boolean;
   sms_enabled: boolean;
   push_enabled: boolean;
+  digest_opt_out?: boolean;
 }
 
 const CHANNEL_META: { key: Channel; label: string; icon: typeof Mail; desc: string }[] = [
@@ -50,8 +57,10 @@ function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onCha
 export function NotificationsPage() {
   const { user } = useAuth();
   const { isDemoMode } = useDemo();
+  const { timezone } = useOrgSummary();
   const [isLoading, setIsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const [globalToggles, setGlobalToggles] = useState<Record<Channel, boolean>>({
     email: true,
@@ -67,7 +76,18 @@ export function NotificationsPage() {
     return init as Record<NotificationCategory, Record<Channel, boolean>>;
   });
 
-  // Fetch existing preferences
+  // C10.5: per-category digest opt-out
+  const [digestOptOut, setDigestOptOut] = useState<Record<NotificationCategory, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    NOTIFICATION_CATEGORIES.forEach(cat => { init[cat.key] = false; });
+    return init as Record<NotificationCategory, boolean>;
+  });
+
+  // C10.5: phone number (existing user_profiles.phone column)
+  const [phone, setPhone] = useState('');
+  const [phoneSaved, setPhoneSaved] = useState('');
+
+  // Fetch existing preferences + phone
   const fetchPrefs = useCallback(async () => {
     if (isDemoMode || !user?.id) {
       setIsLoading(false);
@@ -76,21 +96,36 @@ export function NotificationsPage() {
 
     setIsLoading(true);
     try {
-      const { data } = await supabase
-        .from('notification_preferences')
-        .select('category, email_enabled, sms_enabled, push_enabled')
-        .eq('user_id', user.id);
+      const [{ data }, { data: profileData }] = await Promise.all([
+        supabase
+          .from('notification_preferences')
+          .select('category, email_enabled, sms_enabled, push_enabled, digest_opt_out')
+          .eq('user_id', user.id),
+        supabase
+          .from('user_profiles')
+          .select('phone')
+          .eq('id', user.id)
+          .maybeSingle(),
+      ]);
 
       if (data && data.length > 0) {
         const updates: Record<string, Record<Channel, boolean>> = {};
+        const digestUpdates: Record<string, boolean> = {};
         data.forEach((row: CategoryPreference) => {
           updates[row.category] = {
             email: row.email_enabled,
             sms: row.sms_enabled,
             push: row.push_enabled,
           };
+          digestUpdates[row.category] = row.digest_opt_out ?? false;
         });
         setPrefs(prev => ({ ...prev, ...updates }));
+        setDigestOptOut(prev => ({ ...prev, ...digestUpdates }));
+      }
+
+      if (profileData?.phone) {
+        setPhone(profileData.phone);
+        setPhoneSaved(profileData.phone);
       }
     } catch {
       // Fall back to defaults
@@ -112,12 +147,35 @@ export function NotificationsPage() {
     }));
   };
 
+  // C10.5: at-least-one-channel validator (checks effective saved state)
+  const validateChannelMinimum = (): string | null => {
+    const willBeSaved = NOTIFICATION_CATEGORIES.map(cat => ({
+      email: globalToggles.email && prefs[cat.key].email,
+      sms: globalToggles.sms && prefs[cat.key].sms,
+    }));
+    const anyEmailEffective = willBeSaved.some(r => r.email);
+    const anySmsEffective = SMS_AVAILABLE && willBeSaved.some(r => r.sms);
+
+    if (!anyEmailEffective && !anySmsEffective) {
+      return 'At least one category must have Email enabled. Without a delivery channel, you won\'t receive any notifications.';
+    }
+    return null;
+  };
+
   const handleSave = async () => {
     if (isDemoMode) {
       alert('Preferences saved (demo mode)');
       return;
     }
     if (!user?.id) return;
+
+    // Validate before saving
+    const validationError = validateChannelMinimum();
+    if (validationError) {
+      setSaveError(validationError);
+      return;
+    }
+    setSaveError(null);
 
     setSaving(true);
     try {
@@ -137,13 +195,31 @@ export function NotificationsPage() {
         email_enabled: globalToggles.email && prefs[cat.key].email,
         sms_enabled: globalToggles.sms && prefs[cat.key].sms,
         push_enabled: globalToggles.push && prefs[cat.key].push,
+        digest_opt_out: digestOptOut[cat.key] ?? false,
       }));
 
-      const { error } = await supabase
-        .from('notification_preferences')
-        .upsert(rows, { onConflict: 'user_id,category' });
+      // Save preferences + phone in parallel
+      const promises: Promise<unknown>[] = [
+        supabase
+          .from('notification_preferences')
+          .upsert(rows, { onConflict: 'user_id,category' }),
+      ];
 
-      if (error) throw error;
+      // Save phone if changed
+      if (phone !== phoneSaved) {
+        promises.push(
+          supabase
+            .from('user_profiles')
+            .update({ phone: phone.trim() || null })
+            .eq('id', user.id),
+        );
+      }
+
+      const results = await Promise.all(promises);
+      const prefResult = results[0] as { error: { message: string } | null };
+      if (prefResult.error) throw prefResult.error;
+
+      setPhoneSaved(phone);
       alert('Notification preferences saved');
     } catch {
       alert('Failed to save preferences');
@@ -171,18 +247,28 @@ export function NotificationsPage() {
           <Bell size={18} color={NAVY} /> Notification Channels
         </h2>
         <div className="flex flex-col gap-3.5">
-          {CHANNEL_META.map(ch => (
-            <div key={ch.key} className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <ch.icon size={18} color={MUTED} />
-                <div>
-                  <span className="text-sm font-semibold text-navy-deeper">{ch.label} Notifications</span>
-                  <p className="text-xs text-navy-mid mt-0.5 mb-0">{ch.desc}</p>
+          {CHANNEL_META.map(ch => {
+            const isSmsLocked = ch.key === 'sms' && !SMS_AVAILABLE;
+            return (
+              <div key={ch.key} className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <ch.icon size={18} color={MUTED} />
+                  <div>
+                    <span className="text-sm font-semibold text-navy-deeper">
+                      {ch.label} Notifications
+                      {isSmsLocked && <span className="ml-1.5 text-[11px] font-normal text-navy-mid">(coming soon)</span>}
+                    </span>
+                    <p className="text-xs text-navy-mid mt-0.5 mb-0">{ch.desc}</p>
+                  </div>
                 </div>
+                <ToggleSwitch
+                  checked={isSmsLocked ? false : globalToggles[ch.key]}
+                  onChange={v => toggleGlobal(ch.key, v)}
+                  disabled={isSmsLocked}
+                />
               </div>
-              <ToggleSwitch checked={globalToggles[ch.key]} onChange={v => toggleGlobal(ch.key, v)} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -223,23 +309,84 @@ export function NotificationsPage() {
                       </div>
                     </div>
                   </td>
-                  {CHANNEL_META.map(ch => (
-                    <td key={ch.key} className="text-center px-3.5 py-2.5">
-                      <input
-                        type="checkbox"
-                        checked={prefs[cat.key]?.[ch.key] || false}
-                        onChange={() => toggleCategory(cat.key, ch.key)}
-                        disabled={!globalToggles[ch.key]}
-                        className={`w-[18px] h-[18px] accent-navy-muted ${globalToggles[ch.key] ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-40'}`}
-                      />
-                    </td>
-                  ))}
+                  {CHANNEL_META.map(ch => {
+                    const isSmsLocked = ch.key === 'sms' && !SMS_AVAILABLE;
+                    const isDisabled = isSmsLocked || !globalToggles[ch.key];
+                    return (
+                      <td key={ch.key} className="text-center px-3.5 py-2.5">
+                        <input
+                          type="checkbox"
+                          checked={isSmsLocked ? false : (prefs[cat.key]?.[ch.key] || false)}
+                          onChange={() => toggleCategory(cat.key, ch.key)}
+                          disabled={isDisabled}
+                          title={isSmsLocked ? 'SMS delivery coming soon' : undefined}
+                          className={`w-[18px] h-[18px] accent-navy-muted ${isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
+                        />
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Daily Digest — C10.5 */}
+      <div className={cardClasses}>
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy-deeper mb-1 mt-0">
+          <Clock size={18} color={NAVY} /> Daily Digest
+        </h2>
+        <p className="text-xs text-navy-mid mb-4 mt-0">
+          Receive a single email each morning at 7 AM{timezone ? ` (${timezone})` : ''} summarizing
+          all pending items. Urgent items may still be delivered individually.
+        </p>
+        <div className="flex flex-col gap-2.5">
+          {NOTIFICATION_CATEGORIES.map(cat => (
+            <div key={cat.key} className="flex items-center justify-between py-1">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                <span className="text-sm font-medium text-navy-deeper">{cat.label}</span>
+              </div>
+              <ToggleSwitch
+                checked={!digestOptOut[cat.key]}
+                onChange={v => setDigestOptOut(prev => ({ ...prev, [cat.key]: !v }))}
+              />
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-navy-mid mt-3 mb-0">
+          Toggle off a category to exclude it from your daily digest. It will still appear in your in-app feed.
+        </p>
+      </div>
+
+      {/* Phone Number — C10.5 stub */}
+      <div className={cardClasses}>
+        <h2 className="flex items-center gap-2 text-base font-bold text-navy-deeper mb-1 mt-0">
+          <Phone size={18} color={MUTED} /> SMS Phone Number
+        </h2>
+        <p className="text-xs text-navy-mid mb-3 mt-0">
+          {SMS_AVAILABLE
+            ? 'Enter your phone number to receive SMS alerts. E.164 format recommended (e.g. +15551234567).'
+            : 'SMS delivery is coming soon. You can enter your number now and it will be ready when SMS launches.'}
+        </p>
+        <input
+          type="tel"
+          placeholder="+1 (555) 123-4567"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          disabled={!SMS_AVAILABLE}
+          className="w-full max-w-xs px-3 py-2 border border-border_ui-cool rounded-lg text-sm text-navy-deeper disabled:opacity-40 disabled:cursor-not-allowed"
+        />
+      </div>
+
+      {/* Validation error banner */}
+      {saveError && (
+        <div className="flex items-start gap-2 p-3 mb-4 rounded-lg border border-red-200 bg-red-50">
+          <AlertTriangle size={16} className="text-red-500 shrink-0 mt-0.5" />
+          <p className="text-sm text-red-700 m-0">{saveError}</p>
+        </div>
+      )}
 
       {/* Save */}
       <div className="flex justify-end">
