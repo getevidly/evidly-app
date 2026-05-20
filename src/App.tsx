@@ -35,6 +35,7 @@ const DemoWizard = lazy(() => import('./pages/DemoWizard').then(m => ({ default:
 const SetupFoodSafety = lazy(() => import('./pages/SetupFoodSafety').then(m => ({ default: m.SetupFoodSafety })));
 const SetupFoodSafetyEntry = lazy(() => import('./pages/SetupFoodSafetyEntry').then(m => ({ default: m.SetupFoodSafetyEntry })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const SendInspectionPage = lazy(() => import('./pages/SendInspectionPage').then(m => ({ default: m.SendInspectionPage })));
 const TempLogs = lazy(() => import('./pages/TempLogs').then(m => ({ default: m.TempLogs })));
 const Checklists = lazy(() => import('./pages/Checklists').then(m => ({ default: m.Checklists })));
 const ChecklistCompletionDetail = lazy(() => import('./pages/ChecklistCompletionDetail'));
@@ -619,6 +620,7 @@ function AppRoutes() {
         <Route element={<ProtectedLayout />}>
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/inspection-package/send" element={<SendInspectionPage />} />
           <Route path="/food-safety" element={<Navigate to="/food-safety/overview" replace />} />
           <Route path="/food-safety/overview" element={<FoodSafetyOverview />} />
 

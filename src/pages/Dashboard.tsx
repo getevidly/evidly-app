@@ -7,6 +7,7 @@ import { PushOptInBanner } from '../components/PushOptInBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { DashboardSplash } from '../components/dashboard/DashboardSplash';
 import { DashboardComposition } from '../components/dashboard/DashboardComposition';
+import { DashboardWelcome } from '../components/dashboard/DashboardWelcome';
 
 export function Dashboard() {
   const { user, profile } = useAuth();
@@ -43,6 +44,7 @@ export function Dashboard() {
       )}
       <SignalAlertBanner />
       {!showWelcome && <PushOptInBanner />}
+      <DashboardWelcome />
       <DashboardComposition />
     </div>
   );
