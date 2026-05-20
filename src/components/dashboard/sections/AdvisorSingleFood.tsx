@@ -1,2 +1,13 @@
-import { SectionStub } from './SectionStub';
-export function AdvisorSingleFood() { return <SectionStub sectionKey="advisor_single_food" />; }
+import { useAdvisorBriefings } from '../../../hooks/useAdvisorBriefings';
+import { useOrgSummary } from '../../../hooks/useOrgSummary';
+import { BriefCard } from './BriefCard';
+
+export function AdvisorSingleFood() {
+  const { food_safety } = useAdvisorBriefings();
+  const { timezone } = useOrgSummary();
+  return (
+    <div className="advisor-single">
+      <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems />
+    </div>
+  );
+}
