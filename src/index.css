@@ -180,6 +180,71 @@
   }
 }
 
+/* ── V10 Dashboard Composition (C8) ──────────────────────── */
+
+.v10-dashboard {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.v10-section {
+  background: #FFFFFF;
+  border: 0.5px solid #E5E2DA;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+
+.v10-section-stub {
+  border: 1.5px dashed #D5CFBE;
+  background: #FAF7F0;
+  opacity: 0.7;
+}
+
+.v10-section-label {
+  font-size: 11px;
+  color: #6B6960;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.v10-section-placeholder {
+  font-size: 13px;
+  color: #6B6960;
+  font-style: italic;
+  margin: 0;
+}
+
+.v10-section-missing {
+  border-color: #F09595;
+  background: #FCEBEB;
+}
+
+.v10-section-missing .v10-section-label {
+  color: #A32D2D;
+}
+
+.v10-section-missing .v10-section-placeholder {
+  color: #791F1F;
+}
+
+.v10-dashboard-loading {
+  text-align: center;
+  font-size: 13px;
+  color: #6B6960;
+  padding: 40px 20px;
+}
+
+.v10-dashboard-error {
+  text-align: center;
+  font-size: 13px;
+  color: #A32D2D;
+  padding: 40px 20px;
+}
+
 * {
   margin: 0;
   padding: 0;
