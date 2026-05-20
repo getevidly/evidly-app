@@ -1,4 +1,4 @@
-import { lazy, ReactNode, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, ReactNode, Suspense, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Sidebar } from './Sidebar';
@@ -15,11 +15,8 @@ import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
 
 // Lazy-load all overlay components — none are needed for initial render
-const GuidedTour = lazy(() => import('../GuidedTour').then(m => ({ default: m.GuidedTour })));
-const DemoTour = lazy(() => import('../DemoTour').then(m => ({ default: m.DemoTour })));
 const OfflineBanner = lazy(() => import('../OfflineBanner').then(m => ({ default: m.OfflineBanner })));
 const DemoBanner = lazy(() => import('../DemoBanner').then(m => ({ default: m.DemoBanner })));
-const AIChatPanel = lazy(() => import('../AIChatPanel').then(m => ({ default: m.AIChatPanel })));
 const QuickSwitcher = lazy(() => import('../QuickSwitcher').then(m => ({ default: m.QuickSwitcher })));
 const ReferralTouchpoint = lazy(() => import('../ReferralTouchpoint').then(m => ({ default: m.ReferralTouchpoint })));
 const BiweeklyReferralBanner = lazy(() => import('../BiweeklyReferralBanner').then(m => ({ default: m.BiweeklyReferralBanner })));
@@ -47,13 +44,10 @@ interface LayoutProps {
 }
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
-  const { tourActive, isDemoMode, presenterMode } = useDemo();
+  const { isDemoMode, presenterMode } = useDemo();
   const { session } = useAuth();
   const { isEmulating } = useEmulation();
   const { unreadCount: _notifCount } = useNotifications();
-  const [guidedTourActive, setGuidedTourActive] = useState(false);
-  const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
-  const anyTourActive = tourActive || guidedTourActive;
 
   // Realtime notifications are now handled inside NotificationContext via useNotificationData
 
@@ -136,8 +130,6 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       <MobileTabBar />
       {/* Lazy-loaded overlays — none needed for initial paint */}
       <Suspense fallback={null}>
-        {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
-        <AIChatPanel hidden={anyTourActive} />
         <ReferralTouchpoint />
         <BiweeklyReferralBanner />
         <QuickSwitcher />
