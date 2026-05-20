@@ -874,3 +874,37 @@ body {
 @media (max-width: 767px) {
   .cl-grid { grid-template-columns: 1fr; }
 }
+
+/* ── C12: drift catches ────────────────────────────────────────── */
+.catches { display: flex; flex-direction: column; gap: 0; border: 0.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.catch { display: flex; gap: 12px; padding: 14px 16px; border-top: 0.5px solid var(--line); }
+.catch:first-child { border-top: none; }
+.catch-icon { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.catch-icon.reduced { background: rgba(34,197,94,0.1); color: #16a34a; }
+.catch-icon.proven { background: rgba(245,158,11,0.1); color: #d97706; }
+.catch-icon.open { background: var(--cream); color: var(--gold); border: 0.5px solid var(--line); }
+.catch-body { flex: 1; min-width: 0; }
+.catch-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.catch-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+.catch-tag.reduced { background: rgba(34,197,94,0.1); color: #16a34a; }
+.catch-tag.proven { background: rgba(245,158,11,0.1); color: #d97706; }
+.catch-tag.open { background: var(--cream); color: var(--muted); border: 0.5px solid var(--line); }
+.catch-pillar { font-size: 11px; color: var(--muted); }
+.catch-label { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
+.catch-meta { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.catch-meta strong { font-weight: 600; color: var(--primary); }
+.catch-meta .savings { color: #16a34a; font-weight: 600; }
+.catch-ack-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.catch-ack-stat { font-size: 11px; color: var(--muted); }
+.catch-ack-stat i { font-size: 12px; vertical-align: -1px; margin-right: 2px; }
+.catch-ack-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; border: 0.5px solid var(--line); background: #fff; color: var(--primary); cursor: pointer; transition: background 0.15s; }
+.catch-ack-btn:hover { background: var(--cream); }
+.catch-ack-btn i { font-size: 12px; }
+.catch-ack-btn.done { background: rgba(34,197,94,0.08); color: #16a34a; border-color: rgba(34,197,94,0.2); cursor: default; pointer-events: none; }
+
+/* ── C12: weekly drift report card ─────────────────────────────── */
+.report-card { display: flex; gap: 12px; padding: 14px 16px; border: 0.5px solid var(--line); border-radius: 12px; background: #fff; align-items: flex-start; }
+.report-icon { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--cream); color: var(--gold); }
+.report-h { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
+.report-meta { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.report-meta strong { font-weight: 600; color: var(--primary); }

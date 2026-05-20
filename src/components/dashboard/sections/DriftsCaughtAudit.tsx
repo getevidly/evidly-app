@@ -1,2 +1,17 @@
-import { SectionStub } from './SectionStub';
-export function DriftsCaughtAudit() { return <SectionStub sectionKey="drifts_caught_audit" />; }
+/**
+ * DriftsCaughtAudit — C12 dispatcher
+ *
+ * compliance_manager → audit variant (evidence trail)
+ */
+
+import { useRole } from '../../../contexts/RoleContext';
+import { DriftsCaughtList } from './DriftsCaughtList';
+
+export function DriftsCaughtAudit() {
+  const { userRole } = useRole();
+
+  if (userRole === 'compliance_manager') {
+    return <DriftsCaughtList variant="audit" />;
+  }
+  return null;
+}
