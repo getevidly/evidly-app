@@ -908,3 +908,44 @@ body {
 .report-h { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
 .report-meta { font-size: 11px; color: var(--muted); line-height: 1.4; }
 .report-meta strong { font-weight: 600; color: var(--primary); }
+
+/* ── C13a: county readiness ────────────────────────────────────── */
+.cnty-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.cnty { border: 0.5px solid var(--line); border-radius: 12px; background: #fff; padding: 14px 16px; }
+.cnty-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.cnty-name { font-size: 14px; font-weight: 600; color: var(--primary); }
+.cnty-tier { font-size: 10px; color: var(--muted); background: var(--cream); border: 0.5px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+.cnty-status { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; margin-left: auto; }
+.cnty-status.ready { background: var(--prove-bg); color: var(--prove-dark); }
+.cnty-status.watch { background: var(--reduce-bg); color: var(--reduce-dark); }
+.cnty-status.alarm { background: rgba(163,45,45,0.1); color: var(--red); }
+.cnty-stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.cnty-cell { display: flex; flex-direction: column; gap: 2px; }
+.cnty-cell strong { font-size: 13px; font-weight: 600; color: var(--primary); }
+.cnty-gaps { font-size: 11px; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.cnty-gaps i { font-size: 13px; color: var(--reduce); flex-shrink: 0; }
+.cnty-attribution { font-size: 10px; color: var(--muted); opacity: 0.7; }
+
+/* ── C13a: decisions queue ─────────────────────────────────────── */
+.decisions { display: flex; flex-direction: column; gap: 0; border: 0.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.dec-row { display: flex; gap: 10px; padding: 12px 16px; border-top: 0.5px solid var(--line); align-items: flex-start; }
+.dec-row:first-child { border-top: none; }
+.dec-prio { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; }
+.dec-prio.urgent { background: var(--red); }
+.dec-prio.soon { background: var(--reduce); }
+.dec-prio.review { background: var(--prove); }
+.dec-body { flex: 1; min-width: 0; }
+.dec-label { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
+.dec-meta { font-size: 11px; color: var(--muted); }
+.dec-why { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.dec-why .reg-link { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; cursor: help; }
+.dec-why .reg { color: var(--muted); }
+.dec-why .cost { color: var(--red); font-weight: 600; }
+.dec-act { flex-shrink: 0; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 6px; border: 0.5px solid var(--line); background: #fff; color: var(--primary); cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.dec-act:hover { background: var(--cream); }
+.dec-act.urgent { background: var(--red); color: #fff; border-color: var(--red); }
+
+@media (max-width: 767px) {
+  .cnty-grid { grid-template-columns: 1fr; }
+  .cnty-stat { grid-template-columns: repeat(2, 1fr); }
+}
