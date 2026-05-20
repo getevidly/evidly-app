@@ -67,7 +67,7 @@
   --gold-light:     #C4AE7A;
   --gold-bg:        rgba(160,140,90,.1);
   --gold-border:    rgba(160,140,90,.3);
-  --navy:           #0B1628;
+  --navy:           #1E2D4D;
   --navy-deep:      #07111F;
 
   /* ── STATUS COLORS (never change) ── */
@@ -87,6 +87,97 @@
   --scoretable:     #00D4AA;
   --scoretable-bg:  rgba(0,212,170,.1);
   --scoretable-border: rgba(0,212,170,.3);
+
+  /* ── V10 Layout Shell (C7) ── */
+  --prove:        #0F6E56;
+  --prove-dark:   #085041;
+  --prove-bg:     #E1F5EE;
+}
+
+/* ── V10 Last Action Banner ─────────────────────────────── */
+
+.last-action {
+  background: #E1F5EE;
+  padding: 8px 14px;
+  font-size: 11.5px;
+  color: #085041;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #C3E8D9;
+}
+
+.last-action .ti {
+  font-size: 14px;
+  color: #0F6E56;
+}
+
+.last-action strong {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.last-action .last-action-ago {
+  margin-left: auto;
+  white-space: nowrap;
+  opacity: 0.7;
+  font-size: 10.5px;
+}
+
+/* ── V10 Quick Actions Bar ──────────────────────────────── */
+
+.qa {
+  position: fixed;
+  bottom: 3.5rem; /* above MobileTabBar (h-14 = 3.5rem) */
+  left: 0;
+  right: 0;
+  z-index: 35;
+  background: #1E2D4D;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 14px 20px;
+}
+
+@media (min-width: 1024px) {
+  .qa {
+    bottom: 0;
+    left: 15rem; /* lg:pl-60 = 15rem sidebar */
+  }
+}
+
+.qai {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #A08C5A;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qai:hover {
+  opacity: 0.8;
+}
+
+.qai .ti {
+  font-size: 20px;
+}
+
+/* Mobile: icon-only below 480px */
+@media (max-width: 479px) {
+  .qai {
+    font-size: 0;
+    gap: 0;
+  }
+  .qai .ti {
+    font-size: 22px;
+  }
 }
 
 * {

@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
 import { QuickActionBar } from './QuickActionBar';
+import { LastActionBanner } from './LastActionBanner';
 import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -110,6 +111,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <Suspense fallback={null}><OfflineBanner /></Suspense>
+        <LastActionBanner />
         {/* BREADCRUMB BAR — fixed above scroll area, never scrolls away */}
         <div
           className="flex-shrink-0 z-40"
