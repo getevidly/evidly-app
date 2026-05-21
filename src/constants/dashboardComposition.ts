@@ -42,6 +42,7 @@ export type DashboardRole = Exclude<UserRole, 'platform_admin'>;
  */
 export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   owner_operator: [
+    'today_list',
     'metric_cards',
     'prp_header',
     'yesterday_caught_line',
@@ -55,9 +56,9 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'decisions_queue',
     'team_grid',
     'intelligence_slot',
-    'today_list',
   ],
   executive: [
+    'today_list',
     'metric_cards',
     'prp_header',
     'yesterday_caught_line',
@@ -72,9 +73,9 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'decisions_queue',
     'team_grid',
     'intelligence_slot',
-    'today_list',
   ],
   compliance_manager: [
+    'today_list',
     'metric_cards',
     'prp_header',
     'yesterday_caught_line',
@@ -87,9 +88,9 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'county_readiness',
     'team_grid',
     'intelligence_slot',
-    'today_list',
   ],
   facilities_manager: [
+    'today_list',
     'prp_header',
     'yesterday_caught_line',
     'advisor_single_fire',
@@ -98,9 +99,9 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'weekly_drift_report',
     'decisions_queue',
     'intelligence_slot',
-    'today_list',
   ],
   chef: [
+    'today_list',
     'prp_header',
     'yesterday_caught_line',
     'advisor_single_food',
@@ -108,7 +109,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'drifts_caught',
     'weekly_drift_report',
     'intelligence_slot',
-    'today_list',
   ],
   kitchen_manager: [
     'advisor_flag_strip',
