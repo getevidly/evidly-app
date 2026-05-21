@@ -89,23 +89,47 @@ export function MetricCards() {
     return (
       <div className="met-row">
         <div className="met amber">
-          <div className="met-top"><i className="ti ti-alert-triangle" /><span>Residual risk · portfolio</span></div>
+          <div className="met-top">
+            <i className="ti ti-alert-triangle" />
+            <span>Residual risk · portfolio</span>
+            <span className="info" title="How this is calculated: Sum of estimated dollar exposure across all currently-monitored compliance items (food + fire) across all locations in the portfolio, minus dollar value already mitigated. Full method launches Q3 2026 with per-county fine schedules and insurer-specific disclaimer math.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot timeline">Per-county calc Q3 2026</p>
         </div>
         {/* TODO Q3 2026: wire to useCountyReadiness for portfolio-level rolled-up counts */}
         <div className="met teal">
-          <div className="met-top"><i className="ti ti-shield-check" /><span>Portfolio inspection-ready</span></div>
+          <div className="met-top">
+            <i className="ti ti-shield-check" />
+            <span>Portfolio inspection-ready</span>
+            <span className="info" title="How this is calculated: Each location is scored per the inspection methodology of its own county or jurisdiction (CalCode, FDA Food Code, NFPA, etc.) and displayed exactly as that jurisdiction produces it. EvidLY never blends or converts. Live per-county wiring lands Q3 2026.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot">Per-county readiness wiring launches Q3 2026.</p>
         </div>
         <div className="met teal">
-          <div className="met-top"><i className="ti ti-file-check" /><span>Docs current portfolio</span></div>
+          <div className="met-top">
+            <i className="ti ti-file-check" />
+            <span>Docs current portfolio</span>
+            <span className="info" title="Counts active documents on file across all portfolio locations that have not expired. Excludes archived, replaced, or deleted documents. Documents within 30 days of expiration are surfaced separately in the Renewal card.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">{loading ? '—' : `${current} of ${total}`}</p>
           <p className="met-foot detail">{loading ? '' : `${expiringWithin30Days} expire <30d`}</p>
         </div>
         <div className="met purple">
-          <div className="met-top"><i className="ti ti-clock" /><span>Decisions waiting</span></div>
+          <div className="met-top">
+            <i className="ti ti-clock" />
+            <span>Decisions waiting</span>
+            <span className="info" title="Counts decisions awaiting action across the portfolio — vendor renewals, service approvals, corrective action sign-offs. Each decision routes to the Decisions Queue section below for review.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot">Decisions queue lands C13</p>
         </div>
@@ -117,22 +141,46 @@ export function MetricCards() {
     return (
       <div className="met-row">
         <div className="met amber">
-          <div className="met-top"><i className="ti ti-alert-triangle" /><span>Residual risk · monitored</span></div>
+          <div className="met-top">
+            <i className="ti ti-alert-triangle" />
+            <span>Residual risk · monitored</span>
+            <span className="info" title="How this is calculated: Sum of estimated dollar exposure across all currently-monitored compliance items (food + fire) minus dollar value already mitigated. Full method launches Q3 2026 with per-county fine schedules and insurer-specific disclaimer math.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot timeline">Per-county calc Q3 2026</p>
         </div>
         <div className="met teal">
-          <div className="met-top"><i className="ti ti-file-check" /><span>Evidence on record</span></div>
+          <div className="met-top">
+            <i className="ti ti-file-check" />
+            <span>Evidence on record</span>
+            <span className="info" title="Counts active documents with full chain-of-custody on record. Evidence packages route through here when assembling for inspection or audit. Excludes archived or replaced documents.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">{loading ? '—' : `${current} of ${total}`}</p>
           <p className="met-foot detail">All inspection-traceable</p>
         </div>
         <div className="met purple">
-          <div className="met-top"><i className="ti ti-calendar" /><span>Inspection windows opening</span></div>
+          <div className="met-top">
+            <i className="ti ti-calendar" />
+            <span>Inspection windows opening</span>
+            <span className="info" title="Counts inspections scheduled to open within the next 60 days, by county. Window opens are jurisdiction-defined; EvidLY reads the schedule per agency methodology. Full per-county wiring lands Q3 2026.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot">County readiness lands C13</p>
         </div>
         <div className="met teal">
-          <div className="met-top"><i className="ti ti-eye-check" /><span>Drifts caught QTD</span></div>
+          <div className="met-top">
+            <i className="ti ti-eye-check" />
+            <span>Drifts caught QTD</span>
+            <span className="info" title="Counts drift catches resolved this quarter across the portfolio. 'Reduced' = caught and mitigated before exposure. 'Proven' = caught and documented. See Drifts Caught section below for the full audit trail.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot">Live wiring lands C12</p>
         </div>
