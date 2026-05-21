@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import type { AdvisorBriefing, OpenItem } from '../../../hooks/useAdvisorBriefings';
+import { CitationChip } from '../CitationChip';
 
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
 
@@ -90,6 +92,38 @@ function defaultPostureLine(posture: string, items: OpenItem[]): string {
   return `${items.length} open item${items.length === 1 ? '' : 's'}.`;
 }
 
+/* ── Citation parsing ──────────────────────────────────────────── */
+
+const CITATION_RE =
+  /<citation\s+data-id="([^"]+)"\s+data-section="([^"]+)"\s+data-family="([^"]+)">([^<]+)<\/citation>/g;
+
+function renderBodyWithCitations(text: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let key = 0;
+
+  CITATION_RE.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = CITATION_RE.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    const [, id, , , label] = match;
+    parts.push(
+      <CitationChip key={`cite-${key++}`} citationId={id}>
+        {label}
+      </CitationChip>,
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [text];
+}
+
 /* ── Date formatting ───────────────────────────────────────────── */
 
 function formatBriefingDate(generatedAt: string, tz: string): string {
@@ -156,7 +190,7 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
         </span>
         {summary}
       </p>
-      {bodyText && <p className="brief-body">{bodyText}</p>}
+      {bodyText && <p className="brief-body">{renderBodyWithCitations(bodyText)}</p>}
       {showItems && briefing.open_items.length > 0 && (
         <div className="brief-items">
           <p className="brief-items-h">{ITEMS_LABEL[variant]}</p>

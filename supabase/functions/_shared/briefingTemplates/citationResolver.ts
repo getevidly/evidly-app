@@ -130,14 +130,18 @@ export async function resolveStatuteDelta(
 
 /**
  * Format a citation for inclusion in briefing prose.
- * No delta:   "CalCode §113996 (Hot and cold holding, potentially hazardous food)"
- * With delta: "CalCode §113996 (Hot and cold holding, potentially hazardous food) — Berkeley Environmental Health BMC §11.28.220 is stricter"
+ * Wraps the CalCode reference in a <citation> element that BriefCard (Step 6)
+ * parses into a clickable CitationChip React component.
+ *
+ * No delta:   <citation data-id="uuid" data-section="113996" data-family="CalCode">CalCode §113996 (short title)</citation>
+ * With delta: <citation ...>CalCode §113996 (...)</citation> — Berkeley Environmental Health BMC §11.28.220 is stricter
  */
 export function renderCitationReference(
   citation: ResolvedCitation,
   delta?: StatuteDelta | null,
 ): string {
-  const base = `CalCode §${citation.section_number} (${citation.short_title})`;
+  const label = `CalCode \u00A7${citation.section_number} (${citation.short_title})`;
+  const base = `<citation data-id="${citation.citation_id}" data-section="${citation.section_number}" data-family="CalCode">${label}</citation>`;
 
   if (delta) {
     const authority = delta.local_authority_name || 'local authority';
@@ -151,9 +155,9 @@ export function renderCitationReference(
 }
 
 /**
- * Format a resolved citation as a markdown link for downstream rendering.
- * BriefCard (Step 6) will make [text](citation:uuid) links clickable.
+ * Format a resolved citation as a structured <citation> element.
+ * Shorter form (section number only, no short_title) for inline references.
  */
 export function formatCitation(citation: ResolvedCitation): string {
-  return `[CalCode \u00A7${citation.section_number}](citation:${citation.citation_id})`;
+  return `<citation data-id="${citation.citation_id}" data-section="${citation.section_number}" data-family="CalCode">CalCode \u00A7${citation.section_number}</citation>`;
 }
