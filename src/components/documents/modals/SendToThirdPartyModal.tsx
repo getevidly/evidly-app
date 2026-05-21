@@ -65,6 +65,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
   const [coverMsg, setCoverMsg] = useState('');
   const [orgDocs, setOrgDocs] = useState<OrgDoc[]>([]);
   const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<{ portalUrl: string; emailSent: boolean; note?: string } | null>(null);
 
   // AI memory state
   const [recentRecipients, setRecentRecipients] = useState<RecentRecipient[]>([]);
@@ -307,14 +308,33 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
         }
       }
 
-      toast.success('Secure link sent');
-      onClose();
+      // 4. Invoke send-portal-link edge function (sends email + returns portal URL)
+      const portalUrl = `${window.location.origin}/portal/${secureToken}`;
+      let emailSent = false;
+      let note: string | undefined;
+
+      try {
+        const { data: sendData } = await supabase.functions.invoke('send-portal-link', {
+          body: { send_record_id: sendRec.id },
+        });
+        if (sendData?.portal_url) {
+          // Edge function may return a canonical portal URL
+        }
+        emailSent = sendData?.email_sent === true;
+        if (sendData?.note) note = sendData.note as string;
+      } catch {
+        // Email delivery failed — still show success with manual share
+        note = 'Email delivery failed. Share the link manually.';
+      }
+
+      setSendResult({ portalUrl, emailSent, note });
+      setStep(5);
     } catch {
       toast.error('Failed to send');
     } finally {
       setSending(false);
     }
-  }, [orgId, profile, recipientType, recipientName, recipientEmail, recipientOrg, purpose, coverMsg, picked, onClose]);
+  }, [orgId, profile, recipientType, recipientName, recipientEmail, recipientOrg, purpose, coverMsg, picked]);
 
   const purposes = recipientType === 'custom' ? CUSTOM_PURPOSES : (currentRecipient?.purposes || []);
 
@@ -332,7 +352,9 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
           SEND TO THIRD PARTY
         </div>
         <div className="text-[17px] font-bold mt-1">
-          Step {step} of 4 {'\u2014'} {STEP_LABELS[step - 1]}
+          {step <= 4
+            ? `Step ${step} of 4 ${'\u2014'} ${STEP_LABELS[step - 1]}`
+            : 'Sent!'}
         </div>
         <div className="flex gap-1 mt-2.5">
           {[1, 2, 3, 4].map((n) => (
@@ -595,49 +617,111 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
             </div>
           </>
         )}
+
+        {step === 5 && sendResult && (
+          <>
+            <div className="text-center mb-5">
+              <div
+                className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-[22px]"
+                style={{ backgroundColor: sendResult.emailSent ? '#DEF7EC' : '#FEF3C7', color: sendResult.emailSent ? '#059669' : '#D97706' }}
+              >
+                {sendResult.emailSent ? '\u2713' : '\u21AA'}
+              </div>
+              <h2 className="text-[17px] font-bold text-[#1E2D4D] mb-1">
+                {sendResult.emailSent ? 'Link Sent' : 'Link Created'}
+              </h2>
+              <p className="text-[13px] text-[#8A93A6]">
+                {sendResult.emailSent
+                  ? `An email with the portal link was sent to ${recipientEmail}.`
+                  : (sendResult.note || 'Share the link below with the recipient.')}
+              </p>
+            </div>
+
+            <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2">
+              Portal Link
+            </div>
+            <div
+              className="flex items-center gap-2 p-3 rounded-md border border-[#E2DDD4]"
+              style={{ backgroundColor: '#FAF7F0' }}
+            >
+              <code className="flex-1 text-[12px] text-[#1E2D4D] break-all select-all font-mono">
+                {sendResult.portalUrl}
+              </code>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(sendResult.portalUrl);
+                  toast.success('Link copied');
+                }}
+                className="flex-shrink-0 px-3 py-1.5 bg-[#1E2D4D] text-[#FAF7F0] text-[11px] font-bold rounded-md hover:opacity-90"
+              >
+                Copy
+              </button>
+            </div>
+
+            <div className="mt-3 text-[11px] text-[#8A93A6]">
+              This link expires in 14 days. You can revoke it any time from the send history.
+            </div>
+          </>
+        )}
       </div>
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-[#E2DDD4] flex justify-between bg-[#FAFBFD] rounded-b-xl">
-        <button
-          type="button"
-          onClick={onClose}
-          className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <div className="flex gap-2">
-          {step > 1 && (
+        {step === 5 ? (
+          <>
+            <div />
             <button
               type="button"
-              onClick={() => setStep(step - 1)}
+              onClick={onClose}
+              className="px-4 py-2 bg-[#1E2D4D] text-[#FAF7F0] text-[12px] font-bold rounded-md hover:opacity-90"
+            >
+              Close
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={onClose}
               className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50"
             >
-              Back
+              Cancel
             </button>
-          )}
-          {step < 4 && (
-            <button
-              type="button"
-              onClick={() => setStep(step + 1)}
-              disabled={!canNext}
-              className="px-4 py-2 bg-[#1E2D4D] text-white text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-40"
-            >
-              Next {'\u2192'}
-            </button>
-          )}
-          {step === 4 && (
-            <button
-              type="button"
-              onClick={handleSend}
-              disabled={sending}
-              className="px-4 py-2 rounded-md text-[12px] font-bold hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-            >
-              {sending ? 'Sending\u2026' : 'Send Secure Link \u2192'}
-            </button>
-          )}
-        </div>
+            <div className="flex gap-2">
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setStep(step - 1)}
+                  className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50"
+                >
+                  Back
+                </button>
+              )}
+              {step < 4 && (
+                <button
+                  type="button"
+                  onClick={() => setStep(step + 1)}
+                  disabled={!canNext}
+                  className="px-4 py-2 bg-[#1E2D4D] text-white text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-40"
+                >
+                  Next {'\u2192'}
+                </button>
+              )}
+              {step === 4 && (
+                <button
+                  type="button"
+                  onClick={handleSend}
+                  disabled={sending}
+                  className="px-4 py-2 rounded-md text-[12px] font-bold hover:opacity-90 disabled:opacity-50"
+                  style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+                >
+                  {sending ? 'Sending\u2026' : 'Send Secure Link \u2192'}
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );
