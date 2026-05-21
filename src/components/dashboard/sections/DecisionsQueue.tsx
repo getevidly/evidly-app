@@ -10,6 +10,7 @@ import { useRole } from '../../../contexts/RoleContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useDecisionsQueue } from '../../../hooks/useDecisionsQueue';
 import { DecisionRow } from './DecisionRow';
+import { DecisionsEmptyState } from './DecisionsEmptyState';
 
 const HEADING: Record<string, string> = {
   owner_operator: 'Decisions awaiting your call',
@@ -61,11 +62,7 @@ export function DecisionsQueue() {
       </div>
       <div className="decisions">
         {openCount === 0 ? (
-          <div className="dec-row" style={{ justifyContent: 'center', textAlign: 'center' }}>
-            <p style={{ color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-              No decisions awaiting your call. EvidLY is watching.
-            </p>
-          </div>
+          <DecisionsEmptyState />
         ) : (
           decisions.slice(0, 10).map(d => (
             <DecisionRow key={d.id} decision={d} />

@@ -14,6 +14,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { TodayListRow } from './TodayListRow';
+import { TasksEmptyState } from './TasksEmptyState';
 
 interface RoleConfig {
   heading: string;
@@ -87,11 +88,7 @@ function TodayListInner({ heading, pillarFilter, userIdFilter }: {
       </div>
       <div className="tdc">
         {items.length === 0 ? (
-          <div className="tdr" style={{ justifyContent: 'center', textAlign: 'center' }}>
-            <p style={{ color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-              No tasks scheduled for today.
-            </p>
-          </div>
+          <TasksEmptyState />
         ) : (
           items.map(item => (
             <TodayListRow key={item.id} item={item} />

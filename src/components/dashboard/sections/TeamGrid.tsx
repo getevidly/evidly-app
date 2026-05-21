@@ -10,6 +10,7 @@ import { useRole } from '../../../contexts/RoleContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useTeamGrid } from '../../../hooks/useTeamGrid';
 import { TeamCard } from './TeamCard';
+import { TeamEmptyState } from './TeamEmptyState';
 
 const HEADING: Record<string, string> = {
   owner_operator: 'Where your team stands',
@@ -59,13 +60,7 @@ export function TeamGrid() {
         )}
       </div>
       {members.length === 0 ? (
-        <div className="team-grid">
-          <div className="team-card" style={{ textAlign: 'center', gridColumn: '1 / -1' }}>
-            <p style={{ color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-              No team members yet. Invite via Settings.
-            </p>
-          </div>
-        </div>
+        <TeamEmptyState />
       ) : (
         <div className="team-grid">
           {members.map(m => (
