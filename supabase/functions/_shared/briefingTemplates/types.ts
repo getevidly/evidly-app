@@ -28,12 +28,6 @@ export interface OpenItem {
   detected_at: string; // ISO timestamp
 }
 
-export interface CitationResolution {
-  text: string;
-  source_url: string | null;
-  verified: boolean;
-}
-
 export interface DataSnapshot {
   open_items: OpenItem[];
   recent_drift_count_30d: number;
@@ -44,6 +38,8 @@ export interface DataSnapshot {
   open_corrective_actions: number;
   food_safety_agencies: string[];
   fire_safety_agencies: string[];
+  food_safety_jurisdiction_id: string | null;
+  fire_safety_jurisdiction_id: string | null;
   scope: {
     advisor_type: AdvisorType;
     location_id: string | null;

@@ -345,9 +345,11 @@ export async function loadData(
   const upcomingInspections30d =
     items.filter((i) => i.source === 'inspection_window').length;
 
-  // ── Jurisdiction agencies for credential straps ────────────────
+  // ── Jurisdiction agencies + IDs for credential straps + citation delta lookups
   const food_safety_agencies: string[] = [];
   const fire_safety_agencies: string[] = [];
+  let food_safety_jurisdiction_id: string | null = null;
+  let fire_safety_jurisdiction_id: string | null = null;
   {
     let locQ = supabase
       .from('locations')
@@ -360,16 +362,25 @@ export async function loadData(
     if (orgLocIds.length > 0) {
       const { data: ljRows } = await supabase
         .from('location_jurisdictions')
-        .select('jurisdiction_layer, jurisdictions(agency_name)')
+        .select('jurisdiction_layer, jurisdiction_id, jurisdictions(agency_name)')
         .in('location_id', orgLocIds);
 
       for (const r of ljRows || []) {
         const agencyName = (r.jurisdictions as Record<string, unknown>)?.agency_name as string | undefined;
-        if (!agencyName) continue;
-        if (r.jurisdiction_layer === 'food_safety' && !food_safety_agencies.includes(agencyName)) {
-          food_safety_agencies.push(agencyName);
-        } else if (r.jurisdiction_layer === 'fire_safety' && !fire_safety_agencies.includes(agencyName)) {
-          fire_safety_agencies.push(agencyName);
+        if (r.jurisdiction_layer === 'food_safety') {
+          if (agencyName && !food_safety_agencies.includes(agencyName)) {
+            food_safety_agencies.push(agencyName);
+          }
+          if (!food_safety_jurisdiction_id && r.jurisdiction_id) {
+            food_safety_jurisdiction_id = r.jurisdiction_id as string;
+          }
+        } else if (r.jurisdiction_layer === 'fire_safety') {
+          if (agencyName && !fire_safety_agencies.includes(agencyName)) {
+            fire_safety_agencies.push(agencyName);
+          }
+          if (!fire_safety_jurisdiction_id && r.jurisdiction_id) {
+            fire_safety_jurisdiction_id = r.jurisdiction_id as string;
+          }
         }
       }
     }
@@ -385,6 +396,8 @@ export async function loadData(
     open_corrective_actions: openCorrectiveActions,
     food_safety_agencies,
     fire_safety_agencies,
+    food_safety_jurisdiction_id,
+    fire_safety_jurisdiction_id,
     scope: {
       advisor_type: input.advisor_type,
       location_id: input.location_id,

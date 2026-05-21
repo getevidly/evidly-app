@@ -1,8 +1,16 @@
 // templates/fireSafety.ts — fire safety advisor briefing (fire_safety pillar only)
+//
+// TODO C17-NFPA: rewire to citations table when NFPA codes are seeded.
+// Currently no specific section numbers to avoid hardcoded references being wrong.
+// Hood cleaning frequency = "NFPA 96 hood cleaning frequency" (not Table 11.4).
+// Suppression maintenance = "NFPA 96 fire suppression system maintenance" (not §11.2).
 
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
-import { resolveCitation, formatCitation } from '../citationResolver.ts';
+
+// Fire safety citation strings — plain text until NFPA is seeded in citations table
+const HOOD_CLEANING_REF = 'NFPA 96 hood cleaning frequency';
+const SUPPRESSION_REF = 'NFPA 96 fire suppression system maintenance';
 
 function credentialStrap(snapshot: DataSnapshot): string {
   const base = 'NFPA 96, NFPA 17A, NFPA 10, CA Fire Code';
@@ -46,19 +54,15 @@ function timeframe(snapshot: DataSnapshot): string {
 }
 
 export async function renderFireSafety(
-  supabase: SupabaseClient,
+  _supabase: SupabaseClient,
   posture: Posture,
   snapshot: DataSnapshot,
   _input: BriefingInput,
 ): Promise<string> {
-  // Resolve common fire safety citations with fallback text
-  const hoodCleaning = await resolveCitation(supabase, null, 'NFPA 96 Table 11.4 hood cleaning frequency');
-  const suppression = await resolveCitation(supabase, null, 'NFPA 96 \u00A711.2 fire suppression system maintenance');
-
   if (posture === 'solid') {
     return [
       'Fire safety operations are in good standing.',
-      `Hood cleaning, suppression service, and extinguisher inspections current per ${formatCitation(hoodCleaning, null)} and ${formatCitation(suppression, null)}, no recent drift activity.`,
+      `Hood cleaning, suppression service, and extinguisher inspections current per ${HOOD_CLEANING_REF} and ${SUPPRESSION_REF}, no recent drift activity.`,
       `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
@@ -109,7 +113,7 @@ export async function renderFireSafety(
   );
   if (hasService) {
     parts.push(
-      `Hood cleaning frequency per ${formatCitation(hoodCleaning, null)} and suppression inspection per ${formatCitation(suppression, null)} apply.`,
+      `Hood cleaning frequency per ${HOOD_CLEANING_REF} and suppression inspection per ${SUPPRESSION_REF} apply.`,
     );
   }
 

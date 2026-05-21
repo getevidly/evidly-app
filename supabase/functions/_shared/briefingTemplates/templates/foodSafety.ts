@@ -2,7 +2,11 @@
 
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
-import { resolveCitation, formatCitation } from '../citationResolver.ts';
+import {
+  resolveCitation,
+  resolveStatuteDelta,
+  renderCitationReference,
+} from '../citationResolver.ts';
 
 function credentialStrap(snapshot: DataSnapshot): string {
   const base = 'FDA Food Code, CalCode';
@@ -45,20 +49,39 @@ function timeframe(snapshot: DataSnapshot): string {
   return '14 days';
 }
 
+/** Resolve a CalCode citation + optional statute delta for this jurisdiction. */
+async function resolveWithDelta(
+  supabase: SupabaseClient,
+  section: string,
+  fallback: string,
+  jurisdictionId: string | null,
+): Promise<string> {
+  const citation = await resolveCitation(supabase, 'CalCode', section);
+  if (!citation) return fallback;
+
+  const delta = jurisdictionId
+    ? await resolveStatuteDelta(supabase, jurisdictionId, 'CalCode', section)
+    : null;
+
+  return renderCitationReference(citation, delta);
+}
+
 export async function renderFoodSafety(
   supabase: SupabaseClient,
   posture: Posture,
   snapshot: DataSnapshot,
   _input: BriefingInput,
 ): Promise<string> {
-  // Resolve common citations with fallback text (regulatory_citations is empty)
-  const coldHold = await resolveCitation(supabase, null, 'CalCode \u00A7113996 cold-holding');
-  const hotHold = await resolveCitation(supabase, null, 'CalCode \u00A7114002 hot-holding');
+  const jId = snapshot.food_safety_jurisdiction_id;
+
+  // Resolve CalCode citations from the citations table
+  const coldHoldRef = await resolveWithDelta(supabase, '113996', 'cold-holding requirements', jId);
+  const hotHoldRef = await resolveWithDelta(supabase, '114002', 'hot-holding requirements', jId);
 
   if (posture === 'solid') {
     return [
       'Food safety operations are running clean.',
-      `Cold-hold and hot-hold temps current per ${formatCitation(coldHold, null)}, employee certifications in good standing, no recent drift activity.`,
+      `Cold-hold and hot-hold temps current per ${coldHoldRef}, employee certifications in good standing, no recent drift activity.`,
       `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
@@ -109,7 +132,7 @@ export async function renderFoodSafety(
   );
   if (hasTemp) {
     parts.push(
-      `Temperature control requirements per ${formatCitation(coldHold, null)} and ${formatCitation(hotHold, null)} apply.`,
+      `Temperature control requirements per ${coldHoldRef} and ${hotHoldRef} apply.`,
     );
   }
 

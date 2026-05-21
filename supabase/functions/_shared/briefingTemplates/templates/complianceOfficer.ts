@@ -2,7 +2,6 @@
 
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
-import { resolveCitation, formatCitation } from '../citationResolver.ts';
 
 function credentialStrap(snapshot: DataSnapshot): string {
   const allAgencies = [...new Set([...snapshot.food_safety_agencies, ...snapshot.fire_safety_agencies])];

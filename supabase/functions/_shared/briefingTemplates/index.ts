@@ -48,5 +48,4 @@ export type {
   OpenItem,
   Pillar,
   Urgency,
-  CitationResolution,
 } from './types.ts';
