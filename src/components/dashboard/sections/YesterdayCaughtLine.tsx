@@ -37,13 +37,28 @@ export function YesterdayCaughtLine() {
   const summary = buildSummary(filtered);
   const filteredSavings = filtered.reduce((s, c) => s + c.estimated_savings_cents, 0) / 100;
 
+  // Resolution clause — conditional, no hardcoded assumption
+  let resolutionClause = '';
+  if (filtered.some(c => c.resolution_type === 'corrective_action')) {
+    resolutionClause = ' — corrective action dispatched';
+  } else if (filtered.some(c => c.resolved_at !== null)) {
+    resolutionClause = ' — resolved';
+  }
+
+  // Savings clause — suppress $0 noise
+  const savingsClause = filteredSavings > 0
+    ? `, est. ${formatSavings(filteredSavings)} product saved`
+    : '';
+
   let copy: string;
   switch (role) {
     case 'owner_operator':
-      copy = `Yesterday EvidLY caught: ${summary} — corrective action dispatched, est. ${formatSavings(filteredSavings)} product saved.`;
+      copy = `Yesterday EvidLY caught: ${summary}${resolutionClause}${savingsClause}.`;
       break;
     case 'executive':
-      copy = `Yesterday EvidLY caught: ${summary} · ${formatSavings(filteredSavings)} saved.`;
+      copy = filteredSavings > 0
+        ? `Yesterday EvidLY caught: ${summary} · ${formatSavings(filteredSavings)} saved.`
+        : `Yesterday EvidLY caught: ${summary}.`;
       break;
     case 'compliance_manager':
       copy = `Yesterday EvidLY caught: ${summary}.`;

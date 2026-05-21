@@ -10,6 +10,8 @@ export interface DriftCatch {
   drift_type: string;
   estimated_savings_cents: number;
   severity: string;
+  resolution_type: string | null;
+  resolved_at: string | null;
 }
 
 interface YesterdayCatches {
@@ -48,7 +50,7 @@ export function useYesterdayCatches(): YesterdayCatches {
 
         const { data, error: qErr } = await supabase
           .from('drift_catches')
-          .select('id, location_id, pillar, drift_type, estimated_savings_cents, severity')
+          .select('id, location_id, pillar, drift_type, estimated_savings_cents, severity, resolution_type, resolved_at')
           .eq('org_id', orgId)
           .gte('detected_at', start + 'T00:00:00')
           .lt('detected_at', end + 'T00:00:00');
@@ -73,13 +75,15 @@ export function useYesterdayCatches(): YesterdayCatches {
         const locMap = new Map((locs || []).map((l: { id: string; name: string }) => [l.id, l.name]));
 
         setCatches(
-          data.map((d: { id: string; location_id: string; pillar: 'food_safety' | 'fire_safety'; drift_type: string; estimated_savings_cents: number; severity: string }) => ({
+          data.map((d: { id: string; location_id: string; pillar: 'food_safety' | 'fire_safety'; drift_type: string; estimated_savings_cents: number; severity: string; resolution_type: string | null; resolved_at: string | null }) => ({
             id: d.id,
             location_name: locMap.get(d.location_id) || 'Unknown',
             pillar: d.pillar,
             drift_type: d.drift_type,
             estimated_savings_cents: d.estimated_savings_cents || 0,
             severity: d.severity,
+            resolution_type: d.resolution_type ?? null,
+            resolved_at: d.resolved_at ?? null,
           }))
         );
       } catch (err) {

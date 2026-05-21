@@ -3,26 +3,31 @@
  *
  * drift_catches.drift_type → human-readable display label.
  * drift_catches.source_table → evidence trail label.
+ *
+ * Each entry has a verb form (action sentence for cards) and
+ * a noun form (short label for banners / summaries).
  */
 
-const DRIFT_TYPE_LABELS: Record<string, string> = {
-  temperature_out_of_range: 'Temperature drift prevented loss',
-  temperature_trend_drift: 'Temperature trend caught early',
-  missed_checklist: 'Missed checklist caught',
-  document_expiration: 'Document expiration intercepted',
-  receiving_log_missing: 'Receiving log gap caught',
-  allergen_training_overdue: 'Allergen training gap closed',
-  hood_cleaning_approaching: 'Hood cleaning scheduled before lapse',
-  suppression_semi_annual_due: 'Suppression service caught before due',
-  extinguisher_monthly_missed: 'Extinguisher check gap closed',
-  vendor_coi_expiring: 'Vendor COI renewal caught',
-  inspection_readiness_gap: 'Inspection readiness gap closed',
-  team_miss_clustering: 'Team checklist pattern caught',
-  streak_break: 'Compliance streak break caught',
+const DRIFT_TYPE_LABELS: Record<string, { verb: string; noun: string }> = {
+  temperature_out_of_range:    { verb: 'Temperature drift prevented loss',      noun: 'Temperature drift' },
+  temperature_trend_drift:     { verb: 'Temperature trend caught early',        noun: 'Temperature trend' },
+  missed_checklist:            { verb: 'Missed checklist caught',               noun: 'Missed checklist' },
+  document_expiration:         { verb: 'Document expiration intercepted',       noun: 'Document expiration' },
+  receiving_log_missing:       { verb: 'Receiving log gap caught',              noun: 'Receiving log gap' },
+  allergen_training_overdue:   { verb: 'Allergen training gap closed',          noun: 'Allergen training gap' },
+  hood_cleaning_approaching:   { verb: 'Hood cleaning scheduled before lapse',  noun: 'Hood cleaning due' },
+  suppression_semi_annual_due: { verb: 'Suppression service caught before due', noun: 'Suppression service due' },
+  extinguisher_monthly_missed: { verb: 'Extinguisher check gap closed',         noun: 'Extinguisher check gap' },
+  vendor_coi_expiring:         { verb: 'Vendor COI renewal caught',             noun: 'Vendor COI expiring' },
+  inspection_readiness_gap:    { verb: 'Inspection readiness gap closed',       noun: 'Inspection readiness gap' },
+  team_miss_clustering:        { verb: 'Team checklist pattern caught',         noun: 'Team checklist pattern' },
+  streak_break:                { verb: 'Compliance streak break caught',        noun: 'Compliance streak break' },
 };
 
-export function getDriftLabel(driftType: string): string {
-  return DRIFT_TYPE_LABELS[driftType] || 'Drift caught';
+export function getDriftLabel(driftType: string, opts?: { form?: 'verb' | 'noun' }): string {
+  const entry = DRIFT_TYPE_LABELS[driftType];
+  if (!entry) return driftType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return entry[opts?.form ?? 'verb'];
 }
 
 const SOURCE_TABLE_LABELS: Record<string, string> = {

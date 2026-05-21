@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
+import { getDriftLabel } from '../constants/driftTypeLabels';
 
 export interface LastAction {
   user: string;
@@ -190,7 +191,7 @@ export function useLastAction(): LastAction | null {
         user_id: null,
         location_id: driftLog.location_id as string,
         timestamp: driftLog.detected_at as string,
-        detail: `Drift detected: ${driftLog.drift_type} (${driftLog.pillar})`,
+        detail: `EvidLY caught: ${getDriftLabel(driftLog.drift_type as string, { form: 'noun' })}`,
       });
     }
 
