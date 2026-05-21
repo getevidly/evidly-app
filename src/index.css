@@ -993,3 +993,52 @@ body {
 @media (max-width: 767px) {
   .team-grid { grid-template-columns: 1fr; }
 }
+
+/* ── C14: facility services ────────────────────────────────────── */
+.fs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+.fs-card { background: #FFFFFF; border: 0.5px solid var(--line); border-left: 3px solid var(--predict); border-radius: 8px; padding: 12px 14px; }
+.fs-h { font-size: 12px; font-weight: 500; color: var(--navy); margin: 0 0 4px; display: flex; align-items: center; gap: 7px; }
+.fs-h i { color: var(--predict); font-size: 14px; }
+.fs-meta { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.5; }
+.fs-meta .due { color: var(--reduce-dark); font-weight: 500; }
+.fs-meta .ok { color: var(--prove-dark); font-weight: 500; }
+
+/* ── C14: approval queue ───────────────────────────────────────── */
+.approval { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.appr-row { padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; border-top: 0.5px solid var(--line); }
+.appr-row:first-child { border-top: none; }
+.appr-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--reduce-bg); color: var(--reduce); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.appr-body { flex: 1; }
+.appr-label { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0; line-height: 1.35; }
+.appr-meta { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.appr-why { font-size: 12px; color: var(--navy); margin: 9px 0 0; padding: 9px 12px; background: var(--cream); border-left: 2px solid var(--reduce); border-radius: 0 6px 6px 0; line-height: 1.55; }
+.appr-why .reg { color: var(--predict-dark); font-weight: 500; }
+.appr-why .rec { color: var(--reduce-dark); font-weight: 500; }
+.appr-buttons { display: flex; gap: 6px; flex-shrink: 0; align-items: flex-start; padding-top: 2px; }
+.appr-btn { padding: 7px 13px; border: 0.5px solid var(--line); background: #FFFFFF; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.appr-btn.approve { background: var(--prove); color: #FFFFFF; border-color: var(--prove); }
+.appr-btn.reject { color: var(--red); border-color: var(--red-border); }
+
+/* ── C14: overdue items ────────────────────────────────────────── */
+.overdue { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.ov-row { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid var(--red-border); font-size: 13px; color: var(--red-dark); }
+.ov-row:first-child { border-top: none; }
+.ov-l { display: flex; align-items: center; gap: 10px; }
+.ov-l i { color: var(--red); }
+.ov-meta { font-size: 11px; color: var(--red-dark); opacity: 0.75; }
+
+/* ── C14: portfolio snapshot ───────────────────────────────────── */
+.portfolio { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.port-row { padding: 12px 18px; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 0.5fr; gap: 14px; align-items: center; border-top: 0.5px solid var(--line); font-size: 12px; }
+.port-row:first-child { border-top: none; background: var(--cream); font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; padding: 9px 18px; }
+.port-loc { font-weight: 500; color: var(--navy); }
+.port-cell { color: var(--navy); }
+.port-status { font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500; letter-spacing: 0.4px; }
+.port-status.ready { background: var(--prove-bg); color: var(--prove-dark); }
+.port-status.watch { background: var(--reduce-bg); color: var(--reduce-dark); }
+.port-status.alarm { background: var(--red-bg); color: var(--red); }
+
+@media (max-width: 767px) {
+  .fs-grid { grid-template-columns: 1fr; }
+  .port-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+}
