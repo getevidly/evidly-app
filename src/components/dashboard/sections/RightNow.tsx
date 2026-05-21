@@ -32,7 +32,14 @@ function RightNowInner() {
     );
   }
 
-  if (error) return null;
+  if (error) {
+    console.error('[RightNow] failed to load:', error);
+    return (
+      <div className="rightnow" style={{ padding: '14px 18px', color: 'var(--muted)', fontSize: 12 }}>
+        Unable to load. Try refreshing.
+      </div>
+    );
+  }
 
   return (
     <div>

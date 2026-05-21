@@ -31,7 +31,14 @@ function TeamHeadsUpInner() {
     );
   }
 
-  if (error) return null;
+  if (error) {
+    console.error('[TeamHeadsUp] failed to load:', error);
+    return (
+      <div className="tdr-list" style={{ padding: '14px 18px', color: 'var(--muted)', fontSize: 12 }}>
+        Unable to load. Try refreshing.
+      </div>
+    );
+  }
 
   const chipText = items.length > 0 ? `${items.length}` : '';
 

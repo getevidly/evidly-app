@@ -34,7 +34,14 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
     );
   }
 
-  if (error) return null;
+  if (error) {
+    console.error('[DriftsCaughtList] failed to load:', error);
+    return (
+      <div className="catches" style={{ padding: '14px 16px', color: 'var(--muted)', fontSize: 12 }}>
+        Unable to load drift catches. Try refreshing.
+      </div>
+    );
+  }
 
   const count = catches.length;
   const chipText = count > 0
