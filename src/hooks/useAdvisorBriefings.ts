@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -69,7 +69,10 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [fetchKey, setFetchKey] = useState(0);
+  const regenInFlightRef = useRef<Set<string>>(new Set());
 
+  // Phase 1 + Phase 2: fetch fresh rows, fall back to stale
   useEffect(() => {
     if (!orgId) { setLoading(false); return; }
     let cancelled = false;
@@ -139,7 +142,38 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId]);
+  }, [orgId, fetchKey]);
+
+  // Phase 3: background regen for stale advisor_types
+  useEffect(() => {
+    if (loading || error || !orgId) return;
+
+    const staleTypes = (Object.keys(staleness) as AdvisorType[]).filter(t => staleness[t]);
+    if (staleTypes.length === 0) return;
+
+    const toRegen = staleTypes.filter(t => !regenInFlightRef.current.has(t));
+    if (toRegen.length === 0) return;
+
+    let cancelled = false;
+    toRegen.forEach(t => regenInFlightRef.current.add(t));
+
+    Promise.allSettled(
+      toRegen.map(advisor_type =>
+        supabase.functions.invoke('generate-advisor-briefing', {
+          body: { org_id: orgId, advisor_type, location_id: null, force_refresh: true },
+        })
+      )
+    ).then(results => {
+      toRegen.forEach(t => regenInFlightRef.current.delete(t));
+      if (cancelled) return;
+      const anySuccess = results.some(r => r.status === 'fulfilled' && !(r.value as { error?: unknown }).error);
+      if (anySuccess) {
+        setFetchKey(k => k + 1);
+      }
+    });
+
+    return () => { cancelled = true; };
+  }, [loading, error, orgId, staleness]);
 
   return { ...briefings, loading, error, staleness };
 }
