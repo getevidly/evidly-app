@@ -42,6 +42,8 @@ export interface DataSnapshot {
   upcoming_service_due_30d: number;
   upcoming_inspections_30d: number;
   open_corrective_actions: number;
+  food_safety_agencies: string[];
+  fire_safety_agencies: string[];
   scope: {
     advisor_type: AdvisorType;
     location_id: string | null;

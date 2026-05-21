@@ -9,6 +9,27 @@ import type {
   Urgency,
 } from './types.ts';
 
+// ── Drift type → human-readable noun label (mirrors src/constants/driftTypeLabels.ts) ──
+const DRIFT_TYPE_NOUNS: Record<string, string> = {
+  temperature_out_of_range: 'Temperature drift',
+  temperature_trend_drift: 'Temperature trend',
+  missed_checklist: 'Missed checklist',
+  document_expiration: 'Document expiration',
+  receiving_log_missing: 'Receiving log gap',
+  allergen_training_overdue: 'Allergen training gap',
+  hood_cleaning_approaching: 'Hood cleaning due',
+  suppression_semi_annual_due: 'Suppression service due',
+  extinguisher_monthly_missed: 'Extinguisher check gap',
+  vendor_coi_expiring: 'Vendor COI expiring',
+  inspection_readiness_gap: 'Inspection readiness gap',
+  team_miss_clustering: 'Team checklist pattern',
+  streak_break: 'Compliance streak break',
+};
+
+function driftLabel(driftType: string): string {
+  return DRIFT_TYPE_NOUNS[driftType] || driftType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 // ── Pillar filter from advisor type ────────────────────────────────
 function pillarFilterFor(advisor_type: string): Pillar | null {
   if (advisor_type === 'food_safety') return 'food_safety';
@@ -84,7 +105,7 @@ export async function loadData(
         source_id: r.id,
         pillar: r.pillar as Pillar,
         urgency: severityToUrgency(r.severity),
-        title: `Drift: ${r.drift_type || 'operational drift'} detected ${r.detected_at?.split('T')[0] || ''}`.trim(),
+        title: `Drift: ${driftLabel(r.drift_type || 'operational drift')}`,
         location_id: r.location_id,
         detected_at: r.detected_at || nowISO,
       });
@@ -344,6 +365,36 @@ export async function loadData(
   const upcomingInspections30d =
     items.filter((i) => i.source === 'inspection_window').length;
 
+  // ── Jurisdiction agencies for credential straps ────────────────
+  const food_safety_agencies: string[] = [];
+  const fire_safety_agencies: string[] = [];
+  {
+    let locQ = supabase
+      .from('locations')
+      .select('id')
+      .eq('organization_id', org_id);
+    if (location_id) locQ = locQ.eq('id', location_id);
+    const { data: orgLocs } = await locQ;
+    const orgLocIds = (orgLocs || []).map((l: { id: string }) => l.id);
+
+    if (orgLocIds.length > 0) {
+      const { data: ljRows } = await supabase
+        .from('location_jurisdictions')
+        .select('jurisdiction_layer, jurisdictions(agency_name)')
+        .in('location_id', orgLocIds);
+
+      for (const r of ljRows || []) {
+        const agencyName = (r.jurisdictions as Record<string, unknown>)?.agency_name as string | undefined;
+        if (!agencyName) continue;
+        if (r.jurisdiction_layer === 'food_safety' && !food_safety_agencies.includes(agencyName)) {
+          food_safety_agencies.push(agencyName);
+        } else if (r.jurisdiction_layer === 'fire_safety' && !fire_safety_agencies.includes(agencyName)) {
+          fire_safety_agencies.push(agencyName);
+        }
+      }
+    }
+  }
+
   return {
     open_items: items,
     recent_drift_count_30d: recentDriftCount30d,
@@ -352,6 +403,8 @@ export async function loadData(
     upcoming_service_due_30d: upcomingServiceDue30d,
     upcoming_inspections_30d: upcomingInspections30d,
     open_corrective_actions: openCorrectiveActions,
+    food_safety_agencies,
+    fire_safety_agencies,
     scope: {
       advisor_type: input.advisor_type,
       location_id: input.location_id,

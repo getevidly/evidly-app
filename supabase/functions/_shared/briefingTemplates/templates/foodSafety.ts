@@ -4,8 +4,13 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
 import { resolveCitation, formatCitation } from '../citationResolver.ts';
 
-const CREDENTIAL_STRAP =
-  'Current with FDA Food Code, CalCode, and applicable county codes.';
+function credentialStrap(snapshot: DataSnapshot): string {
+  const base = 'FDA Food Code, CalCode';
+  const agencies = snapshot.food_safety_agencies;
+  return agencies.length > 0
+    ? `Current with ${base}, and the requirements of ${agencies.join('; ')}.`
+    : `Current with ${base}.`;
+}
 
 function pluralize(n: number, singular: string, plural?: string): string {
   return n === 1 ? `${n} ${singular}` : `${n} ${plural || singular + 's'}`;
@@ -54,7 +59,7 @@ export async function renderFoodSafety(
     return [
       'Food safety operations are running clean.',
       `Cold-hold and hot-hold temps current per ${formatCitation(coldHold, null)}, employee certifications in good standing, no recent drift activity.`,
-      `Posture: solid \u2014 ${CREDENTIAL_STRAP}`,
+      `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
 
@@ -69,7 +74,7 @@ export async function renderFoodSafety(
       `Recommend ${verb} within ${tf}.`,
       `Posture: watch \u2014 ${pluralize(n, 'item')} pulling, no urgent food safety exposure.`,
       '',
-      CREDENTIAL_STRAP,
+      credentialStrap(snapshot),
     ].join(' ').replace('  ', '\n');
   }
 
@@ -119,7 +124,7 @@ export async function renderFoodSafety(
   parts.push(`Posture: alarm \u2014 ${reasons.join(' + ')}.`);
 
   parts.push('');
-  parts.push(CREDENTIAL_STRAP);
+  parts.push(credentialStrap(snapshot));
 
   return parts.join(' ').replace(/  /g, '\n');
 }

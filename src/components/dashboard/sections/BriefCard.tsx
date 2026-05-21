@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { AdvisorBriefing, OpenItem } from '../../../hooks/useAdvisorBriefings';
 
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
@@ -27,6 +28,12 @@ const CONSULT_LABEL: Record<AdvisorType, string> = {
   compliance_officer: 'Open compliance',
   food_safety: 'Open food safety',
   fire_safety: 'Open fire safety',
+};
+
+const CONSULT_ROUTE: Record<AdvisorType, string> = {
+  compliance_officer: '/dashboard',
+  food_safety: '/food-safety/overview',
+  fire_safety: '/fire-safety/overview',
 };
 
 const ITEMS_LABEL: Record<AdvisorType, string> = {
@@ -163,10 +170,10 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
         </div>
       )}
       {showConsult && (
-        <button type="button" className="brief-consult">
+        <Link to={CONSULT_ROUTE[variant]} className="brief-consult">
           <i className="ti ti-external-link" />
           {CONSULT_LABEL[variant]}
-        </button>
+        </Link>
       )}
     </div>
   );

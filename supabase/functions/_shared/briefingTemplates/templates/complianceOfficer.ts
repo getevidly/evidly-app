@@ -4,8 +4,12 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
 import { resolveCitation, formatCitation } from '../citationResolver.ts';
 
-const CREDENTIAL_STRAP =
-  'Current with FDA Food Code, CalCode, NFPA 96, and CA Fire Code as adopted by applicable county codes.';
+function credentialStrap(snapshot: DataSnapshot): string {
+  const allAgencies = [...new Set([...snapshot.food_safety_agencies, ...snapshot.fire_safety_agencies])];
+  return allAgencies.length > 0
+    ? `Current with FDA Food Code, CalCode, NFPA standards, CA Fire Code, and the requirements of ${allAgencies.join('; ')}.`
+    : 'Current with FDA Food Code, CalCode, NFPA standards, and CA Fire Code.';
+}
 
 function pluralize(n: number, singular: string, plural?: string): string {
   return n === 1 ? `${n} ${singular}` : `${n} ${plural || singular + 's'}`;
@@ -50,7 +54,7 @@ export async function renderComplianceOfficer(
     return [
       'Portfolio is current across food safety and fire safety.',
       'No drift activity in the last 30 days and no items pulling attention this week.',
-      `Posture: solid \u2014 ${CREDENTIAL_STRAP}`,
+      `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
 
@@ -65,7 +69,7 @@ export async function renderComplianceOfficer(
       `Recommend ${verb} within ${tf}.`,
       `Posture: watch \u2014 ${pluralize(n, 'item')} pulling, no urgent exposure.`,
       '',
-      CREDENTIAL_STRAP,
+      credentialStrap(snapshot),
     ].join(' ').replace('  ', '\n');
   }
 
@@ -110,7 +114,7 @@ export async function renderComplianceOfficer(
   parts.push(`Posture: alarm \u2014 ${reasons.join(' + ')}.`);
 
   parts.push('');
-  parts.push(CREDENTIAL_STRAP);
+  parts.push(credentialStrap(snapshot));
 
   return parts.join(' ').replace(/  /g, '\n');
 }

@@ -362,7 +362,7 @@
 .brief-item .ds.review { background: #5DCAA5; }
 .brief-item strong { color: var(--cream); font-weight: 500; }
 .brief-item .tag { margin-left: auto; font-size: 10px; padding: 2px 8px; border-radius: 8px; background: rgba(250,247,240,0.08); color: rgba(250,247,240,0.7); white-space: nowrap; }
-.brief-consult { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 8px 14px; background: rgba(250,247,240,0.08); color: var(--cream); border: 0.5px solid rgba(250,247,240,0.2); border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.brief-consult { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 8px 14px; background: rgba(250,247,240,0.08); color: var(--cream); border: 0.5px solid rgba(250,247,240,0.2); border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; text-decoration: none; }
 .advisor-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 22px; }
 .advisor-single { margin-bottom: 22px; }
 .compliance-row { margin-bottom: 14px; }
