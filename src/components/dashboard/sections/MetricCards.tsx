@@ -47,6 +47,18 @@ export function MetricCards() {
           <p className="met-num">&mdash;</p>
           <p className="met-foot timeline">Full per-county calculation launches Q3 2026.</p>
         </div>
+        {/* TODO Q3 2026: wire value + footer to useCountyReadiness rolled-up ready/watch/alarm counts */}
+        <div className="met teal">
+          <div className="met-top">
+            <i className="ti ti-shield-check" />
+            <span>Inspection-ready</span>
+            <span className="info" title="How this is calculated: Each location is scored per the inspection methodology of its own county or jurisdiction (CalCode, FDA Food Code, NFPA, etc.) and displayed exactly as that jurisdiction produces it. EvidLY never blends or converts. Live per-county wiring lands Q3 2026.">
+              <i className="ti ti-info-circle" />
+            </span>
+          </div>
+          <p className="met-num">&mdash;</p>
+          <p className="met-foot">Per-county readiness wiring launches Q3 2026.</p>
+        </div>
         <div className="met teal">
           <div className="met-top">
             <i className="ti ti-file-check" />
@@ -80,6 +92,12 @@ export function MetricCards() {
           <div className="met-top"><i className="ti ti-alert-triangle" /><span>Residual risk · portfolio</span></div>
           <p className="met-num">&mdash;</p>
           <p className="met-foot timeline">Per-county calc Q3 2026</p>
+        </div>
+        {/* TODO Q3 2026: wire to useCountyReadiness for portfolio-level rolled-up counts */}
+        <div className="met teal">
+          <div className="met-top"><i className="ti ti-shield-check" /><span>Portfolio inspection-ready</span></div>
+          <p className="met-num">&mdash;</p>
+          <p className="met-foot">Per-county readiness wiring launches Q3 2026.</p>
         </div>
         <div className="met teal">
           <div className="met-top"><i className="ti ti-file-check" /><span>Docs current portfolio</span></div>
