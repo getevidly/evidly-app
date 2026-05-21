@@ -1,27 +1,31 @@
 /**
  * CountyReadiness — C13a dispatcher
  *
- * owner_operator, executive → all counties
- * compliance_manager → same data, advisory header
+ * compliance_manager only — advisory detail view.
+ *
+ * owner_operator + executive intentionally excluded — the Inspection-ready metric card at the
+ * top of the dashboard is the at-a-glance surface for these roles. CountyReadiness was a
+ * duplicate. Compliance_manager keeps the section as an advisory detail view.
  */
 
 import { useRole } from '../../../contexts/RoleContext';
-import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useCountyReadiness } from '../../../hooks/useCountyReadiness';
 import { CountyReadinessCard } from './CountyReadinessCard';
 
 export function CountyReadiness() {
   const { userRole } = useRole();
-  const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { counties, totalLocations, totalCounties, loading } = useCountyReadiness();
 
-  if (role !== 'owner_operator' && role !== 'executive' && role !== 'compliance_manager') {
+  if (userRole !== 'compliance_manager') {
     return null;
   }
 
-  const heading = role === 'compliance_manager'
-    ? 'County compliance posture'
-    : 'Inspection-readiness by county';
+  return <CountyReadinessInner />;
+}
+
+function CountyReadinessInner() {
+  const { counties, totalLocations, totalCounties, loading } = useCountyReadiness();
+
+  const heading = 'County compliance posture';
 
   if (loading) {
     return (
