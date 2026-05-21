@@ -18,12 +18,12 @@ interface Recipient {
 }
 
 const RECIPIENTS: Recipient[] = [
-  { v: 'government',        l: 'Environmental Health Dept.',            purposes: ['Annual renewal', 'Inspection follow-up', 'Variance request'] },
-  { v: 'fire_authority',    l: 'Authority Having Jurisdiction (Fire)',  purposes: ['Annual fire inspection', 'Plan check', 'Permit renewal'] },
+  { v: 'ehd',               l: 'Environmental Health Dept.',            purposes: ['Annual renewal', 'Inspection follow-up', 'Variance request'] },
+  { v: 'ahj',               l: 'Authority Having Jurisdiction (Fire)',  purposes: ['Annual fire inspection', 'Plan check', 'Permit renewal'] },
   { v: 'insurance_broker',  l: 'Insurance Broker',                     purposes: ['Annual renewal', 'Claim documentation', 'Underwriting review'] },
   { v: 'insurance_carrier', l: 'Insurance Carrier',                    purposes: ['Claim submission', 'Coverage verification'] },
   { v: 'auditor',           l: 'Auditor / Regulator',                  purposes: ['Compliance audit', 'Investigation'] },
-  { v: 'legal',             l: 'Client / Legal',                       purposes: ['Discovery', 'Contract compliance'] },
+  { v: 'client_legal',      l: 'Client / Legal',                       purposes: ['Discovery', 'Contract compliance'] },
 ];
 
 const CUSTOM_PURPOSES = ['Compliance documentation', 'Contract requirement', 'Insurance claim', 'Legal discovery', 'Other'];
