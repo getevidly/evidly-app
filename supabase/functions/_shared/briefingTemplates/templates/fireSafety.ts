@@ -52,8 +52,8 @@ export async function renderFireSafety(
   _input: BriefingInput,
 ): Promise<string> {
   // Resolve common fire safety citations with fallback text
-  const hoodCleaning = await resolveCitation(supabase, null, 'NFPA 96 \u00A711.6.2 hood cleaning frequency');
-  const suppression = await resolveCitation(supabase, null, 'NFPA 96 \u00A710.2 fire suppression inspection');
+  const hoodCleaning = await resolveCitation(supabase, null, 'NFPA 96 Table 11.4 hood cleaning frequency');
+  const suppression = await resolveCitation(supabase, null, 'NFPA 96 \u00A711.2 fire suppression system maintenance');
 
   if (posture === 'solid') {
     return [

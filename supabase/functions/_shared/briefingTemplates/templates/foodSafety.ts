@@ -53,7 +53,7 @@ export async function renderFoodSafety(
 ): Promise<string> {
   // Resolve common citations with fallback text (regulatory_citations is empty)
   const coldHold = await resolveCitation(supabase, null, 'CalCode \u00A7113996 cold-holding');
-  const hotHold = await resolveCitation(supabase, null, 'CalCode \u00A7113996 hot-holding');
+  const hotHold = await resolveCitation(supabase, null, 'CalCode \u00A7114002 hot-holding');
 
   if (posture === 'solid') {
     return [
