@@ -1042,3 +1042,43 @@ body {
   .fs-grid { grid-template-columns: 1fr; }
   .port-row { grid-template-columns: 1fr 1fr; gap: 8px; }
 }
+
+/* ── C15: right now (kitchen_staff) ──────────────────────────────── */
+.rightnow { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.rightnow-eyebrow { padding: 14px 18px 0; font-size: 11px; font-weight: 500; color: var(--reduce-dark); display: flex; align-items: center; }
+.rightnow-task { padding: 6px 18px 0; font-size: 15px; font-weight: 600; color: var(--navy); line-height: 1.35; }
+.rightnow-meta { font-size: 11px; color: var(--muted); margin-left: 8px; font-weight: 400; }
+.rightnow-cta { padding: 14px 18px 16px; }
+.rightnow-start { padding: 9px 20px; background: var(--prove); color: #FFFFFF; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.rightnow-start:hover { background: var(--prove-dark); }
+.rightnow-next { padding: 12px 18px; border-top: 0.5px solid var(--line); font-size: 12px; color: var(--muted); }
+.rightnow-next strong { color: var(--navy); font-weight: 500; margin-right: 4px; }
+
+/* C15: job aid (placeholder — renders when task_definitions.job_aid exists) */
+.rightnow-job { padding: 10px 18px 14px; background: var(--cream); border-top: 0.5px solid var(--line); }
+.rightnow-job-h { font-size: 11px; font-weight: 600; color: var(--navy); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rightnow-job ol { margin: 0; padding-left: 18px; font-size: 12px; color: var(--navy); line-height: 1.7; }
+.rightnow-job li { padding-left: 2px; }
+.rightnow-job li strong { font-weight: 600; }
+
+/* ── C15: team heads-up (kitchen_staff) ──────────────────────────── */
+.tdr-list { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.tdr-row { padding: 12px 18px; display: flex; align-items: flex-start; gap: 10px; border-top: 0.5px solid var(--line); }
+.tdr-row:first-child { border-top: none; }
+.tdr-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; background: var(--muted); }
+.tdr-dot.assigned { background: var(--prove); }
+.tdr-dot.info { background: var(--predict); }
+.tdr-dot.alert { background: var(--red); }
+.tdr-body { flex: 1; }
+.tdr-label { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0; line-height: 1.35; }
+.tdr-detail { font-size: 12px; color: var(--muted); margin: 3px 0 0; line-height: 1.4; }
+.tdr-time { font-size: 11px; color: var(--muted); flex-shrink: 0; white-space: nowrap; margin-top: 2px; }
+
+/* ── C15: escalation card (kitchen_staff) ────────────────────────── */
+.escalation { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; padding: 16px 18px; }
+.esc-h { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.esc-h i { color: var(--predict); font-size: 13px; }
+.esc-b { font-size: 13px; color: var(--navy); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.esc-b strong { font-weight: 600; }
+.esc-phone { font-size: 12px; color: var(--prove); text-decoration: none; font-weight: 500; }
+.esc-phone:hover { text-decoration: underline; }
