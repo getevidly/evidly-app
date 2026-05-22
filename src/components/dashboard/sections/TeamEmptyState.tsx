@@ -117,7 +117,7 @@ export function TeamEmptyState() {
 
       {/* CTA */}
       <Link to="/team" style={ctaButton}>
-        Invite your first manager
+        Invite first team member
       </Link>
       <p style={subText}>4 seats included on your Founder plan</p>
     </div>
