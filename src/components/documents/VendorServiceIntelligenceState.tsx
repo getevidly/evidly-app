@@ -69,7 +69,7 @@ export function VendorServiceIntelligenceState({ intel, onSendRequest, onVendorA
             EvidLY sees {'\u00B7'} No vendors linked to your kitchen yet
           </p>
           <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
-            Add a vendor {'\u2014'} for hood cleaning, fire suppression, pest control, or any service {'\u2014'} and EvidLY will start tracking service records automatically.
+            Add a vendor {'\u2014'} for hood cleaning, fire suppression, pest control, or any service {'\u2014'} and EvidLY will start identifying service records automatically.
           </p>
           <button
             type="button"
@@ -86,7 +86,7 @@ export function VendorServiceIntelligenceState({ intel, onSendRequest, onVendorA
           <div className="px-5 py-4 border-b border-[#E2DDD4]">
             <h2 className="text-[16px] font-bold text-[#1E2D4D]">Add your first vendor</h2>
             <p className="text-[11px] text-[#8A93A6] mt-1">
-              EvidLY will begin tracking their service records once linked.
+              EvidLY will begin identifying their service records once linked.
             </p>
           </div>
           <div className="px-5 py-4">
@@ -108,7 +108,7 @@ export function VendorServiceIntelligenceState({ intel, onSendRequest, onVendorA
     return (
       <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
         <Wrench size={32} className="text-[#B0B8C8] mb-3" />
-        <p className="text-[13px] text-[#8A93A6] mb-2">Track your vendors' service work</p>
+        <p className="text-[13px] text-[#8A93A6] mb-2">Review your vendors' service work</p>
         <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
           EvidLY watches for hood cleaning reports, suppression tests, pest control logs, fire alarm inspections {'\u2014'} and tells you what's missing.
         </p>

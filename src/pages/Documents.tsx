@@ -9,8 +9,14 @@ import { computeStats } from '../hooks/documents/useDocumentsStats';
 import { useVendorBusinessIntelligence } from '../hooks/documents/useVendorBusinessIntelligence';
 import { useVendorServiceIntelligence } from '../hooks/documents/useVendorServiceIntelligence';
 import { useKitchenEmployeeIntelligence } from '../hooks/documents/useKitchenEmployeeIntelligence';
+import { useFeatureFlag } from '../hooks/useFeatureFlag';
+import { useOrgLocationContext } from '../hooks/documents/useOrgLocationContext';
+import { usePRPStats } from '../hooks/documents/usePRPStats';
+import { useRequiredDocsForTab } from '../hooks/documents/useRequiredDocsForTab';
+import { pillarToCategory } from '../lib/documents/pillarToCategory';
+import { getDocumentsForState } from '../data/onboardingDocuments';
 import { DocumentsHeader } from '../components/documents/DocumentsHeader';
-import { DocumentsTabs, type DocumentTabId } from '../components/documents/DocumentsTabs';
+import { DocumentsTabs, type DocumentTabId, type RequiredCountEntry } from '../components/documents/DocumentsTabs';
 import { DocumentsToolbar } from '../components/documents/DocumentsToolbar';
 import { DocumentsList } from '../components/documents/DocumentsList';
 import { EmptyTabContent } from '../components/documents/EmptyTabContent';
@@ -29,15 +35,6 @@ const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
   business: ['business'],
 };
 
-function pillarToCategory(pillar: string): string {
-  switch (pillar) {
-    case 'fire_safety': return 'service';
-    case 'food_safety': return 'kitchen';
-    case 'vendor':      return 'business';
-    default:            return 'kitchen';
-  }
-}
-
 export function DocumentsPage() {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
@@ -46,6 +43,21 @@ export function DocumentsPage() {
   const activeTab = (searchParams.get('tab') as DocumentTabId) || 'kitchen';
 
   const { documents, loading, refetch } = useDocumentsByTab(orgId);
+
+  // Feature flag: PRP layout
+  const { enabled: prpEnabled } = useFeatureFlag('documents_prp_layout_v1');
+
+  // Org location context for county-dependent features
+  const { stateCode, county } = useOrgLocationContext();
+
+  // PRP stats (only computed when flag is on, but hooks can't be conditional)
+  const prpStats = usePRPStats(documents, prpEnabled ? stateCode : null);
+
+  // Required docs for active tab
+  const { requiredDocs, requiredCount, hasReference } = useRequiredDocsForTab(
+    prpEnabled ? stateCode : null,
+    activeTab,
+  );
 
   // Intelligence hooks
   const businessIntel = useVendorBusinessIntelligence(orgId);
@@ -140,6 +152,59 @@ export function DocumentsPage() {
     };
   }, [documents]);
 
+  // Required-docs counts per tab (for tab indicator tags)
+  const requiredCounts = useMemo<Record<DocumentTabId, RequiredCountEntry | null> | undefined>(() => {
+    if (!prpEnabled || !stateCode) return undefined;
+
+    const allDocs = getDocumentsForState(stateCode);
+    const result: Record<DocumentTabId, RequiredCountEntry> = {
+      kitchen: { required: 0, uploaded: 0 },
+      service: { required: 0, uploaded: 0 },
+      business: { required: 0, uploaded: 0 },
+    };
+
+    // Count required docs per tab from reference
+    for (const doc of allDocs) {
+      if (!doc.required) continue;
+      const cat = pillarToCategory(doc.pillar) as DocumentTabId;
+      const tab = cat === ('employee' as string) ? 'kitchen' : cat;
+      if (result[tab]) result[tab].required++;
+    }
+
+    // Count uploaded (current or expiring) docs per tab as "on file"
+    for (const doc of documents) {
+      if (doc.status === 'current' || doc.status === 'expiring') {
+        for (const [tabId, tabCats] of Object.entries(TAB_CATEGORIES)) {
+          if (tabCats.includes(doc.category)) {
+            const t = tabId as DocumentTabId;
+            if (result[t]) {
+              result[t].uploaded = Math.min(result[t].uploaded + 1, result[t].required);
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+  }, [prpEnabled, stateCode, documents]);
+
+  // County helper text for tab body
+  const countyHelperText = useMemo(() => {
+    if (!prpEnabled || !hasReference || !county || requiredCount === 0) return undefined;
+    return `Your county (${county}) requires ${requiredCount} record type${requiredCount !== 1 ? 's' : ''} for this tab.`;
+  }, [prpEnabled, hasReference, county, requiredCount]);
+
+  // Smart empty state data
+  const smartEmptyData = useMemo(() => {
+    if (!prpEnabled || !hasReference || !county || !stateCode || requiredDocs.length === 0) return undefined;
+    return { county, stateAbbr: stateCode, requiredDocs };
+  }, [prpEnabled, hasReference, county, stateCode, requiredDocs]);
+
+  // PREDICT card click → filter to expiring + missing
+  const handlePredictClick = useCallback(() => {
+    setStatusFilter('expiring');
+  }, []);
+
   // Unique locations and vendors for filter dropdowns
   const locations = useMemo(() => {
     const set = new Set<string>();
@@ -197,13 +262,20 @@ export function DocumentsPage() {
   // Render intelligence state for vendor tabs when no docs exist (replaces basic EmptyTabContent)
   const renderTabContent = () => {
     if (loading) {
-      return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents{'\u2026'}</div>;
+      return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>;
     }
 
     // Kitchen tab: show intelligence banner above list when populated
     if (activeTab === 'kitchen') {
       if (!hasAnyTabDocs) {
-        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+        return (
+          <EmptyTabContent
+            activeTab={activeTab}
+            onUpload={() => setShowUpload(true)}
+            onAddVendorDoc={() => setShowAddVendorDoc(true)}
+            smartEmptyData={smartEmptyData}
+          />
+        );
       }
       return (
         <>
@@ -219,7 +291,14 @@ export function DocumentsPage() {
         return <VendorServiceIntelligenceState intel={serviceIntel} onSendRequest={openRequestModal} onVendorAdded={() => { serviceIntel.refetch(); refetch(); }} />;
       }
       if (!hasAnyTabDocs) {
-        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+        return (
+          <EmptyTabContent
+            activeTab={activeTab}
+            onUpload={() => setShowUpload(true)}
+            onAddVendorDoc={() => setShowAddVendorDoc(true)}
+            smartEmptyData={smartEmptyData}
+          />
+        );
       }
       return (
         <>
@@ -237,7 +316,14 @@ export function DocumentsPage() {
         return <VendorBusinessIntelligenceState intel={businessIntel} onSendRequest={openRequestModal} onVendorAdded={() => { businessIntel.refetch(); refetch(); }} />;
       }
       if (!hasAnyTabDocs) {
-        return <EmptyTabContent activeTab={activeTab} onUpload={() => setShowUpload(true)} onAddVendorDoc={() => setShowAddVendorDoc(true)} />;
+        return (
+          <EmptyTabContent
+            activeTab={activeTab}
+            onUpload={() => setShowUpload(true)}
+            onAddVendorDoc={() => setShowAddVendorDoc(true)}
+            smartEmptyData={smartEmptyData}
+          />
+        );
       }
       return (
         <>
@@ -254,12 +340,20 @@ export function DocumentsPage() {
 
   return (
     <>
-      <DocumentsHeader stats={stats} onSendToThirdParty={() => setShowSendWizard(true)} />
+      <DocumentsHeader
+        stats={stats}
+        onSendToThirdParty={() => setShowSendWizard(true)}
+        prpEnabled={prpEnabled}
+        prpStats={prpStats}
+        onPredictClick={handlePredictClick}
+      />
       <DocumentsTabs
         activeTab={activeTab}
         onTabChange={handleTabChange}
         counts={tabCounts}
         pendingCounts={pendingCounts}
+        requiredCounts={requiredCounts}
+        countyHelperText={countyHelperText}
       />
       <DocumentsToolbar
         activeTab={activeTab}

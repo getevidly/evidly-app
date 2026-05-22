@@ -612,7 +612,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
             >
               <div className="font-bold text-[#1E2D4D] mb-1">How this works</div>
               Recipient gets an EvidLY-branded email with a secure link. Link is valid 14 days,
-              tracked (open / download), revocable any time. Documents are NOT email attachments
+              logged (open / download), revocable any time. Documents are NOT email attachments
               {'\u2014'} viewers see them in a portal-style page.
             </div>
           </>

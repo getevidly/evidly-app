@@ -415,7 +415,7 @@ export function RequestFromVendorModal({
               style={{ backgroundColor: '#FAF7F0', border: '1px solid #E2DDD4' }}
             >
               <div className="font-bold text-[#1E2D4D] mb-1">How this works</div>
-              Vendor gets an EvidLY-branded email with a secure upload link. Link valid 14 days, tracked.
+              Vendor gets an EvidLY-branded email with a secure upload link. Link valid 14 days, activity-logged.
               They upload directly {'\u2014'} no account needed.
             </div>
           </>

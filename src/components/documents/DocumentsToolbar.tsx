@@ -43,7 +43,7 @@ export function DocumentsToolbar({
         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A93A6]" />
         <input
           type="text"
-          placeholder="Search documents\u2026"
+          placeholder="Search documents…"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full pl-8 pr-3 py-2.5 border border-[#E2DDD4] bg-white rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"

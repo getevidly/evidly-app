@@ -69,7 +69,7 @@ export function VendorBusinessIntelligenceState({ intel, onSendRequest, onVendor
             EvidLY sees {'\u00B7'} No vendors linked to your kitchen yet
           </p>
           <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
-            Add a vendor {'\u2014'} EvidLY will automatically track their COI, W-9, and license expirations once linked.
+            Add a vendor {'\u2014'} EvidLY will automatically identify their COI, W-9, and license expirations once linked.
           </p>
           <button
             type="button"
@@ -86,7 +86,7 @@ export function VendorBusinessIntelligenceState({ intel, onSendRequest, onVendor
           <div className="px-5 py-4 border-b border-[#E2DDD4]">
             <h2 className="text-[16px] font-bold text-[#1E2D4D]">Add your first vendor</h2>
             <p className="text-[11px] text-[#8A93A6] mt-1">
-              EvidLY will begin tracking their business compliance documents once linked.
+              EvidLY will begin identifying their business compliance documents once linked.
             </p>
           </div>
           <div className="px-5 py-4">
@@ -108,9 +108,9 @@ export function VendorBusinessIntelligenceState({ intel, onSendRequest, onVendor
     return (
       <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
         <ShieldAlert size={32} className="text-[#B0B8C8] mb-3" />
-        <p className="text-[13px] text-[#8A93A6] mb-2">Track your vendors' business compliance</p>
+        <p className="text-[13px] text-[#8A93A6] mb-2">Review your vendors' business compliance</p>
         <p className="text-[11px] text-[#8A93A6] mb-4 max-w-md">
-          EvidLY tracks COI expirations, surfaces vendors missing required documents, and alerts you before coverage gaps.
+          EvidLY identifies COI expirations, flags vendors missing required documents, and alerts you before coverage gaps.
         </p>
         <button
           type="button"
