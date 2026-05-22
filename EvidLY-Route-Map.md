@@ -610,6 +610,8 @@
 
 **SP5 (Shift Intelligence)** has no separate route — integrated into `/shift-handoff` via `ShiftSummaryCard`.
 
+**Sidebar: Shift Intelligence section** — groups `/current-shift` (Current) and `/shift-handoff` (Handoff) under a dedicated collapsible section. Separated from the Operations section which now contains only admin-flow items (Incidents, Corrective Actions, Self-Inspection, Deficiencies). All roles that see Operations also see Shift Intelligence.
+
 ### Role Access (Superpowers)
 
 | Route | Roles |

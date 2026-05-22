@@ -115,11 +115,11 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Track and resolve violations with documented corrective action plans.',
   },
   'op-current-shift': {
-    id: 'op-current-shift', label: 'Current Shift', path: '/current-shift', icon: '📊',
+    id: 'op-current-shift', label: 'Current', path: '/current-shift', icon: '📊',
     roles: [], description: 'Live mid-shift snapshot — task progress, temperatures, incidents, and PRP outlook.',
   },
   'op-shift': {
-    id: 'op-shift', label: 'Shift Handoff', path: '/shift-handoff', icon: '🤝',
+    id: 'op-shift', label: 'Handoff', path: '/shift-handoff', icon: '🤝',
     roles: [], description: 'End-of-shift handoff — stats, notes, and auto-send to next team.',
   },
 
@@ -272,11 +272,17 @@ interface SectionDef {
 }
 
 const SECTION_DEFS: Record<string, SectionDef> = {
+  shiftIntelligence: {
+    id: 'shift-intelligence', label: 'Shift Intelligence', icon: '🕒',
+    tooltipTitle: 'Shift Intelligence',
+    tooltipDescription: 'Live mid-shift snapshot and end-of-shift handoff with auto-summary.',
+    itemIds: ['op-current-shift', 'op-shift'],
+  },
   operations: {
     id: 'operations', label: 'Operations', icon: '📋',
     tooltipTitle: 'Operations',
-    tooltipDescription: 'Shift intelligence, incidents, corrective actions, self-inspections, and deficiencies across all pillars.',
-    itemIds: ['op-current-shift', 'op-shift', 'op-incidents', 'op-corrective', 'op-self', 'op-deficiencies'],
+    tooltipDescription: 'Incidents, corrective actions, self-inspections, and deficiencies across all pillars.',
+    itemIds: ['op-incidents', 'op-corrective', 'op-self', 'op-deficiencies'],
   },
   foodSafety: {
     id: 'food-safety', label: 'Food Safety', icon: '🍽️',
@@ -335,7 +341,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
 
 /** Section render order */
 const SECTION_ORDER = [
-  'operations', 'foodSafety', 'fireSafety', 'programs', 'jurisdiction',
+  'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'jurisdiction',
   'vendors', 'insights', 'tools', 'admin',
 ] as const;
 
@@ -354,14 +360,14 @@ const TOP_LEVEL_IDS = [
 // ══════════════════════════════════════════════════════════
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  platform_admin:     ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  owner_operator:     ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  executive:          ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  compliance_manager: ['dashboard', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  facilities_manager: ['dashboard', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  kitchen_manager:    ['dashboard', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
-  chef:               ['dashboard', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
-  kitchen_staff:      ['dashboard', 'operations', 'foodSafety',                                                                                                       'tools'],
+  platform_admin:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
+  chef:               ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
+  kitchen_staff:      ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                                       'tools'],
 };
 
 // ══════════════════════════════════════════════════════════
