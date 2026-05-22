@@ -1,10 +1,10 @@
 /**
  * usePRPStats — computes Predict / Reduce / Prove card values.
+ * Uses static CA_REQUIRED_RECORDS for the "required not on file" count.
  */
 import { useMemo } from 'react';
 import type { EnrichedDocument } from './useDocumentsByTab';
-import { getDocumentsForState } from '../../data/onboardingDocuments';
-import { pillarToCategory } from '../../lib/documents/pillarToCategory';
+import { CA_REQUIRED_RECORDS } from '../../data/caRequiredRecords';
 
 export interface PRPStats {
   predict: {
@@ -30,8 +30,7 @@ export function usePRPStats(
 
     let requiredNotOnFile: number | null = null;
 
-    if (stateCode) {
-      const allRequired = getDocumentsForState(stateCode).filter(d => d.required);
+    if (stateCode === 'CA') {
       // Build set of document types currently on file (any non-archived status)
       const uploadedTypes = new Set(
         documents
@@ -39,13 +38,10 @@ export function usePRPStats(
           .map(d => (d.type || '').toLowerCase()),
       );
 
-      // Count required docs whose id is not represented in uploaded types
+      // Count CA required records whose id is not represented in uploaded types
       let missing = 0;
-      for (const req of allRequired) {
-        // Match by id (e.g. 'hood_cleaning_cert') or name similarity
-        const idMatch = uploadedTypes.has(req.id.toLowerCase());
-        const nameMatch = uploadedTypes.has(req.name.toLowerCase());
-        if (!idMatch && !nameMatch) {
+      for (const rec of CA_REQUIRED_RECORDS) {
+        if (!uploadedTypes.has(rec.id.toLowerCase())) {
           missing++;
         }
       }
@@ -53,7 +49,6 @@ export function usePRPStats(
     }
 
     const total = expiringIn30Days + (requiredNotOnFile || 0);
-
     const currentCount = documents.filter(d => d.status === 'current').length;
 
     return {

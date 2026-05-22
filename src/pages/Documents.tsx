@@ -12,11 +12,10 @@ import { useKitchenEmployeeIntelligence } from '../hooks/documents/useKitchenEmp
 import { useFeatureFlag } from '../hooks/useFeatureFlag';
 import { useOrgLocationContext } from '../hooks/documents/useOrgLocationContext';
 import { usePRPStats } from '../hooks/documents/usePRPStats';
-import { useRequiredDocsForTab } from '../hooks/documents/useRequiredDocsForTab';
+import { useRequiredDocsCounts } from '../hooks/documents/useRequiredDocsCounts';
 import { pillarToCategory } from '../lib/documents/pillarToCategory';
-import { getDocumentsForState } from '../data/onboardingDocuments';
 import { DocumentsHeader } from '../components/documents/DocumentsHeader';
-import { DocumentsTabs, type DocumentTabId, type RequiredCountEntry } from '../components/documents/DocumentsTabs';
+import { DocumentsTabs, type DocumentTabId } from '../components/documents/DocumentsTabs';
 import { DocumentsToolbar } from '../components/documents/DocumentsToolbar';
 import { DocumentsList } from '../components/documents/DocumentsList';
 import { EmptyTabContent } from '../components/documents/EmptyTabContent';
@@ -47,16 +46,16 @@ export function DocumentsPage() {
   // Feature flag: PRP layout
   const { enabled: prpEnabled } = useFeatureFlag('documents_prp_layout_v1');
 
-  // Org location context for county-dependent features
-  const { stateCode, county } = useOrgLocationContext();
+  // Org location context (state-level)
+  const { stateCode } = useOrgLocationContext();
 
-  // PRP stats (only computed when flag is on, but hooks can't be conditional)
+  // PRP stats — uses static CA_REQUIRED_RECORDS when state is CA
   const prpStats = usePRPStats(documents, prpEnabled ? stateCode : null);
 
-  // Required docs for active tab
-  const { requiredDocs, requiredCount, hasReference } = useRequiredDocsForTab(
+  // Required-docs counts per tab (static CA data, for tab indicator tags)
+  const requiredCounts = useRequiredDocsCounts(
     prpEnabled ? stateCode : null,
-    activeTab,
+    documents,
   );
 
   // Intelligence hooks
@@ -73,6 +72,7 @@ export function DocumentsPage() {
   // Modal state
   const [openDoc, setOpenDoc] = useState<EnrichedDocument | null>(null);
   const [showUpload, setShowUpload] = useState(false);
+  const [uploadTypeHint, setUploadTypeHint] = useState<string | undefined>();
   const [showSendWizard, setShowSendWizard] = useState(false);
   const [showAddVendorDoc, setShowAddVendorDoc] = useState(false);
   const [showRequestFromVendor, setShowRequestFromVendor] = useState(false);
@@ -152,54 +152,6 @@ export function DocumentsPage() {
     };
   }, [documents]);
 
-  // Required-docs counts per tab (for tab indicator tags)
-  const requiredCounts = useMemo<Record<DocumentTabId, RequiredCountEntry | null> | undefined>(() => {
-    if (!prpEnabled || !stateCode) return undefined;
-
-    const allDocs = getDocumentsForState(stateCode);
-    const result: Record<DocumentTabId, RequiredCountEntry> = {
-      kitchen: { required: 0, uploaded: 0 },
-      service: { required: 0, uploaded: 0 },
-      business: { required: 0, uploaded: 0 },
-    };
-
-    // Count required docs per tab from reference
-    for (const doc of allDocs) {
-      if (!doc.required) continue;
-      const cat = pillarToCategory(doc.pillar) as DocumentTabId;
-      const tab = cat === ('employee' as string) ? 'kitchen' : cat;
-      if (result[tab]) result[tab].required++;
-    }
-
-    // Count uploaded (current or expiring) docs per tab as "on file"
-    for (const doc of documents) {
-      if (doc.status === 'current' || doc.status === 'expiring') {
-        for (const [tabId, tabCats] of Object.entries(TAB_CATEGORIES)) {
-          if (tabCats.includes(doc.category)) {
-            const t = tabId as DocumentTabId;
-            if (result[t]) {
-              result[t].uploaded = Math.min(result[t].uploaded + 1, result[t].required);
-            }
-          }
-        }
-      }
-    }
-
-    return result;
-  }, [prpEnabled, stateCode, documents]);
-
-  // County helper text for tab body
-  const countyHelperText = useMemo(() => {
-    if (!prpEnabled || !hasReference || !county || requiredCount === 0) return undefined;
-    return `Your county (${county}) requires ${requiredCount} record type${requiredCount !== 1 ? 's' : ''} for this tab.`;
-  }, [prpEnabled, hasReference, county, requiredCount]);
-
-  // Smart empty state data
-  const smartEmptyData = useMemo(() => {
-    if (!prpEnabled || !hasReference || !county || !stateCode || requiredDocs.length === 0) return undefined;
-    return { county, stateAbbr: stateCode, requiredDocs };
-  }, [prpEnabled, hasReference, county, stateCode, requiredDocs]);
-
   // PREDICT card click → filter to expiring + missing
   const handlePredictClick = useCallback(() => {
     setStatusFilter('expiring');
@@ -218,9 +170,16 @@ export function DocumentsPage() {
     return Array.from(set).sort();
   }, [tabDocs]);
 
+  // Open upload modal, optionally with a type hint from the smart empty state card
+  const openUploadModal = useCallback((typeHint?: string) => {
+    setUploadTypeHint(typeHint);
+    setShowUpload(true);
+  }, []);
+
   // SmartUploadModal onSave
   const handleUploadSave = useCallback(async (files: ClassifiedFile[]) => {
     setShowUpload(false);
+    setUploadTypeHint(undefined);
     if (!orgId) return;
 
     for (const cf of files) {
@@ -271,9 +230,9 @@ export function DocumentsPage() {
         return (
           <EmptyTabContent
             activeTab={activeTab}
-            onUpload={() => setShowUpload(true)}
+            onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            smartEmptyData={smartEmptyData}
+            stateCode={prpEnabled ? stateCode : null}
           />
         );
       }
@@ -294,9 +253,9 @@ export function DocumentsPage() {
         return (
           <EmptyTabContent
             activeTab={activeTab}
-            onUpload={() => setShowUpload(true)}
+            onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            smartEmptyData={smartEmptyData}
+            stateCode={prpEnabled ? stateCode : null}
           />
         );
       }
@@ -319,9 +278,9 @@ export function DocumentsPage() {
         return (
           <EmptyTabContent
             activeTab={activeTab}
-            onUpload={() => setShowUpload(true)}
+            onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            smartEmptyData={smartEmptyData}
+            stateCode={prpEnabled ? stateCode : null}
           />
         );
       }
@@ -353,7 +312,6 @@ export function DocumentsPage() {
         counts={tabCounts}
         pendingCounts={pendingCounts}
         requiredCounts={requiredCounts}
-        countyHelperText={countyHelperText}
       />
       <DocumentsToolbar
         activeTab={activeTab}
@@ -367,7 +325,7 @@ export function DocumentsPage() {
         onVendorFilterChange={setVendorFilter}
         locations={locations}
         vendors={vendors}
-        onUpload={() => setShowUpload(true)}
+        onUpload={() => openUploadModal()}
         onAddVendorDoc={() => setShowAddVendorDoc(true)}
       />
 
@@ -379,8 +337,9 @@ export function DocumentsPage() {
 
       <SmartUploadModal
         isOpen={showUpload}
-        onClose={() => setShowUpload(false)}
+        onClose={() => { setShowUpload(false); setUploadTypeHint(undefined); }}
         onSave={handleUploadSave}
+        presetDocType={uploadTypeHint}
         batchMode
       />
 
@@ -391,7 +350,7 @@ export function DocumentsPage() {
       {showAddVendorDoc && (
         <AddVendorDocumentModal
           onClose={() => setShowAddVendorDoc(false)}
-          onUploadSelf={() => { setShowAddVendorDoc(false); setShowUpload(true); }}
+          onUploadSelf={() => { setShowAddVendorDoc(false); openUploadModal(); }}
           onRequestFromVendor={(vendor) => { setShowAddVendorDoc(false); setPreSelectedVendor(vendor || null); setShowRequestFromVendor(true); }}
         />
       )}

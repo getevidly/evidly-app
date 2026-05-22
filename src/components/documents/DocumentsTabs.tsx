@@ -23,10 +23,9 @@ interface DocumentsTabsProps {
   counts: Record<DocumentTabId, number>;
   pendingCounts: Record<DocumentTabId, number>;
   requiredCounts?: Record<DocumentTabId, RequiredCountEntry | null>;
-  countyHelperText?: string;
 }
 
-export function DocumentsTabs({ activeTab, onTabChange, counts, pendingCounts, requiredCounts, countyHelperText }: DocumentsTabsProps) {
+export function DocumentsTabs({ activeTab, onTabChange, counts, pendingCounts, requiredCounts }: DocumentsTabsProps) {
   return (
     <div>
       <div className="border-b border-[#E2DDD4] bg-white overflow-x-auto">
@@ -77,9 +76,6 @@ export function DocumentsTabs({ activeTab, onTabChange, counts, pendingCounts, r
       </div>
       <div className="px-0 py-3 text-[13px] text-[#8A93A6]">
         {TABS.find((t) => t.id === activeTab)?.desc}
-        {countyHelperText && (
-          <span className="block mt-1 text-[12px] text-[#6B7F96]">{countyHelperText}</span>
-        )}
       </div>
     </div>
   );

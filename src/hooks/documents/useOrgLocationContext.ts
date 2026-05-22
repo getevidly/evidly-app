@@ -1,6 +1,6 @@
 /**
- * useOrgLocationContext — fetches the org's primary location state + county.
- * Used by Documents PRP to determine if required-docs reference is available.
+ * useOrgLocationContext — fetches the org's primary location state and county.
+ * Used by Documents PRP to determine state-level required-records reference.
  */
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -30,7 +30,7 @@ export function useOrgLocationContext(): OrgLocationContext {
     let cancelled = false;
 
     async function fetch() {
-      const { data } = await supabase
+      const { data: loc } = await supabase
         .from('locations')
         .select('state, county')
         .eq('organization_id', orgId)
@@ -41,8 +41,8 @@ export function useOrgLocationContext(): OrgLocationContext {
       if (cancelled) return;
 
       setState({
-        stateCode: data?.state || null,
-        county: data?.county || null,
+        stateCode: loc?.state || null,
+        county: loc?.county || null,
         loading: false,
       });
     }
