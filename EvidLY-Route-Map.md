@@ -763,7 +763,7 @@
 |-------|-----------|------|-------------|
 | `/documents` | `Documents.tsx` | Protected | Document management |
 | `/document-checklist` | `DocumentChecklist.tsx` | Protected | Document checklist |
-| `/calendar` | `Calendar.tsx` | Protected | Calendar view |
+| `/calendar` | `Calendar.tsx` | Protected | Vendor services scheduling — top-level, not pillar-scoped. Shows all vendor visits across Food Safety, Fire Safety, and Equipment. |
 | `/org-hierarchy` | `OrgHierarchy.tsx` | Protected | Organization hierarchy |
 | `/help` | `HelpSupport.tsx` | Protected | Help & support |
 | `/weekly-digest` | `WeeklyDigest.tsx` | Protected | Weekly compliance digest |

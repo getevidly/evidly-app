@@ -129,10 +129,6 @@ const I: Record<string, NavItem> = {
     id: 'fr-overview', label: 'Overview', path: '/fire-safety/overview', icon: '🔥',
     roles: [], description: 'PSE status, open findings, and fire system compliance overview.',
   },
-  'fr-calendar': {
-    id: 'fr-calendar', label: 'Calendar', path: '/calendar', icon: '📅',
-    roles: [], description: 'Fire safety service schedules, inspections, and compliance deadlines.',
-  },
   'fr-incidents': {
     id: 'fr-incidents', label: 'Incidents', path: '/incidents?pillar=fire', icon: '⚠️',
     roles: [], description: 'Log and track fire safety incidents with timestamped, immutable records.',
@@ -292,8 +288,8 @@ const SECTION_DEFS: Record<string, SectionDef> = {
   fireSafety: {
     id: 'fire-safety', label: 'Fire Safety', icon: '🔥',
     tooltipTitle: 'Fire Safety',
-    tooltipDescription: 'Fire safety compliance overview and calendar.',
-    itemIds: ['fr-overview', 'fr-calendar'],
+    tooltipDescription: 'Fire safety compliance overview.',
+    itemIds: ['fr-overview'],
     path: '/fire-safety',
   },
   programs: {
