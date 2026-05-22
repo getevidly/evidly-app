@@ -190,9 +190,12 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
         </div>
 
         <div style={{ padding: '18px 20px', fontSize: 13, lineHeight: 1.6, color: 'var(--navy, #1E2D4D)' }}>
-          <p style={{ margin: '0 0 6px', fontWeight: 500, fontSize: 14 }}>
-            EvidLY is still getting to know your kitchen.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
+            <span style={{ fontSize: 16 }}>💡</span>
+            <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>
+              EvidLY is still getting to know your kitchen.
+            </p>
+          </div>
           <p style={{ margin: 0, color: 'var(--muted, #6B6960)' }}>
             For the next {baselineDaysRemaining > 0 ? baselineDaysRemaining : 'few'} days,
             EvidLY is building a baseline from your daily readings. Predictions
@@ -234,9 +237,12 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
         </div>
 
         <div style={{ padding: '18px 20px', fontSize: 13, lineHeight: 1.6 }}>
-          <p style={{ margin: '0 0 6px', fontWeight: 500, fontSize: 14, color: 'var(--cream, #FAF7F0)' }}>
-            EvidLY handled the routine — nothing needs your call.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
+            <span style={{ fontSize: 16 }}>💡</span>
+            <p style={{ margin: 0, fontWeight: 500, fontSize: 14, color: 'var(--cream, #FAF7F0)' }}>
+              EvidLY handled the routine — nothing needs your call.
+            </p>
+          </div>
 
           {hasEvents ? (
             <>

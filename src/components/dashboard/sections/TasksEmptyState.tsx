@@ -114,9 +114,12 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
         <div style={bodyStyle}>
           {resolved === 'day1' ? (
             <>
-              <p style={{ margin: '0 0 6px', fontWeight: 500, fontSize: 14 }}>
-                Your first day with EvidLY.
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
+                <span style={{ fontSize: 16 }}>📋</span>
+                <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>
+                  Your first day with EvidLY.
+                </p>
+              </div>
               {/* TODO: append next-occurrence time from task_instances when query available */}
               <p style={{ margin: 0, color: 'var(--muted, #6B6960)' }}>
                 EvidLY pre-scheduled controls for tomorrow based on your county's
@@ -129,9 +132,12 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
             </>
           ) : (
             <>
-              <p style={{ margin: '0 0 6px', fontWeight: 500, fontSize: 14 }}>
-                Today's tasks are on track.
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
+                <span style={{ fontSize: 16 }}>📋</span>
+                <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>
+                  Today's tasks are on track.
+                </p>
+              </div>
               <p style={{ margin: 0, color: 'var(--muted, #6B6960)' }}>
                 {laterToday > 0
                   ? `${laterToday} control${laterToday === 1 ? '' : 's'} scheduled for later today. Nothing requires your attention.`

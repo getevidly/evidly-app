@@ -29,21 +29,8 @@ const cardStyle: React.CSSProperties = {
 const headerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 10,
+  gap: 8,
   marginBottom: 14,
-};
-
-const iconCircle: React.CSSProperties = {
-  width: 36,
-  height: 36,
-  borderRadius: '50%',
-  border: '1.5px solid var(--gold, #A08C5A)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'var(--gold, #A08C5A)',
-  fontSize: 16,
-  flexShrink: 0,
 };
 
 const bodyText: React.CSSProperties = {
@@ -107,9 +94,7 @@ export function TeamEmptyState() {
     <div style={cardStyle}>
       {/* Header icon + title */}
       <div style={headerStyle}>
-        <span style={iconCircle}>
-          <i className="ti ti-users" />
-        </span>
+        <span style={{ fontSize: 16 }}>👥</span>
         <span style={{ fontWeight: 500, fontSize: 14, color: 'var(--navy, #1E2D4D)' }}>
           Right now, it's just you.
         </span>
