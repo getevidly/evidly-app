@@ -1,0 +1,563 @@
+[
+  {
+    "jurisdiction_id": "7edbb389-6fa8-4421-bed3-f6d64312fb08",
+    "county": "Los Angeles",
+    "city": "Vernon",
+    "status": "blocked_403",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [],
+    "urls_failed": [
+      {
+        "url": "https://www.cityofvernon.org/government/departments/health-environmental-control",
+        "reason": "301 redirect to cityofvernonca.gov, then 403 Forbidden"
+      },
+      {
+        "url": "https://www.cityofvernonca.gov/government/departments/health-environmental-control",
+        "reason": "403 Forbidden — WAF blocking"
+      }
+    ],
+    "food": {
+      "poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "Website blocked (403). Deferred to phase2b manual research." },
+      "poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "Website blocked (403)" },
+      "agency_email": { "value": null, "source_url": null, "confidence": "null", "reason": "Website blocked (403)" },
+      "agency_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "Website blocked (403)" },
+      "agency_address": { "value": null, "source_url": null, "confidence": "null", "reason": "Website blocked (403)" }
+    },
+    "fire": {
+      "fire_ahj_poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_email": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_address": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" }
+    },
+    "notes": [
+      "301 redirect cityofvernon.org → cityofvernonca.gov confirmed, then 403 on all paths",
+      "WAF blocking — deferred to phase2b manual research",
+      "Fire pillar: no fire_ahj_website exists in PROD"
+    ]
+  },
+  {
+    "jurisdiction_id": "0e0e3fc8-5fdd-41aa-a14b-4a887d819e2f",
+    "county": "Los Angeles",
+    "city": "Pasadena",
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://www.cityofpasadena.net/public-health/",
+      "https://www.cityofpasadena.net/public-health/environmental-health/",
+      "https://www.cityofpasadena.net/public-health/about/",
+      "https://www.cityofpasadena.net/public-health/contact/",
+      "https://www.cityofpasadena.net/public-health/directory/"
+    ],
+    "urls_failed": [],
+    "food": {
+      "poc_name": {
+        "value": "Manuel Carmona, MPH, MPA",
+        "source_url": "https://www.cityofpasadena.net/public-health/about/",
+        "confidence": "high",
+        "reason": "Named on official About page as Director of Public Health with biographical detail"
+      },
+      "poc_title": {
+        "value": "Director of Public Health",
+        "source_url": "https://www.cityofpasadena.net/public-health/about/",
+        "confidence": "high",
+        "reason": "Explicitly listed title on official About page"
+      },
+      "agency_email": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No general EH email found. Only body art program email (envhealth-bodyart@cityofpasadena.net) — rejected per program-specific alias rule.",
+        "candidates": [
+          {
+            "value": "envhealth-bodyart@cityofpasadena.net",
+            "source_url": "https://www.cityofpasadena.net/public-health/environmental-health/",
+            "confidence": "low",
+            "reason": "Program-specific email (Body Art), not general EH division inbox"
+          }
+        ]
+      },
+      "agency_fax": {
+        "value": "(626) 744-6113",
+        "source_url": "https://www.cityofpasadena.net/public-health/contact/",
+        "confidence": "high",
+        "reason": "Listed on official Contact page as department fax number"
+      },
+      "agency_address": {
+        "value": "1845 N. Fair Oaks Ave., Suite 1200, Pasadena, CA 91103",
+        "source_url": "https://www.cityofpasadena.net/public-health/environmental-health/",
+        "confidence": "high",
+        "reason": "Environmental Health Services Division address with suite number, CA + ZIP confirmed"
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_email": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_address": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" }
+    },
+    "notes": [
+      "Carried forward from Pasadena dryrun (docs/firecrawl_dryrun_pasadena.json)",
+      "4 HIGH fills: poc_name, poc_title, agency_fax, agency_address",
+      "agency_email: only body-art-specific email found; NULL recommended",
+      "Fire pillar: no fire_ahj_website exists in PROD"
+    ]
+  },
+  {
+    "jurisdiction_id": "fdf06087-a578-42eb-b0fb-8a8750c12348",
+    "county": "Monterey",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://www.mcrfd.org/contact-us-9913b14",
+      "https://www.mcrfd.org/administrative-staff"
+    ],
+    "urls_failed": [
+      {
+        "url": "https://www.countyofmonterey.gov/government/departments-a-h/fire",
+        "reason": "403 Forbidden — co.monterey.ca.us redirects to countyofmonterey.gov which blocks crawlers"
+      }
+    ],
+    "food": {
+      "poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "No agency_website in PROD. Cannot crawl food pillar." },
+      "poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No agency_website in PROD" },
+      "agency_email": { "value": null, "source_url": null, "confidence": "null", "reason": "No agency_website in PROD" },
+      "agency_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "No agency_website in PROD" },
+      "agency_address": { "value": null, "source_url": null, "confidence": "null", "reason": "No agency_website in PROD" }
+    },
+    "fire": {
+      "fire_ahj_poc_name": {
+        "value": "Justin Reyes",
+        "source_url": "https://www.mcrfd.org/contact-us-9913b14",
+        "confidence": "high",
+        "reason": "Division Chief / Fire Marshal listed on MCRFD official Contact page with email and phone"
+      },
+      "fire_ahj_poc_title": {
+        "value": "Division Chief / Fire Marshal",
+        "source_url": "https://www.mcrfd.org/contact-us-9913b14",
+        "confidence": "high",
+        "reason": "Title explicitly listed on MCRFD Contact page"
+      },
+      "fire_ahj_email": {
+        "value": "jreyes@mcrfd.org",
+        "source_url": "https://www.mcrfd.org/contact-us-9913b14",
+        "confidence": "high",
+        "reason": "Fire Marshal direct email on official Contact page. Domain mcrfd.org matches fire district."
+      },
+      "fire_ahj_fax": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No fax number listed on MCRFD contact or admin pages"
+      },
+      "fire_ahj_address": {
+        "value": "19900 Portola Drive, Salinas, CA 93908",
+        "source_url": "https://www.mcrfd.org/contact-us-9913b14",
+        "confidence": "high",
+        "reason": "MCRFD headquarters address on Contact page. CA + ZIP confirmed."
+      }
+    },
+    "notes": [
+      "County fire page (co.monterey.ca.us/fire → countyofmonterey.gov) returned 403",
+      "MCRFD (Monterey County Regional Fire Protection District) is the county fire AHJ — crawled mcrfd.org directly",
+      "Food pillar: no agency_website in PROD, all food fields remain NULL",
+      "Fire Chief is David Sargenti (from admin-staff page), but Fire Marshal Justin Reyes is the AHJ POC for fire prevention"
+    ]
+  },
+  {
+    "jurisdiction_id": "00f803d1-7d50-4671-98d4-55be41c1bb40",
+    "county": "San Luis Obispo",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health",
+      "https://www.calfireslo.org"
+    ],
+    "urls_failed": [],
+    "food": {
+      "poc_name": {
+        "value": "Peter Hague",
+        "source_url": "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health",
+        "confidence": "high",
+        "reason": "Listed as Director of Environmental Health on official SLO County EHD page"
+      },
+      "poc_title": {
+        "value": "Director of Environmental Health",
+        "source_url": "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health",
+        "confidence": "high",
+        "reason": "Title explicitly listed on official SLO County EHD page"
+      },
+      "agency_email": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No general EHD inbox email found. Only individual supervisor emails (lterry@co.slo.ca.us, crattigan@co.slo.ca.us, etc.) — program-specific, rejected.",
+        "candidates": [
+          { "value": "lterry@co.slo.ca.us", "source_url": "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health", "confidence": "medium", "reason": "Food Safety supervisor direct email, .us TLD valid, but program-specific" },
+          { "value": "crattigan@co.slo.ca.us", "source_url": "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health", "confidence": "medium", "reason": "Supervisor direct email for permitting/PRA" }
+        ]
+      },
+      "agency_fax": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No fax number listed on EHD page"
+      },
+      "agency_address": {
+        "value": "1055 Monterey Street, San Luis Obispo, CA 93408",
+        "source_url": "https://www.slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health",
+        "confidence": "high",
+        "reason": "County Government Center address listed on EHD page. CA + ZIP confirmed."
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "Only 'Chief Owens' referenced in nav menu — no first name available. Insufficient for HIGH or MEDIUM."
+      },
+      "fire_ahj_poc_title": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No explicit title beyond generic 'Chief' reference"
+      },
+      "fire_ahj_email": {
+        "value": "slu.reception@fire.ca.gov",
+        "source_url": "https://www.calfireslo.org",
+        "confidence": "high",
+        "reason": "Official CAL FIRE SLU reception email on calfireslo.org. .gov TLD confirmed."
+      },
+      "fire_ahj_fax": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No fax number listed on calfireslo.org"
+      },
+      "fire_ahj_address": {
+        "value": "100 Cross Street, San Luis Obispo, CA 93401",
+        "source_url": "https://www.calfireslo.org",
+        "confidence": "high",
+        "reason": "CAL FIRE SLU headquarters address. CA + ZIP confirmed."
+      }
+    },
+    "notes": [
+      "agency_website is NULL in PROD but EHD page discovered at slocounty.ca.gov/Departments/Health-Agency/Public-Health/Environmental-Health",
+      "Food pillar: 3 fills (poc_name, poc_title, agency_address). Email NULL — only individual supervisor emails found.",
+      "Fire AHJ is CAL FIRE San Luis Obispo Unit (SLU). fire_ahj_website 'slocounty.ca.gov/fire' maps to calfireslo.org.",
+      "Fire pillar: 2 fills (fire_ahj_email, fire_ahj_address). POC name incomplete (last name only)."
+    ]
+  },
+  {
+    "jurisdiction_id": "85db5307-9608-46e2-bcf5-47131bd86119",
+    "county": "Contra Costa",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://www.cccfpd.org/"
+    ],
+    "urls_failed": [
+      {
+        "url": "https://www.cchealth.org/about-contra-costa-health/divisions/environmental-health",
+        "reason": "403 Forbidden — cchealth.org blocks automated crawlers"
+      }
+    ],
+    "food": {
+      "poc_name": {
+        "value": "Kristian Lucas, REHS",
+        "source_url": "https://www.cchealth.org/about-contra-costa-health/divisions/environmental-health/about-us",
+        "confidence": "medium",
+        "reason": "Director name from web search cached result (cchealth.org 403 on direct crawl). REHS credential confirms EH professional."
+      },
+      "poc_title": {
+        "value": "Director of Environmental Health",
+        "source_url": "https://www.cchealth.org/about-contra-costa-health/divisions/environmental-health/about-us",
+        "confidence": "medium",
+        "reason": "Title from web search cached result (direct crawl blocked by 403)"
+      },
+      "agency_email": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No email found in any crawled or cached page for Contra Costa EHD"
+      },
+      "agency_fax": {
+        "value": "(925) 608-5502",
+        "source_url": "https://www.cchealth.org/about-contra-costa-health/divisions/environmental-health/contact-us-env-health",
+        "confidence": "medium",
+        "reason": "Fax from web search cached result (direct crawl blocked by 403)"
+      },
+      "agency_address": {
+        "value": "2120 Diamond Boulevard, Suite 100, Concord, CA 94520",
+        "source_url": "https://www.cchealth.org/about-contra-costa-health/divisions/environmental-health/contact-us-env-health",
+        "confidence": "medium",
+        "reason": "Address from web search cached result. CA + ZIP confirmed."
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": {
+        "value": "Aaron McAlister",
+        "source_url": "https://www.cccfpd.org/",
+        "confidence": "high",
+        "reason": "Fire Chief appointed May 12, 2026 — listed on official CCCFPD homepage"
+      },
+      "fire_ahj_poc_title": {
+        "value": "Fire Chief",
+        "source_url": "https://www.cccfpd.org/",
+        "confidence": "high",
+        "reason": "Title on official CCCFPD homepage"
+      },
+      "fire_ahj_email": {
+        "value": "info@cccfpd.org",
+        "source_url": "https://www.cccfpd.org/",
+        "confidence": "high",
+        "reason": "General contact email on official CCCFPD page. Domain matches fire_ahj_website."
+      },
+      "fire_ahj_fax": {
+        "value": "(925) 941-3309",
+        "source_url": "https://www.cccfpd.org/",
+        "confidence": "high",
+        "reason": "Fax listed on official CCCFPD homepage alongside phone"
+      },
+      "fire_ahj_address": {
+        "value": "4005 Port Chicago Highway, Suite 250, Concord, CA 94520-1180",
+        "source_url": "https://www.cccfpd.org/",
+        "confidence": "high",
+        "reason": "Headquarters address on official CCCFPD page. CA + ZIP confirmed."
+      }
+    },
+    "notes": [
+      "cchealth.org returned 403 on direct crawl — EHD data sourced from web search cached results (MEDIUM confidence)",
+      "CCCFPD.org crawled directly — 5 HIGH fills for fire pillar",
+      "Aaron McAlister appointed Fire Chief May 12, 2026 (replacing Lewis Broschard)"
+    ]
+  },
+  {
+    "jurisdiction_id": "49fa961e-9076-4a79-b56e-b3b72b252a41",
+    "county": "Placer",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://www.placer.ca.gov/3105/Environmental-Health",
+      "https://www.placer.ca.gov/Directory.aspx?did=187",
+      "https://www.placer.ca.gov/7662/Fire-Marshals-Office-and-Loss-Reduction",
+      "https://www.placer.ca.gov/directory.aspx?did=28"
+    ],
+    "urls_failed": [],
+    "food": {
+      "poc_name": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No individual staff names or titles listed on Placer County EH page or directory"
+      },
+      "poc_title": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No individual staff names or titles listed"
+      },
+      "agency_email": {
+        "value": "environmentalhealth@placer.ca.gov",
+        "source_url": "https://www.placer.ca.gov/3105/Environmental-Health",
+        "confidence": "high",
+        "reason": "Official EH division email on placer.ca.gov. .gov TLD confirmed."
+      },
+      "agency_fax": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No fax number listed on EH page or directory"
+      },
+      "agency_address": {
+        "value": "11434 B Ave, Suite 400, Auburn, CA 95603",
+        "source_url": "https://www.placer.ca.gov/3105/Environmental-Health",
+        "confidence": "high",
+        "reason": "Primary Auburn office address on official EH page. CA + ZIP confirmed."
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": {
+        "value": "Chris Mertens",
+        "source_url": "https://www.placer.ca.gov/7662/Fire-Marshals-Office-and-Loss-Reduction",
+        "confidence": "high",
+        "reason": "Battalion Chief — Placer County Fire Marshal, named on official Fire Marshal page"
+      },
+      "fire_ahj_poc_title": {
+        "value": "Battalion Chief / Placer County Fire Marshal",
+        "source_url": "https://www.placer.ca.gov/7662/Fire-Marshals-Office-and-Loss-Reduction",
+        "confidence": "high",
+        "reason": "Title on official Fire Marshal page"
+      },
+      "fire_ahj_email": {
+        "value": "building@placer.ca.gov",
+        "source_url": "https://www.placer.ca.gov/directory.aspx?did=28",
+        "confidence": "medium",
+        "reason": "Listed for Fire Inspections & Prevention Division. .gov TLD valid. 'building@' prefix suggests shared building/fire inbox."
+      },
+      "fire_ahj_fax": {
+        "value": "(530) 745-3058",
+        "source_url": "https://www.placer.ca.gov/directory.aspx?did=28",
+        "confidence": "high",
+        "reason": "Fax listed for Fire Inspections & Prevention Division on official staff directory"
+      },
+      "fire_ahj_address": {
+        "value": "3091 County Center Dr., #160, Auburn, CA 95603",
+        "source_url": "https://www.placer.ca.gov/directory.aspx?did=28",
+        "confidence": "high",
+        "reason": "Fire Inspections & Prevention office address on staff directory. CA + ZIP confirmed."
+      }
+    },
+    "notes": [
+      "agency_website is NULL in PROD but EH page found at placer.ca.gov/3105/Environmental-Health",
+      "Food pillar: 2 fills (email, address). No POC names found — Placer does not publish EH staff names online.",
+      "Fire pillar: 5 fills. Fire Marshal Chris Mertens identified. building@placer.ca.gov is a shared inbox (MEDIUM).",
+      "Stale POC note: Wesley Nicks was EH director at 2016 placard launch — likely no longer current"
+    ]
+  },
+  {
+    "jurisdiction_id": "61c0e8aa-c729-4dbd-b92d-72a708c0d543",
+    "county": "Sacramento",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://emd.saccounty.gov/us/en.html",
+      "https://emd.saccounty.gov/us/en/contact-and-about-us/contact-us.html",
+      "https://metrofire.ca.gov"
+    ],
+    "urls_failed": [],
+    "food": {
+      "poc_name": {
+        "value": "Jennea Monasterio",
+        "source_url": "https://emd.saccounty.gov/Documents/OrgChart.pdf",
+        "confidence": "medium",
+        "reason": "Director name from org chart PDF referenced in web search. Not on direct HTML crawl page."
+      },
+      "poc_title": {
+        "value": "Director, Environmental Management Department",
+        "source_url": "https://emd.saccounty.gov/Documents/OrgChart.pdf",
+        "confidence": "medium",
+        "reason": "Title from org chart PDF referenced in web search"
+      },
+      "agency_email": {
+        "value": "EMDinfo@Saccounty.gov",
+        "source_url": "https://emd.saccounty.gov/us/en/contact-and-about-us/contact-us.html",
+        "confidence": "high",
+        "reason": "General inquiries email on official Contact page. .gov TLD confirmed."
+      },
+      "agency_fax": {
+        "value": "(916) 875-8513",
+        "source_url": "https://emd.saccounty.gov/us/en/contact-and-about-us/contact-us.html",
+        "confidence": "medium",
+        "reason": "Fax from web search referencing contact page (not visible on direct HTML crawl)"
+      },
+      "agency_address": {
+        "value": "11080 White Rock Rd., Suite 200, Rancho Cordova, CA 95670",
+        "source_url": "https://emd.saccounty.gov/us/en/contact-and-about-us/contact-us.html",
+        "confidence": "high",
+        "reason": "EMD office address on official Contact page. CA + ZIP confirmed."
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": {
+        "value": "Adam A. House",
+        "source_url": "https://metrofire.ca.gov",
+        "confidence": "high",
+        "reason": "Fire Chief listed on official Sacramento Metro Fire website"
+      },
+      "fire_ahj_poc_title": {
+        "value": "Fire Chief",
+        "source_url": "https://metrofire.ca.gov",
+        "confidence": "high",
+        "reason": "Title on official Metro Fire homepage"
+      },
+      "fire_ahj_email": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No email address listed on metrofire.ca.gov. Site directs to Records Request portal."
+      },
+      "fire_ahj_fax": {
+        "value": "(916) 859-3702",
+        "source_url": "https://metrofire.ca.gov",
+        "confidence": "high",
+        "reason": "Fax listed on official Metro Fire homepage alongside main phone"
+      },
+      "fire_ahj_address": {
+        "value": "10545 Armstrong Ave., Suite 200, Mather, CA 95655",
+        "source_url": "https://metrofire.ca.gov",
+        "confidence": "high",
+        "reason": "Metro Fire headquarters address. CA + ZIP confirmed."
+      }
+    },
+    "notes": [
+      "sacmetrofire.ca.gov refused connection — metrofire.ca.gov is the actual domain",
+      "Food pillar: 5 fills. POC and fax from web search (MEDIUM); email and address from direct crawl (HIGH).",
+      "Fire pillar: 4 fills. No email published — Metro Fire uses records request portal instead.",
+      "Sacramento EMD contact page structure: /us/en/contact-and-about-us/contact-us.html (non-standard path)"
+    ]
+  },
+  {
+    "jurisdiction_id": "bd7bbcbf-0658-4908-9aa9-7cada20a5ec2",
+    "county": "Alameda",
+    "city": "Berkeley",
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": [
+      "https://berkeleyca.gov/doing-business/operating-berkeley/food-service/food-safety-and-inspection-program",
+      "https://berkeleyca.gov/your-government/about-us/departments/health-housing-and-community-services"
+    ],
+    "urls_failed": [],
+    "food": {
+      "poc_name": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No EH division staff names published. Scott Gilman is Director of HHCS (parent dept), not EH division head."
+      },
+      "poc_title": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "No EH-specific title published"
+      },
+      "agency_email": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "SKIP — already 'envhealth@berkeleyca.gov' in PROD (non-NULL)"
+      },
+      "agency_fax": {
+        "value": "(510) 981-5305",
+        "source_url": "https://ecologycenter.org/directory/directory-entries/city-of-berkeley-division-of-environmental-health/",
+        "confidence": "medium",
+        "reason": "Fax from Ecology Center directory listing for Berkeley EHD. Cross-referenced via web search."
+      },
+      "agency_address": {
+        "value": null,
+        "source_url": null,
+        "confidence": "null",
+        "reason": "SKIP — already '2180 Milvia St., 2nd Floor, Berkeley, CA 94704' in PROD (non-NULL)"
+      }
+    },
+    "fire": {
+      "fire_ahj_poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_email": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" },
+      "fire_ahj_address": { "value": null, "source_url": null, "confidence": "null", "reason": "No fire_ahj_website in PROD" }
+    },
+    "notes": [
+      "Food pillar: 1 fill (agency_fax). agency_email and agency_address SKIPPED (non-NULL in PROD).",
+      "POC: Berkeley does not publish EH division head name. Scott Gilman (HHCS Director) is parent dept — not EH-specific.",
+      "Fire pillar: no fire_ahj_website exists in PROD for Berkeley"
+    ]
+  }
+]
