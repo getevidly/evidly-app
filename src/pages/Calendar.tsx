@@ -16,7 +16,6 @@ import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { useTooltip } from '../hooks/useTooltip';
 import { Modal } from '../components/ui/Modal';
 import ReadOnlyEventModal from '../components/calendar/ReadOnlyEventModal';
-import { useFeatureFlag } from '../hooks/useFeatureFlag';
 import { useCalendarPRPStats } from '../hooks/calendar/useCalendarPRPStats';
 import { useDueNotScheduled } from '../hooks/calendar/useDueNotScheduled';
 import { CalendarPRPBand } from '../components/calendar/CalendarPRPBand';
@@ -218,9 +217,8 @@ export function Calendar() {
   const ttCalendarSubtitle = useTooltip('calendarSubtitle', userRole);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
-  // Feature flag: PRP layout — wait for async resolution before showing PRP
-  const { enabled: prpFlagEnabled, loading: prpFlagLoading } = useFeatureFlag('calendar_prp_layout_v1');
-  const prpEnabled = prpFlagEnabled && !prpFlagLoading;
+  // PRP layout — always on (matches Documents page pattern)
+  const prpEnabled = true;
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
