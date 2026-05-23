@@ -1,0 +1,46 @@
+diff --git a/src/components/haccp/HACCPAICreate.tsx b/src/components/haccp/HACCPAICreate.tsx
+index 6bc1c0a..578b2e0 100644
+--- a/src/components/haccp/HACCPAICreate.tsx
++++ b/src/components/haccp/HACCPAICreate.tsx
+@@ -28,6 +28,9 @@ import {
+ import { useDemo } from '../../contexts/DemoContext';
+ import { useAuth } from '../../contexts/AuthContext';
+ import { useRole } from '../../contexts/RoleContext';
++import { supabase } from '../../lib/supabase';
++
++const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+ import { useSaveDocument } from '../../hooks/useSaveDocument';
+ import { toast } from 'sonner';
+ import { parseWizardToCCPs, parseCCPsFromText } from '../../lib/haccpParser';
+@@ -390,9 +393,13 @@ export function HACCPAICreate() {
+     // Production: call AI for this specific principle
+     try {
+       const prompt = buildPrinciplePrompt(principleNumber, intake);
+-      const response = await fetch('/api/ai-advisor', {
++      const { data: { session } } = await supabase.auth.getSession();
++      const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-chat`, {
+         method: 'POST',
+-        headers: { 'Content-Type': 'application/json' },
++        headers: {
++          'Content-Type': 'application/json',
++          'Authorization': `Bearer ${session?.access_token}`,
++        },
+         body: JSON.stringify({
+           system: 'You are a HACCP plan expert. Return ONLY the requested data as key:value pairs, one per line. No markdown, no headers, no explanations.',
+           messages: [{ role: 'user', content: prompt }],
+@@ -451,9 +458,13 @@ export function HACCPAICreate() {
+     const systemPrompt = buildFinalPlanPrompt(intake, principleData);
+     try {
+       abortRef.current = new AbortController();
+-      const response = await fetch('/api/ai-advisor', {
++      const { data: { session } } = await supabase.auth.getSession();
++      const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-chat`, {
+         method: 'POST',
+-        headers: { 'Content-Type': 'application/json' },
++        headers: {
++          'Content-Type': 'application/json',
++          'Authorization': `Bearer ${session?.access_token}`,
++        },
+         body: JSON.stringify({
+           system: systemPrompt,
+           messages: [{ role: 'user', content: buildFinalUserMessage(intake, principleData) }],

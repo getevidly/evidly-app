@@ -1,0 +1,690 @@
+{
+  "audit_phase": "08-onboarding",
+  "generated_at": "2026-04-24",
+  "summary": "Comprehensive audit of signup, onboarding, demo wizard, guided tour, demo data generation, and demo mode lifecycle across the EvidLY platform.",
+
+  "signup_paths": [
+    {
+      "path": "/signup",
+      "component": "src/pages/Signup.tsx",
+      "method": "email_password",
+      "fields": [
+        { "name": "fullName", "type": "text", "required": true, "validation": "min 2 chars" },
+        { "name": "email", "type": "email", "required": true, "validation": "regex ^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "pre_populated_from": "?email= search param" },
+        { "name": "phone", "type": "tel", "required": true, "validation": "10 digits", "format": "(555) 555-5555" },
+        { "name": "orgName", "type": "text", "required": true, "validation": "min 2 chars" },
+        { "name": "signupState", "type": "select", "required": true, "source": "SUPPORTED_STATES from src/data/stateCounties.ts" },
+        { "name": "jurisdiction", "type": "select", "required": false, "source": "getCountiesForState() + getIndependentJurisdictionsForState()" },
+        { "name": "kitchenType", "type": "select", "required": true, "source": "KITCHEN_TYPES from src/config/kitchenTypes.ts" },
+        { "name": "password", "type": "password", "required": true, "validation": "min 12 chars, 1 upper, 1 lower, 1 number, 1 special" },
+        { "name": "confirmPassword", "type": "password", "required": true, "validation": "must match password" },
+        { "name": "termsAccepted", "type": "checkbox", "required": true, "links_to": ["https://getevidly.com/terms", "https://getevidly.com/privacy"] }
+      ],
+      "password_requirements": {
+        "minLength": 12,
+        "hasUpper": true,
+        "hasLower": true,
+        "hasNumber": true,
+        "hasSpecial": true,
+        "strength_meter": true,
+        "strength_levels": ["Weak (<=2)", "Fair (3)", "Good (4)", "Strong (5)"]
+      },
+      "db_write": {
+        "method": "supabase.auth.signUp via useAuth().signUp",
+        "deferred_writes": "Org/profile/access INSERTs deferred to EmailConfirmed.tsx where confirmed session exists",
+        "user_metadata_stored": ["full_name", "phone", "org_name", "state", "kitchen_type"],
+        "email_redirect_to": "${origin}/email-confirmed"
+      },
+      "pricing_tier_selection": "No tier selection on Signup.tsx; all signups start as trial. FounderBanner shows countdown to FOUNDER_PRICING_DEADLINE (August 7, 2026).",
+      "social_login": "SocialLoginButtons component with mode='signup'",
+      "analytics_events": ["signup_start (method: email)", "signup_complete (method: email)", "trial_started (conversion)"],
+      "post_submit": "Shows 'Check Your Email' confirmation screen with email address and 'try again' button",
+      "crisp_hidden": true
+    },
+    {
+      "path": "/signup-locations",
+      "component": "src/pages/SignupLocations.tsx",
+      "purpose": "Post-signup location count selection and pricing display",
+      "location_types": [
+        { "type": "single", "description": "1 location, 1 address" },
+        { "type": "multiple", "description": "2-10 locations, counter UI (min 2, max 10)" },
+        { "type": "enterprise", "description": "11+ locations, custom pricing, shows contact info" }
+      ],
+      "pricing_display": {
+        "founder_base_price": "$99/mo",
+        "founder_per_location": "$49/ea",
+        "standard_base_price": "$199/mo",
+        "standard_per_location": "$99/ea",
+        "billing_periods": ["monthly", "annual (10 months = 2 free)"],
+        "savings_display": true,
+        "savings_calculation": "Shows monthly savings, annual savings, and percentage"
+      },
+      "enterprise_contact": {
+        "phone": "(855) 384-3591",
+        "email": "sales@getevidly.com"
+      },
+      "features_listed": ["All features included", "AI Advisor", "QR Passport", "Priority support"],
+      "next_action": "navigates to /onboarding on 'Continue to Checkout'",
+      "db_write": "None - purely client-side pricing display"
+    }
+  ],
+
+  "onboarding": {
+    "component": "src/pages/Onboarding.tsx",
+    "total_steps": 10,
+    "progress_persistence": "organizations.onboarding_step (integer) and organizations.onboarding_completed (boolean)",
+    "steps": [
+      {
+        "step": 1,
+        "name": "Welcome",
+        "icon": "EvidlyIcon",
+        "content": "Welcome screen with EvidLY icon, heading, and description",
+        "skippable": true,
+        "db_write": false
+      },
+      {
+        "step": 2,
+        "name": "Org Details",
+        "icon": "EvidlyIcon",
+        "content": "Informational - says org is already set up, continue with locations",
+        "skippable": true,
+        "db_write": false
+      },
+      {
+        "step": 3,
+        "name": "Add Location",
+        "icon": "MapPin",
+        "fields": ["locationName (required, uses GhostInput AI)", "locationAddress (optional)"],
+        "skippable": true,
+        "db_write": {
+          "table": "locations",
+          "columns": ["organization_id", "name", "address"],
+          "condition": "Only if not isDemoMode and locationName is provided"
+        },
+        "jurisdiction_lookup": "lookupJurisdiction() called on address, best-effort, non-blocking"
+      },
+      {
+        "step": 4,
+        "name": "Shifts",
+        "icon": "Clock",
+        "fields": ["shiftOpenTime (default 06:00)", "shiftCloseTime (default 22:00)", "shiftChangeover (default 14:00)"],
+        "shift_preview": ["Morning: openTime-changeover", "Evening: changeover-closeTime"],
+        "skippable": false,
+        "db_write": "Sets OperatingHoursContext state (in-memory), not DB",
+        "note": "Skip button hidden for step 4"
+      },
+      {
+        "step": 5,
+        "name": "Equipment",
+        "icon": "Thermometer",
+        "content": "Temperature monitoring setup from industry templates",
+        "template_source": "INDUSTRY_TEMPLATES from src/config/industryTemplates.ts",
+        "category_filter": "temperature_logs",
+        "features": ["Toggle items on/off", "Add custom items via GhostInput"],
+        "skippable": true,
+        "db_write": {
+          "table": "onboarding_checklist_items",
+          "columns": ["organization_id", "category", "item_name", "is_enabled", "is_required", "custom"],
+          "condition": "On handleNext, enabled items inserted"
+        }
+      },
+      {
+        "step": 6,
+        "name": "Checklists",
+        "icon": "CheckSquare",
+        "content": "Daily operations checklists from industry templates",
+        "category_filter": "checklists",
+        "features": ["Toggle items on/off", "Add custom items"],
+        "skippable": true,
+        "db_write": "Same as step 5 - onboarding_checklist_items"
+      },
+      {
+        "step": 7,
+        "name": "Documents",
+        "icon": "FileText",
+        "content": "Documentation and vendor services setup from templates",
+        "category_filter": ["documents", "vendor_services"],
+        "features": ["Toggle items on/off", "Add custom items", "'I'll set this up later' link"],
+        "skippable": true,
+        "db_write": "Same as step 5 - onboarding_checklist_items"
+      },
+      {
+        "step": 8,
+        "name": "Team",
+        "icon": "Users",
+        "fields": ["teamEmail (optional)", "teamPhone (optional)", "inviteMethod (sms|email|both, default sms)"],
+        "skippable": true,
+        "db_write": {
+          "edge_function": "send-team-invite",
+          "body": ["email", "inviteUrl", "role (kitchen_staff)", "inviterName", "organizationName"],
+          "condition": "Only if teamEmail provided and not isDemoMode"
+        }
+      },
+      {
+        "step": 9,
+        "name": "QR Codes",
+        "icon": "QrCode",
+        "content": "Preview QR code generation - placeholder, actual generation after setup",
+        "skippable": true,
+        "db_write": false
+      },
+      {
+        "step": 10,
+        "name": "Done",
+        "icon": "PartyPopper",
+        "content": "Celebration screen - 'You're All Set!'",
+        "action": "Marks onboarding_completed=true, onboarding_completed_at=now(), navigates to /dashboard",
+        "db_write": {
+          "table": "organizations",
+          "columns": ["onboarding_completed", "onboarding_completed_at"]
+        }
+      }
+    ],
+    "demo_mode_behavior": "In demo mode, updateOnboardingStep/completeOnboarding/saveChecklistItems are no-ops. Location insert skipped.",
+    "resume_behavior": "On mount, fetches organizations.onboarding_step and resumes from last saved step. If onboarding_completed=true, redirects to /dashboard.",
+    "industry_template_integration": "Loads from organizations.industry_subtype, maps to INDUSTRY_TEMPLATES key for pre-populated checklist items"
+  },
+
+  "onboarding_checklist_card": {
+    "component": "src/components/dashboard/shared/OnboardingChecklistCard.tsx",
+    "config_file": "src/config/onboardingChecklistConfig.ts",
+    "total_possible_steps": 20,
+    "sections": [
+      { "id": "getting_started", "label": "Getting Started", "steps": ["profile", "setup_locations"] },
+      { "id": "team_vendors", "label": "Team & Vendors", "steps": ["add_team", "invite_team", "add_vendors", "invite_vendors", "add_vendor_services"] },
+      { "id": "safety_setup", "label": "Safety & Compliance", "steps": ["register_equipment", "upload_documents", "ai_document_routing", "request_documents", "sb1383_setup", "k12_setup", "iot_readiness"] },
+      { "id": "platform_tour", "label": "Platform Tour", "steps": ["take_tour"] },
+      { "id": "growth", "label": "Grow & Connect", "steps": ["k2c_referral", "schedule_consultation", "setup_complete"] }
+    ],
+    "step_types": ["navigate", "modal", "external", "celebration", "tour"],
+    "visibility_filtering": {
+      "by_role": "Steps can restrict to specific UserRole[] values",
+      "by_industry": "Steps can restrict to IndustryCode[] values",
+      "by_tier": "Steps can require minimum LocationTier (single|multi|enterprise)",
+      "by_enrollment": "sb1383_setup gated by isSB1383Enrolled, k12_setup gated by isK12Enrolled",
+      "resolver_function": "resolveVisibleSteps(industryType, locationCount, userRole, enrollmentFlags)"
+    },
+    "dependency_system": "Steps can declare dependsOn[] - array of step IDs that must be completed first",
+    "auto_completion": "Some steps auto-detect completion via completionTable + completionMinCount or completionProfileField"
+  },
+
+  "demo_wizard": {
+    "component": "src/pages/DemoWizard.tsx",
+    "current_behavior": "BYPASSED - useEffect immediately calls enterDemo() + navigate('/dashboard', { replace: true }). Returns null. The full 7-step wizard code exists below but is unreachable (dead code after 'return null').",
+    "bypass_action": {
+      "sets_operating_hours": "3 locations with predefined schedules",
+      "sets_shifts": "6 shifts across 3 locations",
+      "calls": "enterDemo()",
+      "navigates_to": "/dashboard (replace: true)"
+    },
+    "dead_code_wizard_steps": [
+      { "step": 0, "label": "About You", "icon": "User", "fields": ["name", "email", "phone"] },
+      { "step": 1, "label": "Your Business", "icon": "Building2", "fields": ["orgName", "industry (5 options)", "subtype"] },
+      { "step": 2, "label": "Location", "icon": "MapPin", "fields": ["locationType (single|multi)", "locationCount (2-100+)", "locationName"] },
+      { "step": 3, "label": "Hours", "icon": "Clock", "fields": ["wizardDays[]", "wizardOpenTime", "wizardCloseTime", "wizardShift1Name", "wizardShift1End", "wizardShift2Name", "showShifts toggle"] },
+      { "step": 4, "label": "Log Temps", "icon": "Thermometer", "fields": ["Walk-in Cooler", "Walk-in Freezer", "Prep Cooler", "Hot Hold Cabinet"], "requirement": "Log at least 2 readings" },
+      { "step": 5, "label": "Checklist", "icon": "ClipboardCheck", "fields": ["6 checklist items"], "requirement": "Complete at least 3 items" },
+      { "step": 6, "label": "Your Dashboard", "icon": "Sparkles", "content": "Celebration + launch dashboard CTA + free assessment link" }
+    ],
+    "industries_defined": ["restaurant", "healthcare_facility", "senior_living", "k12_school", "higher_education"],
+    "lead_capture": {
+      "table": "demo_leads",
+      "columns": ["full_name", "email", "phone", "organization_name", "industry_type", "industry_subtype", "location_type", "location_count", "location_name"],
+      "trigger": "Called after step 0 on 'Continue'",
+      "note": "Unreachable in current code due to early return null"
+    },
+    "staff_login": {
+      "purpose": "Subtle 'Staff Login' link for sales team, uses supabase.auth.signInWithPassword",
+      "note": "Also unreachable in current code"
+    }
+  },
+
+  "demo_request_flow": {
+    "step_1": {
+      "path": "/demo/request",
+      "component": "src/pages/DemoRequest.tsx",
+      "purpose": "Sales-qualified demo request form with competitor email blocking",
+      "fields": [
+        { "name": "name", "required": true },
+        { "name": "email", "required": true, "validation": "regex + isBlockedDomain() check" },
+        { "name": "phone", "required": true },
+        { "name": "companyName", "required": true },
+        { "name": "companyType", "required": true, "source": "KITCHEN_TYPES from src/data/demoGeneratorData.ts" },
+        { "name": "operationVolume", "required": true, "source": "OPERATION_VOLUMES" },
+        { "name": "address", "required": true },
+        { "name": "city", "required": true },
+        { "name": "state", "required": true, "source": "US_STATES" },
+        { "name": "zipCode", "required": true },
+        { "name": "numLocations", "default": 1, "max": 10 }
+      ],
+      "competitor_blocking": "isBlockedDomain(email) checks for competitor and disposable email domains",
+      "data_storage": "sessionStorage('demo_request_data')",
+      "next": "navigates to /demo/schedule/:sessionId"
+    },
+    "step_2": {
+      "path": "/demo/schedule/:sessionId",
+      "component": "src/pages/DemoSchedule.tsx",
+      "purpose": "Calendly scheduling page after demo request submission",
+      "calendly_url": "https://calendly.com/founders-getevidly/60min",
+      "calendly_event_listener": "window.addEventListener('message') for calendly.event_scheduled",
+      "states": ["scheduling (shows Calendly embed placeholder)", "booked (shows confirmation + next steps)"],
+      "data_retrieval": "sessionStorage('demo_request_data')",
+      "note": "Calendly widget is a placeholder in current code with 'Simulate Booking' button"
+    }
+  },
+
+  "demo_expired": {
+    "component": "src/pages/DemoExpired.tsx",
+    "purpose": "Full-screen upgrade prompt for expired authenticated demo accounts",
+    "preserved_data": ["Organization profile and settings", "Location and facility configurations", "Jurisdiction authority assignments", "Team member roles and access"],
+    "ctas": [
+      { "label": "Upgrade Now", "action": "navigate('/pricing')" },
+      { "label": "Talk to Us", "action": "external link to Calendly" }
+    ]
+  },
+
+  "guided_tour": {
+    "components": {
+      "GuidedTour": {
+        "file": "src/components/GuidedTour.tsx",
+        "purpose": "General platform guided tour - highlights top bar and sidebar navigation elements",
+        "trigger": "Floating 'Tour' button (bottom-right, z-1040) or programmatic via window event 'evidly:start-guided-tour'",
+        "total_steps": 14,
+        "steps": [
+          { "step": 1, "target": "tour-search", "title": "Search", "placement": "bottom" },
+          { "step": 2, "target": "tour-alerts", "title": "Alerts", "placement": "bottom" },
+          { "step": 3, "target": "tour-language", "title": "Language", "placement": "bottom" },
+          { "step": 4, "target": "tour-help-topbar", "title": "Help", "placement": "bottom" },
+          { "step": 5, "target": "tour-settings", "title": "Settings", "placement": "bottom" },
+          { "step": 6, "target": "tour-user", "title": "User Info", "placement": "bottom" },
+          { "step": 7, "target": "tour-dashboard", "title": "Dashboard", "placement": "right" },
+          { "step": 8, "target": "tour-section-daily", "title": "Daily Operations", "placement": "right" },
+          { "step": 9, "target": "tour-section-compliance", "title": "Compliance", "placement": "right" },
+          { "step": 10, "target": "tour-section-insights", "title": "Insights", "placement": "right" },
+          { "step": 11, "target": "tour-section-tools", "title": "Tools", "placement": "right" },
+          { "step": 12, "target": "tour-section-administration", "title": "Administration", "placement": "right" },
+          { "step": 13, "target": "tour-section-help", "title": "Help", "placement": "right" },
+          { "step": 14, "target": "tour-logout", "title": "Log Out", "placement": "right" }
+        ],
+        "ui_features": ["Spotlight cutout with gold border", "Black overlay 50% opacity", "Tooltip with title/content/navigation", "Skip Tour button", "Back/Next navigation", "Scroll into view on step change", "Repositions on window resize"]
+      },
+      "DemoTour": {
+        "file": "src/components/DemoTour.tsx",
+        "purpose": "Demo-specific guided tour focused on compliance features, ends with animated score celebration",
+        "context": "Uses DemoContext tourStep/setTourStep/completeTour/firstName/companyName",
+        "total_steps": 6,
+        "steps": [
+          { "step": 0, "target": "compliance-score", "title": "Welcome to {companyName}!", "placement": "bottom" },
+          { "step": 1, "target": "temp-logs-nav", "title": "Temperature Monitoring", "placement": "right" },
+          { "step": 2, "target": "checklists-nav", "title": "Daily Checklists", "placement": "right" },
+          { "step": 3, "target": "documents-nav", "title": "Documents & Compliance", "placement": "right" },
+          { "step": 4, "target": "ai-advisor-nav", "title": "AI Compliance Advisor", "placement": "right" },
+          { "step": 5, "target": null, "title": "You're Inspection Ready!", "type": "celebration_overlay" }
+        ],
+        "celebration_step": {
+          "animated_score_sequence": [0, 15, 35, 50, 65, 80, 92],
+          "animation_interval_ms": 350,
+          "score_colors": { ">=90": "#22c55e (green)", ">=70": "#eab308 (yellow)", "<70": "#ef4444 (red)" },
+          "score_labels": { ">=90": "Inspection Ready", ">=70": "Needs Attention", "<70": "Critical" },
+          "sparkle_decorations": "8 animated sparkle dots in gold/navy"
+        },
+        "ui_features": ["Progress dots (not step counter)", "Spotlight cutout with gold border", "Skip Tour button", "Back/Next navigation", "Last regular step shows 'See Your Score' instead of 'Next'"]
+      }
+    },
+    "tour_modules_config": {
+      "file": "src/config/tourModules.ts",
+      "purpose": "Single source of truth for ALL EvidLY feature modules - used in guided tour templates and setup form toggles",
+      "total_modules": 53,
+      "groups": [
+        { "group": "Daily Tasks", "module_count": 5 },
+        { "group": "Food Safety", "module_count": 7 },
+        { "group": "Fire Safety", "module_count": 8 },
+        { "group": "Compliance", "module_count": 9 },
+        { "group": "Insights & Benchmarking", "module_count": 8 },
+        { "group": "Reporting", "module_count": 4 },
+        { "group": "Vendors & Operations", "module_count": 5 },
+        { "group": "Administration", "module_count": 6 }
+      ]
+    }
+  },
+
+  "demo_data_generation": {
+    "generator": "src/lib/demoDataGenerator.ts",
+    "purpose": "Client-side in-memory demo data generation for anonymous demo mode (no Supabase writes)",
+    "config_interface": "DemoGenerationConfig",
+    "config_fields": ["companyName", "companyType", "operationType (light|moderate|heavy|institutional)", "city", "county", "state", "zipCode", "healthAuthority", "fireAuthority", "numLocations", "durationDays", "includeInsights[]"],
+    "data_categories": [
+      {
+        "category": "tempReadings",
+        "type": "GeneratedTempReading[]",
+        "generation": "30 days x equipment x 3 shifts (morning/midday/evening)",
+        "equipment_base": ["Walk-in Cooler #1", "Walk-in Freezer", "Prep Cooler", "Hot Hold Station"],
+        "equipment_heavy": ["+ Walk-in Cooler #2", "+ Blast Chiller"],
+        "excursion_rate": "2-4 predetermined excursion days, 30% chance per equipment per midday shift"
+      },
+      {
+        "category": "checklists",
+        "type": "GeneratedChecklist[]",
+        "types": ["Daily Opening (12 items)", "Daily Closing (10 items)", "Weekly Equipment (8 items, every 7 days)", "HACCP Cooking Temp (6 items)", "HACCP Cooling (4 items)"],
+        "institutional_extras": ["Allergen Control (8 items)", "Receiving Inspection (6 items)"],
+        "completion_rate": "85-95% target per type"
+      },
+      {
+        "category": "complianceSnapshots",
+        "type": "GeneratedComplianceSnapshot[]",
+        "scoring": "Starts at ~72%, improves to ~85% over 30 days with daily variance",
+        "dimensions": ["overall_score", "food_safety_ops", "food_safety_docs", "facility_safety_ops", "facility_safety_docs"]
+      },
+      {
+        "category": "vendorServices",
+        "type": "GeneratedVendorService[]",
+        "vendors": [
+          { "vendor": "Valley Hood Cleaning Co.", "type": "Hood Cleaning", "frequency": "NFPA 96 based on operationType" },
+          { "vendor": "ABC Fire Protection", "type": "Fire Extinguisher Inspection", "frequency": "Annual" },
+          { "vendor": "ABC Fire Protection", "type": "Fire Suppression (Ansul) Inspection", "frequency": "Semi-Annual", "overdue": true },
+          { "vendor": "Orkin Pest Control", "type": "Pest Control", "frequency": "Monthly" },
+          { "vendor": "Valley Grease Services", "type": "Grease Trap Pumping", "frequency": "Quarterly", "overdue": true }
+        ]
+      },
+      {
+        "category": "documents",
+        "type": "GeneratedDocument[]",
+        "documents": ["Health Permit (expiring_soon)", "Business License (current)", "Hood Cleaning Certificate (current)", "Fire Inspection Certificate (current)", "5x Food Handler Cards (mix of current/expiring_soon)"]
+      },
+      {
+        "category": "insights",
+        "type": "GeneratedInsight[]",
+        "count": "6-7 insights",
+        "categories_covered": ["temperature", "inspection", "certification", "vendor", "compliance"],
+        "jurisdiction_aware": true,
+        "conditional_insight": "inspection_predictions adds health authority cycle insight"
+      },
+      {
+        "category": "correctiveActions",
+        "type": "GeneratedCorrectiveAction[]",
+        "actions": [
+          { "title": "Temperature Excursion - Walk-in Cooler #1", "status": "resolved" },
+          { "title": "Missed Closing Checklist - Feb 15", "status": "resolved" },
+          { "title": "Overdue Ansul Inspection", "status": "in_progress" }
+        ]
+      },
+      {
+        "category": "teamMembers",
+        "type": "GeneratedTeamMember[]",
+        "base_members": ["Maria Garcia (Kitchen Manager)", "Jose Rodriguez (Kitchen Staff)", "Lisa Tran (Kitchen Staff)"],
+        "moderate_plus": ["+ David Kim (Chef)"],
+        "heavy_plus": ["+ Amy Williams (Kitchen Staff)"]
+      }
+    ],
+    "generation_steps_ui": [
+      "Location configured", "Jurisdiction identified", "Compliance requirements loaded",
+      "Generating temperature readings", "Generating checklists", "Calculating compliance scores",
+      "Setting up vendor services", "Creating sample documents", "Creating insights and alerts",
+      "Adding corrective actions", "Setting up demo team"
+    ],
+    "progress_animation": "200-500ms delay between steps for loading screen effect"
+  },
+
+  "demo_mode": {
+    "context_file": "src/contexts/DemoContext.tsx",
+    "provider": "DemoProvider",
+    "override_provider": "DemoOverrideProvider (for Role Preview - forces demo mode off for regular layout)",
+
+    "modes": {
+      "anonymous_demo": {
+        "flag": "isDemoMode = true",
+        "storage": "sessionStorage 'evidly_demo_mode' = 'true'",
+        "condition": "rawDemoMode && !isAuthenticated",
+        "guard_mode": "anonymous_demo"
+      },
+      "authenticated_demo": {
+        "flag": "isAuthenticatedDemo = true",
+        "condition": "isAuthenticated && organizations.is_demo = true",
+        "fetches": "organizations.is_demo + demo_expires_at on session change",
+        "guard_mode": "authenticated_demo"
+      },
+      "role_preview": {
+        "flag": "isDemoMode = true (forced)",
+        "condition": "__rolePreview URL param present",
+        "detection": "Module-level IIFE _isRolePreview",
+        "purpose": "Admin iframe must render tenant layout with demo data"
+      }
+    },
+
+    "activation": {
+      "function": "enterDemo(lead?: DemoLead)",
+      "actions": [
+        "Clears all Supabase auth tokens from localStorage (sb-*-auth-token)",
+        "Signs out from Supabase if session exists",
+        "Sets rawDemoMode = true",
+        "Tracks 'demo_start' analytics event",
+        "Stores 'evidly_demo_mode' = 'true' in sessionStorage",
+        "If lead provided: stores lead in sessionStorage + starts tour"
+      ]
+    },
+
+    "deactivation": {
+      "function": "exitDemo()",
+      "actions": [
+        "Sets rawDemoMode = false",
+        "Clears demoLead state",
+        "Sets tourActive = false",
+        "Removes 'evidly_demo_mode' and 'evidly_demo_lead' from sessionStorage"
+      ],
+      "auto_cleanup": "When user authenticates while in rawDemoMode, demo state is auto-cleaned (unless in role preview)"
+    },
+
+    "conversion": {
+      "edge_function": "demo-account-convert",
+      "auth": "EvidLY admin only (@getevidly.com)",
+      "actions": [
+        "Sets organizations.is_demo = false, converted_at = now(), demo_plan = selectedPlan",
+        "Updates demo_sessions.status = 'converted'",
+        "Deletes demo_generated_data rows linked to demo sessions"
+      ],
+      "philosophy": "Conversion = flip a flag, not a migration. Profile data was always in DB."
+    },
+
+    "expiration": {
+      "check_interval": "Every 60 seconds",
+      "source": "organizations.demo_expires_at",
+      "expired_state": "isDemoExpired = true",
+      "expired_page": "src/pages/DemoExpired.tsx"
+    },
+
+    "presenter_mode": {
+      "activation": ["?presenter=true URL param", "Typing 'evidly' on keyboard (konami code)"],
+      "storage": "sessionStorage 'evidly-presenter'",
+      "toggle_function": "togglePresenterMode()"
+    },
+
+    "write_guard": {
+      "import": "setDemoWriteGuard, setDemoGuardMode from src/lib/supabaseGuard",
+      "modes": {
+        "live": "Full write access (platform_admin always gets this)",
+        "anonymous_demo": "Write guard active for anonymous demo",
+        "authenticated_demo": "Write guard active for authenticated demo"
+      }
+    },
+
+    "default_identity": {
+      "companyName": "Pacific Coast Dining",
+      "userName": "Maria Rodriguez",
+      "firstName": "Maria"
+    }
+  },
+
+  "edge_functions": {
+    "demo-account-create": {
+      "file": "supabase/functions/demo-account-create/index.ts",
+      "auth": "EvidLY admin only (@getevidly.com)",
+      "purpose": "Creates real Supabase auth account + org + locations for prospect demo",
+      "creates": [
+        { "entity": "Auth user", "details": "email + temp password (12 char UUID slice), auto-confirmed, user_metadata.is_demo=true" },
+        { "entity": "Organization", "details": "is_demo=true, demo_started_at, demo_expires_at (default 14 days)" },
+        { "entity": "Location(s)", "details": "Up to 10 locations with address/city/state/zip" },
+        { "entity": "User profile", "details": "role=owner_operator, linked to org" },
+        { "entity": "User location access", "details": "role=owner per location" },
+        { "entity": "Demo session update", "details": "If demo_session_id provided, updates with credentials and status=ready" }
+      ],
+      "competitor_blocking": "Checks competitor_blocked_domains table",
+      "cleanup_on_failure": "Deletes orphaned auth user if any subsequent step fails",
+      "returns": "{ success, auth_user_id, organization_id, location_ids, credentials, demo_expires_at }"
+    },
+    "demo-account-convert": {
+      "file": "supabase/functions/demo-account-convert/index.ts",
+      "auth": "EvidLY admin only (@getevidly.com)",
+      "purpose": "Converts demo account to live paid account",
+      "actions": [
+        "Sets organizations.is_demo=false, converted_at=now(), demo_plan=selectedPlan (default 'founder')",
+        "Updates demo_sessions.status='converted'",
+        "Deletes demo_generated_data rows for linked sessions"
+      ],
+      "returns": "{ success, organization_id, organization_name, plan, converted_at }"
+    },
+    "cleanup-demo-tour": {
+      "file": "supabase/functions/cleanup-demo-tour/index.ts",
+      "auth": "EvidLY admin or service_role (pg_cron)",
+      "purpose": "Removes all demo data for completed tours and expired partner demos",
+      "modes": {
+        "manual": "Pass { tour_id } or { partner_demo_id } to clean specific entity",
+        "scheduled": "No body = finds all completed tours past cleanup_scheduled_for timestamp"
+      },
+      "tables_cleaned": [
+        "temp_logs", "checklist_completions", "corrective_actions", "documents",
+        "equipment_service_records", "insurance_risk_scores", "sb1383_compliance",
+        "notifications", "checklists", "vendors", "locations",
+        "user_profiles (+ auth.admin.deleteUser)", "organizations"
+      ],
+      "source_tags": ["demo_template (for demo tours)", "partner_demo (for partner demos)"],
+      "status_lifecycle": "completed -> cleaned (with cleaned_at timestamp)"
+    },
+    "generate-demo-template": {
+      "file": "supabase/functions/generate-demo-template/index.ts",
+      "auth": "EvidLY admin only (@getevidly.com)",
+      "purpose": "Populates staging demo org with 60 days of realistic data across all pillars",
+      "data_generated_per_location": [
+        "Temperature logs (60 days x 4-5 units, 5% deviation rate)",
+        "Checklists (4 types + completions, 5% miss rate)",
+        "Corrective actions (4 scenarios: temp deviation, pest control, ice machine, food handler card)",
+        "Vendors (from demo_vendor_profiles table, industry-filtered)",
+        "Documents (10 types: permits, certs, food handler cards, insurance)",
+        "Insurance risk scores",
+        "SB 1383 compliance (if applicable industry)"
+      ],
+      "source_tag": "demo_template",
+      "tribal_casino_support": "Sets food_safety_mode=advisory with TEHO authority text",
+      "updates_tour_status": "demo_tours.status = 'active'"
+    },
+    "generate-partner-demo": {
+      "file": "supabase/functions/generate-partner-demo/index.ts",
+      "auth": "EvidLY admin only (@getevidly.com)",
+      "purpose": "Populates partner demo with curated multi-location data tailored to partner persona",
+      "partner_types": {
+        "vendor": {
+          "locations": "5 client restaurants across 3 counties (Merced, Fresno, Stanislaus)",
+          "data": "60 days ops + 12 months hood cleaning service records",
+          "config": "vendor_connect_slots, service_history"
+        },
+        "association": {
+          "locations": "10 member restaurants across 5 counties",
+          "data": "30 days ops + K2C metrics",
+          "config": "member_count, county_coverage, adoption_pipeline"
+        },
+        "integration": {
+          "locations": "4 joint customers",
+          "data": "30 days ops",
+          "sub_types": ["toast (POS data)", "dinehr (HR data)", "next_insurance (insurance data)", "cintas (uniform data)"],
+          "config": "integration-type-specific mock data"
+        },
+        "carrier": {
+          "locations": "10 insured restaurants across 4 counties",
+          "data": "60 days ops + CIC 5-pillar risk profiles",
+          "config": "cic_profiles, risk_distribution, pse_summary, api_feed_sample"
+        },
+        "tribal_casino": {
+          "locations": "5-8 casino outlets (Main Buffet, Steakhouse, Sports Bar, etc.)",
+          "data": "60 days ops + monthly hood cleaning + quarterly fire suppression + annual fire extinguisher",
+          "config": "tribe_name, casino_name, sovereignty_type, NIGC overlay, fire_compliance stats",
+          "special": "Sets is_tribal=true, food_safety_mode=advisory"
+        }
+      },
+      "source_tag": "partner_demo"
+    }
+  },
+
+  "observations": [
+    {
+      "id": "OBS-08-001",
+      "severity": "info",
+      "area": "DemoWizard",
+      "finding": "The entire 7-step DemoWizard (steps 0-6) is dead code. The component always returns null after the useEffect that calls enterDemo() and navigates to /dashboard. ~400 lines of unreachable UI code remain in the file."
+    },
+    {
+      "id": "OBS-08-002",
+      "severity": "info",
+      "area": "SignupLocations",
+      "finding": "SignupLocations.tsx does not write to DB. It performs client-side pricing calculations and navigates to /onboarding, but the selected location count, billing period, and pricing are NOT persisted or passed to the onboarding page."
+    },
+    {
+      "id": "OBS-08-003",
+      "severity": "info",
+      "area": "Signup",
+      "finding": "Signup defers all org/profile/access DB writes to EmailConfirmed.tsx after email verification. Only user_metadata is stored in the signUp call."
+    },
+    {
+      "id": "OBS-08-004",
+      "severity": "low",
+      "area": "Onboarding",
+      "finding": "Onboarding step 3 (Add Location) hardcodes state as 'CA' in lookupJurisdiction() call regardless of the user's actual state selection during signup."
+    },
+    {
+      "id": "OBS-08-005",
+      "severity": "info",
+      "area": "DemoSchedule",
+      "finding": "DemoSchedule.tsx contains a placeholder Calendly widget with a 'Simulate Booking' button instead of an actual embed. The real Calendly inline widget is not integrated."
+    },
+    {
+      "id": "OBS-08-006",
+      "severity": "info",
+      "area": "DemoContext",
+      "finding": "Presenter mode can be toggled by typing 'evidly' on the keyboard (konami code) or via ?presenter=true URL param. Session-based persistence."
+    },
+    {
+      "id": "OBS-08-007",
+      "severity": "info",
+      "area": "GuidedTour",
+      "finding": "Two separate tour systems exist: GuidedTour (14 steps, general platform navigation) and DemoTour (6 steps, demo-specific with animated score celebration). GuidedTour is triggered from the floating button or the onboarding checklist. DemoTour is controlled by DemoContext."
+    },
+    {
+      "id": "OBS-08-008",
+      "severity": "info",
+      "area": "DemoDataGenerator",
+      "finding": "Client-side demoDataGenerator.ts generates compliance scores (overall_score, food_safety_ops/docs, facility_safety_ops/docs) which may conflict with CLAUDE.md rule 'Never generate, calculate, blend, or aggregate a compliance score.' However, this is used only in anonymous demo mode, not production."
+    },
+    {
+      "id": "OBS-08-009",
+      "severity": "info",
+      "area": "EdgeFunctions",
+      "finding": "generate-demo-template and generate-partner-demo edge functions both generate insurance risk scores and compliance data with hardcoded values. All rows are tagged with source='demo_template' or 'partner_demo' for safe cleanup."
+    },
+    {
+      "id": "OBS-08-010",
+      "severity": "info",
+      "area": "OnboardingChecklist",
+      "finding": "The post-signup onboarding checklist (OnboardingChecklistCard) is a completely separate system from the Onboarding.tsx 10-step wizard. The checklist has 20 possible steps with role/industry/tier-based visibility, dependency chains, and auto-completion detection."
+    },
+    {
+      "id": "OBS-08-011",
+      "severity": "low",
+      "area": "DemoRequest",
+      "finding": "DemoRequest form stores data only in sessionStorage, not in Supabase. Comment says 'In a real implementation, this would save to Supabase.' The session ID is generated client-side with Date.now().toString(36)."
+    },
+    {
+      "id": "OBS-08-012",
+      "severity": "info",
+      "area": "DemoExpired",
+      "finding": "DemoExpired page preserves profile data and redirects to /pricing for upgrade or Calendly for consultation. No data loss messaging."
+    }
+  ]
+}

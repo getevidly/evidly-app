@@ -1,0 +1,651 @@
+================================================================================
+BACKEND WIRING AUDIT — EvidLY Admin
+Generated: 2026-05-07
+Repo: C:\Users\newpa\OneDrive\Desktop\evidly-app
+Supabase PROD: irxgmhxhmxtzfwuieblc
+================================================================================
+
+================================================================================
+SECTION 1: DEPLOYED EDGE FUNCTIONS
+================================================================================
+
+Total deployed to PROD: 222 functions (all status ACTIVE)
+
+Notable functions by last updated:
+  stripe-webhook          v39  2026-04-07 (most-iterated)
+  ai-document-analysis    v23  2026-04-07
+  ai-corrective-action-dr v21  2026-04-07
+  ai-weekly-digest        v21  2026-04-07
+  send-email              v19  2026-02-04
+  vendor-upload-reminder  v19  2026-02-04
+  expiration-alerts       v19  2026-02-04
+  weekly-digest           v19  2026-02-04
+  ai-advisor              v15  2026-02-04
+
+Full alphabetical list: see deployed-functions.txt (222 entries)
+
+FINDINGS: 222 deployed, all ACTIVE. No invocation metrics available via CLI.
+Version numbers range 12–39, indicating multiple deployment waves.
+
+DISCOVERED:
+- Several early functions (send-email v19, vendor-upload-reminder v19) not
+  updated since Feb 2026, suggesting they may be stale
+- stripe-webhook at v39 is most-deployed function (heaviest iteration)
+
+================================================================================
+SECTION 2: EDGE FUNCTIONS IN REPO
+================================================================================
+
+Total in repo: 165 function directories (all have index.ts)
+Shared utilities: 9 files in _shared/
+Combined LOC: ~27,000+
+
+Top 10 by LOC:
+| Name                      | LOC  | Key Imports                           |
+|---------------------------|------|---------------------------------------|
+| intelligence-collect      | 1009 | supabase-js, sendEmail, anthropic     |
+| generate-partner-demo     | 904  | supabase-js, getCorsHeaders           |
+| generate-alerts           | 851  | supabase-js, createOrgNotification    |
+| trial-email-sender        | 703  | supabase-js, sendEmail, logger        |
+| generate-job-report       | 660  | supabase-js, getCorsHeaders           |
+| intelligence-deliver      | 654  | supabase-js, sendEmail                |
+| ops-intelligence-generate | 612  | supabase-js, createOrgNotification    |
+| calculate-compliance-score| 610  | supabase-js, getCorsHeaders           |
+| generate-kec-report       | 558  | supabase-js, getCorsHeaders           |
+| correlation-engine        | 438  | supabase-js, getCorsHeaders           |
+
+Shared utilities (_shared/):
+| File                  | LOC | Purpose                              |
+|-----------------------|-----|--------------------------------------|
+| notify.ts             | 295 | Notification + email/push delivery   |
+| email.ts              | 121 | Resend email service                 |
+| invocation-logger.ts  | 120 | Function invocation audit logging    |
+| posUtils.ts           | 80  | POS integration helpers              |
+| rateLimit.ts          | 60  | DB-backed rate limiting              |
+| sms.ts                | 50  | Twilio SMS (disabled in prod)        |
+| cors.ts               | 40  | Domain-restricted CORS               |
+| auth.ts               | 36  | API key validation                   |
+| logger.ts             | 26  | PII scrubbing (email/phone/IP)       |
+
+FINDINGS: 165 functions in repo, all with index.ts. 11 functions > 500 LOC.
+
+FLAGGED: calculate-compliance-score (610 LOC) — POTENTIAL VIOLATION of CLAUDE.md
+rule: "Never generate, calculate, blend, or aggregate a compliance score."
+
+DISCOVERED:
+- 7 functions configured with verify_jwt=false in config.toml:
+  intelligence-collect, intelligence-approve, intelligence-webhook,
+  crawl-monitor, trigger-crawl, classify-signals, violation-crawl
+- All justified: cron-invoked (x-cron-secret) or admin-invoked (Bearer + @getevidly.com)
+- Function-to-function chains: stripe-webhook→k2c-processor,
+  vendor-secure-upload→validate-vendor-document→vendor-document-notify
+
+================================================================================
+SECTION 3: ORPHAN & DRIFT ANALYSIS
+================================================================================
+
+Drift A — In repo, NOT deployed (1):
+  send-welcome-email
+
+Drift B — Deployed, NOT in repo (58):
+  ai-advisor, ai-estimate, analyze-kitchen-video, apply-migration,
+  assess-ground-truth-submission, assign-ground-truth-mission,
+  check-unconfirmed-jobs, checkup-notify, compute-jpi,
+  crawl-orchestrator, create-client, daily-intelligence,
+  demo-expire, demo-generate-data, demo-send-magic-link,
+  drift-alert-sender, expiration-alerts, extract-inspection,
+  fetch-jurisdiction, forum-moderate, generate-corrective-action,
+  generate-threshold-guidance, handle-sms-reply,
+  hoodops-webhook-receiver, insurance-risk-calculate,
+  insurance-risk-fire-safety, insurance-risk-history,
+  insurance-risk-incidents, insurance-risk-verify,
+  intel-crawl-environmental, intel-crawl-recalls,
+  job-availability, notify-affected-clients,
+  parse-inspection-portal, process-scheduled-emails,
+  process-voice-command, public-resource-feed,
+  read-thermometer-photo, reschedule-request,
+  route-arthur-alert, seed-distributions,
+  send-arthur-digest, send-email, send-essential-transition-email,
+  send-ground-truth-nudge, send-sms, send-trial-email,
+  send-welcome, smooth-processor, triage-signal,
+  trial-email-sender, user-invitation, vendor-connect-invite,
+  vendor-doc-request, vendor-service-token, vendor-sms-reminder,
+  vendor-upload-reminder, weekly-digest, zoominfo-webhook
+
+FINDINGS:
+  Drift A count: 1
+  Drift B count: 58
+  Total deployed: 222
+  Total in repo: 165
+  58 ghost functions deployed from prior code that no longer exists in repo.
+
+DISCOVERED:
+- Several Drift B match HoodOps PRO scope (job-availability,
+  check-unconfirmed-jobs, hoodops-webhook-receiver)
+- zoominfo-webhook deployed but not in repo
+- apply-migration deployed as edge function (unusual pattern)
+
+================================================================================
+SECTION 4: FRONTEND → EDGE FUNCTION CALLS
+================================================================================
+
+Total .functions.invoke() calls: 51 across 33 files
+Total fetch() calls to /functions/v1/: 6 in src/lib/api.ts
+Total unique edge functions called from frontend: 32
+
+By location:
+  Hooks: 4 files (8 calls)
+    useComplianceScore.ts → calculate-compliance-score
+    useIntelligenceHub.ts → intelligence-feed, intelligence-approve,
+                            generate-executive-snapshot
+    useCommandCenter.ts → send-client-notification, crawl-code-monitor
+    useRegulatoryChanges.ts → monitor-regulations (x2)
+
+  Library: 3 files (8 calls)
+    aiTextAssist.ts → ai-text-assist
+    stripe.ts → stripe-create-checkout, stripe-customer-portal
+    api.ts → vendor-contact, vendor-secure-upload, ai-document-analysis,
+             generate-compliance-package, vendor-document-notify (all fetch)
+
+  Components: 8 files (10 calls)
+    HoldingActiveStatus, TempPatternInsights, TempIntelligenceCard,
+    HACCPDeviationReport → ai-text-assist
+    K2CInviteModal → k2c-referral-invite
+    TeamInviteModal → send-team-invite (x2)
+    SmartUploadModal → ai-text-assist
+    CloudImportPicker → cloud-file-import
+
+  User pages: 5 files (9 calls)
+    HACCP.tsx → generate-haccp-from-checklists
+    Team.tsx → send-team-invite (x2), send-sms-invite
+    Onboarding.tsx → send-team-invite
+    OperationsIntelligence.jsx → ops-intelligence-generate, ops-intelligence-coach
+    AdminIntelligenceQueue.tsx → intelligence-approve (x3)
+
+  Admin pages: 13 files (22 calls)
+    AdminDashboard → crawl-monitor, k2c-processor, platform-metrics-refresh
+    AdminCrawlMonitor → crawl-monitor, trigger-crawl
+    CommandCenter → trigger-crawl
+    DemoPipeline → demo-account-convert
+    DemoTours → cleanup-demo-tour
+    EvidLYIntelligence → intelligence-collect, intelligence-deliver
+    FeatureFlags → ai-flag-suggest
+    IntelligenceAdmin → classify-signals (x2), intelligence-deliver (x3)
+    PartnerDemos → cleanup-demo-tour
+    SecuritySettings → security-headers-check
+    SupportTickets → send-email
+    TrialHealth → trial-reminder
+    ViolationOutreach → generate-outreach
+
+CROSS-REFERENCE:
+  Called but NOT deployed: 0 ✓
+  Ghost dependencies (called, not in repo): 3
+    generate-executive-snapshot (useIntelligenceHub.ts)
+    crawl-code-monitor (useCommandCenter.ts)
+    send-client-notification (useCommandCenter.ts)
+
+FINDINGS: 0 broken calls. 3 calls depend on ghost (Drift B) deployments.
+
+================================================================================
+SECTION 5: SUPABASE TABLES — ADMIN SCOPE
+================================================================================
+
+Total tables in PROD: 225
+
+Tables with RLS DISABLED (9):
+  client_intelligence_feed    22 cols  0 policies
+  intelligence_insight_views   4 cols  0 policies
+  intelligence_insights       31 cols  1 policy
+  intelligence_subscriptions  13 cols  0 policies
+  jie_health_log               8 cols  0 policies
+  jurisdiction_intel_updates  15 cols  0 policies
+  regions                      6 cols  0 policies
+  scoretable_views             7 cols  0 policies
+  task_definition_templates   19 cols  0 policies
+
+Tables with RLS ENABLED but ZERO policies (19):
+  device_registrations, jurisdiction_violation_overrides,
+  location_jurisdictions, playbook_activations, playbook_food_disposition,
+  playbook_insurance_claims, playbook_notifications,
+  playbook_step_checklist_items, playbook_step_checklist_responses,
+  playbook_step_photos, playbook_step_responses, playbook_steps,
+  playbook_templates, playbook_vendor_contacts, playbooks,
+  sync_conflicts, sync_queue, sync_snapshots, trial_email_log,
+  vendor_partners
+
+LOCKED-RULE VERIFICATIONS:
+  ✓ jurisdictions.agency_name EXISTS
+  ✓ jurisdictions.fire_jurisdiction_config EXISTS (JSONB)
+  ✓ user_profiles has ALL perm_* columns (11 verified)
+  ✓ Pillar values: only 'food_safety' in populated tables (no violations)
+
+FINDINGS:
+  9 tables RLS disabled — SECURITY RISK
+  19 tables RLS enabled, 0 policies — EFFECTIVELY OPEN
+  Total needing RLS attention: 28
+  Locked-rule violations: 0
+  Code-vs-schema mismatches: 1 (vault_documents missing)
+
+================================================================================
+SECTION 6: DATA INJECTION PATHS — ADMIN WRITES
+================================================================================
+
+Pages that WRITE (with operations and target tables):
+
+| File                        | Ops       | Target Tables                     |
+|-----------------------------|-----------|-----------------------------------|
+| AdminAuditLog.tsx           | insert    | platform_audit_log                |
+| AdminK2C.tsx                | insert    | k2c_donations                     |
+| AdminOrgs.tsx               | upd,ins   | organizations, platform_audit_log |
+| AdminReports.tsx            | ins,upd   | internal_reports                  |
+| AdminSecurity.tsx           | 6xupd,2xi | mfa_policy, session_policy,       |
+|                             |           | user_sessions, platform_audit_log |
+| AdminUsers.tsx              | 4xupd,1xi | user_profiles, user_sessions,     |
+|                             |           | platform_audit_log                |
+| AdminVendorConnect.jsx      | 2xupd     | vendor_connect_applications,      |
+|                             |           | vendor_connect_spots              |
+| Configure.tsx               | 5xins,4xi | organizations, locations, vendors, |
+|                             |           | admin_event_log                   |
+| DatabaseBackup.tsx          | insert    | admin_backups                     |
+| DemoGenerator.tsx           | 2xins     | demo_sessions, intelligence_sigs  |
+| DemoPipeline.tsx            | 4xupd     | demo_sessions, organizations      |
+| DocumentVault.tsx           | ins,del   | vault_documents (MISSING TABLE!)  |
+| EmailSequenceManager.tsx    | 4xupd,1xi | trial_email_sequences             |
+| EvidLYIntelligence.tsx      | 3xupd,ups | intelligence_signals, platform_   |
+|                             | 1xins     | settings, client_advisories       |
+| FeatureFlags.tsx            | 2xupd,2xi | feature_flags, feature_flag_audit |
+| GuidedTours.tsx             | 8xins,3xu | demo_sessions, sales_pipeline,    |
+|                             | 1xdel     | guided_tour_templates             |
+
+Read-only admin pages: ~27 pages (AdminHome, AdminBilling, AdminCrawlMonitor,
+AdminDashboard, AdminScoreTable, etc.)
+
+FINDINGS:
+  Write pages: ~18
+  Read-only pages: ~27
+  Most-mutated table: platform_audit_log (10+ insert points)
+  Writes to missing table: 1 (DocumentVault → vault_documents)
+
+================================================================================
+SECTION 7: ADMIN → USER UI WIRING VERIFICATION
+================================================================================
+
+a. JurisdictionIntelligence → user surface
+   Admin writes: jurisdiction_intel_updates (published, published_at, published_by)
+   User reads: ZERO pages query this table
+   Result: ORPHANED
+
+b. IntelligenceAdmin → Business Intelligence / Operations Intelligence
+   Admin writes: intelligence_signals (status, risk levels, reviewed_by)
+   User reads: BusinessIntelligence.tsx, OperationsIntelligence.jsx
+   Result: WIRED (caveat: OperationsIntelligence.jsx has no explicit org_id filter)
+
+c. AdminRegulatoryChanges → RegulatoryAlerts
+   Admin writes: regulatory_changes (published=true, AI summaries)
+   User reads: RegulatoryAlerts.tsx + regulatory_change_reads tracking
+   Result: WIRED (complete bidirectional with read tracking)
+
+d. AdminVendorConnect → VendorConnect
+   Admin writes: vendor_connect_profiles (status=approved, is_active=true)
+   User reads: VendorConnect.jsx (filters approved + active)
+   Result: WIRED (complete approval workflow)
+
+e. AdminK2C → user surface
+   Admin writes: k2c_donations
+   User reads: NONE
+   Result: ORPHANED (by design — internal tracking only)
+
+f. DocumentVault → /documents
+   Admin writes: vault_documents (TABLE DOES NOT EXIST)
+   User reads: NONE
+   Result: BROKEN
+
+g. AdminCrawlMonitor + EvidLYIntelligence
+   Both read: intelligence_sources (same table)
+   CrawlMonitor = operational (health, WAF blocks)
+   EvidLYIntelligence = strategic (signals, predictions)
+   Result: WIRED (complementary, not redundant)
+
+FINDINGS:
+  WIRED:    4 (IntelligenceAdmin, RegulatoryChanges, VendorConnect, Crawl+Intel)
+  ORPHANED: 2 (JurisdictionIntelligence, AdminK2C)
+  BROKEN:   1 (DocumentVault — missing table)
+
+================================================================================
+SECTION 8: CRITICAL EDGE FUNCTION HEALTH
+================================================================================
+
+NOTE: Invocation stats require Supabase dashboard (not available via CLI).
+
+Structural health by family:
+
+crawl-*:
+  crawl-monitor:      repo ✓  deployed ✓  jwt=false (cron)
+  trigger-crawl:      repo ✓  deployed ✓  jwt=false (admin)
+  crawl-orchestrator:  repo ✗  deployed ✓  (ghost)
+  violation-crawl:    repo ✓  deployed ✓  jwt=false (cron)
+
+stripe-*:
+  stripe-webhook:         repo ✓  deployed ✓  v39
+  stripe-create-checkout: repo ✓  deployed ✓
+  stripe-customer-portal: repo ✓  deployed ✓
+
+send-*:
+  send-email:             repo ✗  deployed ✓  (ghost — used by pg_cron!)
+  send-team-invite:       repo ✓  deployed ✓
+  send-document-alerts:   repo ✓  deployed ✓
+  send-welcome-email:     repo ✓  deployed ✗  (Drift A)
+
+intelligence-*:
+  intelligence-collect:      repo ✓  deployed ✓  1009 LOC
+  intelligence-approve:      repo ✓  deployed ✓  jwt=false
+  intelligence-deliver:      repo ✓  deployed ✓
+  intelligence-feed:         repo ✓  deployed ✓
+  intelligence-webhook:      repo ✓  deployed ✓  jwt=false
+  intelligence-auto-publish: repo ✓  deployed ✓
+  intelligence-bridge-proxy: repo ✓  deployed ✓
+
+ai-*:
+  ai-chat:                  repo ✓  deployed ✓
+  ai-document-analysis:     repo ✓  deployed ✓
+  ai-advisor:               repo ✗  deployed ✓  (ghost)
+
+FINDINGS: 3 critical ghost dependencies (send-email, ai-advisor, crawl-orchestrator).
+
+================================================================================
+SECTION 9: SCHEDULED JOBS (pg_cron)
+================================================================================
+
+9 pg_cron jobs configured in PROD:
+
+| # | Schedule     | Function                   | Auth Method           |
+|---|-------------|----------------------------|-----------------------|
+| 9 | 15 9 * * *  | document-reminders         | current_setting() ✓   |
+| 6 | 0 8 * * *   | expiration-alerts          | HARDCODED JWT ⚠       |
+| 8 | 0 9 * * *   | onboarding-reminders       | current_setting() ✓   |
+|10 | 0 15 * * *  | trial-email-sender         | current_setting() ✓   |
+|11 | 0 16 * * *  | vendor-notification-sender | current_setting() ✓   |
+|12 | 0 17 * * *  | vendor-partner-outreach    | current_setting() ✓   |
+| 4 | 15 9 * * *  | vendor-sms-reminder        | HARDCODED JWT ⚠       |
+| 5 | 0 9 * * *   | vendor-upload-reminder     | HARDCODED JWT ⚠       |
+| 7 | 0 15 * * 1  | weekly-digest              | HARDCODED JWT ⚠       |
+
+SECURITY ISSUE: 4 jobs embed full service_role JWT directly in SQL.
+JWT visible to any DB admin. Key rotation breaks these jobs.
+
+FINDINGS: 9 cron jobs. 4 with hardcoded JWT. All daily except weekly-digest (Mon).
+
+DISCOVERED:
+- document-reminders and onboarding-reminders are ghost functions (Drift B)
+  but have active pg_cron jobs — work only because old deployment persists
+- No pg_cron job for intelligence-collect despite being cron-triggered —
+  likely uses external scheduler or Supabase scheduled functions
+
+================================================================================
+SECTION 10: DATA INTEGRITY SPOT CHECKS
+================================================================================
+
+1. Pillar values:
+   14 tables have pillar column
+   Values found: 'food_safety' only (no violations)
+   fire_safety type exists but no rows yet
+
+2. Organization status:
+   subscription_status: trial=3 (all 3 orgs are trial)
+
+3. Crawl health:
+   intelligence_sources: live=68, error=14
+   Error rate: 17% (14/82)
+
+4. Pending signals:
+   intelligence_signals unpublished: 148
+
+5. Support tickets:
+   open + high: 53 (ALL older than 7 days)
+
+6. Storage buckets (11, all private):
+   bundle-temp, capture-artifacts, compliance-documents,
+   compliance-photos, documents, inspection-reports, reports,
+   uploads, vault, vendor-documents, vendor-uploads
+
+7. Triggers in PROD: 29
+   Notable: trg_jurisdiction_config_drift (AFTER UPDATE on jurisdictions),
+   trg_temp_deviation_to_ca (AFTER INSERT on temperature_logs),
+   trg_auto_create_temperature_equipment_tasks (AFTER INSERT on temperature_equipment)
+
+8. RPC functions in PROD: 29
+   Notable: is_platform_admin(), fn_jurisdiction_config_drift_check(),
+   fn_temp_deviation_to_ca(), create_vendor_upload_request(),
+   fn_jie_integrity_check()
+
+9. Realtime publications: NONE found in pg_publication_tables
+
+FINDINGS:
+  Pillar violations: 0
+  Crawl error rate: 17%
+  Signal backlog: 148
+  Stale tickets: 53 (all >7d)
+  No realtime publications configured
+
+================================================================================
+SECTION 11: STUB & PLACEHOLDER DETECTION
+================================================================================
+
+| File                          | Stub Indicators                      |
+|-------------------------------|--------------------------------------|
+| FeatureBaselineTracker.jsx    | Meta audit tool; STUB verdicts for   |
+|                               | FDA 2-Stage Cooling, service report  |
+| FeatureFlags.tsx              | "Audit trail stub" comment           |
+| DemoGenerator.tsx             | temp_password: 'demo-xxxxxxxx'       |
+|                               | (intentional placeholder UX)         |
+| AdminDashboard.tsx            | DEMO_* arrays (demo mode ONLY)       |
+
+TODO/FIXME/HACK/XXX: 1 match (DemoGenerator placeholder)
+"Coming Soon" / "Not yet implemented": 0
+Empty catch blocks: 0
+
+FINDINGS: 1 meta-audit page, 0 stub production pages.
+
+================================================================================
+SECTION 12: SECRETS / ENV VAR USAGE IN EDGE FUNCTIONS
+================================================================================
+
+26 unique environment variables across 165 functions.
+
+REQUIRED (crash if missing):
+  SUPABASE_URL              — 160 calls, ALL functions
+  SUPABASE_SERVICE_ROLE_KEY — 162 calls, ALL functions
+
+CONDITIONAL (service-specific):
+  ANTHROPIC_API_KEY    — 20 calls, 17 AI functions (returns 503 if missing)
+  STRIPE_SECRET_KEY    — 3 calls, 3 stripe functions
+  STRIPE_WEBHOOK_SECRET— 1 call, stripe-webhook
+  RESEND_API_KEY       — 5 calls, 19 email functions (silent skip if missing)
+  CRON_SECRET          — 17 calls, 17 cron functions
+  TWILIO_*             — 9 calls total, 3 SMS functions (silent skip)
+
+OPTIONAL:
+  APP_URL (fallback: https://app.getevidly.com)
+  VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY (push skip if missing)
+  FIRECRAWL_API_KEY, SAM_GOV_API_KEY (RFP)
+  HOODOPS_WEBHOOK_SECRET, INTELLIGENCE_WEBHOOK_SECRET
+  WEBHOOK_SECRET (default '' — SECURITY ISSUE)
+  EVIDLY_API_KEYS, INTELLIGENCE_BRIDGE_URL, EVIDLY_WEBHOOK_URL
+
+SECURITY ISSUES:
+  1. WEBHOOK_SECRET defaults to '' — empty header passes validation
+  2. CRON_SECRET: undefined === undefined comparison lets requests through
+  3. Webhook secrets optional — missing = unauthenticated accepted
+
+FINDINGS: No hardcoded API keys in code ✓. 3 webhook validation weaknesses.
+
+================================================================================
+SECTION 13: DISCOVERED ISSUES
+================================================================================
+
+1. HARDCODED SERVICE_ROLE JWT IN PG_CRON JOBS
+   4 of 9 pg_cron jobs embed the full service_role JWT in SQL.
+   If key rotates, 4 jobs silently break. JWT visible to DB admins.
+
+2. VAULT_DOCUMENTS TABLE MISSING
+   DocumentVault.tsx does CRUD on vault_documents. No migration exists.
+   Runtime error on admin document upload.
+
+3. 58 GHOST FUNCTIONS DEPLOYED
+   58 functions in PROD not in repo. Unmaintained security surface.
+   Includes HoodOps PRO scope functions.
+
+4. 3 FRONTEND CALLS DEPEND ON GHOST FUNCTIONS
+   generate-executive-snapshot, crawl-code-monitor, send-client-notification
+   called from hooks but only exist as ghost deployments.
+
+5. 28 TABLES WITH INADEQUATE RLS
+   9 disabled, 19 with zero policies. All 11 playbook_* tables open.
+
+6. OPERATIONSINTELLIGENCE.JSX MISSING ORG_ID FILTER
+   Queries intelligence_signals without .eq('org_id'). Relies on RLS only.
+
+7. 148 UNPUBLISHED INTELLIGENCE SIGNALS
+   Backlog awaiting admin review.
+
+8. 53 STALE SUPPORT TICKETS
+   All open, high priority, >7 days old.
+
+9. 14 CRAWL SOURCES IN ERROR STATE (17% error rate)
+
+10. CALCULATE-COMPLIANCE-SCORE FUNCTION
+    610 LOC. May violate CLAUDE.md no-score rule. Needs review.
+
+11. EMAIL RATE LIMIT: 2/HOUR
+    config.toml auth email rate = 2/hour. Too low for onboarding.
+
+12. NO CI/CD PIPELINE
+    No .github/workflows/. All deploys manual.
+
+13. SEED.SQL CONFIGURED BUT MISSING
+    config.toml references ./seed.sql. File doesn't exist.
+
+14. ROLE PREVIEW NOT AUDITED
+    __rolePreview URL param not logged to audit trail.
+
+15. REGION-LEVEL ACCESS NOT IMPLEMENTED
+    user_location_access.region_id exists but code has TODO comment.
+
+16. NO REALTIME PUBLICATIONS
+    pg_publication_tables for supabase_realtime is empty.
+    If any page depends on Supabase realtime subscriptions, they won't work.
+
+17. DOCUMENT-REMINDERS AND ONBOARDING-REMINDERS ARE GHOST FUNCTIONS
+    Active pg_cron jobs point to functions not in repo.
+    Work only because old deployments persist.
+
+================================================================================
+SECTION 14: SUMMARY
+================================================================================
+
+Total deployed edge functions:     222
+Total functions in repo:           165
+Drift A (in repo, not deployed):   1
+Drift B (deployed, not in repo):   58
+Stale (>7d no invocations):        Unknown (requires dashboard)
+
+Total tables in PROD:              225
+Total tables referenced by admin:  25+
+Tables with RLS disabled:          9
+Tables with RLS enabled, 0 policy: 19
+Code-vs-schema mismatches:         1 (vault_documents missing)
+
+Frontend → backend calls:          57 (51 invoke + 6 fetch)
+Unique functions called:           32
+Broken (called, not deployed):     0
+Orphaned (deployed, never called): ~190
+Ghost deps (called, not in repo):  3
+
+Admin → user wiring flows audited: 7
+   WIRED:    4
+   ORPHANED: 2
+   BROKEN:   1
+
+Stub pages detected:               1 (FeatureBaselineTracker — audit tool)
+Locked-rule violations found:      0
+
+pg_cron jobs:                      9
+  With hardcoded JWT:              4
+  With proper key retrieval:       5
+
+Triggers in PROD:                  29
+RPC functions in PROD:             29
+Storage buckets:                   11 (all private)
+Pillar value violations:           0
+Realtime publications:             0
+
+================================================================================
+TOP 10 PRIORITY FIXES
+================================================================================
+
+1. HARDCODED JWT IN PG_CRON (CRITICAL — Security)
+   What: 4 pg_cron jobs embed service_role JWT directly in SQL
+   Where: pg_cron job IDs 4,5,6,7 (expiration-alerts, vendor-sms-reminders,
+          vendor-upload-reminders, weekly-digest)
+   Impact: Key rotation breaks 4 jobs; JWT visible to DB admins
+   Fix: Replace with current_setting('app.settings.service_role_key')
+
+2. VAULT_DOCUMENTS TABLE MISSING (CRITICAL — Runtime failure)
+   What: DocumentVault.tsx does CRUD on non-existent table
+   Where: src/pages/admin/DocumentVault.tsx
+   Impact: Admin document upload/view crashes
+   Fix: Create migration for vault_documents
+
+3. 28 TABLES WITH INADEQUATE RLS (HIGH — Security)
+   What: 9 RLS disabled, 19 with 0 policies
+   Where: See Section 5
+   Impact: Possible cross-org data access
+   Fix: Add RLS policies; prioritize playbook_* (11 tables)
+
+4. 58 GHOST FUNCTIONS (HIGH — Security surface)
+   What: 58 deployed functions not in repo
+   Where: Supabase PROD
+   Impact: Unmaintained code processing requests
+   Fix: Audit and delete; re-add critical ones to repo
+
+5. 3 FRONTEND GHOST DEPENDENCIES (HIGH — Fragile)
+   What: 3 frontend calls depend on ghost deployments
+   Where: useIntelligenceHub.ts, useCommandCenter.ts
+   Impact: Deleting ghosts breaks features
+   Fix: Add to repo OR remove frontend calls
+
+6. WEBHOOK SECRET VALIDATION GAPS (MEDIUM — Security)
+   What: WEBHOOK_SECRET defaults to ''; CRON_SECRET accepts if undefined
+   Where: webhook-dispatch/index.ts, 17 cron functions
+   Impact: Unauthenticated execution possible
+   Fix: Require all secrets; fail hard if missing
+
+7. ORPHANED JURISDICTION INTELLIGENCE (MEDIUM — UX)
+   What: Admin publishes but no user page reads
+   Where: src/pages/admin/JurisdictionIntelligence.tsx
+   Impact: Admin work produces invisible results
+   Fix: Create user page OR remove publish feature
+
+8. 53 STALE SUPPORT TICKETS (MEDIUM — Operations)
+   What: All open tickets >7 days old, high priority
+   Where: support_tickets table
+   Impact: Customer satisfaction
+   Fix: Review queue; investigate SLA escalation
+
+9. CALCULATE-COMPLIANCE-SCORE REVIEW (MEDIUM — Policy)
+   What: 610 LOC function may violate CLAUDE.md no-score rule
+   Where: supabase/functions/calculate-compliance-score/index.ts
+   Impact: Policy violation if generating scores
+   Fix: Review logic; determine if calculates or passes through
+
+10. EMAIL RATE LIMIT TOO LOW (LOW — UX)
+    What: 2 emails/hour auth rate limit
+    Where: supabase/config.toml [auth.rate_limit] email_sent = 2
+    Impact: Legitimate flows blocked during peak
+    Fix: Increase to 10-15/hour
+
+================================================================================
+END OF BACKEND WIRING AUDIT
+Total issues found: 17 (in Section 13)
+Priority fixes: 10 (ranked above)
+================================================================================

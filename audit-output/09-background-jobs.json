@@ -1,0 +1,246 @@
+{
+  "cron_jobs": [
+    {
+      "jobid": 4,
+      "name": "vendor-sms-reminders",
+      "schedule": "15 9 * * *",
+      "schedule_description": "9:15 AM daily",
+      "edge_function": "vendor-sms-reminder",
+      "active": true,
+      "auth_method": "hardcoded_service_role_jwt"
+    },
+    {
+      "jobid": 5,
+      "name": "vendor-upload-reminders",
+      "schedule": "0 9 * * *",
+      "schedule_description": "9:00 AM daily",
+      "edge_function": "vendor-upload-reminder",
+      "active": true,
+      "auth_method": "hardcoded_service_role_jwt"
+    },
+    {
+      "jobid": 6,
+      "name": "expiration-alerts",
+      "schedule": "0 8 * * *",
+      "schedule_description": "8:00 AM daily",
+      "edge_function": "expiration-alerts",
+      "active": true,
+      "auth_method": "hardcoded_service_role_jwt"
+    },
+    {
+      "jobid": 7,
+      "name": "weekly-digest",
+      "schedule": "0 15 * * 1",
+      "schedule_description": "3:00 PM Monday",
+      "edge_function": "weekly-digest",
+      "active": true,
+      "auth_method": "current_setting('app.settings.service_role_key')"
+    },
+    {
+      "jobid": 8,
+      "name": "onboarding-reminders",
+      "schedule": "0 9 * * *",
+      "schedule_description": "9:00 AM daily",
+      "edge_function": "onboarding-reminders",
+      "active": true,
+      "auth_method": "current_setting('app.settings.service_role_key')"
+    },
+    {
+      "jobid": 9,
+      "name": "document-reminders",
+      "schedule": "15 9 * * *",
+      "schedule_description": "9:15 AM daily",
+      "edge_function": "document-reminders",
+      "active": true,
+      "auth_method": "current_setting('app.settings.service_role_key')"
+    },
+    {
+      "jobid": 10,
+      "name": "trial-email-daily",
+      "schedule": "0 15 * * *",
+      "schedule_description": "3:00 PM daily",
+      "edge_function": "trial-email-sender",
+      "active": true,
+      "auth_method": "current_setting('app.service_role_key')"
+    },
+    {
+      "jobid": 11,
+      "name": "vendor-notifications-daily",
+      "schedule": "0 16 * * *",
+      "schedule_description": "4:00 PM daily",
+      "edge_function": "vendor-notification-sender",
+      "active": true,
+      "auth_method": "current_setting('app.service_role_key')"
+    },
+    {
+      "jobid": 12,
+      "name": "vendor-partner-outreach-daily",
+      "schedule": "0 17 * * *",
+      "schedule_description": "5:00 PM daily",
+      "edge_function": "vendor-partner-outreach",
+      "active": true,
+      "auth_method": "current_setting('app.service_role_key')"
+    }
+  ],
+  "triggers": [
+    {
+      "table": "client_notifications",
+      "trigger_name": "trg_client_notifications_updated_at",
+      "event": "UPDATE",
+      "function": "update_command_center_updated_at()"
+    },
+    {
+      "table": "compliance_photos",
+      "trigger_name": "trg_compliance_photos_updated_at",
+      "event": "UPDATE",
+      "function": "update_compliance_photos_updated_at()"
+    },
+    {
+      "table": "corrective_action_templates",
+      "trigger_name": "trg_corrective_action_templates_updated_at",
+      "event": "UPDATE",
+      "function": "update_corrective_action_templates_updated_at()"
+    },
+    {
+      "table": "corrective_actions",
+      "trigger_name": "trg_corrective_actions_updated_at",
+      "event": "UPDATE",
+      "function": "update_corrective_actions_updated_at()"
+    },
+    {
+      "table": "device_registrations",
+      "trigger_name": "trg_device_registrations_updated_at",
+      "event": "UPDATE",
+      "function": "set_updated_at()"
+    },
+    {
+      "table": "edge_function_registry",
+      "trigger_name": "trg_efr_updated_at",
+      "event": "UPDATE",
+      "function": "update_efr_updated_at()"
+    },
+    {
+      "table": "intelligence_game_plans",
+      "trigger_name": "trg_game_plans_updated_at",
+      "event": "UPDATE",
+      "function": "update_command_center_updated_at()"
+    },
+    {
+      "table": "jurisdiction_scoring_profiles",
+      "trigger_name": "trg_jurisdiction_profile_updated",
+      "event": "UPDATE",
+      "function": "trg_jurisdiction_profile_updated()"
+    },
+    {
+      "table": "jurisdictions",
+      "trigger_name": "jurisdictions_updated_at",
+      "event": "UPDATE",
+      "function": "update_updated_at()"
+    },
+    {
+      "table": "jurisdictions",
+      "trigger_name": "trg_jurisdiction_config_drift",
+      "event": "UPDATE",
+      "function": "fn_jurisdiction_config_drift_check()"
+    },
+    {
+      "table": "location_risk_predictions",
+      "trigger_name": "trg_lrp_updated_at",
+      "event": "UPDATE",
+      "function": "update_updated_at_column()"
+    },
+    {
+      "table": "organizations",
+      "trigger_name": "trg_set_organization_created_by",
+      "event": "INSERT",
+      "function": "set_organization_created_by()"
+    },
+    {
+      "table": "organizations",
+      "trigger_name": "trg_set_trial_end_date",
+      "event": "UPDATE",
+      "function": "set_trial_end_date()"
+    },
+    {
+      "table": "organizations",
+      "trigger_name": "trg_set_trial_end_date",
+      "event": "INSERT",
+      "function": "set_trial_end_date()"
+    },
+    {
+      "table": "platform_updates",
+      "trigger_name": "trg_platform_updates_updated_at",
+      "event": "UPDATE",
+      "function": "update_command_center_updated_at()"
+    },
+    {
+      "table": "playbook_activations",
+      "trigger_name": "trg_playbook_activations_updated_at",
+      "event": "UPDATE",
+      "function": "set_updated_at()"
+    },
+    {
+      "table": "playbooks",
+      "trigger_name": "trg_playbooks_updated_at",
+      "event": "UPDATE",
+      "function": "set_updated_at()"
+    },
+    {
+      "table": "rfp_actions",
+      "trigger_name": "trg_rfp_actions_updated",
+      "event": "UPDATE",
+      "function": "update_rfp_updated_at()"
+    },
+    {
+      "table": "support_tickets",
+      "trigger_name": "ticket_sla",
+      "event": "INSERT",
+      "function": "set_ticket_sla()"
+    },
+    {
+      "table": "temperature_logs",
+      "trigger_name": "trg_temp_deviation_to_ca",
+      "event": "INSERT",
+      "function": "fn_temp_deviation_to_ca()"
+    }
+  ],
+  "drift_monitor": {
+    "trigger_name": "trg_jurisdiction_config_drift",
+    "table": "jurisdictions",
+    "event": "UPDATE",
+    "function": "fn_jurisdiction_config_drift_check()",
+    "tables": {
+      "drift_monitor_executions": {
+        "row_count": 53
+      },
+      "drift_alert_log": {
+        "row_count": 53
+      }
+    },
+    "edge_function": "jurisdiction-drift-alert",
+    "status": "deployed"
+  },
+  "db_functions": [
+    "update_command_center_updated_at",
+    "update_compliance_photos_updated_at",
+    "update_corrective_action_templates_updated_at",
+    "update_corrective_actions_updated_at",
+    "set_updated_at",
+    "update_efr_updated_at",
+    "trg_jurisdiction_profile_updated",
+    "update_updated_at",
+    "fn_jurisdiction_config_drift_check",
+    "update_updated_at_column",
+    "set_organization_created_by",
+    "set_trial_end_date",
+    "set_ticket_sla",
+    "fn_temp_deviation_to_ca",
+    "update_rfp_updated_at",
+    "vendor-sms-reminder",
+    "vendor-upload-reminder",
+    "expiration-alerts",
+    "weekly-digest",
+    "onboarding-reminders",
+    "document-reminders"
+  ]
+}

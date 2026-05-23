@@ -1,0 +1,348 @@
+{
+  "generated": "2026-04-24",
+  "description": "Third-party integrations inventory for EvidLY",
+  "integrations": [
+    {
+      "id": 1,
+      "name": "Supabase",
+      "category": "core backend",
+      "purpose": "Database, auth, storage, edge functions",
+      "clientFiles": [
+        "src/lib/supabase.ts",
+        "src/lib/api.ts",
+        "src/lib/config.ts"
+      ],
+      "clientEnv": [
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY"
+      ],
+      "serverEnv": [
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_ANON_KEY"
+      ],
+      "edgeFunctions": [],
+      "notes": "Core infrastructure — all edge functions run on Supabase"
+    },
+    {
+      "id": 2,
+      "name": "Stripe",
+      "category": "payments",
+      "purpose": "Subscription billing, checkout, customer portal",
+      "clientFiles": [
+        "src/lib/stripe.ts",
+        "src/pages/Signup.tsx",
+        "src/components/Pricing.tsx",
+        "src/components/BillingPanel.tsx",
+        "src/pages/settings/IntegrationsPage.tsx",
+        "src/pages/admin/FeatureBaselineTracker.jsx",
+        "src/pages/CertificateViewer.tsx",
+        "src/pages/public/ScoreTableCountyPage.jsx",
+        "src/components/settings/IntegrationDetailModal.tsx"
+      ],
+      "clientEnv": [
+        "VITE_STRIPE_PUBLISHABLE_KEY",
+        "VITE_STRIPE_FOUNDER_SINGLE_PRICE_ID",
+        "VITE_STRIPE_FOUNDER_MULTI_PRICE_ID"
+      ],
+      "serverEnv": [
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "STRIPE_FOUNDER_ADDITIONAL_PRICE_ID"
+      ],
+      "edgeFunctions": [
+        "stripe-create-checkout",
+        "stripe-customer-portal",
+        "stripe-webhook"
+      ],
+      "notes": null
+    },
+    {
+      "id": 3,
+      "name": "Anthropic/Claude",
+      "category": "AI",
+      "purpose": "AI-powered analysis, drafting, classification, chat",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "edgeFunctions": [
+        "ai-chat",
+        "ai-corrective-action-draft",
+        "ai-document-analysis",
+        "ai-flag-suggest",
+        "ai-photo-analysis",
+        "ai-text-assist",
+        "ai-voice-transcription",
+        "ai-weekly-digest",
+        "benchmark-quarterly-report",
+        "classify-document",
+        "classify-signals",
+        "copilot-analyze",
+        "generate-outreach",
+        "intelligence-collect",
+        "landing-chat",
+        "monitor-regulations",
+        "ops-intelligence-coach",
+        "playbook-ai-assistant",
+        "rfp-classify",
+        "training-ai-companion",
+        "training-ai-quiz-gen",
+        "training-content-translate",
+        "validate-vendor-document",
+        "violation-crawl"
+      ],
+      "notes": "24 edge functions consume the Anthropic API"
+    },
+    {
+      "id": 4,
+      "name": "OpenAI",
+      "category": "speech transcription",
+      "purpose": "Whisper speech-to-text transcription",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "OPENAI_API_KEY"
+      ],
+      "edgeFunctions": [
+        "ai-voice-transcription"
+      ],
+      "notes": "Used alongside Anthropic in the voice transcription pipeline"
+    },
+    {
+      "id": 5,
+      "name": "Resend",
+      "category": "transactional email",
+      "purpose": "Sending emails (reminders, digests, notifications)",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "RESEND_API_KEY"
+      ],
+      "edgeFunctions": [
+        "ai-weekly-digest",
+        "auto-request-documents",
+        "check-onboarding-progress",
+        "intelligence-deliver",
+        "vendor-contact",
+        "resend-webhook"
+      ],
+      "sharedModules": [
+        "_shared/email.ts"
+      ],
+      "notes": "resend-webhook handles inbound email; _shared/email.ts is the shared utility"
+    },
+    {
+      "id": 6,
+      "name": "Twilio",
+      "category": "SMS",
+      "purpose": "SMS notifications to vendors",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN",
+        "TWILIO_FROM_NUMBER"
+      ],
+      "edgeFunctions": [
+        "auto-request-documents"
+      ],
+      "notes": "send-sms-invite and vendor-sms-reminder are deployed-only (not in local source)"
+    },
+    {
+      "id": 7,
+      "name": "Firecrawl",
+      "category": "web crawling",
+      "purpose": "Jurisdiction and regulatory data crawling",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "FIRECRAWL_API_KEY"
+      ],
+      "edgeFunctions": [
+        "crawl-monitor",
+        "trigger-crawl",
+        "rfp-crawl",
+        "violation-crawl"
+      ],
+      "notes": null
+    },
+    {
+      "id": 8,
+      "name": "Crisp",
+      "category": "live chat widget",
+      "purpose": "In-app live chat support",
+      "clientFiles": [
+        "src/hooks/useCrisp.ts",
+        "src/App.tsx",
+        "src/pages/Signup.tsx",
+        "src/pages/Login.tsx",
+        "src/pages/Onboarding.tsx",
+        "src/pages/SetupMFA.tsx"
+      ],
+      "clientEnv": [
+        "VITE_CRISP_WEBSITE_ID"
+      ],
+      "serverEnv": [],
+      "edgeFunctions": [],
+      "notes": "Client-side only integration"
+    },
+    {
+      "id": 9,
+      "name": "Google reCAPTCHA",
+      "category": "bot protection",
+      "purpose": "Bot protection on login forms",
+      "clientFiles": [
+        "src/pages/Login.tsx",
+        "src/pages/VendorLogin.tsx"
+      ],
+      "clientEnv": [
+        "VITE_RECAPTCHA_SITE_KEY"
+      ],
+      "serverEnv": [],
+      "edgeFunctions": [],
+      "notes": "Client-side only integration"
+    },
+    {
+      "id": 10,
+      "name": "Sentry",
+      "category": "error tracking",
+      "purpose": "Frontend error monitoring",
+      "clientFiles": [
+        "src/lib/sentry.ts"
+      ],
+      "clientEnv": [
+        "VITE_SENTRY_DSN"
+      ],
+      "serverEnv": [],
+      "edgeFunctions": [],
+      "notes": "Client-side only integration"
+    },
+    {
+      "id": 11,
+      "name": "Sanity",
+      "category": "CMS",
+      "purpose": "Blog/content management",
+      "clientFiles": [
+        "src/lib/sanityClient.ts"
+      ],
+      "clientEnv": [
+        "VITE_SANITY_PROJECT_ID",
+        "VITE_SANITY_DATASET"
+      ],
+      "serverEnv": [],
+      "edgeFunctions": [],
+      "notes": "Client-side only integration"
+    },
+    {
+      "id": 12,
+      "name": "Web Push (VAPID)",
+      "category": "push notifications",
+      "purpose": "Browser push notifications",
+      "clientFiles": [
+        "src/hooks/usePushNotifications.ts"
+      ],
+      "clientEnv": [
+        "VITE_VAPID_PUBLIC_KEY"
+      ],
+      "serverEnv": [],
+      "edgeFunctions": [],
+      "notes": "Client-side only integration"
+    },
+    {
+      "id": 13,
+      "name": "SAM.gov",
+      "category": "government contract data",
+      "purpose": "RFP/government contract intelligence",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "SAM_GOV_API_KEY"
+      ],
+      "edgeFunctions": [],
+      "notes": "Server-side only integration"
+    },
+    {
+      "id": 14,
+      "name": "HoodOps webhook",
+      "category": "external integration",
+      "purpose": "Integration with HoodOps system",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "HOODOPS_WEBHOOK_SECRET"
+      ],
+      "edgeFunctions": [
+        "hoodops-webhook"
+      ],
+      "notes": "Inbound webhook from HoodOps"
+    },
+    {
+      "id": 15,
+      "name": "Intelligence webhook",
+      "category": "external integration",
+      "purpose": "External intelligence data ingestion",
+      "clientFiles": [],
+      "clientEnv": [],
+      "serverEnv": [
+        "INTELLIGENCE_WEBHOOK_SECRET"
+      ],
+      "edgeFunctions": [
+        "intelligence-webhook"
+      ],
+      "notes": "Inbound webhook for intelligence data"
+    }
+  ],
+  "additionalEnv": {
+    "APP_URL": {
+      "scope": "server",
+      "purpose": "Base URL for links in emails"
+    },
+    "CRON_SECRET": {
+      "scope": "server",
+      "purpose": "Auth for cron-triggered functions"
+    },
+    "RFP_MONTHLY_BUDGET": {
+      "scope": "server",
+      "purpose": "Budget limit for RFP crawling"
+    },
+    "VITE_APP_ENV": {
+      "scope": "client",
+      "purpose": "production/staging mode switching"
+    },
+    "VITE_FOUNDER_NAME": {
+      "scope": "client",
+      "purpose": "Founder contact info"
+    },
+    "VITE_FOUNDER_EMAIL": {
+      "scope": "client",
+      "purpose": "Founder contact info"
+    },
+    "VITE_FOUNDER_PHONE": {
+      "scope": "client",
+      "purpose": "Founder contact info"
+    },
+    "VITE_FOUNDER_TITLE": {
+      "scope": "client",
+      "purpose": "Founder contact info"
+    }
+  },
+  "summary": {
+    "totalIntegrations": 15,
+    "clientEnvVarsCount": 12,
+    "serverEnvVarsCount": 16,
+    "additionalEnvVarsCount": 8,
+    "categories": {
+      "coreBackend": ["Supabase"],
+      "payments": ["Stripe"],
+      "ai": ["Anthropic/Claude", "OpenAI"],
+      "communications": ["Resend", "Twilio", "Crisp", "Web Push (VAPID)"],
+      "dataCollection": ["Firecrawl", "SAM.gov"],
+      "security": ["Google reCAPTCHA"],
+      "observability": ["Sentry"],
+      "cms": ["Sanity"],
+      "externalWebhooks": ["HoodOps webhook", "Intelligence webhook"]
+    }
+  }
+}

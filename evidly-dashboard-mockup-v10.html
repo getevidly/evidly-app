@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EvidLY Dashboard — v10 final 7-role composition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+:root {
+  --navy: #1E2D4D; --navy-2: #2A3D62; --gold: #A08C5A; --cream: #FAF7F0;
+  --footer: #283F6A; --line: #E5E2DA; --line-strong: #D5CFBE; --muted: #6B6960;
+  --predict: #534AB7; --predict-dark: #3C3489; --predict-bg: #EEEDFE;
+  --reduce: #BA7517; --reduce-dark: #633806; --reduce-bg: #FAEEDA;
+  --prove: #0F6E56; --prove-dark: #085041; --prove-bg: #E1F5EE;
+  --red: #A32D2D; --red-dark: #791F1F; --red-bg: #FCEBEB; --red-border: #F09595;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: #F1EFE8; color: var(--navy); }
+body { padding: 24px; min-height: 100vh; }
+
+.role-preview { max-width: 1180px; margin: 0 auto 18px; background: var(--navy); color: var(--cream); padding: 14px 22px; border-radius: 12px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.role-preview-label { font-size: 11px; font-weight: 500; letter-spacing: 1px; color: var(--gold); text-transform: uppercase; }
+.role-btns { display: inline-flex; background: rgba(250,247,240,0.08); border-radius: 8px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.role-btn { background: transparent; border: none; padding: 7px 13px; font-size: 11.5px; font-weight: 500; color: rgba(250,247,240,0.7); border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.15s ease; white-space: nowrap; }
+.role-btn:hover:not(.active) { color: var(--cream); }
+.role-btn.active { background: var(--gold); color: var(--navy); }
+.role-note { font-size: 11px; color: rgba(250,247,240,0.6); font-style: italic; flex: 1; min-width: 200px; }
+
+.shell { max-width: 1180px; margin: 0 auto; background: var(--cream); border-radius: 14px; border: 0.5px solid var(--line-strong); overflow: hidden; }
+.bb { height: 32px; background: #ECE8DC; display: flex; align-items: center; padding: 0 14px; gap: 7px; border-bottom: 0.5px solid var(--line-strong); }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #E0726A; } .dot.y { background: #E8B339; } .dot.g { background: #6EBF60; }
+.url { margin-left: 16px; font-size: 12px; color: var(--muted); font-family: 'SF Mono', Consolas, monospace; }
+
+.topbar { height: 56px; background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; color: var(--cream); }
+.wm { font-weight: 800; font-size: 19px; letter-spacing: 1.2px; }
+.wm .g { color: var(--gold); }
+.tbr { display: flex; gap: 22px; color: rgba(250,247,240,0.7); font-size: 18px; align-items: center; }
+
+.dashc { position: relative; min-height: 1100px; }
+.dash { padding: 22px 32px 110px; }
+
+.last-action { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--prove-bg); color: var(--prove-dark); border-radius: 8px; font-size: 11.5px; margin-bottom: 14px; }
+.last-action i { font-size: 14px; }
+.last-action strong { font-weight: 500; }
+.last-action .ago { color: var(--muted); margin-left: auto; }
+
+.welcome { margin-bottom: 22px; }
+.welcome-h { font-size: 22px; font-weight: 500; margin: 0; color: var(--navy); }
+.welcome-sub { font-size: 13px; color: var(--muted); margin-top: 2px; display: block; }
+
+.met-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+.met { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid #ccc; border-radius: 10px; padding: 16px 18px; position: relative; }
+.met.teal { border-top-color: var(--prove); }
+.met.purple { border-top-color: var(--predict); }
+.met.amber { border-top-color: var(--reduce); }
+.met.red { border-top-color: var(--red); }
+.met-top { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.3; }
+.met-top i { font-size: 16px; flex-shrink: 0; }
+.met-top .info { margin-left: auto; cursor: help; opacity: 0.6; font-size: 13px; position: relative; }
+.met-top .info:hover .tip { display: block; }
+.tip { display: none; position: absolute; right: 0; top: 22px; width: 260px; background: var(--navy); color: var(--cream); padding: 10px 12px; border-radius: 8px; font-size: 11px; line-height: 1.5; z-index: 10; font-style: normal; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+.tip strong { color: var(--gold); font-weight: 500; }
+.met.teal .met-top i { color: var(--prove); }
+.met.purple .met-top i { color: var(--predict); }
+.met.amber .met-top i { color: var(--reduce); }
+.met.red .met-top i { color: var(--red); }
+.met-num { font-size: 30px; font-weight: 500; line-height: 1; }
+.met-num.tbd { color: var(--muted); font-size: 22px; font-weight: 500; letter-spacing: 0.5px; }
+.met.teal .met-num { color: var(--prove); }
+.met.purple .met-num { color: var(--predict); }
+.met.amber .met-num { color: var(--reduce); }
+.met.red .met-num { color: var(--red); }
+.met-foot { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.met-foot.timeline { color: var(--predict-dark); }
+.met-foot.detail { color: var(--prove-dark); }
+
+.prp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+.prp { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid #ccc; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.prp.predict { border-top-color: var(--predict); }
+.prp.reduce { border-top-color: var(--reduce); }
+.prp.prove { border-top-color: var(--prove); }
+.prp-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.prp.predict .prp-icon { background: var(--predict-bg); color: var(--predict); }
+.prp.reduce .prp-icon { background: var(--reduce-bg); color: var(--reduce); }
+.prp.prove .prp-icon { background: var(--prove-bg); color: var(--prove); }
+.prp-label { font-size: 14px; font-weight: 500; margin: 0; }
+.prp-sub { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.prp.predict .prp-label { color: var(--predict-dark); }
+.prp.reduce .prp-label { color: var(--reduce-dark); }
+.prp.prove .prp-label { color: var(--prove-dark); }
+
+.caught-line { background: var(--prove-bg); border: 0.5px solid #B8DCC9; border-radius: 8px; padding: 10px 14px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: var(--prove-dark); }
+.caught-line i { font-size: 16px; color: var(--prove); }
+.caught-line strong { font-weight: 500; }
+
+.insp-pkg { background: #FFFFFF; border: 0.5px solid var(--line); border-left: 3px solid var(--prove); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
+.insp-head { padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.insp-head i { color: var(--prove); font-size: 18px; }
+.insp-title { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0; }
+.insp-meta { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.insp-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.insp-btn { padding: 7px 13px; border: 0.5px solid var(--line); background: #FFFFFF; color: var(--navy); border-radius: 6px; font-size: 11.5px; font-weight: 500; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+.insp-btn:hover { background: var(--cream); }
+.insp-btn.primary { background: var(--prove); color: #FFFFFF; border-color: var(--prove); }
+.insp-btn.primary:hover { background: var(--prove-dark); }
+.insp-btn i { font-size: 13px; }
+.insp-log { background: var(--cream); border-top: 0.5px solid var(--line); padding: 10px 16px; font-size: 11px; color: var(--muted); }
+.insp-log-h { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin: 0 0 6px; }
+.insp-log-row { padding: 3px 0; display: flex; align-items: center; gap: 8px; }
+.insp-log-row i { font-size: 12px; }
+.insp-log-row.delivered i { color: var(--prove); }
+.insp-log-row.sent i { color: var(--predict); }
+.insp-log-row strong { color: var(--navy); font-weight: 500; }
+.insp-log-row .when { margin-left: auto; }
+
+.brief { background: var(--navy); color: var(--cream); border-radius: 12px; padding: 20px 24px; position: relative; overflow: hidden; }
+.brief::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+.brief.compliance::before { background: var(--gold); }
+.brief.food::before { background: var(--prove); }
+.brief.fire::before { background: var(--reduce); }
+.brief-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+.brief.compliance .brief-eyebrow { color: var(--gold); }
+.brief.food .brief-eyebrow { color: #5DCAA5; }
+.brief.fire .brief-eyebrow { color: #FAC775; }
+.brief-eyebrow i { font-size: 13px; }
+.brief-credentials { font-size: 10px; color: rgba(250,247,240,0.55); font-style: italic; margin-left: auto; letter-spacing: 0.3px; text-transform: none; }
+.brief-posture { font-size: 16px; font-weight: 500; margin: 0 0 10px; line-height: 1.3; }
+.brief-posture .badge { display: inline-block; padding: 3px 10px; color: #FFFFFF; font-size: 11px; border-radius: 6px; vertical-align: 2px; margin-right: 6px; letter-spacing: 0.6px; font-weight: 500; }
+.brief-posture .badge.solid { background: var(--prove); }
+.brief-posture .badge.watch { background: var(--reduce); }
+.brief-posture .badge.alarm { background: var(--red); }
+.brief-body { font-size: 12.5px; line-height: 1.7; color: rgba(250,247,240,0.88); margin: 0; }
+.brief-body strong { color: var(--cream); font-weight: 500; }
+.brief-body .reg { color: #C5B58A; font-weight: 500; }
+.brief-body .reg-link { color: #C5B58A; font-weight: 500; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; cursor: pointer; }
+.brief-items { margin-top: 14px; padding-top: 12px; border-top: 0.5px solid rgba(250,247,240,0.15); }
+.brief-items-h { font-size: 10px; color: rgba(250,247,240,0.55); margin: 0 0 8px; letter-spacing: 0.8px; text-transform: uppercase; }
+.brief-item { font-size: 11.5px; color: rgba(250,247,240,0.78); padding: 4px 0; display: flex; align-items: center; gap: 8px; line-height: 1.5; }
+.brief-item .ds { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.brief-item .ds.urgent { background: var(--red); }
+.brief-item .ds.soon { background: var(--reduce); }
+.brief-item .ds.ok { background: var(--prove); }
+.brief-item .ds.review { background: #5DCAA5; }
+.brief-item strong { color: var(--cream); font-weight: 500; }
+.brief-item .tag { margin-left: auto; font-size: 10px; padding: 2px 8px; border-radius: 8px; background: rgba(250,247,240,0.08); color: rgba(250,247,240,0.7); white-space: nowrap; }
+.brief-consult { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 8px 14px; background: rgba(250,247,240,0.08); color: var(--cream); border: 0.5px solid rgba(250,247,240,0.2); border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
+
+.advisor-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 22px; }
+.advisor-single { margin-bottom: 22px; }
+.compliance-row { margin-bottom: 14px; }
+
+.section-h { font-size: 11px; font-weight: 500; color: var(--muted); margin: 0 0 10px; letter-spacing: 1.2px; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.section-h .count { background: var(--cream); border: 0.5px solid var(--line); padding: 3px 9px; border-radius: 10px; font-size: 11px; color: var(--navy); letter-spacing: 0; text-transform: none; font-weight: 500; }
+
+.cl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+.cl-card { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid var(--prove); border-radius: 10px; padding: 14px 16px; }
+.cl-h { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.cl-h-label { font-size: 10px; font-weight: 500; color: var(--prove-dark); letter-spacing: 1px; text-transform: uppercase; }
+.cl-h-cadence { font-size: 10px; color: var(--muted); margin-left: auto; padding: 2px 8px; background: var(--cream); border: 0.5px solid var(--line); border-radius: 8px; }
+.cl-item { padding: 7px 0; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--navy); border-top: 0.5px solid var(--line); line-height: 1.4; }
+.cl-item:first-of-type { border-top: none; padding-top: 4px; }
+.cl-stat { width: 14px; height: 14px; border: 1px solid #C4BDA8; border-radius: 3px; flex-shrink: 0; position: relative; }
+.cl-stat.done { background: var(--prove); border-color: var(--prove); }
+.cl-stat.done::after { content: "✓"; color: #FFFFFF; font-size: 10px; position: absolute; top: -3px; left: 1px; line-height: 14px; }
+.cl-stat.due { background: var(--reduce-bg); border-color: var(--reduce); }
+.cl-stat.overdue { background: var(--red-bg); border-color: var(--red); }
+.cl-when { margin-left: auto; font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.cl-when.overdue { color: var(--red-dark); font-weight: 500; }
+.cl-when.due { color: var(--reduce-dark); font-weight: 500; }
+.cl-item.done span { color: var(--muted); }
+
+.catches { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.catch { padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; border-top: 0.5px solid var(--line); }
+.catch:first-child { border-top: none; }
+.catch-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 17px; }
+.catch-icon.reduced { background: var(--prove-bg); color: var(--prove); }
+.catch-icon.proven { background: var(--reduce-bg); color: var(--reduce); }
+.catch-body { flex: 1; }
+.catch-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.catch-tag { font-size: 10px; padding: 3px 9px; border-radius: 10px; font-weight: 500; letter-spacing: 0.4px; }
+.catch-tag.reduced { background: var(--prove-bg); color: var(--prove-dark); }
+.catch-tag.proven { background: var(--reduce-bg); color: var(--reduce-dark); }
+.catch-pillar { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+.catch-label { font-size: 13.5px; font-weight: 500; color: var(--navy); margin: 0; line-height: 1.4; }
+.catch-meta { font-size: 11.5px; color: var(--muted); margin: 5px 0 0; line-height: 1.5; }
+.catch-meta strong { color: var(--navy); font-weight: 500; }
+.catch-meta .savings { color: var(--prove-dark); font-weight: 500; }
+.catch-ack-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 0.5px dashed var(--line); }
+.catch-ack-stat { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.catch-ack-stat i { color: var(--prove); font-size: 13px; }
+.catch-ack-btn { margin-left: auto; padding: 6px 12px; background: var(--navy); color: var(--cream); border: none; border-radius: 6px; font-size: 11.5px; font-weight: 500; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+.catch-ack-btn i { font-size: 13px; }
+.catch-ack-btn.done { background: var(--prove); cursor: default; }
+
+.report-card { background: var(--cream); border: 0.5px solid var(--gold); border-radius: 10px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; gap: 14px; }
+.report-icon { width: 38px; height: 38px; border-radius: 9px; background: #FFFFFF; border: 0.5px solid var(--line); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.report-body { flex: 1; }
+.report-h { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0; }
+.report-meta { font-size: 11px; color: var(--muted); margin: 3px 0 0; line-height: 1.5; }
+.report-meta strong { color: var(--navy); font-weight: 500; }
+
+.cnty-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 22px; }
+.cnty { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.cnty-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cnty-name { font-size: 14px; font-weight: 500; margin: 0; color: var(--navy); }
+.cnty-tier { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.cnty-status { font-size: 10px; padding: 4px 10px; border-radius: 10px; font-weight: 500; letter-spacing: 0.5px; }
+.cnty-status.ready { background: var(--prove-bg); color: var(--prove-dark); }
+.cnty-status.watch { background: var(--reduce-bg); color: var(--reduce-dark); }
+.cnty-stat { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 0.5px solid var(--line); margin-top: 4px; }
+.cnty-cell { font-size: 11px; color: var(--muted); }
+.cnty-cell strong { display: block; color: var(--navy); font-size: 12px; font-weight: 500; margin-top: 2px; }
+.cnty-gaps { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--line); font-size: 12px; color: var(--reduce-dark); display: flex; align-items: flex-start; gap: 7px; line-height: 1.5; }
+.cnty-gaps i { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.cnty-attribution { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 8px; }
+
+.decisions { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.dec-row { padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; border-top: 0.5px solid var(--line); }
+.dec-row:first-child { border-top: none; }
+.dec-prio { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.dec-prio.urgent { background: var(--red); }
+.dec-prio.soon { background: var(--reduce); }
+.dec-prio.review { background: var(--prove); }
+.dec-body { flex: 1; }
+.dec-label { font-size: 14px; font-weight: 500; color: var(--navy); margin: 0; line-height: 1.35; }
+.dec-meta { font-size: 12px; color: var(--muted); margin: 5px 0 0; }
+.dec-why { font-size: 12px; color: var(--navy); margin: 10px 0 0; padding: 10px 12px; background: var(--cream); border-left: 2px solid var(--reduce); border-radius: 0 6px 6px 0; line-height: 1.55; }
+.dec-why .reg-link { color: var(--predict-dark); font-weight: 500; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; }
+.dec-why .reg { color: var(--predict-dark); font-weight: 500; }
+.dec-why .cost { color: var(--red-dark); font-weight: 500; }
+.dec-act { background: var(--navy); color: var(--cream); border: none; padding: 8px 16px; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.dec-act.urgent { background: var(--red); }
+
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+.team-card { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.team-top { display: flex; align-items: center; gap: 13px; }
+.team-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 13px; flex-shrink: 0; }
+.team-info { flex: 1; }
+.team-name { font-size: 13px; font-weight: 500; margin: 0; color: var(--navy); }
+.team-role { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.team-stat { text-align: right; }
+.team-pct { font-size: 18px; font-weight: 500; line-height: 1; }
+.team-pct.ok { color: var(--prove); }
+.team-pct.warn { color: var(--reduce); }
+.team-pct.bad { color: var(--red); }
+.team-detail { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.team-pattern { margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--line); font-size: 12px; color: var(--navy); line-height: 1.5; display: flex; align-items: flex-start; gap: 8px; }
+.team-pattern i { font-size: 14px; color: var(--reduce); flex-shrink: 0; margin-top: 1px; }
+.team-pattern strong { color: var(--reduce-dark); font-weight: 500; }
+
+.intel { background: #FFFFFF; border: 1px dashed var(--gold); border-radius: 10px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.il { display: flex; gap: 14px; align-items: center; }
+.imk { width: 38px; height: 38px; border-radius: 9px; background: var(--cream); border: 0.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 19px; flex-shrink: 0; }
+.it { font-size: 14px; font-weight: 500; color: var(--navy); margin: 0; }
+.is { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+.itg { font-size: 11px; padding: 5px 12px; border-radius: 11px; background: var(--cream); color: var(--muted); border: 0.5px solid var(--line); white-space: nowrap; }
+
+.tdc { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+.tdr { padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid var(--line); font-size: 13px; color: var(--navy); }
+.tdr:first-child { border-top: none; }
+.tdl { display: flex; align-items: center; gap: 12px; }
+.tch { width: 16px; height: 16px; border: 1px solid #C4BDA8; border-radius: 3px; flex-shrink: 0; }
+.tch.done { background: var(--prove); border-color: var(--prove); position: relative; }
+.tch.done::after { content: "✓"; color: #FFFFFF; font-size: 11px; position: absolute; top: -2px; left: 2px; line-height: 16px; }
+.tdr.done .tdl span:last-child { color: var(--muted); text-decoration: line-through; }
+.tdm { font-size: 12px; color: var(--muted); }
+
+/* Facilities — Facility Services bucket */
+.fs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+.fs-card { background: #FFFFFF; border: 0.5px solid var(--line); border-left: 3px solid var(--predict); border-radius: 8px; padding: 12px 14px; }
+.fs-h { font-size: 12px; font-weight: 500; color: var(--navy); margin: 0 0 4px; display: flex; align-items: center; gap: 7px; }
+.fs-h i { color: var(--predict); font-size: 14px; }
+.fs-meta { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.5; }
+.fs-meta .due { color: var(--reduce-dark); font-weight: 500; }
+.fs-meta .ok { color: var(--prove-dark); font-weight: 500; }
+
+/* Kitchen Manager — approval queue + flag strip */
+.flagstrip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+.flag { background: #FFFFFF; border: 0.5px solid var(--line); border-left: 3px solid #ccc; border-radius: 8px; padding: 12px 14px; }
+.flag.food { border-left-color: var(--prove); }
+.flag.fire { border-left-color: var(--reduce); }
+.flag-eye { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 7px; }
+.flag.food .flag-eye { color: var(--prove); }
+.flag.fire .flag-eye { color: var(--reduce); }
+.flag-msg { font-size: 12px; color: var(--navy); line-height: 1.5; margin: 0; }
+.flag-msg strong { font-weight: 500; }
+
+.approval { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.appr-row { padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; border-top: 0.5px solid var(--line); }
+.appr-row:first-child { border-top: none; }
+.appr-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--reduce-bg); color: var(--reduce); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.appr-body { flex: 1; }
+.appr-label { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0; line-height: 1.35; }
+.appr-meta { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.appr-why { font-size: 12px; color: var(--navy); margin: 9px 0 0; padding: 9px 12px; background: var(--cream); border-left: 2px solid var(--reduce); border-radius: 0 6px 6px 0; line-height: 1.55; }
+.appr-why .reg { color: var(--predict-dark); font-weight: 500; }
+.appr-why .rec { color: var(--reduce-dark); font-weight: 500; }
+.appr-buttons { display: flex; gap: 6px; flex-shrink: 0; align-items: flex-start; padding-top: 2px; }
+.appr-btn { padding: 7px 13px; border: 0.5px solid var(--line); background: #FFFFFF; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.appr-btn.approve { background: var(--prove); color: #FFFFFF; border-color: var(--prove); }
+.appr-btn.reject { color: var(--red); border-color: var(--red-border); }
+
+.overdue { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.ov-row { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid var(--red-border); font-size: 13px; color: var(--red-dark); }
+.ov-row:first-child { border-top: none; }
+.ov-l { display: flex; align-items: center; gap: 10px; }
+.ov-l i { color: var(--red); }
+.ov-meta { font-size: 11px; color: var(--red-dark); opacity: 0.75; }
+
+/* Kitchen Staff — Right Now card */
+.rightnow { background: var(--navy); color: var(--cream); border-radius: 12px; padding: 22px 26px; margin-bottom: 20px; }
+.rightnow-eyebrow { font-size: 11px; color: var(--gold); font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; margin: 0 0 8px; }
+.rightnow-task { font-size: 22px; font-weight: 500; margin: 0 0 6px; line-height: 1.2; }
+.rightnow-meta { font-size: 13px; color: rgba(250,247,240,0.7); margin: 0 0 16px; }
+.rightnow-cta { background: var(--gold); color: var(--navy); border: none; padding: 12px 24px; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+.rightnow-job { margin-top: 18px; padding-top: 16px; border-top: 0.5px solid rgba(250,247,240,0.18); }
+.rightnow-job-h { font-size: 12px; color: var(--gold); font-weight: 500; margin: 0 0 8px; letter-spacing: 0.5px; }
+.rightnow-job ol { margin: 0; padding-left: 22px; }
+.rightnow-job li { font-size: 12px; line-height: 1.7; color: rgba(250,247,240,0.85); }
+.rightnow-job li strong { color: var(--cream); font-weight: 500; }
+.rightnow-next { margin-top: 14px; padding-top: 14px; border-top: 0.5px solid rgba(250,247,240,0.15); font-size: 12px; color: rgba(250,247,240,0.65); }
+.rightnow-next strong { color: var(--cream); font-weight: 500; }
+
+.escalation { background: var(--cream); border: 0.5px solid var(--gold); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; }
+.esc-h { font-size: 13px; font-weight: 500; color: var(--navy); margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+.esc-b { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.55; }
+.esc-b strong { color: var(--navy); font-weight: 500; }
+
+/* Executive — portfolio snapshot */
+.portfolio { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.port-row { padding: 12px 18px; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 0.5fr; gap: 14px; align-items: center; border-top: 0.5px solid var(--line); font-size: 12px; }
+.port-row:first-child { border-top: none; background: var(--cream); font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; padding: 9px 18px; }
+.port-loc { font-weight: 500; color: var(--navy); }
+.port-cell { color: var(--navy); }
+.port-status { font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500; letter-spacing: 0.4px; }
+.port-status.ready { background: var(--prove-bg); color: var(--prove-dark); }
+.port-status.watch { background: var(--reduce-bg); color: var(--reduce-dark); }
+
+.qa { position: absolute; bottom: 18px; left: 32px; right: 32px; background: var(--navy); border-radius: 12px; padding: 14px 20px; display: flex; justify-content: space-around; align-items: center; color: var(--cream); }
+.qai { display: flex; align-items: center; gap: 9px; font-size: 13px; cursor: pointer; }
+.qai i { font-size: 17px; color: var(--gold); }
+
+.hidden { display: none !important; }
+
+.fineprint { max-width: 1180px; margin: 16px auto 0; padding: 0 8px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.fineprint strong { color: var(--navy); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="role-preview">
+  <span class="role-preview-label">Preview as</span>
+  <div class="role-btns">
+    <button class="role-btn active" id="rb-owner" onclick="switchRole('owner')">Owner / Operator</button>
+    <button class="role-btn" id="rb-exec" onclick="switchRole('exec')">Executive (GM)</button>
+    <button class="role-btn" id="rb-compliance" onclick="switchRole('compliance')">Compliance Officer</button>
+    <button class="role-btn" id="rb-facilities" onclick="switchRole('facilities')">Facilities</button>
+    <button class="role-btn" id="rb-chef" onclick="switchRole('chef')">Chef</button>
+    <button class="role-btn" id="rb-manager" onclick="switchRole('manager')">Kitchen Manager</button>
+    <button class="role-btn" id="rb-staff" onclick="switchRole('staff')">Kitchen Staff</button>
+  </div>
+  <span class="role-note">v10 — all 7 role compositions per locked matrix.</span>
+</div>
+
+<div class="shell">
+  <div class="bb">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="url">app.getevidly.com/dashboard</span>
+  </div>
+  <div class="topbar">
+    <span class="wm"><span class="g">E</span>vid<span class="g">LY</span></span>
+    <span class="tbr"><i class="ti ti-help-circle"></i><i class="ti ti-bell"></i><i class="ti ti-user"></i></span>
+  </div>
+  <div class="dashc">
+    <div class="dash">
+
+      <!-- Last action banner — all roles -->
+      <div class="last-action">
+        <i class="ti ti-circle-check-filled"></i>
+        <strong>Last action logged:</strong> <span id="last-action-detail">Tom — Walk-in temp 38°F (Modesto-1)</span>
+        <span class="ago">11 minutes ago</span>
+      </div>
+
+      <!-- Welcome — all roles -->
+      <div class="welcome">
+        <p class="welcome-h" id="welcome-h">Good afternoon, Arthur</p>
+        <span class="welcome-sub" id="welcome-sub">Tuesday, May 19 · Pellegrini's Pizza · 5 locations · 2 counties</span>
+      </div>
+
+      <!-- ============ OWNER / OPERATOR ============ -->
+      <div id="view-owner">
+        <div class="met-row">
+          <div class="met amber">
+            <div class="met-top"><i class="ti ti-currency-dollar"></i>Residual risk · monitored
+              <span class="info"><i class="ti ti-info-circle"></i><span class="tip"><strong>How this is calculated:</strong> Sum of estimated dollar exposure across all currently-monitored compliance items (food + fire) minus dollar value already mitigated. Full method launches Q3 2026 with per-county fine schedules and insurer-specific disclaimer math.</span></span>
+            </div>
+            <div class="met-num tbd">TBD</div>
+            <p class="met-foot">Per-county calc launches Q3 2026</p>
+          </div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-circle-check"></i>Inspection-ready</div><div class="met-num tbd">TBD</div><p class="met-foot">Per-county wiring Q3 2026</p></div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-file"></i>Documents current</div><div class="met-num">69<span style="font-size: 16px; color: var(--muted); font-weight: 500;"> of 72</span></div><p class="met-foot detail">3 expire within 30 days</p></div>
+          <div class="met purple"><div class="met-top"><i class="ti ti-clock"></i>Renewal &lt;30d</div><div class="met-num">2</div><p class="met-foot timeline">Day 5 (Sysco COI) · Day 21 (Hood Q3)</p></div>
+        </div>
+
+        <div class="prp-row">
+          <div class="prp predict"><div class="prp-icon"><i class="ti ti-trending-up"></i></div><div><p class="prp-label">Predict</p><p class="prp-sub">See what is coming due</p></div></div>
+          <div class="prp reduce"><div class="prp-icon"><i class="ti ti-shield-check"></i></div><div><p class="prp-label">Reduce</p><p class="prp-sub">Cut losses before they hit</p></div></div>
+          <div class="prp prove"><div class="prp-icon"><i class="ti ti-file-check"></i></div><div><p class="prp-label">Prove</p><p class="prp-sub">Evidence on record</p></div></div>
+        </div>
+
+        <div class="caught-line"><i class="ti ti-eye-check"></i><span><strong>Yesterday EvidLY caught:</strong> 1 walk-in drift at Stockton-3 — corrective action dispatched, est. <strong>$240 product saved</strong>.</span></div>
+
+        <div class="insp-pkg">
+          <div class="insp-head">
+            <i class="ti ti-file-zip"></i>
+            <div><p class="insp-title">Inspection package</p><p class="insp-meta">Ready · last refreshed 2h ago · 5 locations · 2 counties · 47 evidence items</p></div>
+            <div class="insp-actions">
+              <button class="insp-btn"><i class="ti ti-download"></i>Download</button>
+              <button class="insp-btn primary"><i class="ti ti-send"></i>Send</button>
+            </div>
+          </div>
+          <div class="insp-log">
+            <p class="insp-log-h">Recent delivery log</p>
+            <div class="insp-log-row delivered"><i class="ti ti-mail-check"></i><strong>Delivered to:</strong> jcastro@sanjoaquinhealth.gov <span class="when">May 14 · 9:12 AM</span></div>
+            <div class="insp-log-row delivered"><i class="ti ti-mail-check"></i><strong>Delivered to:</strong> Maria, Sam (internal share) <span class="when">May 13 · 4:30 PM</span></div>
+            <div class="insp-log-row delivered"><i class="ti ti-mail-check"></i><strong>Delivered to:</strong> claims@greatamericanins.com — Q1 renewal <span class="when">Apr 28 · 11:03 AM</span></div>
+          </div>
+        </div>
+
+        <div class="compliance-row">
+          <div class="brief compliance">
+            <p class="brief-eyebrow"><i class="ti ti-shield-half"></i>Compliance read · Today<span class="brief-credentials">Current with CalCode · FDA Food Code · NFPA · 62 CA counties</span></p>
+            <p class="brief-posture"><span class="badge watch">Watch</span>Two pulling items. Not in alarm. In maintenance.</p>
+            <p class="brief-body"><strong>Sysco COI expires Friday May 23</strong> — without it you breach Aramark §4.2 across Yosemite. Renew or move to US Foods / PFG. <strong>Stockton-3 walk-in showed an afternoon temperature pattern</strong> — Food Safety read below. <strong>San Joaquin inspection window opens Aug 1</strong>; Stanislaus two weeks behind. Evidence on record except Sysco COI gap.</p>
+          </div>
+        </div>
+
+        <div class="advisor-row">
+          <div class="brief food">
+            <p class="brief-eyebrow"><i class="ti ti-chef-hat"></i>Food Safety Advisor<span class="brief-credentials">Current with CalCode · FDA Food Code 2022 · HACCP framework</span></p>
+            <p class="brief-posture"><span class="badge watch">Watch</span>One active concern.</p>
+            <p class="brief-body"><strong>Stockton-3 walk-in is your only pull.</strong> Three afternoon readings 42–44°F over 8 days — compressor short-cycle pattern. <span class="reg-link" title="CalCode source on file — click to view">CalCode §113996</span> requires TCS foods ≤41°F. Service today, not Thursday.</p>
+            <div class="brief-items"><p class="brief-items-h">Open in food safety</p>
+              <div class="brief-item"><span class="ds urgent"></span><span><strong>Walk-in service</strong> · Stockton-3</span><span class="tag">Today</span></div>
+              <div class="brief-item"><span class="ds soon"></span><span><strong>Allergen training acks</strong> · 3 staff outstanding</span><span class="tag">5d late</span></div>
+              <div class="brief-item"><span class="ds review"></span><span><strong>Sysco receiving photos</strong> · cold-chain evidence</span><span class="tag">Today</span></div>
+            </div>
+            <button class="brief-consult"><i class="ti ti-external-link"></i>Open food safety</button>
+          </div>
+          <div class="brief fire">
+            <p class="brief-eyebrow"><i class="ti ti-flame"></i>Fire Safety Advisor<span class="brief-credentials">Current with NFPA 96 · NFPA 17A · NFPA 10 · CA Fire Code</span></p>
+            <p class="brief-posture"><span class="badge solid">Solid</span>One decision pending.</p>
+            <p class="brief-body"><strong>Hood Q3 cycle falls due in 21 days</strong> across all 5 locations. <span class="reg-link" title="NFPA source on file — click to view">NFPA 96 §11.4</span> mandates quarterly Type I exhaust cleaning. CPP IKECA-certified vendor, 48-hr turnaround, $2,850 portfolio total. Suppression Jun 25 on track.</p>
+            <div class="brief-items"><p class="brief-items-h">Open in fire safety</p>
+              <div class="brief-item"><span class="ds soon"></span><span><strong>Hood Q3 cleaning</strong> · decide by Fri</span><span class="tag">5 sites</span></div>
+              <div class="brief-item"><span class="ds ok"></span><span><strong>Suppression semi-annual</strong> · scheduled</span><span class="tag">Jun 25</span></div>
+              <div class="brief-item"><span class="ds ok"></span><span><strong>Extinguisher monthly</strong> · current</span><span class="tag">Apr/May</span></div>
+            </div>
+            <button class="brief-consult"><i class="ti ti-external-link"></i>Open fire safety</button>
+          </div>
+        </div>
+
+        <p class="section-h">Food Safety checklists <span class="count">3 cadences · 13 items</span></p>
+        <div class="cl-grid">
+          <div class="cl-card">
+            <div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">5 items</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Opening line check</span><span class="cl-when">7:45 AM</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Hand-wash compliance sweep</span><span class="cl-when">8:00 AM</span></div>
+            <div class="cl-item"><span class="cl-stat due"></span><span>Sanitizer concentration check</span><span class="cl-when due">By 11 AM</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Morning temp logs (10/10)</span><span class="cl-when">9 AM</span></div>
+            <div class="cl-item"><span class="cl-stat"></span><span>Closing line check</span><span class="cl-when">9:30 PM</span></div>
+          </div>
+          <div class="cl-card">
+            <div class="cl-h"><span class="cl-h-label">Weekly</span><span class="cl-h-cadence">4 items</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Deep-clean rotation</span><span class="cl-when">Mon done</span></div>
+            <div class="cl-item"><span class="cl-stat"></span><span>Allergen sweep + verification</span><span class="cl-when due">Thu</span></div>
+            <div class="cl-item"><span class="cl-stat"></span><span>Walk-in defrost check</span><span class="cl-when">Fri</span></div>
+            <div class="cl-item"><span class="cl-stat overdue"></span><span>Receiving evidence-trail check</span><span class="cl-when overdue">2d late</span></div>
+          </div>
+          <div class="cl-card">
+            <div class="cl-h"><span class="cl-h-label">Monthly</span><span class="cl-h-cadence">4 items</span></div>
+            <div class="cl-item"><span class="cl-stat"></span><span>HACCP CCP verification</span><span class="cl-when due">May 31</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Equipment calibration</span><span class="cl-when">May 3</span></div>
+            <div class="cl-item"><span class="cl-stat"></span><span>Pest control report review</span><span class="cl-when">May 28</span></div>
+            <div class="cl-item"><span class="cl-stat done"></span><span>Allergen training cycle</span><span class="cl-when">May 1</span></div>
+          </div>
+        </div>
+
+        <p class="section-h">Drifts EvidLY caught <span class="count">3 this week</span></p>
+        <div class="catches">
+          <div class="catch">
+            <div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div>
+            <div class="catch-body">
+              <div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Food Safety · Stockton-3</span></div>
+              <p class="catch-label">Walk-in cooler drift prevented loss</p>
+              <p class="catch-meta">Predicted <strong>May 12</strong> · Reduced <strong>May 13</strong> · <span class="savings">Est. $2,400 product saved</span></p>
+              <div class="catch-ack-row"><span class="catch-ack-stat"><i class="ti ti-circle-check"></i>Acknowledged by Maria (Kitchen Manager) · May 13</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Owner</button></div>
+            </div>
+          </div>
+          <div class="catch">
+            <div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div>
+            <div class="catch-body">
+              <div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Fire Safety · Modesto-1</span></div>
+              <p class="catch-label">Hood inspection scheduled before lapse</p>
+              <p class="catch-meta">Predicted <strong>May 8</strong> · Reduced <strong>May 9</strong></p>
+              <div class="catch-ack-row"><span class="catch-ack-stat"><i class="ti ti-circle-check"></i>Acknowledged by you · May 9</span><button class="catch-ack-btn done"><i class="ti ti-check"></i>Acknowledged</button></div>
+            </div>
+          </div>
+          <div class="catch">
+            <div class="catch-icon proven"><i class="ti ti-alert-triangle"></i></div>
+            <div class="catch-body">
+              <div class="catch-head"><span class="catch-tag proven">PREDICTED &amp; PROVEN</span><span class="catch-pillar">Food Safety · Stockton-1</span></div>
+              <p class="catch-label">Receiving log gap proved out</p>
+              <p class="catch-meta">Predicted <strong>May 14</strong> · Proven <strong>May 17</strong></p>
+              <div class="catch-ack-row"><span class="catch-ack-stat">Awaiting acknowledgments</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Owner</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-icon"><i class="ti ti-mail"></i></div>
+          <div class="report-body">
+            <p class="report-h">Weekly drift report — Mondays 7 AM PT</p>
+            <p class="report-meta">All caught drifts delivered to your inbox + in-app. <strong>Last sent:</strong> May 12 · delivered 7:02 AM PT.</p>
+          </div>
+        </div>
+
+        <p class="section-h">Inspection-readiness by county <span class="count">5 locations · 2 counties</span></p>
+        <div class="cnty-grid">
+          <div class="cnty">
+            <div class="cnty-head"><div><p class="cnty-name">Stockton, San Joaquin County</p><p class="cnty-tier">Tier 1 · 3 locations</p></div><span class="cnty-status ready">READY</span></div>
+            <div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Feb 12, 2026 · passed</strong></div><div class="cnty-cell">Window opens<strong>Aug 1 — Aug 15</strong></div></div>
+            <div class="cnty-gaps"><i class="ti ti-alert-triangle"></i><span><strong>Open gap:</strong> 2 temp checks flagged (Stockton-3).</span></div>
+            <p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · per-county result display Q3 2026 · Issued by San Joaquin County Environmental Health</p>
+          </div>
+          <div class="cnty">
+            <div class="cnty-head"><div><p class="cnty-name">Modesto, Stanislaus County</p><p class="cnty-tier">Tier 1 · 2 locations</p></div><span class="cnty-status watch">WATCH</span></div>
+            <div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Jan 22, 2026 · passed</strong></div><div class="cnty-cell">Window opens<strong>Jul 22 — Aug 5</strong></div></div>
+            <div class="cnty-gaps"><i class="ti ti-alert-triangle"></i><span><strong>Open gap:</strong> Sysco COI lapse blocks 2 vendor contracts.</span></div>
+            <p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · Issued by Stanislaus County Environmental Resources</p>
+          </div>
+        </div>
+
+        <p class="section-h">Decisions awaiting your call <span class="count">3 open</span></p>
+        <div class="decisions">
+          <div class="dec-row">
+            <span class="dec-prio urgent"></span>
+            <div class="dec-body">
+              <p class="dec-label">Sysco COI expires in 5 days — renew or switch vendor</p>
+              <p class="dec-meta">Affects: Stockton, Modesto · Decide by Friday May 23</p>
+              <div class="dec-why"><span class="reg-link">Aramark §4.2</span> requires current COIs. <span class="cost">Penalty exposure: $15K–50K + 30-day delivery suspension.</span> Pre-vetted alternates: US Foods, PFG.</div>
+            </div>
+            <button class="dec-act urgent">Decide</button>
+          </div>
+          <div class="dec-row">
+            <span class="dec-prio soon"></span>
+            <div class="dec-body">
+              <p class="dec-label">Hood cleaning Q3 cycle due in 21 days — schedule</p>
+              <p class="dec-meta">5 locations · Estimated cost $2,850 · Decide by Mon May 26</p>
+              <div class="dec-why"><span class="reg-link">NFPA 96 §11.4</span> requires quarterly Type I exhaust cleaning. <span class="cost">Insurance disclaimer $25K–$200K.</span></div>
+            </div>
+            <button class="dec-act">Schedule</button>
+          </div>
+          <div class="dec-row">
+            <span class="dec-prio review"></span>
+            <div class="dec-body">
+              <p class="dec-label">Approve corrective action: walk-in cooler temp drift (Stockton-3)</p>
+              <p class="dec-meta">Drafted by Maria · Recommends compressor service</p>
+              <div class="dec-why"><span class="reg-link">CalCode §113996</span> requires TCS foods ≤41°F. <span class="cost">$380 service vs $2,400 product + $5K–15K violation exposure.</span></div>
+            </div>
+            <button class="dec-act">Review</button>
+          </div>
+        </div>
+
+        <p class="section-h">Where your team stands <span class="count">This week</span></p>
+        <div class="team-grid">
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">SH</div><div class="team-info"><p class="team-name">Sam Haggerty</p><p class="team-role">Chef · Stockton</p></div><div class="team-stat"><div class="team-pct ok">100%</div><div class="team-detail">0 overdue</div></div></div></div>
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">ML</div><div class="team-info"><p class="team-name">Maria Lopez</p><p class="team-role">Kitchen Manager · Modesto</p></div><div class="team-stat"><div class="team-pct ok">95%</div><div class="team-detail">1 overdue</div></div></div></div>
+          <div class="team-card">
+            <div class="team-top"><div class="team-avatar" style="background: var(--reduce-bg); color: var(--reduce-dark);">JR</div><div class="team-info"><p class="team-name">Joaquin Reyes</p><p class="team-role">Kitchen Staff · Stockton</p></div><div class="team-stat"><div class="team-pct warn">80%</div><div class="team-detail">2 missed temp checks</div></div></div>
+            <div class="team-pattern"><i class="ti ti-chart-dots"></i><span><strong>Pattern:</strong> Misses cluster 2–4 PM (shift fatigue). 60% of all team misses.</span></div>
+          </div>
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">TP</div><div class="team-info"><p class="team-name">Tom Park</p><p class="team-role">Kitchen Staff · Modesto</p></div><div class="team-stat"><div class="team-pct ok">100%</div><div class="team-detail">0 overdue</div></div></div></div>
+        </div>
+
+        <div class="intel"><div class="il"><div class="imk"><i class="ti ti-sparkles"></i></div><div><p class="it">EvidLY Intelligence</p><p class="is">Predictive analysis returning soon under this name.</p></div></div><span class="itg">Reserved slot</span></div>
+
+        <p class="section-h">Today across your kitchens</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Morning temp logs — All locations</span></div><span class="tdm">10 of 10 done</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Receiving log — Sysco delivery (Stockton)</span></div><span class="tdm">Window 10:30–12:00</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Hood inspection — review vendor evidence</span></div><span class="tdm">Vendor uploaded yesterday</span></div>
+        </div>
+      </div>
+
+      <!-- ============ EXECUTIVE (GM) ============ -->
+      <div id="view-exec" class="hidden">
+        <div class="met-row">
+          <div class="met amber"><div class="met-top"><i class="ti ti-currency-dollar"></i>Residual risk · portfolio<span class="info"><i class="ti ti-info-circle"></i><span class="tip"><strong>How this is calculated:</strong> Same as Owner view, aggregated portfolio-wide. Full method launches Q3 2026.</span></span></div><div class="met-num tbd">TBD</div><p class="met-foot">Per-county calc Q3 2026</p></div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-circle-check"></i>Portfolio inspection-ready</div><div class="met-num tbd">TBD</div><p class="met-foot">Q3 2026</p></div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-file"></i>Docs current portfolio</div><div class="met-num">69<span style="font-size: 16px; color: var(--muted); font-weight: 500;"> of 72</span></div><p class="met-foot detail">3 expire &lt;30d</p></div>
+          <div class="met purple"><div class="met-top"><i class="ti ti-clock"></i>Decisions waiting</div><div class="met-num">3</div><p class="met-foot timeline">1 urgent · 2 this week</p></div>
+        </div>
+
+        <div class="prp-row">
+          <div class="prp predict"><div class="prp-icon"><i class="ti ti-trending-up"></i></div><div><p class="prp-label">Predict</p><p class="prp-sub">Portfolio-wide</p></div></div>
+          <div class="prp reduce"><div class="prp-icon"><i class="ti ti-shield-check"></i></div><div><p class="prp-label">Reduce</p><p class="prp-sub">Cut losses before they hit</p></div></div>
+          <div class="prp prove"><div class="prp-icon"><i class="ti ti-file-check"></i></div><div><p class="prp-label">Prove</p><p class="prp-sub">Evidence on record</p></div></div>
+        </div>
+
+        <div class="caught-line"><i class="ti ti-eye-check"></i><span><strong>Yesterday EvidLY caught:</strong> 1 walk-in drift at Stockton-3 · <strong>$240 saved</strong>. 2 caught this week. 7 caught QTD.</span></div>
+
+        <div class="insp-pkg">
+          <div class="insp-head">
+            <i class="ti ti-file-zip"></i>
+            <div><p class="insp-title">Inspection package · Portfolio</p><p class="insp-meta">Ready · 5 locations · 47 evidence items</p></div>
+            <div class="insp-actions"><button class="insp-btn"><i class="ti ti-download"></i>Download</button><button class="insp-btn primary"><i class="ti ti-send"></i>Send</button></div>
+          </div>
+        </div>
+
+        <div class="compliance-row">
+          <div class="brief compliance">
+            <p class="brief-eyebrow"><i class="ti ti-shield-half"></i>Compliance read · Portfolio<span class="brief-credentials">Current with CalCode · FDA Food Code · NFPA · 62 CA counties</span></p>
+            <p class="brief-posture"><span class="badge watch">Watch</span>Two pulling items across 5 kitchens.</p>
+            <p class="brief-body">Sysco COI expiry affects vendor contracts across portfolio — renew before Friday. Stockton-3 cooler pattern flagged, service dispatched. San Joaquin inspection window opens Aug 1; Stanislaus two weeks behind.</p>
+          </div>
+        </div>
+
+        <div class="advisor-row">
+          <div class="brief food">
+            <p class="brief-eyebrow"><i class="ti ti-chef-hat"></i>Food Safety Advisor<span class="brief-credentials">Current with CalCode · FDA Food Code 2022 · HACCP</span></p>
+            <p class="brief-posture"><span class="badge watch">Watch</span>1 active pull · 4 clean.</p>
+            <p class="brief-body">Stockton-3 cooler service dispatched. Allergen training acks pending across 3 staff. Receiving photos current.</p>
+          </div>
+          <div class="brief fire">
+            <p class="brief-eyebrow"><i class="ti ti-flame"></i>Fire Safety Advisor<span class="brief-credentials">Current with NFPA 96 · NFPA 17A · NFPA 10 · CA Fire Code</span></p>
+            <p class="brief-posture"><span class="badge solid">Solid</span>Hood Q3 across 5 sites pending.</p>
+            <p class="brief-body">CPP IKECA-certified vendor, $2,850 portfolio total. Suppression Jun 25 scheduled. Extinguisher monthly current.</p>
+          </div>
+        </div>
+
+        <p class="section-h">Portfolio snapshot</p>
+        <div class="portfolio">
+          <div class="port-row"><div>Location</div><div>Logs done today</div><div>Open actions</div><div>Doc current</div><div>Status</div></div>
+          <div class="port-row"><div class="port-loc">Stockton-1</div><div class="port-cell">3/3</div><div class="port-cell">0</div><div class="port-cell">14/14</div><div><span class="port-status ready">READY</span></div></div>
+          <div class="port-row"><div class="port-loc">Stockton-2</div><div class="port-cell">3/3</div><div class="port-cell">0</div><div class="port-cell">14/14</div><div><span class="port-status ready">READY</span></div></div>
+          <div class="port-row"><div class="port-loc">Stockton-3</div><div class="port-cell">2/3</div><div class="port-cell">1</div><div class="port-cell">14/14</div><div><span class="port-status watch">WATCH</span></div></div>
+          <div class="port-row"><div class="port-loc">Modesto-1</div><div class="port-cell">3/3</div><div class="port-cell">0</div><div class="port-cell">14/15</div><div><span class="port-status watch">WATCH</span></div></div>
+          <div class="port-row"><div class="port-loc">Modesto-2</div><div class="port-cell">3/3</div><div class="port-cell">1</div><div class="port-cell">13/14</div><div><span class="port-status ready">READY</span></div></div>
+        </div>
+
+        <p class="section-h">Food Safety checklists <span class="count">3 cadences</span></p>
+        <div class="cl-grid">
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">5 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Opening line check</span><span class="cl-when">All sites</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Hand-wash sweep</span><span class="cl-when">All sites</span></div><div class="cl-item"><span class="cl-stat due"></span><span>Sanitizer concentration</span><span class="cl-when due">2 pending</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Morning temp logs</span><span class="cl-when">All sites</span></div><div class="cl-item"><span class="cl-stat"></span><span>Closing line check</span><span class="cl-when">9:30 PM</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Weekly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Deep-clean rotation</span><span class="cl-when">5/5</span></div><div class="cl-item"><span class="cl-stat"></span><span>Allergen sweep</span><span class="cl-when due">Thu</span></div><div class="cl-item"><span class="cl-stat"></span><span>Walk-in defrost</span><span class="cl-when">Fri</span></div><div class="cl-item"><span class="cl-stat overdue"></span><span>Receiving evidence check</span><span class="cl-when overdue">Stockton-1</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Monthly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat"></span><span>HACCP CCP verification</span><span class="cl-when due">May 31</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Equipment calibration</span><span class="cl-when">May 3</span></div><div class="cl-item"><span class="cl-stat"></span><span>Pest control review</span><span class="cl-when">May 28</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Allergen training cycle</span><span class="cl-when">May 1</span></div></div>
+        </div>
+
+        <p class="section-h">Drifts EvidLY caught <span class="count">7 this quarter</span></p>
+        <div class="catches">
+          <div class="catch"><div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Food Safety · Stockton-3</span></div><p class="catch-label">Walk-in cooler drift prevented loss</p><p class="catch-meta">Predicted May 12 · Reduced May 13 · <span class="savings">$2,400 saved</span></p><div class="catch-ack-row"><span class="catch-ack-stat"><i class="ti ti-circle-check"></i>Acknowledged by Arthur, Maria</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Executive</button></div></div></div>
+          <div class="catch"><div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Fire Safety · Modesto-1</span></div><p class="catch-label">Hood inspection scheduled before lapse</p><p class="catch-meta">Predicted May 8 · Reduced May 9</p><div class="catch-ack-row"><span class="catch-ack-stat"><i class="ti ti-circle-check"></i>Acknowledged by Arthur</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Executive</button></div></div></div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-icon"><i class="ti ti-mail"></i></div>
+          <div class="report-body"><p class="report-h">Weekly drift report — Mondays 7 AM PT</p><p class="report-meta">Portfolio rollup. <strong>Last sent:</strong> May 12 · delivered 7:02 AM PT.</p></div>
+        </div>
+
+        <p class="section-h">Inspection-readiness by county <span class="count">2 counties</span></p>
+        <div class="cnty-grid">
+          <div class="cnty"><div class="cnty-head"><div><p class="cnty-name">San Joaquin County</p><p class="cnty-tier">3 locations</p></div><span class="cnty-status ready">READY</span></div><div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Feb 12 · passed</strong></div><div class="cnty-cell">Window opens<strong>Aug 1</strong></div></div><p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · Q3 2026 · Issued by San Joaquin County Environmental Health</p></div>
+          <div class="cnty"><div class="cnty-head"><div><p class="cnty-name">Stanislaus County</p><p class="cnty-tier">2 locations</p></div><span class="cnty-status watch">WATCH</span></div><div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Jan 22 · passed</strong></div><div class="cnty-cell">Window opens<strong>Jul 22</strong></div></div><p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · Q3 2026 · Issued by Stanislaus County Environmental Resources</p></div>
+        </div>
+
+        <p class="section-h">Decisions awaiting your call <span class="count">3 open</span></p>
+        <div class="decisions">
+          <div class="dec-row"><span class="dec-prio urgent"></span><div class="dec-body"><p class="dec-label">Sysco COI — renew or switch (portfolio-wide)</p><p class="dec-meta">Decide by Friday</p><div class="dec-why"><span class="reg-link">Aramark §4.2</span> · <span class="cost">$15K–50K exposure</span></div></div><button class="dec-act urgent">Decide</button></div>
+          <div class="dec-row"><span class="dec-prio soon"></span><div class="dec-body"><p class="dec-label">Hood Q3 cycle — 5 sites · $2,850</p><p class="dec-meta">Decide by Mon</p><div class="dec-why"><span class="reg-link">NFPA 96 §11.4</span> · <span class="cost">$25K–$200K insurance exposure</span></div></div><button class="dec-act">Schedule</button></div>
+        </div>
+
+        <p class="section-h">Where your team stands</p>
+        <div class="team-grid">
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">ML</div><div class="team-info"><p class="team-name">Maria Lopez</p><p class="team-role">Kitchen Manager · Modesto</p></div><div class="team-stat"><div class="team-pct ok">95%</div><div class="team-detail">1 overdue</div></div></div></div>
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--reduce-bg); color: var(--reduce-dark);">JR</div><div class="team-info"><p class="team-name">Joaquin Reyes</p><p class="team-role">Kitchen Staff · Stockton</p></div><div class="team-stat"><div class="team-pct warn">80%</div><div class="team-detail">2 misses</div></div></div></div>
+        </div>
+
+        <div class="intel"><div class="il"><div class="imk"><i class="ti ti-sparkles"></i></div><div><p class="it">EvidLY Intelligence</p><p class="is">Predictive analysis returning soon under this name.</p></div></div><span class="itg">Reserved slot</span></div>
+
+        <p class="section-h">Today across your kitchens</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Morning temp logs — All sites</span></div><span class="tdm">10 of 10 done</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Sysco delivery — Stockton</span></div><span class="tdm">10:30 AM</span></div>
+        </div>
+      </div>
+
+      <!-- ============ COMPLIANCE OFFICER ============ -->
+      <div id="view-compliance" class="hidden">
+        <div class="met-row">
+          <div class="met amber"><div class="met-top"><i class="ti ti-currency-dollar"></i>Residual risk · monitored<span class="info"><i class="ti ti-info-circle"></i><span class="tip"><strong>How this is calculated:</strong> Same as Owner view. Full method launches Q3 2026.</span></span></div><div class="met-num tbd">TBD</div><p class="met-foot">Per-county calc Q3 2026</p></div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-file-check"></i>Evidence on record</div><div class="met-num">69<span style="font-size: 16px; color: var(--muted); font-weight: 500;"> of 72</span></div><p class="met-foot detail">All inspection-traceable</p></div>
+          <div class="met purple"><div class="met-top"><i class="ti ti-clock"></i>Inspection windows opening</div><div class="met-num">2</div><p class="met-foot timeline">San Joaquin Aug 1 · Stanislaus Jul 22</p></div>
+          <div class="met teal"><div class="met-top"><i class="ti ti-shield-check"></i>Drifts caught QTD</div><div class="met-num">7</div><p class="met-foot detail">5 reduced · 2 proven</p></div>
+        </div>
+
+        <div class="prp-row">
+          <div class="prp predict"><div class="prp-icon"><i class="ti ti-trending-up"></i></div><div><p class="prp-label">Predict</p><p class="prp-sub">Inspection windows</p></div></div>
+          <div class="prp reduce"><div class="prp-icon"><i class="ti ti-shield-check"></i></div><div><p class="prp-label">Reduce</p><p class="prp-sub">Defensible gaps</p></div></div>
+          <div class="prp prove"><div class="prp-icon"><i class="ti ti-file-check"></i></div><div><p class="prp-label">Prove</p><p class="prp-sub">Full evidence trail</p></div></div>
+        </div>
+
+        <div class="caught-line"><i class="ti ti-eye-check"></i><span><strong>Yesterday EvidLY caught:</strong> 1 walk-in drift at Stockton-3. <strong>4 new evidence entries this week.</strong></span></div>
+
+        <div class="insp-pkg">
+          <div class="insp-head"><i class="ti ti-file-zip"></i><div><p class="insp-title">Inspection package · Portfolio</p><p class="insp-meta">Ready · 5 locations · 47 evidence items · full chain-of-custody</p></div><div class="insp-actions"><button class="insp-btn"><i class="ti ti-download"></i>Download</button><button class="insp-btn primary"><i class="ti ti-send"></i>Send</button></div></div>
+          <div class="insp-log"><p class="insp-log-h">Recent delivery log</p><div class="insp-log-row delivered"><i class="ti ti-mail-check"></i><strong>Delivered to:</strong> jcastro@sanjoaquinhealth.gov <span class="when">May 14 · 9:12 AM</span></div><div class="insp-log-row delivered"><i class="ti ti-mail-check"></i><strong>Delivered to:</strong> claims@greatamericanins.com <span class="when">Apr 28</span></div></div>
+        </div>
+
+        <div class="compliance-row">
+          <div class="brief compliance"><p class="brief-eyebrow"><i class="ti ti-shield-half"></i>Compliance read · Today<span class="brief-credentials">Current with CalCode · FDA Food Code · NFPA · 62 CA counties</span></p><p class="brief-posture"><span class="badge watch">Watch</span>Two pulling items. Inspection-defensible.</p><p class="brief-body"><strong>Sysco COI expires May 23</strong> — vendor compliance gap. <strong>Stockton-3 walk-in pattern</strong>: 3 readings 42–44°F over 8 days, <span class="reg-link">CalCode §113996</span> boundary, corrective action dispatched. Both events logged with full evidence trail. Inspection windows: <strong>San Joaquin opens Aug 1</strong>, <strong>Stanislaus Jul 22</strong>.</p></div>
+        </div>
+
+        <div class="advisor-row">
+          <div class="brief food"><p class="brief-eyebrow"><i class="ti ti-chef-hat"></i>Food Safety Advisor<span class="brief-credentials">Current with CalCode · FDA Food Code 2022 · HACCP framework</span></p><p class="brief-posture"><span class="badge watch">Watch</span></p><p class="brief-body">Stockton-3 walk-in: 3 readings 42–44°F. Pattern, not noise. <span class="reg-link">CalCode §113996</span> requires ≤41°F. Compressor short-cycle confirmed.</p></div>
+          <div class="brief fire"><p class="brief-eyebrow"><i class="ti ti-flame"></i>Fire Safety Advisor<span class="brief-credentials">Current with NFPA 96 · NFPA 17A · NFPA 10 · CA Fire Code</span></p><p class="brief-posture"><span class="badge solid">Solid</span></p><p class="brief-body">Hood Q3 cycle scheduling open across 5 sites. <span class="reg-link">NFPA 96 §11.4</span> deadline 21 days. Suppression Jun 25, extinguisher monthly current.</p></div>
+        </div>
+
+        <p class="section-h">Food Safety checklists <span class="count">evidence trail</span></p>
+        <div class="cl-grid">
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">5 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Opening line check</span><span class="cl-when">All</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Hand-wash sweep</span><span class="cl-when">All</span></div><div class="cl-item"><span class="cl-stat due"></span><span>Sanitizer concentration</span><span class="cl-when due">2 sites</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Morning temp logs</span><span class="cl-when">All</span></div><div class="cl-item"><span class="cl-stat"></span><span>Closing line check</span><span class="cl-when">9:30 PM</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Weekly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Deep-clean rotation</span><span class="cl-when">5/5</span></div><div class="cl-item"><span class="cl-stat"></span><span>Allergen sweep</span><span class="cl-when due">Thu</span></div><div class="cl-item"><span class="cl-stat"></span><span>Walk-in defrost</span><span class="cl-when">Fri</span></div><div class="cl-item"><span class="cl-stat overdue"></span><span>Receiving evidence check</span><span class="cl-when overdue">2d late</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Monthly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat"></span><span>HACCP CCP verification</span><span class="cl-when due">May 31</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Equipment calibration</span><span class="cl-when">May 3</span></div><div class="cl-item"><span class="cl-stat"></span><span>Pest control review</span><span class="cl-when">May 28</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Allergen training cycle</span><span class="cl-when">May 1</span></div></div>
+        </div>
+
+        <p class="section-h">Drifts EvidLY caught · full evidence trail <span class="count">3 this week · 7 QTD</span></p>
+        <div class="catches">
+          <div class="catch"><div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Food Safety · Stockton-3</span></div><p class="catch-label">Walk-in cooler drift prevented loss</p><p class="catch-meta">Predicted May 12 · Reduced May 13 · Evidence: temp log series, vendor invoice, CA report</p><div class="catch-ack-row"><span class="catch-ack-stat">Awaiting Compliance acknowledgment</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Compliance</button></div></div></div>
+          <div class="catch"><div class="catch-icon proven"><i class="ti ti-alert-triangle"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag proven">PREDICTED &amp; PROVEN</span><span class="catch-pillar">Food Safety · Stockton-1</span></div><p class="catch-label">Receiving log gap proved out</p><p class="catch-meta">Predicted May 14 · Proven May 17 · Evidence: pattern alert log, missing photo record, post-incident CA</p><div class="catch-ack-row"><span class="catch-ack-stat">Awaiting Compliance acknowledgment</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Compliance</button></div></div></div>
+        </div>
+
+        <div class="report-card"><div class="report-icon"><i class="ti ti-mail"></i></div><div class="report-body"><p class="report-h">Weekly drift report — Mondays 7 AM PT</p><p class="report-meta">Full evidence trail delivered. <strong>Last sent:</strong> May 12 · delivered 7:02 AM PT.</p></div></div>
+
+        <p class="section-h">Inspection-readiness by county <span class="count">5 locations · 2 counties</span></p>
+        <div class="cnty-grid">
+          <div class="cnty"><div class="cnty-head"><div><p class="cnty-name">Stockton, San Joaquin County</p><p class="cnty-tier">Tier 1 · 3 locations</p></div><span class="cnty-status ready">READY</span></div><div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Feb 12 · passed</strong></div><div class="cnty-cell">Window opens<strong>Aug 1 — Aug 15</strong></div></div><div class="cnty-gaps"><i class="ti ti-alert-triangle"></i><span><strong>Open gap:</strong> 2 temp checks flagged. Inspection package generated.</span></div><p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · Issued by San Joaquin County Environmental Health</p></div>
+          <div class="cnty"><div class="cnty-head"><div><p class="cnty-name">Modesto, Stanislaus County</p><p class="cnty-tier">Tier 1 · 2 locations</p></div><span class="cnty-status watch">WATCH</span></div><div class="cnty-stat"><div class="cnty-cell">Last visit<strong>Jan 22 · passed</strong></div><div class="cnty-cell">Window opens<strong>Jul 22 — Aug 5</strong></div></div><div class="cnty-gaps"><i class="ti ti-alert-triangle"></i><span><strong>Open gap:</strong> Sysco COI lapse.</span></div><p class="cnty-attribution">Last inspection result: <strong style="color:var(--muted)">TBD</strong> · Issued by Stanislaus County Environmental Resources</p></div>
+        </div>
+
+        <p class="section-h">Where your team stands</p>
+        <div class="team-grid">
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--reduce-bg); color: var(--reduce-dark);">JR</div><div class="team-info"><p class="team-name">Joaquin Reyes</p><p class="team-role">Kitchen Staff · Stockton</p></div><div class="team-stat"><div class="team-pct warn">80%</div><div class="team-detail">2 missed temp checks</div></div></div></div>
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">ML</div><div class="team-info"><p class="team-name">Maria Lopez</p><p class="team-role">Kitchen Manager</p></div><div class="team-stat"><div class="team-pct ok">95%</div><div class="team-detail">1 overdue</div></div></div></div>
+        </div>
+
+        <div class="intel"><div class="il"><div class="imk"><i class="ti ti-sparkles"></i></div><div><p class="it">EvidLY Intelligence</p><p class="is">Predictive analysis returning soon under this name.</p></div></div><span class="itg">Reserved slot</span></div>
+
+        <p class="section-h">Today across your kitchens</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Morning temp logs — All</span></div><span class="tdm">10 of 10 done</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Sysco receiving evidence</span></div><span class="tdm">10:30 AM</span></div>
+        </div>
+      </div>
+
+      <!-- ============ FACILITIES ============ -->
+      <div id="view-facilities" class="hidden">
+        <div class="prp-row">
+          <div class="prp predict"><div class="prp-icon"><i class="ti ti-trending-up"></i></div><div><p class="prp-label">Predict</p><p class="prp-sub">Service cycles + lapses</p></div></div>
+          <div class="prp reduce"><div class="prp-icon"><i class="ti ti-shield-check"></i></div><div><p class="prp-label">Reduce</p><p class="prp-sub">Fire risk · service gaps</p></div></div>
+          <div class="prp prove"><div class="prp-icon"><i class="ti ti-file-check"></i></div><div><p class="prp-label">Prove</p><p class="prp-sub">Contracts on file</p></div></div>
+        </div>
+
+        <div class="caught-line"><i class="ti ti-eye-check"></i><span><strong>Yesterday EvidLY caught:</strong> Hood Q3 scheduling window opening at Modesto-1 — vendor confirmed within 24h.</span></div>
+
+        <div class="advisor-single">
+          <div class="brief fire">
+            <p class="brief-eyebrow"><i class="ti ti-flame"></i>Fire Safety Advisor<span class="brief-credentials">Current with NFPA 96 · NFPA 17A · NFPA 10 · CA Fire Code</span></p>
+            <p class="brief-posture"><span class="badge solid">Solid</span>Hood Q3 the only open call.</p>
+            <p class="brief-body"><strong>Hood Q3 cycle falls due in 21 days</strong> across all 5 locations. <span class="reg-link">NFPA 96 §11.4</span> mandates quarterly cleaning. CPP IKECA-certified vendor, 48-hr turnaround, $2,850 total. Suppression semi-annual Jun 25 (FireWatch). Extinguisher monthly current at all sites.</p>
+            <div class="brief-items"><p class="brief-items-h">Open in fire safety</p>
+              <div class="brief-item"><span class="ds soon"></span><span><strong>Hood Q3 cleaning</strong> · confirm CPP by Fri</span><span class="tag">5 sites</span></div>
+              <div class="brief-item"><span class="ds ok"></span><span><strong>Suppression Jun 25</strong> · scheduled</span><span class="tag">FireWatch</span></div>
+              <div class="brief-item"><span class="ds ok"></span><span><strong>Extinguishers</strong> · monthly current</span><span class="tag">Apr/May</span></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="section-h">Facility Services <span class="count">8 active contracts</span></p>
+        <div class="fs-grid">
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-air-conditioning"></i>HVAC preventive maintenance</p><p class="fs-meta">All 5 sites · TechAir Services · Next: <span class="due">Jun 3 (Stockton-1)</span></p></div>
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-bug"></i>Pest control</p><p class="fs-meta">All 5 sites · Orkin · Monthly · Next: <span class="due">May 28</span></p></div>
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-droplet"></i>Grease trap pump-out</p><p class="fs-meta">Stockton sites · Liquid Environmental · Next: <span class="due">Jun 12</span></p></div>
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-plug"></i>Electrical panel inspection</p><p class="fs-meta">Annual · All sites · Last: <span class="ok">Mar 15 · passed</span></p></div>
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-pipe"></i>Backflow testing</p><p class="fs-meta">Required by water districts · Next: <span class="due">Aug 1</span></p></div>
+          <div class="fs-card"><p class="fs-h"><i class="ti ti-trash"></i>Waste management</p><p class="fs-meta">Republic Services · 2x weekly · <span class="ok">on schedule</span></p></div>
+        </div>
+
+        <p class="section-h">Drifts EvidLY caught · Fire <span class="count">3 QTD</span></p>
+        <div class="catches">
+          <div class="catch"><div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Fire Safety · Modesto-1</span></div><p class="catch-label">Hood inspection scheduled before lapse</p><p class="catch-meta">Predicted May 8 · Reduced May 9 · Avoided insurance void</p><div class="catch-ack-row"><span class="catch-ack-stat">Awaiting your acknowledgment</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Facilities</button></div></div></div>
+        </div>
+
+        <div class="report-card"><div class="report-icon"><i class="ti ti-mail"></i></div><div class="report-body"><p class="report-h">Weekly drift report — Mondays 7 AM PT (fire pillar)</p><p class="report-meta">Fire-only catches delivered to you. <strong>Last sent:</strong> May 12.</p></div></div>
+
+        <p class="section-h">Decisions awaiting your call <span class="count">2 open · facilities scope</span></p>
+        <div class="decisions">
+          <div class="dec-row"><span class="dec-prio soon"></span><div class="dec-body"><p class="dec-label">Hood cleaning Q3 cycle — confirm CPP vendor</p><p class="dec-meta">5 locations · $2,850 · Decide by Mon May 26</p><div class="dec-why"><span class="reg-link">NFPA 96 §11.4</span> quarterly Type I exhaust cleaning. <span class="cost">Insurance disclaimer $25K–$200K.</span></div></div><button class="dec-act">Schedule</button></div>
+          <div class="dec-row"><span class="dec-prio review"></span><div class="dec-body"><p class="dec-label">HVAC service contract renewal — TechAir or competitive bid</p><p class="dec-meta">Current expires Jul 15 · 5-site contract · ~$8,400/yr</p><div class="dec-why">Current vendor responsive but pricing rising 12%. Two competitive bids on file.</div></div><button class="dec-act">Review</button></div>
+        </div>
+
+        <div class="intel"><div class="il"><div class="imk"><i class="ti ti-sparkles"></i></div><div><p class="it">EvidLY Intelligence</p><p class="is">Predictive analysis returning soon under this name.</p></div></div><span class="itg">Reserved slot</span></div>
+
+        <p class="section-h">Today across your kitchens</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Hood visual check — All sites</span></div><span class="tdm">5 of 5 done</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Pest control visit — Stockton-2</span></div><span class="tdm">PM window</span></div>
+        </div>
+      </div>
+
+      <!-- ============ CHEF ============ -->
+      <div id="view-chef" class="hidden">
+        <div class="prp-row">
+          <div class="prp predict"><div class="prp-icon"><i class="ti ti-trending-up"></i></div><div><p class="prp-label">Predict</p><p class="prp-sub">Food safety drifts</p></div></div>
+          <div class="prp reduce"><div class="prp-icon"><i class="ti ti-shield-check"></i></div><div><p class="prp-label">Reduce</p><p class="prp-sub">Spoilage · violations</p></div></div>
+          <div class="prp prove"><div class="prp-icon"><i class="ti ti-file-check"></i></div><div><p class="prp-label">Prove</p><p class="prp-sub">Logs · photos · sign-offs</p></div></div>
+        </div>
+
+        <div class="caught-line"><i class="ti ti-eye-check"></i><span><strong>Yesterday EvidLY caught:</strong> Walk-in drift at Stockton-3 — compressor service today. <strong>$240 saved.</strong></span></div>
+
+        <div class="advisor-single">
+          <div class="brief food">
+            <p class="brief-eyebrow"><i class="ti ti-chef-hat"></i>Food Safety Advisor<span class="brief-credentials">Current with CalCode · FDA Food Code 2022 · HACCP framework</span></p>
+            <p class="brief-posture"><span class="badge watch">Watch</span>One active concern.</p>
+            <p class="brief-body"><strong>Stockton-3 walk-in:</strong> 3 readings 42–44°F over 8 days. <span class="reg-link">CalCode §113996</span> requires TCS foods ≤41°F. Compressor service dispatched today. Move TCS to backup unit until service confirms. <strong>Allergen training acks</strong>: 3 staff still need to confirm. Receiving photos all current.</p>
+            <div class="brief-items"><p class="brief-items-h">Open in food safety</p>
+              <div class="brief-item"><span class="ds urgent"></span><span><strong>Walk-in service</strong> · Stockton-3 today</span><span class="tag">Today</span></div>
+              <div class="brief-item"><span class="ds soon"></span><span><strong>Allergen acks</strong> · Joaquin, Sam, Tom</span><span class="tag">5d late</span></div>
+              <div class="brief-item"><span class="ds review"></span><span><strong>HACCP review</strong> · monthly check</span><span class="tag">May 31</span></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="section-h">Food Safety checklists <span class="count">3 cadences · 13 items</span></p>
+        <div class="cl-grid">
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">5 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Opening line check</span><span class="cl-when">7:45 AM</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Hand-wash compliance</span><span class="cl-when">8:00 AM</span></div><div class="cl-item"><span class="cl-stat due"></span><span>Sanitizer concentration</span><span class="cl-when due">By 11 AM</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Morning temp logs</span><span class="cl-when">9 AM</span></div><div class="cl-item"><span class="cl-stat"></span><span>Closing line check</span><span class="cl-when">9:30 PM</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Weekly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Deep-clean rotation</span><span class="cl-when">Mon done</span></div><div class="cl-item"><span class="cl-stat"></span><span>Allergen sweep</span><span class="cl-when due">Thu</span></div><div class="cl-item"><span class="cl-stat"></span><span>Walk-in defrost check</span><span class="cl-when">Fri</span></div><div class="cl-item"><span class="cl-stat overdue"></span><span>Receiving evidence check</span><span class="cl-when overdue">2d late</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Monthly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat"></span><span>HACCP CCP verification</span><span class="cl-when due">May 31</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Equipment calibration</span><span class="cl-when">May 3</span></div><div class="cl-item"><span class="cl-stat"></span><span>Pest control review</span><span class="cl-when">May 28</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Allergen training cycle</span><span class="cl-when">May 1</span></div></div>
+        </div>
+
+        <p class="section-h">Drifts EvidLY caught · Food <span class="count">4 QTD</span></p>
+        <div class="catches">
+          <div class="catch"><div class="catch-icon reduced"><i class="ti ti-shield-check"></i></div><div class="catch-body"><div class="catch-head"><span class="catch-tag reduced">PREDICTED &amp; REDUCED</span><span class="catch-pillar">Food Safety · Stockton-3</span></div><p class="catch-label">Walk-in cooler drift prevented loss</p><p class="catch-meta">Predicted May 12 · Reduced May 13 · <span class="savings">$2,400 saved</span></p><div class="catch-ack-row"><span class="catch-ack-stat">Awaiting your acknowledgment</span><button class="catch-ack-btn"><i class="ti ti-check"></i>Acknowledge as Chef</button></div></div></div>
+        </div>
+
+        <div class="report-card"><div class="report-icon"><i class="ti ti-mail"></i></div><div class="report-body"><p class="report-h">Weekly drift report — Mondays 7 AM PT (food pillar)</p><p class="report-meta">Food-only catches delivered to you. <strong>Last sent:</strong> May 12.</p></div></div>
+
+        <div class="intel"><div class="il"><div class="imk"><i class="ti ti-sparkles"></i></div><div><p class="it">EvidLY Intelligence</p><p class="is">Predictive analysis returning soon under this name.</p></div></div><span class="itg">Reserved slot</span></div>
+
+        <p class="section-h">Today's prep + sign-offs</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Morning temp logs reviewed</span></div><span class="tdm">9:15 AM</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Sign off on Joaquin's temp log — Walk-in 44°F</span></div><span class="tdm">Pending</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Verify Sysco delivery photos</span></div><span class="tdm">10:48 AM</span></div>
+        </div>
+      </div>
+
+      <!-- ============ KITCHEN MANAGER ============ -->
+      <div id="view-manager" class="hidden">
+        <p class="section-h">Today's advisor flags</p>
+        <div class="flagstrip">
+          <div class="flag food"><p class="flag-eye"><i class="ti ti-chef-hat"></i>Food Safety Advisor</p><p class="flag-msg"><strong>Walk-in 44°F</strong> — reject Joaquin's reading and dispatch compressor service. <span class="reg-link" style="color: var(--predict-dark);">CalCode §113996</span> requires ≤41°F.</p></div>
+          <div class="flag fire"><p class="flag-eye"><i class="ti ti-flame"></i>Fire Safety Advisor</p><p class="flag-msg"><strong>Hood Q3 due in 21 days.</strong> CPP scheduling opens Mon. Confirm with Arthur before Friday.</p></div>
+        </div>
+
+        <p class="section-h">Food Safety checklists <span class="count">3 cadences · 13 items</span></p>
+        <div class="cl-grid">
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">5 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Opening line check</span><span class="cl-when">7:45 AM</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Hand-wash compliance</span><span class="cl-when">8:00 AM</span></div><div class="cl-item"><span class="cl-stat due"></span><span>Sanitizer concentration</span><span class="cl-when due">By 11 AM</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Morning temp logs</span><span class="cl-when">9 AM</span></div><div class="cl-item"><span class="cl-stat"></span><span>Closing line check</span><span class="cl-when">9:30 PM</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Weekly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Deep-clean rotation</span><span class="cl-when">Mon done</span></div><div class="cl-item"><span class="cl-stat"></span><span>Allergen sweep</span><span class="cl-when due">Thu</span></div><div class="cl-item"><span class="cl-stat"></span><span>Walk-in defrost check</span><span class="cl-when">Fri</span></div><div class="cl-item"><span class="cl-stat overdue"></span><span>Receiving evidence check</span><span class="cl-when overdue">2d late</span></div></div>
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Monthly</span><span class="cl-h-cadence">4 items</span></div><div class="cl-item"><span class="cl-stat"></span><span>HACCP CCP verification</span><span class="cl-when due">May 31</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Equipment calibration</span><span class="cl-when">May 3</span></div><div class="cl-item"><span class="cl-stat"></span><span>Pest control review</span><span class="cl-when">May 28</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Allergen training cycle</span><span class="cl-when">May 1</span></div></div>
+        </div>
+
+        <p class="section-h">Your team needs you to <span class="count">4 pending</span></p>
+        <div class="approval">
+          <div class="appr-row"><div class="appr-icon"><i class="ti ti-temperature"></i></div><div class="appr-body"><p class="appr-label">Approve Joaquin's temp log — Walk-in 44°F</p><p class="appr-meta">Out-of-range · 8:32 AM</p><div class="appr-why"><span class="reg">CalCode §113996</span> requires ≤41°F. <span class="rec">Reject and dispatch CA.</span></div></div><div class="appr-buttons"><button class="appr-btn reject">Flag</button><button class="appr-btn approve">Approve</button></div></div>
+          <div class="appr-row"><div class="appr-icon"><i class="ti ti-clipboard-check"></i></div><div class="appr-body"><p class="appr-label">Sign off on opening checklist</p><p class="appr-meta">Tom · 9:14 AM · 23 items</p><div class="appr-why"><span class="reg">FDA Food Code 8-103.11</span> PIC verification.</div></div><div class="appr-buttons"><button class="appr-btn approve">Sign off</button></div></div>
+          <div class="appr-row"><div class="appr-icon"><i class="ti ti-photo"></i></div><div class="appr-body"><p class="appr-label">Review Sysco delivery photos</p><p class="appr-meta">8 photos · Joaquin · 10:48 AM</p><div class="appr-why">Cold-chain in-range.</div></div><div class="appr-buttons"><button class="appr-btn approve">Review</button></div></div>
+          <div class="appr-row"><div class="appr-icon"><i class="ti ti-file-text"></i></div><div class="appr-body"><p class="appr-label">Approve corrective action draft</p><p class="appr-meta">Refrigeration plan · pending Arthur after your approval</p><div class="appr-why">$380 service vs $2,400 exposure. <span class="rec">Submit.</span></div></div><div class="appr-buttons"><button class="appr-btn reject">Edit</button><button class="appr-btn approve">Submit</button></div></div>
+        </div>
+
+        <p class="section-h">What's overdue <span class="count">3 items</span></p>
+        <div class="overdue">
+          <div class="ov-row"><div class="ov-l"><i class="ti ti-clock-exclamation"></i><span>Tom missed 2 afternoon temp checks Tuesday</span></div><span class="ov-meta">2 days late</span></div>
+          <div class="ov-row"><div class="ov-l"><i class="ti ti-clock-exclamation"></i><span>Receiving log Sunday — incomplete</span></div><span class="ov-meta">2 days late</span></div>
+          <div class="ov-row"><div class="ov-l"><i class="ti ti-clock-exclamation"></i><span>Allergen training acks — 3 staff</span></div><span class="ov-meta">5 days late</span></div>
+        </div>
+
+        <p class="section-h">Where your team stands</p>
+        <div class="team-grid">
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--reduce-bg); color: var(--reduce-dark);">JR</div><div class="team-info"><p class="team-name">Joaquin Reyes</p><p class="team-role">Kitchen Staff · Stockton</p></div><div class="team-stat"><div class="team-pct warn">80%</div><div class="team-detail">2 missed checks</div></div></div></div>
+          <div class="team-card"><div class="team-top"><div class="team-avatar" style="background: var(--prove-bg); color: var(--prove-dark);">TP</div><div class="team-info"><p class="team-name">Tom Park</p><p class="team-role">Kitchen Staff · Modesto</p></div><div class="team-stat"><div class="team-pct ok">100%</div><div class="team-detail">0 overdue</div></div></div></div>
+        </div>
+
+        <p class="section-h">Today's task list</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span class="tch done"></span><span>Pre-shift line check</span></div><span class="tdm">Done 7:45 AM</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Confirm Sysco receiving log</span></div><span class="tdm">By 12:00 PM</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>End-of-day team huddle</span></div><span class="tdm">4:30 PM</span></div>
+        </div>
+      </div>
+
+      <!-- ============ KITCHEN STAFF ============ -->
+      <div id="view-staff" class="hidden">
+        <div class="rightnow">
+          <p class="rightnow-eyebrow">RIGHT NOW</p>
+          <p class="rightnow-task">Morning temp log — Walk-in cooler</p>
+          <p class="rightnow-meta">Due in 17 minutes · Safe range 33–40°F · CalCode §113996</p>
+          <button class="rightnow-cta">Log temperature now →</button>
+          <div class="rightnow-job">
+            <p class="rightnow-job-h">If the reading is 41°F or higher</p>
+            <ol>
+              <li><strong>Stop loading new product</strong> into the walk-in.</li>
+              <li><strong>Move TCS foods</strong> (dairy, meat, prepared dishes) to the backup unit.</li>
+              <li><strong>Notify Maria immediately</strong> — tap the bell icon or call (209) 555-0142.</li>
+              <li>Log the reading anyway. Photo the thermometer. Maria will dispatch a corrective action.</li>
+            </ol>
+          </div>
+          <div class="rightnow-next"><strong>After this:</strong> Receiving log — Sysco delivery (window 10:30–12:00)</div>
+        </div>
+
+        <p class="section-h">My checklists today <span class="count">read-only</span></p>
+        <div class="cl-grid">
+          <div class="cl-card"><div class="cl-h"><span class="cl-h-label">Daily</span><span class="cl-h-cadence">My items</span></div><div class="cl-item"><span class="cl-stat done"></span><span>Hood visual check</span><span class="cl-when">8:15 AM</span></div><div class="cl-item"><span class="cl-stat"></span><span>Morning temp log — Walk-in</span><span class="cl-when due">9:00 AM</span></div><div class="cl-item"><span class="cl-stat"></span><span>Sysco receiving log</span><span class="cl-when">10:30 AM</span></div><div class="cl-item"><span class="cl-stat"></span><span>Pre-shift checklist</span><span class="cl-when">By 11 AM</span></div></div>
+        </div>
+
+        <p class="section-h">Today's tasks <span class="count">4 total</span></p>
+        <div class="tdc">
+          <div class="tdr done"><div class="tdl"><span class="tch done"></span><span>Hood visual check</span></div><span class="tdm">Done 8:15 AM</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Morning temp log — Walk-in cooler</span></div><span class="tdm">Due 9:00 AM</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Receiving log — Sysco delivery</span></div><span class="tdm">Window 10:30–12:00</span></div>
+          <div class="tdr"><div class="tdl"><span class="tch"></span><span>Pre-shift checklist</span></div><span class="tdm">By 11:00 AM</span></div>
+        </div>
+
+        <p class="section-h" style="margin-top: 22px;">Heads up from your team</p>
+        <div class="tdc">
+          <div class="tdr"><div class="tdl"><span style="width: 16px; height: 16px; border-radius: 50%; background: var(--reduce); flex-shrink: 0;"></span><span>Maria assigned you: review allergen training video by Friday</span></div><span class="tdm">Due Fri</span></div>
+          <div class="tdr"><div class="tdl"><span style="width: 16px; height: 16px; border-radius: 50%; background: var(--predict); flex-shrink: 0;"></span><span>Sysco delivery ETA pushed to 11:15 AM</span></div><span class="tdm">15 min ago</span></div>
+        </div>
+
+        <div class="escalation" style="margin-top: 22px;">
+          <p class="esc-h"><i class="ti ti-help-circle"></i>If you can't complete a task</p>
+          <p class="esc-b">Tap <strong>Report issue</strong> below, or notify <strong>Maria Lopez</strong> (Kitchen Manager) at <strong>(209) 555-0142</strong>. Never skip a task without flagging — that's how things slip and become violations.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="qa">
+      <span class="qai"><i class="ti ti-temperature"></i>Log temp</span>
+      <span class="qai"><i class="ti ti-clipboard-check"></i>Checklist</span>
+      <span class="qai"><i class="ti ti-upload"></i>Upload doc</span>
+      <span class="qai"><i class="ti ti-alert-triangle"></i>Report issue</span>
+    </div>
+  </div>
+</div>
+
+<p class="fineprint">
+  <strong>v10 — final 7-role composition.</strong> Each role view renders only the sections in its row of the locked matrix. Compliance Officer view drops the Decisions queue (advisory not decisive). Facilities sees Fire Safety Advisor only + Facility Services bucket + facilities-scoped decisions. Chef sees Food Safety Advisor only. Kitchen Manager focuses on approval queue + overdue + flag strip from advisors. Kitchen Staff gets Right Now + read-only "my checklists" filter + tasks + escalation. All citation references render as dotted-underline links — resolves to source PDF if on file in citation library, plain text fallback if not. Inspection package log shows "Delivered" only (no open tracking at launch). Drift acknowledgments tracked per-role per-catch.
+</p>
+
+<script>
+function switchRole(r) {
+  const views = { owner: 'view-owner', exec: 'view-exec', compliance: 'view-compliance', facilities: 'view-facilities', chef: 'view-chef', manager: 'view-manager', staff: 'view-staff' };
+  const buttons = { owner: 'rb-owner', exec: 'rb-exec', compliance: 'rb-compliance', facilities: 'rb-facilities', chef: 'rb-chef', manager: 'rb-manager', staff: 'rb-staff' };
+  Object.values(views).forEach(id => document.getElementById(id).classList.add('hidden'));
+  Object.values(buttons).forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(views[r]).classList.remove('hidden');
+  document.getElementById(buttons[r]).classList.add('active');
+  const wh = document.getElementById('welcome-h');
+  const ws = document.getElementById('welcome-sub');
+  const names = {
+    owner: ['Good afternoon, Arthur', "Tuesday, May 19 · Pellegrini's Pizza · 5 locations · 2 counties"],
+    exec: ['Good afternoon, Diana', "Tuesday, May 19 · GM · Portfolio · 5 locations · 2 counties"],
+    compliance: ['Good afternoon, Patricia', "Tuesday, May 19 · Compliance Officer"],
+    facilities: ['Good afternoon, Marcus', "Tuesday, May 19 · Facilities · 5 locations · 8 active contracts"],
+    chef: ['Good afternoon, Chef Sam', "Tuesday, May 19 · Stockton · 14 staff"],
+    manager: ['Good morning, Maria', "Tuesday, May 19 · Pellegrini's Pizza · Modesto"],
+    staff: ['Hi, Joaquin', "Tuesday, May 19 · Stockton · Shift 7 AM – 3 PM"]
+  };
+  wh.textContent = names[r][0];
+  ws.textContent = names[r][1];
+}
+</script>
+</body>
+</html>

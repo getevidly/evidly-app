@@ -1,0 +1,289 @@
+ADMIN-SIDEBAR-VERIFY-001 — AUDIT RESULTS
+Generated: 2026-05-07T13:45:00-07:00
+Audited against spec: ADMIN-SIDEBAR-RESTRUCTURE-001
+Expected last commit: 7a6d62b
+
+================================================================================
+SECTION 1: GIT STATE
+================================================================================
+
+git log --oneline -20:
+  7a6d62b chore(admin): remove DocumentVault.tsx after EvidLY Vault rename
+  de914e3 feat(fire): add PSE status + reschedule notice helpers
+  16ba61f feat(admin): restructure admin sidebar IA per ADMIN-SIDEBAR-RESTRUCTURE-001
+  6a632d6 chore(config): add @/ alias resolution for canonical query layer
+  0c1c446 feat(db): create platform_audit_log and service_action_log ...
+  (older commits follow — not in scope)
+
+Commits from 6a632d6^ to HEAD:
+
+  6a632d6 | 2026-05-07 13:12:32 -0700 | getevidly | chore(config): add @/ alias resolution
+    tsconfig.app.json | 6 ++++++
+    vite.config.ts    | 6 ++++++
+
+  16ba61f | 2026-05-07 13:20:06 -0700 | getevidly | feat(admin): restructure admin sidebar IA
+    src/App.tsx                          |   7 +-
+    src/components/layout/AdminShell.tsx | 134 ++++++++++++++++++++---------------
+    src/pages/admin/AdminHome.tsx        |   2 +-
+    src/pages/admin/EvidlyVault.tsx      |  31 ++++++++
+
+  *** UNEXPECTED COMMIT ***
+  de914e3 | 2026-05-07 13:29:02 -0700 | getevidly | feat(fire): add PSE status + reschedule notice helpers
+    src/lib/__tests__/pseStatus.test.ts        | 36 ++++++++++++++
+    src/lib/__tests__/rescheduleNotice.test.ts | 75 ++++++++++++++++++++++++++++++
+    src/lib/pseStatus.ts                       | 37 +++++++++++++++
+    src/lib/rescheduleNotice.ts                | 62 ++++++++++++++++++++++++
+
+  7a6d62b | 2026-05-07 13:33:55 -0700 | getevidly | chore(admin): remove DocumentVault.tsx
+    src/pages/admin/DocumentVault.tsx | 276 ----------------------------------
+
+origin/main: 7a6d62b chore(admin): remove DocumentVault.tsx after EvidLY Vault rename
+
+Working tree:
+  - Modified (unstaged): supabase/.temp/cli-latest (pre-existing, not in scope)
+  - Untracked: ~40 files (audit artifacts, diff chunks, temp files — all pre-existing)
+  - No modifications to any in-scope file
+
+FINDINGS: DRIFT DETECTED
+  1. Commit de914e3 is NOT one of the 3 approved commits.
+     It was committed by another CC session between 16ba61f and 7a6d62b.
+     Files added: src/lib/pseStatus.ts, src/lib/rescheduleNotice.ts,
+                  src/lib/__tests__/pseStatus.test.ts, src/lib/__tests__/rescheduleNotice.test.ts
+     These files are NOT part of ADMIN-SIDEBAR-RESTRUCTURE-001 spec.
+     They do NOT touch any admin sidebar file, so they don't affect sidebar correctness,
+     but they represent an unauthorized interleaved commit.
+
+================================================================================
+SECTION 2: FILE-LEVEL VERIFICATION
+================================================================================
+
+2.1 vite.config.ts
+  - import path from 'path';                                    PRESENT (line 3)
+  - resolve: { alias: { '@': path.resolve(__dirname, './src') } } PRESENT (lines 10-14)
+  VERDICT: PASS
+
+2.2 tsconfig.app.json
+  - "baseUrl": "."                                               PRESENT (line 18)
+  - "paths": { "@/*": ["./src/*"] }                              PRESENT (lines 19-21)
+  VERDICT: PASS
+
+2.3 src/components/layout/AdminShell.tsx (308 lines)
+  NavItem interface:
+    - label: string                                              PRESENT
+    - path: string                                               PRESENT
+    - salesOnly?: boolean                                        PRESENT
+    - perm?: union of 9 strings                                  PRESENT (canBilling, canSecurity,
+        canEmulate, canConfigure, canSupportTickets, canCrawlManage,
+        canRemoteConnect, canIntelligence, canStaffManage)
+    - hidden?: boolean                                           PRESENT
+  VERDICT: PASS
+
+  NAV_SECTIONS — 7 sections in correct order:
+    1. System Status         (11 items)                          PASS
+    2. Operations            (6 items: 5 visible + 1 hidden)     PASS
+    3. Tenants               (7 items)                           PASS
+    4. Content & Intelligence (7 items)                          PASS
+    5. Accounting & Program Performance (4 items)                PASS
+    6. Security              (3 items)                           PASS
+    7. Sales & GTM           (15 items)                          PASS
+    TOTAL: 53 items                                              PASS
+
+  Specific items verified:
+    - { label: 'EvidLY Vault', path: '/admin/evidly-vault', hidden: true }    PRESENT (line 73)
+    - { label: 'Status Rollup', path: '/admin/dashboard' }                    PRESENT (line 52, position 1)
+    - { label: 'Crawl Monitor', path: '/admin/crawl-monitor', perm: 'canCrawlManage' }  PRESENT (line 53)
+    - { label: 'Carrier API Keys', path: '/admin/api-keys', perm: 'canSecurity' }       PRESENT (line 114)
+    - { label: 'K2C Program', path: '/admin/k2c' }                           PRESENT (line 104)
+    - { label: 'EvidLY Intelligence', path: '/admin/intelligence', perm: 'canIntelligence' } PRESENT (line 95)
+
+  Permission wiring:
+    - const perms = useEvidlyPermissions();                      PRESENT (line 143)
+    - if (item.hidden) return false;                             PRESENT (line 155)
+    - if (item.salesOnly && !perms.canSeeSalesMarketing)          PRESENT (line 156)
+    - if (item.perm && !perms[item.perm]) return false;          PRESENT (line 157)
+  VERDICT: PASS
+
+2.4 src/pages/admin/AdminHome.tsx
+  grep "User Provisioning":
+    Line 41: { label: 'User Provisioning', path: '/admin/provisioning', ... }
+    Path is /admin/provisioning (NOT /admin/users)               PASS
+  VERDICT: PASS
+
+2.5 src/App.tsx
+  - const EvidlyVault = lazy(() => import('./pages/admin/EvidlyVault'));      PRESENT (line 174)
+  - const DocumentVault = ...                                                NOT PRESENT (correct)
+  - <Route path="/admin/dashboard" element={<AdminDashboard />} />           PRESENT (line 768)
+  - <Route path="/admin/evidly-vault" element={<EvidlyVault />} />           PRESENT (line 784)
+  - <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} /> PRESENT (line 785)
+  - grep "DocumentVault" src/ → 0 matches                                   PASS
+  VERDICT: PASS
+
+2.6 src/pages/admin/EvidlyVault.tsx
+  - File exists                                                  YES
+  - Line count: 31 lines                                         PASS
+  - Imports AdminBreadcrumb                                      PRESENT (line 11)
+  - Renders breadcrumb + lock icon + heading + description       PRESENT
+  - No database queries (no supabase.from, no useState, no fetch) PASS
+  VERDICT: PASS
+
+2.7 src/pages/admin/DocumentVault.tsx
+  - ls: cannot access — No such file or directory                PASS (correctly deleted)
+  - grep "DocumentVault" src/ → 0 matches                       PASS (no orphaned refs)
+  VERDICT: PASS
+
+FINDINGS: PASS — All 7 files match expected state.
+
+================================================================================
+SECTION 3: SCOPE CREEP DETECTION
+================================================================================
+
+Baseline comparison using git diff (handles line endings correctly):
+
+  git diff 16ba61f -- src/components/layout/AdminShell.tsx       → 0 diff (identical)
+  git diff 16ba61f -- src/App.tsx                                → 0 diff (identical)
+  git diff 16ba61f -- src/pages/admin/AdminHome.tsx              → 0 diff (identical)
+  git diff 16ba61f -- src/pages/admin/EvidlyVault.tsx            → 0 diff (identical)
+
+Note: Unix `diff` command showed every-line-changed due to CRLF/LF mismatch
+(git show outputs LF, Windows disk files have CRLF). git diff confirms
+content is byte-identical after normalization.
+
+FINDINGS: PASS — Zero drift from approved baseline in any spec file.
+
+================================================================================
+SECTION 4: OUT-OF-SCOPE FILE MODIFICATIONS
+================================================================================
+
+Files touched across 6a632d6^..HEAD:
+
+  Approved (expected):
+    vite.config.ts                            (6a632d6)
+    tsconfig.app.json                         (6a632d6)
+    src/components/layout/AdminShell.tsx       (16ba61f)
+    src/pages/admin/AdminHome.tsx              (16ba61f)
+    src/App.tsx                               (16ba61f)
+    src/pages/admin/EvidlyVault.tsx            (16ba61f — addition)
+    src/pages/admin/DocumentVault.tsx          (7a6d62b — deletion)
+
+  *** OUT-OF-SCOPE FILES (from commit de914e3) ***
+    src/lib/pseStatus.ts                      (addition)
+    src/lib/rescheduleNotice.ts               (addition)
+    src/lib/__tests__/pseStatus.test.ts       (addition)
+    src/lib/__tests__/rescheduleNotice.test.ts (addition)
+
+FINDINGS: DRIFT DETECTED
+  4 files added by unauthorized commit de914e3.
+  These are lib utility files + tests, NOT admin sidebar files.
+  They do not modify any file in the approved scope.
+  However, they were committed between the sidebar commits,
+  interleaving unapproved work into the ticket's commit range.
+
+================================================================================
+SECTION 5: TYPESCRIPT + BUILD HEALTH
+================================================================================
+
+  npx tsc --noEmit → exit code 0, 0 errors                      PASS
+
+  git status:
+    - No in-scope files modified
+    - supabase/.temp/cli-latest modified (pre-existing, out of scope)
+    - ~40 untracked files (pre-existing audit artifacts)
+
+FINDINGS: PASS — TypeScript clean. No in-scope working tree issues.
+
+================================================================================
+SECTION 6: DEPLOYED PROD VS GIT HEAD
+================================================================================
+
+  git log origin/main..main --oneline → (empty)                  PASS
+  git log main..origin/main --oneline → (empty)                  PASS
+
+  Local main and origin/main are in sync at 7a6d62b.
+
+  Last prod deploy was triggered after 7a6d62b push.
+  Vercel build log confirmed: 4198 modules transformed,
+  aliased to https://app.getevidly.com.
+
+FINDINGS: PASS — No divergence between local and remote.
+
+================================================================================
+SECTION 7: ADJACENT FILES — DRIFT DETECTION
+================================================================================
+
+Files in src/components/layout/ and src/pages/admin/ touched in range:
+  - src/components/layout/AdminShell.tsx      (expected — 16ba61f)
+  - src/pages/admin/AdminHome.tsx             (expected — 16ba61f)
+  - src/pages/admin/EvidlyVault.tsx           (expected — 16ba61f)
+  - src/pages/admin/DocumentVault.tsx         (expected — 7a6d62b deletion)
+
+  src/contexts/AuthContext.tsx                NOT touched          PASS
+  src/hooks/useEvidlyPermissions.ts           NOT touched          PASS
+
+New additions (--diff-filter=A):
+  - src/pages/admin/EvidlyVault.tsx           (expected)
+  - src/lib/pseStatus.ts                      *** OUT OF SCOPE ***
+  - src/lib/rescheduleNotice.ts               *** OUT OF SCOPE ***
+  - src/lib/__tests__/pseStatus.test.ts       *** OUT OF SCOPE ***
+  - src/lib/__tests__/rescheduleNotice.test.ts *** OUT OF SCOPE ***
+
+Deletions (--diff-filter=D):
+  - src/pages/admin/DocumentVault.tsx         (expected)
+
+FINDINGS: DRIFT DETECTED
+  4 out-of-scope file additions from commit de914e3.
+  No unexpected modifications to admin layout or auth files.
+
+================================================================================
+SECTION 8: STASH CHECK
+================================================================================
+
+  git stash list:
+    stash@{0}: On main: vite-5.4.21-bump-2026-05-07
+
+  - stash@{0} is the pre-existing vite bump stash              EXPECTED
+  - stash@{1} (admin-shell-rebrand-WIP) does NOT exist         EXPECTED (was popped)
+  - No unexpected admin-related stashes                         PASS
+
+FINDINGS: PASS — Stash state matches expectations.
+
+================================================================================
+SUMMARY
+================================================================================
+
+Sections passing:    6/8
+Sections failing:    2/8
+Drift detected:      YES
+Spec compliance:     CONDITIONAL PASS
+
+DRIFT ITEMS:
+
+  1. UNEXPECTED COMMIT: de914e3
+     Commit: feat(fire): add PSE status + reschedule notice helpers
+     Author: getevidly
+     Date: 2026-05-07 13:29:02 -0700
+     Position: Interleaved between 16ba61f (sidebar restructure) and 7a6d62b (cleanup)
+     Files added:
+       - src/lib/pseStatus.ts (37 lines)
+       - src/lib/rescheduleNotice.ts (62 lines)
+       - src/lib/__tests__/pseStatus.test.ts (36 lines)
+       - src/lib/__tests__/rescheduleNotice.test.ts (75 lines)
+     Impact on sidebar spec: NONE — these files do not touch any admin
+       sidebar, route, or permission file. Sidebar functionality is unaffected.
+     Concern: Another CC session committed work to main between the
+       sidebar restructure commit and the DocumentVault cleanup commit,
+       interleaving non-spec work into the ticket's commit range.
+
+  2. All 7 spec files match their approved state exactly (zero git diff).
+     The sidebar restructure itself is shipped AS DESIGNED with no
+     scope creep in any file that was part of the approved spec.
+
+CONDITIONAL PASS RATIONALE:
+  The sidebar restructure (ADMIN-SIDEBAR-RESTRUCTURE-001) is correctly
+  implemented with zero drift in all spec files. The interleaved commit
+  de914e3 adds unrelated utility files that do not affect sidebar behavior.
+  Whether this commit is authorized is a process/governance question, not
+  a spec compliance question for this ticket.
+
+================================================================================
+END OF AUDIT
+================================================================================

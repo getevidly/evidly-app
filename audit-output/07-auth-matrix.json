@@ -1,0 +1,785 @@
+{
+  "meta": {
+    "generated": "2026-04-24",
+    "description": "Authentication and authorization matrix for EvidLY app",
+    "sources": [
+      "src/contexts/AuthContext.tsx",
+      "src/contexts/RoleContext.tsx",
+      "src/contexts/DemoContext.tsx",
+      "src/lib/routeGuards.ts",
+      "src/components/auth/RequireAdmin.tsx",
+      "src/components/layout/SalesGuard.tsx",
+      "src/components/auth/QRAuthGuard.jsx",
+      "src/config/sidebarConfig.ts"
+    ]
+  },
+
+  "roles": {
+    "canonical": [
+      "platform_admin",
+      "owner_operator",
+      "executive",
+      "compliance_manager",
+      "chef",
+      "kitchen_manager",
+      "facilities_manager",
+      "kitchen_staff"
+    ],
+    "db_aliases": {
+      "admin": "owner_operator",
+      "owner": "owner_operator"
+    },
+    "default_fallback": "owner_operator",
+    "type_definition": "src/contexts/RoleContext.tsx:6",
+    "alias_mapping_function": "dbRoleToUserRole (src/contexts/RoleContext.tsx:82-96)"
+  },
+
+  "contexts": {
+    "AuthContext": {
+      "file": "src/contexts/AuthContext.tsx",
+      "hook": "useAuth()",
+      "provides": {
+        "user": "Supabase User object or null",
+        "profile": "UserProfile from user_profiles table (with optional org override)",
+        "session": "Supabase Session or null",
+        "loading": "boolean — true until initial auth check completes",
+        "isEvidlyAdmin": "boolean — true if user email ends with @getevidly.com",
+        "isAdmin": "boolean — true if isEvidlyAdmin OR profile.role === 'platform_admin'",
+        "signIn": "(email, password) => Promise",
+        "signUp": "(email, password, fullName, phone, orgName, state, kitchenType) => Promise",
+        "signOut": "() => Promise",
+        "refreshProfile": "() => Promise — re-fetches user_profiles row",
+        "setOrgOverride": "(orgId | null) => void — overrides profile.organization_id for emulation"
+      },
+      "security_behaviors": {
+        "suspension_enforcement": "If user_profiles.is_suspended is true, immediately signs out and redirects to /suspended",
+        "login_timestamps": "Updates last_login_at (and first_login_at on first login) in user_profiles"
+      }
+    },
+    "RoleContext": {
+      "file": "src/contexts/RoleContext.tsx",
+      "hook": "useRole()",
+      "provides": {
+        "userRole": "UserRole — current effective role",
+        "setUserRole": "(role) => void — only works in demo mode (no-op in preview mode)",
+        "isPreviewMode": "boolean — true when __rolePreview URL param is active",
+        "roleLocationAssignments": "Record<UserRole, LocationAssignment[]> — demo location map",
+        "tempCoverageAssignments": "TempCoverageAssignment[] — temporary location coverage grants",
+        "addTempCoverage": "(assignment) => void",
+        "removeTempCoverage": "(id) => void",
+        "getAccessibleLocations": "() => LocationAssignment[]",
+        "getAccessibleLocationUrlIds": "() => string[]",
+        "canAccessLocation": "(locationUrlId) => boolean",
+        "canManageTeam": "() => boolean — platform_admin, executive, owner_operator",
+        "canAccessBilling": "() => boolean — platform_admin, executive",
+        "canAssignTempCoverage": "() => boolean — platform_admin, executive, owner_operator",
+        "hasMultipleLocations": "() => boolean",
+        "showAllLocationsOption": "() => boolean"
+      },
+      "role_sync": {
+        "authenticated_user": "Role is synced from profile.role via dbRoleToUserRole()",
+        "demo_mode": "Role is stored in localStorage key 'evidly-demo-role'",
+        "preview_mode": "__rolePreview URL param locks role for the page lifecycle"
+      }
+    },
+    "DemoContext": {
+      "file": "src/contexts/DemoContext.tsx",
+      "hook": "useDemo()",
+      "provides": {
+        "isDemoMode": "boolean — anonymous demo (no session), forced true in __rolePreview",
+        "isAuthenticatedDemo": "boolean — user has session AND org.is_demo === true",
+        "isAnyDemoMode": "boolean — isDemoMode OR isAuthenticatedDemo",
+        "demoExpiresAt": "Date | null — from organizations.demo_expires_at",
+        "isDemoExpired": "boolean — checked every 60 seconds",
+        "enterDemo": "(lead?) => void — clears auth tokens, sets sessionStorage",
+        "exitDemo": "() => void — clears sessionStorage demo flags",
+        "demoLead": "DemoLead | null",
+        "setDemoLead": "(lead) => void",
+        "tourActive": "boolean",
+        "tourStep": "number",
+        "setTourStep": "(step) => void",
+        "startTour": "() => void",
+        "completeTour": "() => void",
+        "companyName": "string — from lead or default 'Pacific Coast Dining'",
+        "userName": "string — from lead or default 'Maria Rodriguez'",
+        "firstName": "string — first word of userName",
+        "presenterMode": "boolean — activated by typing 'evidly' or ?presenter=true",
+        "togglePresenterMode": "() => void"
+      },
+      "storage_keys": {
+        "evidly_demo_mode": "sessionStorage — 'true' when anonymous demo is active",
+        "evidly_demo_lead": "sessionStorage — JSON-serialized DemoLead object",
+        "evidly-presenter": "sessionStorage — 'true' when presenter mode is active"
+      },
+      "guard_mode_sync": {
+        "platform_admin": "always 'live' — full write access even when org is_demo",
+        "anonymous_demo": "when isDemoMode is true (no session)",
+        "authenticated_demo": "when isAuthenticatedDemo is true (session + org.is_demo)",
+        "live": "default for authenticated non-demo users"
+      }
+    }
+  },
+
+  "guard_functions": {
+    "isRouteAllowedForRole": {
+      "file": "src/lib/routeGuards.ts",
+      "line": 88,
+      "signature": "(pathname: string, role: UserRole) => boolean",
+      "behavior": {
+        "platform_admin": "Always returns true — bypasses all route restrictions",
+        "prefix_matching": "Routes ending with '/' use startsWith; others match exact or exact + '/'",
+        "unlisted_routes": "Routes not in ROUTE_ROLE_MAP return true for all authenticated users",
+        "empty_array": "Routes with [] as allowed roles are only accessible to platform_admin"
+      }
+    },
+    "RequireAdmin": {
+      "file": "src/components/auth/RequireAdmin.tsx",
+      "type": "Route guard component (wraps <Outlet />)",
+      "behavior": {
+        "unauthenticated": "Redirects to /login",
+        "demo_mode": "Allows through (admin pages have write guards separately)",
+        "non_admin": "Redirects to /dashboard, logs to platform_audit_log, shows error toast",
+        "admin": "Renders child routes via <Outlet />"
+      },
+      "admin_check": "useAuth().isAdmin — true if email ends @getevidly.com OR role === 'platform_admin'"
+    },
+    "SalesGuard": {
+      "file": "src/components/layout/SalesGuard.tsx",
+      "type": "Component wrapper guard",
+      "behavior": {
+        "check": "useEvidlyPermissions().canSeeSalesMarketing",
+        "unauthorized": "Redirects to /admin via useNavigate()",
+        "authorized": "Renders children"
+      }
+    },
+    "QRAuthGuard": {
+      "file": "src/components/auth/QRAuthGuard.jsx",
+      "type": "Component wrapper guard",
+      "behavior": {
+        "no_session_no_qr": "Redirects to /login",
+        "no_session_qr_entry": "Renders children with guest banner (method=qr_scan or equipment param)",
+        "has_session": "Renders children normally"
+      }
+    }
+  },
+
+  "role_route_matrix": {
+    "description": "For each route in ROUTE_ROLE_MAP: true = allowed, false = denied. platform_admin always allowed (bypasses all). Routes not listed are accessible to all authenticated users.",
+    "routes": {
+      "/analysis": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/audit-trail": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/benchmarks": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/compliance-trends": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/intelligence": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/intelligence": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/reports": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/inspection-forecast": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/insights/violation-radar": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/trajectory": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/vendor-performance": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/insights/signals": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/leaderboard": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/insights/operations-intelligence": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/iot-monitoring": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/jurisdiction": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/scoring-breakdown": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/violation-trends": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": false,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/tasks": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": true
+      },
+      "/corrective-actions": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": true
+      },
+      "/vendor-certifications": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": false,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/export-center": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/workforce-risk": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/cic-pse": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/vendor-connect": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/admin/vendor-connect": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/equipment": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/incidents": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": true
+      },
+      "/vendors": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/vendors/review": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/calendar": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/dashboard/training": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": false,
+        "kitchen_staff": true
+      },
+      "/reports": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/billing": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/org-hierarchy": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/team": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": true,
+        "kitchen_manager": true,
+        "facilities_manager": true,
+        "kitchen_staff": false
+      },
+      "/admin/api-keys": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/demo-generator": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/demo-pipeline": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/demo-tours": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/partner-demos": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/demos": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/partner/ (prefix)": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/admin/ (prefix, general)": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/enterprise/ (prefix)": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/settings/roles-permissions": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/settings/team-roles": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/settings/service-types": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/settings/billing": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": false,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "/iot/hub": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": true,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      }
+    }
+  },
+
+  "role_capability_matrix": {
+    "description": "Non-route capabilities derived from RoleContext helper functions",
+    "canManageTeam": {
+      "platform_admin": true,
+      "owner_operator": true,
+      "executive": true,
+      "compliance_manager": false,
+      "chef": false,
+      "kitchen_manager": false,
+      "facilities_manager": false,
+      "kitchen_staff": false
+    },
+    "canAccessBilling": {
+      "platform_admin": true,
+      "owner_operator": false,
+      "executive": true,
+      "compliance_manager": false,
+      "chef": false,
+      "kitchen_manager": false,
+      "facilities_manager": false,
+      "kitchen_staff": false
+    },
+    "canAssignTempCoverage": {
+      "platform_admin": true,
+      "owner_operator": true,
+      "executive": true,
+      "compliance_manager": false,
+      "chef": false,
+      "kitchen_manager": false,
+      "facilities_manager": false,
+      "kitchen_staff": false
+    }
+  },
+
+  "route_matching_precedence": {
+    "description": "ROUTE_ROLE_MAP is evaluated top-to-bottom. First match wins. Specific routes (e.g., /admin/vendor-connect with []) are listed BEFORE general prefix matches (e.g., /admin/ with [owner_operator, executive]).",
+    "example_conflict": {
+      "route": "/admin/vendor-connect",
+      "specific_rule": "Line 42: [] — platform_admin only",
+      "general_rule": "Line 71: /admin/ — [owner_operator, executive]",
+      "winner": "specific_rule (listed first)"
+    },
+    "prefix_routes": [
+      "/admin/ (general)",
+      "/enterprise/",
+      "/partner/"
+    ]
+  },
+
+  "demo_mode": {
+    "activation": {
+      "anonymous": "sessionStorage.setItem('evidly_demo_mode', 'true') via DemoContext.enterDemo()",
+      "authenticated": "organizations.is_demo === true in database",
+      "role_preview": "__rolePreview URL param forces isDemoMode = true"
+    },
+    "deactivation": {
+      "anonymous": "sessionStorage.removeItem('evidly_demo_mode') via DemoContext.exitDemo()",
+      "auto_cleanup": "When user authenticates, rawDemoMode is set to false and sessionStorage keys are removed"
+    },
+    "write_guard_modes": {
+      "live": "Full write access (default for authenticated non-demo users; always for platform_admin)",
+      "anonymous_demo": "Destructive writes blocked via guardOperation()",
+      "authenticated_demo": "Destructive writes blocked via guardOperation()"
+    },
+    "expiry": {
+      "source": "organizations.demo_expires_at column",
+      "check_interval": "60 seconds",
+      "flag": "isDemoExpired boolean in DemoContext"
+    },
+    "presenter_mode": {
+      "activation": [
+        "URL param: ?presenter=true",
+        "Keyboard konami: type 'evidly' (outside input fields)"
+      ],
+      "storage": "sessionStorage key 'evidly-presenter'"
+    }
+  },
+
+  "admin_access": {
+    "definition": "isAdmin = isEvidlyAdmin || profile.role === 'platform_admin'",
+    "isEvidlyAdmin": "user.email ends with '@getevidly.com'",
+    "guard_component": "RequireAdmin (src/components/auth/RequireAdmin.tsx)",
+    "unauthorized_logging": "Logs to platform_audit_log via useAuditLog().logEvent()",
+    "admin_only_nav_items": [
+      "Sales Pipeline",
+      "GTM Dashboard",
+      "Leads",
+      "Campaigns",
+      "Demo Generator",
+      "Demo Launcher",
+      "Demo Pipeline",
+      "Kitchen Checkup"
+    ],
+    "nav_gate_rule": "if (userRole !== 'platform_admin') return null"
+  },
+
+  "qr_auth": {
+    "guard": "QRAuthGuard (src/components/auth/QRAuthGuard.jsx)",
+    "routes": ["/temp/log", "/temp-logs/scan"],
+    "behavior": {
+      "authenticated": "Normal render",
+      "guest_with_qr": "Renders with yellow 'Scanning as guest' banner (method=qr_scan or equipment param present)",
+      "guest_without_qr": "Redirects to /login"
+    }
+  },
+
+  "security_notes": {
+    "suspension": "AuthContext checks is_suspended on every profile fetch; signs out immediately if true and redirects to /suspended",
+    "platform_admin_bypass": "platform_admin bypasses ALL route guards in isRouteAllowedForRole(); also bypasses demo write guards (always 'live' mode)",
+    "org_emulation": "setOrgOverride() in AuthContext allows platform_admin to override profile.organization_id for cross-org support",
+    "role_preview": "__rolePreview URL param lets admin preview any role; locks role for page lifecycle, forces demo mode on",
+    "first_match_wins": "ROUTE_ROLE_MAP is iterated in order; specific routes must appear before their prefix catch-all to avoid being shadowed"
+  }
+}

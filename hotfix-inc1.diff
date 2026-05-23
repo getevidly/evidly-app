@@ -1,0 +1,121 @@
+diff --git a/src/pages/IncidentLog.tsx b/src/pages/IncidentLog.tsx
+index f89c5c7..6b0a88c 100644
+--- a/src/pages/IncidentLog.tsx
++++ b/src/pages/IncidentLog.tsx
+@@ -23,7 +23,7 @@ import { EmptyState } from '../components/EmptyState';
+ import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+ import { GhostInput } from '../components/ai/GhostInput';
+ import { usePageTitle } from '../hooks/usePageTitle';
+-import type { IncidentTemplate } from '../types/incidents';
++import type { IncidentTemplate, IncidentStatus } from '../types/incidents';
+ 
+ // ── Types ──────────────────────────────────────────────────────────
+ 
+@@ -39,8 +39,6 @@ type IncidentType =
+ 
+ type Severity = 'critical' | 'major' | 'minor';
+ 
+-type IncidentStatus = 'reported' | 'assigned' | 'in_progress' | 'resolved' | 'verified';
+-
+ type RootCause = 'equipment' | 'training' | 'process' | 'vendor' | 'external' | 'unknown';
+ 
+ interface TimelineEntry {
+@@ -805,7 +803,7 @@ export function IncidentLog() {
+         title: newTitle,
+         description: newDescription,
+         location_name: newLocation,
+-        status: 'assigned',
++        status: 'open',
+         assigned_to: assignee,
+         reported_by: user?.id ?? null,
+         photos: newPhotos,
+@@ -822,8 +820,8 @@ export function IncidentLog() {
+       if (inserted) {
+         insertedDbId = inserted.id;
+         await supabase.from('incident_timeline').insert([
+-          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: user?.id ?? null },
+-          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'assigned', performed_by: 'System' },
++          { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
++          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: 'System' },
+         ]);
+       }
+     }
+@@ -836,7 +834,7 @@ export function IncidentLog() {
+       title: newTitle,
+       description: newDescription,
+       location: newLocation,
+-      status: 'assigned',
++      status: 'open',
+       assignedTo: assignee ?? '',
+       reportedBy: user?.id ?? '',
+       createdAt: nowIso,
+@@ -860,7 +858,7 @@ export function IncidentLog() {
+   const handleTakeAction = async () => {
+     if (!selectedIncident || !actionText.trim()) return;
+     const updated = { ...selectedIncident };
+-    updated.status = 'in_progress';
++    updated.status = 'investigating';
+     updated.correctiveAction = actionText;
+     updated.actionChips = actionChips;
+     updated.updatedAt = new Date().toISOString();
+@@ -868,7 +866,7 @@ export function IncidentLog() {
+     updated.timeline = [...updated.timeline, {
+       id: `t-${Date.now()}`,
+       action: `Corrective action: ${actionText}${estLabel}`,
+-      status: 'in_progress',
++      status: 'investigating',
+       user: user?.id ?? '',
+       timestamp: new Date().toISOString(),
+       photos: actionPhotos.length > 0 ? actionPhotos : undefined,
+@@ -968,13 +966,13 @@ export function IncidentLog() {
+         timestamp: new Date().toISOString(),
+       }];
+     } else {
+-      updated.status = 'in_progress';
++      updated.status = 'investigating';
+       updated.resolvedAt = undefined;
+       updated.updatedAt = new Date().toISOString();
+       updated.timeline = [...updated.timeline, {
+         id: `t-${Date.now()}`,
+         action: 'Resolution rejected — sent back for additional action',
+-        status: 'in_progress',
++        status: 'investigating',
+         user: user?.id ?? '',
+         timestamp: new Date().toISOString(),
+       }];
+@@ -1001,7 +999,7 @@ export function IncidentLog() {
+         });
+       } else {
+         await supabase.from('incidents').update({
+-          status: 'in_progress',
++          status: 'investigating',
+           resolved_at: null,
+           updated_at: nowIso,
+         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+@@ -1009,7 +1007,7 @@ export function IncidentLog() {
+         await supabase.from('incident_timeline').insert({
+           incident_id: selectedIncident.dbId,
+           action: 'Resolution rejected — sent back for additional action',
+-          status: 'in_progress',
++          status: 'investigating',
+           performed_by: user?.id ?? null,
+         });
+       }
+@@ -1109,7 +1107,7 @@ export function IncidentLog() {
+                 <h2 className="text-lg text-[#1E2D4D]/80">{inc.title}</h2>
+               </div>
+               <div className="flex gap-2 flex-wrap">
+-                {(inc.status === 'assigned' || inc.status === 'reported') && (
++                {inc.status === 'open' && (
+                   <button
+                     onClick={() => setShowActionForm(true)}
+                     className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
+@@ -1117,7 +1115,7 @@ export function IncidentLog() {
+                     {t('incidents.takeAction')}
+                   </button>
+                 )}
+-                {inc.status === 'in_progress' && (
++                {inc.status === 'investigating' && (
+                   <button
+                     onClick={() => setShowResolveForm(true)}
+                     className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"

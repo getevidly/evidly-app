@@ -1,0 +1,310 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index 5c74495..e32fdff 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -86,10 +86,6 @@ const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default:
+ const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
+ const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
+ const ComplianceOverview = lazy(() => import('./pages/ComplianceOverview').then(m => ({ default: m.ComplianceOverview })));
+-const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ default: m.InsuranceRisk })));
+-const InsuranceRiskShared = lazy(() => import('./pages/InsuranceRiskShared'));
+-const ImproveScore = lazy(() => import('./pages/ImproveScore').then(m => ({ default: m.ImproveScore })));
+-const InsuranceSettings = lazy(() => import('./pages/InsuranceSettings').then(m => ({ default: m.InsuranceSettings })));
+ const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
+ const VendorMarketplace = lazy(() => import('./pages/VendorMarketplace').then(m => ({ default: m.VendorMarketplace })));
+ const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
+@@ -544,7 +540,6 @@ function AppRoutes() {
+         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
+         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
+         <Route path="/r/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralPage /></Suspense>} />
+-        <Route path="/risk/:shareToken" element={<Suspense fallback={<PageSkeleton />}><InsuranceRiskShared /></Suspense>} />
+         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
+         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
+         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
+@@ -686,9 +681,6 @@ function AppRoutes() {
+           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
+           <Route path="/compliance-index" element={<ComplianceIndex />} />
+           <Route path="/compliance-overview" element={<ComplianceOverview />} />
+-          <Route path="/insurance-risk" element={<InsuranceRisk />} />
+-          <Route path="/improve-score" element={<ImproveScore />} />
+-          <Route path="/insurance-settings" element={<InsuranceSettings />} />
+           {/* IoT Sensor Platform + Vendor Migration (all authenticated users) */}
+           <Route path="/iot/platform" element={<IoTSensorPlatform />} />
+           <Route path="/iot/setup" element={<SensorSetupWizard />} />
+diff --git a/src/components/PremiumFeaturePreview.tsx b/src/components/PremiumFeaturePreview.tsx
+index ac1f936..4c77381 100644
+--- a/src/components/PremiumFeaturePreview.tsx
++++ b/src/components/PremiumFeaturePreview.tsx
+@@ -135,46 +135,6 @@ function IndustryBenchmarksSample() {
+   );
+ }
+ 
+-function InsuranceRiskScoreSample() {
+-  const factors = [
+-    { label: 'Compliance History', value: 82 },
+-    { label: 'Equipment Maintenance', value: 68 },
+-    { label: 'Documentation', value: 74 },
+-  ];
+-  return (
+-    <div style={{ display: 'flex', gap: 28, alignItems: 'center', flexWrap: 'wrap' }}>
+-      <div
+-        style={{
+-          width: 88,
+-          height: 88,
+-          borderRadius: '50%',
+-          border: '4px solid #A08C5A',
+-          display: 'flex',
+-          alignItems: 'center',
+-          justifyContent: 'center',
+-          flexDirection: 'column',
+-          flexShrink: 0,
+-        }}
+-      >
+-        <span style={{ fontSize: 28, fontWeight: 800, color: '#1E2D4D' }}>B+</span>
+-      </div>
+-      <div style={{ flex: 1, minWidth: 180 }}>
+-        <p style={{ margin: '0 0 12px', fontWeight: 600, color: '#1E2D4D', fontSize: 14 }}>
+-          Risk Assessment: Medium
+-        </p>
+-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+-          {factors.map((f) => (
+-            <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+-              <span style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', width: 160, flexShrink: 0 }}>{f.label}</span>
+-              <ProgressBar value={f.value} color="#1E2D4D" />
+-            </div>
+-          ))}
+-        </div>
+-      </div>
+-    </div>
+-  );
+-}
+-
+ function DefaultSample() {
+   const stats = [
+     { label: 'Score', value: '87%' },
+@@ -208,8 +168,6 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
+   const sampleContent =
+     feature.id === 'industry-benchmarks' ? (
+       <IndustryBenchmarksSample />
+-    ) : feature.id === 'insurance-risk-score' ? (
+-      <InsuranceRiskScoreSample />
+     ) : (
+       <DefaultSample />
+     );
+diff --git a/src/components/layout/AutoBreadcrumb.tsx b/src/components/layout/AutoBreadcrumb.tsx
+index f5111cd..ccb7f12 100644
+--- a/src/components/layout/AutoBreadcrumb.tsx
++++ b/src/components/layout/AutoBreadcrumb.tsx
+@@ -29,9 +29,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
+   '/documents': { label: 'Documents', parent: '/compliance' },
+   '/document-checklist': { label: 'Document Checklist', parent: '/compliance' },
+   '/incidents': { label: 'Incident Log', parent: '/compliance' },
+-  '/insurance-risk': { label: 'Insurance Risk', parent: '/compliance' },
+-  '/improve-score': { label: 'Improve Score', parent: '/insurance-risk' },
+-  '/insurance-settings': { label: 'Insurance Settings', parent: '/insurance-risk' },
+   '/regulatory-alerts': { label: 'Regulatory Updates', parent: '/compliance' },
+   '/reports': { label: 'Reports', parent: '/compliance' },
+   '/self-audit': { label: 'Self-Inspection', parent: '/compliance' },
+diff --git a/src/components/layout/MobileTabBar.tsx b/src/components/layout/MobileTabBar.tsx
+index b774930..41a942c 100644
+--- a/src/components/layout/MobileTabBar.tsx
++++ b/src/components/layout/MobileTabBar.tsx
+@@ -85,7 +85,6 @@ const PATH_ICON: Record<string, any> = {
+   '/vendors/review': FileText,
+   '/marketplace': Store,
+   '/help': HelpCircle,
+-  '/insurance-risk': Shield,
+   '/allergen-tracking': AlertTriangle,
+   '/cooling-logs': Snowflake,
+   '/receiving-log': FileText,
+diff --git a/src/config/sidebarConfig.ts b/src/config/sidebarConfig.ts
+index df4fd80..e9de584 100644
+--- a/src/config/sidebarConfig.ts
++++ b/src/config/sidebarConfig.ts
+@@ -285,11 +285,6 @@ const I: Record<string, NavItem> = {
+     roles: [], description: 'USDA Child Nutrition Program meal production records, meal pattern compliance, and CN label tracking.',
+      },
+ 
+-  // ── Insurance ──
+-  insuranceRisk: {
+-    id: 'insurance-risk', label: 'Insurance Risk', path: '/insurance-risk', icon: '🛡️',
+-    roles: [], description: 'PSE insurance risk scoring, protective safeguard compliance, carrier-ready documentation, and premium reduction tracking.',
+-  },
+   // ── insurance, fleet, emergencyInfo removed — HoodOps concepts, not EvidLY ──
+ 
+   // ── Voice ──
+@@ -466,7 +461,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+       ),
+       section('compliance', 'Compliance', '📋',
+         'Compliance', 'Documents, inspections, insurance risk, regulatory tracking, vendor marketplace, and more.',
+-        [I.complianceOverview, I.deficiencies, I.documents, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
++        [I.complianceOverview, I.deficiencies, I.documents, I.inspectorArrival, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
+         '/compliance',
+       ),
+       section('insights', 'Insights', '💡',
+@@ -627,7 +622,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+       ),
+       section('compliance', 'Compliance', '📋',
+         'Compliance', 'Documentation, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, services, and vendor marketplace.',
+-        [I.complianceOverview, I.deficiencies, I.documents, I.incidentsViewOnly, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
++        [I.complianceOverview, I.deficiencies, I.documents, I.incidentsViewOnly, I.inspectorArrival, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
+         '/compliance',
+       ),
+       section('insights', 'Insights', '💡',
+@@ -719,7 +714,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+       ),
+       section('compliance', 'Compliance', '📋',
+         'Compliance', 'Documents, incidents, insurance risk, regulatory tracking, reporting, self-inspection, vendor services, and vendor marketplace.',
+-        [I.complianceOverview, I.deficiencies, I.documents, I.incidents, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
++        [I.complianceOverview, I.deficiencies, I.documents, I.incidents, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
+         '/compliance',
+       ),
+       section('insights', 'Insights', '💡',
+@@ -770,7 +765,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+       ),
+       section('compliance', 'Compliance', '📋',
+         'Compliance', 'Incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, vendor services, and vendor marketplace.',
+-        [I.complianceOverview, I.correctiveActions, I.deficiencies, I.incidentsViewOnly, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
++        [I.complianceOverview, I.correctiveActions, I.deficiencies, I.incidentsViewOnly, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorDocReview, I.vendorMarketplace, I.vendorConnect],
+         '/compliance',
+       ),
+       section('tools', 'Tools', '🔧',
+diff --git a/src/config/tourModules.ts b/src/config/tourModules.ts
+index fa28458..072b1e5 100644
+--- a/src/config/tourModules.ts
++++ b/src/config/tourModules.ts
+@@ -69,7 +69,6 @@ export const ALL_MODULES = [
+       { id: 'trend_analytics', label: 'Trend Analytics', description: '30/60/90/180/365-day compliance trend views' },
+       { id: 'business_intelligence', label: 'Business Intelligence', description: 'Executive-level portfolio insights and KPI dashboards' },
+       { id: 'compliance_score_engine', label: 'Compliance Score Engine', description: 'Inspection Readiness + Benchmarking Index + Insurance Risk Score' },
+-      { id: 'insurance_risk_score', label: 'Insurance Risk Score', description: 'Configurable-weight risk score for insurance premium reduction' },
+     ],
+   },
+   {
+diff --git a/src/data/helpDocs.ts b/src/data/helpDocs.ts
+index b6019c7..be99b46 100644
+--- a/src/data/helpDocs.ts
++++ b/src/data/helpDocs.ts
+@@ -166,7 +166,6 @@ export const featureExplanations: Record<string, string> = {
+   '/reports': 'Generate compliance reports for inspectors, insurance companies, and internal review. Download or share directly from EvidLY.',
+   '/health-dept-report': 'Generate inspection-ready reports formatted for your local health department. Includes all required documentation.',
+   '/audit-trail': 'Every action in EvidLY is logged. View who did what, when, for complete accountability and inspection readiness.',
+-  '/insurance-risk': 'See how your compliance posture affects your insurance risk profile. Better compliance can lead to lower premiums.',
+   '/training': 'Access training courses for your team on food safety, compliance procedures, and best practices.',
+   '/dashboard/training': 'Track employee certifications, training completion, and compliance requirements across your team. Monitor expiring certs and assign training proactively.',
+   '/playbooks': 'Pre-built response procedures for common incidents. When something goes wrong, follow the playbook step by step.',
+diff --git a/src/lib/__tests__/partnerDemoSystem.test.ts b/src/lib/__tests__/partnerDemoSystem.test.ts
+index 251e52e..e7adee0 100644
+--- a/src/lib/__tests__/partnerDemoSystem.test.ts
++++ b/src/lib/__tests__/partnerDemoSystem.test.ts
+@@ -87,12 +87,11 @@ describe('Partner Demo System', () => {
+     it('cleanup targets correct tables', () => {
+       const tablesToClean = [
+         'temp_logs', 'checklist_completions', 'corrective_actions',
+-        'documents', 'equipment_service_records', 'insurance_risk_scores',
++        'documents', 'equipment_service_records',
+         'sb1383_compliance', 'notifications', 'checklists', 'vendors',
+       ];
+       expect(tablesToClean).toContain('temp_logs');
+       expect(tablesToClean).toContain('equipment_service_records');
+-      expect(tablesToClean).toContain('insurance_risk_scores');
+       expect(tablesToClean).not.toContain('partner_demos'); // Metadata table, not data
+       expect(tablesToClean).not.toContain('demo_tours');    // Separate system
+     });
+diff --git a/src/lib/i18n.ts b/src/lib/i18n.ts
+index 54c52ba..bc3861d 100644
+--- a/src/lib/i18n.ts
++++ b/src/lib/i18n.ts
+@@ -41,9 +41,6 @@ const en = {
+     admin: 'ADMIN',
+     usageAnalytics: 'Usage Analytics',
+     complianceIndex: 'Compliance Index',
+-    insuranceRisk: 'Insurance Risk',
+-    improveScore: 'Improve Score',
+-    insuranceSettings: 'Insurance Settings',
+     iotSensors: 'IoT Sensors',
+     integrations: 'Integrations',
+     developerPortal: 'Developer Portal',
+@@ -1483,9 +1480,6 @@ const es: typeof en = {
+     admin: 'ADMIN',
+     usageAnalytics: 'Análisis de Uso',
+     complianceIndex: 'Índice de Cumplimiento',
+-    insuranceRisk: 'Riesgo de Seguro',
+-    improveScore: 'Mejorar Puntuación',
+-    insuranceSettings: 'Configuración de Seguro',
+     iotSensors: 'Sensores IoT',
+     integrations: 'Integraciones',
+     developerPortal: 'Portal de Desarrolladores',
+diff --git a/src/pages/Settings.tsx b/src/pages/Settings.tsx
+index 2439b9f..9c5dbbe 100644
+--- a/src/pages/Settings.tsx
++++ b/src/pages/Settings.tsx
+@@ -972,47 +972,6 @@ export function Settings() {
+                   </div>
+                 </div>
+ 
+-                {/* Insurance Risk Score Sharing */}
+-                <div className="border-2 rounded-xl p-4 sm:p-5" style={{ borderColor: '#1E2D4D' }}>
+-                  <div className="flex flex-wrap items-center justify-between gap-3">
+-                    <div className="flex items-center gap-3 sm:gap-4">
+-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1E2D4D' }}>
+-                        <EvidlyIcon size={24} />
+-                      </div>
+-                      <div>
+-                        <h4 className="font-semibold text-[#1E2D4D]">Insurance Risk Score Sharing</h4>
+-                        <p className="text-sm text-[#1E2D4D]/50">Share your EvidLY risk score with insurance carriers via secure API</p>
+-                      </div>
+-                    </div>
+-                    <div className="flex items-center gap-3">
+-                      <button
+-                        onClick={() => toast.info('Insurance data sharing is currently disabled')}
+-                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-[#1E2D4D]/8 transition-colors"
+-                      >
+-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
+-                      </button>
+-                    </div>
+-                  </div>
+-                  <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
+-                    <p className="text-xs text-[#1E2D4D]/70">
+-                      When enabled, authorized insurance carriers can access your risk score via API. No employee PII is ever shared.
+-                      Only aggregated compliance scores, anonymized incident counts, and service compliance dates are included.
+-                    </p>
+-                  </div>
+-                  <div className="mt-3 flex items-center justify-between">
+-                    <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50">
+-                      <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: '#fdf8e8', color: '#A08C5A' }}>Coming Soon</span>
+-                      <span>Carrier partnerships launching soon</span>
+-                    </div>
+-                    <button
+-                      onClick={() => navigate('/insurance-settings')}
+-                      className="text-sm font-medium transition-colors hover:underline"
+-                      style={{ color: '#1E2D4D' }}
+-                    >
+-                      Manage Insurance Connections →
+-                    </button>
+-                  </div>
+-                </div>
+ 
+                 {/* Restaurant365 */}
+                 <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
+diff --git a/src/types/rfp.ts b/src/types/rfp.ts
+index 7a8f4f9..484fe55 100644
+--- a/src/types/rfp.ts
++++ b/src/types/rfp.ts
+@@ -59,7 +59,7 @@ export type RfpRecommendedAction = 'pursue' | 'monitor' | 'skip';
+ 
+ export type RfpModule =
+   | 'food_safety' | 'sb1383' | 'facility_safety' | 'k12_production'
+-  | 'compliance_intelligence' | 'insurance_risk' | 'vendor_management'
++  | 'compliance_intelligence' | 'vendor_management'
+   | 'temp_monitoring' | 'haccp' | 'training' | 'document_management';
+ 
+ export interface RfpClassification {
+@@ -166,7 +166,6 @@ export const MODULE_LABELS: Record<string, string> = {
+   sb1383: 'SB 1383',
+   k12_production: 'K-12 Production',
+   compliance_intelligence: 'Compliance Intelligence',
+-  insurance_risk: 'Insurance Risk',
+   vendor_management: 'Vendor Management',
+   temp_monitoring: 'Temp Monitoring',
+   haccp: 'HACCP',

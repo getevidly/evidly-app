@@ -44,6 +44,10 @@ import {
   type CorrectiveActionItem,
 } from '../data/correctiveActionsDemoData';
 import { exportCorrectiveActionsPdf } from '../lib/correctiveActionPdf';
+import { useCARecurringPatterns } from '../hooks/corrective-actions/useCARecurringPatterns';
+import { useCorrectiveActionsPRPStats } from '../hooks/corrective-actions/useCorrectiveActionsPRPStats';
+import { CorrectiveActionsPRPBand } from '../components/corrective-actions/CorrectiveActionsPRPBand';
+import { CARecurringBar } from '../components/corrective-actions/CARecurringBar';
 
 // ── Constants ────────────────────────────────────────────────
 
@@ -429,6 +433,17 @@ export function CorrectiveActions() {
 
   const hasAnyFilters = filterStatus !== 'all' || filterLocation !== 'all' || filterSeverity !== 'all';
 
+  // ── PRP hooks ───────────────────────────────────────────────
+  const recurringPatterns = useCARecurringPatterns(actions);
+  const caStats = useCorrectiveActionsPRPStats(actions, recurringPatterns);
+  const recurringActionIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const p of recurringPatterns) {
+      for (const id of p.actionIds) ids.add(id);
+    }
+    return ids;
+  }, [recurringPatterns]);
+
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6" style={{ fontFamily: 'system-ui' }}>
       {/* Inspection handoff banner */}
@@ -458,7 +473,11 @@ export function CorrectiveActions() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>Corrective Actions</h1>
-          <p className="text-sm text-[#1E2D4D]/50 mt-1">Track and resolve compliance violations with documented action plans.</p>
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">
+            <span className="font-semibold" style={{ color: NAVY }}>Predict</span> what's coming due.{' '}
+            <span className="font-semibold" style={{ color: NAVY }}>Reduce</span> open exposure.{' '}
+            <span className="font-semibold" style={{ color: NAVY }}>Prove</span> every verified resolution.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -480,170 +499,267 @@ export function CorrectiveActions() {
         </div>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: 'Open', value: counts.open, color: '#dc2626' },
-          { label: 'Overdue', value: counts.overdue, color: '#991b1b' },
-          { label: 'Avg Resolve', value: `${counts.avgResolve}d`, color: '#d97706' },
-          { label: 'Verified', value: counts.verified, color: NAVY },
-        ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-            <p className="text-2xl font-bold tracking-tight" style={{ color: card.color }}>{card.value}</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">{card.label}</p>
-          </div>
-        ))}
-      </div>
+      {/* PRP Band */}
+      <CorrectiveActionsPRPBand
+        stats={caStats}
+        loading={false}
+        onFilterPredict={() => { setFilterStatus('all'); setFilterSeverity('all'); setFilterLocation('all'); setFilterCategory('all'); setSortBy('due_date'); }}
+        onFilterProve={() => { setFilterStatus('verified' as CAStatus); setFilterSeverity('all'); setFilterLocation('all'); setFilterCategory('all'); }}
+      />
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 flex flex-wrap items-center gap-3">
-        <Filter size={16} className="text-[#1E2D4D]/30" />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
-          style={{ fontSize: 16 }}
-        >
-          <option value="all">All Statuses</option>
-          <option value="reported">Reported</option>
-          <option value="assigned">Assigned</option>
-          <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-          <option value="verified">Verified</option>
-        </select>
-        <select
-          value={filterLocation}
-          onChange={(e) => setFilterLocation(e.target.value)}
-          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
-          style={{ fontSize: 16 }}
-        >
-          <option value="all">All Locations</option>
-          {locations.map(loc => (
-            <option key={loc.id} value={loc.id}>{loc.name}</option>
-          ))}
-        </select>
-        <select
-          value={filterSeverity}
-          onChange={(e) => setFilterSeverity(e.target.value as any)}
-          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
-          style={{ fontSize: 16 }}
-        >
-          <option value="all">All Severities</option>
-          <option value="critical">Critical</option>
-          <option value="high">High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
-        </select>
-        <select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value as any)}
-          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
-          style={{ fontSize: 16 }}
-        >
-          <option value="all">All Categories</option>
-          {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
-          ))}
-        </select>
-        <div className="flex items-center gap-1.5 ml-auto">
-          <ArrowDown size={12} className="text-[#1E2D4D]/30" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
-            style={{ fontSize: 16 }}
-          >
-            <option value="due_date">Sort: Due Date</option>
-            <option value="severity">Sort: Severity</option>
-            <option value="created">Sort: Newest</option>
-            <option value="status">Sort: Status</option>
-          </select>
-        </div>
-        {hasAnyFilters && (
-          <button
-            onClick={() => { setFilterStatus('all'); setFilterLocation('all'); setFilterSeverity('all'); }}
-            className="text-xs text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 underline"
-          >
-            Clear filters
-          </button>
-        )}
-      </div>
+      {/* Filters — hidden when no actions exist */}
+      {actions.length > 0 && (
+        <>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 flex flex-wrap items-center gap-3">
+            <Filter size={16} className="text-[#1E2D4D]/30" />
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as any)}
+              className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+              style={{ fontSize: 16 }}
+            >
+              <option value="all">All Statuses</option>
+              <option value="reported">Reported</option>
+              <option value="assigned">Assigned</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="verified">Verified</option>
+            </select>
+            <select
+              value={filterLocation}
+              onChange={(e) => setFilterLocation(e.target.value)}
+              className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+              style={{ fontSize: 16 }}
+            >
+              <option value="all">All Locations</option>
+              {locations.map(loc => (
+                <option key={loc.id} value={loc.id}>{loc.name}</option>
+              ))}
+            </select>
+            <select
+              value={filterSeverity}
+              onChange={(e) => setFilterSeverity(e.target.value as any)}
+              className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+              style={{ fontSize: 16 }}
+            >
+              <option value="all">All Severities</option>
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value as any)}
+              className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+              style={{ fontSize: 16 }}
+            >
+              <option value="all">All Categories</option>
+              {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+            <div className="flex items-center gap-1.5 ml-auto">
+              <ArrowDown size={12} className="text-[#1E2D4D]/30" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2.5 text-[#1E2D4D]/80"
+                style={{ fontSize: 16 }}
+              >
+                <option value="due_date">Sort: Due Date</option>
+                <option value="severity">Sort: Severity</option>
+                <option value="created">Sort: Newest</option>
+                <option value="status">Sort: Status</option>
+              </select>
+            </div>
+            {hasAnyFilters && (
+              <button
+                onClick={() => { setFilterStatus('all'); setFilterLocation('all'); setFilterSeverity('all'); }}
+                className="text-xs text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 underline"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+
+          {/* Recurring root cause callouts */}
+          <CARecurringBar patterns={recurringPatterns} />
+        </>
+      )}
 
       {/* Action list */}
       <div className="space-y-3">
-        {/* Empty state: no actions at all */}
+        {/* True empty state — PRP framed */}
         {actions.length === 0 && (
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-            <AlertTriangle className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
-            <p className="text-sm font-medium text-[#1E2D4D]/80">No corrective actions on file</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">
-              Actions are created from self-inspections, failed checklists, temperature excursions, or manually.
+          <div className="bg-white rounded-xl border border-[#E2DDD4] p-10 text-center">
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ backgroundColor: 'rgba(47,122,77,0.12)' }}
+            >
+              <CheckCircle2 className="w-7 h-7" style={{ color: '#2f7a4d' }} />
+            </div>
+            <p className="text-base font-semibold" style={{ color: NAVY }}>
+              No corrective actions on file
             </p>
+            <p className="text-sm text-[#6B7F96] mt-1 max-w-md mx-auto">
+              Your operations are running clean. When issues arise from inspections, checklists,
+              or temperature logs, corrective actions will appear here.
+            </p>
+            <div className="flex items-center justify-center gap-6 mt-6">
+              <div className="text-center">
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</p>
+                <p className="text-[10px] text-[#8A93A6] mt-0.5">Overdue + due soon</p>
+              </div>
+              <div className="text-center">
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#8A93A6' }}>REDUCE</p>
+                <p className="text-[10px] text-[#8A93A6] mt-0.5">Open exposure</p>
+              </div>
+              <div className="text-center">
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</p>
+                <p className="text-[10px] text-[#8A93A6] mt-0.5">Verified + documented</p>
+              </div>
+            </div>
+            {canCreate && (
+              <button
+                onClick={handleOpenCreate}
+                className="mt-6 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white"
+                style={{ backgroundColor: NAVY }}
+              >
+                + Report your first action
+              </button>
+            )}
+            <div className="mt-4 pt-4" style={{ borderTop: '1px dashed #E2DDD4' }}>
+              <p className="text-[11px] text-[#8A93A6] italic max-w-sm mx-auto">
+                Every corrective action closes a gap. Predict what needs attention,
+                reduce open exposure, prove the fix.
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Empty state: no matches */}
+        {/* Filter empty state */}
         {actions.length > 0 && filtered.length === 0 && (
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center text-[#1E2D4D]/30 text-sm">
             No corrective actions match the selected filters.
           </div>
         )}
 
-        {filtered.map(item => {
-          const sev = SEVERITY_CONFIG[item.severity];
-          const stat = CA_STATUS_MAP[item.status];
-          const overdue = isOverdue(item);
-          const StatusIcon = STATUS_ICON_MAP[item.status];
+        {/* Section headers + action cards */}
+        {(() => {
+          const signalItems = filtered.filter(
+            (i) => caStats.overdueIds.has(i.id) || caStats.dueSoonIds.has(i.id)
+          );
+          const restItems = filtered.filter(
+            (i) => !caStats.overdueIds.has(i.id) && !caStats.dueSoonIds.has(i.id)
+          );
+          const showHeaders = signalItems.length > 0;
 
-          return (
-            <div
-              key={item.id}
-              className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden cursor-pointer transition-all hover:border-[#1E2D4D]/15"
-              onClick={() => navigate(`/corrective-actions/${item.id}`)}
-            >
-              <div className="p-4">
-                <div className="flex items-start gap-3">
-                  <StatusIcon
-                    size={18}
-                    className="shrink-0 mt-0.5"
-                    style={{ color: stat.color }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <h3 className="text-sm font-semibold text-[#1E2D4D]">{item.title}</h3>
-                      <span
-                        className="text-xs font-bold px-2 py-0.5 rounded-full uppercase"
-                        style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
-                      >
-                        {sev.label}
-                      </span>
-                      <span
-                        className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                        style={{ color: stat.color, backgroundColor: stat.bg }}
-                      >
-                        {stat.label}
-                      </span>
-                      {overdue && (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50 border border-red-200">
-                          OVERDUE
+          const renderCard = (item: CorrectiveActionItem) => {
+            const sev = SEVERITY_CONFIG[item.severity];
+            const stat = CA_STATUS_MAP[item.status];
+            const overdue = isOverdue(item);
+            const StatusIcon = STATUS_ICON_MAP[item.status];
+            const isOpen = (OPEN_CORRECTIVE_ACTION_STATUSES as readonly string[]).includes(item.status);
+
+            return (
+              <div
+                key={item.id}
+                className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden cursor-pointer transition-all hover:border-[#1E2D4D]/15"
+                onClick={() => navigate(`/corrective-actions/${item.id}`)}
+              >
+                <div className="p-4">
+                  <div className="flex items-start gap-3">
+                    <StatusIcon size={18} className="shrink-0 mt-0.5" style={{ color: stat.color }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <h3 className="text-sm font-semibold text-[#1E2D4D]">{item.title}</h3>
+                        <span
+                          className="text-xs font-bold px-2 py-0.5 rounded-full uppercase"
+                          style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
+                        >
+                          {sev.label}
                         </span>
-                      )}
+                        <span
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                          style={{ color: stat.color, backgroundColor: stat.bg }}
+                        >
+                          {stat.label}
+                        </span>
+                        {overdue && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#c2731a', backgroundColor: 'rgba(194,115,26,0.12)', border: '1px dashed #c2731a' }}
+                          >
+                            Predict · Overdue
+                          </span>
+                        )}
+                        {caStats.dueSoonIds.has(item.id) && !overdue && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#c2731a', backgroundColor: 'rgba(194,115,26,0.12)', border: '1px dashed #c2731a' }}
+                          >
+                            Predict · Due 48h
+                          </span>
+                        )}
+                        {recurringActionIds.has(item.id) && isOpen && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+                          >
+                            Recurring
+                          </span>
+                        )}
+                        {recurringActionIds.has(item.id) && !isOpen && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+                          >
+                            Same root cause
+                          </span>
+                        )}
+                        {!item.assignee && isOpen && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#b3261e', backgroundColor: 'rgba(179,38,30,0.08)', border: '1px dashed #b3261e' }}
+                          >
+                            Unassigned
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#1E2D4D]/50 mb-2 line-clamp-2">{item.description}</p>
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-[#1E2D4D]/30">
+                        <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
+                        {item.assignee && <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>}
+                        <span>Source: {item.source}</span>
+                        <span>Due: {formatDate(item.dueDate)}</span>
+                        {item.resolvedAt && <span>Resolved: {formatDate(item.resolvedAt)}</span>}
+                      </div>
                     </div>
-                    <p className="text-xs text-[#1E2D4D]/50 mb-2 line-clamp-2">{item.description}</p>
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-[#1E2D4D]/30">
-                      <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
-                      {item.assignee && <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>}
-                      <span>Source: {item.source}</span>
-                      <span>Due: {formatDate(item.dueDate)}</span>
-                      {item.resolvedAt && <span>Resolved: {formatDate(item.resolvedAt)}</span>}
-                    </div>
+                    <ChevronRight size={16} className="text-[#1E2D4D]/30 shrink-0 mt-1" />
                   </div>
-                  <ChevronRight size={16} className="text-[#1E2D4D]/30 shrink-0 mt-1" />
                 </div>
               </div>
-            </div>
+            );
+          };
+
+          return (
+            <>
+              {showHeaders && (
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#c2731a] pt-2">
+                  Overdue or due within 48h · Predict signal
+                </p>
+              )}
+              {signalItems.map(renderCard)}
+              {showHeaders && restItems.length > 0 && (
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+                  All corrective actions
+                </p>
+              )}
+              {showHeaders ? restItems.map(renderCard) : filtered.map(renderCard)}
+            </>
           );
-        })}
+        })()}
       </div>
 
       {/* ── Create CA Modal ──────────────────────────────────── */}

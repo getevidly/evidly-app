@@ -1,0 +1,20 @@
+       docs: 50,
+     },
++    timezone: 'America/Los_Angeles',
+   };
+ }
+ 
+@@ -314,6 +317,7 @@ function buildEmptyPayload(): DashboardPayload {
+     moduleStatuses: [],
+     trendData: [],
+     weights: { ops: 50, docs: 50 },
++    timezone: null,
+   };
+ }
+ 
+@@ -368,6 +372,12 @@ export function useDashboardData(): {
+   const [error, setError] = useState<string | null>(null);
+   const mountedRef = useRef(true);
+ 
++  // Canonical task state — bails internally on empty orgId or tz
++  const taskStateResult = useTaskState({

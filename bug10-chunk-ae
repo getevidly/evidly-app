@@ -1,0 +1,20 @@
+--- a/src/hooks/useDashboardData.ts
++++ b/src/hooks/useDashboardData.ts
+@@ -1,6 +1,7 @@
+ import { useState, useEffect, useCallback, useRef } from 'react';
+ import { useAuth } from '../contexts/AuthContext';
+ import { useDemo } from '../contexts/DemoContext';
++import { useTaskState } from '../lib/canonicalQueries/task-state';
+ import { pushComplianceUpdate } from '../lib/intelligenceBridge';
+ import {
+   loadDashboardData,
+@@ -101,6 +102,7 @@ export interface DashboardPayload {
+   moduleStatuses: ModuleStatus[];
+   trendData: TrendDataPoint[];
+   weights: DashboardWeights;
++  timezone: string | null;
+ }
+ 
+ // ── Demo Data ──────────────────────────────────────────
+@@ -297,6 +299,7 @@ function buildDemoPayload(): DashboardPayload {
+       ops: 50,

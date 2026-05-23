@@ -4,7 +4,7 @@ VALUES (
   'calendar_prp_layout_v1',
   'Calendar PRP Layout',
   false,
-  'master_switch',
+  'always_on',
   'admin_only',
   'Calendar PRP Layout',
   'Predict / Reduce / Prove framing for the Calendar page.'

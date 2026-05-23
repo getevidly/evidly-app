@@ -1,0 +1,98 @@
+{
+  "jurisdiction_id": "0e0e3fc8-5fdd-41aa-a14b-4a887d819e2f",
+  "county": "Los Angeles",
+  "city": "Pasadena",
+  "crawl_date": "2026-05-22",
+  "base_url": "https://www.cityofpasadena.net/public-health/",
+  "urls_crawled": [
+    "https://www.cityofpasadena.net/public-health/",
+    "https://www.cityofpasadena.net/public-health/environmental-health/",
+    "https://www.cityofpasadena.net/public-health/about/",
+    "https://www.cityofpasadena.net/public-health/contact/",
+    "https://www.cityofpasadena.net/public-health/directory/"
+  ],
+  "urls_blocked": [
+    {
+      "url": "https://www.cityofvernon.org/government/departments/health-environmental-control",
+      "reason": "301 redirect to cityofvernonca.gov, then 403 Forbidden on all paths"
+    }
+  ],
+  "food_pillar": {
+    "poc_name": {
+      "value": "Manuel Carmona, MPH, MPA",
+      "source_url": "https://www.cityofpasadena.net/public-health/about/",
+      "confidence": "high",
+      "reason": "Named on official About page as Director of Public Health with biographical detail"
+    },
+    "poc_title": {
+      "value": "Director of Public Health",
+      "source_url": "https://www.cityofpasadena.net/public-health/about/",
+      "confidence": "high",
+      "reason": "Explicitly listed title on official About page"
+    },
+    "agency_email": {
+      "value": null,
+      "candidates": [
+        {
+          "value": "envhealth-bodyart@cityofpasadena.net",
+          "source_url": "https://www.cityofpasadena.net/public-health/environmental-health/",
+          "confidence": "low",
+          "reason": "Program-specific email (Body Art), not general EH division inbox"
+        }
+      ],
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No general Environmental Health email found across 5 pages. Only body art program email available. Contact page uses web form instead of email."
+    },
+    "agency_fax": {
+      "value": "(626) 744-6113",
+      "source_url": "https://www.cityofpasadena.net/public-health/contact/",
+      "confidence": "high",
+      "reason": "Listed on official Contact page as department fax number"
+    },
+    "agency_address": {
+      "value": "1845 N. Fair Oaks Ave., Suite 1200, Pasadena, CA 91103",
+      "source_url": "https://www.cityofpasadena.net/public-health/environmental-health/",
+      "confidence": "high",
+      "reason": "Environmental Health Services Division address with suite number, more specific than general PH address"
+    }
+  },
+  "fire_pillar": {
+    "fire_ahj_poc_name": {
+      "value": null,
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No fire_ahj_website to crawl. Fire AHJ website is NULL in PROD."
+    },
+    "fire_ahj_poc_title": {
+      "value": null,
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No fire_ahj_website to crawl"
+    },
+    "fire_ahj_email": {
+      "value": null,
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No fire_ahj_website to crawl"
+    },
+    "fire_ahj_fax": {
+      "value": null,
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No fire_ahj_website to crawl"
+    },
+    "fire_ahj_address": {
+      "value": null,
+      "source_url": null,
+      "confidence": "null",
+      "reason": "No fire_ahj_website to crawl"
+    }
+  },
+  "notes": [
+    "Vernon (rank 3) returned 403 Forbidden on all paths — moved to manual research within this batch",
+    "Pasadena EHD yielded 3 high-confidence fills (poc_name, poc_title, fax) + 1 high-confidence fill (address)",
+    "agency_email: only body-art-specific email found; recommend NULL rather than misleading program email",
+    "Fire pillar: no fire_ahj_website exists on PROD, cannot crawl fire contact data for Pasadena"
+  ]
+}

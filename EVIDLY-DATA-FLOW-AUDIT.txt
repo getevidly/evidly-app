@@ -1,0 +1,1914 @@
+══════════════════════════════════════════════════════════════════════
+EVIDLY DATA FLOW AUDIT — COMPREHENSIVE FORENSIC REPORT
+══════════════════════════════════════════════════════════════════════
+Commit: 350effef9ae09dc0d4678d2e77b06ac43285f669 (main)
+Date:   2026-04-24
+Scope:  Read-only. Zero files modified.
+══════════════════════════════════════════════════════════════════════
+
+TABLE OF CONTENTS
+─────────────────
+  PHASE A — Onboarding Journey (A0–A18)
+    A0   Stepper Verification
+    A0+  Addendum: Conditional Step Inspections (SB 1383, K-12)
+    A0++ Second Stepper Check
+    A1   Complete Your Profile
+    A2   Set Up Locations
+    A3   Add Team Members
+    A4   Invite Your Team
+    A5   Add Your Vendors
+    A6   Invite Vendors to Portal
+    A7   Add Vendor Services
+    A8   Register Equipment
+    A9   Upload Key Documents
+    A10  AI Document Routing
+    A11  Request Missing Documents
+    A12  Set up SB 1383 Tracking (conditional)
+    A13  Configure K-12 Food Safety (conditional)
+    A14  Sensor-Ready Setup
+    A15  Take a Platform Tour
+    A16  Share Kitchen to Community
+    A17  Schedule Your Consultation
+    A18  Setup Complete!
+    AX   Onboarding Completion Tracking (cross-cutting)
+  PHASE B — Daily Operations (by role)
+  PHASE C — Organization Admin
+  PHASE D — Platform Admin
+  PHASE E — RLS Reference Patterns
+  APPENDIX 1 — Complete Table Reference Map
+  APPENDIX 2 — Edge Function Inventory
+  APPENDIX 3 — Bugs, Gaps & Divergences
+
+══════════════════════════════════════════════════════════════════════
+PHASE A — ONBOARDING JOURNEY
+══════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────
+A0: STEPPER VERIFICATION
+────────────────────────────────────────────────────────────────────
+
+Config file: src/config/onboardingChecklistConfig.ts
+Total steps defined: 20 (in ONBOARDING_STEPS array)
+Visible to generic owner_operator: 18 (2 conditional filtered out)
+Conditional steps: sb1383_setup, k12_setup
+
+Steps by section:
+
+  GETTING STARTED (2)
+    1. profile           — Complete Your Profile
+    2. setup_locations    — Set Up Locations
+
+  TEAM & VENDORS (5)
+    3. add_team           — Add Team Members
+    4. invite_team        — Invite Your Team (depends: add_team)
+    5. add_vendors        — Add Your Vendors
+    6. invite_vendors     — Invite Vendors to Portal (depends: add_vendors)
+    7. add_vendor_services — Add Vendor Services (depends: add_vendors)
+
+  SAFETY & COMPLIANCE (7)
+    8.  register_equipment  — Register Equipment
+    9.  upload_documents    — Upload Key Documents
+    10. ai_document_routing — AI Document Routing
+    11. request_documents   — Request Missing Documents (depends: add_vendors, upload_documents)
+    12. sb1383_setup        — Set up SB 1383 Tracking [CONDITIONAL]
+    13. k12_setup           — Configure K-12 Food Safety [CONDITIONAL]
+    14. iot_readiness       — Sensor-Ready Setup
+
+  PLATFORM TOUR (1)
+    15. take_tour           — Take a Platform Tour
+
+  GROW & CONNECT (3)
+    16. k2c_referral          — Share Kitchen to Community (modal)
+    17. schedule_consultation — Schedule Your Consultation (external)
+    18. setup_complete        — Setup Complete! (celebration)
+
+Expected stepper count by org type:
+    Generic kitchen          -> 16 steps (no conditionals)
+    CA Tier 1/2 only         -> 17 steps (+ SB 1383)
+    K-12 only                -> 17 steps (+ K-12)
+    CA Tier 1/2 K-12         -> 18 steps (both)
+
+NOTE: Canonical list had 16 steps. Actual config has 20 total
+(18 base + 2 conditional). The 4 extra steps beyond the canonical 16 are:
+  - ai_document_routing (A10)
+  - iot_readiness (A14)
+  - sb1383_setup (A12, conditional)
+  - k12_setup (A13, conditional)
+Arthur directed: walk all 18 including conditionals.
+
+────────────────────────────────────────────────────────────────────
+A0+ ADDENDUM: CONDITIONAL STEP INSPECTIONS
+────────────────────────────────────────────────────────────────────
+
+=== INSPECTION 1: GATING FLAG SOURCE ===
+
+Resolver: resolveVisibleSteps() at onboardingChecklistConfig.ts:314-352
+Single call site: useOnboardingChecklist.ts:171-174
+
+  const visibleSteps = useMemo(
+    () => resolveVisibleSteps(orgIndustry, orgLocationCount, userRole),
+    [orgIndustry, orgLocationCount, userRole],
+  );
+
+CRITICAL: enrollmentFlags parameter is NOT PASSED. The 4th arg is omitted.
+Result: Both sb1383_setup and k12_setup are ALWAYS filtered out.
+
+A12 SB 1383 gating:
+  Config line 340: if (step.id === 'sb1383_setup' && !enrollmentFlags?.isSB1383Enrolled) return false;
+  Since enrollmentFlags is undefined -> !undefined?.isSB1383Enrolled -> !undefined -> true
+  -> Step is ALWAYS filtered out.
+
+  BUG (Appendix 3): The gate is a simple boolean toggle. It does NOT
+  check state=CA or generator tier/meals-per-day. A Texas restaurant
+  that somehow gets isSB1383Enrolled=true would see this step. The hint
+  says "Required for California commercial food generators" but the code
+  does not enforce California or generator tier.
+
+A13 K-12 gating:
+  Dual gate:
+    1. industries: ['k12_school'] -> industryType must be 'k12_school'
+    2. Config line 344: if (step.id === 'k12_setup' && !enrollmentFlags?.isK12Enrolled) return false;
+  Gate 1 works (industry filter). Gate 2 always filters out (undefined).
+  -> K-12 orgs NEVER see this step.
+
+  The K-12 gate correctly checks org type = k12_school via the industry
+  filter. The enrollment flag adds a second layer that is non-functional.
+
+Source of other parameters:
+  orgIndustry: from organizations.industry_type (hook line 155)
+  orgLocationCount: from organizations.planned_location_count (hook line 156)
+  userRole: from useRole() context (hook line 114)
+
+=== INSPECTION 2: RENDERING BEHAVIOR FOR NON-QUALIFYING ORGS ===
+
+ANSWER: Behavior (a) — steps filtered out entirely.
+
+resolveVisibleSteps() returns a filtered array. Steps that fail any
+gate are removed from the array. The rendering component
+(OnboardingChecklistCard.tsx) renders only the returned array via
+steps.map(). Non-qualifying steps never appear in the UI.
+
+Contrast with dependsOn (sequence gates):
+  - Steps with unmet dependsOn ARE rendered but shown LOCKED
+  - Lock icon replaces step number
+  - Reduced opacity (0.5), cursor-not-allowed
+  - Tooltip: "Requires: [Step A], [Step B]"
+  - Background: #F8F9FB (light gray), text: #B0B8C5 (muted)
+
+This matches the intended behavior: qualification gates = invisible,
+sequence gates = visible but locked.
+
+=== INSPECTION 3: WHERE QUALIFICATION DATA IS CAPTURED ===
+
+SB 1383 qualification data:
+  - sb1383_enrolled boolean on organizations table (migration 20260505200000)
+  - sb1383_enrolled_at timestamp on organizations table
+  - NOT captured during onboarding
+  - Only available via Settings > Privacy tab toggle (Settings.tsx:1614-1707)
+  - No state=CA check, no generator tier check
+
+K-12 qualification data:
+  - k12_enrolled boolean on organizations table (migration 20260505200000)
+  - k12_enrolled_at timestamp on organizations table
+  - org_type text on organizations table (set to 'k12' on enrollment)
+  - NOT captured during onboarding
+  - Only available via Settings > Privacy tab toggle (Settings.tsx:1709-1803)
+  - industry_type captured in Settings but as uncontrolled input (no Supabase write)
+
+BUG (Appendix 3): Qualification data is NEVER captured during onboarding.
+It exists only as a post-onboarding toggle. The conditional onboarding
+steps can therefore never appear during first-run onboarding.
+
+BUG (Appendix 3): The enrollment toggles in Settings initialize to false
+but never load the org's actual enrollment state from Supabase on mount.
+First visit always shows toggles OFF even if org previously enrolled.
+
+=== INSPECTION 4: POST-ONBOARDING ENROLLMENT PATH ===
+
+CONFIRMED: Full post-onboarding enrollment paths exist in Settings.
+
+SB 1383 enrollment (Settings.tsx:1614-1707):
+  Route: /settings tab=privacy
+  Access: executives, owner_operators only
+  Flow: Toggle -> guardAction('sb1383_enrollment') ->
+        UPDATE organizations SET sb1383_enrolled=val, sb1383_enrolled_at=now()
+        WHERE id=profile.organization_id
+  On enable: button links to /sb1383 dashboard
+
+K-12 enrollment (Settings.tsx:1709-1803):
+  Route: /settings tab=privacy
+  Access: executives, owner_operators only
+  Flow: Toggle -> guardAction('k12_enrollment') ->
+        UPDATE organizations SET k12_enrolled=val, k12_enrolled_at=now(),
+                                  org_type='k12'/'standard'
+        WHERE id=profile.organization_id
+  On enable: button links to /k12 dashboard
+
+BUG (Appendix 3): Even after enrollment via Settings, the onboarding
+checklist hook never passes enrollmentFlags to resolveVisibleSteps().
+The conditional steps remain invisible even for enrolled orgs. The
+enrollment toggles work (Supabase writes succeed) but the onboarding
+checklist never reads them.
+
+=== INSPECTION 5: SCHEMA REQUIREMENT ===
+
+STATED: Tables written by A12 and A13 must exist in PROD regardless of
+how many current orgs trigger the conditional. Conditional gates UX
+rendering, not schema requirements. When a qualifying org eventually
+hits the step, the writes must succeed.
+
+Current state:
+  A12 (SB 1383): Writes to food_recovery_records -> TABLE DOES NOT EXIST
+  A13 (K-12):    Writes to k12_school_records    -> TABLE DOES NOT EXIST
+
+Both tables have NO migration in the repo. They must be created before
+any qualifying org can use these features.
+
+────────────────────────────────────────────────────────────────────
+A0++ SECOND STEPPER CHECK
+────────────────────────────────────────────────────────────────────
+
+FIVE onboarding/setup flow definitions found in the repo:
+
+1. LIVE CONFIG (authoritative)
+   File: src/config/onboardingChecklistConfig.ts
+   Steps: 20 (18 base + 2 conditional)
+   Consumer: useOnboardingChecklist.ts -> OnboardingChecklistCard.tsx
+   Persistence: localStorage + auto-detect via Supabase table counts
+
+2. LEGACY WIZARD (divergent)
+   File: src/pages/Onboarding.tsx
+   Steps: 10 (Welcome, Org Details, Add Location, Shifts, Equipment,
+          Checklists, Documents, Team, QR Codes, Done)
+   Persistence: DB column organizations.onboarding_step
+   STATUS: DIVERGENT — completely different step IDs, labels, and count.
+
+3. LEGACY SUMMARY (divergent)
+   File: src/components/OnboardingSummary.tsx
+   Steps: 8 (location, equipment, documents, temp, checklist, vendors,
+          team, score)
+   Persistence: localStorage key evidly_onboarding_progress
+   STATUS: DIVERGENT — different step set, demo-only usage.
+
+4. SENSOR SETUP WIZARD (domain-specific, not divergent)
+   File: src/pages/SensorSetupWizard.tsx
+   Steps: 5 (Equipment, Sensor Type, Connection, Alerts, Confirm)
+   STATUS: OK — IoT-specific flow, not general onboarding.
+
+5. VENDOR SETUP (domain-specific, not divergent)
+   File: src/pages/VendorSetup.tsx
+   Steps: 5 (Company Profile, Certs & Credentials, COI/Insurance,
+          Service Defaults, Team)
+   STATUS: OK — Vendor registration flow, not customer onboarding.
+
+6. ADMIN CLIENT ONBOARDING (admin-only, not divergent)
+   File: src/pages/AdminClientOnboarding.tsx
+   Steps: Form-based (not step-based), platform_admin only
+   STATUS: OK — Admin org creation, separate concern.
+
+DIVERGENCE (Appendix 3): Two legacy onboarding flow definitions
+(Onboarding.tsx with 10 steps, OnboardingSummary.tsx with 8 steps)
+coexist with the live config (20 steps). Resolution needed: which is
+the spec going forward? Live config (onboardingChecklistConfig.ts) wins
+per audit direction.
+
+ICON GAP: OnboardingChecklistCard.tsx defines STEP_ICONS for 15 of 18
+steps. Missing icons: sb1383_setup, k12_setup, iot_readiness.
+
+────────────────────────────────────────────────────────────────────
+A1: COMPLETE YOUR PROFILE
+────────────────────────────────────────────────────────────────────
+Route: /settings | Config: completionProfileField: 'full_name'
+
+(i) Component: src/pages/Settings.tsx (Profile tab, lines 267-341)
+
+(ii) Tables READ:
+  - notification_settings: .from('notification_settings').select('*')
+    .eq('user_id', profile.id).maybeSingle()
+  - organizations: read via useOnboardingChecklist (not from Settings itself)
+  - Profile data from useAuth() context (no direct Supabase read)
+
+(iii) Tables WRITTEN:
+  - notification_settings: .update() or .insert() (lines 194-208)
+  - supabase.auth.updateUser({ password }) on password change (line 1248)
+  - CRITICAL: Profile "Save Changes" does NOT write to Supabase.
+    It fires toast.success('Profile saved') with no .update() call.
+
+(iv) Edge functions: None
+
+(v) RLS: profile.id for notification_settings, user.id for auth updates
+
+(vi) Demo mode: isDemoMode checked. Demo shows ROLE_DEMO_PROFILES
+     hardcoded data. guardAction shows upgrade prompt in demo.
+
+(vii) BUGS:
+  - CRITICAL: Profile save is a no-op toast. User data never persists.
+  - CRITICAL: Completion check queries .from('profiles') but table is
+    user_profiles. Step never auto-completes.
+
+────────────────────────────────────────────────────────────────────
+A2: SET UP LOCATIONS
+────────────────────────────────────────────────────────────────────
+Route: /settings | Config: no completionTable
+
+(i) Component: src/pages/Settings.tsx (Organization tab, lines 344-458)
+
+(ii) Tables READ: None directly. Uses uncontrolled form inputs.
+
+(iii) Tables WRITTEN:
+  - NONE. "Add Location" button fires toast.info('Add location') — no-op.
+  - "Save Changes" fires toast.success('Organization settings saved') — no-op.
+
+(iv) Edge functions: None
+
+(v) RLS: N/A — no Supabase operations
+
+(vi) Demo mode: Shows 3 hardcoded demo locations (Fresno, Merced, Modesto).
+     Live mode shows empty state.
+
+(vii) BUGS:
+  - CRITICAL: No location creation, update, or persistence exists.
+    The "Add location" button is a no-op toast. Step is non-functional.
+  - No completionTable defined — cannot auto-detect completion.
+
+────────────────────────────────────────────────────────────────────
+A3: ADD TEAM MEMBERS
+────────────────────────────────────────────────────────────────────
+Route: /team | Config: completionTable: 'profiles', completionMinCount: 2
+
+(i) Components:
+  - src/pages/Team.tsx (main page)
+  - src/components/TeamInviteModal.tsx (invite modal)
+
+(ii) Tables READ:
+  - user_profiles: .select('id, full_name, email, phone, role, avatar_url, created_at')
+    .eq('organization_id', profile.organization_id)
+  - user_invitations: .select('*').eq('organization_id', profile.organization_id)
+    .in('status', ['pending', 'expired'])
+  - employee_certifications: .select('*').eq('user_id', userId)
+  - organizations: .select('name').eq('id', profile.organization_id)
+
+(iii) Tables WRITTEN:
+  - user_invitations: INSERT (single + bulk), UPDATE (status, email_status,
+    expires_at on resend/cancel)
+
+(iv) Edge functions:
+  - send-team-invite (on single/bulk invite)
+  - send-sms-invite (on SMS resend)
+
+(v) RLS: profile.organization_id scopes all queries. auth.uid() as invited_by.
+
+(vi) Demo mode: Uses DEMO_MEMBERS (9 hardcoded). Skips all Supabase.
+     TeamInviteModal shows demo toast without DB call.
+
+(vii) BUGS:
+  - CRITICAL: completionTable is 'profiles' but actual table is
+    user_profiles. Step never auto-completes via detection.
+
+────────────────────────────────────────────────────────────────────
+A4: INVITE YOUR TEAM
+────────────────────────────────────────────────────────────────────
+Route: /team | Depends: add_team | Config: no completionTable
+
+(i) Components: Same as A3 (same /team route)
+
+(ii-vi) Same as A3 (same page)
+
+(vii) BUGS:
+  - Depends on add_team which never auto-completes (wrong table name).
+    Step remains LOCKED unless add_team is manually completed.
+  - No completionTable — manual completion only.
+
+────────────────────────────────────────────────────────────────────
+A5: ADD YOUR VENDORS
+────────────────────────────────────────────────────────────────────
+Route: /vendors | Config: completionTable: 'vendors', completionMinCount: 1
+
+(i) Components:
+  - src/pages/Vendors.tsx
+  - src/components/vendor/AddVendorModal.tsx
+  - src/hooks/useCreateVendor.ts
+
+(ii) Tables READ:
+  - vendors (+ vendor_client_relationships!inner): .eq('vendor_client_relationships.organization_id', ...)
+  - intelligence_signals: .eq('signal_type', 'vendor_intelligence').eq('org_id', ...)
+
+(iii) Tables WRITTEN:
+  - vendors: INSERT via useCreateVendor
+  - vendor_client_relationships: INSERT (linking row after vendor)
+  - vendor_upload_requests: INSERT (document requests)
+  - vendor_contact_log: INSERT (contact audit)
+
+(iv) Edge functions: None from add_vendors flow
+
+(v) RLS: profile.organization_id via vendor_client_relationships join
+
+(vi) Demo mode: Uses demoVendors from demoData.ts. AddVendorModal creates
+     local-only record with manual- prefix ID. All writes guarded.
+
+(vii) BUGS:
+  - CRITICAL: No INSERT RLS policy on vendor_client_relationships.
+    The useCreateVendor hook's linking insert will be silently blocked.
+  - HIGH: Migration conflict — two CREATE TABLE IF NOT EXISTS vendors
+    with different schemas. Production schema ambiguous.
+  - Completion check queries vendors.organization_id which may not exist
+    in newer schema.
+
+────────────────────────────────────────────────────────────────────
+A6: INVITE VENDORS TO PORTAL
+────────────────────────────────────────────────────────────────────
+Route: /vendors | Depends: add_vendors | Config: no completionTable
+
+(i) Components:
+  - src/pages/Vendors.tsx
+  - src/components/vendor/InviteVendorModal.tsx
+
+(ii) Tables READ: Same as A5
+
+(iii) Tables WRITTEN:
+  - user_invitations: INSERT (role: 'vendor', status: 'pending')
+
+(iv) Edge functions: NONE — email is NOT sent. Unlike TeamInviteModal,
+     InviteVendorModal does NOT invoke send-team-invite or any function.
+
+(v) RLS: organizationId from props
+
+(vi) Demo mode: Skips Supabase insert. Shows success toast regardless.
+
+(vii) BUGS:
+  - CRITICAL: No edge function sends the invitation email. The invitation
+    row is created but the vendor never receives it.
+  - role: 'vendor' is not one of the 8 defined UserRole types.
+  - Depends on add_vendors which has RLS issues.
+
+────────────────────────────────────────────────────────────────────
+A7: ADD VENDOR SERVICES
+────────────────────────────────────────────────────────────────────
+Route: /vendors | Depends: add_vendors | Config: no completionTable
+
+(i) Components:
+  - src/pages/Vendors.tsx
+  - src/components/services/LogServiceModal.jsx
+  - src/components/services/RequestServiceModal.tsx
+  - src/components/services/ServiceComplianceList.jsx
+  - src/components/services/ServiceExpenseTracker.jsx
+  - src/hooks/useServiceRequests.ts
+
+(ii) Tables READ:
+  - vendors + vendor_client_relationships (same as A5)
+  - intelligence_signals
+  - service_requests (+ joins vendors, locations, requester)
+  - location_service_schedules
+
+(iii) Tables WRITTEN:
+  - vendor_upload_requests: INSERT
+  - vendor_contact_log: INSERT
+  - vendor_service_records: INSERT, UPDATE
+  - location_service_schedules: UPSERT
+  - service_requests: UPDATE (accept/cancel)
+  - calendar_events: INSERT (after accepting alternative)
+  Storage: service-certificates bucket UPLOAD
+
+(iv) Edge functions:
+  - process-service-request (via raw fetch, not supabase.functions.invoke)
+
+(v) RLS: profile.organization_id throughout
+
+(vi) Demo mode: Full demo data from vendorServiceWorkflowDemo.ts.
+     All writes guarded. useServiceRequests returns empty in demo.
+
+(vii) BUGS:
+  - service-certificates storage bucket has no creation migration.
+    Uploads will silently fail if bucket not manually created.
+
+────────────────────────────────────────────────────────────────────
+A8: REGISTER EQUIPMENT
+────────────────────────────────────────────────────────────────────
+Route: /equipment | Config: completionTable: 'equipment', completionMinCount: 1
+
+(i) Component: src/pages/Equipment.tsx
+
+(ii) Tables READ:
+  - equipment (+ equipment_service_records, equipment_maintenance_schedule)
+    .eq('organization_id', ...).eq('is_active', true)
+  - locations: .eq('organization_id', ...)
+
+(iii) Tables WRITTEN:
+  - equipment: INSERT with organization_id, location_id, name,
+    equipment_type, make, model, serial_number, etc.
+    compliance_pillar hardcoded to 'facility_safety'
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for reads and writes
+
+(vi) Demo mode: Uses DEMO_EQUIPMENT and DEMO_LOCATIONS. All writes guarded.
+
+(vii) BUGS:
+  - LOW: compliance_pillar hardcoded to 'facility_safety' for ALL equipment.
+    No food_safety option available in UI.
+
+────────────────────────────────────────────────────────────────────
+A9: UPLOAD KEY DOCUMENTS
+────────────────────────────────────────────────────────────────────
+Route: /documents | Config: completionTable: 'documents', completionMinCount: 1
+
+(i) Components:
+  - src/pages/Documents.tsx
+  - src/components/SmartUploadModal.tsx
+  - src/lib/documentClassifier.ts
+
+(ii) Tables READ:
+  - documents: .eq('organization_id', ...).order('created_at', desc)
+
+(iii) Tables WRITTEN:
+  - NONE. SmartUploadModal onSave creates in-memory document objects
+    (id: 'ai-${Date.now()}-${i}') and updates React state only.
+    Comment says "document-scan edge function updates the DB record"
+    but no INSERT to documents table is visible in client code.
+
+(iv) Edge functions:
+  - classify-document (classification only, no DB write)
+
+(v) RLS: profile.organization_id for reads. No writes.
+
+(vi) Demo mode: Uses SAMPLE_DOCUMENTS (30 hardcoded). classifyDocumentDemo()
+     mock. Shows DemoModeBanner.
+
+(vii) BUGS:
+  - CRITICAL: Document upload does NOT write to documents table.
+    Uploads only persist in React state. completionTable check
+    (documents, minCount 1) will never be satisfied by this flow.
+  - document-scan edge function exists but is never invoked from
+    Documents page or SmartUploadModal.
+
+────────────────────────────────────────────────────────────────────
+A10: AI DOCUMENT ROUTING
+────────────────────────────────────────────────────────────────────
+Route: /documents (same page as A9)
+
+Same findings as A9. The AI classification is part of the SmartUploadModal
+flow. Classification results are stored in local React state only, not
+persisted to Supabase.
+
+No completionTable defined — completion is manual only.
+
+────────────────────────────────────────────────────────────────────
+A11: REQUEST MISSING DOCUMENTS
+────────────────────────────────────────────────────────────────────
+Route: /documents | Depends: add_vendors, upload_documents
+
+(i) Components: Same as A9 (src/pages/Documents.tsx)
+
+(ii-vi) Same as A9
+
+(vii) BUGS:
+  - HIGH: Route mismatch. Step sends users to /documents but the
+    "request from vendor" functionality (vendor_upload_requests INSERT)
+    is on /vendors page. Documents page has ShareModal for external
+    sharing but no "request from vendor" UI.
+  - No completionTable — manual completion only.
+
+────────────────────────────────────────────────────────────────────
+A12: SET UP SB 1383 TRACKING [CONDITIONAL]
+────────────────────────────────────────────────────────────────────
+Route: /food-recovery | Visible when: isSB1383Enrolled (never fires — see A0+)
+
+(i) Component: src/pages/FoodRecovery.tsx
+
+(ii) Tables READ:
+  - food_recovery_records: .eq('organization_id', ...).order('created_at', desc)
+
+(iii) Tables WRITTEN:
+  - NONE. "Log Entry" button calls guardAction(..., () => alert('coming soon'))
+    This is a placeholder alert with no Supabase write.
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for read
+
+(vi) Demo mode: Uses SB1383_DEMO_DATA (3 hardcoded locations).
+     guardAction shows DemoUpgradePrompt in demo.
+
+(vii) BUGS:
+  - CRITICAL: food_recovery_records table DOES NOT EXIST in any migration.
+    SELECT will fail in production.
+  - CRITICAL: Write functionality is a placeholder alert(). No form exists.
+  - CRITICAL: Step is never visible because enrollmentFlags is never passed
+    to resolveVisibleSteps() (see A0+ Inspection 1).
+  - Schema requirement: table must exist regardless of current enrollments.
+
+────────────────────────────────────────────────────────────────────
+A13: CONFIGURE K-12 FOOD SAFETY [CONDITIONAL]
+────────────────────────────────────────────────────────────────────
+Route: /usda/production-records | Visible when: industry=k12_school AND isK12Enrolled
+
+(i) Component: src/pages/USDAProductionRecords.tsx
+
+(ii) Tables READ:
+  - k12_school_records: .eq('organization_id', ...).order('name', asc)
+
+(iii) Tables WRITTEN:
+  - NONE. "Add School" button calls guardAction(..., () => alert('coming soon'))
+    Placeholder alert with no Supabase write.
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for read
+
+(vi) Demo mode: Uses K12_DEMO_DATA (3 hardcoded schools in Fresno USD).
+     guardAction shows DemoUpgradePrompt in demo.
+
+(vii) BUGS:
+  - CRITICAL: k12_school_records table DOES NOT EXIST in any migration.
+    SELECT will fail in production.
+  - CRITICAL: Write functionality is a placeholder alert(). No form exists.
+  - CRITICAL: Step is never visible because enrollmentFlags is never passed
+    (see A0+ Inspection 1). Even for k12_school industry orgs, the
+    isK12Enrolled flag blocks it.
+  - Schema requirement: table must exist regardless of current enrollments.
+
+────────────────────────────────────────────────────────────────────
+A14: SENSOR-READY SETUP
+────────────────────────────────────────────────────────────────────
+Route: /equipment | Config: completionTable: 'temperature_equipment', completionMinCount: 1
+
+(i) Component: src/pages/Equipment.tsx (same as A8)
+
+(ii) Tables READ: Same as A8
+
+(iii) Tables WRITTEN: Same as A8 (equipment INSERT)
+
+(iv) Edge functions: None
+
+(v) RLS: Same as A8
+
+(vi) Demo mode: Same as A8
+
+(vii) BUGS:
+  - MISMATCH: Step checks temperature_equipment for auto-completion,
+    but Equipment page only writes to equipment table. A user who
+    registers equipment via the Equipment page will NOT have this step
+    auto-complete. They need to use the Sensor Setup Wizard
+    (SensorSetupWizard.tsx) or IoT Sensor Platform instead.
+
+────────────────────────────────────────────────────────────────────
+A15: TAKE A PLATFORM TOUR
+────────────────────────────────────────────────────────────────────
+Route: /dashboard | stepType: 'tour'
+
+(i) Components:
+  - src/components/GuidedTour.tsx (14-step tour)
+  - src/components/layout/Layout.tsx (mounts GuidedTour at line 137)
+  - src/components/dashboard/shared/OnboardingChecklistCard.tsx (trigger)
+
+(ii) Tables READ: None. Purely client-side.
+
+(iii) Tables WRITTEN: None. Completion is localStorage only via completeStep().
+
+(iv) Edge functions: None
+
+(v) RLS: N/A
+
+(vi) Demo mode: GuidedTour has no demo check. In demo, DemoTour replaces it.
+     Onboarding checklist auto-dismissed in demo, so step never shown.
+
+(vii) BUGS:
+  - Step marked complete BEFORE tour runs. completeStep fires on click,
+    not on tour completion. User can click Start Tour, immediately close,
+    and step is marked done.
+  - No server-side persistence of tour completion.
+
+Activation flow:
+  1. User clicks "Start Tour"
+  2. handleStepAction dispatches CustomEvent('evidly:start-guided-tour')
+  3. AND immediately calls completeStep(step.id) <-- premature
+  4. GuidedTour listens for event, starts tour
+  5. Tour walks 14 DOM elements matched by data-tour attributes
+
+────────────────────────────────────────────────────────────────────
+A16: SHARE KITCHEN TO COMMUNITY
+────────────────────────────────────────────────────────────────────
+Route: '' | stepType: 'modal'
+
+(i) Component: Inline K2CReferralModal defined inside
+    OnboardingChecklistCard.tsx (lines 46-163)
+
+(ii) Tables READ: None. Uses hardcoded referral link.
+
+(iii) Tables WRITTEN: None. "Done — I shared it!" calls completeStep()
+     (localStorage only). No actual referral is tracked.
+
+(iv) Edge functions: None from onboarding modal.
+     (Separate K2CInviteModal from Referral Dashboard uses
+     k2c-referral-invite edge function — different flow.)
+
+(v) RLS: N/A
+
+(vi) Demo mode: No demo check in inline modal. Onboarding checklist
+     auto-dismissed in demo, so modal never shown.
+
+(vii) BUGS:
+  - Hardcoded demo referral link: 'https://evidly.com/refer?code=K2C-DEMO'
+    Same link for every user. Does NOT use the user's actual referral code
+    from k2c_referral_codes table.
+  - No referral tracking. Clicking "Done" is purely localStorage.
+  - The separate K2CInviteModal (from Referral Dashboard) correctly uses
+    real referral codes and the edge function.
+
+────────────────────────────────────────────────────────────────────
+A17: SCHEDULE YOUR CONSULTATION
+────────────────────────────────────────────────────────────────────
+Route: '' | stepType: 'external' | URL: https://calendly.com/founders-getevidly/60min
+
+(i) Component: OnboardingChecklistCard.tsx (line 264-265)
+
+(ii) Tables READ: None
+(iii) Tables WRITTEN: None
+(iv) Edge functions: None
+
+(v) RLS: N/A
+
+(vi) Demo mode: window.open fires regardless, but checklist auto-dismissed
+     in demo so step never shown.
+
+(vii) BUGS:
+  - No completion tracking from Calendly. Opens in new tab with no
+    postMessage listener. Step requires manual "Mark Done".
+  - Uses window.open() (external URL — acceptable exception to CLAUDE.md rule).
+
+────────────────────────────────────────────────────────────────────
+A18: SETUP COMPLETE!
+────────────────────────────────────────────────────────────────────
+Route: /dashboard | stepType: 'celebration'
+
+(i) Component: OnboardingChecklistCard.tsx
+
+(ii) Tables READ: None
+(iii) Tables WRITTEN: None. Does NOT write onboarding_completed to
+     organizations table.
+(iv) Edge functions: None
+
+(v) RLS: N/A
+
+(vi) Demo mode: Auto-dismissed in demo.
+
+(vii) BUGS:
+  - No server-side "onboarding complete" flag is written by the
+    checklist wizard. The legacy Onboarding.tsx writes
+    onboarding_completed: true to organizations, but the checklist
+    wizard does not.
+
+Activation flow:
+  1. Celebration step excluded from progress count
+     (actionableSteps = steps.filter(s => s.stepType !== 'celebration'))
+  2. When all actionable steps complete, isAllComplete fires
+  3. Confetti via triggerConfetti('onboarding-checklist-complete')
+  4. Clicking "Go to Dashboard" calls completeStep + navigate('/dashboard')
+  5. Dismiss button (X) hides permanently via localStorage
+
+────────────────────────────────────────────────────────────────────
+AX: ONBOARDING COMPLETION TRACKING (cross-cutting)
+────────────────────────────────────────────────────────────────────
+
+Hook: src/hooks/useOnboardingChecklist.ts
+UI: src/components/dashboard/shared/OnboardingChecklistCard.tsx
+
+=== PRIMARY PERSISTENCE: localStorage ===
+
+  Key: evidly_onboarding_checklist_{orgId}  -> JSON array of completed IDs
+  Key: evidly_onboarding_skipped_{orgId}    -> JSON array of skipped IDs
+  Key: evidly_onboarding_dismissed_{orgId}  -> 'true' if dismissed
+
+  Demo keys (no orgId): evidly_onboarding_checklist, _skipped, _dismissed
+
+=== AUTO-DETECTION: Supabase table counts ===
+
+  | Step             | completionTable      | Check                         | Min |
+  |------------------|----------------------|-------------------------------|-----|
+  | profile          | (profileField)       | profiles.full_name NOT NULL   | N/A |
+  | add_team         | profiles             | count where org_id match      |  2  |
+  | add_vendors      | vendors              | count where org_id match      |  1  |
+  | register_equip   | equipment            | count where org_id match      |  1  |
+  | upload_documents | documents            | count where org_id match      |  1  |
+  | iot_readiness    | temperature_equipment| count where org_id match      |  1  |
+
+  Auto-detection runs on mount and on visibilitychange events.
+
+=== BUGS IN AUTO-DETECTION ===
+
+  - profile: queries .from('profiles') -> table is user_profiles. BROKEN.
+  - add_team: queries .from('profiles') -> table is user_profiles. BROKEN.
+  - add_vendors: queries vendors.organization_id which may not exist in
+    newer schema (migration conflict). POTENTIALLY BROKEN.
+  - upload_documents: queries documents table but upload flow never writes
+    to it. Step never auto-completes via upload.
+  - iot_readiness: queries temperature_equipment but Equipment page writes
+    to equipment table. MISMATCH.
+
+=== ORGANIZATIONS TABLE FLAG ===
+
+  Hook reads organizations.onboarding_completed (line 150).
+  If truthy, entire checklist auto-dismissed.
+
+  BUG: No migration creates onboarding_completed boolean on organizations.
+  The SELECT may return null (Supabase ignores unknown columns in .select).
+  Legacy Onboarding.tsx writes onboarding_completed: true but column may
+  not exist in PROD.
+
+=== PERSISTENCE GAP SUMMARY ===
+
+  | What                    | Storage      | Server-persisted? |
+  |-------------------------|--------------|-------------------|
+  | Step completions        | localStorage | NO (auto-detect only) |
+  | Step skips              | localStorage | NO |
+  | Checklist dismissed     | localStorage | Partially (org flag) |
+  | Tour completion (A15)   | localStorage | NO |
+  | K2C referral (A16)      | localStorage | NO |
+  | Consultation (A17)      | localStorage | NO |
+  | Setup Complete (A18)    | localStorage | NO |
+
+  If user clears browser data or switches devices, ALL progress is lost.
+
+
+══════════════════════════════════════════════════════════════════════
+PHASE B — DAILY OPERATIONS (by role)
+══════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────
+B1: DASHBOARD (/dashboard)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/Dashboard.tsx (main dispatcher)
+  - src/components/dashboard/OwnerOperatorDashboard.tsx
+  - src/components/dashboard/ExecutiveDashboard.tsx
+  - src/components/dashboard/ComplianceManagerDashboard.tsx
+  - src/components/dashboard/ChefDashboard.tsx
+  - src/components/dashboard/KitchenManagerDashboard.tsx
+  - src/components/dashboard/KitchenStaffTaskList.tsx
+  - src/components/dashboard/FacilitiesDashboardNew.tsx
+  - src/components/dashboard/DashboardToday.tsx
+  - src/hooks/useDashboardStanding.ts -> standingQueries.ts
+  - src/hooks/useDashboardData.ts -> dashboardQueries.ts
+  - src/hooks/useSignalNotifications.ts
+  - src/hooks/useActiveBanner.ts
+
+(ii) Tables READ (via standingQueries.ts and dashboardQueries.ts):
+  - locations (org-scoped)
+  - temperature_logs (latest per-location)
+  - checklist_completions (latest per-location) — POTENTIAL NAME MISMATCH
+    (actual table may be checklist_template_completions)
+  - incidents (count open/critical)
+  - equipment (maintenance status)
+  - predictive_alerts (active)
+  - tasks (today + upcoming)
+  - documents (expiring/missing)
+  - vendor_service_records (vendor summary)
+  - vendor_client_relationships
+  - vendors
+  - notifications (realtime subscription)
+  - intelligence_signals (realtime subscription)
+  - location_service_schedules (VendorServiceWidgets)
+
+(iii) Tables WRITTEN:
+  - signal_reads: INSERT on banner dismiss (via useActiveBanner)
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for all org-scoped queries
+
+(vi) Demo mode: Each role dashboard has full demo data. Live mode
+     queries standing/dashboard tables. KitchenStaffTaskList uses
+     empty array in live mode (no task query).
+
+(vii) BUGS:
+  - Queries checklist_completions but actual table may be
+    checklist_template_completions — name mismatch
+  - References tasks, predictive_alerts, vendor_service_records which
+    may not exist in PROD
+  - All queries wrapped in try/catch — graceful degradation
+
+────────────────────────────────────────────────────────────────────
+B2: TEMPERATURE LOGGING (/temp-logs, /temp-log-quick, /temp-log-scan)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/TempLogs.tsx (~2000 lines, main)
+  - src/pages/TempLogQuick.tsx (quick entry)
+  - src/pages/TempLogScan.tsx (QR scan entry)
+
+(ii) Tables READ:
+  - temperature_equipment: .eq('organization_id', ...).eq('is_active', true)
+  - temperature_logs: last reading per equipment + history (200 rows)
+  - user_profiles: .select('id, full_name').eq('organization_id', ...)
+  - locations: .eq('organization_id', ...).limit(1)
+
+(iii) Tables WRITTEN:
+  - temperature_logs: INSERT (single + batch)
+  - receiving_temp_logs: INSERT (receiving tab)
+  - cooldown_logs: INSERT (completed cooldowns)
+  - cooldown_temp_checks: INSERT (individual checks)
+
+(iv) Edge functions: None directly. Calls dispatchTempViolationSignal()
+     which may invoke functions internally.
+
+(v) RLS: profile.organization_id for equipment/users. BUT:
+  - fetchHistory() does NOT filter by organization_id — queries ALL
+    temp logs with just .limit(200). Relies entirely on RLS.
+
+(vi) Demo mode: Hardcoded demo equipment (9 items), demo users (4),
+     generated history. All writes skipped with "(Demo)" toasts.
+
+(vii) BUGS:
+  - CRITICAL: TempLogQuick.tsx — No Supabase fetch for equipment in
+    live mode. Equipment list is empty. Page unusable outside demo.
+  - CRITICAL: TempLogScan.tsx — Entirely demo-driven. QR lookup uses
+    hardcoded equipmentQRCodes. No live mode data path.
+  - BUG: fetchHistory() has no org_id filter — cross-org data leakage
+    risk if RLS is misconfigured.
+  - receiving_temp_logs, cooldown_logs, cooldown_temp_checks may not
+    exist in PROD.
+
+────────────────────────────────────────────────────────────────────
+B3: DAILY CHECKLISTS (/checklists)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/Checklists.tsx (~1800 lines)
+
+(ii) Tables READ:
+  - checklist_templates (+ checklist_template_items count)
+  - checklist_template_completions
+  - user_profiles (batch name fetch)
+  - checklist_template_items (on start)
+  - locations (on completion submit)
+  - haccp_monitoring_logs (post-submit CCP check)
+
+(iii) Tables WRITTEN:
+  - checklist_templates: INSERT (create template)
+  - checklist_template_items: INSERT (template items)
+  - checklist_template_completions: INSERT (record completion)
+  - checklist_responses: INSERT (individual item responses)
+  - alerts: INSERT (for failed CCP items)
+  - checklist_templates: DELETE (delete template)
+  - Also: IndexedDB via addPendingAction() for offline resilience
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for all queries
+
+(vi) Demo mode: Uses DEMO_TODAY_CHECKLISTS, DEMO_HISTORY, hardcoded
+     CalCode/NFPA templates. CCP auto-mapping simulated locally.
+
+(vii) BUGS:
+  - alerts table may not exist in PROD
+  - haccp_monitoring_logs read depends on DB trigger that may not exist
+  - Template edit does "delete old + create new" — if create fails,
+    old template is lost
+
+────────────────────────────────────────────────────────────────────
+B4: CORRECTIVE ACTIONS (/corrective-actions)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/CorrectiveActions.tsx
+  - src/pages/CorrectiveActionDetail.tsx
+
+(ii) Tables READ: NONE
+(iii) Tables WRITTEN: NONE
+(iv) Edge functions: NONE
+
+(v) RLS: useRole() for role-based visibility (client-side only)
+
+(vi) Demo mode: ENTIRELY client-side state. Uses correctiveActionsDemoData.
+     Self-Inspection handoff reads from sessionStorage.
+
+(vii) BUGS:
+  - CRITICAL: No Supabase persistence whatsoever. All corrective actions
+    are lost on page refresh. This is a UI-only feature.
+  - CorrectiveActionDetail.tsx: localAction starts null, never populated
+    from any data source — always shows "not found" via router nav.
+
+────────────────────────────────────────────────────────────────────
+B5: HACCP (/haccp)
+────────────────────────────────────────────────────────────────────
+
+(i) Component: src/pages/HACCP.tsx (~2000+ lines)
+
+(ii) Tables READ:
+  - haccp_plans (+ haccp_critical_control_points embedded)
+  - haccp_monitoring_logs (latest per CCP)
+  - haccp_corrective_actions
+
+(iii) Tables WRITTEN:
+  - haccp_plans: INSERT (create), UPDATE (mark reviewed)
+  - haccp_critical_control_points: INSERT (CCPs for plan)
+  - haccp_corrective_actions: UPDATE (verify CA)
+
+(iv) Edge functions:
+  - generate-haccp-from-checklists (auto-generate plan from templates)
+
+(v) RLS: profile.organization_id for all queries/writes.
+    profile.full_name for verified_by field.
+
+(vi) Demo mode: Hardcoded HACCP_PLANS (3 plans) + CORRECTIVE_ACTIONS.
+     Plan creation shows toast only. Verify updates local state.
+
+(vii) BUGS:
+  - Plan creation in live mode does NOT refresh plan list after insert
+  - All 4 HACCP tables were recently applied to PROD (confirmed)
+
+────────────────────────────────────────────────────────────────────
+B6: INCIDENTS (/incidents)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/IncidentLog.tsx (~1000+ lines)
+
+(ii) Tables READ:
+  - incidents (+ incident_timeline, incident_comments embedded)
+  - locations
+
+(iii) Tables WRITTEN:
+  - incidents: INSERT (create), UPDATE (status changes)
+  - incident_timeline: INSERT (timeline entries)
+  - incident_comments: INSERT (add comment)
+
+(iv) Edge functions: None
+
+(v) RLS: profile.organization_id for all queries/writes.
+    Role-based: kitchen_staff sees only own incidents (client-side filter).
+
+(vi) Demo mode: DEMO_INCIDENTS (5 hardcoded). All CRUD updates local state.
+
+(vii) BUGS:
+  - CRITICAL (KNOWN): incidents, incident_timeline, incident_comments
+    tables have NO MIGRATION. All live-mode operations fail.
+  - BUG: reported_by hardcoded as 'Current User' string
+  - BUG: assigned_to uses random DEMO team member name
+  - BUG: Demo incidents may bleed into live mode (state initialized
+    with demo data, only overwritten if live fetch returns results)
+
+────────────────────────────────────────────────────────────────────
+B7: TRAINING (/training)
+────────────────────────────────────────────────────────────────────
+
+(i) Components:
+  - src/pages/TrainingRecords.tsx
+  - src/pages/TrainingHub.tsx
+  - src/pages/TrainingCatalog.tsx
+  - src/pages/TrainingCourse.tsx
+  - src/pages/EmployeeTrainingProfile.tsx
+
+(ii) Tables READ: NONE
+(iii) Tables WRITTEN: NONE
+(iv) Edge functions: NONE
+
+(v) RLS: useRole() for role-based filtering (client-side only)
+
+(vi) Demo mode: Uses TRAINING_EMPLOYEES from trainingRecordsDemoData.ts.
+     Live mode: employees = [] — shows "No team members yet".
+
+(vii) BUGS:
+  - CRITICAL: No Supabase integration at all. Entire module is demo-only
+    UI with no production data persistence.
+  - Live mode shows "No team members yet" regardless of actual team size.
+
+────────────────────────────────────────────────────────────────────
+B8: SHIFT HANDOFF (/shift-handoff)
+────────────────────────────────────────────────────────────────────
+
+(i) Component: src/pages/ShiftHandoff.jsx
+
+(ii) Tables READ: NONE
+(iii) Tables WRITTEN: NONE
+(iv) Edge functions: NONE
+
+(v) RLS: useAuth() for profile.full_name (greeting only)
+
+(vi) Demo mode: Hardcoded stats (tempCount: 12, checklistCount: 2, etc.).
+     Live mode: all stats 0, open items empty.
+
+(vii) BUGS:
+  - CRITICAL: No Supabase persistence. Shift handoff notes are not saved
+    anywhere. "Complete Handoff" is purely cosmetic.
+  - Code comment: "in production these would come from DB queries"
+
+────────────────────────────────────────────────────────────────────
+B-SUMMARY: DAILY OPERATIONS STATUS
+────────────────────────────────────────────────────────────────────
+
+  FULL SUPABASE INTEGRATION (Demo + Live):
+  | Page              | Read | Write | Status                    |
+  |-------------------|------|-------|---------------------------|
+  | Temperature Logs  | YES  | YES   | Works but org_id gap      |
+  | Checklists        | YES  | YES   | Works, handles FK issues  |
+  | HACCP             | YES  | YES   | Works (tables now in PROD)|
+  | Incidents         | YES  | YES   | TABLES DO NOT EXIST       |
+
+  NO SUPABASE INTEGRATION (Demo-Only UI):
+  | Page              | Status                              |
+  |-------------------|-------------------------------------|
+  | Corrective Actions| All client-side state, no persistence|
+  | Training Records  | Demo data only, no DB integration   |
+  | Shift Handoff     | No persistence at all               |
+  | TempLogQuick      | Broken in live mode (empty equip)   |
+  | TempLogScan       | Demo-only (hardcoded QR lookup)     |
+
+  DASHBOARD: Reads from many tables. References potentially missing
+  tables (tasks, predictive_alerts, vendor_service_records). Possible
+  table name mismatch (checklist_completions vs checklist_template_completions).
+
+
+══════════════════════════════════════════════════════════════════════
+PHASE C — ORGANIZATION ADMIN
+══════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────
+C1: SETTINGS (/settings)
+────────────────────────────────────────────────────────────────────
+File: src/pages/Settings.tsx (~1850 lines, 12 tabs)
+
+Tabs with REAL Supabase writes:
+  - notifications: notification_settings table (read + upsert)
+  - security: supabase.auth.updateUser({ password })
+  - billing: Stripe edge functions (see C2)
+  - privacy: organizations table (leaderboard opt-in, SB 1383, K-12)
+
+Tabs with NO Supabase writes (toast-only or ephemeral state):
+  - profile: "Save Changes" is no-op toast
+  - organization: "Save Changes" is no-op toast
+  - operating-hours: OperatingHoursContext only (no DB)
+  - regulatory-monitoring: all defaultChecked, no persistence
+  - jurisdiction: hardcoded demo locations, toast-only
+  - integrations: all "Coming Soon" / toast-only
+  - enterprise: hardcoded SSO demo data
+  - sync: reads from OfflineContext
+
+Confirmed no-op "Save" buttons:
+  - Profile settings: toast.success('Profile saved')
+  - Organization settings: toast.success('Organization settings saved')
+  - Regulatory monitoring: toast.success('preferences saved')
+  - Jurisdiction overrides: toast.success('override saved')
+  - All integration buttons: toast.info(...)
+  - Add Location: toast.info('Add location')
+  - Add Custom Jurisdiction: toast.success('Custom jurisdiction added')
+
+────────────────────────────────────────────────────────────────────
+C2: BILLING / SUBSCRIPTION
+────────────────────────────────────────────────────────────────────
+Files:
+  - src/components/BillingPanel.tsx
+  - src/lib/stripe.ts
+  - supabase/functions/stripe-create-checkout/index.ts
+  - supabase/functions/stripe-customer-portal/index.ts
+  - supabase/functions/stripe-webhook/index.ts
+
+Edge functions:
+  - stripe-create-checkout: Creates Stripe Checkout session -> returns URL
+  - stripe-customer-portal: Creates billing portal session -> returns URL
+  - stripe-webhook: Handles Stripe webhook events (server-side)
+
+Plans hardcoded in stripe.ts (not from DB):
+  - founder_single: $99/mo single location
+  - founder_multi: $99/mo + $49/mo per additional
+  - enterprise: Contact sales
+
+Demo mode: Shows toast "Stripe checkout available in production".
+Trial banner: hardcoded "18 days remaining" in demo.
+
+────────────────────────────────────────────────────────────────────
+C3: LOCATIONS MANAGEMENT
+────────────────────────────────────────────────────────────────────
+STATUS: NON-FUNCTIONAL
+
+No dedicated Locations page exists. Location management is in
+Settings.tsx Organization tab (lines ~422-453). Shows hardcoded
+demo locations or empty state. "Add Location" is a no-op toast.
+
+The locations table EXISTS in PROD but there is no CRUD UI.
+ComplianceOverview links to /org-hierarchy for location management
+but that page was not found.
+
+────────────────────────────────────────────────────────────────────
+C4: DOCUMENTS (/documents) — Admin Features
+────────────────────────────────────────────────────────────────────
+File: src/pages/Documents.tsx
+
+READ: documents table (.eq('organization_id', ...))
+WRITE: NONE. Share/export are toast-only via guardAction.
+
+No bulk delete, no category management, no admin-only visibility.
+
+────────────────────────────────────────────────────────────────────
+C5: COMPLIANCE OVERVIEW / PSE
+────────────────────────────────────────────────────────────────────
+
+ComplianceOverview.tsx: ZERO Supabase calls. 100% demo data.
+  Non-demo returns empty state: "No compliance data yet."
+
+ComplianceTrends.tsx: Has real data path via useTrendAnalytics hook.
+  Reads: compliance_score_snapshots, locations
+
+ComplianceIndex.tsx: ZERO Supabase calls. All hardcoded const data.
+  Non-demo returns: "No Compliance Index Data."
+
+ComplianceIntelligence.tsx: ZERO Supabase calls. Data from
+  intelligenceData.ts imports.
+
+ComplianceHub.tsx: Pure navigation hub from sidebarConfig.
+
+────────────────────────────────────────────────────────────────────
+C6: REPORTS / ANALYTICS
+────────────────────────────────────────────────────────────────────
+
+ReportCenter.tsx: ZERO Supabase calls. Report catalog from
+  reportConfig. hasData = isDemoMode (live = "no data").
+
+ReportDetail.tsx: ZERO Supabase calls.
+
+────────────────────────────────────────────────────────────────────
+C7: REFERRAL / AMBASSADOR
+────────────────────────────────────────────────────────────────────
+
+ReferralDashboard.tsx: ZERO Supabase calls. 100% demo data from
+  referralDemoData.ts. 6 tabs all demo-powered.
+
+ReferralRedirect.tsx (/ref/:code): Public page. ZERO Supabase calls.
+  Auto-redirects to /signup?ref=${code}. No click tracking persisted.
+
+All share/generate operations use navigator.clipboard or navigator.share.
+No referral tracking tables queried or written.
+
+────────────────────────────────────────────────────────────────────
+C8: LEADERBOARD
+────────────────────────────────────────────────────────────────────
+
+Leaderboard.tsx: Has real data path.
+  READ: v_location_leaderboard view (no org scoping — community view)
+  View depends on: locations, organizations, temp_logs,
+    checklist_completions
+  Filter: locations.status='active' AND organizations.leaderboard_opted_in=true
+  Feature-gated: <FeatureGate flagKey="leaderboard">
+  NO demo mode check — always queries real data.
+
+LeaderboardPreview.tsx: Hardcoded preview data. Zero Supabase calls.
+  Marketing page with CTAs to signup/login.
+
+
+══════════════════════════════════════════════════════════════════════
+PHASE D — PLATFORM ADMIN
+══════════════════════════════════════════════════════════════════════
+
+All /admin/* routes wrapped in <RequireAdmin /> in src/App.tsx.
+Many sales/demo routes have additional <SalesGuard> wrapper.
+platform_admin bypasses all route guards (routeGuards.ts:90).
+
+────────────────────────────────────────────────────────────────────
+D1: ADMIN DASHBOARD
+────────────────────────────────────────────────────────────────────
+
+AdminHome.tsx:
+  READ: billing_subscriptions, organizations, locations,
+    intelligence_sources, intelligence_signals, support_tickets,
+    platform_audit_log
+  WRITE: None
+
+AdminDashboard.tsx:
+  READ: crawl_health, crawl_runs, admin_event_log, admin_api_keys,
+    assessment_leads, demo_sessions, k2c_donations, organizations,
+    locations, platform_metrics_daily
+  EDGE: crawl-monitor, k2c-processor, platform-metrics-refresh
+  Demo: hardcoded DEMO_CRAWL_HEALTH, DEMO_EVENTS, etc.
+
+────────────────────────────────────────────────────────────────────
+D2: SALES PIPELINE
+────────────────────────────────────────────────────────────────────
+SalesPipeline.tsx:
+  READ: sales_pipeline
+  WRITE: sales_pipeline (update stage/notes), demo_sessions (update)
+
+────────────────────────────────────────────────────────────────────
+D3: GTM DASHBOARD
+────────────────────────────────────────────────────────────────────
+GtmDashboard.tsx:
+  READ: demo_sessions, sales_pipeline_deals, assessment_leads
+  BUG: Reads sales_pipeline_deals while SalesPipeline reads
+    sales_pipeline — potential table name mismatch.
+
+────────────────────────────────────────────────────────────────────
+D4: DEMO MANAGEMENT
+────────────────────────────────────────────────────────────────────
+
+DemoGenerator.tsx:
+  WRITE: demo_sessions INSERT
+  EDGE: demo-account-create
+
+DemoLauncher.tsx:
+  READ: demo_sessions
+  WRITE: demo_sessions INSERT, intelligence_signals INSERT
+
+DemoPipeline.tsx:
+  READ: demo_sessions
+  WRITE: demo_sessions UPDATE, organizations UPDATE
+  EDGE: demo-account-convert
+
+DemoTours.jsx:
+  READ: demo_tours, demo_templates
+  WRITE: organizations INSERT, locations INSERT, user_profiles UPDATE,
+    demo_tours INSERT/UPDATE
+  EDGE: demo-account-create, generate-demo-template, cleanup-demo-tour
+  Production guard: IS_PRODUCTION check redirects to /admin
+
+PartnerDemos.jsx:
+  READ: demo_sessions
+  WRITE: demo_sessions INSERT
+
+────────────────────────────────────────────────────────────────────
+D5: KITCHEN CHECKUP
+────────────────────────────────────────────────────────────────────
+AssessmentLeads.tsx:
+  READ: assessment_leads (with assessment_results join)
+  Access gated by isEvidlyAdmin or platform_admin/owner_operator
+
+────────────────────────────────────────────────────────────────────
+D6: ADMIN CLIENT ONBOARDING
+────────────────────────────────────────────────────────────────────
+AdminClientOnboarding.tsx:
+  READ: jurisdictions
+  WRITE: organizations INSERT, locations INSERT, user_profiles INSERT,
+    user_location_access INSERT. Also supabase.auth.signUp().
+
+────────────────────────────────────────────────────────────────────
+D7: ALL OTHER ADMIN ROUTES (30+ pages)
+────────────────────────────────────────────────────────────────────
+
+AdminOrgs.tsx: READ/WRITE organizations, platform_audit_log
+AdminUsers.tsx: READ/WRITE user_profiles, user_sessions, platform_audit_log
+AdminBilling.tsx: READ billing_subscriptions, billing_invoices
+TrialHealth.tsx: READ organizations, trial_email_log. EDGE: trial-reminder
+MarketingCampaigns.tsx: READ/WRITE marketing_campaigns, touchpoints
+EmailSequenceManager.tsx: READ trial_email_sequences, vendor_outreach_pipeline,
+  vendor_notification_log, referrals. WRITE trial_email_sequences
+  ** CLAUDE.MD VIOLATION: reads referrals table (HoodOps PRO) **
+ViolationOutreach.tsx: READ violation_prospects, outreach_touches. EDGE: generate-outreach
+Configure.tsx: READ/WRITE organizations, locations, vendors, admin_event_log
+FeatureFlags.tsx: READ/WRITE feature_flags, feature_flag_audit. EDGE: ai-flag-suggest
+UserEmulation.tsx: READ organizations, user_profiles, emulation_audit_log
+AdminAuditLog.tsx: READ/WRITE platform_audit_log
+AdminCrawlMonitor.tsx: READ intelligence_sources, crawl_runs. EDGE: crawl-monitor, trigger-crawl
+AdminScoreTable.tsx: READ scoretable_views (5000 row client-side aggregation)
+CommandCenter.tsx: READ admin_event_log, intelligence_sources, support_tickets,
+  organizations, locations. EDGE: trigger-crawl
+DatabaseBackup.tsx: READ/WRITE admin_backups
+AdminTestimonials.tsx: READ/WRITE testimonials
+AdminSecurity.tsx: READ/WRITE mfa_policy, session_policy, user_sessions, platform_audit_log
+AdminK2C.tsx: READ/WRITE k2c_donations
+AdminReports.tsx: READ/WRITE internal_reports
+EventLog.tsx: READ admin_event_log (realtime subscription, 10s auto-refresh)
+DocumentVault.tsx: READ/WRITE vault_documents. STORAGE: VAULT bucket
+EvidLYIntelligence.tsx (7-tab mega page): READ entity_correlations,
+  jurisdiction_intel_updates, regulatory_changes, rfp_listings, jurisdictions,
+  location_risk_predictions, prediction_accuracy_log, platform_settings.
+  WRITE intelligence_signals, jurisdiction_intel_updates, client_advisories.
+  EDGE: intelligence-collect, intelligence-deliver
+IntelligenceAdmin.tsx (signal pipeline): READ/WRITE intelligence_signals,
+  intelligence_game_plans, signal_review_log. EDGE: classify-signals
+MaintenanceMode.tsx: READ/WRITE admin_security_config, admin_event_log
+RemoteConnect.tsx: READ/WRITE remote_connect_sessions, organizations
+RfpIntelligence.tsx: READ rfp_listings, rfp_sources. EDGE: rfp-crawl, rfp-classify
+SecuritySettings.tsx: READ/WRITE admin_security_config. EDGE: security-headers-check
+StaffRoles.tsx: READ/WRITE admin_staff
+SupportTickets.tsx: READ/WRITE support_tickets, support_ticket_replies
+SurveyPage.tsx: READ/WRITE support_tickets (PUBLIC — no auth required, token-based)
+SystemMessages.tsx: READ/WRITE system_messages
+UserProvisioning.tsx: READ/WRITE user_profiles, organizations
+GuidedTours.tsx: READ/WRITE demo_sessions, sales_pipeline, marketing_campaigns,
+  guided_tour_templates
+
+────────────────────────────────────────────────────────────────────
+D-SUMMARY: PLATFORM ADMIN
+────────────────────────────────────────────────────────────────────
+
+  Total admin page files: 49
+  Distinct Supabase tables READ: 65+
+  Distinct Supabase tables WRITTEN: 35+
+  Distinct edge functions invoked: 17
+  Pages with no Supabase access: 4 (AdminHub, DemoDashboard,
+    RolePreview, FeatureBaselineTracker)
+
+  CLAUDE.MD VIOLATION:
+    EmailSequenceManager.tsx reads 'referrals' table — HoodOps PRO
+
+  TABLE NAME MISMATCH:
+    GtmDashboard reads sales_pipeline_deals vs SalesPipeline reads
+    sales_pipeline — different table names for same data
+
+  PUBLIC PAGE IN ADMIN FOLDER:
+    SurveyPage.tsx requires NO authentication (token-based CSAT)
+
+  35+ admin tables likely missing from PROD (would show empty data):
+    crawl_health, crawl_runs, platform_metrics_daily,
+    admin_event_log, admin_api_keys, admin_backups, admin_staff,
+    admin_security_config, trial_email_log, trial_email_sequences,
+    vendor_outreach_pipeline, vendor_notification_log,
+    violation_prospects, outreach_touches, feature_flag_audit,
+    emulation_audit_log, demo_tours, demo_templates,
+    guided_tour_templates, entity_correlations, regulatory_changes,
+    rfp_listings, rfp_sources, location_risk_predictions,
+    prediction_accuracy_log, platform_settings, signal_review_log,
+    intelligence_game_plans, intelligence_classification_log,
+    content_verification_status, ai_budget_config, client_advisories,
+    mfa_policy, session_policy, vault_documents, remote_connect_sessions,
+    scoretable_views, system_messages, internal_reports,
+    verification_status, verification_log, vendor_spots, vendor_leads,
+    api_key_request_log, sales_pipeline_deals
+
+
+══════════════════════════════════════════════════════════════════════
+PHASE E — RLS REFERENCE PATTERNS
+══════════════════════════════════════════════════════════════════════
+
+138 migration files contain CREATE POLICY statements.
+
+────────────────────────────────────────────────────────────────────
+E1: PATTERN TAXONOMY
+────────────────────────────────────────────────────────────────────
+
+PATTERN A: Direct org_id match via user_profiles
+  "organization_id IN (SELECT organization_id FROM user_profiles
+   WHERE id = auth.uid())"
+  Returns: single org
+
+  Tables: employee_certifications, cooldown_logs, cooldown_temp_checks,
+    notifications, corrective_actions, corrective_action_templates,
+    haccp_plans, haccp_monitoring_logs, haccp_corrective_actions,
+    equipment, equipment_service_records, alerts,
+    self_inspection_sessions, mock_inspection_sessions
+
+PATTERN C: Location-based via user_location_access
+  "organization_id IN (SELECT organization_id FROM
+   user_location_access WHERE user_id = auth.uid())"
+  Returns: can return multiple orgs
+
+  Tables: organizations, locations, temp_logs, checklists,
+    checklist_items, checklist_assignments, checklist_completions,
+    documents, vendors, compliance_requirements, tasks, activity_logs,
+    temperature_equipment, temp_check_completions, receiving_temp_logs,
+    checklist_templates, checklist_template_items,
+    checklist_template_completions, checklist_responses,
+    onboarding_checklist_items, vendor_upload_requests
+
+PATTERN A-VARIANT: Facility-based org match
+  "facility_id IN (SELECT l.id FROM locations l JOIN user_profiles up
+   ON up.organization_id = l.organization_id WHERE up.id = auth.uid())"
+
+  Tables: temperature_logs, cooling_logs
+
+PATTERN B: Direct user match
+  "id = auth.uid()" or "user_id = auth.uid()"
+
+  Tables: user_profiles, user_location_access, vendor_users
+
+PATTERN D: Service role only
+  "auth.role() = 'service_role'"
+
+  Tables with service_role bypass: temperature_logs, cooling_logs,
+    equipment, equipment_service_records, equipment_maintenance_schedule,
+    alerts, corrective_action_templates, corrective_actions,
+    haccp_plans, haccp_critical_control_points, haccp_monitoring_logs,
+    haccp_corrective_actions
+
+  Tables with ONLY service_role access (catch-all from 20260531):
+    trial_email_sequences, trial_email_log, vendor_outreach_pipeline,
+    service_type_definitions, equipment_type_definitions,
+    competitor_blocked_domains, jurisdiction_config_baselines,
+    drift_alert_log, drift_monitor_executions
+
+PATTERN E: Public read (USING (true))
+  Tables: vendor_secure_tokens, jurisdiction_scoring_profiles,
+    violation_code_mappings, crawl_runs, intelligence_insights,
+    executive_snapshots
+
+PATTERN F: Role-based
+  Tables: user_invitations (role IN ('admin','owner') on
+    user_location_access), demo_sessions (role-based DELETE)
+
+────────────────────────────────────────────────────────────────────
+E2: CRITICAL TABLE RLS AUDIT
+────────────────────────────────────────────────────────────────────
+
+temperature_logs:
+  RLS: ENABLED. SELECT + INSERT via facility_id join. service_role INSERT.
+  GAPS: No UPDATE, no DELETE. No organization_id column — RLS uses
+        facility_id join. Client .eq('organization_id') silently fails.
+
+checklist_responses:
+  RLS: ENABLED. SELECT + INSERT via completion_id join.
+  GAPS: No UPDATE, no DELETE.
+
+corrective_actions:
+  RLS: ENABLED. SELECT, INSERT, UPDATE via Pattern A. service_role ALL.
+  GAPS: No DELETE for authenticated users.
+
+equipment:
+  RLS: ENABLED. SELECT, INSERT, UPDATE, DELETE via Pattern A. service_role ALL.
+  GAPS: None — FULLY COVERED.
+
+documents:
+  RLS: ENABLED. SELECT, INSERT, UPDATE, DELETE via Pattern C.
+  GAPS: None — FULLY COVERED.
+
+vendors:
+  RLS: ENABLED. SELECT, INSERT, UPDATE, DELETE via Pattern C.
+  GAPS: None — FULLY COVERED.
+  NOTE: Two vendor table definitions — policies from both may coexist.
+
+vendor_client_relationships:
+  RLS: ENABLED. SELECT only (vendor-side + client-side).
+  GAPS: NO INSERT, NO UPDATE, NO DELETE for any authenticated user.
+        Writes completely blocked at RLS. useCreateVendor INSERT fails.
+
+user_profiles:
+  RLS: ENABLED. SELECT (org-wide + self). INSERT (self). UPDATE (self).
+  GAPS: No DELETE.
+
+organizations:
+  RLS: ENABLED. SELECT via user_location_access. INSERT WITH CHECK (true).
+       UPDATE via user_location_access.
+  GAPS: No DELETE. INSERT is wide open — any authenticated user can
+        create unlimited organizations (intentional for signup).
+
+locations:
+  RLS: ENABLED. SELECT, INSERT, UPDATE, DELETE via Pattern C.
+  GAPS: None — FULLY COVERED.
+
+user_invitations:
+  RLS: ENABLED. SELECT, INSERT, UPDATE restricted to
+       user_location_access.role IN ('admin','owner').
+  GAPS: No DELETE. Role check uses user_location_access.role values
+        ('admin','owner') which differ from user_profiles.role values
+        (owner_operator, platform_admin, etc.). MISMATCH.
+
+employee_certifications:
+  RLS: ENABLED. SELECT, INSERT, UPDATE via Pattern A.
+  GAPS: No DELETE.
+
+haccp_plans:
+  RLS: ENABLED. SELECT, INSERT, UPDATE via Pattern A. service_role ALL.
+  GAPS: No DELETE for authenticated users.
+
+haccp_corrective_actions:
+  RLS: ENABLED. SELECT, INSERT, UPDATE via Pattern A. service_role ALL.
+  GAPS: No DELETE for authenticated users.
+
+────────────────────────────────────────────────────────────────────
+E3: CRITICAL VULNERABILITIES
+────────────────────────────────────────────────────────────────────
+
+VULN-001: Dual org-resolution patterns (Pattern A vs Pattern C)
+  Pattern A: user_profiles.organization_id -> single org
+  Pattern C: user_location_access.user_id -> can return multiple orgs
+  If a user has user_location_access rows for org X and Y, Pattern C
+  grants access to both while Pattern A only grants access to one.
+  Tables using different patterns have different access boundaries.
+
+VULN-002: temperature_logs has no organization_id column
+  RLS correctly joins through facility_id -> locations -> user_profiles.
+  But client code calling .eq('organization_id', orgId) silently fails
+  (returns zero rows, not an error).
+
+VULN-003: organizations INSERT is wide open
+  WITH CHECK (true) — any authenticated user can create unlimited orgs.
+  Intentional for signup but represents abuse vector.
+
+VULN-004: user_invitations role check mismatch
+  RLS checks user_location_access.role IN ('admin','owner').
+  App uses user_profiles.role values (owner_operator, platform_admin).
+  These are DIFFERENT ROLE SYSTEMS. An owner_operator needs
+  user_location_access.role='owner' to manage invitations.
+
+VULN-005: Tables created after RLS catch-all without explicit RLS
+  jurisdiction_config_baselines, drift_alert_log, drift_monitor_executions
+  (from 20260605000000) created AFTER catch-all (20260531) with NO
+  explicit ENABLE ROW LEVEL SECURITY. May be completely unprotected.
+
+VULN-006: vendor_client_relationships — no INSERT/UPDATE/DELETE
+  Authenticated users cannot create, modify, or remove vendor
+  relationships. useCreateVendor INSERT is silently blocked by RLS.
+
+VULN-007: Missing UPDATE/DELETE on audit-trail tables
+  temperature_logs, checklist_completions, checklist_responses,
+  cooling_logs — no UPDATE or DELETE policies.
+  Possibly intentional (immutable audit trail) but not documented.
+
+
+══════════════════════════════════════════════════════════════════════
+APPENDIX 1 — COMPLETE TABLE REFERENCE MAP
+══════════════════════════════════════════════════════════════════════
+
+Tables with CONFIRMED real data paths (Supabase reads/writes in
+non-demo code paths):
+
+  CORE:
+    organizations, locations, user_profiles, user_location_access
+
+  AUTH:
+    user_invitations, notification_settings
+
+  TEMPERATURE:
+    temperature_equipment, temperature_logs, receiving_temp_logs,
+    cooldown_logs, cooldown_temp_checks
+
+  CHECKLISTS:
+    checklist_templates, checklist_template_items,
+    checklist_template_completions, checklist_responses
+
+  HACCP:
+    haccp_plans, haccp_critical_control_points,
+    haccp_monitoring_logs, haccp_corrective_actions
+
+  CORRECTIVE ACTIONS:
+    corrective_actions, corrective_action_templates
+
+  EQUIPMENT:
+    equipment, equipment_service_records, equipment_maintenance_schedule
+
+  VENDORS:
+    vendors, vendor_client_relationships, vendor_upload_requests,
+    vendor_contact_log
+
+  DOCUMENTS:
+    documents
+
+  CERTIFICATIONS:
+    employee_certifications
+
+  INTELLIGENCE:
+    intelligence_signals, intelligence_sources, signal_reads
+
+  LEADERBOARD:
+    v_location_leaderboard (view)
+
+  BILLING:
+    billing_subscriptions, billing_invoices (via Stripe webhook)
+
+  COMPLIANCE:
+    compliance_score_snapshots (via useTrendAnalytics)
+
+Tables with ONLY demo data paths (no real Supabase queries):
+  incidents, incident_timeline, incident_comments (missing tables)
+  food_recovery_records (missing table)
+  k12_school_records (missing table)
+  corrective_actions (page has no Supabase, only toast/local state)
+  All training-related tables
+  All referral-related tables (in non-admin context)
+
+Tables referenced ONLY by admin pages (65+ total — see D7 listing)
+
+
+══════════════════════════════════════════════════════════════════════
+APPENDIX 2 — EDGE FUNCTION INVENTORY
+══════════════════════════════════════════════════════════════════════
+
+PHASE A (Onboarding):
+  | Function               | Caller                    | Guard       |
+  |------------------------|---------------------------|-------------|
+  | send-team-invite       | TeamInviteModal.tsx        | !isDemoMode |
+  | send-sms-invite        | Team.tsx (resend)          | !isDemoMode |
+  | classify-document      | SmartUploadModal.tsx       | !isDemoMode |
+  | process-service-request| RequestServiceModal.tsx    | !isDemoMode |
+  | k2c-referral-invite    | K2CInviteModal.tsx (not onboarding) | !isDemoMode |
+
+PHASE B (Daily Operations):
+  | Function                        | Caller           | Guard       |
+  |---------------------------------|------------------|-------------|
+  | generate-haccp-from-checklists  | HACCP.tsx         | !isDemoMode |
+  | dispatchTempViolationSignal*    | TempLogs.tsx      | !isDemoMode |
+
+PHASE C (Org Admin):
+  | Function               | Caller          | Guard       |
+  |------------------------|-----------------|-------------|
+  | stripe-create-checkout | BillingPanel.tsx | !isDemoMode |
+  | stripe-customer-portal | BillingPanel.tsx | !isDemoMode |
+  | stripe-webhook         | (server-side)   | N/A         |
+
+PHASE D (Platform Admin — 17 distinct):
+  | Function                 | Caller(s)                         |
+  |--------------------------|-----------------------------------|
+  | crawl-monitor            | AdminDashboard, AdminCrawlMonitor |
+  | trigger-crawl            | AdminCrawlMonitor, CommandCenter  |
+  | k2c-processor            | AdminDashboard                    |
+  | platform-metrics-refresh | AdminDashboard                    |
+  | demo-account-create      | DemoGenerator, DemoTours          |
+  | demo-account-convert     | DemoPipeline                      |
+  | generate-demo-template   | DemoTours                         |
+  | cleanup-demo-tour        | DemoTours                         |
+  | trial-reminder           | TrialHealth                       |
+  | generate-outreach        | ViolationOutreach                 |
+  | ai-flag-suggest          | FeatureFlags                      |
+  | intelligence-collect     | EvidLYIntelligence                |
+  | intelligence-deliver     | EvidLYIntelligence, IntelligenceAdmin |
+  | classify-signals         | IntelligenceAdmin                 |
+  | security-headers-check   | SecuritySettings                  |
+  | rfp-crawl                | RfpIntelligence                   |
+  | rfp-classify             | RfpIntelligence                   |
+
+Functions SHOULD be invoked but are NOT:
+  - Vendor invite email (InviteVendorModal creates row, no send)
+  - document-scan (exists but never invoked from Documents page)
+
+
+══════════════════════════════════════════════════════════════════════
+APPENDIX 3 — BUGS, GAPS & DIVERGENCES
+══════════════════════════════════════════════════════════════════════
+
+=== CRITICAL (blocks production functionality) ===
+
+BUG-001: Profile save is no-op toast (A1)
+  File: src/pages/Settings.tsx
+  Issue: "Save Changes" on profile tab calls toast.success() with no
+         Supabase .update() call. User data never persists.
+
+BUG-002: Location creation is no-op toast (A2)
+  File: src/pages/Settings.tsx
+  Issue: "Add Location" fires toast.info() with no modal, no write.
+         Entire step is non-functional.
+
+BUG-003: Completion detection uses wrong table name (A1, A3)
+  File: src/hooks/useOnboardingChecklist.ts
+  Issue: Queries .from('profiles') but actual table is user_profiles.
+         Steps profile and add_team never auto-complete.
+
+BUG-004: No INSERT RLS policy on vendor_client_relationships (A5, E2)
+  File: useCreateVendor.ts -> vendor_client_relationships
+  Issue: INSERT silently blocked by RLS. Orphaned vendor records.
+
+BUG-005: Vendor invitation email never sent (A6)
+  File: src/components/vendor/InviteVendorModal.tsx
+  Issue: Creates user_invitations row but does NOT invoke any edge
+         function to send the email. Vendors never receive invitations.
+
+BUG-006: Document upload never writes to documents table (A9)
+  File: src/components/SmartUploadModal.tsx
+  Issue: onSave creates in-memory objects only. completionTable check
+         for documents will never be satisfied.
+
+BUG-007: food_recovery_records table missing (A12)
+  Issue: Table does not exist in any migration. SELECT fails in PROD.
+         Write is placeholder alert().
+
+BUG-008: k12_school_records table missing (A13)
+  Issue: Table does not exist in any migration. SELECT fails in PROD.
+         Write is placeholder alert().
+
+BUG-009: enrollmentFlags never passed to resolveVisibleSteps (A0+)
+  File: src/hooks/useOnboardingChecklist.ts:171-174
+  Issue: 4th parameter omitted. SB 1383 and K-12 steps always filtered
+         out, even for qualifying orgs.
+
+BUG-010: Settings enrollment toggles don't hydrate from DB (A0+)
+  File: src/pages/Settings.tsx
+  Issue: SB 1383 and K-12 toggles initialize to false but never load
+         the org's actual enrollment state on page mount.
+
+BUG-011: organizations.onboarding_completed column may not exist
+  File: useOnboardingChecklist.ts:150, Onboarding.tsx:92
+  Issue: No migration creates this boolean column on organizations.
+
+BUG-020: Corrective Actions page has zero Supabase persistence (B4)
+  File: src/pages/CorrectiveActions.tsx
+  Issue: All data is client-side state. Lost on page refresh.
+
+BUG-021: Training module has zero Supabase integration (B7)
+  File: src/pages/TrainingRecords.tsx
+  Issue: Entire module is demo-only UI. Live mode shows empty state.
+
+BUG-022: Shift Handoff has zero persistence (B8)
+  File: src/pages/ShiftHandoff.jsx
+  Issue: Notes and handoff data are not saved anywhere.
+
+BUG-023: TempLogQuick broken in live mode (B2)
+  File: src/pages/TempLogQuick.tsx
+  Issue: No Supabase fetch for equipment. Equipment list empty.
+
+BUG-024: TempLogScan is demo-only (B2)
+  File: src/pages/TempLogScan.tsx
+  Issue: QR lookup uses hardcoded data. No live data path.
+
+BUG-025: Incidents tables missing from PROD (B6)
+  Issue: incidents, incident_timeline, incident_comments have no
+         migration. All live-mode operations fail.
+
+BUG-026: Incident reported_by hardcoded as 'Current User' (B6)
+  File: src/pages/IncidentLog.tsx
+  Issue: Should use profile.full_name.
+
+BUG-027: Incident assigned_to uses random demo name (B6)
+  File: src/pages/IncidentLog.tsx
+  Issue: Random DEMO_MEMBER name, not a real user.
+
+BUG-028: Demo incidents bleed into live mode (B6)
+  File: src/pages/IncidentLog.tsx
+  Issue: State initialized with demo data, only overwritten if live
+         fetch returns results. Empty live = stale demo data shown.
+
+BUG-029: EmailSequenceManager reads referrals table (D7)
+  File: src/pages/admin/EmailSequenceManager.tsx
+  Issue: CLAUDE.MD VIOLATION — referrals is HoodOps PRO table.
+
+BUG-030: Tables created after RLS catch-all without RLS (E3)
+  File: 20260605000000_jurisdiction_drift_monitor_02.sql
+  Issue: jurisdiction_config_baselines, drift_alert_log,
+         drift_monitor_executions may have NO RLS protection.
+
+=== HIGH (wrong behavior, no crash) ===
+
+BUG-012: Vendor table schema conflict (A5)
+BUG-013: Route mismatch for request_documents (A11)
+BUG-014: Completion mismatch for iot_readiness (A14)
+BUG-015: Tour marked complete before it runs (A15)
+BUG-016: K2C onboarding modal uses hardcoded demo referral link (A16)
+
+BUG-031: fetchHistory() has no org_id filter (B2)
+  File: src/pages/TempLogs.tsx
+  Issue: Queries ALL temp logs with .limit(200). Cross-org data
+         leakage risk if RLS is misconfigured.
+
+BUG-032: Checklist template edit deletes then creates (B3)
+  File: src/pages/Checklists.tsx
+  Issue: If create fails, old template is lost.
+
+BUG-033: HACCP plan list not refreshed after creation (B5)
+  File: src/pages/HACCP.tsx
+  Issue: No fetch call after insert success.
+
+BUG-034: GtmDashboard vs SalesPipeline table name mismatch (D3)
+  Issue: sales_pipeline_deals vs sales_pipeline — different names.
+
+BUG-035: user_invitations RLS role mismatch (E2)
+  Issue: RLS checks user_location_access.role ('admin','owner') but
+         app uses user_profiles.role ('owner_operator', etc.).
+
+=== MEDIUM (UX issue, non-blocking) ===
+
+BUG-017: SB 1383 gate lacks state + tier check (A0+)
+BUG-018: service-certificates storage bucket not in migration (A7)
+BUG-019: Missing icons for 3 onboarding steps (A0++)
+
+BUG-036: Dashboard queries checklist_completions — may be wrong name
+  Issue: Actual table may be checklist_template_completions.
+
+BUG-037: Organizations INSERT is wide open (E3)
+  Issue: WITH CHECK (true) — any authenticated user can create
+         unlimited organizations.
+
+BUG-038: Dual org-resolution patterns (E3)
+  Issue: Pattern A (user_profiles) vs Pattern C (user_location_access)
+         give different access boundaries for the same user.
+
+=== DIVERGENCES ===
+
+DIV-001: Two legacy onboarding flow definitions (A0++)
+DIV-002: role: 'vendor' in user_invitations (A6)
+DIV-003: All onboarding progress is localStorage-only (AX)
+
+DIV-004: SurveyPage.tsx is public but in admin folder (D7)
+  Issue: No auth required. Token-based CSAT. Architecturally misplaced.
+
+DIV-005: 35+ admin tables likely missing from PROD (D-summary)
+  Issue: Admin pages reference tables that may not exist. Would show
+         empty data, not crash (try/catch wrapping).
+
+DIV-006: Missing UPDATE/DELETE on audit-trail tables (E3)
+  Issue: temperature_logs, checklist_completions, checklist_responses,
+         cooling_logs have no UPDATE/DELETE policies. Possibly
+         intentional (immutable audit trail) but not documented.
+
+
+══════════════════════════════════════════════════════════════════════
+AUDIT COMPLETE
+══════════════════════════════════════════════════════════════════════
+Total bugs/gaps cataloged: 38 (BUG-001 through BUG-038)
+Total divergences cataloged: 6 (DIV-001 through DIV-006)
+
+Critical (blocks production): 14
+High (wrong behavior): 8
+Medium (UX/non-blocking): 6
+Divergences: 6
+
+Pages with FULL Supabase integration: ~8 (TempLogs, Checklists,
+  HACCP, Team, Vendors, Equipment, Settings notifications, Leaderboard)
+
+Pages with ZERO Supabase integration: ~8 (Corrective Actions,
+  Training, Shift Handoff, TempLogQuick, TempLogScan, Compliance
+  Overview/Index/Intelligence, Reports, Referral Dashboard)
+
+Edge functions invoked from client: 25 distinct
+Supabase tables referenced: 288 (from foundation research)
+Tables confirmed in PROD: ~198
+Tables missing from PROD: ~168 (from migration sweep)
+Critical missing tables blocking active code: ~27
+
+══════════════════════════════════════════════════════════════════════

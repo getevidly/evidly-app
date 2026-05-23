@@ -1,0 +1,6166 @@
+{
+  "01-routes": {
+    "meta": {
+      "generated": "2026-04-24",
+      "source": "src/App.tsx (lines 535-840, imports 22-265)",
+      "framework": "react-router v6",
+      "lazyLoaded": true,
+      "totals": {
+        "publicRoutes": 58,
+        "publicOnlyRoutes": 4,
+        "protectedNoLayout": 11,
+        "protectedWithLayout": 102,
+        "adminRoutes": 101,
+        "redirectRoutes": 18,
+        "catchAll": 1,
+        "totalNonRedirect": 276
+      }
+    },
+    "publicRoutes": {
+      "description": "No authentication required. Accessible to anyone.",
+      "routes": [
+        {
+          "path": "/operations-check",
+          "component": "OperationsCheck"
+        },
+        {
+          "path": "/verify/:code",
+          "component": "PublicVerification"
+        },
+        {
+          "path": "/ref/:code",
+          "component": "ReferralRedirect"
+        },
+        {
+          "path": "/r/:code",
+          "component": "ReferralPage"
+        },
+        {
+          "path": "/risk/:shareToken",
+          "component": "InsuranceRiskShared"
+        },
+        {
+          "path": "/report/:token",
+          "component": "SharedReport"
+        },
+        {
+          "path": "/passport/demo",
+          "component": "PassportDemo"
+        },
+        {
+          "path": "/passport/:id",
+          "component": "Passport"
+        },
+        {
+          "path": "/partners/insurance",
+          "component": "CarrierPartnership"
+        },
+        {
+          "path": "/providers",
+          "component": "MarketplaceLanding"
+        },
+        {
+          "path": "/enterprise",
+          "component": "EnterpriseLanding"
+        },
+        {
+          "path": "/iot",
+          "component": "IoTSensorLanding"
+        },
+        {
+          "path": "/terms",
+          "component": "TermsOfService"
+        },
+        {
+          "path": "/privacy",
+          "component": "PrivacyPolicy"
+        },
+        {
+          "path": "/compliance/california",
+          "component": "CaliforniaCompliance"
+        },
+        {
+          "path": "/compliance/california/:countySlug",
+          "component": "CountyCompliance"
+        },
+        {
+          "path": "/assessment",
+          "component": "AssessmentTool"
+        },
+        {
+          "path": "/scoretable",
+          "component": "ScoreTableIndex"
+        },
+        {
+          "path": "/scoretable/city/:citySlug",
+          "component": "ScoreTableCityPage"
+        },
+        {
+          "path": "/scoretable/:stateSlug",
+          "component": "ScoreTableState"
+        },
+        {
+          "path": "/scoretable/:stateSlug/:countySlug",
+          "component": "ScoreTableCountyDetail"
+        },
+        {
+          "path": "/kitchen-check/:slug",
+          "component": "KitchenCheckPage",
+          "wrapper": "KitchenCheckWrapper"
+        },
+        {
+          "path": "/kitchen-to-community",
+          "component": "KitchenToCommunity"
+        },
+        {
+          "path": "/leaderboard-preview",
+          "component": "LeaderboardPreview"
+        },
+        {
+          "path": "/equipment/scan/:equipmentId",
+          "component": "QRScanLandingPage"
+        },
+        {
+          "path": "/temp/log",
+          "component": "TempLogQuick",
+          "wrapper": "QRAuthGuard"
+        },
+        {
+          "path": "/temp-logs/scan",
+          "component": "TempLogScan",
+          "wrapper": "QRAuthGuard"
+        },
+        {
+          "path": "/suspended",
+          "component": "Suspended"
+        },
+        {
+          "path": "/invite/:token",
+          "component": "InviteAccept"
+        },
+        {
+          "path": "/reset-password",
+          "component": "ResetPassword"
+        },
+        {
+          "path": "/email-confirmed",
+          "component": "EmailConfirmed"
+        },
+        {
+          "path": "/demo",
+          "component": "DemoWizard"
+        },
+        {
+          "path": "/demo/request",
+          "component": "DemoRequest"
+        },
+        {
+          "path": "/demo/schedule/:sessionId",
+          "component": "DemoSchedule"
+        },
+        {
+          "path": "/auth/callback",
+          "component": "AuthCallback"
+        },
+        {
+          "path": "/setup-mfa",
+          "component": "SetupMFA"
+        },
+        {
+          "path": "/mfa-challenge",
+          "component": "MFAChallenge"
+        },
+        {
+          "path": "/vendor/login",
+          "component": "VendorLogin"
+        },
+        {
+          "path": "/vendor/register",
+          "component": "VendorRegister"
+        },
+        {
+          "path": "/vendor/upload/:token",
+          "component": "VendorSecureUpload"
+        },
+        {
+          "path": "/vendor/invite/:code",
+          "component": "VendorInviteLanding"
+        },
+        {
+          "path": "/vendor-update/:token",
+          "component": "VendorServiceUpdate"
+        },
+        {
+          "path": "/vendor/schedule/:token",
+          "component": "VendorScheduleResponse"
+        },
+        {
+          "path": "/vendor-connect/apply",
+          "component": "VendorConnectApply"
+        },
+        {
+          "path": "/support/survey/:token",
+          "component": "SurveyPage"
+        },
+        {
+          "path": "/city/:citySlug",
+          "component": "CityPage"
+        },
+        {
+          "path": "/blog",
+          "component": "BlogList"
+        },
+        {
+          "path": "/blog/:slug",
+          "component": "BlogPost"
+        },
+        {
+          "path": "/:slug",
+          "component": "CountyLandingPage",
+          "note": "catch-all county slug"
+        }
+      ]
+    },
+    "publicOnlyRoutes": {
+      "description": "PublicRoute-wrapped. Redirect to /dashboard if already authenticated.",
+      "routes": [
+        {
+          "path": "/login",
+          "component": "Login"
+        },
+        {
+          "path": "/admin-login",
+          "component": "AdminLogin"
+        },
+        {
+          "path": "/signup",
+          "component": "Signup"
+        },
+        {
+          "path": "/forgot-password",
+          "component": "ForgotPassword"
+        }
+      ]
+    },
+    "protectedNoLayout": {
+      "description": "ProtectedRoute-wrapped but no ProtectedLayout (no sidebar/topbar).",
+      "routes": [
+        {
+          "path": "/signup/locations",
+          "component": "SignupLocations"
+        },
+        {
+          "path": "/vendor/dashboard",
+          "component": "VendorDashboard"
+        },
+        {
+          "path": "/vendor/partner-dashboard",
+          "component": "VendorPartnerDashboard"
+        },
+        {
+          "path": "/vendor/setup",
+          "component": "VendorSetup"
+        },
+        {
+          "path": "/enterprise/admin",
+          "component": "EnterpriseDashboard"
+        },
+        {
+          "path": "/enterprise/dashboard",
+          "component": "EnterpriseExecutive"
+        },
+        {
+          "path": "/enterprise/intelligence",
+          "component": "ComplianceIntelligence"
+        },
+        {
+          "path": "/iot/hub",
+          "component": "IoTSensorHub"
+        },
+        {
+          "path": "/onboarding",
+          "component": "Onboarding"
+        },
+        {
+          "path": "/demo-expired",
+          "component": "DemoExpired"
+        },
+        {
+          "path": "/admin/role-preview",
+          "component": "RolePreview"
+        }
+      ]
+    },
+    "protectedWithLayout": {
+      "description": "ProtectedRoute + ProtectedLayout (sidebar/topbar). Auth required.",
+      "routes": [
+        {
+          "path": "/dashboard",
+          "component": "Dashboard"
+        },
+        {
+          "path": "/food-safety",
+          "component": "FoodSafetyHub"
+        },
+        {
+          "path": "/compliance",
+          "component": "ComplianceHub"
+        },
+        {
+          "path": "/insights",
+          "component": "InsightsHub"
+        },
+        {
+          "path": "/tools",
+          "component": "ToolsHub"
+        },
+        {
+          "path": "/admin",
+          "component": "AdminRoute",
+          "note": "AdminHome for admin, AdminHub for others"
+        },
+        {
+          "path": "/admin/onboarding",
+          "component": "AdminClientOnboarding"
+        },
+        {
+          "path": "/temp-logs",
+          "component": "TempLogs"
+        },
+        {
+          "path": "/iot-monitoring",
+          "component": "IoTMonitoring"
+        },
+        {
+          "path": "/checklists",
+          "component": "Checklists"
+        },
+        {
+          "path": "/documents",
+          "component": "Documents"
+        },
+        {
+          "path": "/document-checklist",
+          "component": "DocumentChecklist"
+        },
+        {
+          "path": "/vendors",
+          "component": "Vendors"
+        },
+        {
+          "path": "/vendors/:vendorId",
+          "component": "VendorDetail"
+        },
+        {
+          "path": "/marketplace",
+          "component": "VendorMarketplace"
+        },
+        {
+          "path": "/vendor-connect",
+          "component": "VendorConnectPage"
+        },
+        {
+          "path": "/upgrade",
+          "component": "Upgrade"
+        },
+        {
+          "path": "/marketplace/vendor/:vendorSlug",
+          "component": "VendorProfile"
+        },
+        {
+          "path": "/marketplace/:vendorSlug",
+          "component": "VendorProfile"
+        },
+        {
+          "path": "/haccp",
+          "component": "HACCP"
+        },
+        {
+          "path": "/alerts",
+          "component": "Alerts"
+        },
+        {
+          "path": "/incidents",
+          "component": "IncidentLog"
+        },
+        {
+          "path": "/ai-advisor",
+          "component": "AIAdvisor"
+        },
+        {
+          "path": "/leaderboard",
+          "component": "Leaderboard"
+        },
+        {
+          "path": "/referrals",
+          "component": "ReferralDashboard"
+        },
+        {
+          "path": "/analysis",
+          "component": "Analysis"
+        },
+        {
+          "path": "/team",
+          "component": "Team"
+        },
+        {
+          "path": "/reports",
+          "component": "ReportsPage"
+        },
+        {
+          "path": "/reports/:slug",
+          "component": "ReportGeneratorPage"
+        },
+        {
+          "path": "/settings",
+          "component": "SettingsPage",
+          "nestedRoutes": [
+            {
+              "path": "/settings/company",
+              "component": "CompanyProfilePage"
+            },
+            {
+              "path": "/settings/team-roles",
+              "component": "TeamRolesPage"
+            },
+            {
+              "path": "/settings/service-types",
+              "component": "ServiceTypesPage"
+            },
+            {
+              "path": "/settings/notifications",
+              "component": "NotificationsPage"
+            },
+            {
+              "path": "/settings/billing",
+              "component": "BillingPage"
+            }
+          ]
+        },
+        {
+          "path": "/settings/branding",
+          "component": "BrandingSettings"
+        },
+        {
+          "path": "/settings/sensors",
+          "component": "IoTSensorHub"
+        },
+        {
+          "path": "/settings/roles-permissions",
+          "component": "RolesPermissions"
+        },
+        {
+          "path": "/import",
+          "component": "ImportData"
+        },
+        {
+          "path": "/calendar",
+          "component": "Calendar"
+        },
+        {
+          "path": "/schedule",
+          "component": "SchedulePage"
+        },
+        {
+          "path": "/help",
+          "component": "HelpSupport"
+        },
+        {
+          "path": "/weekly-digest",
+          "component": "WeeklyDigest"
+        },
+        {
+          "path": "/audit-report",
+          "component": "AuditReport"
+        },
+        {
+          "path": "/facility-safety",
+          "component": "FacilitySafety"
+        },
+        {
+          "path": "/workforce-risk",
+          "component": "WorkforceRisk"
+        },
+        {
+          "path": "/cic-pse",
+          "component": "CicPseView"
+        },
+        {
+          "path": "/progress",
+          "component": "Progress"
+        },
+        {
+          "path": "/food-recovery",
+          "component": "FoodRecovery"
+        },
+        {
+          "path": "/sb1383",
+          "component": "SB1383Compliance"
+        },
+        {
+          "path": "/k12",
+          "component": "K12Compliance"
+        },
+        {
+          "path": "/usda/production-records",
+          "component": "USDAProductionRecords"
+        },
+        {
+          "path": "/equipment",
+          "component": "EquipmentPage"
+        },
+        {
+          "path": "/equipment/:id",
+          "component": "EquipmentDetailPage"
+        },
+        {
+          "path": "/equipment/:equipmentId/service/new",
+          "component": "ServiceRecordEntry"
+        },
+        {
+          "path": "/regulatory-alerts",
+          "component": "RegulatoryAlerts"
+        },
+        {
+          "path": "/jurisdiction",
+          "component": "JurisdictionSettings"
+        },
+        {
+          "path": "/health-dept-report",
+          "component": "HealthDeptReport"
+        },
+        {
+          "path": "/scoring-breakdown",
+          "component": "ScoringBreakdown"
+        },
+        {
+          "path": "/benchmarks",
+          "component": "Benchmarks"
+        },
+        {
+          "path": "/compliance-trends",
+          "component": "ComplianceTrends"
+        },
+        {
+          "path": "/org-hierarchy",
+          "component": "OrgHierarchy"
+        },
+        {
+          "path": "/compliance-index",
+          "component": "ComplianceIndex"
+        },
+        {
+          "path": "/compliance-overview",
+          "component": "ComplianceOverview"
+        },
+        {
+          "path": "/insurance-risk",
+          "component": "InsuranceRisk"
+        },
+        {
+          "path": "/improve-score",
+          "component": "ImproveScore"
+        },
+        {
+          "path": "/insurance-settings",
+          "component": "InsuranceSettings"
+        },
+        {
+          "path": "/iot/platform",
+          "component": "IoTSensorPlatform"
+        },
+        {
+          "path": "/iot/setup",
+          "component": "SensorSetupWizard"
+        },
+        {
+          "path": "/migrate",
+          "component": "VendorMigration"
+        },
+        {
+          "path": "/insights/intelligence",
+          "component": "BusinessIntelligence"
+        },
+        {
+          "path": "/insights/reports",
+          "component": "ClientReports"
+        },
+        {
+          "path": "/insights/predictions",
+          "component": "PredictiveAnalysis"
+        },
+        {
+          "path": "/insights/inspection-forecast",
+          "component": "InspectionForecastPage"
+        },
+        {
+          "path": "/insights/violation-radar",
+          "component": "ViolationRadarPage"
+        },
+        {
+          "path": "/insights/trajectory",
+          "component": "ComplianceTrajectoryPage"
+        },
+        {
+          "path": "/insights/vendor-performance",
+          "component": "VendorPerformancePage"
+        },
+        {
+          "path": "/insights/signals",
+          "component": "JurisdictionSignalsPage"
+        },
+        {
+          "path": "/insights/leaderboard",
+          "component": "TeamLeaderboardPage"
+        },
+        {
+          "path": "/insights/operations-intelligence",
+          "component": "OperationsIntelligencePage"
+        },
+        {
+          "path": "/tasks",
+          "component": "TaskManager"
+        },
+        {
+          "path": "/vendors/review",
+          "component": "VendorDocumentReview"
+        },
+        {
+          "path": "/corrective-actions",
+          "component": "CorrectiveActions"
+        },
+        {
+          "path": "/corrective-actions/:actionId",
+          "component": "CorrectiveActionDetail"
+        },
+        {
+          "path": "/voice-help",
+          "component": "VoiceHelp"
+        },
+        {
+          "path": "/deficiencies",
+          "component": "Deficiencies"
+        },
+        {
+          "path": "/deficiencies/:deficiencyId",
+          "component": "DeficiencyDetail"
+        }
+      ]
+    },
+    "adminRoutes": {
+      "description": "RequireAdmin-wrapped (platform_admin only). Inside ProtectedLayout.",
+      "routes": [
+        {
+          "path": "/admin/usage-analytics",
+          "component": "UsageAnalytics"
+        },
+        {
+          "path": "/iot-platform",
+          "component": "IoTSensorPlatform"
+        },
+        {
+          "path": "/sensors",
+          "component": "SensorHub"
+        },
+        {
+          "path": "/sensors/add",
+          "component": "SensorSetupWizard"
+        },
+        {
+          "path": "/sensors/:id",
+          "component": "SensorDetail"
+        },
+        {
+          "path": "/integrations",
+          "component": "IntegrationHub"
+        },
+        {
+          "path": "/settings/integrations",
+          "component": "SettingsIntegrationsPage"
+        },
+        {
+          "path": "/settings/api-keys",
+          "component": "IntegrationHub"
+        },
+        {
+          "path": "/settings/webhooks",
+          "component": "IntegrationHub"
+        },
+        {
+          "path": "/developers",
+          "component": "DeveloperPortal"
+        },
+        {
+          "path": "/training",
+          "component": "TrainingHub"
+        },
+        {
+          "path": "/training/course/:id",
+          "component": "TrainingCourse"
+        },
+        {
+          "path": "/training/courses/builder",
+          "component": "CourseBuilder"
+        },
+        {
+          "path": "/training/certificates",
+          "component": "CertificateViewer"
+        },
+        {
+          "path": "/training/employee/:userId",
+          "component": "EmployeeCertDetail"
+        },
+        {
+          "path": "/dashboard/training",
+          "component": "TrainingRecords"
+        },
+        {
+          "path": "/dashboard/training/:employeeId",
+          "component": "EmployeeTrainingProfile"
+        },
+        {
+          "path": "/dashboard/training-catalog",
+          "component": "TrainingCatalog"
+        },
+        {
+          "path": "/playbooks",
+          "component": "IncidentPlaybooks"
+        },
+        {
+          "path": "/playbooks/active/:id",
+          "component": "PlaybookRunner"
+        },
+        {
+          "path": "/playbooks/builder",
+          "component": "PlaybookBuilder"
+        },
+        {
+          "path": "/playbooks/analytics",
+          "component": "PlaybookAnalytics"
+        },
+        {
+          "path": "/playbooks/history/:id",
+          "component": "PlaybookTimeline"
+        },
+        {
+          "path": "/inspector-view",
+          "component": "InspectorView"
+        },
+        {
+          "path": "/shift-handoff",
+          "component": "ShiftHandoff"
+        },
+        {
+          "path": "/inspector-mode",
+          "component": "InspectorMode"
+        },
+        {
+          "path": "/services",
+          "component": "ServicesPage"
+        },
+        {
+          "path": "/services/:recordId",
+          "component": "ServiceRecordDetail"
+        },
+        {
+          "path": "/self-audit",
+          "component": "SelfAudit"
+        },
+        {
+          "path": "/self-inspection",
+          "component": "SelfAudit"
+        },
+        {
+          "path": "/mock-inspection",
+          "component": "MockInspection"
+        },
+        {
+          "path": "/photo-evidence",
+          "component": "PhotoEvidencePage"
+        },
+        {
+          "path": "/audit-trail",
+          "component": "AuditTrail"
+        },
+        {
+          "path": "/copilot",
+          "component": "CopilotInsights"
+        },
+        {
+          "path": "/intelligence",
+          "component": "IntelligenceHub"
+        },
+        {
+          "path": "/self-diagnosis",
+          "component": "SelfDiagnosis"
+        },
+        {
+          "path": "/admin/regulatory-changes",
+          "component": "AdminRegulatoryChanges"
+        },
+        {
+          "path": "/admin/intelligence-admin",
+          "component": "IntelligenceAdmin"
+        },
+        {
+          "path": "/admin/jurisdiction-intelligence",
+          "component": "JurisdictionIntelligence"
+        },
+        {
+          "path": "/admin/demo-generator",
+          "component": "DemoGenerator",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/demo-launcher",
+          "component": "DemoLauncher",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/demo-pipeline",
+          "component": "DemoPipeline",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/demo-tours",
+          "component": "DemoTours",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/partner-demos",
+          "component": "PartnerDemos",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/partner/vendor-demo",
+          "component": "VendorDemoDashboard",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/partner/association-demo",
+          "component": "AssociationDemoDashboard",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/partner/carrier-demo",
+          "component": "CarrierDemoDashboard",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/kitchen-checkup",
+          "component": "AssessmentLeads",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/scoretable",
+          "component": "AdminScoreTable",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/testimonials",
+          "component": "AdminTestimonials",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/api-keys",
+          "component": "InsuranceApiKeys"
+        },
+        {
+          "path": "/admin/demo/dashboard",
+          "component": "DemoDashboard"
+        },
+        {
+          "path": "/admin/command-center",
+          "component": "CommandCenter"
+        },
+        {
+          "path": "/admin/guided-tours",
+          "component": "GuidedTours",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/leads",
+          "component": "AssessmentLeads",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/configure",
+          "component": "Configure"
+        },
+        {
+          "path": "/admin/emulate",
+          "component": "UserEmulation"
+        },
+        {
+          "path": "/admin/billing",
+          "component": "AdminBilling"
+        },
+        {
+          "path": "/admin/crawl-monitor",
+          "component": "AdminCrawlMonitor"
+        },
+        {
+          "path": "/admin/rfp-monitor",
+          "component": "RfpIntelligence"
+        },
+        {
+          "path": "/admin/messages",
+          "component": "SystemMessages"
+        },
+        {
+          "path": "/admin/k2c",
+          "component": "AdminK2C"
+        },
+        {
+          "path": "/admin/backup",
+          "component": "DatabaseBackup"
+        },
+        {
+          "path": "/admin/maintenance",
+          "component": "MaintenanceMode"
+        },
+        {
+          "path": "/admin/security-settings",
+          "component": "SecuritySettings"
+        },
+        {
+          "path": "/admin/vault",
+          "component": "DocumentVault"
+        },
+        {
+          "path": "/admin/event-log",
+          "component": "EventLog"
+        },
+        {
+          "path": "/admin/campaigns",
+          "component": "MarketingCampaigns",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/sales",
+          "component": "SalesPipeline",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/users",
+          "component": "AdminUsers"
+        },
+        {
+          "path": "/admin/security",
+          "component": "AdminSecurity"
+        },
+        {
+          "path": "/admin/audit-log",
+          "component": "AdminAuditLog"
+        },
+        {
+          "path": "/admin/orgs",
+          "component": "AdminOrgs"
+        },
+        {
+          "path": "/admin/provisioning",
+          "component": "UserProvisioning"
+        },
+        {
+          "path": "/admin/support",
+          "component": "SupportTickets"
+        },
+        {
+          "path": "/admin/remote-connect",
+          "component": "RemoteConnect"
+        },
+        {
+          "path": "/admin/staff",
+          "component": "StaffRoles"
+        },
+        {
+          "path": "/admin/intelligence",
+          "component": "EvidLYIntelligence"
+        },
+        {
+          "path": "/admin/reports",
+          "component": "AdminReports"
+        },
+        {
+          "path": "/admin/violation-outreach",
+          "component": "ViolationOutreach",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/email-sequences",
+          "component": "EmailSequenceManager",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/trial-health",
+          "component": "TrialHealth",
+          "wrapper": "SalesGuard"
+        },
+        {
+          "path": "/admin/verification",
+          "component": "VerificationReport"
+        },
+        {
+          "path": "/admin/system/edge-functions",
+          "component": "EdgeFunctions"
+        },
+        {
+          "path": "/admin/feature-flags",
+          "component": "FeatureFlags"
+        },
+        {
+          "path": "/admin/feature-baseline",
+          "component": "FeatureBaselineTracker"
+        },
+        {
+          "path": "/admin/vendor-connect",
+          "component": "AdminVendorConnect"
+        },
+        {
+          "path": "/admin/gtm",
+          "component": "GtmDashboard",
+          "wrapper": "SalesGuard"
+        }
+      ]
+    },
+    "redirectRoutes": {
+      "description": "Routes that redirect to another path. Not counted in non-redirect totals.",
+      "routes": [
+        {
+          "from": "/",
+          "to": "/login"
+        },
+        {
+          "from": "/settings",
+          "to": "/settings/company",
+          "note": "index redirect"
+        },
+        {
+          "from": "/admin/onboard-client",
+          "to": "/admin/onboarding"
+        },
+        {
+          "from": "/admin/home",
+          "to": "/admin"
+        },
+        {
+          "from": "/admin/dashboard",
+          "to": "/admin"
+        },
+        {
+          "from": "/regulatory-updates",
+          "to": "/intelligence"
+        },
+        {
+          "from": "/admin/intelligence-queue",
+          "to": "/admin/intelligence-admin"
+        },
+        {
+          "from": "/admin/rfp-intelligence",
+          "to": "/admin/rfp-monitor"
+        },
+        {
+          "from": "/admin/emulation",
+          "to": "/admin/emulate"
+        },
+        {
+          "from": "/admin/regulatory",
+          "to": "/admin/regulatory-changes"
+        },
+        {
+          "from": "/admin/rfp",
+          "to": "/admin/rfp-monitor"
+        },
+        {
+          "from": "/admin/jurisdiction-intel",
+          "to": "/admin/jurisdiction-intelligence"
+        },
+        {
+          "from": "/admin/demos",
+          "to": "/admin/demo-pipeline"
+        },
+        {
+          "from": "/admin/assessments",
+          "to": "/admin/kitchen-checkup"
+        },
+        {
+          "from": "/admin/pipeline",
+          "to": "/admin/sales"
+        },
+        {
+          "from": "/admin/user-provisioning",
+          "to": "/admin/provisioning"
+        },
+        {
+          "from": "/incident-playbook",
+          "to": "/playbooks"
+        },
+        {
+          "from": "/regulatory-tracking",
+          "to": "/regulatory-alerts"
+        },
+        {
+          "from": "/ai-insights",
+          "to": "/ai-advisor"
+        },
+        {
+          "from": "/analytics",
+          "to": "/analysis"
+        },
+        {
+          "from": "/daily-operations",
+          "to": "/dashboard"
+        },
+        {
+          "from": "/locations",
+          "to": "/org-hierarchy"
+        },
+        {
+          "from": "/inspections",
+          "to": "/self-audit"
+        },
+        {
+          "from": "/certifications",
+          "to": "/training/certificates"
+        },
+        {
+          "from": "/sensor-dashboard",
+          "to": "/sensors"
+        }
+      ]
+    },
+    "catchAll": {
+      "path": "*",
+      "component": "NotFound"
+    }
+  },
+  "02-features": {
+    "total_features_cataloged": 82,
+    "generated_at": "2026-04-24",
+    "features": [
+      {
+        "route": "/dashboard",
+        "component_file": "src/pages/Dashboard.tsx",
+        "actions": [
+          {
+            "name": "Dismiss WelcomeModal (first login onboarding)",
+            "trigger": "button click",
+            "handler_or_line": "WelcomeModal.handleGetStarted:28",
+            "produces_db_write": "user_profiles (update onboarding_completed)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Dismiss intelligence banner",
+            "trigger": "button click",
+            "handler_or_line": "IntelligenceBanner.dismiss:101",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/temp-logs",
+        "component_file": "src/pages/TempLogs.tsx",
+        "actions": [
+          {
+            "name": "Log single temperature reading",
+            "trigger": "form submit",
+            "handler_or_line": "handleSubmitTemp:661",
+            "produces_db_write": "temperature_logs (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Batch log temperatures for all equipment",
+            "trigger": "button click",
+            "handler_or_line": "handleSubmitBatch:795",
+            "produces_db_write": "temperature_logs (insert multiple)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Submit receiving temperature log (per item)",
+            "trigger": "form submit",
+            "handler_or_line": "handleSubmitReceiving:885",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Finalize receiving log (all items for vendor)",
+            "trigger": "button click",
+            "handler_or_line": "handleFinalizeReceiving:961",
+            "produces_db_write": "receiving_temp_logs (insert multiple)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Save CCP-04 corrective action for failed receiving item",
+            "trigger": "modal action",
+            "handler_or_line": "handleCcpSave:937",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Start cooldown tracking",
+            "trigger": "form submit",
+            "handler_or_line": "handleStartCooldown:1400",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Log cooldown temperature check",
+            "trigger": "form submit",
+            "handler_or_line": "handleLogCooldownCheck:1431",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Complete cooldown (persist to DB)",
+            "trigger": "button click",
+            "handler_or_line": "handleCompleteCooldown:1562",
+            "produces_db_write": "cooldown_temp_checks (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Dispatch temp violation signal on out-of-range",
+            "trigger": "automatic after temp log",
+            "handler_or_line": "dispatchTempViolationSignal:749",
+            "produces_db_write": "intelligence signals (via lib)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Add current reading via modal",
+            "trigger": "modal action",
+            "handler_or_line": "handleSaveCurrentReading:1457",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Add receiving reading via modal",
+            "trigger": "modal action",
+            "handler_or_line": "handleSaveReceivingReading:1486",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Add holding reading via modal",
+            "trigger": "modal action",
+            "handler_or_line": "handleSaveHoldingReading:1497",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Add cooldown reading via modal",
+            "trigger": "modal action",
+            "handler_or_line": "handleSaveCooldownReading:1526",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Export history to CSV",
+            "trigger": "button click",
+            "handler_or_line": "exportToCSV:1230 (guardAction:2320)",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/checklists",
+        "component_file": "src/pages/Checklists.tsx",
+        "actions": [
+          {
+            "name": "Create checklist template (manual custom)",
+            "trigger": "form submit",
+            "handler_or_line": "handleCreateTemplate:986",
+            "produces_db_write": "checklist_templates (insert) + checklist_template_items (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Create checklist template from pre-built template",
+            "trigger": "button click",
+            "handler_or_line": "handleSelectPreBuiltTemplate:838 (implicit)",
+            "produces_db_write": "checklist_templates (insert) + checklist_template_items (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Delete checklist template",
+            "trigger": "button click",
+            "handler_or_line": "handleDeleteTemplate:1329",
+            "produces_db_write": "checklist_templates (delete)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Edit checklist template (delete + recreate)",
+            "trigger": "button click",
+            "handler_or_line": "handleEditTemplate:1349",
+            "produces_db_write": "checklist_templates (delete)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Submit checklist completion with item responses",
+            "trigger": "button click",
+            "handler_or_line": "handleSubmitCompletion:1154",
+            "produces_db_write": "checklist_template_completions (insert) + checklist_responses (insert) + alerts (insert on CCP failure)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Add item to checklist template being created",
+            "trigger": "button click",
+            "handler_or_line": "handleAddItem:967",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Remove item from checklist template being created",
+            "trigger": "button click",
+            "handler_or_line": "handleRemoveItem:982",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Persist checklist item response offline (IndexedDB)",
+            "trigger": "automatic on item change",
+            "handler_or_line": "addPendingAction:1142",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/documents",
+        "component_file": "src/pages/Documents.tsx",
+        "actions": [
+          {
+            "name": "Download document",
+            "trigger": "button click",
+            "handler_or_line": "handleDownload:284",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Share document (open share modal)",
+            "trigger": "button click",
+            "handler_or_line": "handleShareDocument:346",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Share multiple documents",
+            "trigger": "button click",
+            "handler_or_line": "handleShareMultiple:353",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Change document category",
+            "trigger": "select change",
+            "handler_or_line": "handleCategoryChange:368",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Smart upload documents (AI classification)",
+            "trigger": "modal action",
+            "handler_or_line": "SmartUploadModal.handleSave:313",
+            "produces_db_write": null,
+            "produces_edge_call": "document classification (functions.invoke)",
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/vendors",
+        "component_file": "src/pages/Vendors.tsx",
+        "actions": [
+          {
+            "name": "Request document from vendor (general)",
+            "trigger": "button click",
+            "handler_or_line": "inline:896",
+            "produces_db_write": "vendor_upload_requests (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Request specific missing/expired document from vendor",
+            "trigger": "button click",
+            "handler_or_line": "inline:983",
+            "produces_db_write": "vendor_upload_requests (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Request COI from vendor (quick action)",
+            "trigger": "button click",
+            "handler_or_line": "inline:1627",
+            "produces_db_write": "vendor_upload_requests (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Send upload link to vendor",
+            "trigger": "button click",
+            "handler_or_line": "inline:1222",
+            "produces_db_write": "vendor_contact_log (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Save vendor photos",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:934",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Download vendor document",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:971",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Add vendor (modal)",
+            "trigger": "modal action",
+            "handler_or_line": "AddVendorModal (external component)",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Invite vendor to EvidLY portal",
+            "trigger": "modal action",
+            "handler_or_line": "InviteVendorModal.handleSubmit:53",
+            "produces_db_write": "user_invitations (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Log service (from vendor detail)",
+            "trigger": "modal action",
+            "handler_or_line": "LogServiceModal:65",
+            "produces_db_write": "vendor_service_records (insert) + vendor_service_records (update certificate_url) + location_service_schedules (upsert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/corrective-actions",
+        "component_file": "src/pages/CorrectiveActions.tsx",
+        "actions": [
+          {
+            "name": "Open create corrective action modal",
+            "trigger": "button click",
+            "handler_or_line": "handleOpenCreate:267",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Select pre-built CA template",
+            "trigger": "button click",
+            "handler_or_line": "handleSelectTemplate:276",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Create corrective action",
+            "trigger": "button click",
+            "handler_or_line": "handleCreateCA:295",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Export corrective actions PDF",
+            "trigger": "button click",
+            "handler_or_line": "handleExportPdf:361",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/incidents",
+        "component_file": "src/pages/IncidentLog.tsx",
+        "actions": [
+          {
+            "name": "Create new incident",
+            "trigger": "button click",
+            "handler_or_line": "handleCreateIncident:702",
+            "produces_db_write": "incidents (insert) + incident_timeline (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Take corrective action on incident",
+            "trigger": "button click",
+            "handler_or_line": "handleTakeAction:771",
+            "produces_db_write": "incidents (update) + incident_timeline (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Resolve incident",
+            "trigger": "button click",
+            "handler_or_line": "handleResolve:812",
+            "produces_db_write": "incidents (update) + incident_timeline (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Verify or reject incident resolution",
+            "trigger": "button click",
+            "handler_or_line": "handleVerify:857",
+            "produces_db_write": "incidents (update) + incident_timeline (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Add comment to incident",
+            "trigger": "button click / enter key",
+            "handler_or_line": "handleAddComment:922",
+            "produces_db_write": "incident_comments (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Export incident PDF",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:1318",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "File regulatory report for incident",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:1090",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Create corrective action from incident",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:1117",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/calendar",
+        "component_file": "src/pages/Calendar.tsx",
+        "actions": [
+          {
+            "name": "Create calendar event (with optional recurrence)",
+            "trigger": "button click",
+            "handler_or_line": "handleSaveEvent:439",
+            "produces_db_write": "calendar_events (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Update existing calendar event",
+            "trigger": "button click",
+            "handler_or_line": "handleSaveEvent:439 (edit path)",
+            "produces_db_write": "calendar_events (update)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Delete calendar event",
+            "trigger": "button click",
+            "handler_or_line": "handleDeleteEvent:602",
+            "produces_db_write": "calendar_events (delete)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Log frequency reduction (audit trail)",
+            "trigger": "automatic on event save with frequency change",
+            "handler_or_line": "handleSaveEvent:556",
+            "produces_db_write": "frequency_change_log (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Log vendor change (audit trail)",
+            "trigger": "automatic on event save with vendor change",
+            "handler_or_line": "handleSaveEvent:585",
+            "produces_db_write": "vendor_changes (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/team",
+        "component_file": "src/pages/Team.tsx",
+        "actions": [
+          {
+            "name": "Cancel team invitation",
+            "trigger": "button click",
+            "handler_or_line": "cancelInvitation:258",
+            "produces_db_write": "user_invitations (update status=expired)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Resend team invitation (email)",
+            "trigger": "button click",
+            "handler_or_line": "resendInvitation:271",
+            "produces_db_write": "user_invitations (update email_status, expires_at)",
+            "produces_edge_call": "send-team-invite",
+            "demo_gated": true
+          },
+          {
+            "name": "Resend team invitation (SMS)",
+            "trigger": "button click",
+            "handler_or_line": "resendInvitation:271 (sms path)",
+            "produces_db_write": "user_invitations (update sms_status, expires_at)",
+            "produces_edge_call": "send-sms-invite",
+            "demo_gated": true
+          },
+          {
+            "name": "Open invite team member modal",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:486",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Open bulk invite modal",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:493",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Reset team member password",
+            "trigger": "modal action",
+            "handler_or_line": "handleResetPassword:352",
+            "produces_db_write": null,
+            "produces_edge_call": "supabase.auth.resetPasswordForEmail",
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/alerts",
+        "component_file": "src/pages/Alerts.tsx",
+        "actions": [
+          {
+            "name": "Resolve alert with resolution notes",
+            "trigger": "modal action",
+            "handler_or_line": "handleResolveSubmit:362",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Snooze alert (preset days)",
+            "trigger": "button click",
+            "handler_or_line": "handleSnooze:388",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Snooze alert (custom date)",
+            "trigger": "button click",
+            "handler_or_line": "handleCustomSnooze:400",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Reassign alert to team member",
+            "trigger": "button click",
+            "handler_or_line": "handleReassign:413",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Dismiss alert",
+            "trigger": "button click",
+            "handler_or_line": "handleDismiss:423",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/settings/company-profile",
+        "component_file": "src/pages/settings/CompanyProfilePage.tsx",
+        "actions": [
+          {
+            "name": "Save company profile settings",
+            "trigger": "button click",
+            "handler_or_line": "handleSave:94",
+            "produces_db_write": "organization settings (via useSettings hook)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/settings/notifications",
+        "component_file": "src/pages/settings/NotificationsPage.tsx",
+        "actions": [
+          {
+            "name": "Save notification preferences",
+            "trigger": "button click",
+            "handler_or_line": "handleSave:115",
+            "produces_db_write": "notification_preferences (upsert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Toggle global notification channel",
+            "trigger": "toggle switch",
+            "handler_or_line": "toggleGlobal:104",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Toggle per-category notification channel",
+            "trigger": "checkbox",
+            "handler_or_line": "toggleCategory:108",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/settings/team-roles",
+        "component_file": "src/pages/settings/TeamRolesPage.tsx",
+        "actions": [
+          {
+            "name": "Save role permissions",
+            "trigger": "button click",
+            "handler_or_line": "handleSave:48",
+            "produces_db_write": "permissions (via useSettings hook)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Toggle permission for a role",
+            "trigger": "checkbox",
+            "handler_or_line": "togglePermission:41",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/settings/service-types",
+        "component_file": "src/pages/settings/ServiceTypesPage.tsx",
+        "actions": [
+          {
+            "name": "Add service type",
+            "trigger": "button click (opens modal)",
+            "handler_or_line": "handleAdd:17",
+            "produces_db_write": "service_types (via ServiceTypeFormModal)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Edit service type",
+            "trigger": "button click (opens modal)",
+            "handler_or_line": "handleEdit:22",
+            "produces_db_write": "service_types (via ServiceTypeFormModal)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Delete service type",
+            "trigger": "button click",
+            "handler_or_line": "handleDelete:35",
+            "produces_db_write": "service_types (delete via useDeleteServiceType)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Toggle service type active status",
+            "trigger": "checkbox",
+            "handler_or_line": "handleToggleActive:45",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/settings/billing",
+        "component_file": "src/pages/settings/BillingPage.tsx",
+        "actions": []
+      },
+      {
+        "route": "/settings/integrations",
+        "component_file": "src/pages/settings/IntegrationsPage.tsx",
+        "actions": []
+      },
+      {
+        "route": "/equipment",
+        "component_file": "src/pages/equipment/EquipmentPage.tsx",
+        "actions": [
+          {
+            "name": "Add equipment (open modal)",
+            "trigger": "button click",
+            "handler_or_line": "setShowAddModal:118",
+            "produces_db_write": "equipment (via EquipmentFormModal)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Print bulk QR codes",
+            "trigger": "button click",
+            "handler_or_line": "setShowBulkQR:111",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/insurance-risk",
+        "component_file": "src/pages/InsuranceRisk.tsx",
+        "actions": []
+      },
+      {
+        "route": "/compliance-overview",
+        "component_file": "src/pages/ComplianceOverview.tsx",
+        "actions": []
+      },
+      {
+        "route": "/ai-advisor",
+        "component_file": "src/pages/AIAdvisor.tsx",
+        "actions": [
+          {
+            "name": "Send chat message to AI advisor",
+            "trigger": "form submit",
+            "handler_or_line": "handleSubmit:369 -> sendMessage:301",
+            "produces_db_write": null,
+            "produces_edge_call": "streamChatResponse (Claude API streaming)",
+            "demo_gated": false
+          },
+          {
+            "name": "Start new conversation",
+            "trigger": "button click",
+            "handler_or_line": "startNewConversation:374",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Start mock inspection",
+            "trigger": "button click",
+            "handler_or_line": "startInspection:384",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Answer inspection question",
+            "trigger": "form submit",
+            "handler_or_line": "handleInspectionAnswer:402",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          },
+          {
+            "name": "Create action items from AI response",
+            "trigger": "button click",
+            "handler_or_line": "handleCreateActions:479 (guardAction:753)",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Save action items",
+            "trigger": "button click",
+            "handler_or_line": "guardAction:1117",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": true
+          }
+        ]
+      },
+      {
+        "route": "/referrals",
+        "component_file": "src/pages/ReferralDashboard.tsx",
+        "actions": []
+      },
+      {
+        "route": "/self-audit",
+        "component_file": "src/pages/SelfAudit.tsx",
+        "actions": [
+          {
+            "name": "Start self-audit session",
+            "trigger": "button click",
+            "handler_or_line": "startAudit:536",
+            "produces_db_write": "self_inspection_sessions (insert)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Auto-save audit section progress",
+            "trigger": "automatic on section change",
+            "handler_or_line": "updateDbSession:484",
+            "produces_db_write": "self_inspection_sessions (update sections_json)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Finalize audit session",
+            "trigger": "button click",
+            "handler_or_line": "finalizeDbSession:505",
+            "produces_db_write": "self_inspection_sessions (update completed_at, failed_items_json)",
+            "produces_edge_call": null,
+            "demo_gated": true
+          },
+          {
+            "name": "Resume saved audit session",
+            "trigger": "button click",
+            "handler_or_line": "resumeAudit:549",
+            "produces_db_write": null,
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      },
+      {
+        "route": "/reports",
+        "component_file": "src/pages/reports/ReportsPage.tsx",
+        "actions": []
+      },
+      {
+        "route": "/vendor-connect",
+        "component_file": "src/pages/VendorConnect.jsx",
+        "actions": []
+      },
+      {
+        "route": "/signup",
+        "component_file": "src/pages/Signup.tsx",
+        "actions": [
+          {
+            "name": "Sign up for new account",
+            "trigger": "form submit",
+            "handler_or_line": "handleSubmit:173",
+            "produces_db_write": "auth.users (signUp) + user_profiles (via trigger) + organizations (via trigger)",
+            "produces_edge_call": null,
+            "demo_gated": false
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "routes_with_db_writes": 14,
+      "routes_read_only": 8,
+      "total_db_write_actions": 39,
+      "total_edge_function_calls": 3,
+      "total_demo_gated_actions": 52,
+      "tables_written_to": [
+        "temperature_logs",
+        "receiving_temp_logs",
+        "cooldown_temp_checks",
+        "checklist_templates",
+        "checklist_template_items",
+        "checklist_template_completions",
+        "checklist_responses",
+        "alerts",
+        "vendor_upload_requests",
+        "vendor_contact_log",
+        "user_invitations",
+        "incidents",
+        "incident_timeline",
+        "incident_comments",
+        "calendar_events",
+        "frequency_change_log",
+        "vendor_changes",
+        "notification_preferences",
+        "user_profiles",
+        "self_inspection_sessions",
+        "vendor_service_records",
+        "location_service_schedules",
+        "haccp_monitoring_logs"
+      ],
+      "edge_functions_invoked": [
+        "send-team-invite",
+        "send-sms-invite",
+        "document classification (via SmartUploadModal)"
+      ],
+      "auth_operations": [
+        "supabase.auth.signUp (Signup page)",
+        "supabase.auth.resetPasswordForEmail (Team page)"
+      ]
+    }
+  },
+  "03-db-operations": {
+    "tables_touched_in_code": 108,
+    "tables_in_prod_db": 173,
+    "phantom_tables_in_code_not_in_db": [
+      "admin_backups",
+      "admin_security_config",
+      "ai_budget_config",
+      "alerts",
+      "assessment_responses",
+      "assessment_results",
+      "billing_invoices",
+      "billing_subscriptions",
+      "calendar_events",
+      "client_advisories",
+      "corrective_action_history",
+      "demo_leads",
+      "emulation_audit_log",
+      "equipment",
+      "equipment_qr_codes",
+      "feature_flag_audit",
+      "frequency_change_log",
+      "guided_tour_templates",
+      "haccp_corrective_actions",
+      "haccp_critical_control_points",
+      "haccp_plans",
+      "incident_comments",
+      "incident_timeline",
+      "incidents",
+      "inspections",
+      "intelligence_classification_log",
+      "internal_reports",
+      "location_custom_vendors",
+      "marketing_campaigns",
+      "marketing_touchpoints",
+      "mfa_policy",
+      "notifications",
+      "nslp_claim_periods",
+      "outreach_touches",
+      "platform_audit_log",
+      "platform_settings",
+      "profiles",
+      "push_subscriptions",
+      "referrals",
+      "risk_plans",
+      "sales_pipeline",
+      "sb1383_compliance",
+      "session_policy",
+      "signal_review_log",
+      "system_messages",
+      "testimonials",
+      "trial_email_sequences",
+      "user_mfa_config",
+      "user_milestones",
+      "user_sessions",
+      "vendor_changes",
+      "vendor_connect_applications",
+      "vendor_connect_leads",
+      "vendor_connect_profiles",
+      "vendor_connect_spots",
+      "vendor_notification_log",
+      "vendor_outreach_pipeline",
+      "vendor_service_records",
+      "violation_prospects",
+      "workforce_risk_signals",
+      "x"
+    ],
+    "tables_in_db_not_in_code": [
+      "activity_logs",
+      "ai_corrective_actions",
+      "ai_weekly_digests",
+      "api_applications",
+      "api_marketplace_listings",
+      "api_sandbox_keys",
+      "api_tokens",
+      "api_webhook_deliveries",
+      "api_webhook_subscriptions",
+      "auto_request_log",
+      "auto_request_settings",
+      "benchmark_badges",
+      "benchmark_index_reports",
+      "benchmark_snapshots",
+      "calcode_violation_map",
+      "checklist_assignments",
+      "checklist_items",
+      "checklist_template_completions",
+      "checklist_template_items",
+      "client_intelligence_feed",
+      "compliance_photos",
+      "compliance_requirements",
+      "cooldown_logs",
+      "corrective_action_templates",
+      "crawl_categories",
+      "crawl_results",
+      "crawl_sources",
+      "device_registrations",
+      "document_alerts",
+      "document_reminders",
+      "drift_alert_log",
+      "drift_monitor_executions",
+      "edge_function_invocations",
+      "edge_function_registry",
+      "enterprise_api_keys",
+      "enterprise_bulk_operations",
+      "enterprise_hierarchy_config",
+      "enterprise_hierarchy_nodes",
+      "enterprise_integration_config",
+      "enterprise_location_assignments",
+      "enterprise_report_schedules",
+      "enterprise_report_templates",
+      "enterprise_scim_tokens",
+      "enterprise_sso_configs",
+      "enterprise_user_mappings",
+      "evidly_role_permissions",
+      "inspection_reports",
+      "insurance_api_keys",
+      "insurance_api_logs",
+      "insurance_api_requests",
+      "insurance_consent",
+      "insurance_reports",
+      "insurance_risk_factors",
+      "insurance_risk_scores",
+      "insurance_score_history",
+      "insurance_share_links",
+      "integration_entity_map",
+      "integration_sync_log",
+      "integration_webhook_config",
+      "integrations",
+      "intelligence_insight_views",
+      "intelligence_insights",
+      "intelligence_subscriptions",
+      "iot_ingestion_log",
+      "iot_integration_configs",
+      "iot_sensor_alerts",
+      "iot_sensor_providers",
+      "iot_sensor_readings",
+      "jie_health_log",
+      "jurisdiction_config_snapshots",
+      "jurisdiction_distributions",
+      "jurisdiction_scoring_profiles",
+      "jurisdiction_violation_overrides",
+      "location_benchmark_ranks",
+      "location_jurisdiction_scores",
+      "location_jurisdictions",
+      "location_risk_predictions",
+      "marketplace_credentials",
+      "marketplace_documents",
+      "marketplace_reviews",
+      "marketplace_service_requests",
+      "marketplace_services",
+      "marketplace_vendor_metrics",
+      "mock_inspection_sessions",
+      "notification_settings",
+      "onboarding_checklist_items",
+      "onboarding_reminders",
+      "platform_update_log",
+      "playbook_activations",
+      "playbook_food_disposition",
+      "playbook_insurance_claims",
+      "playbook_notifications",
+      "playbook_step_checklist_items",
+      "playbook_step_checklist_responses",
+      "playbook_step_photos",
+      "playbook_step_responses",
+      "playbook_steps",
+      "playbook_templates",
+      "playbook_vendor_contacts",
+      "playbooks",
+      "prediction_accuracy_log",
+      "public_estimate_leads",
+      "regulatory_change_reads",
+      "regulatory_sources",
+      "regulatory_updates",
+      "report_subscriptions",
+      "rfp_actions",
+      "rfp_classifications",
+      "rfp_sources",
+      "scheduled_emails",
+      "score_calculations",
+      "scoretable_views",
+      "self_inspection_sessions",
+      "sensor_alerts",
+      "sensor_calibration_log",
+      "sensor_cooling_logs",
+      "sensor_csv_imports",
+      "sensor_defrost_schedules",
+      "sensor_devices",
+      "sensor_door_events",
+      "sensor_incidents",
+      "sensor_integrations",
+      "sensor_readings",
+      "sensor_webhooks",
+      "service_completions",
+      "service_quotes",
+      "stripe_customers",
+      "subscriptions",
+      "support_ticket_activity",
+      "sync_conflicts",
+      "sync_queue",
+      "sync_snapshots",
+      "tasks",
+      "temp_check_completions",
+      "temp_logs",
+      "training_ai_interactions",
+      "training_certificates",
+      "training_courses",
+      "training_enrollments",
+      "training_lessons",
+      "training_modules",
+      "training_progress",
+      "training_questions",
+      "training_quiz_attempts",
+      "training_sb476_log",
+      "trial_email_log",
+      "user_invitations",
+      "vendor_analytics",
+      "vendor_certification_status",
+      "vendor_connect_slots",
+      "vendor_leads",
+      "vendor_messages",
+      "vendor_partners",
+      "vendor_secure_tokens",
+      "vendor_subscriptions",
+      "video_analyses"
+    ],
+    "tables_touched": [
+      "admin_api_keys",
+      "admin_backups",
+      "admin_event_log",
+      "admin_security_config",
+      "ai_budget_config",
+      "ai_insights",
+      "ai_interaction_logs",
+      "alerts",
+      "api_request_log",
+      "assessment_leads",
+      "assessment_responses",
+      "assessment_results",
+      "billing_invoices",
+      "billing_subscriptions",
+      "calendar_events",
+      "checklist_completions",
+      "checklist_responses",
+      "checklist_templates",
+      "checklists",
+      "client_advisories",
+      "client_notifications",
+      "cooldown_temp_checks",
+      "corrective_action_history",
+      "corrective_actions",
+      "crawl_execution_log",
+      "crawl_health",
+      "crawl_runs",
+      "demo_leads",
+      "demo_sessions",
+      "documents",
+      "employee_certifications",
+      "emulation_audit_log",
+      "enterprise_audit_log",
+      "enterprise_rollup_scores",
+      "enterprise_tenants",
+      "entity_correlations",
+      "equipment",
+      "equipment_qr_codes",
+      "feature_flag_audit",
+      "frequency_change_log",
+      "guided_tour_templates",
+      "haccp_corrective_actions",
+      "haccp_critical_control_points",
+      "haccp_plans",
+      "incident_comments",
+      "incident_timeline",
+      "incidents",
+      "inspections",
+      "intelligence_classification_log",
+      "intelligence_game_plans",
+      "intelligence_signals",
+      "intelligence_sources",
+      "internal_reports",
+      "iot_sensors",
+      "irr_submissions",
+      "jurisdiction_intel_updates",
+      "jurisdictions",
+      "k2c_donations",
+      "location_custom_vendors",
+      "locations",
+      "marketing_campaigns",
+      "marketing_touchpoints",
+      "marketplace_vendors",
+      "mfa_policy",
+      "notifications",
+      "nslp_claim_periods",
+      "organizations",
+      "outreach_touches",
+      "platform_audit_log",
+      "platform_settings",
+      "platform_updates",
+      "profiles",
+      "push_subscriptions",
+      "receiving_temp_logs",
+      "referrals",
+      "regulatory_changes",
+      "remote_connect_sessions",
+      "rfp_listings",
+      "risk_plans",
+      "sales_pipeline",
+      "sb1383_compliance",
+      "session_policy",
+      "signal_review_log",
+      "support_ticket_replies",
+      "support_tickets",
+      "system_messages",
+      "temperature_equipment",
+      "temperature_logs",
+      "testimonials",
+      "trial_email_sequences",
+      "user_location_access",
+      "user_mfa_config",
+      "user_milestones",
+      "user_profiles",
+      "user_sessions",
+      "vault_documents",
+      "vendor_changes",
+      "vendor_client_relationships",
+      "vendor_connect_applications",
+      "vendor_connect_leads",
+      "vendor_connect_profiles",
+      "vendor_connect_spots",
+      "vendor_contact_log",
+      "vendor_notification_log",
+      "vendor_outreach_pipeline",
+      "vendor_service_records",
+      "vendor_upload_requests",
+      "vendor_users",
+      "vendors",
+      "violation_prospects",
+      "workforce_risk_signals",
+      "x"
+    ],
+    "rpc_calls": [],
+    "edge_invocations": [
+      {
+        "function": "stripe-customer-portal",
+        "file": "src/lib/stripe.ts",
+        "line": 100
+      },
+      {
+        "function": "crawl-monitor",
+        "file": "src/pages/admin/AdminCrawlMonitor.tsx",
+        "line": 151
+      },
+      {
+        "function": "trigger-crawl",
+        "file": "src/pages/admin/AdminCrawlMonitor.tsx",
+        "line": 152
+      },
+      {
+        "function": "trigger-crawl",
+        "file": "src/pages/admin/CommandCenter.tsx",
+        "line": 169
+      },
+      {
+        "function": "intelligence-collect",
+        "file": "src/pages/admin/EvidLYIntelligence.tsx",
+        "line": 612
+      }
+    ],
+    "storage_ops": [
+      {
+        "operation": "upload",
+        "bucket": "compliance-photos",
+        "file": "src/lib/photoUpload.ts",
+        "line": 54
+      },
+      {
+        "operation": "getPublicUrl",
+        "bucket": "compliance-photos",
+        "file": "src/lib/photoUpload.ts",
+        "line": 65
+      },
+      {
+        "operation": "getPublicUrl",
+        "bucket": "compliance-photos",
+        "file": "src/lib/photoUpload.ts",
+        "line": 104
+      },
+      {
+        "operation": "upload",
+        "bucket": "(generic helper)",
+        "file": "src/lib/storage.ts",
+        "line": 20
+      },
+      {
+        "operation": "getPublicUrl",
+        "bucket": "(generic helper)",
+        "file": "src/lib/storage.ts",
+        "line": 42
+      },
+      {
+        "operation": "remove",
+        "bucket": "(generic helper)",
+        "file": "src/lib/storage.ts",
+        "line": 51
+      },
+      {
+        "operation": "upload",
+        "bucket": "(dynamic)",
+        "file": "src/components/services/LogServiceModal.jsx",
+        "line": 92
+      },
+      {
+        "operation": "getPublicUrl",
+        "bucket": "(dynamic)",
+        "file": "src/components/services/LogServiceModal.jsx",
+        "line": 97
+      }
+    ]
+  },
+  "04-edge-functions": {
+    "total_local": 171,
+    "total_deployed": 222,
+    "local_only": [
+      "send-welcome-email"
+    ],
+    "deployed_only": [
+      "ai-advisor",
+      "ai-estimate",
+      "analyze-kitchen-video",
+      "apply-migration",
+      "assess-ground-truth-submission",
+      "assign-ground-truth-mission",
+      "check-unconfirmed-jobs",
+      "checkup-notify",
+      "compute-jpi",
+      "crawl-orchestrator",
+      "create-client",
+      "daily-intelligence",
+      "demo-expire",
+      "demo-generate-data",
+      "demo-send-magic-link",
+      "drift-alert-sender",
+      "expiration-alerts",
+      "extract-inspection",
+      "fetch-jurisdiction",
+      "forum-moderate",
+      "generate-corrective-action",
+      "generate-threshold-guidance",
+      "handle-sms-reply",
+      "hoodops-webhook-receiver",
+      "intel-crawl-environmental",
+      "intel-crawl-recalls",
+      "job-availability",
+      "notify-affected-clients",
+      "parse-inspection-portal",
+      "process-scheduled-emails",
+      "process-voice-command",
+      "public-resource-feed",
+      "read-thermometer-photo",
+      "reschedule-request",
+      "route-arthur-alert",
+      "seed-distributions",
+      "send-arthur-digest",
+      "send-email",
+      "send-essential-transition-email",
+      "send-ground-truth-nudge",
+      "send-sms",
+      "send-trial-email",
+      "send-welcome",
+      "smooth-processor",
+      "triage-signal",
+      "user-invitation",
+      "vendor-connect-invite",
+      "vendor-doc-request",
+      "vendor-sms-reminder",
+      "vendor-upload-reminder",
+      "weekly-digest",
+      "zoominfo-webhook"
+    ],
+    "invoked_from_code": [
+      {
+        "name": "stripe-customer-portal",
+        "callers": [
+          "src/lib/stripe.ts:100"
+        ]
+      },
+      {
+        "name": "crawl-monitor",
+        "callers": [
+          "src/pages/admin/AdminCrawlMonitor.tsx:151"
+        ]
+      },
+      {
+        "name": "trigger-crawl",
+        "callers": [
+          "src/pages/admin/AdminCrawlMonitor.tsx:152",
+          "src/pages/admin/CommandCenter.tsx:169"
+        ]
+      },
+      {
+        "name": "intelligence-collect",
+        "callers": [
+          "src/pages/admin/EvidLYIntelligence.tsx:612"
+        ]
+      }
+    ],
+    "invoked_from_cron": [
+      {
+        "name": "vendor-sms-reminder",
+        "jobid": 4
+      },
+      {
+        "name": "vendor-upload-reminder",
+        "jobid": 5
+      },
+      {
+        "name": "expiration-alerts",
+        "jobid": 6
+      },
+      {
+        "name": "weekly-digest",
+        "jobid": 7
+      },
+      {
+        "name": "onboarding-reminders",
+        "jobid": 8
+      },
+      {
+        "name": "document-reminders",
+        "jobid": 9
+      },
+      {
+        "name": "trial-email-sender",
+        "jobid": 10
+      },
+      {
+        "name": "vendor-notification-sender",
+        "jobid": 11
+      },
+      {
+        "name": "vendor-partner-outreach",
+        "jobid": 12
+      }
+    ],
+    "functions": [
+      "ai-chat",
+      "ai-corrective-action-draft",
+      "ai-document-analysis",
+      "ai-estimate-submit",
+      "ai-flag-suggest",
+      "ai-pattern-analysis",
+      "ai-photo-analysis",
+      "ai-predictive-alerts",
+      "ai-text-assist",
+      "ai-voice-transcription",
+      "ai-weekly-digest",
+      "api-marketplace-publish",
+      "api-oauth-authorize",
+      "api-oauth-token",
+      "api-rate-limiter",
+      "api-token-validate",
+      "api-usage-aggregate",
+      "api-v1-locations-certificates",
+      "api-v1-locations-compliance",
+      "api-v1-locations-schedule",
+      "api-v1-locations-services",
+      "api-v1-services-photos",
+      "api-webhook-dispatch",
+      "api-webhook-retry",
+      "assessment-notify",
+      "auto-request-documents",
+      "availability-reminders",
+      "benchmark-aggregate",
+      "benchmark-badge-check",
+      "benchmark-quarterly-report",
+      "benchmark-snapshot",
+      "calculate-compliance-score",
+      "canonical-correlate",
+      "check-equipment-alerts",
+      "check-expiries",
+      "check-onboarding-progress",
+      "classify-document",
+      "classify-signals",
+      "cleanup-demo-tour",
+      "client-invite-send",
+      "cloud-file-import",
+      "copilot-analyze",
+      "correlation-engine",
+      "crawl-monitor",
+      "demo-account-convert",
+      "demo-account-create",
+      "document-scan",
+      "enterprise-alert-rollup",
+      "enterprise-audit-export",
+      "enterprise-report-generate",
+      "enterprise-rollup-calculate",
+      "enterprise-scim-users",
+      "enterprise-sso-callback",
+      "enterprise-tenant-provision",
+      "evidly-referral-signup",
+      "evidly-service-request",
+      "generate-agreement-pdf",
+      "generate-alerts",
+      "generate-api-key",
+      "generate-certificate",
+      "generate-compliance-package",
+      "generate-demo-template",
+      "generate-haccp-from-checklists",
+      "generate-job-report",
+      "generate-kec-report",
+      "generate-outreach",
+      "generate-partner-demo",
+      "generate-service-report",
+      "generate-task-instances",
+      "get-jurisdictions",
+      "hoodops-webhook",
+      "insurance-export",
+      "insurance-risk-calculate",
+      "insurance-risk-fire-safety",
+      "insurance-risk-history",
+      "insurance-risk-incidents",
+      "insurance-risk-verify",
+      "integration-conflict-resolver",
+      "integration-data-mapper",
+      "integration-health-check",
+      "integration-oauth-callback",
+      "integration-sync-engine",
+      "intelligence-approve",
+      "intelligence-auto-publish",
+      "intelligence-bridge-proxy",
+      "intelligence-collect",
+      "intelligence-deliver",
+      "intelligence-feed",
+      "intelligence-webhook",
+      "iot-process-reading",
+      "iot-sensor-alerts",
+      "iot-sensor-pull",
+      "iot-sensor-webhook",
+      "jurisdiction-drift-alert",
+      "k2c-processor",
+      "k2c-referral-invite",
+      "landing-chat",
+      "monitor-regulations",
+      "notify-qa-review",
+      "offline-conflict-resolver",
+      "offline-device-manager",
+      "offline-photo-batch-upload",
+      "offline-sync-handler",
+      "offline-sync-pull",
+      "ops-intelligence-coach",
+      "ops-intelligence-generate",
+      "platform-metrics-refresh",
+      "platform-stats",
+      "playbook-ai-assistant",
+      "playbook-auto-trigger",
+      "playbook-completion-handler",
+      "playbook-escalation-monitor",
+      "playbook-food-loss-calculator",
+      "playbook-report-generator",
+      "pos-connect",
+      "pos-sync-all",
+      "pos-sync-employees",
+      "pos-sync-locations",
+      "process-service-reminders",
+      "process-service-request",
+      "resend-webhook",
+      "rfp-classify",
+      "rfp-crawl",
+      "risk-score-api",
+      "security-headers-check",
+      "send-document-alerts",
+      "send-missing-doc-reminders",
+      "send-reminders",
+      "send-sms-invite",
+      "send-team-invite",
+      "send-welcome-email",
+      "sensor-alert-escalate",
+      "sensor-compliance-aggregate",
+      "sensor-defrost-detect",
+      "sensor-device-health",
+      "sensor-threshold-evaluate",
+      "snapshot-readiness",
+      "stripe-create-checkout",
+      "stripe-customer-portal",
+      "stripe-webhook",
+      "task-notifications",
+      "training-ai-companion",
+      "training-ai-quiz-gen",
+      "training-analytics-aggregate",
+      "training-auto-enroll",
+      "training-certificate-gen",
+      "training-completion-handler",
+      "training-content-translate",
+      "training-enroll",
+      "training-progress-reminder",
+      "training-quiz-score",
+      "training-sb476-report",
+      "trial-email-sender",
+      "trigger-crawl",
+      "validate-vendor-document",
+      "vendor-analytics-snapshot",
+      "vendor-certification-evaluate",
+      "vendor-connect-apply",
+      "vendor-contact",
+      "vendor-credential-check",
+      "vendor-document-notify",
+      "vendor-document-reminders",
+      "vendor-lead-notify",
+      "vendor-notification-sender",
+      "vendor-partner-outreach",
+      "vendor-recommendation-engine",
+      "vendor-schedule-response",
+      "vendor-secure-upload",
+      "vendor-service-token",
+      "violation-crawl",
+      "webhook-dispatch"
+    ]
+  },
+  "05-integrations": {
+    "generated": "2026-04-24",
+    "description": "Third-party integrations inventory for EvidLY",
+    "integrations": [
+      {
+        "id": 1,
+        "name": "Supabase",
+        "category": "core backend",
+        "purpose": "Database, auth, storage, edge functions",
+        "clientFiles": [
+          "src/lib/supabase.ts",
+          "src/lib/api.ts",
+          "src/lib/config.ts"
+        ],
+        "clientEnv": [
+          "VITE_SUPABASE_URL",
+          "VITE_SUPABASE_ANON_KEY"
+        ],
+        "serverEnv": [
+          "SUPABASE_URL",
+          "SUPABASE_SERVICE_ROLE_KEY",
+          "SUPABASE_ANON_KEY"
+        ],
+        "edgeFunctions": [],
+        "notes": "Core infrastructure \u00e2\u20ac\u201d all edge functions run on Supabase"
+      },
+      {
+        "id": 2,
+        "name": "Stripe",
+        "category": "payments",
+        "purpose": "Subscription billing, checkout, customer portal",
+        "clientFiles": [
+          "src/lib/stripe.ts",
+          "src/pages/Signup.tsx",
+          "src/components/Pricing.tsx",
+          "src/components/BillingPanel.tsx",
+          "src/pages/settings/IntegrationsPage.tsx",
+          "src/pages/admin/FeatureBaselineTracker.jsx",
+          "src/pages/CertificateViewer.tsx",
+          "src/pages/public/ScoreTableCountyPage.jsx",
+          "src/components/settings/IntegrationDetailModal.tsx"
+        ],
+        "clientEnv": [
+          "VITE_STRIPE_PUBLISHABLE_KEY",
+          "VITE_STRIPE_FOUNDER_SINGLE_PRICE_ID",
+          "VITE_STRIPE_FOUNDER_MULTI_PRICE_ID"
+        ],
+        "serverEnv": [
+          "STRIPE_SECRET_KEY",
+          "STRIPE_WEBHOOK_SECRET",
+          "STRIPE_FOUNDER_ADDITIONAL_PRICE_ID"
+        ],
+        "edgeFunctions": [
+          "stripe-create-checkout",
+          "stripe-customer-portal",
+          "stripe-webhook"
+        ],
+        "notes": null
+      },
+      {
+        "id": 3,
+        "name": "Anthropic/Claude",
+        "category": "AI",
+        "purpose": "AI-powered analysis, drafting, classification, chat",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "ANTHROPIC_API_KEY"
+        ],
+        "edgeFunctions": [
+          "ai-chat",
+          "ai-corrective-action-draft",
+          "ai-document-analysis",
+          "ai-flag-suggest",
+          "ai-photo-analysis",
+          "ai-text-assist",
+          "ai-voice-transcription",
+          "ai-weekly-digest",
+          "benchmark-quarterly-report",
+          "classify-document",
+          "classify-signals",
+          "copilot-analyze",
+          "generate-outreach",
+          "intelligence-collect",
+          "landing-chat",
+          "monitor-regulations",
+          "ops-intelligence-coach",
+          "playbook-ai-assistant",
+          "rfp-classify",
+          "training-ai-companion",
+          "training-ai-quiz-gen",
+          "training-content-translate",
+          "validate-vendor-document",
+          "violation-crawl"
+        ],
+        "notes": "24 edge functions consume the Anthropic API"
+      },
+      {
+        "id": 4,
+        "name": "OpenAI",
+        "category": "speech transcription",
+        "purpose": "Whisper speech-to-text transcription",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "OPENAI_API_KEY"
+        ],
+        "edgeFunctions": [
+          "ai-voice-transcription"
+        ],
+        "notes": "Used alongside Anthropic in the voice transcription pipeline"
+      },
+      {
+        "id": 5,
+        "name": "Resend",
+        "category": "transactional email",
+        "purpose": "Sending emails (reminders, digests, notifications)",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "RESEND_API_KEY"
+        ],
+        "edgeFunctions": [
+          "ai-weekly-digest",
+          "auto-request-documents",
+          "check-onboarding-progress",
+          "intelligence-deliver",
+          "vendor-contact",
+          "resend-webhook"
+        ],
+        "sharedModules": [
+          "_shared/email.ts"
+        ],
+        "notes": "resend-webhook handles inbound email; _shared/email.ts is the shared utility"
+      },
+      {
+        "id": 6,
+        "name": "Twilio",
+        "category": "SMS",
+        "purpose": "SMS notifications to vendors",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "TWILIO_ACCOUNT_SID",
+          "TWILIO_AUTH_TOKEN",
+          "TWILIO_FROM_NUMBER"
+        ],
+        "edgeFunctions": [
+          "auto-request-documents"
+        ],
+        "notes": "send-sms-invite and vendor-sms-reminder are deployed-only (not in local source)"
+      },
+      {
+        "id": 7,
+        "name": "Firecrawl",
+        "category": "web crawling",
+        "purpose": "Jurisdiction and regulatory data crawling",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "FIRECRAWL_API_KEY"
+        ],
+        "edgeFunctions": [
+          "crawl-monitor",
+          "trigger-crawl",
+          "rfp-crawl",
+          "violation-crawl"
+        ],
+        "notes": null
+      },
+      {
+        "id": 8,
+        "name": "Crisp",
+        "category": "live chat widget",
+        "purpose": "In-app live chat support",
+        "clientFiles": [
+          "src/hooks/useCrisp.ts",
+          "src/App.tsx",
+          "src/pages/Signup.tsx",
+          "src/pages/Login.tsx",
+          "src/pages/Onboarding.tsx",
+          "src/pages/SetupMFA.tsx"
+        ],
+        "clientEnv": [
+          "VITE_CRISP_WEBSITE_ID"
+        ],
+        "serverEnv": [],
+        "edgeFunctions": [],
+        "notes": "Client-side only integration"
+      },
+      {
+        "id": 9,
+        "name": "Google reCAPTCHA",
+        "category": "bot protection",
+        "purpose": "Bot protection on login forms",
+        "clientFiles": [
+          "src/pages/Login.tsx",
+          "src/pages/VendorLogin.tsx"
+        ],
+        "clientEnv": [
+          "VITE_RECAPTCHA_SITE_KEY"
+        ],
+        "serverEnv": [],
+        "edgeFunctions": [],
+        "notes": "Client-side only integration"
+      },
+      {
+        "id": 10,
+        "name": "Sentry",
+        "category": "error tracking",
+        "purpose": "Frontend error monitoring",
+        "clientFiles": [
+          "src/lib/sentry.ts"
+        ],
+        "clientEnv": [
+          "VITE_SENTRY_DSN"
+        ],
+        "serverEnv": [],
+        "edgeFunctions": [],
+        "notes": "Client-side only integration"
+      },
+      {
+        "id": 11,
+        "name": "Sanity",
+        "category": "CMS",
+        "purpose": "Blog/content management",
+        "clientFiles": [
+          "src/lib/sanityClient.ts"
+        ],
+        "clientEnv": [
+          "VITE_SANITY_PROJECT_ID",
+          "VITE_SANITY_DATASET"
+        ],
+        "serverEnv": [],
+        "edgeFunctions": [],
+        "notes": "Client-side only integration"
+      },
+      {
+        "id": 12,
+        "name": "Web Push (VAPID)",
+        "category": "push notifications",
+        "purpose": "Browser push notifications",
+        "clientFiles": [
+          "src/hooks/usePushNotifications.ts"
+        ],
+        "clientEnv": [
+          "VITE_VAPID_PUBLIC_KEY"
+        ],
+        "serverEnv": [],
+        "edgeFunctions": [],
+        "notes": "Client-side only integration"
+      },
+      {
+        "id": 13,
+        "name": "SAM.gov",
+        "category": "government contract data",
+        "purpose": "RFP/government contract intelligence",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "SAM_GOV_API_KEY"
+        ],
+        "edgeFunctions": [],
+        "notes": "Server-side only integration"
+      },
+      {
+        "id": 14,
+        "name": "HoodOps webhook",
+        "category": "external integration",
+        "purpose": "Integration with HoodOps system",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "HOODOPS_WEBHOOK_SECRET"
+        ],
+        "edgeFunctions": [
+          "hoodops-webhook"
+        ],
+        "notes": "Inbound webhook from HoodOps"
+      },
+      {
+        "id": 15,
+        "name": "Intelligence webhook",
+        "category": "external integration",
+        "purpose": "External intelligence data ingestion",
+        "clientFiles": [],
+        "clientEnv": [],
+        "serverEnv": [
+          "INTELLIGENCE_WEBHOOK_SECRET"
+        ],
+        "edgeFunctions": [
+          "intelligence-webhook"
+        ],
+        "notes": "Inbound webhook for intelligence data"
+      }
+    ],
+    "additionalEnv": {
+      "APP_URL": {
+        "scope": "server",
+        "purpose": "Base URL for links in emails"
+      },
+      "CRON_SECRET": {
+        "scope": "server",
+        "purpose": "Auth for cron-triggered functions"
+      },
+      "RFP_MONTHLY_BUDGET": {
+        "scope": "server",
+        "purpose": "Budget limit for RFP crawling"
+      },
+      "VITE_APP_ENV": {
+        "scope": "client",
+        "purpose": "production/staging mode switching"
+      },
+      "VITE_FOUNDER_NAME": {
+        "scope": "client",
+        "purpose": "Founder contact info"
+      },
+      "VITE_FOUNDER_EMAIL": {
+        "scope": "client",
+        "purpose": "Founder contact info"
+      },
+      "VITE_FOUNDER_PHONE": {
+        "scope": "client",
+        "purpose": "Founder contact info"
+      },
+      "VITE_FOUNDER_TITLE": {
+        "scope": "client",
+        "purpose": "Founder contact info"
+      }
+    },
+    "summary": {
+      "totalIntegrations": 15,
+      "clientEnvVarsCount": 12,
+      "serverEnvVarsCount": 16,
+      "additionalEnvVarsCount": 8,
+      "categories": {
+        "coreBackend": [
+          "Supabase"
+        ],
+        "payments": [
+          "Stripe"
+        ],
+        "ai": [
+          "Anthropic/Claude",
+          "OpenAI"
+        ],
+        "communications": [
+          "Resend",
+          "Twilio",
+          "Crisp",
+          "Web Push (VAPID)"
+        ],
+        "dataCollection": [
+          "Firecrawl",
+          "SAM.gov"
+        ],
+        "security": [
+          "Google reCAPTCHA"
+        ],
+        "observability": [
+          "Sentry"
+        ],
+        "cms": [
+          "Sanity"
+        ],
+        "externalWebhooks": [
+          "HoodOps webhook",
+          "Intelligence webhook"
+        ]
+      }
+    }
+  },
+  "06-db-schema": {
+    "total_public_tables": 173,
+    "tables": [
+      "activity_logs",
+      "admin_api_keys",
+      "admin_event_log",
+      "ai_corrective_actions",
+      "ai_insights",
+      "ai_interaction_logs",
+      "ai_weekly_digests",
+      "api_applications",
+      "api_marketplace_listings",
+      "api_request_log",
+      "api_sandbox_keys",
+      "api_tokens",
+      "api_webhook_deliveries",
+      "api_webhook_subscriptions",
+      "assessment_leads",
+      "auto_request_log",
+      "auto_request_settings",
+      "benchmark_badges",
+      "benchmark_index_reports",
+      "benchmark_snapshots",
+      "calcode_violation_map",
+      "checklist_assignments",
+      "checklist_completions",
+      "checklist_items",
+      "checklist_responses",
+      "checklist_template_completions",
+      "checklist_template_items",
+      "checklist_templates",
+      "checklists",
+      "client_intelligence_feed",
+      "client_notifications",
+      "compliance_photos",
+      "compliance_requirements",
+      "cooldown_logs",
+      "cooldown_temp_checks",
+      "corrective_action_templates",
+      "corrective_actions",
+      "crawl_categories",
+      "crawl_execution_log",
+      "crawl_health",
+      "crawl_results",
+      "crawl_runs",
+      "crawl_sources",
+      "demo_sessions",
+      "device_registrations",
+      "document_alerts",
+      "document_reminders",
+      "documents",
+      "drift_alert_log",
+      "drift_monitor_executions",
+      "edge_function_invocations",
+      "edge_function_registry",
+      "employee_certifications",
+      "enterprise_api_keys",
+      "enterprise_audit_log",
+      "enterprise_bulk_operations",
+      "enterprise_hierarchy_config",
+      "enterprise_hierarchy_nodes",
+      "enterprise_integration_config",
+      "enterprise_location_assignments",
+      "enterprise_report_schedules",
+      "enterprise_report_templates",
+      "enterprise_rollup_scores",
+      "enterprise_scim_tokens",
+      "enterprise_sso_configs",
+      "enterprise_tenants",
+      "enterprise_user_mappings",
+      "entity_correlations",
+      "evidly_role_permissions",
+      "inspection_reports",
+      "insurance_api_keys",
+      "insurance_api_logs",
+      "insurance_api_requests",
+      "insurance_consent",
+      "insurance_reports",
+      "insurance_risk_factors",
+      "insurance_risk_scores",
+      "insurance_score_history",
+      "insurance_share_links",
+      "integration_entity_map",
+      "integration_sync_log",
+      "integration_webhook_config",
+      "integrations",
+      "intelligence_game_plans",
+      "intelligence_insight_views",
+      "intelligence_insights",
+      "intelligence_signals",
+      "intelligence_sources",
+      "intelligence_subscriptions",
+      "iot_ingestion_log",
+      "iot_integration_configs",
+      "iot_sensor_alerts",
+      "iot_sensor_providers",
+      "iot_sensor_readings",
+      "iot_sensors",
+      "irr_submissions",
+      "jie_health_log",
+      "jurisdiction_config_snapshots",
+      "jurisdiction_distributions",
+      "jurisdiction_intel_updates",
+      "jurisdiction_scoring_profiles",
+      "jurisdiction_violation_overrides",
+      "jurisdictions",
+      "k2c_donations",
+      "location_benchmark_ranks",
+      "location_jurisdiction_scores",
+      "location_jurisdictions",
+      "location_risk_predictions",
+      "locations",
+      "marketplace_credentials",
+      "marketplace_documents",
+      "marketplace_reviews",
+      "marketplace_service_requests",
+      "marketplace_services",
+      "marketplace_vendor_metrics",
+      "marketplace_vendors",
+      "mock_inspection_sessions",
+      "notification_settings",
+      "onboarding_checklist_items",
+      "onboarding_reminders",
+      "organizations",
+      "platform_update_log",
+      "platform_updates",
+      "playbook_activations",
+      "playbook_food_disposition",
+      "playbook_insurance_claims",
+      "playbook_notifications",
+      "playbook_step_checklist_items",
+      "playbook_step_checklist_responses",
+      "playbook_step_photos",
+      "playbook_step_responses",
+      "playbook_steps",
+      "playbook_templates",
+      "playbook_vendor_contacts",
+      "playbooks",
+      "prediction_accuracy_log",
+      "public_estimate_leads",
+      "receiving_temp_logs",
+      "regulatory_change_reads",
+      "regulatory_changes",
+      "regulatory_sources",
+      "regulatory_updates",
+      "remote_connect_sessions",
+      "report_subscriptions",
+      "rfp_actions",
+      "rfp_classifications",
+      "rfp_listings",
+      "rfp_sources",
+      "scheduled_emails",
+      "score_calculations",
+      "scoretable_views",
+      "self_inspection_sessions",
+      "sensor_alerts",
+      "sensor_calibration_log",
+      "sensor_cooling_logs",
+      "sensor_csv_imports",
+      "sensor_defrost_schedules",
+      "sensor_devices",
+      "sensor_door_events",
+      "sensor_incidents",
+      "sensor_integrations",
+      "sensor_readings",
+      "sensor_webhooks",
+      "service_completions",
+      "service_quotes",
+      "stripe_customers",
+      "subscriptions",
+      "support_ticket_activity",
+      "support_ticket_replies",
+      "support_tickets",
+      "sync_conflicts",
+      "sync_queue",
+      "sync_snapshots",
+      "tasks",
+      "temp_check_completions",
+      "temp_logs",
+      "temperature_equipment",
+      "temperature_logs",
+      "training_ai_interactions",
+      "training_certificates",
+      "training_courses",
+      "training_enrollments",
+      "training_lessons",
+      "training_modules",
+      "training_progress",
+      "training_questions",
+      "training_quiz_attempts",
+      "training_sb476_log",
+      "trial_email_log",
+      "user_invitations",
+      "user_location_access",
+      "user_profiles",
+      "vault_documents",
+      "vendor_analytics",
+      "vendor_certification_status",
+      "vendor_client_relationships",
+      "vendor_connect_slots",
+      "vendor_contact_log",
+      "vendor_leads",
+      "vendor_messages",
+      "vendor_partners",
+      "vendor_secure_tokens",
+      "vendor_subscriptions",
+      "vendor_upload_requests",
+      "vendor_users",
+      "vendors",
+      "video_analyses"
+    ],
+    "rls_status": {
+      "enabled": 166,
+      "disabled": 7,
+      "disabled_tables": [
+        "client_intelligence_feed",
+        "intelligence_insight_views",
+        "intelligence_insights",
+        "intelligence_subscriptions",
+        "jie_health_log",
+        "jurisdiction_intel_updates",
+        "scoretable_views"
+      ]
+    },
+    "storage_buckets": [
+      "bundle-temp",
+      "compliance-documents",
+      "compliance-photos",
+      "documents",
+      "inspection-reports",
+      "reports",
+      "uploads",
+      "vault",
+      "vendor-documents",
+      "vendor-uploads"
+    ],
+    "cron_jobs": [
+      {
+        "jobid": 4,
+        "name": "vendor-sms-reminders",
+        "schedule": "15 9 * * *",
+        "edge_function": "vendor-sms-reminder"
+      },
+      {
+        "jobid": 5,
+        "name": "vendor-upload-reminders",
+        "schedule": "0 9 * * *",
+        "edge_function": "vendor-upload-reminder"
+      },
+      {
+        "jobid": 6,
+        "name": "expiration-alerts",
+        "schedule": "0 8 * * *",
+        "edge_function": "expiration-alerts"
+      },
+      {
+        "jobid": 7,
+        "name": "weekly-digest",
+        "schedule": "0 15 * * 1",
+        "edge_function": "weekly-digest"
+      },
+      {
+        "jobid": 8,
+        "name": "onboarding-reminders",
+        "schedule": "0 9 * * *",
+        "edge_function": "onboarding-reminders"
+      },
+      {
+        "jobid": 9,
+        "name": "document-reminders",
+        "schedule": "15 9 * * *",
+        "edge_function": "document-reminders"
+      },
+      {
+        "jobid": 10,
+        "name": "trial-email-daily",
+        "schedule": "0 15 * * *",
+        "edge_function": "trial-email-sender"
+      },
+      {
+        "jobid": 11,
+        "name": "vendor-notifications-daily",
+        "schedule": "0 16 * * *",
+        "edge_function": "vendor-notification-sender"
+      },
+      {
+        "jobid": 12,
+        "name": "vendor-partner-outreach-daily",
+        "schedule": "0 17 * * *",
+        "edge_function": "vendor-partner-outreach"
+      }
+    ],
+    "triggers": [
+      {
+        "table": "client_notifications",
+        "trigger": "trg_client_notifications_updated_at",
+        "function": "update_command_center_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "compliance_photos",
+        "trigger": "trg_compliance_photos_updated_at",
+        "function": "update_compliance_photos_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "corrective_action_templates",
+        "trigger": "trg_corrective_action_templates_updated_at",
+        "function": "update_corrective_action_templates_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "corrective_actions",
+        "trigger": "trg_corrective_actions_updated_at",
+        "function": "update_corrective_actions_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "device_registrations",
+        "trigger": "trg_device_registrations_updated_at",
+        "function": "set_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "edge_function_registry",
+        "trigger": "trg_efr_updated_at",
+        "function": "update_efr_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "intelligence_game_plans",
+        "trigger": "trg_game_plans_updated_at",
+        "function": "update_command_center_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "jurisdiction_scoring_profiles",
+        "trigger": "trg_jurisdiction_profile_updated",
+        "function": "update_jurisdiction_profile_timestamp",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "jurisdictions",
+        "trigger": "jurisdictions_updated_at",
+        "function": "update_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "jurisdictions",
+        "trigger": "trg_jurisdiction_config_drift",
+        "function": "fn_jurisdiction_config_drift_check",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "location_risk_predictions",
+        "trigger": "trg_lrp_updated_at",
+        "function": "update_updated_at_column",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "organizations",
+        "trigger": "trg_set_organization_created_by",
+        "function": "set_organization_created_by",
+        "events": [
+          "INSERT"
+        ]
+      },
+      {
+        "table": "organizations",
+        "trigger": "trg_set_trial_end_date",
+        "function": "set_trial_end_date",
+        "events": [
+          "INSERT",
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "platform_updates",
+        "trigger": "trg_platform_updates_updated_at",
+        "function": "update_command_center_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "playbook_activations",
+        "trigger": "trg_playbook_activations_updated_at",
+        "function": "set_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "playbooks",
+        "trigger": "trg_playbooks_updated_at",
+        "function": "set_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "rfp_actions",
+        "trigger": "trg_rfp_actions_updated",
+        "function": "update_rfp_updated_at",
+        "events": [
+          "UPDATE"
+        ]
+      },
+      {
+        "table": "support_tickets",
+        "trigger": "ticket_sla",
+        "function": "set_ticket_sla",
+        "events": [
+          "INSERT"
+        ]
+      },
+      {
+        "table": "temperature_logs",
+        "trigger": "trg_temp_deviation_to_ca",
+        "function": "fn_temp_deviation_to_ca",
+        "events": [
+          "INSERT"
+        ]
+      }
+    ],
+    "db_functions": [
+      "create_vendor_upload_request",
+      "fn_jie_integrity_check",
+      "fn_jurisdiction_config_drift_check",
+      "fn_temp_deviation_to_ca",
+      "generate_secure_token",
+      "generate_ticket_number",
+      "is_platform_admin",
+      "prevent_snapshot_score_update",
+      "set_organization_created_by",
+      "set_ticket_sla",
+      "set_trial_end_date",
+      "set_updated_at",
+      "update_command_center_updated_at",
+      "update_compliance_photos_updated_at",
+      "update_corrective_action_templates_updated_at",
+      "update_corrective_actions_updated_at",
+      "update_efr_updated_at",
+      "update_jurisdiction_profile_timestamp",
+      "update_rfp_updated_at",
+      "update_updated_at",
+      "update_updated_at_column"
+    ],
+    "row_counts": {
+      "entity_correlations": 647,
+      "vendor_connect_slots": 638,
+      "crawl_execution_log": 407,
+      "admin_event_log": 362,
+      "jie_health_log": 267,
+      "jurisdictions": 169,
+      "intelligence_signals": 148,
+      "intelligence_sources": 82,
+      "drift_monitor_executions": 53,
+      "support_tickets": 53,
+      "drift_alert_log": 53,
+      "crawl_sources": 52,
+      "crawl_health": 47,
+      "regulatory_updates": 29,
+      "crawl_runs": 20,
+      "crawl_categories": 12,
+      "crawl_results": 8,
+      "regulatory_changes": 6,
+      "jurisdiction_distributions": 5,
+      "vault_documents": 5,
+      "user_profiles": 1,
+      "user_location_access": 1,
+      "organizations": 1
+    },
+    "jie_baseline": {
+      "status": "PASS",
+      "AZ": 15,
+      "CA": 62,
+      "NV": 17,
+      "OR": 36,
+      "WA": 39,
+      "total": 169
+    }
+  },
+  "07-auth-matrix": {
+    "meta": {
+      "generated": "2026-04-24",
+      "description": "Authentication and authorization matrix for EvidLY app",
+      "sources": [
+        "src/contexts/AuthContext.tsx",
+        "src/contexts/RoleContext.tsx",
+        "src/contexts/DemoContext.tsx",
+        "src/lib/routeGuards.ts",
+        "src/components/auth/RequireAdmin.tsx",
+        "src/components/layout/SalesGuard.tsx",
+        "src/components/auth/QRAuthGuard.jsx",
+        "src/config/sidebarConfig.ts"
+      ]
+    },
+    "roles": {
+      "canonical": [
+        "platform_admin",
+        "owner_operator",
+        "executive",
+        "compliance_manager",
+        "chef",
+        "kitchen_manager",
+        "facilities_manager",
+        "kitchen_staff"
+      ],
+      "db_aliases": {
+        "admin": "owner_operator",
+        "owner": "owner_operator"
+      },
+      "default_fallback": "owner_operator",
+      "type_definition": "src/contexts/RoleContext.tsx:6",
+      "alias_mapping_function": "dbRoleToUserRole (src/contexts/RoleContext.tsx:82-96)"
+    },
+    "contexts": {
+      "AuthContext": {
+        "file": "src/contexts/AuthContext.tsx",
+        "hook": "useAuth()",
+        "provides": {
+          "user": "Supabase User object or null",
+          "profile": "UserProfile from user_profiles table (with optional org override)",
+          "session": "Supabase Session or null",
+          "loading": "boolean \u00e2\u20ac\u201d true until initial auth check completes",
+          "isEvidlyAdmin": "boolean \u00e2\u20ac\u201d true if user email ends with @getevidly.com",
+          "isAdmin": "boolean \u00e2\u20ac\u201d true if isEvidlyAdmin OR profile.role === 'platform_admin'",
+          "signIn": "(email, password) => Promise",
+          "signUp": "(email, password, fullName, phone, orgName, state, kitchenType) => Promise",
+          "signOut": "() => Promise",
+          "refreshProfile": "() => Promise \u00e2\u20ac\u201d re-fetches user_profiles row",
+          "setOrgOverride": "(orgId | null) => void \u00e2\u20ac\u201d overrides profile.organization_id for emulation"
+        },
+        "security_behaviors": {
+          "suspension_enforcement": "If user_profiles.is_suspended is true, immediately signs out and redirects to /suspended",
+          "login_timestamps": "Updates last_login_at (and first_login_at on first login) in user_profiles"
+        }
+      },
+      "RoleContext": {
+        "file": "src/contexts/RoleContext.tsx",
+        "hook": "useRole()",
+        "provides": {
+          "userRole": "UserRole \u00e2\u20ac\u201d current effective role",
+          "setUserRole": "(role) => void \u00e2\u20ac\u201d only works in demo mode (no-op in preview mode)",
+          "isPreviewMode": "boolean \u00e2\u20ac\u201d true when __rolePreview URL param is active",
+          "roleLocationAssignments": "Record<UserRole, LocationAssignment[]> \u00e2\u20ac\u201d demo location map",
+          "tempCoverageAssignments": "TempCoverageAssignment[] \u00e2\u20ac\u201d temporary location coverage grants",
+          "addTempCoverage": "(assignment) => void",
+          "removeTempCoverage": "(id) => void",
+          "getAccessibleLocations": "() => LocationAssignment[]",
+          "getAccessibleLocationUrlIds": "() => string[]",
+          "canAccessLocation": "(locationUrlId) => boolean",
+          "canManageTeam": "() => boolean \u00e2\u20ac\u201d platform_admin, executive, owner_operator",
+          "canAccessBilling": "() => boolean \u00e2\u20ac\u201d platform_admin, executive",
+          "canAssignTempCoverage": "() => boolean \u00e2\u20ac\u201d platform_admin, executive, owner_operator",
+          "hasMultipleLocations": "() => boolean",
+          "showAllLocationsOption": "() => boolean"
+        },
+        "role_sync": {
+          "authenticated_user": "Role is synced from profile.role via dbRoleToUserRole()",
+          "demo_mode": "Role is stored in localStorage key 'evidly-demo-role'",
+          "preview_mode": "__rolePreview URL param locks role for the page lifecycle"
+        }
+      },
+      "DemoContext": {
+        "file": "src/contexts/DemoContext.tsx",
+        "hook": "useDemo()",
+        "provides": {
+          "isDemoMode": "boolean \u00e2\u20ac\u201d anonymous demo (no session), forced true in __rolePreview",
+          "isAuthenticatedDemo": "boolean \u00e2\u20ac\u201d user has session AND org.is_demo === true",
+          "isAnyDemoMode": "boolean \u00e2\u20ac\u201d isDemoMode OR isAuthenticatedDemo",
+          "demoExpiresAt": "Date | null \u00e2\u20ac\u201d from organizations.demo_expires_at",
+          "isDemoExpired": "boolean \u00e2\u20ac\u201d checked every 60 seconds",
+          "enterDemo": "(lead?) => void \u00e2\u20ac\u201d clears auth tokens, sets sessionStorage",
+          "exitDemo": "() => void \u00e2\u20ac\u201d clears sessionStorage demo flags",
+          "demoLead": "DemoLead | null",
+          "setDemoLead": "(lead) => void",
+          "tourActive": "boolean",
+          "tourStep": "number",
+          "setTourStep": "(step) => void",
+          "startTour": "() => void",
+          "completeTour": "() => void",
+          "companyName": "string \u00e2\u20ac\u201d from lead or default 'Pacific Coast Dining'",
+          "userName": "string \u00e2\u20ac\u201d from lead or default 'Maria Rodriguez'",
+          "firstName": "string \u00e2\u20ac\u201d first word of userName",
+          "presenterMode": "boolean \u00e2\u20ac\u201d activated by typing 'evidly' or ?presenter=true",
+          "togglePresenterMode": "() => void"
+        },
+        "storage_keys": {
+          "evidly_demo_mode": "sessionStorage \u00e2\u20ac\u201d 'true' when anonymous demo is active",
+          "evidly_demo_lead": "sessionStorage \u00e2\u20ac\u201d JSON-serialized DemoLead object",
+          "evidly-presenter": "sessionStorage \u00e2\u20ac\u201d 'true' when presenter mode is active"
+        },
+        "guard_mode_sync": {
+          "platform_admin": "always 'live' \u00e2\u20ac\u201d full write access even when org is_demo",
+          "anonymous_demo": "when isDemoMode is true (no session)",
+          "authenticated_demo": "when isAuthenticatedDemo is true (session + org.is_demo)",
+          "live": "default for authenticated non-demo users"
+        }
+      }
+    },
+    "guard_functions": {
+      "isRouteAllowedForRole": {
+        "file": "src/lib/routeGuards.ts",
+        "line": 88,
+        "signature": "(pathname: string, role: UserRole) => boolean",
+        "behavior": {
+          "platform_admin": "Always returns true \u00e2\u20ac\u201d bypasses all route restrictions",
+          "prefix_matching": "Routes ending with '/' use startsWith; others match exact or exact + '/'",
+          "unlisted_routes": "Routes not in ROUTE_ROLE_MAP return true for all authenticated users",
+          "empty_array": "Routes with [] as allowed roles are only accessible to platform_admin"
+        }
+      },
+      "RequireAdmin": {
+        "file": "src/components/auth/RequireAdmin.tsx",
+        "type": "Route guard component (wraps <Outlet />)",
+        "behavior": {
+          "unauthenticated": "Redirects to /login",
+          "demo_mode": "Allows through (admin pages have write guards separately)",
+          "non_admin": "Redirects to /dashboard, logs to platform_audit_log, shows error toast",
+          "admin": "Renders child routes via <Outlet />"
+        },
+        "admin_check": "useAuth().isAdmin \u00e2\u20ac\u201d true if email ends @getevidly.com OR role === 'platform_admin'"
+      },
+      "SalesGuard": {
+        "file": "src/components/layout/SalesGuard.tsx",
+        "type": "Component wrapper guard",
+        "behavior": {
+          "check": "useEvidlyPermissions().canSeeSalesMarketing",
+          "unauthorized": "Redirects to /admin via useNavigate()",
+          "authorized": "Renders children"
+        }
+      },
+      "QRAuthGuard": {
+        "file": "src/components/auth/QRAuthGuard.jsx",
+        "type": "Component wrapper guard",
+        "behavior": {
+          "no_session_no_qr": "Redirects to /login",
+          "no_session_qr_entry": "Renders children with guest banner (method=qr_scan or equipment param)",
+          "has_session": "Renders children normally"
+        }
+      }
+    },
+    "role_route_matrix": {
+      "description": "For each route in ROUTE_ROLE_MAP: true = allowed, false = denied. platform_admin always allowed (bypasses all). Routes not listed are accessible to all authenticated users.",
+      "routes": {
+        "/analysis": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/audit-trail": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/benchmarks": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/compliance-trends": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/intelligence": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/intelligence": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/reports": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/inspection-forecast": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/insights/violation-radar": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/trajectory": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/vendor-performance": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/insights/signals": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/leaderboard": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/insights/operations-intelligence": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/iot-monitoring": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/jurisdiction": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/scoring-breakdown": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/violation-trends": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": false,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/tasks": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": true
+        },
+        "/corrective-actions": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": true
+        },
+        "/vendor-certifications": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": false,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/export-center": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/workforce-risk": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/cic-pse": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/vendor-connect": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/admin/vendor-connect": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/equipment": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/incidents": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": true
+        },
+        "/vendors": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/vendors/review": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/calendar": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/dashboard/training": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": false,
+          "kitchen_staff": true
+        },
+        "/reports": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/billing": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/org-hierarchy": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/team": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": true,
+          "kitchen_manager": true,
+          "facilities_manager": true,
+          "kitchen_staff": false
+        },
+        "/admin/api-keys": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/demo-generator": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/demo-pipeline": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/demo-tours": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/partner-demos": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/demos": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/partner/ (prefix)": {
+          "platform_admin": true,
+          "owner_operator": false,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/admin/ (prefix, general)": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/enterprise/ (prefix)": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/settings/roles-permissions": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/settings/team-roles": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/settings/service-types": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/settings/billing": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": false,
+          "compliance_manager": false,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        },
+        "/iot/hub": {
+          "platform_admin": true,
+          "owner_operator": true,
+          "executive": true,
+          "compliance_manager": true,
+          "chef": false,
+          "kitchen_manager": false,
+          "facilities_manager": false,
+          "kitchen_staff": false
+        }
+      }
+    },
+    "role_capability_matrix": {
+      "description": "Non-route capabilities derived from RoleContext helper functions",
+      "canManageTeam": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "canAccessBilling": {
+        "platform_admin": true,
+        "owner_operator": false,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      },
+      "canAssignTempCoverage": {
+        "platform_admin": true,
+        "owner_operator": true,
+        "executive": true,
+        "compliance_manager": false,
+        "chef": false,
+        "kitchen_manager": false,
+        "facilities_manager": false,
+        "kitchen_staff": false
+      }
+    },
+    "route_matching_precedence": {
+      "description": "ROUTE_ROLE_MAP is evaluated top-to-bottom. First match wins. Specific routes (e.g., /admin/vendor-connect with []) are listed BEFORE general prefix matches (e.g., /admin/ with [owner_operator, executive]).",
+      "example_conflict": {
+        "route": "/admin/vendor-connect",
+        "specific_rule": "Line 42: [] \u00e2\u20ac\u201d platform_admin only",
+        "general_rule": "Line 71: /admin/ \u00e2\u20ac\u201d [owner_operator, executive]",
+        "winner": "specific_rule (listed first)"
+      },
+      "prefix_routes": [
+        "/admin/ (general)",
+        "/enterprise/",
+        "/partner/"
+      ]
+    },
+    "demo_mode": {
+      "activation": {
+        "anonymous": "sessionStorage.setItem('evidly_demo_mode', 'true') via DemoContext.enterDemo()",
+        "authenticated": "organizations.is_demo === true in database",
+        "role_preview": "__rolePreview URL param forces isDemoMode = true"
+      },
+      "deactivation": {
+        "anonymous": "sessionStorage.removeItem('evidly_demo_mode') via DemoContext.exitDemo()",
+        "auto_cleanup": "When user authenticates, rawDemoMode is set to false and sessionStorage keys are removed"
+      },
+      "write_guard_modes": {
+        "live": "Full write access (default for authenticated non-demo users; always for platform_admin)",
+        "anonymous_demo": "Destructive writes blocked via guardOperation()",
+        "authenticated_demo": "Destructive writes blocked via guardOperation()"
+      },
+      "expiry": {
+        "source": "organizations.demo_expires_at column",
+        "check_interval": "60 seconds",
+        "flag": "isDemoExpired boolean in DemoContext"
+      },
+      "presenter_mode": {
+        "activation": [
+          "URL param: ?presenter=true",
+          "Keyboard konami: type 'evidly' (outside input fields)"
+        ],
+        "storage": "sessionStorage key 'evidly-presenter'"
+      }
+    },
+    "admin_access": {
+      "definition": "isAdmin = isEvidlyAdmin || profile.role === 'platform_admin'",
+      "isEvidlyAdmin": "user.email ends with '@getevidly.com'",
+      "guard_component": "RequireAdmin (src/components/auth/RequireAdmin.tsx)",
+      "unauthorized_logging": "Logs to platform_audit_log via useAuditLog().logEvent()",
+      "admin_only_nav_items": [
+        "Sales Pipeline",
+        "GTM Dashboard",
+        "Leads",
+        "Campaigns",
+        "Demo Generator",
+        "Demo Launcher",
+        "Demo Pipeline",
+        "Kitchen Checkup"
+      ],
+      "nav_gate_rule": "if (userRole !== 'platform_admin') return null"
+    },
+    "qr_auth": {
+      "guard": "QRAuthGuard (src/components/auth/QRAuthGuard.jsx)",
+      "routes": [
+        "/temp/log",
+        "/temp-logs/scan"
+      ],
+      "behavior": {
+        "authenticated": "Normal render",
+        "guest_with_qr": "Renders with yellow 'Scanning as guest' banner (method=qr_scan or equipment param present)",
+        "guest_without_qr": "Redirects to /login"
+      }
+    },
+    "security_notes": {
+      "suspension": "AuthContext checks is_suspended on every profile fetch; signs out immediately if true and redirects to /suspended",
+      "platform_admin_bypass": "platform_admin bypasses ALL route guards in isRouteAllowedForRole(); also bypasses demo write guards (always 'live' mode)",
+      "org_emulation": "setOrgOverride() in AuthContext allows platform_admin to override profile.organization_id for cross-org support",
+      "role_preview": "__rolePreview URL param lets admin preview any role; locks role for page lifecycle, forces demo mode on",
+      "first_match_wins": "ROUTE_ROLE_MAP is iterated in order; specific routes must appear before their prefix catch-all to avoid being shadowed"
+    }
+  },
+  "08-onboarding": {
+    "audit_phase": "08-onboarding",
+    "generated_at": "2026-04-24",
+    "summary": "Comprehensive audit of signup, onboarding, demo wizard, guided tour, demo data generation, and demo mode lifecycle across the EvidLY platform.",
+    "signup_paths": [
+      {
+        "path": "/signup",
+        "component": "src/pages/Signup.tsx",
+        "method": "email_password",
+        "fields": [
+          {
+            "name": "fullName",
+            "type": "text",
+            "required": true,
+            "validation": "min 2 chars"
+          },
+          {
+            "name": "email",
+            "type": "email",
+            "required": true,
+            "validation": "regex ^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "pre_populated_from": "?email= search param"
+          },
+          {
+            "name": "phone",
+            "type": "tel",
+            "required": true,
+            "validation": "10 digits",
+            "format": "(555) 555-5555"
+          },
+          {
+            "name": "orgName",
+            "type": "text",
+            "required": true,
+            "validation": "min 2 chars"
+          },
+          {
+            "name": "signupState",
+            "type": "select",
+            "required": true,
+            "source": "SUPPORTED_STATES from src/data/stateCounties.ts"
+          },
+          {
+            "name": "jurisdiction",
+            "type": "select",
+            "required": false,
+            "source": "getCountiesForState() + getIndependentJurisdictionsForState()"
+          },
+          {
+            "name": "kitchenType",
+            "type": "select",
+            "required": true,
+            "source": "KITCHEN_TYPES from src/config/kitchenTypes.ts"
+          },
+          {
+            "name": "password",
+            "type": "password",
+            "required": true,
+            "validation": "min 12 chars, 1 upper, 1 lower, 1 number, 1 special"
+          },
+          {
+            "name": "confirmPassword",
+            "type": "password",
+            "required": true,
+            "validation": "must match password"
+          },
+          {
+            "name": "termsAccepted",
+            "type": "checkbox",
+            "required": true,
+            "links_to": [
+              "https://getevidly.com/terms",
+              "https://getevidly.com/privacy"
+            ]
+          }
+        ],
+        "password_requirements": {
+          "minLength": 12,
+          "hasUpper": true,
+          "hasLower": true,
+          "hasNumber": true,
+          "hasSpecial": true,
+          "strength_meter": true,
+          "strength_levels": [
+            "Weak (<=2)",
+            "Fair (3)",
+            "Good (4)",
+            "Strong (5)"
+          ]
+        },
+        "db_write": {
+          "method": "supabase.auth.signUp via useAuth().signUp",
+          "deferred_writes": "Org/profile/access INSERTs deferred to EmailConfirmed.tsx where confirmed session exists",
+          "user_metadata_stored": [
+            "full_name",
+            "phone",
+            "org_name",
+            "state",
+            "kitchen_type"
+          ],
+          "email_redirect_to": "${origin}/email-confirmed"
+        },
+        "pricing_tier_selection": "No tier selection on Signup.tsx; all signups start as trial. FounderBanner shows countdown to FOUNDER_PRICING_DEADLINE (August 7, 2026).",
+        "social_login": "SocialLoginButtons component with mode='signup'",
+        "analytics_events": [
+          "signup_start (method: email)",
+          "signup_complete (method: email)",
+          "trial_started (conversion)"
+        ],
+        "post_submit": "Shows 'Check Your Email' confirmation screen with email address and 'try again' button",
+        "crisp_hidden": true
+      },
+      {
+        "path": "/signup-locations",
+        "component": "src/pages/SignupLocations.tsx",
+        "purpose": "Post-signup location count selection and pricing display",
+        "location_types": [
+          {
+            "type": "single",
+            "description": "1 location, 1 address"
+          },
+          {
+            "type": "multiple",
+            "description": "2-10 locations, counter UI (min 2, max 10)"
+          },
+          {
+            "type": "enterprise",
+            "description": "11+ locations, custom pricing, shows contact info"
+          }
+        ],
+        "pricing_display": {
+          "founder_base_price": "$99/mo",
+          "founder_per_location": "$49/ea",
+          "standard_base_price": "$199/mo",
+          "standard_per_location": "$99/ea",
+          "billing_periods": [
+            "monthly",
+            "annual (10 months = 2 free)"
+          ],
+          "savings_display": true,
+          "savings_calculation": "Shows monthly savings, annual savings, and percentage"
+        },
+        "enterprise_contact": {
+          "phone": "(855) 384-3591",
+          "email": "sales@getevidly.com"
+        },
+        "features_listed": [
+          "All features included",
+          "AI Advisor",
+          "QR Passport",
+          "Priority support"
+        ],
+        "next_action": "navigates to /onboarding on 'Continue to Checkout'",
+        "db_write": "None - purely client-side pricing display"
+      }
+    ],
+    "onboarding": {
+      "component": "src/pages/Onboarding.tsx",
+      "total_steps": 10,
+      "progress_persistence": "organizations.onboarding_step (integer) and organizations.onboarding_completed (boolean)",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Welcome",
+          "icon": "EvidlyIcon",
+          "content": "Welcome screen with EvidLY icon, heading, and description",
+          "skippable": true,
+          "db_write": false
+        },
+        {
+          "step": 2,
+          "name": "Org Details",
+          "icon": "EvidlyIcon",
+          "content": "Informational - says org is already set up, continue with locations",
+          "skippable": true,
+          "db_write": false
+        },
+        {
+          "step": 3,
+          "name": "Add Location",
+          "icon": "MapPin",
+          "fields": [
+            "locationName (required, uses GhostInput AI)",
+            "locationAddress (optional)"
+          ],
+          "skippable": true,
+          "db_write": {
+            "table": "locations",
+            "columns": [
+              "organization_id",
+              "name",
+              "address"
+            ],
+            "condition": "Only if not isDemoMode and locationName is provided"
+          },
+          "jurisdiction_lookup": "lookupJurisdiction() called on address, best-effort, non-blocking"
+        },
+        {
+          "step": 4,
+          "name": "Shifts",
+          "icon": "Clock",
+          "fields": [
+            "shiftOpenTime (default 06:00)",
+            "shiftCloseTime (default 22:00)",
+            "shiftChangeover (default 14:00)"
+          ],
+          "shift_preview": [
+            "Morning: openTime-changeover",
+            "Evening: changeover-closeTime"
+          ],
+          "skippable": false,
+          "db_write": "Sets OperatingHoursContext state (in-memory), not DB",
+          "note": "Skip button hidden for step 4"
+        },
+        {
+          "step": 5,
+          "name": "Equipment",
+          "icon": "Thermometer",
+          "content": "Temperature monitoring setup from industry templates",
+          "template_source": "INDUSTRY_TEMPLATES from src/config/industryTemplates.ts",
+          "category_filter": "temperature_logs",
+          "features": [
+            "Toggle items on/off",
+            "Add custom items via GhostInput"
+          ],
+          "skippable": true,
+          "db_write": {
+            "table": "onboarding_checklist_items",
+            "columns": [
+              "organization_id",
+              "category",
+              "item_name",
+              "is_enabled",
+              "is_required",
+              "custom"
+            ],
+            "condition": "On handleNext, enabled items inserted"
+          }
+        },
+        {
+          "step": 6,
+          "name": "Checklists",
+          "icon": "CheckSquare",
+          "content": "Daily operations checklists from industry templates",
+          "category_filter": "checklists",
+          "features": [
+            "Toggle items on/off",
+            "Add custom items"
+          ],
+          "skippable": true,
+          "db_write": "Same as step 5 - onboarding_checklist_items"
+        },
+        {
+          "step": 7,
+          "name": "Documents",
+          "icon": "FileText",
+          "content": "Documentation and vendor services setup from templates",
+          "category_filter": [
+            "documents",
+            "vendor_services"
+          ],
+          "features": [
+            "Toggle items on/off",
+            "Add custom items",
+            "'I'll set this up later' link"
+          ],
+          "skippable": true,
+          "db_write": "Same as step 5 - onboarding_checklist_items"
+        },
+        {
+          "step": 8,
+          "name": "Team",
+          "icon": "Users",
+          "fields": [
+            "teamEmail (optional)",
+            "teamPhone (optional)",
+            "inviteMethod (sms|email|both, default sms)"
+          ],
+          "skippable": true,
+          "db_write": {
+            "edge_function": "send-team-invite",
+            "body": [
+              "email",
+              "inviteUrl",
+              "role (kitchen_staff)",
+              "inviterName",
+              "organizationName"
+            ],
+            "condition": "Only if teamEmail provided and not isDemoMode"
+          }
+        },
+        {
+          "step": 9,
+          "name": "QR Codes",
+          "icon": "QrCode",
+          "content": "Preview QR code generation - placeholder, actual generation after setup",
+          "skippable": true,
+          "db_write": false
+        },
+        {
+          "step": 10,
+          "name": "Done",
+          "icon": "PartyPopper",
+          "content": "Celebration screen - 'You're All Set!'",
+          "action": "Marks onboarding_completed=true, onboarding_completed_at=now(), navigates to /dashboard",
+          "db_write": {
+            "table": "organizations",
+            "columns": [
+              "onboarding_completed",
+              "onboarding_completed_at"
+            ]
+          }
+        }
+      ],
+      "demo_mode_behavior": "In demo mode, updateOnboardingStep/completeOnboarding/saveChecklistItems are no-ops. Location insert skipped.",
+      "resume_behavior": "On mount, fetches organizations.onboarding_step and resumes from last saved step. If onboarding_completed=true, redirects to /dashboard.",
+      "industry_template_integration": "Loads from organizations.industry_subtype, maps to INDUSTRY_TEMPLATES key for pre-populated checklist items"
+    },
+    "onboarding_checklist_card": {
+      "component": "src/components/dashboard/shared/OnboardingChecklistCard.tsx",
+      "config_file": "src/config/onboardingChecklistConfig.ts",
+      "total_possible_steps": 20,
+      "sections": [
+        {
+          "id": "getting_started",
+          "label": "Getting Started",
+          "steps": [
+            "profile",
+            "setup_locations"
+          ]
+        },
+        {
+          "id": "team_vendors",
+          "label": "Team & Vendors",
+          "steps": [
+            "add_team",
+            "invite_team",
+            "add_vendors",
+            "invite_vendors",
+            "add_vendor_services"
+          ]
+        },
+        {
+          "id": "safety_setup",
+          "label": "Safety & Compliance",
+          "steps": [
+            "register_equipment",
+            "upload_documents",
+            "ai_document_routing",
+            "request_documents",
+            "sb1383_setup",
+            "k12_setup",
+            "iot_readiness"
+          ]
+        },
+        {
+          "id": "platform_tour",
+          "label": "Platform Tour",
+          "steps": [
+            "take_tour"
+          ]
+        },
+        {
+          "id": "growth",
+          "label": "Grow & Connect",
+          "steps": [
+            "k2c_referral",
+            "schedule_consultation",
+            "setup_complete"
+          ]
+        }
+      ],
+      "step_types": [
+        "navigate",
+        "modal",
+        "external",
+        "celebration",
+        "tour"
+      ],
+      "visibility_filtering": {
+        "by_role": "Steps can restrict to specific UserRole[] values",
+        "by_industry": "Steps can restrict to IndustryCode[] values",
+        "by_tier": "Steps can require minimum LocationTier (single|multi|enterprise)",
+        "by_enrollment": "sb1383_setup gated by isSB1383Enrolled, k12_setup gated by isK12Enrolled",
+        "resolver_function": "resolveVisibleSteps(industryType, locationCount, userRole, enrollmentFlags)"
+      },
+      "dependency_system": "Steps can declare dependsOn[] - array of step IDs that must be completed first",
+      "auto_completion": "Some steps auto-detect completion via completionTable + completionMinCount or completionProfileField"
+    },
+    "demo_wizard": {
+      "component": "src/pages/DemoWizard.tsx",
+      "current_behavior": "BYPASSED - useEffect immediately calls enterDemo() + navigate('/dashboard', { replace: true }). Returns null. The full 7-step wizard code exists below but is unreachable (dead code after 'return null').",
+      "bypass_action": {
+        "sets_operating_hours": "3 locations with predefined schedules",
+        "sets_shifts": "6 shifts across 3 locations",
+        "calls": "enterDemo()",
+        "navigates_to": "/dashboard (replace: true)"
+      },
+      "dead_code_wizard_steps": [
+        {
+          "step": 0,
+          "label": "About You",
+          "icon": "User",
+          "fields": [
+            "name",
+            "email",
+            "phone"
+          ]
+        },
+        {
+          "step": 1,
+          "label": "Your Business",
+          "icon": "Building2",
+          "fields": [
+            "orgName",
+            "industry (5 options)",
+            "subtype"
+          ]
+        },
+        {
+          "step": 2,
+          "label": "Location",
+          "icon": "MapPin",
+          "fields": [
+            "locationType (single|multi)",
+            "locationCount (2-100+)",
+            "locationName"
+          ]
+        },
+        {
+          "step": 3,
+          "label": "Hours",
+          "icon": "Clock",
+          "fields": [
+            "wizardDays[]",
+            "wizardOpenTime",
+            "wizardCloseTime",
+            "wizardShift1Name",
+            "wizardShift1End",
+            "wizardShift2Name",
+            "showShifts toggle"
+          ]
+        },
+        {
+          "step": 4,
+          "label": "Log Temps",
+          "icon": "Thermometer",
+          "fields": [
+            "Walk-in Cooler",
+            "Walk-in Freezer",
+            "Prep Cooler",
+            "Hot Hold Cabinet"
+          ],
+          "requirement": "Log at least 2 readings"
+        },
+        {
+          "step": 5,
+          "label": "Checklist",
+          "icon": "ClipboardCheck",
+          "fields": [
+            "6 checklist items"
+          ],
+          "requirement": "Complete at least 3 items"
+        },
+        {
+          "step": 6,
+          "label": "Your Dashboard",
+          "icon": "Sparkles",
+          "content": "Celebration + launch dashboard CTA + free assessment link"
+        }
+      ],
+      "industries_defined": [
+        "restaurant",
+        "healthcare_facility",
+        "senior_living",
+        "k12_school",
+        "higher_education"
+      ],
+      "lead_capture": {
+        "table": "demo_leads",
+        "columns": [
+          "full_name",
+          "email",
+          "phone",
+          "organization_name",
+          "industry_type",
+          "industry_subtype",
+          "location_type",
+          "location_count",
+          "location_name"
+        ],
+        "trigger": "Called after step 0 on 'Continue'",
+        "note": "Unreachable in current code due to early return null"
+      },
+      "staff_login": {
+        "purpose": "Subtle 'Staff Login' link for sales team, uses supabase.auth.signInWithPassword",
+        "note": "Also unreachable in current code"
+      }
+    },
+    "demo_request_flow": {
+      "step_1": {
+        "path": "/demo/request",
+        "component": "src/pages/DemoRequest.tsx",
+        "purpose": "Sales-qualified demo request form with competitor email blocking",
+        "fields": [
+          {
+            "name": "name",
+            "required": true
+          },
+          {
+            "name": "email",
+            "required": true,
+            "validation": "regex + isBlockedDomain() check"
+          },
+          {
+            "name": "phone",
+            "required": true
+          },
+          {
+            "name": "companyName",
+            "required": true
+          },
+          {
+            "name": "companyType",
+            "required": true,
+            "source": "KITCHEN_TYPES from src/data/demoGeneratorData.ts"
+          },
+          {
+            "name": "operationVolume",
+            "required": true,
+            "source": "OPERATION_VOLUMES"
+          },
+          {
+            "name": "address",
+            "required": true
+          },
+          {
+            "name": "city",
+            "required": true
+          },
+          {
+            "name": "state",
+            "required": true,
+            "source": "US_STATES"
+          },
+          {
+            "name": "zipCode",
+            "required": true
+          },
+          {
+            "name": "numLocations",
+            "default": 1,
+            "max": 10
+          }
+        ],
+        "competitor_blocking": "isBlockedDomain(email) checks for competitor and disposable email domains",
+        "data_storage": "sessionStorage('demo_request_data')",
+        "next": "navigates to /demo/schedule/:sessionId"
+      },
+      "step_2": {
+        "path": "/demo/schedule/:sessionId",
+        "component": "src/pages/DemoSchedule.tsx",
+        "purpose": "Calendly scheduling page after demo request submission",
+        "calendly_url": "https://calendly.com/founders-getevidly/60min",
+        "calendly_event_listener": "window.addEventListener('message') for calendly.event_scheduled",
+        "states": [
+          "scheduling (shows Calendly embed placeholder)",
+          "booked (shows confirmation + next steps)"
+        ],
+        "data_retrieval": "sessionStorage('demo_request_data')",
+        "note": "Calendly widget is a placeholder in current code with 'Simulate Booking' button"
+      }
+    },
+    "demo_expired": {
+      "component": "src/pages/DemoExpired.tsx",
+      "purpose": "Full-screen upgrade prompt for expired authenticated demo accounts",
+      "preserved_data": [
+        "Organization profile and settings",
+        "Location and facility configurations",
+        "Jurisdiction authority assignments",
+        "Team member roles and access"
+      ],
+      "ctas": [
+        {
+          "label": "Upgrade Now",
+          "action": "navigate('/pricing')"
+        },
+        {
+          "label": "Talk to Us",
+          "action": "external link to Calendly"
+        }
+      ]
+    },
+    "guided_tour": {
+      "components": {
+        "GuidedTour": {
+          "file": "src/components/GuidedTour.tsx",
+          "purpose": "General platform guided tour - highlights top bar and sidebar navigation elements",
+          "trigger": "Floating 'Tour' button (bottom-right, z-1040) or programmatic via window event 'evidly:start-guided-tour'",
+          "total_steps": 14,
+          "steps": [
+            {
+              "step": 1,
+              "target": "tour-search",
+              "title": "Search",
+              "placement": "bottom"
+            },
+            {
+              "step": 2,
+              "target": "tour-alerts",
+              "title": "Alerts",
+              "placement": "bottom"
+            },
+            {
+              "step": 3,
+              "target": "tour-language",
+              "title": "Language",
+              "placement": "bottom"
+            },
+            {
+              "step": 4,
+              "target": "tour-help-topbar",
+              "title": "Help",
+              "placement": "bottom"
+            },
+            {
+              "step": 5,
+              "target": "tour-settings",
+              "title": "Settings",
+              "placement": "bottom"
+            },
+            {
+              "step": 6,
+              "target": "tour-user",
+              "title": "User Info",
+              "placement": "bottom"
+            },
+            {
+              "step": 7,
+              "target": "tour-dashboard",
+              "title": "Dashboard",
+              "placement": "right"
+            },
+            {
+              "step": 8,
+              "target": "tour-section-daily",
+              "title": "Daily Operations",
+              "placement": "right"
+            },
+            {
+              "step": 9,
+              "target": "tour-section-compliance",
+              "title": "Compliance",
+              "placement": "right"
+            },
+            {
+              "step": 10,
+              "target": "tour-section-insights",
+              "title": "Insights",
+              "placement": "right"
+            },
+            {
+              "step": 11,
+              "target": "tour-section-tools",
+              "title": "Tools",
+              "placement": "right"
+            },
+            {
+              "step": 12,
+              "target": "tour-section-administration",
+              "title": "Administration",
+              "placement": "right"
+            },
+            {
+              "step": 13,
+              "target": "tour-section-help",
+              "title": "Help",
+              "placement": "right"
+            },
+            {
+              "step": 14,
+              "target": "tour-logout",
+              "title": "Log Out",
+              "placement": "right"
+            }
+          ],
+          "ui_features": [
+            "Spotlight cutout with gold border",
+            "Black overlay 50% opacity",
+            "Tooltip with title/content/navigation",
+            "Skip Tour button",
+            "Back/Next navigation",
+            "Scroll into view on step change",
+            "Repositions on window resize"
+          ]
+        },
+        "DemoTour": {
+          "file": "src/components/DemoTour.tsx",
+          "purpose": "Demo-specific guided tour focused on compliance features, ends with animated score celebration",
+          "context": "Uses DemoContext tourStep/setTourStep/completeTour/firstName/companyName",
+          "total_steps": 6,
+          "steps": [
+            {
+              "step": 0,
+              "target": "compliance-score",
+              "title": "Welcome to {companyName}!",
+              "placement": "bottom"
+            },
+            {
+              "step": 1,
+              "target": "temp-logs-nav",
+              "title": "Temperature Monitoring",
+              "placement": "right"
+            },
+            {
+              "step": 2,
+              "target": "checklists-nav",
+              "title": "Daily Checklists",
+              "placement": "right"
+            },
+            {
+              "step": 3,
+              "target": "documents-nav",
+              "title": "Documents & Compliance",
+              "placement": "right"
+            },
+            {
+              "step": 4,
+              "target": "ai-advisor-nav",
+              "title": "AI Compliance Advisor",
+              "placement": "right"
+            },
+            {
+              "step": 5,
+              "target": null,
+              "title": "You're Inspection Ready!",
+              "type": "celebration_overlay"
+            }
+          ],
+          "celebration_step": {
+            "animated_score_sequence": [
+              0,
+              15,
+              35,
+              50,
+              65,
+              80,
+              92
+            ],
+            "animation_interval_ms": 350,
+            "score_colors": {
+              ">=90": "#22c55e (green)",
+              ">=70": "#eab308 (yellow)",
+              "<70": "#ef4444 (red)"
+            },
+            "score_labels": {
+              ">=90": "Inspection Ready",
+              ">=70": "Needs Attention",
+              "<70": "Critical"
+            },
+            "sparkle_decorations": "8 animated sparkle dots in gold/navy"
+          },
+          "ui_features": [
+            "Progress dots (not step counter)",
+            "Spotlight cutout with gold border",
+            "Skip Tour button",
+            "Back/Next navigation",
+            "Last regular step shows 'See Your Score' instead of 'Next'"
+          ]
+        }
+      },
+      "tour_modules_config": {
+        "file": "src/config/tourModules.ts",
+        "purpose": "Single source of truth for ALL EvidLY feature modules - used in guided tour templates and setup form toggles",
+        "total_modules": 53,
+        "groups": [
+          {
+            "group": "Daily Tasks",
+            "module_count": 5
+          },
+          {
+            "group": "Food Safety",
+            "module_count": 7
+          },
+          {
+            "group": "Fire Safety",
+            "module_count": 8
+          },
+          {
+            "group": "Compliance",
+            "module_count": 9
+          },
+          {
+            "group": "Insights & Benchmarking",
+            "module_count": 8
+          },
+          {
+            "group": "Reporting",
+            "module_count": 4
+          },
+          {
+            "group": "Vendors & Operations",
+            "module_count": 5
+          },
+          {
+            "group": "Administration",
+            "module_count": 6
+          }
+        ]
+      }
+    },
+    "demo_data_generation": {
+      "generator": "src/lib/demoDataGenerator.ts",
+      "purpose": "Client-side in-memory demo data generation for anonymous demo mode (no Supabase writes)",
+      "config_interface": "DemoGenerationConfig",
+      "config_fields": [
+        "companyName",
+        "companyType",
+        "operationType (light|moderate|heavy|institutional)",
+        "city",
+        "county",
+        "state",
+        "zipCode",
+        "healthAuthority",
+        "fireAuthority",
+        "numLocations",
+        "durationDays",
+        "includeInsights[]"
+      ],
+      "data_categories": [
+        {
+          "category": "tempReadings",
+          "type": "GeneratedTempReading[]",
+          "generation": "30 days x equipment x 3 shifts (morning/midday/evening)",
+          "equipment_base": [
+            "Walk-in Cooler #1",
+            "Walk-in Freezer",
+            "Prep Cooler",
+            "Hot Hold Station"
+          ],
+          "equipment_heavy": [
+            "+ Walk-in Cooler #2",
+            "+ Blast Chiller"
+          ],
+          "excursion_rate": "2-4 predetermined excursion days, 30% chance per equipment per midday shift"
+        },
+        {
+          "category": "checklists",
+          "type": "GeneratedChecklist[]",
+          "types": [
+            "Daily Opening (12 items)",
+            "Daily Closing (10 items)",
+            "Weekly Equipment (8 items, every 7 days)",
+            "HACCP Cooking Temp (6 items)",
+            "HACCP Cooling (4 items)"
+          ],
+          "institutional_extras": [
+            "Allergen Control (8 items)",
+            "Receiving Inspection (6 items)"
+          ],
+          "completion_rate": "85-95% target per type"
+        },
+        {
+          "category": "complianceSnapshots",
+          "type": "GeneratedComplianceSnapshot[]",
+          "scoring": "Starts at ~72%, improves to ~85% over 30 days with daily variance",
+          "dimensions": [
+            "overall_score",
+            "food_safety_ops",
+            "food_safety_docs",
+            "facility_safety_ops",
+            "facility_safety_docs"
+          ]
+        },
+        {
+          "category": "vendorServices",
+          "type": "GeneratedVendorService[]",
+          "vendors": [
+            {
+              "vendor": "Valley Hood Cleaning Co.",
+              "type": "Hood Cleaning",
+              "frequency": "NFPA 96 based on operationType"
+            },
+            {
+              "vendor": "ABC Fire Protection",
+              "type": "Fire Extinguisher Inspection",
+              "frequency": "Annual"
+            },
+            {
+              "vendor": "ABC Fire Protection",
+              "type": "Fire Suppression (Ansul) Inspection",
+              "frequency": "Semi-Annual",
+              "overdue": true
+            },
+            {
+              "vendor": "Orkin Pest Control",
+              "type": "Pest Control",
+              "frequency": "Monthly"
+            },
+            {
+              "vendor": "Valley Grease Services",
+              "type": "Grease Trap Pumping",
+              "frequency": "Quarterly",
+              "overdue": true
+            }
+          ]
+        },
+        {
+          "category": "documents",
+          "type": "GeneratedDocument[]",
+          "documents": [
+            "Health Permit (expiring_soon)",
+            "Business License (current)",
+            "Hood Cleaning Certificate (current)",
+            "Fire Inspection Certificate (current)",
+            "5x Food Handler Cards (mix of current/expiring_soon)"
+          ]
+        },
+        {
+          "category": "insights",
+          "type": "GeneratedInsight[]",
+          "count": "6-7 insights",
+          "categories_covered": [
+            "temperature",
+            "inspection",
+            "certification",
+            "vendor",
+            "compliance"
+          ],
+          "jurisdiction_aware": true,
+          "conditional_insight": "inspection_predictions adds health authority cycle insight"
+        },
+        {
+          "category": "correctiveActions",
+          "type": "GeneratedCorrectiveAction[]",
+          "actions": [
+            {
+              "title": "Temperature Excursion - Walk-in Cooler #1",
+              "status": "resolved"
+            },
+            {
+              "title": "Missed Closing Checklist - Feb 15",
+              "status": "resolved"
+            },
+            {
+              "title": "Overdue Ansul Inspection",
+              "status": "in_progress"
+            }
+          ]
+        },
+        {
+          "category": "teamMembers",
+          "type": "GeneratedTeamMember[]",
+          "base_members": [
+            "Maria Garcia (Kitchen Manager)",
+            "Jose Rodriguez (Kitchen Staff)",
+            "Lisa Tran (Kitchen Staff)"
+          ],
+          "moderate_plus": [
+            "+ David Kim (Chef)"
+          ],
+          "heavy_plus": [
+            "+ Amy Williams (Kitchen Staff)"
+          ]
+        }
+      ],
+      "generation_steps_ui": [
+        "Location configured",
+        "Jurisdiction identified",
+        "Compliance requirements loaded",
+        "Generating temperature readings",
+        "Generating checklists",
+        "Calculating compliance scores",
+        "Setting up vendor services",
+        "Creating sample documents",
+        "Creating insights and alerts",
+        "Adding corrective actions",
+        "Setting up demo team"
+      ],
+      "progress_animation": "200-500ms delay between steps for loading screen effect"
+    },
+    "demo_mode": {
+      "context_file": "src/contexts/DemoContext.tsx",
+      "provider": "DemoProvider",
+      "override_provider": "DemoOverrideProvider (for Role Preview - forces demo mode off for regular layout)",
+      "modes": {
+        "anonymous_demo": {
+          "flag": "isDemoMode = true",
+          "storage": "sessionStorage 'evidly_demo_mode' = 'true'",
+          "condition": "rawDemoMode && !isAuthenticated",
+          "guard_mode": "anonymous_demo"
+        },
+        "authenticated_demo": {
+          "flag": "isAuthenticatedDemo = true",
+          "condition": "isAuthenticated && organizations.is_demo = true",
+          "fetches": "organizations.is_demo + demo_expires_at on session change",
+          "guard_mode": "authenticated_demo"
+        },
+        "role_preview": {
+          "flag": "isDemoMode = true (forced)",
+          "condition": "__rolePreview URL param present",
+          "detection": "Module-level IIFE _isRolePreview",
+          "purpose": "Admin iframe must render tenant layout with demo data"
+        }
+      },
+      "activation": {
+        "function": "enterDemo(lead?: DemoLead)",
+        "actions": [
+          "Clears all Supabase auth tokens from localStorage (sb-*-auth-token)",
+          "Signs out from Supabase if session exists",
+          "Sets rawDemoMode = true",
+          "Tracks 'demo_start' analytics event",
+          "Stores 'evidly_demo_mode' = 'true' in sessionStorage",
+          "If lead provided: stores lead in sessionStorage + starts tour"
+        ]
+      },
+      "deactivation": {
+        "function": "exitDemo()",
+        "actions": [
+          "Sets rawDemoMode = false",
+          "Clears demoLead state",
+          "Sets tourActive = false",
+          "Removes 'evidly_demo_mode' and 'evidly_demo_lead' from sessionStorage"
+        ],
+        "auto_cleanup": "When user authenticates while in rawDemoMode, demo state is auto-cleaned (unless in role preview)"
+      },
+      "conversion": {
+        "edge_function": "demo-account-convert",
+        "auth": "EvidLY admin only (@getevidly.com)",
+        "actions": [
+          "Sets organizations.is_demo = false, converted_at = now(), demo_plan = selectedPlan",
+          "Updates demo_sessions.status = 'converted'",
+          "Deletes demo_generated_data rows linked to demo sessions"
+        ],
+        "philosophy": "Conversion = flip a flag, not a migration. Profile data was always in DB."
+      },
+      "expiration": {
+        "check_interval": "Every 60 seconds",
+        "source": "organizations.demo_expires_at",
+        "expired_state": "isDemoExpired = true",
+        "expired_page": "src/pages/DemoExpired.tsx"
+      },
+      "presenter_mode": {
+        "activation": [
+          "?presenter=true URL param",
+          "Typing 'evidly' on keyboard (konami code)"
+        ],
+        "storage": "sessionStorage 'evidly-presenter'",
+        "toggle_function": "togglePresenterMode()"
+      },
+      "write_guard": {
+        "import": "setDemoWriteGuard, setDemoGuardMode from src/lib/supabaseGuard",
+        "modes": {
+          "live": "Full write access (platform_admin always gets this)",
+          "anonymous_demo": "Write guard active for anonymous demo",
+          "authenticated_demo": "Write guard active for authenticated demo"
+        }
+      },
+      "default_identity": {
+        "companyName": "Pacific Coast Dining",
+        "userName": "Maria Rodriguez",
+        "firstName": "Maria"
+      }
+    },
+    "edge_functions": {
+      "demo-account-create": {
+        "file": "supabase/functions/demo-account-create/index.ts",
+        "auth": "EvidLY admin only (@getevidly.com)",
+        "purpose": "Creates real Supabase auth account + org + locations for prospect demo",
+        "creates": [
+          {
+            "entity": "Auth user",
+            "details": "email + temp password (12 char UUID slice), auto-confirmed, user_metadata.is_demo=true"
+          },
+          {
+            "entity": "Organization",
+            "details": "is_demo=true, demo_started_at, demo_expires_at (default 14 days)"
+          },
+          {
+            "entity": "Location(s)",
+            "details": "Up to 10 locations with address/city/state/zip"
+          },
+          {
+            "entity": "User profile",
+            "details": "role=owner_operator, linked to org"
+          },
+          {
+            "entity": "User location access",
+            "details": "role=owner per location"
+          },
+          {
+            "entity": "Demo session update",
+            "details": "If demo_session_id provided, updates with credentials and status=ready"
+          }
+        ],
+        "competitor_blocking": "Checks competitor_blocked_domains table",
+        "cleanup_on_failure": "Deletes orphaned auth user if any subsequent step fails",
+        "returns": "{ success, auth_user_id, organization_id, location_ids, credentials, demo_expires_at }"
+      },
+      "demo-account-convert": {
+        "file": "supabase/functions/demo-account-convert/index.ts",
+        "auth": "EvidLY admin only (@getevidly.com)",
+        "purpose": "Converts demo account to live paid account",
+        "actions": [
+          "Sets organizations.is_demo=false, converted_at=now(), demo_plan=selectedPlan (default 'founder')",
+          "Updates demo_sessions.status='converted'",
+          "Deletes demo_generated_data rows for linked sessions"
+        ],
+        "returns": "{ success, organization_id, organization_name, plan, converted_at }"
+      },
+      "cleanup-demo-tour": {
+        "file": "supabase/functions/cleanup-demo-tour/index.ts",
+        "auth": "EvidLY admin or service_role (pg_cron)",
+        "purpose": "Removes all demo data for completed tours and expired partner demos",
+        "modes": {
+          "manual": "Pass { tour_id } or { partner_demo_id } to clean specific entity",
+          "scheduled": "No body = finds all completed tours past cleanup_scheduled_for timestamp"
+        },
+        "tables_cleaned": [
+          "temp_logs",
+          "checklist_completions",
+          "corrective_actions",
+          "documents",
+          "equipment_service_records",
+          "insurance_risk_scores",
+          "sb1383_compliance",
+          "notifications",
+          "checklists",
+          "vendors",
+          "locations",
+          "user_profiles (+ auth.admin.deleteUser)",
+          "organizations"
+        ],
+        "source_tags": [
+          "demo_template (for demo tours)",
+          "partner_demo (for partner demos)"
+        ],
+        "status_lifecycle": "completed -> cleaned (with cleaned_at timestamp)"
+      },
+      "generate-demo-template": {
+        "file": "supabase/functions/generate-demo-template/index.ts",
+        "auth": "EvidLY admin only (@getevidly.com)",
+        "purpose": "Populates staging demo org with 60 days of realistic data across all pillars",
+        "data_generated_per_location": [
+          "Temperature logs (60 days x 4-5 units, 5% deviation rate)",
+          "Checklists (4 types + completions, 5% miss rate)",
+          "Corrective actions (4 scenarios: temp deviation, pest control, ice machine, food handler card)",
+          "Vendors (from demo_vendor_profiles table, industry-filtered)",
+          "Documents (10 types: permits, certs, food handler cards, insurance)",
+          "Insurance risk scores",
+          "SB 1383 compliance (if applicable industry)"
+        ],
+        "source_tag": "demo_template",
+        "tribal_casino_support": "Sets food_safety_mode=advisory with TEHO authority text",
+        "updates_tour_status": "demo_tours.status = 'active'"
+      },
+      "generate-partner-demo": {
+        "file": "supabase/functions/generate-partner-demo/index.ts",
+        "auth": "EvidLY admin only (@getevidly.com)",
+        "purpose": "Populates partner demo with curated multi-location data tailored to partner persona",
+        "partner_types": {
+          "vendor": {
+            "locations": "5 client restaurants across 3 counties (Merced, Fresno, Stanislaus)",
+            "data": "60 days ops + 12 months hood cleaning service records",
+            "config": "vendor_connect_slots, service_history"
+          },
+          "association": {
+            "locations": "10 member restaurants across 5 counties",
+            "data": "30 days ops + K2C metrics",
+            "config": "member_count, county_coverage, adoption_pipeline"
+          },
+          "integration": {
+            "locations": "4 joint customers",
+            "data": "30 days ops",
+            "sub_types": [
+              "toast (POS data)",
+              "dinehr (HR data)",
+              "next_insurance (insurance data)",
+              "cintas (uniform data)"
+            ],
+            "config": "integration-type-specific mock data"
+          },
+          "carrier": {
+            "locations": "10 insured restaurants across 4 counties",
+            "data": "60 days ops + CIC 5-pillar risk profiles",
+            "config": "cic_profiles, risk_distribution, pse_summary, api_feed_sample"
+          },
+          "tribal_casino": {
+            "locations": "5-8 casino outlets (Main Buffet, Steakhouse, Sports Bar, etc.)",
+            "data": "60 days ops + monthly hood cleaning + quarterly fire suppression + annual fire extinguisher",
+            "config": "tribe_name, casino_name, sovereignty_type, NIGC overlay, fire_compliance stats",
+            "special": "Sets is_tribal=true, food_safety_mode=advisory"
+          }
+        },
+        "source_tag": "partner_demo"
+      }
+    },
+    "observations": [
+      {
+        "id": "OBS-08-001",
+        "severity": "info",
+        "area": "DemoWizard",
+        "finding": "The entire 7-step DemoWizard (steps 0-6) is dead code. The component always returns null after the useEffect that calls enterDemo() and navigates to /dashboard. ~400 lines of unreachable UI code remain in the file."
+      },
+      {
+        "id": "OBS-08-002",
+        "severity": "info",
+        "area": "SignupLocations",
+        "finding": "SignupLocations.tsx does not write to DB. It performs client-side pricing calculations and navigates to /onboarding, but the selected location count, billing period, and pricing are NOT persisted or passed to the onboarding page."
+      },
+      {
+        "id": "OBS-08-003",
+        "severity": "info",
+        "area": "Signup",
+        "finding": "Signup defers all org/profile/access DB writes to EmailConfirmed.tsx after email verification. Only user_metadata is stored in the signUp call."
+      },
+      {
+        "id": "OBS-08-004",
+        "severity": "low",
+        "area": "Onboarding",
+        "finding": "Onboarding step 3 (Add Location) hardcodes state as 'CA' in lookupJurisdiction() call regardless of the user's actual state selection during signup."
+      },
+      {
+        "id": "OBS-08-005",
+        "severity": "info",
+        "area": "DemoSchedule",
+        "finding": "DemoSchedule.tsx contains a placeholder Calendly widget with a 'Simulate Booking' button instead of an actual embed. The real Calendly inline widget is not integrated."
+      },
+      {
+        "id": "OBS-08-006",
+        "severity": "info",
+        "area": "DemoContext",
+        "finding": "Presenter mode can be toggled by typing 'evidly' on the keyboard (konami code) or via ?presenter=true URL param. Session-based persistence."
+      },
+      {
+        "id": "OBS-08-007",
+        "severity": "info",
+        "area": "GuidedTour",
+        "finding": "Two separate tour systems exist: GuidedTour (14 steps, general platform navigation) and DemoTour (6 steps, demo-specific with animated score celebration). GuidedTour is triggered from the floating button or the onboarding checklist. DemoTour is controlled by DemoContext."
+      },
+      {
+        "id": "OBS-08-008",
+        "severity": "info",
+        "area": "DemoDataGenerator",
+        "finding": "Client-side demoDataGenerator.ts generates compliance scores (overall_score, food_safety_ops/docs, facility_safety_ops/docs) which may conflict with CLAUDE.md rule 'Never generate, calculate, blend, or aggregate a compliance score.' However, this is used only in anonymous demo mode, not production."
+      },
+      {
+        "id": "OBS-08-009",
+        "severity": "info",
+        "area": "EdgeFunctions",
+        "finding": "generate-demo-template and generate-partner-demo edge functions both generate insurance risk scores and compliance data with hardcoded values. All rows are tagged with source='demo_template' or 'partner_demo' for safe cleanup."
+      },
+      {
+        "id": "OBS-08-010",
+        "severity": "info",
+        "area": "OnboardingChecklist",
+        "finding": "The post-signup onboarding checklist (OnboardingChecklistCard) is a completely separate system from the Onboarding.tsx 10-step wizard. The checklist has 20 possible steps with role/industry/tier-based visibility, dependency chains, and auto-completion detection."
+      },
+      {
+        "id": "OBS-08-011",
+        "severity": "low",
+        "area": "DemoRequest",
+        "finding": "DemoRequest form stores data only in sessionStorage, not in Supabase. Comment says 'In a real implementation, this would save to Supabase.' The session ID is generated client-side with Date.now().toString(36)."
+      },
+      {
+        "id": "OBS-08-012",
+        "severity": "info",
+        "area": "DemoExpired",
+        "finding": "DemoExpired page preserves profile data and redirects to /pricing for upgrade or Calendly for consultation. No data loss messaging."
+      }
+    ]
+  },
+  "09-background-jobs": {
+    "cron_jobs": [
+      {
+        "jobid": 4,
+        "name": "vendor-sms-reminders",
+        "schedule": "15 9 * * *",
+        "schedule_description": "9:15 AM daily",
+        "edge_function": "vendor-sms-reminder",
+        "active": true,
+        "auth_method": "hardcoded_service_role_jwt"
+      },
+      {
+        "jobid": 5,
+        "name": "vendor-upload-reminders",
+        "schedule": "0 9 * * *",
+        "schedule_description": "9:00 AM daily",
+        "edge_function": "vendor-upload-reminder",
+        "active": true,
+        "auth_method": "hardcoded_service_role_jwt"
+      },
+      {
+        "jobid": 6,
+        "name": "expiration-alerts",
+        "schedule": "0 8 * * *",
+        "schedule_description": "8:00 AM daily",
+        "edge_function": "expiration-alerts",
+        "active": true,
+        "auth_method": "hardcoded_service_role_jwt"
+      },
+      {
+        "jobid": 7,
+        "name": "weekly-digest",
+        "schedule": "0 15 * * 1",
+        "schedule_description": "3:00 PM Monday",
+        "edge_function": "weekly-digest",
+        "active": true,
+        "auth_method": "current_setting('app.settings.service_role_key')"
+      },
+      {
+        "jobid": 8,
+        "name": "onboarding-reminders",
+        "schedule": "0 9 * * *",
+        "schedule_description": "9:00 AM daily",
+        "edge_function": "onboarding-reminders",
+        "active": true,
+        "auth_method": "current_setting('app.settings.service_role_key')"
+      },
+      {
+        "jobid": 9,
+        "name": "document-reminders",
+        "schedule": "15 9 * * *",
+        "schedule_description": "9:15 AM daily",
+        "edge_function": "document-reminders",
+        "active": true,
+        "auth_method": "current_setting('app.settings.service_role_key')"
+      },
+      {
+        "jobid": 10,
+        "name": "trial-email-daily",
+        "schedule": "0 15 * * *",
+        "schedule_description": "3:00 PM daily",
+        "edge_function": "trial-email-sender",
+        "active": true,
+        "auth_method": "current_setting('app.service_role_key')"
+      },
+      {
+        "jobid": 11,
+        "name": "vendor-notifications-daily",
+        "schedule": "0 16 * * *",
+        "schedule_description": "4:00 PM daily",
+        "edge_function": "vendor-notification-sender",
+        "active": true,
+        "auth_method": "current_setting('app.service_role_key')"
+      },
+      {
+        "jobid": 12,
+        "name": "vendor-partner-outreach-daily",
+        "schedule": "0 17 * * *",
+        "schedule_description": "5:00 PM daily",
+        "edge_function": "vendor-partner-outreach",
+        "active": true,
+        "auth_method": "current_setting('app.service_role_key')"
+      }
+    ],
+    "triggers": [
+      {
+        "table": "client_notifications",
+        "trigger_name": "trg_client_notifications_updated_at",
+        "event": "UPDATE",
+        "function": "update_command_center_updated_at()"
+      },
+      {
+        "table": "compliance_photos",
+        "trigger_name": "trg_compliance_photos_updated_at",
+        "event": "UPDATE",
+        "function": "update_compliance_photos_updated_at()"
+      },
+      {
+        "table": "corrective_action_templates",
+        "trigger_name": "trg_corrective_action_templates_updated_at",
+        "event": "UPDATE",
+        "function": "update_corrective_action_templates_updated_at()"
+      },
+      {
+        "table": "corrective_actions",
+        "trigger_name": "trg_corrective_actions_updated_at",
+        "event": "UPDATE",
+        "function": "update_corrective_actions_updated_at()"
+      },
+      {
+        "table": "device_registrations",
+        "trigger_name": "trg_device_registrations_updated_at",
+        "event": "UPDATE",
+        "function": "set_updated_at()"
+      },
+      {
+        "table": "edge_function_registry",
+        "trigger_name": "trg_efr_updated_at",
+        "event": "UPDATE",
+        "function": "update_efr_updated_at()"
+      },
+      {
+        "table": "intelligence_game_plans",
+        "trigger_name": "trg_game_plans_updated_at",
+        "event": "UPDATE",
+        "function": "update_command_center_updated_at()"
+      },
+      {
+        "table": "jurisdiction_scoring_profiles",
+        "trigger_name": "trg_jurisdiction_profile_updated",
+        "event": "UPDATE",
+        "function": "trg_jurisdiction_profile_updated()"
+      },
+      {
+        "table": "jurisdictions",
+        "trigger_name": "jurisdictions_updated_at",
+        "event": "UPDATE",
+        "function": "update_updated_at()"
+      },
+      {
+        "table": "jurisdictions",
+        "trigger_name": "trg_jurisdiction_config_drift",
+        "event": "UPDATE",
+        "function": "fn_jurisdiction_config_drift_check()"
+      },
+      {
+        "table": "location_risk_predictions",
+        "trigger_name": "trg_lrp_updated_at",
+        "event": "UPDATE",
+        "function": "update_updated_at_column()"
+      },
+      {
+        "table": "organizations",
+        "trigger_name": "trg_set_organization_created_by",
+        "event": "INSERT",
+        "function": "set_organization_created_by()"
+      },
+      {
+        "table": "organizations",
+        "trigger_name": "trg_set_trial_end_date",
+        "event": "UPDATE",
+        "function": "set_trial_end_date()"
+      },
+      {
+        "table": "organizations",
+        "trigger_name": "trg_set_trial_end_date",
+        "event": "INSERT",
+        "function": "set_trial_end_date()"
+      },
+      {
+        "table": "platform_updates",
+        "trigger_name": "trg_platform_updates_updated_at",
+        "event": "UPDATE",
+        "function": "update_command_center_updated_at()"
+      },
+      {
+        "table": "playbook_activations",
+        "trigger_name": "trg_playbook_activations_updated_at",
+        "event": "UPDATE",
+        "function": "set_updated_at()"
+      },
+      {
+        "table": "playbooks",
+        "trigger_name": "trg_playbooks_updated_at",
+        "event": "UPDATE",
+        "function": "set_updated_at()"
+      },
+      {
+        "table": "rfp_actions",
+        "trigger_name": "trg_rfp_actions_updated",
+        "event": "UPDATE",
+        "function": "update_rfp_updated_at()"
+      },
+      {
+        "table": "support_tickets",
+        "trigger_name": "ticket_sla",
+        "event": "INSERT",
+        "function": "set_ticket_sla()"
+      },
+      {
+        "table": "temperature_logs",
+        "trigger_name": "trg_temp_deviation_to_ca",
+        "event": "INSERT",
+        "function": "fn_temp_deviation_to_ca()"
+      }
+    ],
+    "drift_monitor": {
+      "trigger_name": "trg_jurisdiction_config_drift",
+      "table": "jurisdictions",
+      "event": "UPDATE",
+      "function": "fn_jurisdiction_config_drift_check()",
+      "tables": {
+        "drift_monitor_executions": {
+          "row_count": 53
+        },
+        "drift_alert_log": {
+          "row_count": 53
+        }
+      },
+      "edge_function": "jurisdiction-drift-alert",
+      "status": "deployed"
+    },
+    "db_functions": [
+      "update_command_center_updated_at",
+      "update_compliance_photos_updated_at",
+      "update_corrective_action_templates_updated_at",
+      "update_corrective_actions_updated_at",
+      "set_updated_at",
+      "update_efr_updated_at",
+      "trg_jurisdiction_profile_updated",
+      "update_updated_at",
+      "fn_jurisdiction_config_drift_check",
+      "update_updated_at_column",
+      "set_organization_created_by",
+      "set_trial_end_date",
+      "set_ticket_sla",
+      "fn_temp_deviation_to_ca",
+      "update_rfp_updated_at",
+      "vendor-sms-reminder",
+      "vendor-upload-reminder",
+      "expiration-alerts",
+      "weekly-digest",
+      "onboarding-reminders",
+      "document-reminders"
+    ]
+  },
+  "10-gaps": {
+    "phase": 10,
+    "title": "Gap Detection",
+    "generated": "2026-04-24",
+    "summary": {
+      "total_gap_categories": 11,
+      "critical_gaps": 3,
+      "warning_gaps": 5,
+      "info_gaps": 3
+    },
+    "categories": {
+      "orphan_routes": {
+        "severity": "info",
+        "count": 0,
+        "status": "PASS",
+        "detail": "All routes in App.tsx have valid component files via lazy imports."
+      },
+      "orphan_pages": {
+        "severity": "info",
+        "count": 0,
+        "status": "PASS",
+        "detail": "All page components referenced by lazy imports in App.tsx appear valid."
+      },
+      "orphan_edge_functions": {
+        "severity": "warning",
+        "count": 1,
+        "status": "REVIEW",
+        "items": [
+          {
+            "function": "send-welcome-email",
+            "issue": "Exists locally but never deployed. Not invoked from src/ or other edge functions."
+          }
+        ],
+        "detail": "Most edge functions are invoked by other edge functions, webhooks, cron, or external triggers. Only send-welcome-email appears truly orphaned."
+      },
+      "db_tables_not_in_code": {
+        "severity": "info",
+        "count": 0,
+        "status": "EXPECTED",
+        "detail": "Tables accessed only by edge functions, RLS policies, or triggers are expected to have no src/ references. Playbook tables and vendor/marketplace/enterprise tables with 0 rows are either used by edge functions or awaiting future features. No action required."
+      },
+      "phantom_tables": {
+        "severity": "critical",
+        "count": 61,
+        "status": "FAIL",
+        "detail": "61 tables referenced in code (supabase.from() calls) that do not exist in the production database. These will produce runtime RLS or 404 errors.",
+        "items": [
+          "admin_backups",
+          "admin_security_config",
+          "ai_budget_config",
+          "alerts",
+          "assessment_responses",
+          "assessment_results",
+          "billing_invoices",
+          "billing_subscriptions",
+          "calendar_events",
+          "client_advisories",
+          "corrective_action_history",
+          "demo_leads",
+          "emulation_audit_log",
+          "equipment",
+          "equipment_qr_codes",
+          "feature_flag_audit",
+          "frequency_change_log",
+          "guided_tour_templates",
+          "haccp_corrective_actions",
+          "haccp_critical_control_points",
+          "haccp_plans",
+          "incident_comments",
+          "incident_timeline",
+          "incidents",
+          "inspections",
+          "intelligence_classification_log",
+          "internal_reports",
+          "location_custom_vendors",
+          "marketing_campaigns",
+          "marketing_touchpoints",
+          "mfa_policy",
+          "notifications",
+          "nslp_claim_periods",
+          "outreach_touches",
+          "platform_audit_log",
+          "platform_settings",
+          "profiles",
+          "push_subscriptions",
+          "referrals",
+          "risk_plans",
+          "sales_pipeline",
+          "sb1383_compliance",
+          "session_policy",
+          "signal_review_log",
+          "system_messages",
+          "testimonials",
+          "trial_email_sequences",
+          "user_mfa_config",
+          "user_milestones",
+          "user_sessions",
+          "vendor_changes",
+          "vendor_connect_applications",
+          "vendor_connect_leads",
+          "vendor_connect_profiles",
+          "vendor_connect_spots",
+          "vendor_notification_log",
+          "vendor_outreach_pipeline",
+          "vendor_service_records",
+          "violation_prospects",
+          "workforce_risk_signals",
+          "x"
+        ],
+        "notes": [
+          "'x' is likely a typo or test artifact.",
+          "'profiles' should be 'user_profiles' \u00e2\u20ac\u201d wrong table name in code.",
+          "'referrals' is a HoodOps PRO table and must NOT be created in this repo.",
+          "'calendar_events' may be intentionally deferred."
+        ]
+      },
+      "missing_env_docs": {
+        "severity": "warning",
+        "count": 1,
+        "status": "FAIL",
+        "detail": "No .env.example file exists. All environment variables are undocumented. New developers have no reference for required configuration."
+      },
+      "role_mismatch": {
+        "severity": "info",
+        "count": 0,
+        "status": "PASS",
+        "detail": "Code roles match DB roles. Code defines 8 roles (platform_admin, owner_operator, executive, compliance_manager, chef, kitchen_manager, facilities_manager, kitchen_staff). Aliases 'admin' and 'owner' map to owner_operator."
+      },
+      "jie_baseline": {
+        "severity": "info",
+        "count": 0,
+        "status": "PASS",
+        "baseline": {
+          "CA": 62,
+          "OR": 36,
+          "WA": 39,
+          "NV": 17,
+          "AZ": 15,
+          "total": 169
+        },
+        "detail": "JIE baseline verified. Note: audit spec referenced column 'state_code' but actual column is 'state'. Schema documentation mismatch logged."
+      },
+      "fake_data_candidates": {
+        "severity": "warning",
+        "count": 6,
+        "status": "REVIEW",
+        "items": [
+          {
+            "file": "src/contexts/OperatingHoursContext.tsx",
+            "symbols": [
+              "DEMO_HOURS",
+              "DEMO_SHIFTS"
+            ],
+            "gated_by_demo": true,
+            "verdict": "OK \u00e2\u20ac\u201d demo-gated"
+          },
+          {
+            "file": "src/hooks/useDashboardData.ts",
+            "symbols": [
+              "DEMO_TASKS",
+              "DEMO_DEADLINES",
+              "DEMO_ALERTS",
+              "DEMO_ACTIVITY",
+              "DEMO_MODULE_STATUSES"
+            ],
+            "gated_by_demo": true,
+            "verdict": "OK \u00e2\u20ac\u201d demo-gated"
+          },
+          {
+            "file": "src/utils/demoScoring.ts",
+            "symbols": [
+              "DEMO_JURISDICTIONS",
+              "DEMO_LOCATIONS",
+              "DEMO_SCORE_BREAKDOWN"
+            ],
+            "gated_by_demo": true,
+            "verdict": "OK \u00e2\u20ac\u201d demo-gated"
+          },
+          {
+            "file": "src/utils/inspectionReadiness.ts",
+            "symbols": [
+              "DEMO_LOCATION_SCORES"
+            ],
+            "gated_by_demo": true,
+            "verdict": "OK \u00e2\u20ac\u201d demo-gated"
+          },
+          {
+            "file": "src/constants/correctiveActionStatus.ts",
+            "symbols": [
+              "DEMO_TEAM_MEMBERS"
+            ],
+            "gated_by_demo": true,
+            "verdict": "OK \u00e2\u20ac\u201d demo-gated"
+          },
+          {
+            "file": "src/utils/sampleData.ts",
+            "symbols": [
+              "SAMPLE_DATA"
+            ],
+            "gated_by_demo": "UNKNOWN",
+            "verdict": "NEEDS MANUAL REVIEW \u00e2\u20ac\u201d purpose unclear, may violate zero-fake-data rule"
+          }
+        ],
+        "detail": "5 of 6 candidates are properly gated by isDemoMode. sampleData.ts requires manual review."
+      },
+      "deployed_only_functions": {
+        "severity": "critical",
+        "count": 52,
+        "status": "FAIL",
+        "detail": "52 edge functions exist on the Supabase server but have no local source code in the repository. This includes critical cron-invoked functions. Local development, review, and disaster recovery are impossible for these functions.",
+        "examples": [
+          "expiration-alerts",
+          "weekly-digest",
+          "vendor-sms-reminder",
+          "vendor-upload-reminder",
+          "send-email",
+          "send-sms",
+          "send-welcome",
+          "trial-email-sender"
+        ]
+      },
+      "rls_disabled_tables": {
+        "severity": "critical",
+        "count": 7,
+        "status": "FAIL",
+        "detail": "7 tables have RLS disabled. Data is publicly readable without row-level security. If any contain sensitive or org-scoped data, this is a security vulnerability.",
+        "items": [
+          "client_intelligence_feed",
+          "intelligence_insight_views",
+          "intelligence_insights",
+          "intelligence_subscriptions",
+          "jie_health_log",
+          "jurisdiction_intel_updates",
+          "scoretable_views"
+        ]
+      }
+    }
+  }
+}

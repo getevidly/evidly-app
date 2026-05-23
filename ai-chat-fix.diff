@@ -1,0 +1,40 @@
+diff --git a/src/lib/aiAdvisor.ts b/src/lib/aiAdvisor.ts
+index 219d248..2f0540b 100644
+--- a/src/lib/aiAdvisor.ts
++++ b/src/lib/aiAdvisor.ts
+@@ -1,14 +1,17 @@
+ /**
+  * AI Advisor — Claude API integration
+  *
+- * Calls Claude API via /api/ai-advisor edge function.
++ * Calls Claude API via the ai-chat Supabase Edge Function.
+  * In demo mode, uses hardcoded responses from getDemoResponse().
+  * In production, sends full conversation history + compliance context.
+  *
+  * TODO: Set ANTHROPIC_API_KEY environment variable in Vercel/Supabase
+  */
+ 
++import { supabase } from './supabase';
+ import { DEMO_INTELLIGENCE_INSIGHTS, type IntelligenceInsight } from '../data/demoIntelligenceData';
++
++const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+ import {
+   buildAllLocationPayloads,
+   formatPayloadForPrompt,
+@@ -218,10 +221,14 @@ export async function* streamChatResponse(
+   mode: 'chat' | 'inspection' = 'chat',
+ ): AsyncGenerator<string> {
+   const systemPrompt = buildSystemPrompt(context, mode);
++  const { data: { session } } = await supabase.auth.getSession();
+ 
+-  const response = await fetch('/api/ai-advisor', {
++  const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-chat`, {
+     method: 'POST',
+-    headers: { 'Content-Type': 'application/json' },
++    headers: {
++      'Content-Type': 'application/json',
++      'Authorization': `Bearer ${session?.access_token}`,
++    },
+     body: JSON.stringify({
+       system: systemPrompt,
+       messages: messages.map((m) => ({ role: m.role, content: m.content })),

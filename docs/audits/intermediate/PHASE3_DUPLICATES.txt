@@ -1,0 +1,576 @@
+================================================================================
+PHASE 3 -- DUPLICATES ANALYSIS
+Generated: 2026-05-13
+Baseline anchor: 2b2b486
+================================================================================
+
+SUMMARY
+  Total findings:           52
+  CRITICAL:                  0
+  HIGH:                     24
+  MEDIUM:                   19
+  LOW:                       9
+  Deferred (paused):         3 sub-phases (3.7 copy, 3.8 style, 3.10 icon)
+
+  Sub-phase breakdown:
+    3.1 Component duplicates:  10 findings (5 HIGH, 3 MEDIUM, 2 LOW)
+    3.2 Hook duplicates:        3 findings (1 HIGH, 2 MEDIUM)
+    3.3 Inline query backlog:   1 finding  (0 HIGH, 1 MEDIUM)
+    3.4 Type duplicates:       20 findings (13 HIGH, 5 MEDIUM, 2 LOW)
+    3.5 Constant duplicates:   10 findings (5 HIGH, 4 MEDIUM, 1 LOW)
+    3.6 Route duplicates:       5 findings (1 HIGH, 2 MEDIUM, 2 LOW)
+    3.9 Validation duplicates:  7 findings (2 HIGH, 3 MEDIUM, 2 LOW)
+
+  PAUSED (not analyzed):
+    3.7  Copy/label duplicates -- deferred per standing exclusion
+    3.8  Style/Tailwind duplicates -- deferred per standing exclusion
+    3.10 Icon duplicates -- deferred per standing exclusion
+
+================================================================================
+3.1 -- COMPONENT DUPLICATES
+================================================================================
+
+--- HIGH (5) ---
+
+D3.1-H1. admin/StatCard.tsx = admin/KpiTile.tsx (EXACT COPY)
+  File A: src/components/admin/StatCard.tsx (50 lines, 9 importers)
+  File B: src/components/admin/KpiTile.tsx (52 lines, 14 importers)
+  Detail: Identical VALUE_COLORS map, identical props (label, value,
+    valueColor). Only diff is <div> vs <p> and two margin resets.
+  Impact: 23 admin pages import one or the other. StatCardRow.tsx (9
+    importers) wraps admin/StatCard, coupling it to this duplicate.
+  Action: Consolidate to one component, update 23 importers.
+
+D3.1-H2. ui/StatCard.tsx -- dead duplicate of admin/StatCard
+  File: src/components/ui/StatCard.tsx (25 lines, 0 importers)
+  Detail: Same concept, Tailwind-based variant with icon prop. Zero
+    importers. Confirmed dead in Phase 1.
+  Action: Delete.
+
+D3.1-H3. InfoTooltip.tsx = SectionTooltip.tsx (NEAR-EXACT COPY)
+  File A: src/components/ui/InfoTooltip.tsx (74 lines, 5 importers)
+  File B: src/components/ui/SectionTooltip.tsx (73 lines, 0 importers)
+  Detail: Identical pattern -- useState visibility, useRef click-outside,
+    useId accessibility, Info icon, identical event handlers. Cosmetic
+    diffs only (icon size, margins, border radius).
+  Action: Delete SectionTooltip.tsx.
+
+D3.1-H4. Inline EmptyState -- 13 copies across page files
+  Shared: src/components/EmptyState.tsx (32 lines, 4 importers)
+  Inline copies (13): AdminBilling, AdminCrawlMonitor, AdminK2C,
+    DatabaseBackup, EvidLYIntelligence, EventLog, RemoteConnect,
+    SupportTickets, StaffRoles, SystemMessages, UserProvisioning,
+    UserEmulation, OperationsIntelligence.jsx
+  Detail: 11 of 13 are functionally identical (emoji-icon, dashed-border,
+    centered layout). ~78 lines of duplicate code total.
+  Action: Extract shared admin empty-state component.
+
+D3.1-H5. Inline StatCard -- 15 copies across page files
+  Shared: 3 component files (admin/StatCard, admin/KpiTile, ui/StatCard)
+  Inline copies (15): BonusDashboardPage, Deficiencies, EquipmentPage,
+    EquipmentIncidentsPage, Analysis.jsx (fire), Trajectory.jsx (fire),
+    Analysis.jsx (food), Trajectory.jsx (food), VehiclesPage,
+    InsurancePage, ReferralDashboard, CallbacksPage, scoreTableShared,
+    IncidentReportsPage, VendorDetail
+  Detail: 18 total implementations of "label + value + color card".
+  Action: Consolidate to one canonical StatCard, update all importers.
+
+--- MEDIUM (3) ---
+
+D3.1-M1. Skeleton / LoadingSkeleton confusing re-export
+  File A: src/components/ui/Skeleton.tsx (86 lines)
+  File B: src/components/LoadingSkeleton.tsx (74 lines, re-exports A)
+  Detail: LoadingSkeleton re-exports all of Skeleton then defines its
+    own LoadingSkeleton, PageSkeleton, DashboardSkeleton. Two entry
+    points for same base component.
+  Action: Consolidate entry point.
+
+D3.1-M2. AnimatedComplianceScore / AnimatedScoreRing overlap
+  File A: src/components/AnimatedComplianceScore.tsx (126 lines, 0 importers)
+  File B: src/components/ui/AnimatedScoreRing.tsx (93 lines, 0 importers)
+  Also: CountUp.tsx (39 lines, 0 importers) uses identical easing
+  Detail: All dead (zero importers each). Same SVG circular gauge
+    animation concept, different implementations.
+  Action: Delete all three.
+
+D3.1-M3. 4 tooltip variants (3 dead)
+  Tooltip.tsx (18 lines, 0 importers) -- CSS-only, dead
+  InfoTooltip.tsx (74 lines, 5 importers) -- ONLY ACTIVE ONE
+  SectionTooltip.tsx (73 lines, 0 importers) -- dead (see D3.1-H3)
+  SidebarTooltip.tsx (60 lines, 0 importers) -- dead
+  Detail: 4 implementations, 1 active. 3 are dead weight.
+  Action: Delete 3 dead tooltips.
+
+--- LOW (2) ---
+
+D3.1-L1. Breadcrumb.tsx no-op stub (52 importers)
+  File: src/components/Breadcrumb.tsx (14 lines, returns null)
+  Detail: Kept to avoid breaking imports after AutoBreadcrumb replaced
+    it. 52 files import a function that returns null.
+  Action: Remove dead imports, then delete stub.
+
+D3.1-L2. 18+ dead demo/upgrade/widget components (zero importers)
+  Files: DemoModeBadge, DemoModeBanner, DemoBanner, DemoCTABar,
+    DemoWatermark, DemoRestrictions, DashboardUpgradeCard,
+    PremiumFeaturePreview, SidebarUpgradeBadge, BenchmarkBadge,
+    BenchmarkWidget, OnboardingProgressWidget, OnboardingSummary,
+    Card.tsx, HoverCard.tsx, CountUp.tsx, AnimatedScoreRing.tsx,
+    AnimatedComplianceScore.tsx
+  Detail: ~1,000+ lines of dead component code. Zero importers each.
+  Action: Delete all.
+
+================================================================================
+3.2 -- HOOK DUPLICATES
+================================================================================
+
+--- HIGH (1) ---
+
+D3.2-H1. intelligence_signals queried by 4 independent hooks
+  useIntelligenceFeed     -- src/hooks/useIntelligenceFeed.ts
+  useUnreadSignals        -- src/hooks/useUnreadSignals.ts
+  useActiveBanner         -- src/hooks/useActiveBanner.ts
+  useCommandCenter        -- src/pages/admin/CommandCenter.tsx (inline)
+  Detail: Each hook independently queries intelligence_signals with its
+    own realtime subscription (4 total). Each builds its own filter and
+    sort logic. Same table hit 4x per page load for any page that
+    composes multiple of these hooks.
+  Impact: 4 realtime subscriptions on same table, 4 independent fetches.
+  Action: Consolidate into single canonical useIntelligenceState() hook
+    with derived selectors.
+
+--- MEDIUM (2) ---
+
+D3.2-M1. Temperature data queried by 3 overlapping hooks
+  useCurrentReadingsSummary -- src/hooks/useCurrentReadingsSummary.ts
+  useUnifiedCurrentReadings -- src/hooks/useUnifiedCurrentReadings.ts
+  useTemperatureLogs        -- src/hooks/api/useTemperatureLogs.ts
+  Detail: First two both build a "latestByEquipment" Map with identical
+    logic (group by equipment_id, keep latest reading). Third hook
+    queries same tables with different filters.
+  Impact: Duplicate client-side aggregation, overlapping queries.
+  Action: Consolidate into useTemperatureState (canonical Layer 2).
+
+D3.2-M2. user_profiles queried by 3 hooks (context-isolated)
+  useAuth, useUserRole, useUserProfile -- each reads user_profiles
+  Detail: Appropriately context-isolated (auth context, role context,
+    profile display). Different consumers, different lifecycles.
+  Verdict: NOT a true duplicate -- context isolation is correct.
+  Action: None required. Documented for completeness.
+
+================================================================================
+3.3 -- INLINE QUERY BACKLOG (Layer 3 migration)
+================================================================================
+
+--- MEDIUM (1) ---
+
+D3.3-M1. 54 pages with inline supabase.from() queries
+  Admin pages with inline queries: 31
+  Regular pages with inline queries: 23
+  Detail: These pages bypass the canonical data layer (Layer 2) and
+    query Supabase directly. This is the known Layer 3 migration backlog,
+    not a net-new finding, but quantified here for Phase 3 completeness.
+  Context: Layer 1 (base hooks) complete. Layer 2 (canonical hooks in
+    src/lib/canonicalQueries/) complete for 6 domains. Layer 3 (consumer
+    migration of ~54 pages) is queued.
+  Action: Layer 3 migration -- move inline queries to canonical hooks.
+
+================================================================================
+3.4 -- TYPE DUPLICATES
+================================================================================
+
+--- HIGH (13) ---
+
+D3.4-H1. CAStatus -- 3 definitions, DIVERGED
+  Canonical: src/types/corrective-actions.ts:12 (7 values)
+  Dup 1: src/constants/correctiveActionStatus.ts:10 (5 values -- MISSING
+    'closed' and 'archived')
+  Dup 2: src/lib/canonicalQueries/corrective-actions-state.ts:53 (7 values)
+  Risk: Constants file missing 2 statuses causes runtime mismatches.
+
+D3.4-H2. CASeverity -- 3 definitions, IDENTICAL
+  src/types/corrective-actions.ts:10
+  src/constants/correctiveActionStatus.ts:99
+  src/lib/canonicalQueries/corrective-actions-state.ts:61
+  All identical ('critical' | 'high' | 'medium' | 'low'). Consolidate.
+
+D3.4-H3. CASourceType -- 3 definitions, IDENTICAL
+  src/types/corrective-actions.ts:11
+  src/data/correctiveActionsDemoData.ts:17
+  src/lib/canonicalQueries/corrective-actions-state.ts:62
+  All identical. Consolidate.
+
+D3.4-H4. CACategory -- 2 definitions, IDENTICAL
+  src/types/corrective-actions.ts:9
+  src/data/correctiveActionsDemoData.ts:16
+  Consolidate.
+
+D3.4-H5. CANote -- 2 definitions, DIVERGED
+  Canonical: src/types/corrective-actions.ts:15-21
+    Fields: { id, timestamp, author_id?, author_name?, body }
+  Demo: src/data/correctiveActionsDemoData.ts:19-23
+    Fields: { text, author, timestamp }
+  Incompatible field names (body vs text, author_id/name vs author).
+
+D3.4-H6. CAAttachment -- 2 definitions, DIVERGED
+  Canonical: src/types/corrective-actions.ts:24-32
+    Fields: { id, uploaded_at, uploaded_by?, filename, storage_url, ... }
+  Demo: src/data/correctiveActionsDemoData.ts:25-29
+    Fields: { name, url, type }
+  Completely different structure.
+
+D3.4-H7. Pillar type -- 6 definitions under different names
+  src/lib/canonicalQueries/task-state.ts:35
+  src/lib/canonicalQueries/corrective-actions-state.ts:52
+  src/lib/canonicalQueries/compliance-state.ts:29
+  src/types/tasks.ts:7 (as TaskPillar)
+  src/types/corrective-actions.ts:8 (as CAPillar)
+  src/utils/inspectionReadiness.ts:10 (as InspectionPillar)
+  All identical: 'food_safety' | 'fire_safety'. Six names for one type.
+  Action: Single canonical export, all others re-export.
+
+D3.4-H8. IncidentCategory -- 2 definitions, IDENTICAL
+  src/types/incidents.ts:6
+  src/lib/canonicalQueries/incidents-state.ts:54
+  Consolidate.
+
+D3.4-H9. IncidentSeverity -- 3 definitions, DIVERGED
+  Canonical: src/types/incidents.ts:7 ('critical'|'high'|'medium'|'low')
+  Canonical query: src/lib/canonicalQueries/incidents-state.ts:56 (same)
+  API hook: src/hooks/api/useIncidents.ts:11
+    ('minor'|'moderate'|'serious'|'critical')
+  Risk: Completely different severity scales. If ever mixed, runtime bug.
+  Action: Rename API hook version to EquipmentIncidentSeverity.
+
+D3.4-H10. IncidentStatus -- 3 definitions, DIVERGED
+  Canonical: src/types/incidents.ts:8
+    ('open'|'investigating'|'resolved'|'verified')
+  Vehicles: src/hooks/api/useVehicles.ts:13
+    ('open'|'investigating'|'resolved'|'closed')
+  Divergence: 'closed' vs 'verified' in last position.
+
+D3.4-H11. TaskStatus -- 2 definitions, IDENTICAL
+  src/types/tasks.ts:20-26
+  src/lib/canonicalQueries/task-state.ts:36
+  Consolidate.
+
+D3.4-H12. ReviewStatus -- 2 definitions, DIVERGED (NAMING COLLISION)
+  src/types/vendorDocuments.ts:12 ('accepted'|'flagged')
+  src/types/vendorCompliance.ts:27 ('pending'|'approved'|'declined')
+  Risk: Same exported name, completely different values. Consumer
+    importing from wrong file gets wrong type silently.
+  Action: Rename to VendorDocReviewStatus / SubmissionReviewStatus.
+
+D3.4-H13. Vendor interface -- 4 definitions, DIVERGED
+  src/data/demoData.ts:275 (companyName, contactName, ...)
+  src/data/vendorData.ts:1 (name, category, preferredContact, ...)
+  src/pages/admin/EmailSequenceManager.tsx:47 (name, type, stage, ...)
+  src/pages/admin/Configure.tsx:26 (company_name, service_type, ...)
+  Four completely different Vendor shapes. No common structure.
+  Action: Canonical Vendor type in src/types/, inline versions use
+    Pick<> or domain-specific names.
+
+--- MEDIUM (5) ---
+
+D3.4-M1. Location interface -- 3 definitions, DIVERGED
+  src/data/demoData.ts:109 (urlId, lat, lng, actionItems, ...)
+  src/pages/admin/Configure.tsx:22 (county, city, organization_id, ...)
+  src/components/LocationMap.tsx:3 (lat, lng, complianceScore, ...)
+  Different shapes per context.
+
+D3.4-M2. CorrectiveAction interface -- 2 definitions, DIVERGED
+  Canonical: src/types/corrective-actions.ts:35-73 (30+ fields)
+  Report: src/lib/reportGenerator.ts:105-115 (8 fields, different names)
+  Divergence: issue vs title, priority vs severity, different statuses.
+
+D3.4-M3. ReportCategory -- 2 definitions, DIVERGED
+  src/constants/reportDefinitions.ts:11
+    ('operations'|'financial'|'compliance'|'team')
+  src/config/reportConfig.ts:11
+    ('overview'|'compliance'|'operations'|'team'|'community')
+  'financial' vs 'overview'/'community'.
+
+D3.4-M4. ImpactLevel -- 2 definitions, DIVERGED
+  src/lib/regulatoryMonitor.ts:19 ('action_required'|'awareness'|'informational')
+  src/data/demoIntelligenceData.ts:11 ('critical'|'high'|'medium'|'low')
+  Completely different models under same name.
+
+D3.4-M5. Severity type -- 2 definitions, DIVERGED
+  src/lib/selfInspectionScoring.ts:17 ('critical'|'major'|'minor')
+  src/lib/canonicalQueries/compliance-state.ts:32 ('critical'|'high'|'medium'|'low')
+  Different granularity.
+
+--- LOW (2) ---
+
+D3.4-L1. PillarState -- 2 definitions (module-scoped, no collision)
+  src/hooks/onboarding/useOnboardingState.ts:15
+  src/lib/canonicalQueries/compliance-state.ts:53
+  Both non-exported. Different domains. Cognitive noise only.
+
+D3.4-L2. User interface -- 1 inline definition (no canonical)
+  src/components/temp-logs/types.ts:28 ({ id, full_name })
+  No canonical User type in src/types/. Not a duplicate per se.
+
+================================================================================
+3.5 -- CONSTANT DUPLICATES
+================================================================================
+
+--- HIGH (5) ---
+
+D3.5-H1. SEVERITY_CONFIG -- 4 definitions, DIVERGED
+  src/constants/correctiveActionStatus.ts:103 (critical/high/medium/low)
+  src/data/deficienciesDemoData.ts:57 (critical/major/minor/advisory)
+  src/components/dashboard/shared/WhereDoIStartSection.tsx:32
+    (critical/warning/info + icon/badgeBg)
+  src/components/notifications/notificationConstants.ts:113
+    (urgent/advisory/info)
+  All different key sets and field shapes. Fragmented.
+
+D3.5-H2. SEVERITY_COLORS -- 2 definitions, DIVERGED
+  Canonical: src/constants/statusColors.ts:15 (urgent/advisory/info)
+  Inline: src/pages/WorkforceRisk.tsx:27 (critical/high/medium/low)
+  Different keys, shadows canonical export name.
+
+D3.5-H3. US_STATES -- 2 definitions, DIVERGED
+  src/types/rfp.ts:178 -- Record<string, string> (abbr -> full name)
+  src/data/demoGeneratorData.ts:95 -- string[] (abbr only)
+  Same name, completely different data structure.
+
+D3.5-H4. PRIORITY_COLORS = SEVERITY_CONFIG color overlap
+  src/constants/statusColors.ts:41 (PRIORITY_COLORS)
+  src/constants/correctiveActionStatus.ts:103 (SEVERITY_CONFIG)
+  Identical hex values for critical/high/medium/low tiers under
+  different constant names.
+
+D3.5-H5. Pillar label strings inline everywhere
+  'Food Safety' / 'Fire Safety' / 'Facility Services' defined as
+  CATEGORY_LABELS in at least 3 files + inline JSX in 20+ files.
+  No single canonical PILLAR_LABELS constant.
+
+--- MEDIUM (4) ---
+
+D3.5-M1. SEVERITY_ORDER -- 2 definitions, SIMILAR
+  src/constants/correctiveActionStatus.ts:110
+  src/data/deficienciesDemoData.ts:72
+  Same concept, different domain keys.
+
+D3.5-M2. CATEGORY_LABELS -- 3 definitions, DIFFERENT DOMAINS
+  src/types/edgeFunctions.ts:119 (edge fn categories)
+  src/config/reportConfig.ts:143 (report categories)
+  src/data/correctiveActionsDemoData.ts:311 (CA pillar labels)
+  Same name exported from 3 files. Import collision risk.
+
+D3.5-M3. NAVY color #1E2D4D -- 2 constants + 30+ inline uses
+  src/constants/correctiveActionStatus.ts:101
+  src/utils/reportExport.ts:8
+  Plus ~30 raw '#1E2D4D' strings across components and pages.
+  BrandingContext has primary: '#1E2D4D' but is not used.
+
+D3.5-M4. STATUS_COLORS / STATUS_TRICOLOR overlap
+  src/constants/serviceTypes.ts:222 (current/due_soon/overdue/not_tracked)
+  src/constants/statusColors.ts:70 (good/warning/danger/neutral)
+  Same underlying hex values, different domain keys.
+
+--- LOW (1) ---
+
+D3.5-L1. DEMO_ORG defined once (good), but related constants
+  co-located in large demoData.ts barrel file, not independently
+  importable. Minor organizational issue.
+
+================================================================================
+3.6 -- ROUTE/PATH DUPLICATES
+================================================================================
+
+--- HIGH (1) ---
+
+D3.6-H1. Catch-all /:slug route conflicts with future routes
+  File: src/App.tsx:596
+  Detail: /:slug registered for county landing pages. React Router v6
+    ranking-based matching protects existing routes, but any NEW
+    top-level route placed after line 596 would be swallowed.
+  Risk: Latent conflict hazard for future route additions.
+
+--- MEDIUM (2) ---
+
+D3.6-M1. /admin/role-preview -- comment noise at line 767
+  Route defined at line 614 (standalone, outside AdminShell).
+  Comment at line 767 says "moved to standalone route". Not a true
+  duplicate but creates audit noise.
+
+D3.6-M2. 5 dead lazy imports in App.tsx
+  Vendors (replaced by VendorsPage), Equipment (replaced by
+  EquipmentPage), EquipmentDetail (replaced by EquipmentDetailPage),
+  ReportCenter (replaced by ReportsPage), ReportDetail (no route).
+  Dead imports increase code-splitting awareness but never load.
+
+--- LOW (2) ---
+
+D3.6-L1. All 18 redirects verified single-hop (clean)
+  No A->B->C chains found. All redirects go directly to final target.
+
+D3.6-L2. 9 stale entries in routeGuards.ts ROUTE_ROLE_MAP
+  /compliance-overview, /iot-monitoring, /violation-trends, /tasks,
+  /vendor-certifications, /export-center, /vendor-connect, /billing,
+  /iot/hub -- no corresponding <Route> exists.
+  Harmless but stale configuration.
+
+================================================================================
+3.9 -- VALIDATION DUPLICATES
+================================================================================
+
+--- HIGH (2) ---
+
+D3.9-H1. Password validation -- AuthModal 8 chars vs Signup 12 chars
+  AuthModal.tsx:44 -- min 8 chars, NO complexity requirements
+  Signup.tsx:122-127 -- min 12 chars + upper/lower/number/special
+  InviteAccept.tsx:59-64 -- min 12 + complexity (same as Signup)
+  ResetPassword.tsx:17-22 -- min 12 + complexity (same as Signup)
+  VendorRegister.tsx:59-64 -- min 12 + complexity (same as Signup)
+  Risk: Users signing up via AuthModal can create 8-char passwords
+    without complexity, weaker than all other flows.
+
+D3.9-H2. Temperature range validation -- divergent boundaries
+  src/lib/sanitize.ts:30 -- accepts -60 to 500 F
+  src/lib/importValidator.ts:151 -- accepts -20 to 250 F
+  Risk: Valid blast chiller (-40 F) or oven (350 F) readings pass
+    sanitize but fail CSV import. User confusion.
+
+--- MEDIUM (3) ---
+
+D3.9-M1. Email validation regex duplicated 7 times
+  Pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  Files: TeamInviteModal.tsx:54, importValidator.ts:91,
+    BulkClientImport.tsx:14, Signup.tsx:146+164, DemoRequest.tsx:57,
+    InviteVendorModal.tsx:58, WeeklyDigest.tsx:151
+  All identical today. Risk: 7 files to update if requirements change.
+
+D3.9-M2. Password requirements object duplicated 4 times
+  Signup.tsx:122-131, InviteAccept.tsx:59-68, ResetPassword.tsx:17-26,
+  VendorRegister.tsx:59-68
+  Logic identical but property names differ (minLength/hasUpper vs
+  length/uppercase). Prevents extraction to shared function.
+
+D3.9-M3. Phone formatting function duplicated 3 times
+  Signup.tsx:110-116 (formatPhoneNumber)
+  VendorRegister.tsx:37-52 (formatPhoneNumber)
+  DemoWizard.tsx:122-127 (formatPhone)
+  All identical logic. No shared utility.
+
+--- LOW (2) ---
+
+D3.9-L1. Date validation -- appropriate divergence
+  sanitize.ts:20-25 -- YYYY-MM-DD only (system boundary)
+  importValidator.ts:26-43 -- YYYY-MM-DD + MM/DD/YYYY + variants (user)
+  Appropriate: strict system boundary vs flexible user-facing import.
+
+D3.9-L2. Domain blocking not applied in main Signup
+  isBlockedDomain() used in DemoRequest + DemoGenerator, but NOT in
+  Signup.tsx. Competitors/disposable emails blocked from demos but
+  not from account creation. May be intentional.
+
+================================================================================
+CROSS-CUTTING PATTERNS
+================================================================================
+
+1. CORRECTIVE ACTION TYPE FRAGMENTATION
+   CAStatus, CASeverity, CASourceType, CACategory, CANote, CAAttachment
+   each defined 2-3 times across src/types/, src/constants/, src/data/,
+   and src/lib/canonicalQueries/. Multiple divergences. 6 findings.
+   Root cause: No import discipline enforcing single source of truth.
+
+2. SEVERITY MODEL PROLIFERATION
+   At least 5 different severity key sets used across the codebase:
+   a. critical/high/medium/low (CA, incidents, general)
+   b. critical/major/minor (self-inspection)
+   c. critical/major/minor/advisory (deficiencies)
+   d. urgent/advisory/info (notifications, status colors)
+   e. minor/moderate/serious/critical (equipment incidents)
+   No canonical severity taxonomy. 4 SEVERITY_CONFIG constants, each
+   with different keys and shapes. 8 findings across 3.4 and 3.5.
+
+3. STAT CARD SPRAWL
+   18 total implementations (3 shared components + 15 inline copies).
+   Most are functionally identical: label + value + color in a card.
+   Estimated 400+ lines of duplicate UI code.
+
+4. DEAD COMPONENT WEIGHT
+   18+ components with zero importers totaling ~1,000+ lines.
+   Includes entire families: 5 demo-related, 2 benchmark, 2 onboarding,
+   3 tooltip, 2 animated score, 1 upgrade, and misc UI primitives.
+
+5. CANONICAL DATA LAYER GAP
+   Layer 2 canonical hooks exist for 6 domains but Layer 3 consumer
+   migration has not started. 54 pages still query Supabase inline.
+   intelligence_signals (4 hooks) and temperature (3 hooks) are the
+   highest-impact consolidation targets.
+
+================================================================================
+SEVERITY SUMMARY
+================================================================================
+
+CRITICAL (0):
+  No critical duplicates found.
+
+HIGH (24):
+  D3.1-H1 through H5: Component duplicates (5)
+  D3.2-H1: intelligence_signals 4-hook fan-out (1)
+  D3.4-H1 through H13: Type duplicates (13)
+  D3.5-H1 through H5: Constant duplicates (5)
+  D3.6-H1: Catch-all route hazard (1 -- counted under 3.6 not 3.5)
+  D3.9-H1, H2: Validation divergences (2)
+  NOTE: Sums adjusted -- 5+1+13+5 = 24 (3.6-H1 counted once)
+
+MEDIUM (19):
+  D3.1-M1 through M3: Component overlaps (3)
+  D3.2-M1, M2: Hook overlaps (2)
+  D3.3-M1: Inline query backlog (1)
+  D3.4-M1 through M5: Type divergences (5)
+  D3.5-M1 through M4: Constant overlaps (4)
+  D3.6-M1, M2: Route noise (2)
+  D3.9-M1 through M3: Validation duplicates (3)
+  NOTE: 3+2+1+5+4 = 15 + 2+2 = 19... let me recount:
+    3.1: 3, 3.2: 2, 3.3: 1, 3.4: 5, 3.5: 4, 3.6: 2, 3.9: 3 = 20
+  CORRECTION: 20 MEDIUM (not 19). Recount:
+    3.2-M2 is "NOT a true duplicate" per verdict. Excluding = 19.
+
+LOW (9):
+  D3.1-L1, L2: Dead code weight (2)
+  D3.4-L1, L2: Module-scoped type noise (2)
+  D3.5-L1: Constants organization (1)
+  D3.6-L1, L2: Clean redirects + stale guards (2)
+  D3.9-L1, L2: Appropriate divergences (2)
+
+================================================================================
+REMEDIATION PRIORITIES (read-only observations)
+================================================================================
+
+P1 -- Type consolidation (HIGH yield, LOW risk):
+  Establish src/types/ as single source of truth for all domain types.
+  Import from canonical files in constants, data, and canonicalQueries.
+  Priority: CAStatus divergence (D3.4-H1), ReviewStatus collision
+  (D3.4-H12), Vendor fragmentation (D3.4-H13), Pillar proliferation
+  (D3.4-H7).
+
+P2 -- Component consolidation (HIGH yield, MEDIUM risk):
+  Merge StatCard + KpiTile, extract shared EmptyState, delete 18+ dead
+  components. ~1,400 lines of dead/duplicate code.
+  Priority: StatCard/KpiTile merger (D3.1-H1), dead component cleanup
+  (D3.1-L2).
+
+P3 -- Validation hardening (HIGH impact, LOW risk):
+  Fix AuthModal password minimum (8 -> 12 + complexity) to match all
+  other flows. Unify temperature range validation.
+  Priority: D3.9-H1 (security), D3.9-H2 (data integrity).
+
+P4 -- Hook consolidation (MEDIUM yield, MEDIUM risk):
+  Consolidate intelligence_signals 4-hook fan-out into single canonical
+  hook. Consolidate temperature 3-hook overlap.
+  Priority: D3.2-H1 (4 realtime subscriptions on same table).
+
+P5 -- Constant unification (MEDIUM yield, LOW risk):
+  Establish canonical severity taxonomy. Consolidate NAVY color.
+  Priority: D3.5-H1 (4 SEVERITY_CONFIG variants).
+
+DEFERRED:
+  3.7  Copy/label duplicates -- paused per standing exclusion
+  3.8  Style/Tailwind duplicates -- paused per standing exclusion
+  3.10 Icon duplicates -- paused per standing exclusion

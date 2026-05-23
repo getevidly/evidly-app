@@ -1,0 +1,20 @@
++
+ // ────────────────────────────────────────────────────────
+ // Master loader — runs all queries in parallel
+ // ────────────────────────────────────────────────────────
+ 
+ export async function loadDashboardData(organizationId?: string): Promise<DashboardData> {
+-  const [complianceData, locs, progress, activity, vendorData, needsAttention, scoreImpact] = await Promise.all([
++  const [complianceData, locs, progress, activity, vendorData, needsAttention, scoreImpact, orgMeta] = await Promise.all([
+     fetchComplianceScores(organizationId),
+     fetchLocations(organizationId),
+     fetchTodaysProgress(organizationId),
+@@ -337,6 +354,7 @@ export async function loadDashboardData(organizationId?: string): Promise<Dashbo
+     fetchVendorServices(organizationId),
+     fetchNeedsAttention(organizationId),
+     fetchScoreImpact(organizationId),
++    fetchOrganizationMeta(organizationId),
+   ]);
+ 
+   return {
+@@ -347,6 +365,7 @@ export async function loadDashboardData(organizationId?: string): Promise<Dashbo

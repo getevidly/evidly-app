@@ -1,0 +1,20 @@
++  return {
++    data,
++    loading,
++    error,
++    refresh: fetchData,
++    overdueCount: taskStateResult.data?.overdueCount ?? null,
++    tasksTodayCount: taskStateResult.data?.todayCounts.total ?? null,
++  };
+ }
+diff --git a/src/lib/dashboardQueries.ts b/src/lib/dashboardQueries.ts
+index de05216..63d4d7e 100644
+--- a/src/lib/dashboardQueries.ts
++++ b/src/lib/dashboardQueries.ts
+@@ -49,6 +49,7 @@ export interface DashboardData {
+   vendors: Vendor[];
+   needsAttention: NeedsAttentionItem[];
+   scoreImpact: ScoreImpactItem[];
++  timezone: string | null;
+ }
+ 

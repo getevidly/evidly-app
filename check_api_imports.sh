@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# List of api hooks that are likely unused based on Phase 0 findings
+API_HOOKS=(
+  "useDeficiencies"
+  "useLocationDeficiencies"
+  "useDeficiency"
+  "useUpdateDeficiencyStatus"
+  "useResolveDeficiency"
+  "useServiceRecords"
+  "useLocationServiceRecords"
+  "useServiceRecord"
+  "useUpdateQaStatus"
+  "useSchedule"
+  "useUnassignedJobs"
+  "useScheduleTechnicians"
+  "useTechnicianAvailability"
+  "useRecurringSchedules"
+  "useRescheduleJob"
+  "useAssignJob"
+  "useOptimizeRoute"
+  "useCreateRecurringSchedule"
+  "useVehicles"
+  "useVehicle"
+  "useVehicleMaintenance"
+  "useVehicleIncidents"
+  "useCreateVehicle"
+  "useUpdateVehicle"
+  "useLogMaintenance"
+  "useReportVehicleIncident"
+  "useAvailabilitySubmission"
+  "useTeamAvailability"
+  "usePendingApprovals"
+  "useSubmitAvailability"
+  "useApproveAvailability"
+  "useRejectAvailability"
+  "useInventoryItems"
+  "useInventoryItem"
+  "useInventoryTransactions"
+  "useInventoryRequests"
+  "useLogUsage"
+  "useCreateInventoryRequest"
+  "useApproveInventoryRequest"
+  "useDenyInventoryRequest"
+  "useCreateInventoryItem"
+  "useUpdateInventoryItem"
+  "useEquipmentIncidents"
+  "useCreateEquipmentIncident"
+  "useResolveEquipmentIncident"
+  "useIncidentReports"
+  "useIncidentReport"
+  "useCreateIncidentReport"
+  "useUpdateIncidentReport"
+  "useInvestigateIncident"
+)
+
+echo "Checking API hooks usage..."
+for hook in "${API_HOOKS[@]}"; do
+  count=$(grep -rh "$hook" "C:\Users\newpa\OneDrive\Desktop\evidly-app\src" --include="*.ts" --include="*.tsx" | grep -v "export function $hook\|export {" | grep -v "export const $hook\|export type" | wc -l)
+  if [ "$count" -eq 0 ]; then
+    echo "DEAD API: $hook"
+  fi
+done

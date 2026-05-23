@@ -1,0 +1,7 @@
+     vendors: vendorData,
+     needsAttention,
+     scoreImpact,
++    timezone: orgMeta.timezone,
+   };
+ }
+ 

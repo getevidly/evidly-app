@@ -1,0 +1,777 @@
+===============================================================================
+NAV AUDIT TREE — EvidLY App
+Generated: 2026-05-07
+===============================================================================
+
+=====================================
+SECTION 1: src/pages FILE TREE
+=====================================
+
+src/pages/
+├── admin/
+│   ├── system/
+│   │   └── EdgeFunctions.tsx
+│   ├── AdminAuditLog.tsx
+│   ├── AdminBilling.tsx
+│   ├── AdminCrawlMonitor.tsx
+│   ├── AdminDashboard.tsx
+│   ├── AdminHome.tsx
+│   ├── AdminK2C.tsx
+│   ├── AdminOrgs.tsx
+│   ├── AdminReports.tsx
+│   ├── AdminScoreTable.tsx
+│   ├── AdminSecurity.tsx
+│   ├── AdminTestimonials.tsx
+│   ├── AdminUsers.tsx
+│   ├── AdminVendorConnect.jsx
+│   ├── AssessmentLeads.tsx
+│   ├── CommandCenter.tsx
+│   ├── Configure.tsx
+│   ├── DatabaseBackup.tsx
+│   ├── DemoDashboard.tsx
+│   ├── DemoGenerator.tsx
+│   ├── DemoLauncher.tsx
+│   ├── DemoPipeline.tsx
+│   ├── DemoTours.jsx
+│   ├── DocumentVault.tsx
+│   ├── EmailSequenceManager.tsx
+│   ├── EventLog.tsx
+│   ├── EvidLYIntelligence.tsx
+│   ├── FeatureBaselineTracker.jsx
+│   ├── FeatureFlags.tsx
+│   ├── GtmDashboard.tsx
+│   ├── GuidedTours.tsx
+│   ├── InsuranceApiKeys.tsx
+│   ├── IntelligenceAdmin.tsx
+│   ├── JurisdictionIntelligence.tsx
+│   ├── MaintenanceMode.tsx
+│   ├── MarketingCampaigns.tsx
+│   ├── PartnerDemos.jsx
+│   ├── RemoteConnect.tsx
+│   ├── RfpIntelligence.tsx
+│   ├── RolePreview.jsx
+│   ├── SalesPipeline.tsx
+│   ├── SecuritySettings.tsx
+│   ├── StaffRoles.tsx
+│   ├── SupportTickets.tsx
+│   ├── SurveyPage.tsx
+│   ├── SystemMessages.tsx
+│   ├── TrialHealth.tsx
+│   ├── UserEmulation.tsx
+│   ├── UserProvisioning.tsx
+│   ├── VerificationReport.tsx
+│   └── ViolationOutreach.tsx
+├── availability/
+│   ├── AvailabilityApprovalsPage.tsx
+│   └── TeamAvailabilityPage.tsx
+├── bonuses/
+│   └── BonusDashboardPage.tsx
+├── equipment/
+│   ├── EquipmentDetailPage.tsx
+│   ├── EquipmentIncidentsPage.tsx
+│   ├── EquipmentPage.tsx
+│   └── QRScanLandingPage.tsx
+├── fireSafety/
+│   ├── Analysis.jsx
+│   ├── Overview.jsx
+│   └── Trajectory.jsx
+├── fleet/
+│   ├── VehicleDetailPage.tsx
+│   └── VehiclesPage.tsx
+├── foodSafety/
+│   ├── Analysis.jsx
+│   ├── Overview.jsx
+│   └── Trajectory.jsx
+├── insights/
+│   ├── InspectionForecast.jsx
+│   ├── JurisdictionSignals.jsx
+│   ├── OperationsIntelligence.jsx  (*)
+│   ├── TeamLeaderboard.jsx
+│   ├── VendorPerformance.jsx
+│   └── ViolationRadar.jsx  (*)
+├── insurance/
+│   ├── InsurancePage.tsx
+│   └── InsurancePolicyPage.tsx
+├── inventory/
+│   ├── InventoryItemPage.tsx
+│   ├── InventoryPage.tsx
+│   └── InventoryRequestsPage.tsx
+├── partner/
+│   ├── AssociationDemoDashboard.jsx
+│   ├── CarrierDemoDashboard.jsx
+│   └── VendorDemoDashboard.jsx  (*)
+├── performance/
+│   ├── MyPerformancePage.tsx
+│   └── PerformanceMetricsPage.tsx
+├── public/
+│   ├── BlogList.tsx
+│   ├── BlogPost.tsx
+│   ├── CaliforniaCompliance.tsx
+│   ├── CityPage.jsx
+│   ├── CountyCompliance.tsx
+│   ├── CountyLandingPage.jsx
+│   ├── KitchenCheckPage.jsx
+│   ├── LandingPage.jsx
+│   ├── ReferralPage.tsx
+│   ├── ScoreTableCityPage.jsx
+│   ├── ScoreTableCountyDetail.jsx
+│   ├── ScoreTableCountyPage.jsx
+│   ├── ScoreTableIndex.jsx
+│   ├── ScoreTableState.jsx
+│   ├── scoreTableShared.jsx
+│   ├── ScoreTableWACounty.jsx
+│   ├── ScoreTableWashington.jsx
+│   └── SharedReport.tsx
+├── quality/
+│   └── CallbacksPage.tsx
+├── reports/
+│   ├── ReportGeneratorPage.tsx
+│   └── ReportsPage.tsx
+├── safety/
+│   ├── IncidentDetailPage.tsx
+│   ├── IncidentReportsPage.tsx
+│   └── ReportIncidentPage.tsx
+├── schedule/
+│   └── SchedulePage.tsx
+├── settings/
+│   ├── BillingPage.tsx
+│   ├── CompanyProfilePage.tsx
+│   ├── IntegrationsPage.tsx
+│   ├── NotificationsPage.tsx
+│   ├── ServiceTypesPage.tsx
+│   ├── SettingsPage.tsx
+│   └── TeamRolesPage.tsx
+│
+├── AdminClientOnboarding.tsx
+├── AdminHub.tsx
+├── AdminIntelligenceQueue.tsx
+├── AdminLogin.tsx
+├── AdminRegulatoryChanges.tsx
+├── AIAdvisor.tsx
+├── Alerts.tsx
+├── AuditReport.tsx
+├── AuditTrail.tsx
+├── AuthCallback.tsx
+├── Benchmarks.tsx
+├── BrandingSettings.tsx
+├── BusinessIntelligence.tsx
+├── Calendar.tsx
+├── CarrierPartnership.tsx
+├── CertificateViewer.tsx
+├── ChecklistCompletionDetail.tsx
+├── Checklists.tsx
+├── CicPseView.tsx
+├── ClientReports.tsx
+├── ComingSoon.tsx
+├── ComplianceHub.tsx
+├── ComplianceIndex.tsx
+├── ComplianceIntelligence.tsx
+├── ComplianceOverview.tsx
+├── ComplianceTrends.tsx
+├── CopilotInsights.tsx
+├── CorrectiveActionDetail.tsx
+├── CorrectiveActions.tsx
+├── CourseBuilder.tsx
+├── Dashboard.tsx
+├── Deficiencies.tsx
+├── DeficiencyDetail.tsx
+├── DemoExpired.tsx
+├── DemoRequest.tsx
+├── DemoSchedule.tsx
+├── DemoWizard.tsx
+├── DeveloperPortal.tsx
+├── DocumentChecklist.tsx
+├── Documents.tsx
+├── EmailConfirmed.tsx
+├── EmergencyInfoPage.tsx
+├── EmployeeCertDetail.tsx
+├── EmployeeTrainingProfile.tsx
+├── EnterpriseDashboard.tsx
+├── EnterpriseExecutive.tsx
+├── EnterpriseLanding.tsx
+├── Equipment.tsx
+├── EquipmentDetail.tsx
+├── FacilitiesDashboard.tsx
+├── FacilitySafety.tsx
+├── FoodRecovery.tsx
+├── ForgotPassword.tsx
+├── HACCP.tsx
+├── HealthDeptReport.tsx
+├── Help.tsx
+├── HelpSupport.tsx
+├── ImportData.tsx
+├── IncidentLog.tsx
+├── IncidentPlaybooks.tsx
+├── InsightsHub.tsx
+├── InspectorMode.jsx
+├── InspectorView.tsx
+├── IntegrationHub.tsx
+├── IntelligenceHub.tsx
+├── InviteAccept.tsx
+├── IoTMonitoring.tsx
+├── IoTSensorHub.tsx
+├── IoTSensorLanding.tsx
+├── IoTSensorPlatform.tsx
+├── JurisdictionSettings.tsx
+├── K12Compliance.tsx
+├── KitchenDashboard.tsx
+├── KitchenToCommunity.tsx
+├── Leaderboard.tsx
+├── LeaderboardPreview.tsx
+├── Login.tsx
+├── MarketplaceLanding.tsx
+├── MFAChallenge.jsx
+├── MockInspection.tsx
+├── NotFound.jsx
+├── Onboarding.tsx
+├── OrgHierarchy.tsx
+├── Passport.tsx
+├── PassportDemo.tsx
+├── PhotoEvidencePage.tsx
+├── PlaybookAnalytics.tsx
+├── PlaybookBuilder.tsx
+├── PlaybookRunner.tsx
+├── PlaybookTimeline.tsx
+├── PredictiveAnalysis.jsx
+├── PrivacyPolicy.tsx
+├── ReferralDashboard.tsx
+├── ReferralRedirect.tsx
+├── RegulatoryAlerts.tsx
+├── ReportCenter.tsx
+├── ReportDetail.tsx
+├── ResetPassword.tsx
+├── RolesPermissions.tsx
+├── SB1383Compliance.tsx
+├── ScoringBreakdown.tsx
+├── SelfAudit.tsx
+├── SelfDiagnosis.tsx
+├── SensorDetail.tsx
+├── SensorHub.tsx
+├── SensorSetupWizard.tsx
+├── ServiceRecordDetail.tsx
+├── ServiceRecordEntry.tsx
+├── ServicesPage.tsx
+├── Settings.tsx
+├── SetupFoodSafety.tsx
+├── SetupFoodSafetyEntry.tsx
+├── SetupMFA.tsx
+├── ShiftHandoff.jsx
+├── Signup.tsx
+├── SignupLocations.tsx
+├── Suspended.tsx
+├── TaskManager.jsx
+├── Team.tsx
+├── TempLogQuick.tsx
+├── TempLogs.tsx
+├── TempLogScan.tsx
+├── TermsOfService.tsx
+├── ToolsHub.tsx
+├── TrainingCatalog.tsx
+├── TrainingCourse.tsx
+├── TrainingHub.tsx
+├── TrainingRecords.tsx
+├── Upgrade.jsx
+├── UsageAnalytics.tsx
+├── USDAProductionRecords.tsx
+├── VendorConnect.jsx
+├── VendorConnectApply.jsx
+├── VendorDashboard.tsx
+├── VendorDetail.tsx
+├── VendorDocumentReview.jsx
+├── VendorInviteLanding.tsx
+├── VendorLogin.tsx
+├── VendorMarketplace.tsx
+├── VendorMigration.jsx
+├── VendorPartnerDashboard.jsx
+├── VendorProfile.tsx
+├── VendorRegister.tsx
+├── Vendors.tsx
+├── VendorScheduleResponse.jsx
+├── VendorSecureUpload.tsx
+├── VendorSetup.tsx
+├── VoiceHelp.jsx
+├── WeeklyDigest.tsx
+└── WorkforceRisk.tsx
+
+
+=====================================
+SECTION 2: SIDEBAR CONFIG (sidebarConfig.ts)
+=====================================
+
+Nav items defined in registry (I):
+  checklists           → /checklists
+  temperatures         → /temp-logs
+  incidents            → /incidents
+  incidentsViewOnly    → /incidents
+  temperaturesViewOnly → /temp-logs
+  documents            → /documents
+  selfInspection       → /self-inspection
+  mockInspection       → /mock-inspection
+  regulatory           → /regulatory-alerts
+  reporting            → /reports
+  taskManager          → /tasks
+  correctiveActions    → /corrective-actions
+  facilitySafety       → /facility-safety
+  deficiencies         → /deficiencies
+  workforceRisk        → /workforce-risk
+  cicPse               → /cic-pse
+  intelligence         → /intelligence
+  rfpIntelligence      → /admin/rfp-intelligence
+  aiInsights           → /ai-advisor
+  copilotInsights      → /copilot
+  analytics            → /analysis
+  foodSafetyAnalysis   → /food-safety/analysis
+  foodSafetyTrajectory → /food-safety/trajectory
+  fireSafetyAnalysis   → /fire-safety/analysis
+  fireSafetyTrajectory → /fire-safety/trajectory
+  complianceTrends     → /compliance-trends
+  auditLog             → /audit-trail
+  benchmarks           → /benchmarks
+  iotDashboard         → /iot-monitoring
+  clientIntelligence   → /insights/intelligence
+  clientReports        → /insights/reports
+  predictions          → /insights/predictions
+  inspectionForecast   → /insights/inspection-forecast
+  violationRadar       → /insights/violation-radar
+  complianceTrajectory → /insights/trajectory
+  vendorPerformance    → /insights/vendor-performance
+  jurisdictionSignals  → /insights/signals
+  teamLeaderboard      → /insights/leaderboard
+  operationsIntelligence → /insights/operations-intelligence
+  jurisdictionIntelligence → /jurisdiction
+  selfDiagnosis        → /self-diagnosis
+  calendar             → /calendar
+  inspectorArrival     → /inspector-view
+  iotSensors           → /sensors
+  connectSensors       → /iot/platform
+  importData           → /migrate
+  foodSafetyOverview   → /food-safety/overview
+  fireSafetyOverview   → /fire-safety/overview
+  complianceOverview   → /compliance-overview
+  services             → /services
+  allEquipment         → /equipment
+  equipment            → /equipment
+  serviceReporting     → /reports
+  vendors              → /vendors
+  vendorDocReview      → /vendors/review
+  vendorMarketplace    → /marketplace
+  vendorConnect        → /vendor-connect
+  upgrade              → /upgrade
+  foodRecovery         → /food-recovery
+  sb1383               → /sb1383
+  k12Compliance        → /k12
+  usdaProductionRecords → /usda/production-records
+  voiceHelp            → /voice-help
+  haccp                → /haccp
+  locations            → /org-hierarchy
+  settings             → /settings
+  team                 → /team
+  trainingRecords      → /dashboard/training
+  trainingCatalog      → /dashboard/training-catalog
+  rolesPermissions     → /settings/roles-permissions
+  commandCenter        → /admin/command-center
+  demoGenerator        → /admin/demo-generator
+  demoPipeline         → /admin/demos
+  emailSequences       → /admin/email-sequences
+  trialHealth          → /admin/trial-health
+  assessmentLeads      → /admin/assessments
+  apiKeys              → /admin/api-keys
+  integrations         → /integrations
+  edgeFunctions        → /admin/system/edge-functions
+  crawlMonitor         → /admin/intelligence
+  adminDashboard       → /admin/dashboard
+  verification         → /admin/verification
+  demoLauncher         → /admin/demo-launcher
+  partnerDemos         → /admin/partner-demos
+  adminTestimonials    → /admin/testimonials
+  featureBaseline      → /admin/feature-baseline
+  help                 → /help
+
+Per-Role Section Structure:
+  platform_admin:      Food Safety | Fire Safety | Compliance | Insights | Tools | Administration | Help
+  kitchen_staff:       Food Safety | Tools | Help
+  chef:                Food Safety | Insights | Tools | Administration | Help
+  kitchen_manager:     Food Safety | Compliance | Insights | Tools | Administration | Help
+  compliance_manager:  Food Safety | Fire Safety | Compliance | Insights | Tools | Administration | Help
+  facilities_manager:  Fire Safety | Compliance | Service | Tools | Insights | Administration | Help
+  owner_operator:      Food Safety | Fire Safety | Compliance | Insights | Tools | Administration | Help
+  executive:           Food Safety | Fire Safety | Insights | Compliance | Tools | Administration | Help
+
+Org-Type Overlays:
+  Food Recovery (SB 1383) — restaurant, healthcare, senior_living, k12, higher_ed
+  K-12 Food Safety       — k12_school only
+
+
+=====================================
+SECTION 3: APP.TSX ROUTES
+=====================================
+
+--- PUBLIC (no auth) ---
+/                              → Redirect → /login
+/verify/:code                  → PublicVerification
+/ref/:code                     → ReferralRedirect
+/r/:code                       → ReferralPage
+/report/:token                 → SharedReport
+/passport/demo                 → PassportDemo
+/passport/:id                  → Passport
+/partners/insurance            → CarrierPartnership
+/providers                     → MarketplaceLanding
+/enterprise                    → EnterpriseLanding
+/iot                           → IoTSensorLanding
+/terms                         → TermsOfService
+/privacy                       → PrivacyPolicy
+/compliance/california         → CaliforniaCompliance
+/compliance/california/:slug   → CountyCompliance
+/scoretable                    → ScoreTableIndex
+/scoretable/city/:citySlug     → ScoreTableCityPage
+/scoretable/:stateSlug         → ScoreTableState
+/scoretable/:state/:county     → ScoreTableCountyDetail
+/kitchen-check/:slug           → KitchenCheckPage
+/kitchen-to-community          → KitchenToCommunity
+/leaderboard-preview           → LeaderboardPreview
+/equipment/scan/:equipmentId   → QRScanLandingPage
+/temp/log                      → TempLogQuick (QRAuthGuard)
+/temp-logs/scan                → TempLogScan (QRAuthGuard)
+/suspended                     → Suspended
+/login                         → Login (PublicRoute)
+/admin-login                   → AdminLogin (PublicRoute)
+/signup                        → Signup (PublicRoute)
+/signup/locations              → SignupLocations (ProtectedRoute)
+/invite/:token                 → InviteAccept
+/forgot-password               → ForgotPassword (PublicRoute)
+/reset-password                → ResetPassword
+/email-confirmed               → EmailConfirmed
+/demo                          → DemoWizard
+/demo/request                  → DemoRequest
+/demo/schedule/:sessionId      → DemoSchedule
+/auth/callback                 → AuthCallback
+/setup-mfa                     → SetupMFA
+/mfa-challenge                 → MFAChallenge
+/vendor/login                  → VendorLogin
+/vendor/register               → VendorRegister
+/vendor/upload/:token          → VendorSecureUpload
+/vendor/invite/:code           → VendorInviteLanding
+/vendor/schedule/:token        → VendorScheduleResponse
+/vendor-connect/apply          → VendorConnectApply
+/support/survey/:token         → SurveyPage
+/city/:citySlug                → CityPage
+/blog                          → BlogList
+/blog/:slug                    → BlogPost
+/:slug                         → CountyLandingPage (catch-all)
+
+--- PROTECTED (no Layout) ---
+/vendor/dashboard              → VendorDashboard
+/vendor/partner-dashboard      → VendorPartnerDashboard
+/vendor/setup                  → VendorSetup
+/enterprise/admin              → EnterpriseDashboard
+/enterprise/dashboard          → EnterpriseExecutive
+/enterprise/intelligence       → ComplianceIntelligence
+/iot/hub                       → IoTSensorHub
+/onboarding                    → Onboarding
+/setup/food-safety             → SetupFoodSafetyEntry
+/setup/food-safety/:locationId → SetupFoodSafety
+/demo-expired                  → DemoExpired
+/admin/role-preview            → RolePreview
+
+--- PROTECTED (ProtectedLayout — Sidebar + TopBar) ---
+/dashboard                     → Dashboard
+/food-safety                   → Redirect → /food-safety/overview
+/food-safety/overview          → FoodSafetyOverview
+/food-safety/analysis          → FoodSafetyAnalysis
+/food-safety/trajectory        → FoodSafetyTrajectory
+/compliance                    → ComplianceHub
+/insights                      → InsightsHub
+/tools                         → ToolsHub
+/admin                         → AdminRoute (AdminHome or AdminHub)
+/admin/onboarding              → AdminClientOnboarding
+/temp-logs                     → TempLogs
+/iot-monitoring                → IoTMonitoring
+/checklists                    → Checklists
+/checklists/history/:id        → ChecklistCompletionDetail
+/documents                     → Documents
+/document-checklist            → DocumentChecklist
+/vendors                       → Vendors
+/vendors/:vendorId             → VendorDetail
+/marketplace                   → VendorMarketplace
+/vendor-connect                → VendorConnectPage
+/upgrade                       → Upgrade
+/marketplace/vendor/:slug      → VendorProfile
+/marketplace/:vendorSlug       → VendorProfile
+/haccp                         → HACCP
+/alerts                        → Alerts
+/incidents                     → IncidentLog
+/ai-advisor                    → AIAdvisor
+/leaderboard                   → Leaderboard
+/referrals                     → ReferralDashboard
+/team                          → Team
+/reports                       → ReportsPage
+/reports/:slug                 → ReportGeneratorPage
+/settings                      → SettingsPage (nested)
+  /settings/company            → CompanyProfilePage
+  /settings/team-roles         → TeamRolesPage
+  /settings/service-types      → ServiceTypesPage
+  /settings/notifications      → NotificationsPage
+  /settings/billing            → BillingPage
+/settings/branding             → BrandingSettings
+/settings/sensors              → IoTSensorHub
+/settings/roles-permissions    → RolesPermissions
+/import                        → ImportData
+/calendar                      → Calendar
+/schedule                      → SchedulePage
+/help                          → HelpSupport
+/weekly-digest                 → WeeklyDigest
+/audit-report                  → AuditReport
+/facility-safety               → FacilitySafety
+/fire-safety                   → Redirect → /fire-safety/overview
+/fire-safety/overview          → FireSafetyOverview
+/fire-safety/analysis          → FireSafetyAnalysis
+/fire-safety/trajectory        → FireSafetyTrajectory
+/workforce-risk                → WorkforceRisk
+/cic-pse                       → CicPseView
+/food-recovery                 → FoodRecovery
+/sb1383                        → SB1383Compliance
+/k12                           → K12Compliance
+/usda/production-records       → USDAProductionRecords
+/equipment                     → EquipmentPage
+/equipment/:id                 → EquipmentDetailPage
+/equipment/:id/service/new     → ServiceRecordEntry
+/regulatory-alerts             → RegulatoryAlerts
+/jurisdiction                  → JurisdictionSettings
+/health-dept-report            → HealthDeptReport
+/scoring-breakdown             → ScoringBreakdown
+/benchmarks                    → Benchmarks
+/compliance-trends             → ComplianceTrends
+/org-hierarchy                 → OrgHierarchy
+/compliance-index              → ComplianceIndex
+/compliance-overview           → ComplianceOverview
+/iot/platform                  → IoTSensorPlatform
+/iot/setup                     → SensorSetupWizard
+/migrate                       → VendorMigration
+
+--- ADMIN ROUTES (RequireAdmin → platform_admin only) ---
+/admin/onboard-client          → Redirect → /admin/onboarding
+/admin/usage-analytics         → UsageAnalytics
+/iot-platform                  → IoTSensorPlatform
+/sensors                       → SensorHub
+/sensors/add                   → SensorSetupWizard
+/sensors/:id                   → SensorDetail
+/integrations                  → IntegrationHub
+/settings/integrations         → SettingsIntegrationsPage
+/settings/api-keys             → IntegrationHub
+/settings/webhooks             → IntegrationHub
+/developers                    → DeveloperPortal
+/training                      → TrainingHub
+/training/course/:id           → TrainingCourse
+/training/courses/builder      → CourseBuilder
+/training/certificates         → CertificateViewer
+/training/employee/:userId     → EmployeeCertDetail
+/dashboard/training            → TrainingRecords
+/dashboard/training/:employeeId → EmployeeTrainingProfile
+/dashboard/training-catalog    → TrainingCatalog
+/playbooks                     → IncidentPlaybooks
+/playbooks/active/:id          → PlaybookRunner
+/playbooks/builder             → PlaybookBuilder
+/playbooks/analytics           → PlaybookAnalytics
+/playbooks/history/:id         → PlaybookTimeline
+/inspector-view                → InspectorView
+/shift-handoff                 → ShiftHandoff
+/inspector-mode                → InspectorMode
+/services                      → ServicesPage
+/services/:recordId            → ServiceRecordDetail
+/self-audit                    → SelfAudit
+/self-inspection               → SelfAudit
+/mock-inspection               → MockInspection
+/photo-evidence                → PhotoEvidencePage
+/audit-trail                   → AuditTrail
+/copilot                       → CopilotInsights
+/intelligence                  → IntelligenceHub
+/regulatory-updates            → Redirect → /intelligence
+/self-diagnosis                → SelfDiagnosis
+/admin/regulatory-changes      → AdminRegulatoryChanges
+/admin/intelligence-admin      → IntelligenceAdmin
+/admin/intelligence-queue      → Redirect → /admin/intelligence-admin
+/admin/rfp-intelligence        → Redirect → /admin/rfp-monitor
+/admin/jurisdiction-intelligence → JurisdictionIntelligence
+/admin/emulation               → Redirect → /admin/emulate
+/admin/regulatory              → Redirect → /admin/regulatory-changes
+/admin/rfp                     → Redirect → /admin/rfp-monitor
+/admin/jurisdiction-intel      → Redirect → /admin/jurisdiction-intelligence
+/admin/demo-generator          → DemoGenerator (SalesGuard)
+/admin/demo-launcher           → DemoLauncher (SalesGuard)
+/admin/demos                   → Redirect → /admin/demo-pipeline
+/admin/demo-pipeline           → DemoPipeline (SalesGuard)
+/admin/demo-tours              → DemoTours (SalesGuard)
+/admin/partner-demos           → PartnerDemos (SalesGuard)
+/partner/vendor-demo           → VendorDemoDashboard (SalesGuard)
+/partner/association-demo      → AssociationDemoDashboard (SalesGuard)
+/partner/carrier-demo          → CarrierDemoDashboard (SalesGuard)
+/admin/kitchen-checkup         → AssessmentLeads (SalesGuard)
+/admin/scoretable              → AdminScoreTable (SalesGuard)
+/admin/testimonials            → AdminTestimonials (SalesGuard)
+/admin/assessments             → Redirect → /admin/kitchen-checkup
+/admin/api-keys                → InsuranceApiKeys
+/admin/home                    → Redirect → /admin
+/admin/dashboard               → Redirect → /admin
+/admin/demo/dashboard          → DemoDashboard
+/admin/command-center          → CommandCenter
+/admin/guided-tours            → GuidedTours (SalesGuard)
+/admin/leads                   → AssessmentLeads (SalesGuard)
+/admin/configure               → Configure
+/admin/emulate                 → UserEmulation
+/admin/billing                 → AdminBilling
+/admin/crawl-monitor           → AdminCrawlMonitor
+/admin/rfp-monitor             → RfpIntelligence
+/admin/messages                → SystemMessages
+/admin/k2c                     → AdminK2C
+/admin/backup                  → DatabaseBackup
+/admin/maintenance             → MaintenanceMode
+/admin/security-settings       → SecuritySettings
+/admin/vault                   → DocumentVault
+/admin/event-log               → EventLog
+/admin/campaigns               → MarketingCampaigns (SalesGuard)
+/admin/sales                   → SalesPipeline (SalesGuard)
+/admin/pipeline                → Redirect → /admin/sales
+/admin/users                   → AdminUsers
+/admin/security                → AdminSecurity
+/admin/audit-log               → AdminAuditLog
+/admin/orgs                    → AdminOrgs
+/admin/provisioning            → UserProvisioning
+/admin/user-provisioning       → Redirect → /admin/provisioning
+/admin/support                 → SupportTickets
+/admin/remote-connect          → RemoteConnect
+/admin/staff                   → StaffRoles
+/admin/intelligence            → EvidLYIntelligence
+/admin/reports                 → AdminReports
+/admin/violation-outreach      → ViolationOutreach (SalesGuard)
+/admin/email-sequences         → EmailSequenceManager (SalesGuard)
+/admin/trial-health            → TrialHealth (SalesGuard)
+/admin/verification            → VerificationReport
+/admin/system/edge-functions   → EdgeFunctions
+/admin/feature-flags           → FeatureFlags
+/admin/feature-baseline        → FeatureBaselineTracker
+/admin/vendor-connect          → AdminVendorConnect
+/admin/gtm                     → GtmDashboard (SalesGuard)
+
+--- POST-ADMIN (inside ProtectedLayout, outside RequireAdmin) ---
+/insights/intelligence         → BusinessIntelligence
+/insights/reports              → ClientReports
+/insights/predictions          → PredictiveAnalysis
+/insights/inspection-forecast  → InspectionForecastPage
+/insights/violation-radar      → ViolationRadarPage
+/insights/vendor-performance   → VendorPerformancePage
+/insights/signals              → JurisdictionSignalsPage
+/insights/leaderboard          → TeamLeaderboardPage
+/insights/operations-intelligence → OperationsIntelligencePage
+/tasks                         → TaskManager
+/vendors/review                → VendorDocumentReview
+/corrective-actions            → CorrectiveActions
+/corrective-actions/:actionId  → CorrectiveActionDetail
+/voice-help                    → VoiceHelp
+/deficiencies                  → Deficiencies
+/deficiencies/:deficiencyId    → DeficiencyDetail
+
+--- ALIAS REDIRECTS ---
+/incident-playbook             → /playbooks
+/regulatory-tracking           → /regulatory-alerts
+/ai-insights                   → /ai-advisor
+/analytics                     → /food-safety/analysis
+/daily-operations              → /dashboard
+/locations                     → /org-hierarchy
+/inspections                   → /self-audit
+/certifications                → /training/certificates
+/sensor-dashboard              → /sensors
+
+--- CATCH-ALL ---
+/*                             → NotFound
+
+
+=====================================
+SECTION 4: ORPHAN PAGE FILES (no route in App.tsx)
+=====================================
+
+Files in src/pages/ with NO matching route in App.tsx:
+
+  pages/AdminHub.tsx                    — Rendered via AdminRoute() component, not a direct <Route>
+  pages/AdminIntelligenceQueue.tsx      — Redirect exists to /admin/intelligence-admin
+  pages/Alerts.tsx                      — Routed at /alerts
+  pages/CarrierPartnership.tsx          — Routed at /partners/insurance
+  pages/ComingSoon.tsx                  — No route (placeholder component)
+  pages/EmergencyInfoPage.tsx           — No route
+  pages/FacilitiesDashboard.tsx         — No route
+  pages/Help.tsx                        — Not imported (HelpSupport.tsx used instead)
+  pages/IoTSensorHub.tsx               — Routed at /iot/hub and /settings/sensors
+  pages/KitchenDashboard.tsx           — No route
+  pages/Login.tsx                       — Routed at /login
+  pages/OrgHierarchy.tsx               — Routed at /org-hierarchy
+  pages/Passport.tsx                    — Routed at /passport/:id
+  pages/PassportDemo.tsx               — Routed at /passport/demo
+  pages/ReportCenter.tsx               — No route (ReportsPage used at /reports)
+  pages/ReportDetail.tsx               — No route (ReportGeneratorPage used at /reports/:slug)
+  pages/ScoringBreakdown.tsx           — Routed at /scoring-breakdown
+  pages/ServicesPage.tsx               — Routed at /services
+  pages/Settings.tsx                    — No route (settings/SettingsPage.tsx used)
+  pages/DemoWizard.tsx                 — Routed at /demo
+
+  --- Subdirectory pages with NO route ---
+  pages/availability/AvailabilityApprovalsPage.tsx  — No route
+  pages/availability/TeamAvailabilityPage.tsx        — No route
+  pages/bonuses/BonusDashboardPage.tsx              — No route
+  pages/equipment/EquipmentIncidentsPage.tsx         — No route
+  pages/fleet/VehicleDetailPage.tsx                  — No route
+  pages/fleet/VehiclesPage.tsx                       — No route
+  pages/insurance/InsurancePage.tsx                   — No route
+  pages/insurance/InsurancePolicyPage.tsx             — No route
+  pages/inventory/InventoryItemPage.tsx               — No route
+  pages/inventory/InventoryPage.tsx                   — No route
+  pages/inventory/InventoryRequestsPage.tsx           — No route
+  pages/performance/MyPerformancePage.tsx             — No route
+  pages/performance/PerformanceMetricsPage.tsx        — No route
+  pages/quality/CallbacksPage.tsx                     — No route
+  pages/safety/IncidentDetailPage.tsx                 — No route
+  pages/safety/IncidentReportsPage.tsx                — No route
+  pages/safety/ReportIncidentPage.tsx                 — No route
+  pages/public/scoreTableShared.jsx                  — Shared helper, not a page
+  pages/public/ScoreTableWACounty.jsx                — No route
+  pages/public/ScoreTableWashington.jsx              — No route
+  pages/public/LandingPage.jsx                       — Imported as NewLandingPage, no route
+
+
+=====================================
+SECTION 5: SIDEBAR ITEMS WITH NO ROUTE
+=====================================
+
+Sidebar nav items whose path does NOT appear as a <Route> in App.tsx:
+
+  analytics → /analysis      — No route (alias redirect /analytics → /food-safety/analysis exists)
+  complianceTrajectory → /insights/trajectory  — No route defined
+
+
+=====================================
+SECTION 6: SIDEBAR.TSX SUMMARY
+=====================================
+
+File: src/components/layout/Sidebar.tsx (821 lines)
+
+Structure:
+  - Imports sidebarConfig (getRoleConfig, getSectionsForRole, getHomeItemForRole, checkTestMode)
+  - SIDEBAR_ICONS map: emoji → Lucide component (64 entries)
+  - SIDEBAR_ITEM_DESCRIPTIONS_ES: Spanish descriptions (54 entries)
+  - SECTION_DESCRIPTIONS_ES: Spanish section tooltips (18 entries)
+  - NAV_I18N: item id → i18n key mapping (27 entries)
+  - SectionTooltip component: hover tooltip for section headers
+  - ItemTooltip component: hover tooltip for individual items
+  - SidebarNavItem component: single nav item with icon + label + badge
+  - Sidebar component:
+    • Uses accordion collapse (one section open at a time)
+    • Auto-expands section containing active route
+    • Exposes test API: __evidly_test.getVisibleNavItems() for Playwright
+    • Presenter mode badge
+    • Test mode badge
+    • Role badge at bottom
+    • Logout button pinned to bottom
+    • White-label "Powered by EvidLY" badge
+    • SidebarUpgradeBadge for demo users
+
+===============================================================================
+END OF NAV AUDIT TREE
+===============================================================================

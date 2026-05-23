@@ -1,0 +1,20 @@
+diff --git a/src/components/dashboard/DashboardToday.tsx b/src/components/dashboard/DashboardToday.tsx
+index 612d195..2ecfe24 100644
+--- a/src/components/dashboard/DashboardToday.tsx
++++ b/src/components/dashboard/DashboardToday.tsx
+@@ -82,7 +82,7 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path:
+ 
+ export function DashboardToday() {
+   const navigate = useNavigate();
+-  const { data } = useDashboardData();
++  const { data, overdueCount, tasksTodayCount } = useDashboardData();
+   const tasks = data.tasks ?? [];
+   const deadlines = data.deadlines ?? [];
+   const todayStr = new Date().toLocaleDateString('en-US', {
+@@ -90,7 +90,6 @@ export function DashboardToday() {
+   });
+ 
+   const doneCount = tasks.filter(t => t.status === 'done').length;
+-  const overdueCount = tasks.filter(t => t.status === 'overdue').length;
+   const urgentDeadlines = deadlines.filter(d => d.severity === 'critical' || d.severity === 'warning');
+ 

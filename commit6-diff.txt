@@ -1,0 +1,652 @@
+diff --git a/src/components/temp-logs/CooldownActiveList.tsx b/src/components/temp-logs/CooldownActiveList.tsx
+index 72d4bb5..344df82 100644
+--- a/src/components/temp-logs/CooldownActiveList.tsx
++++ b/src/components/temp-logs/CooldownActiveList.tsx
+@@ -1,10 +1,12 @@
++import { useState } from 'react';
+ import { Snowflake, Clock, Play, AlertTriangle, Loader2, ChevronRight } from 'lucide-react';
+ import { useCooldownLogs, type CooldownLog } from '../../hooks/api/useCooldownLogs';
+ import { useRole } from '../../contexts/RoleContext';
+ import { formatRelativeTime } from '../../lib/formatters';
+ import { colors, shadows } from '../../lib/designSystem';
+ import { EmptyState } from '../EmptyState';
+-import { toast } from 'sonner';
++import { Modal } from '../ui/Modal';
++import { StartCooldownForm } from './StartCooldownForm';
+ 
+ // ── Helpers ──────────────────────────────────────────────────
+ 
+@@ -36,21 +38,24 @@ function formatElapsed(startTime: string | null): string {
+ // ── Component ────────────────────────────────────────────────
+ 
+ export function CooldownActiveList() {
++  const [showStartForm, setShowStartForm] = useState(false);
+   const { getAccessibleLocations } = useRole();
+   const locationId = getAccessibleLocations()[0]?.locationId ?? '';
+ 
+-  const { data: cooldownLogs, isLoading, error } = useCooldownLogs(locationId, { isActiveOnly: true });
++  const { data: cooldownLogs, isLoading, error, refetch } = useCooldownLogs(locationId, { isActiveOnly: true });
++
++  const logs = cooldownLogs ?? [];
++
++  let content;
+ 
+   if (isLoading) {
+-    return (
++    content = (
+       <div className="flex items-center justify-center py-16">
+         <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
+       </div>
+     );
+-  }
+-
+-  if (error) {
+-    return (
++  } else if (error) {
++    content = (
+       <div
+         className="rounded-xl border p-6 text-center"
+         style={{ borderColor: colors.danger, backgroundColor: colors.dangerSoft }}
+@@ -64,128 +69,136 @@ export function CooldownActiveList() {
+         </p>
+       </div>
+     );
+-  }
+-
+-  const logs = cooldownLogs ?? [];
+-
+-  if (logs.length === 0) {
+-    return (
++  } else if (logs.length === 0) {
++    content = (
+       <EmptyState
+         icon={Snowflake}
+         title="No active cooldowns"
+         description="Start a cooldown to track cooling events and stay compliant with FDA and CalCode requirements."
+         action={{
+           label: 'Start a New Cooldown',
+-          onClick: () => toast.info('Start Cooldown form ships in the next update.'),
++          onClick: () => setShowStartForm(true),
+         }}
+       />
+     );
+-  }
+-
+-  return (
+-    <div className="space-y-5">
+-      {/* AI suggestion placeholder */}
+-      <div
+-        className="rounded-xl border px-5 py-4 flex items-start gap-3"
+-        style={{
+-          backgroundColor: `${colors.gold}08`,
+-          borderColor: `${colors.gold}30`,
+-        }}
+-      >
+-        <Snowflake className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: colors.gold }} />
+-        <p className="text-sm" style={{ color: colors.textPrimary }}>
+-          <span className="font-semibold">{logs.length} active cooldown{logs.length !== 1 ? 's' : ''}.</span>{' '}
+-          AI-powered suggestions will appear here in a future update.
+-        </p>
+-      </div>
+-
+-      {/* Active cooldown rows */}
+-      <div className="space-y-3">
+-        {logs.map((log) => {
+-          const status = deriveStatusInfo(log);
+-          const statusBg = status.color === 'green' ? colors.successSoft : colors.dangerSoft;
+-          const statusFg = status.color === 'green' ? colors.success : colors.danger;
+-
+-          return (
+-            <div
+-              key={log.id}
+-              className="rounded-xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3"
+-              style={{
+-                backgroundColor: colors.white,
+-                borderColor: colors.border,
+-                boxShadow: shadows.sm,
+-              }}
+-            >
+-              {/* Left: item info */}
+-              <div className="flex-1 min-w-0">
+-                <p className="font-semibold truncate" style={{ color: colors.textPrimary }}>
+-                  {log.food_item_name}
+-                </p>
+-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+-                  <span className="flex items-center gap-1 text-xs" style={{ color: colors.textSecondary }}>
+-                    <Clock className="h-3 w-3" />
+-                    Started {log.start_time ? formatRelativeTime(log.start_time) : '—'}
+-                  </span>
+-                  <span className="text-xs" style={{ color: colors.textSecondary }}>
+-                    Elapsed: {formatElapsed(log.start_time)}
+-                  </span>
+-                  <span className="text-xs font-medium" style={{ color: colors.textPrimary }}>
+-                    Stage {log.current_stage ?? 1}
+-                  </span>
++  } else {
++    content = (
++      <div className="space-y-5">
++        {/* AI suggestion placeholder */}
++        <div
++          className="rounded-xl border px-5 py-4 flex items-start gap-3"
++          style={{
++            backgroundColor: `${colors.gold}08`,
++            borderColor: `${colors.gold}30`,
++          }}
++        >
++          <Snowflake className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: colors.gold }} />
++          <p className="text-sm" style={{ color: colors.textPrimary }}>
++            <span className="font-semibold">{logs.length} active cooldown{logs.length !== 1 ? 's' : ''}.</span>{' '}
++            AI-powered suggestions will appear here in a future update.
++          </p>
++        </div>
++
++        {/* Active cooldown rows */}
++        <div className="space-y-3">
++          {logs.map((log) => {
++            const status = deriveStatusInfo(log);
++            const statusBg = status.color === 'green' ? colors.successSoft : colors.dangerSoft;
++            const statusFg = status.color === 'green' ? colors.success : colors.danger;
++
++            return (
++              <div
++                key={log.id}
++                className="rounded-xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3"
++                style={{
++                  backgroundColor: colors.white,
++                  borderColor: colors.border,
++                  boxShadow: shadows.sm,
++                }}
++              >
++                {/* Left: item info */}
++                <div className="flex-1 min-w-0">
++                  <p className="font-semibold truncate" style={{ color: colors.textPrimary }}>
++                    {log.food_item_name}
++                  </p>
++                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
++                    <span className="flex items-center gap-1 text-xs" style={{ color: colors.textSecondary }}>
++                      <Clock className="h-3 w-3" />
++                      Started {log.start_time ? formatRelativeTime(log.start_time) : '—'}
++                    </span>
++                    <span className="text-xs" style={{ color: colors.textSecondary }}>
++                      Elapsed: {formatElapsed(log.start_time)}
++                    </span>
++                    <span className="text-xs font-medium" style={{ color: colors.textPrimary }}>
++                      Stage {log.current_stage ?? 1}
++                    </span>
++                  </div>
+                 </div>
+-              </div>
+ 
+-              {/* Middle: mini timeline dots */}
+-              <div className="flex items-center gap-1.5 px-2">
+-                {[1, 2].map((stage) => {
+-                  const currentStage = log.current_stage ?? 1;
+-                  const dotColor =
+-                    stage < currentStage ? colors.success :
+-                    stage === currentStage ? colors.navy :
+-                    colors.borderLight;
+-                  return (
+-                    <div key={stage} className="flex items-center gap-1.5">
+-                      <div
+-                        className="w-3 h-3 rounded-full"
+-                        style={{ backgroundColor: dotColor }}
+-                      />
+-                      {stage < 2 && (
++                {/* Middle: mini timeline dots */}
++                <div className="flex items-center gap-1.5 px-2">
++                  {[1, 2].map((stage) => {
++                    const currentStage = log.current_stage ?? 1;
++                    const dotColor =
++                      stage < currentStage ? colors.success :
++                      stage === currentStage ? colors.navy :
++                      colors.borderLight;
++                    return (
++                      <div key={stage} className="flex items-center gap-1.5">
+                         <div
+-                          className="w-6 h-0.5 rounded"
+-                          style={{ backgroundColor: stage < currentStage ? colors.success : colors.borderLight }}
++                          className="w-3 h-3 rounded-full"
++                          style={{ backgroundColor: dotColor }}
+                         />
+-                      )}
+-                    </div>
+-                  );
+-                })}
+-              </div>
++                        {stage < 2 && (
++                          <div
++                            className="w-6 h-0.5 rounded"
++                            style={{ backgroundColor: stage < currentStage ? colors.success : colors.borderLight }}
++                          />
++                        )}
++                      </div>
++                    );
++                  })}
++                </div>
+ 
+-              {/* Right: status badge + nav hint */}
+-              <div className="flex items-center gap-3">
+-                <span
+-                  className="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+-                  style={{ backgroundColor: statusBg, color: statusFg }}
+-                >
+-                  {status.label}
+-                </span>
+-                <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: colors.textMuted }} />
++                {/* Right: status badge + nav hint */}
++                <div className="flex items-center gap-3">
++                  <span
++                    className="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
++                    style={{ backgroundColor: statusBg, color: statusFg }}
++                  >
++                    {status.label}
++                  </span>
++                  <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: colors.textMuted }} />
++                </div>
+               </div>
+-            </div>
+-          );
+-        })}
++            );
++          })}
++        </div>
++
++        {/* Start new cooldown button */}
++        <div className="flex justify-center pt-2">
++          <button
++            onClick={() => setShowStartForm(true)}
++            className="px-6 py-3 rounded-xl font-medium transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] min-h-[44px] flex items-center gap-2"
++            style={{ backgroundColor: colors.navy, color: colors.white }}
++          >
++            <Play className="h-4 w-4" />
++            Start a New Cooldown
++          </button>
++        </div>
+       </div>
++    );
++  }
+ 
+-      {/* Start new cooldown button */}
+-      <div className="flex justify-center pt-2">
+-        <button
+-          onClick={() => toast.info('Start Cooldown form ships in the next update.')}
+-          className="px-6 py-3 rounded-xl font-medium transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] min-h-[44px] flex items-center gap-2"
+-          style={{ backgroundColor: colors.navy, color: colors.white }}
+-        >
+-          <Play className="h-4 w-4" />
+-          Start a New Cooldown
+-        </button>
+-      </div>
+-    </div>
++  return (
++    <>
++      {content}
++      <Modal isOpen={showStartForm} onClose={() => setShowStartForm(false)} size="lg">
++        <StartCooldownForm
++          onClose={() => setShowStartForm(false)}
++          onSuccess={() => refetch()}
++        />
++      </Modal>
++    </>
+   );
+ }
+diff --git a/src/components/temp-logs/StartCooldownForm.tsx b/src/components/temp-logs/StartCooldownForm.tsx
+new file mode 100644
+index 0000000..ee3452c
+--- /dev/null
++++ b/src/components/temp-logs/StartCooldownForm.tsx
+@@ -0,0 +1,198 @@
++import { useState, useMemo } from 'react';
++import { Search } from 'lucide-react';
++import { useMenuItems, type MenuItem } from '../../hooks/api/useMenuItems';
++import { useStartCooldown } from '../../hooks/api/useCooldownLogs';
++import { useAuth } from '../../contexts/AuthContext';
++import { useRole } from '../../contexts/RoleContext';
++import { colors } from '../../lib/designSystem';
++import { toast } from 'sonner';
++import Button from '../ui/Button';
++
++interface StartCooldownFormProps {
++  onClose: () => void;
++  onSuccess?: (cooldownLogId: string) => void;
++}
++
++export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps) {
++  const { profile } = useAuth();
++  const { getAccessibleLocations } = useRole();
++  const locationId = getAccessibleLocations()[0]?.locationId ?? '';
++  const organizationId = profile?.organization_id ?? '';
++
++  // Form state
++  const [foodItemName, setFoodItemName] = useState('');
++  const [selectedMenuItemId, setSelectedMenuItemId] = useState<string | null>(null);
++  const [startingTemp, setStartingTemp] = useState('');
++  const [coolingNotes, setCoolingNotes] = useState('');
++  const [showSuggestions, setShowSuggestions] = useState(false);
++  const [submitError, setSubmitError] = useState<string | null>(null);
++
++  // Data
++  const { data: menuItems } = useMenuItems(locationId);
++  const { mutate: startCooldown, isLoading } = useStartCooldown();
++
++  // Filter menu items as user types
++  const filteredItems = useMemo(() => {
++    if (!menuItems || !foodItemName.trim()) return [];
++    const query = foodItemName.toLowerCase();
++    return menuItems.filter(item =>
++      item.name.toLowerCase().includes(query)
++    ).slice(0, 6);
++  }, [menuItems, foodItemName]);
++
++  // Validation
++  const tempNumeric = parseFloat(startingTemp);
++  const tempValid = !isNaN(tempNumeric) && tempNumeric > 0;
++  const itemValid = foodItemName.trim().length > 0;
++  const canSubmit = tempValid && itemValid && !isLoading;
++
++  const handleSelectItem = (item: MenuItem) => {
++    setFoodItemName(item.name);
++    setSelectedMenuItemId(item.id);
++    setShowSuggestions(false);
++  };
++
++  const handleItemInputChange = (value: string) => {
++    setFoodItemName(value);
++    setSelectedMenuItemId(null);
++    setShowSuggestions(value.trim().length > 0);
++  };
++
++  const handleSubmit = async () => {
++    if (!canSubmit) return;
++    setSubmitError(null);
++    try {
++      const result = await startCooldown({
++        organizationId,
++        locationId,
++        foodItemName: foodItemName.trim(),
++        startingTemp: tempNumeric,
++        menuItemId: selectedMenuItemId,
++        notes: coolingNotes.trim() || null,
++      });
++      toast.success(`Cooldown started for ${foodItemName.trim()}`);
++      onSuccess?.(result.cooldownLogId);
++      onClose();
++    } catch (err) {
++      const message = err instanceof Error ? err.message : 'Failed to start cooldown';
++      setSubmitError(message);
++    }
++  };
++
++  return (
++    <div className="p-4 sm:p-5">
++      <h3 className="text-2xl font-bold tracking-tight mb-6" style={{ color: colors.textPrimary }}>
++        Start a Cooldown
++      </h3>
++
++      <div className="space-y-5">
++        {/* Food Item Name — with menu item search */}
++        <div>
++          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
++            What are you cooling?
++          </label>
++          <div className="relative">
++            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
++              <Search className="h-4 w-4" style={{ color: colors.textMuted }} />
++            </div>
++            <input
++              type="text"
++              value={foodItemName}
++              onChange={(e) => handleItemInputChange(e.target.value)}
++              onFocus={() => { if (foodItemName.trim()) setShowSuggestions(true); }}
++              onBlur={() => setShowSuggestions(false)}
++              className="w-full pl-10 pr-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
++              placeholder="e.g., Rice Pilaf, Chicken Soup"
++            />
++            {showSuggestions && filteredItems.length > 0 && (
++              <div
++                className="absolute z-10 w-full mt-1 rounded-xl border shadow-lg overflow-hidden"
++                style={{ backgroundColor: colors.white, borderColor: colors.border }}
++              >
++                {filteredItems.map((item) => (
++                  <button
++                    key={item.id}
++                    type="button"
++                    onMouseDown={(e) => e.preventDefault()}
++                    onClick={() => handleSelectItem(item)}
++                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-cream transition-colors"
++                    style={{ color: colors.textPrimary }}
++                  >
++                    <span className="font-medium">{item.name}</span>
++                    {item.category && (
++                      <span className="ml-2 text-xs" style={{ color: colors.textMuted }}>
++                        {item.category}
++                      </span>
++                    )}
++                  </button>
++                ))}
++              </div>
++            )}
++          </div>
++          {selectedMenuItemId && (
++            <p className="text-xs mt-1" style={{ color: colors.success }}>
++              Linked to menu item
++            </p>
++          )}
++        </div>
++
++        {/* Starting Temperature */}
++        <div>
++          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
++            Starting Temperature (°F)
++          </label>
++          <input
++            type="number"
++            step="0.1"
++            inputMode="decimal"
++            value={startingTemp}
++            onChange={(e) => setStartingTemp(e.target.value)}
++            className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
++            placeholder="e.g., 165"
++          />
++        </div>
++
++        {/* Cooling Location Notes */}
++        <div>
++          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
++            Cooling Where?
++          </label>
++          <input
++            type="text"
++            value={coolingNotes}
++            onChange={(e) => setCoolingNotes(e.target.value)}
++            className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
++            placeholder="e.g., Blast Chiller 1, Walk-in cooler"
++          />
++          <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
++            Optional — describe where the item is cooling
++          </p>
++        </div>
++
++        {/* Inline error */}
++        {submitError && (
++          <div
++            className="rounded-xl border px-4 py-3 text-sm"
++            style={{
++              borderColor: colors.danger,
++              backgroundColor: colors.dangerSoft,
++              color: colors.danger,
++            }}
++          >
++            {submitError}
++          </div>
++        )}
++
++        {/* Actions */}
++        <div className="grid grid-cols-2 gap-4 pt-2">
++          <Button variant="secondary" size="lg" onClick={onClose} disabled={isLoading}>
++            Cancel
++          </Button>
++          <Button variant="primary" size="lg" onClick={handleSubmit} isLoading={isLoading} disabled={!canSubmit}>
++            Start Cooldown
++          </Button>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/pages/TempLogs.tsx b/src/pages/TempLogs.tsx
+index d714d82..2aa9b2e 100644
+--- a/src/pages/TempLogs.tsx
++++ b/src/pages/TempLogs.tsx
+@@ -197,14 +197,6 @@ export function TempLogs() {
+   // Cooldown state
+   const [cooldowns, setCooldowns] = useState<Cooldown[]>([]);
+   const [, setCompletedCooldowns] = useState<Cooldown[]>([]);
+-  const [showStartCooldown, setShowStartCooldown] = useState(false);
+-  const [cooldownForm, setCooldownForm] = useState({
+-    itemName: '',
+-    startTemp: '',
+-    startTime: '',
+-    location: '',
+-    startedBy: '',
+-  });
+   const [selectedCooldown, setSelectedCooldown] = useState<Cooldown | null>(null);
+   const [showCooldownCheckModal, setShowCooldownCheckModal] = useState(false);
+   const [cooldownCheckTemp, setCooldownCheckTemp] = useState('');
+@@ -1314,36 +1306,6 @@ export function TempLogs() {
+     return null;
+   };
+ 
+-  const handleStartCooldown = async (e: React.FormEvent) => {
+-    e.preventDefault();
+-
+-    const newCooldown: Cooldown = {
+-      id: Date.now().toString(),
+-      itemName: cooldownForm.itemName,
+-      startTemp: parseFloat(cooldownForm.startTemp),
+-      startTime: cooldownForm.startTime ? new Date(cooldownForm.startTime) : new Date(),
+-      location: cooldownForm.location,
+-      startedBy: cooldownForm.startedBy,
+-      checks: [{
+-        temperature: parseFloat(cooldownForm.startTemp),
+-        time: cooldownForm.startTime ? new Date(cooldownForm.startTime) : new Date(),
+-      }],
+-      status: 'active',
+-    };
+-
+-    const updated = [...cooldowns, newCooldown];
+-    setCooldowns(updated);
+-    saveCooldownsToStorage(updated);
+-    setShowStartCooldown(false);
+-    setCooldownForm({
+-      itemName: '',
+-      startTemp: '',
+-      startTime: '',
+-      location: '',
+-      startedBy: '',
+-    });
+-    showSuccessToast(`Cooldown started for ${newCooldown.itemName}`);
+-  };
+ 
+   const handleLogCooldownCheck = async (e: React.FormEvent) => {
+     e.preventDefault();
+@@ -3270,99 +3232,6 @@ export function TempLogs() {
+           </div>
+       </Modal>
+ 
+-      {/* Start Cooldown Modal */}
+-      <Modal isOpen={showStartCooldown} onClose={() => setShowStartCooldown(false)} size="lg">
+-          <div className="p-4 sm:p-5">
+-            <h3 className="text-2xl font-bold tracking-tight mb-6">Start New Cooldown</h3>
+-
+-            <form onSubmit={handleStartCooldown} className="space-y-4">
+-              <div>
+-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.foodItemName')}</label>
+-                <input
+-                  type="text"
+-                  value={cooldownForm.itemName}
+-                  onChange={(e) => setCooldownForm({ ...cooldownForm, itemName: e.target.value })}
+-                  required
+-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+-                  placeholder="e.g., Rice Pilaf, Chicken Soup"
+-                />
+-              </div>
+-
+-              <div>
+-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startingTempF')}</label>
+-                <input
+-                  type="number"
+-                  step="0.1"
+-                  inputMode="decimal"
+-                  value={cooldownForm.startTemp}
+-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startTemp: e.target.value })}
+-                  required
+-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+-                  placeholder="e.g., 165"
+-                />
+-              </div>
+-
+-              <div>
+-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startTime')}</label>
+-                <input
+-                  type="datetime-local"
+-                  value={cooldownForm.startTime}
+-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startTime: e.target.value })}
+-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+-                />
+-                <p className="text-xs text-[#1E2D4D]/50 mt-1">Leave blank to use current time</p>
+-              </div>
+-
+-              <div>
+-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
+-                <select
+-                  value={cooldownForm.location}
+-                  onChange={(e) => setCooldownForm({ ...cooldownForm, location: e.target.value })}
+-                  required
+-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+-                >
+-                  <option value="">Select location...</option>
+-                  {locations.map(loc => (
+-                    <option key={loc} value={loc}>{loc}</option>
+-                  ))}
+-                </select>
+-              </div>
+-
+-              <div>
+-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.startedBy')}</label>
+-                <select
+-                  value={cooldownForm.startedBy}
+-                  onChange={(e) => setCooldownForm({ ...cooldownForm, startedBy: e.target.value })}
+-                  required
+-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+-                >
+-                  <option value="">Select employee...</option>
+-                  {users.map((user) => (
+-                    <option key={user.id} value={user.full_name}>
+-                      {user.full_name}
+-                    </option>
+-                  ))}
+-                </select>
+-              </div>
+-
+-              <div className="grid grid-cols-2 gap-4">
+-                <button
+-                  type="button"
+-                  onClick={() => setShowStartCooldown(false)}
+-                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
+-                >
+-                  {t('common.cancel')}
+-                </button>
+-                <button
+-                  type="submit"
+-                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
+-                >
+-                  Start
+-                </button>
+-              </div>
+-            </form>
+-          </div>
+-      </Modal>
+ 
+       {/* Demo Upgrade Prompt */}
+       {showUpgrade && (

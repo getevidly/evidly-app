@@ -1,0 +1,902 @@
+{
+  "total_features_cataloged": 82,
+  "generated_at": "2026-04-24",
+  "features": [
+    {
+      "route": "/dashboard",
+      "component_file": "src/pages/Dashboard.tsx",
+      "actions": [
+        {
+          "name": "Dismiss WelcomeModal (first login onboarding)",
+          "trigger": "button click",
+          "handler_or_line": "WelcomeModal.handleGetStarted:28",
+          "produces_db_write": "user_profiles (update onboarding_completed)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Dismiss intelligence banner",
+          "trigger": "button click",
+          "handler_or_line": "IntelligenceBanner.dismiss:101",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/temp-logs",
+      "component_file": "src/pages/TempLogs.tsx",
+      "actions": [
+        {
+          "name": "Log single temperature reading",
+          "trigger": "form submit",
+          "handler_or_line": "handleSubmitTemp:661",
+          "produces_db_write": "temperature_logs (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Batch log temperatures for all equipment",
+          "trigger": "button click",
+          "handler_or_line": "handleSubmitBatch:795",
+          "produces_db_write": "temperature_logs (insert multiple)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Submit receiving temperature log (per item)",
+          "trigger": "form submit",
+          "handler_or_line": "handleSubmitReceiving:885",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Finalize receiving log (all items for vendor)",
+          "trigger": "button click",
+          "handler_or_line": "handleFinalizeReceiving:961",
+          "produces_db_write": "receiving_temp_logs (insert multiple)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Save CCP-04 corrective action for failed receiving item",
+          "trigger": "modal action",
+          "handler_or_line": "handleCcpSave:937",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Start cooldown tracking",
+          "trigger": "form submit",
+          "handler_or_line": "handleStartCooldown:1400",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Log cooldown temperature check",
+          "trigger": "form submit",
+          "handler_or_line": "handleLogCooldownCheck:1431",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Complete cooldown (persist to DB)",
+          "trigger": "button click",
+          "handler_or_line": "handleCompleteCooldown:1562",
+          "produces_db_write": "cooldown_temp_checks (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Dispatch temp violation signal on out-of-range",
+          "trigger": "automatic after temp log",
+          "handler_or_line": "dispatchTempViolationSignal:749",
+          "produces_db_write": "intelligence signals (via lib)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Add current reading via modal",
+          "trigger": "modal action",
+          "handler_or_line": "handleSaveCurrentReading:1457",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Add receiving reading via modal",
+          "trigger": "modal action",
+          "handler_or_line": "handleSaveReceivingReading:1486",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Add holding reading via modal",
+          "trigger": "modal action",
+          "handler_or_line": "handleSaveHoldingReading:1497",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Add cooldown reading via modal",
+          "trigger": "modal action",
+          "handler_or_line": "handleSaveCooldownReading:1526",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Export history to CSV",
+          "trigger": "button click",
+          "handler_or_line": "exportToCSV:1230 (guardAction:2320)",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/checklists",
+      "component_file": "src/pages/Checklists.tsx",
+      "actions": [
+        {
+          "name": "Create checklist template (manual custom)",
+          "trigger": "form submit",
+          "handler_or_line": "handleCreateTemplate:986",
+          "produces_db_write": "checklist_templates (insert) + checklist_template_items (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Create checklist template from pre-built template",
+          "trigger": "button click",
+          "handler_or_line": "handleSelectPreBuiltTemplate:838 (implicit)",
+          "produces_db_write": "checklist_templates (insert) + checklist_template_items (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Delete checklist template",
+          "trigger": "button click",
+          "handler_or_line": "handleDeleteTemplate:1329",
+          "produces_db_write": "checklist_templates (delete)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Edit checklist template (delete + recreate)",
+          "trigger": "button click",
+          "handler_or_line": "handleEditTemplate:1349",
+          "produces_db_write": "checklist_templates (delete)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Submit checklist completion with item responses",
+          "trigger": "button click",
+          "handler_or_line": "handleSubmitCompletion:1154",
+          "produces_db_write": "checklist_template_completions (insert) + checklist_responses (insert) + alerts (insert on CCP failure)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Add item to checklist template being created",
+          "trigger": "button click",
+          "handler_or_line": "handleAddItem:967",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Remove item from checklist template being created",
+          "trigger": "button click",
+          "handler_or_line": "handleRemoveItem:982",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Persist checklist item response offline (IndexedDB)",
+          "trigger": "automatic on item change",
+          "handler_or_line": "addPendingAction:1142",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/documents",
+      "component_file": "src/pages/Documents.tsx",
+      "actions": [
+        {
+          "name": "Download document",
+          "trigger": "button click",
+          "handler_or_line": "handleDownload:284",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Share document (open share modal)",
+          "trigger": "button click",
+          "handler_or_line": "handleShareDocument:346",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Share multiple documents",
+          "trigger": "button click",
+          "handler_or_line": "handleShareMultiple:353",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Change document category",
+          "trigger": "select change",
+          "handler_or_line": "handleCategoryChange:368",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Smart upload documents (AI classification)",
+          "trigger": "modal action",
+          "handler_or_line": "SmartUploadModal.handleSave:313",
+          "produces_db_write": null,
+          "produces_edge_call": "document classification (functions.invoke)",
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/vendors",
+      "component_file": "src/pages/Vendors.tsx",
+      "actions": [
+        {
+          "name": "Request document from vendor (general)",
+          "trigger": "button click",
+          "handler_or_line": "inline:896",
+          "produces_db_write": "vendor_upload_requests (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Request specific missing/expired document from vendor",
+          "trigger": "button click",
+          "handler_or_line": "inline:983",
+          "produces_db_write": "vendor_upload_requests (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Request COI from vendor (quick action)",
+          "trigger": "button click",
+          "handler_or_line": "inline:1627",
+          "produces_db_write": "vendor_upload_requests (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Send upload link to vendor",
+          "trigger": "button click",
+          "handler_or_line": "inline:1222",
+          "produces_db_write": "vendor_contact_log (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Save vendor photos",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:934",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Download vendor document",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:971",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Add vendor (modal)",
+          "trigger": "modal action",
+          "handler_or_line": "AddVendorModal (external component)",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Invite vendor to EvidLY portal",
+          "trigger": "modal action",
+          "handler_or_line": "InviteVendorModal.handleSubmit:53",
+          "produces_db_write": "user_invitations (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Log service (from vendor detail)",
+          "trigger": "modal action",
+          "handler_or_line": "LogServiceModal:65",
+          "produces_db_write": "vendor_service_records (insert) + vendor_service_records (update certificate_url) + location_service_schedules (upsert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/corrective-actions",
+      "component_file": "src/pages/CorrectiveActions.tsx",
+      "actions": [
+        {
+          "name": "Open create corrective action modal",
+          "trigger": "button click",
+          "handler_or_line": "handleOpenCreate:267",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Select pre-built CA template",
+          "trigger": "button click",
+          "handler_or_line": "handleSelectTemplate:276",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Create corrective action",
+          "trigger": "button click",
+          "handler_or_line": "handleCreateCA:295",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Export corrective actions PDF",
+          "trigger": "button click",
+          "handler_or_line": "handleExportPdf:361",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/incidents",
+      "component_file": "src/pages/IncidentLog.tsx",
+      "actions": [
+        {
+          "name": "Create new incident",
+          "trigger": "button click",
+          "handler_or_line": "handleCreateIncident:702",
+          "produces_db_write": "incidents (insert) + incident_timeline (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Take corrective action on incident",
+          "trigger": "button click",
+          "handler_or_line": "handleTakeAction:771",
+          "produces_db_write": "incidents (update) + incident_timeline (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Resolve incident",
+          "trigger": "button click",
+          "handler_or_line": "handleResolve:812",
+          "produces_db_write": "incidents (update) + incident_timeline (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Verify or reject incident resolution",
+          "trigger": "button click",
+          "handler_or_line": "handleVerify:857",
+          "produces_db_write": "incidents (update) + incident_timeline (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Add comment to incident",
+          "trigger": "button click / enter key",
+          "handler_or_line": "handleAddComment:922",
+          "produces_db_write": "incident_comments (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Export incident PDF",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:1318",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "File regulatory report for incident",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:1090",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Create corrective action from incident",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:1117",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/calendar",
+      "component_file": "src/pages/Calendar.tsx",
+      "actions": [
+        {
+          "name": "Create calendar event (with optional recurrence)",
+          "trigger": "button click",
+          "handler_or_line": "handleSaveEvent:439",
+          "produces_db_write": "calendar_events (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Update existing calendar event",
+          "trigger": "button click",
+          "handler_or_line": "handleSaveEvent:439 (edit path)",
+          "produces_db_write": "calendar_events (update)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Delete calendar event",
+          "trigger": "button click",
+          "handler_or_line": "handleDeleteEvent:602",
+          "produces_db_write": "calendar_events (delete)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Log frequency reduction (audit trail)",
+          "trigger": "automatic on event save with frequency change",
+          "handler_or_line": "handleSaveEvent:556",
+          "produces_db_write": "frequency_change_log (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Log vendor change (audit trail)",
+          "trigger": "automatic on event save with vendor change",
+          "handler_or_line": "handleSaveEvent:585",
+          "produces_db_write": "vendor_changes (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/team",
+      "component_file": "src/pages/Team.tsx",
+      "actions": [
+        {
+          "name": "Cancel team invitation",
+          "trigger": "button click",
+          "handler_or_line": "cancelInvitation:258",
+          "produces_db_write": "user_invitations (update status=expired)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Resend team invitation (email)",
+          "trigger": "button click",
+          "handler_or_line": "resendInvitation:271",
+          "produces_db_write": "user_invitations (update email_status, expires_at)",
+          "produces_edge_call": "send-team-invite",
+          "demo_gated": true
+        },
+        {
+          "name": "Resend team invitation (SMS)",
+          "trigger": "button click",
+          "handler_or_line": "resendInvitation:271 (sms path)",
+          "produces_db_write": "user_invitations (update sms_status, expires_at)",
+          "produces_edge_call": "send-sms-invite",
+          "demo_gated": true
+        },
+        {
+          "name": "Open invite team member modal",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:486",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Open bulk invite modal",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:493",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Reset team member password",
+          "trigger": "modal action",
+          "handler_or_line": "handleResetPassword:352",
+          "produces_db_write": null,
+          "produces_edge_call": "supabase.auth.resetPasswordForEmail",
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/alerts",
+      "component_file": "src/pages/Alerts.tsx",
+      "actions": [
+        {
+          "name": "Resolve alert with resolution notes",
+          "trigger": "modal action",
+          "handler_or_line": "handleResolveSubmit:362",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Snooze alert (preset days)",
+          "trigger": "button click",
+          "handler_or_line": "handleSnooze:388",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Snooze alert (custom date)",
+          "trigger": "button click",
+          "handler_or_line": "handleCustomSnooze:400",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Reassign alert to team member",
+          "trigger": "button click",
+          "handler_or_line": "handleReassign:413",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Dismiss alert",
+          "trigger": "button click",
+          "handler_or_line": "handleDismiss:423",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/settings/company-profile",
+      "component_file": "src/pages/settings/CompanyProfilePage.tsx",
+      "actions": [
+        {
+          "name": "Save company profile settings",
+          "trigger": "button click",
+          "handler_or_line": "handleSave:94",
+          "produces_db_write": "organization settings (via useSettings hook)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/settings/notifications",
+      "component_file": "src/pages/settings/NotificationsPage.tsx",
+      "actions": [
+        {
+          "name": "Save notification preferences",
+          "trigger": "button click",
+          "handler_or_line": "handleSave:115",
+          "produces_db_write": "notification_preferences (upsert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Toggle global notification channel",
+          "trigger": "toggle switch",
+          "handler_or_line": "toggleGlobal:104",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Toggle per-category notification channel",
+          "trigger": "checkbox",
+          "handler_or_line": "toggleCategory:108",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/settings/team-roles",
+      "component_file": "src/pages/settings/TeamRolesPage.tsx",
+      "actions": [
+        {
+          "name": "Save role permissions",
+          "trigger": "button click",
+          "handler_or_line": "handleSave:48",
+          "produces_db_write": "permissions (via useSettings hook)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Toggle permission for a role",
+          "trigger": "checkbox",
+          "handler_or_line": "togglePermission:41",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/settings/service-types",
+      "component_file": "src/pages/settings/ServiceTypesPage.tsx",
+      "actions": [
+        {
+          "name": "Add service type",
+          "trigger": "button click (opens modal)",
+          "handler_or_line": "handleAdd:17",
+          "produces_db_write": "service_types (via ServiceTypeFormModal)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Edit service type",
+          "trigger": "button click (opens modal)",
+          "handler_or_line": "handleEdit:22",
+          "produces_db_write": "service_types (via ServiceTypeFormModal)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Delete service type",
+          "trigger": "button click",
+          "handler_or_line": "handleDelete:35",
+          "produces_db_write": "service_types (delete via useDeleteServiceType)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Toggle service type active status",
+          "trigger": "checkbox",
+          "handler_or_line": "handleToggleActive:45",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/settings/billing",
+      "component_file": "src/pages/settings/BillingPage.tsx",
+      "actions": []
+    },
+    {
+      "route": "/settings/integrations",
+      "component_file": "src/pages/settings/IntegrationsPage.tsx",
+      "actions": []
+    },
+    {
+      "route": "/equipment",
+      "component_file": "src/pages/equipment/EquipmentPage.tsx",
+      "actions": [
+        {
+          "name": "Add equipment (open modal)",
+          "trigger": "button click",
+          "handler_or_line": "setShowAddModal:118",
+          "produces_db_write": "equipment (via EquipmentFormModal)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Print bulk QR codes",
+          "trigger": "button click",
+          "handler_or_line": "setShowBulkQR:111",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/insurance-risk",
+      "component_file": "src/pages/InsuranceRisk.tsx",
+      "actions": []
+    },
+    {
+      "route": "/compliance-overview",
+      "component_file": "src/pages/ComplianceOverview.tsx",
+      "actions": []
+    },
+    {
+      "route": "/ai-advisor",
+      "component_file": "src/pages/AIAdvisor.tsx",
+      "actions": [
+        {
+          "name": "Send chat message to AI advisor",
+          "trigger": "form submit",
+          "handler_or_line": "handleSubmit:369 -> sendMessage:301",
+          "produces_db_write": null,
+          "produces_edge_call": "streamChatResponse (Claude API streaming)",
+          "demo_gated": false
+        },
+        {
+          "name": "Start new conversation",
+          "trigger": "button click",
+          "handler_or_line": "startNewConversation:374",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Start mock inspection",
+          "trigger": "button click",
+          "handler_or_line": "startInspection:384",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Answer inspection question",
+          "trigger": "form submit",
+          "handler_or_line": "handleInspectionAnswer:402",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        },
+        {
+          "name": "Create action items from AI response",
+          "trigger": "button click",
+          "handler_or_line": "handleCreateActions:479 (guardAction:753)",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Save action items",
+          "trigger": "button click",
+          "handler_or_line": "guardAction:1117",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": true
+        }
+      ]
+    },
+    {
+      "route": "/referrals",
+      "component_file": "src/pages/ReferralDashboard.tsx",
+      "actions": []
+    },
+    {
+      "route": "/self-audit",
+      "component_file": "src/pages/SelfAudit.tsx",
+      "actions": [
+        {
+          "name": "Start self-audit session",
+          "trigger": "button click",
+          "handler_or_line": "startAudit:536",
+          "produces_db_write": "self_inspection_sessions (insert)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Auto-save audit section progress",
+          "trigger": "automatic on section change",
+          "handler_or_line": "updateDbSession:484",
+          "produces_db_write": "self_inspection_sessions (update sections_json)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Finalize audit session",
+          "trigger": "button click",
+          "handler_or_line": "finalizeDbSession:505",
+          "produces_db_write": "self_inspection_sessions (update completed_at, failed_items_json)",
+          "produces_edge_call": null,
+          "demo_gated": true
+        },
+        {
+          "name": "Resume saved audit session",
+          "trigger": "button click",
+          "handler_or_line": "resumeAudit:549",
+          "produces_db_write": null,
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    },
+    {
+      "route": "/reports",
+      "component_file": "src/pages/reports/ReportsPage.tsx",
+      "actions": []
+    },
+    {
+      "route": "/vendor-connect",
+      "component_file": "src/pages/VendorConnect.jsx",
+      "actions": []
+    },
+    {
+      "route": "/signup",
+      "component_file": "src/pages/Signup.tsx",
+      "actions": [
+        {
+          "name": "Sign up for new account",
+          "trigger": "form submit",
+          "handler_or_line": "handleSubmit:173",
+          "produces_db_write": "auth.users (signUp) + user_profiles (via trigger) + organizations (via trigger)",
+          "produces_edge_call": null,
+          "demo_gated": false
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "routes_with_db_writes": 14,
+    "routes_read_only": 8,
+    "total_db_write_actions": 39,
+    "total_edge_function_calls": 3,
+    "total_demo_gated_actions": 52,
+    "tables_written_to": [
+      "temperature_logs",
+      "receiving_temp_logs",
+      "cooldown_temp_checks",
+      "checklist_templates",
+      "checklist_template_items",
+      "checklist_template_completions",
+      "checklist_responses",
+      "alerts",
+      "vendor_upload_requests",
+      "vendor_contact_log",
+      "user_invitations",
+      "incidents",
+      "incident_timeline",
+      "incident_comments",
+      "calendar_events",
+      "frequency_change_log",
+      "vendor_changes",
+      "notification_preferences",
+      "user_profiles",
+      "self_inspection_sessions",
+      "vendor_service_records",
+      "location_service_schedules",
+      "haccp_monitoring_logs"
+    ],
+    "edge_functions_invoked": [
+      "send-team-invite",
+      "send-sms-invite",
+      "document classification (via SmartUploadModal)"
+    ],
+    "auth_operations": [
+      "supabase.auth.signUp (Signup page)",
+      "supabase.auth.resetPasswordForEmail (Team page)"
+    ]
+  }
+}

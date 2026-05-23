@@ -1,0 +1,219 @@
+{
+  "phase": 10,
+  "title": "Gap Detection",
+  "generated": "2026-04-24",
+  "summary": {
+    "total_gap_categories": 11,
+    "critical_gaps": 3,
+    "warning_gaps": 5,
+    "info_gaps": 3
+  },
+  "categories": {
+    "orphan_routes": {
+      "severity": "info",
+      "count": 0,
+      "status": "PASS",
+      "detail": "All routes in App.tsx have valid component files via lazy imports."
+    },
+    "orphan_pages": {
+      "severity": "info",
+      "count": 0,
+      "status": "PASS",
+      "detail": "All page components referenced by lazy imports in App.tsx appear valid."
+    },
+    "orphan_edge_functions": {
+      "severity": "warning",
+      "count": 1,
+      "status": "REVIEW",
+      "items": [
+        {
+          "function": "send-welcome-email",
+          "issue": "Exists locally but never deployed. Not invoked from src/ or other edge functions."
+        }
+      ],
+      "detail": "Most edge functions are invoked by other edge functions, webhooks, cron, or external triggers. Only send-welcome-email appears truly orphaned."
+    },
+    "db_tables_not_in_code": {
+      "severity": "info",
+      "count": 0,
+      "status": "EXPECTED",
+      "detail": "Tables accessed only by edge functions, RLS policies, or triggers are expected to have no src/ references. Playbook tables and vendor/marketplace/enterprise tables with 0 rows are either used by edge functions or awaiting future features. No action required."
+    },
+    "phantom_tables": {
+      "severity": "critical",
+      "count": 61,
+      "status": "FAIL",
+      "detail": "61 tables referenced in code (supabase.from() calls) that do not exist in the production database. These will produce runtime RLS or 404 errors.",
+      "items": [
+        "admin_backups",
+        "admin_security_config",
+        "ai_budget_config",
+        "alerts",
+        "assessment_responses",
+        "assessment_results",
+        "billing_invoices",
+        "billing_subscriptions",
+        "calendar_events",
+        "client_advisories",
+        "corrective_action_history",
+        "demo_leads",
+        "emulation_audit_log",
+        "equipment",
+        "equipment_qr_codes",
+        "feature_flag_audit",
+        "frequency_change_log",
+        "guided_tour_templates",
+        "haccp_corrective_actions",
+        "haccp_critical_control_points",
+        "haccp_plans",
+        "incident_comments",
+        "incident_timeline",
+        "incidents",
+        "inspections",
+        "intelligence_classification_log",
+        "internal_reports",
+        "location_custom_vendors",
+        "marketing_campaigns",
+        "marketing_touchpoints",
+        "mfa_policy",
+        "notifications",
+        "nslp_claim_periods",
+        "outreach_touches",
+        "platform_audit_log",
+        "platform_settings",
+        "profiles",
+        "push_subscriptions",
+        "referrals",
+        "risk_plans",
+        "sales_pipeline",
+        "sb1383_compliance",
+        "session_policy",
+        "signal_review_log",
+        "system_messages",
+        "testimonials",
+        "trial_email_sequences",
+        "user_mfa_config",
+        "user_milestones",
+        "user_sessions",
+        "vendor_changes",
+        "vendor_connect_applications",
+        "vendor_connect_leads",
+        "vendor_connect_profiles",
+        "vendor_connect_spots",
+        "vendor_notification_log",
+        "vendor_outreach_pipeline",
+        "vendor_service_records",
+        "violation_prospects",
+        "workforce_risk_signals",
+        "x"
+      ],
+      "notes": [
+        "'x' is likely a typo or test artifact.",
+        "'profiles' should be 'user_profiles' — wrong table name in code.",
+        "'referrals' is a HoodOps PRO table and must NOT be created in this repo.",
+        "'calendar_events' may be intentionally deferred."
+      ]
+    },
+    "missing_env_docs": {
+      "severity": "warning",
+      "count": 1,
+      "status": "FAIL",
+      "detail": "No .env.example file exists. All environment variables are undocumented. New developers have no reference for required configuration."
+    },
+    "role_mismatch": {
+      "severity": "info",
+      "count": 0,
+      "status": "PASS",
+      "detail": "Code roles match DB roles. Code defines 8 roles (platform_admin, owner_operator, executive, compliance_manager, chef, kitchen_manager, facilities_manager, kitchen_staff). Aliases 'admin' and 'owner' map to owner_operator."
+    },
+    "jie_baseline": {
+      "severity": "info",
+      "count": 0,
+      "status": "PASS",
+      "baseline": {
+        "CA": 62,
+        "OR": 36,
+        "WA": 39,
+        "NV": 17,
+        "AZ": 15,
+        "total": 169
+      },
+      "detail": "JIE baseline verified. Note: audit spec referenced column 'state_code' but actual column is 'state'. Schema documentation mismatch logged."
+    },
+    "fake_data_candidates": {
+      "severity": "warning",
+      "count": 6,
+      "status": "REVIEW",
+      "items": [
+        {
+          "file": "src/contexts/OperatingHoursContext.tsx",
+          "symbols": ["DEMO_HOURS", "DEMO_SHIFTS"],
+          "gated_by_demo": true,
+          "verdict": "OK — demo-gated"
+        },
+        {
+          "file": "src/hooks/useDashboardData.ts",
+          "symbols": ["DEMO_TASKS", "DEMO_DEADLINES", "DEMO_ALERTS", "DEMO_ACTIVITY", "DEMO_MODULE_STATUSES"],
+          "gated_by_demo": true,
+          "verdict": "OK — demo-gated"
+        },
+        {
+          "file": "src/utils/demoScoring.ts",
+          "symbols": ["DEMO_JURISDICTIONS", "DEMO_LOCATIONS", "DEMO_SCORE_BREAKDOWN"],
+          "gated_by_demo": true,
+          "verdict": "OK — demo-gated"
+        },
+        {
+          "file": "src/utils/inspectionReadiness.ts",
+          "symbols": ["DEMO_LOCATION_SCORES"],
+          "gated_by_demo": true,
+          "verdict": "OK — demo-gated"
+        },
+        {
+          "file": "src/constants/correctiveActionStatus.ts",
+          "symbols": ["DEMO_TEAM_MEMBERS"],
+          "gated_by_demo": true,
+          "verdict": "OK — demo-gated"
+        },
+        {
+          "file": "src/utils/sampleData.ts",
+          "symbols": ["SAMPLE_DATA"],
+          "gated_by_demo": "UNKNOWN",
+          "verdict": "NEEDS MANUAL REVIEW — purpose unclear, may violate zero-fake-data rule"
+        }
+      ],
+      "detail": "5 of 6 candidates are properly gated by isDemoMode. sampleData.ts requires manual review."
+    },
+    "deployed_only_functions": {
+      "severity": "critical",
+      "count": 52,
+      "status": "FAIL",
+      "detail": "52 edge functions exist on the Supabase server but have no local source code in the repository. This includes critical cron-invoked functions. Local development, review, and disaster recovery are impossible for these functions.",
+      "examples": [
+        "expiration-alerts",
+        "weekly-digest",
+        "vendor-sms-reminder",
+        "vendor-upload-reminder",
+        "send-email",
+        "send-sms",
+        "send-welcome",
+        "trial-email-sender"
+      ]
+    },
+    "rls_disabled_tables": {
+      "severity": "critical",
+      "count": 7,
+      "status": "FAIL",
+      "detail": "7 tables have RLS disabled. Data is publicly readable without row-level security. If any contain sensitive or org-scoped data, this is a security vulnerability.",
+      "items": [
+        "client_intelligence_feed",
+        "intelligence_insight_views",
+        "intelligence_insights",
+        "intelligence_subscriptions",
+        "jie_health_log",
+        "jurisdiction_intel_updates",
+        "scoretable_views"
+      ]
+    }
+  }
+}

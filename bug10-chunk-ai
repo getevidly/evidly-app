@@ -1,0 +1,20 @@
+ // ── Empty results for live mode (no data yet) ───────────
+@@ -324,12 +325,28 @@ export async function fetchScoreImpact(organizationId?: string): Promise<ScoreIm
+   return [];
+ }
+ 
++// ────────────────────────────────────────────────────────
++// Fetch organization metadata — timezone for canonical hook consumers
++// ────────────────────────────────────────────────────────
++export async function fetchOrganizationMeta(
++  organizationId?: string,
++): Promise<{ timezone: string | null }> {
++  if (!organizationId) return { timezone: null };
++  const { data, error } = await supabase
++    .from('organizations')
++    .select('timezone')
++    .eq('id', organizationId)
++    .single();
++  if (error || !data) return { timezone: null };
++  return { timezone: data.timezone };
++}

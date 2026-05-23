@@ -1,0 +1,932 @@
+{
+  "audit": "EVIDLY-PHANTOM-TRIAGE-01",
+  "generated": "2026-04-24",
+  "commit": "263dc73",
+  "status": "complete",
+  "total_phantoms": 61,
+  "processed": 61,
+  "summary": {
+    "create_table": 47,
+    "wrong_name": 1,
+    "hoodops_prohibited": 1,
+    "doc_comment_only": 1,
+    "deferred_feature": 11
+  },
+  "classification_key": {
+    "CREATE": "Table must be created — code actively reads/writes it and will 404 without it",
+    "WRONG_NAME": "Code references wrong table name; fix the code, not the DB",
+    "PROHIBITED": "Table belongs to HoodOps PRO — must NOT be created per CLAUDE.md",
+    "DOC_ONLY": "Reference is in a doc comment or example only — no runtime query",
+    "DEFERRED": "Feature exists in code but table intentionally not yet provisioned — will 404 silently until created"
+  },
+  "tables": {
+    "admin_backups": {
+      "index": 1,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/DatabaseBackup.tsx:47 (select)",
+        "src/pages/admin/DatabaseBackup.tsx:62 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "admin",
+      "notes": "Admin backup config & history. Platform admin only."
+    },
+    "admin_security_config": {
+      "index": 2,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/SecuritySettings.tsx:144 (select)",
+        "src/pages/admin/SecuritySettings.tsx:163 (select)",
+        "src/pages/admin/MaintenanceMode.tsx:50 (select)",
+        "src/pages/admin/MaintenanceMode.tsx:68 (upsert)"
+      ],
+      "operations": ["select", "upsert"],
+      "domain": "admin",
+      "notes": "Key-value config for security settings and maintenance mode."
+    },
+    "ai_budget_config": {
+      "index": 3,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/IntelligenceAdmin.tsx:629 (select)",
+        "src/pages/admin/IntelligenceAdmin.tsx:670 (select)",
+        "src/pages/admin/IntelligenceAdmin.tsx:672 (update)",
+        "src/pages/admin/IntelligenceAdmin.tsx:674 (insert)"
+      ],
+      "operations": ["select", "update", "insert"],
+      "domain": "admin/intelligence",
+      "notes": "AI budget limits for intelligence classification. Admin only."
+    },
+    "alerts": {
+      "index": 4,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useMobileAlerts.ts:31 (select)",
+        "src/pages/Checklists.tsx:1310 (insert)",
+        "supabase/functions/check-equipment-alerts/index.ts:215 (insert)",
+        "supabase/functions/check-equipment-alerts/index.ts:245 (select)",
+        "supabase/functions/check-equipment-alerts/index.ts:259 (update)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "core",
+      "notes": "Core alerts table used by mobile, checklists, and equipment edge function. High-traffic path."
+    },
+    "assessment_responses": {
+      "index": 5,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/public/AssessmentTool.tsx:171 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "public/lead-gen",
+      "notes": "Public assessment tool responses. Write-only from public page."
+    },
+    "assessment_results": {
+      "index": 6,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/public/AssessmentTool.tsx:174 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "public/lead-gen",
+      "notes": "Public assessment tool aggregated results. Write-only from public page."
+    },
+    "billing_invoices": {
+      "index": 7,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/AdminBilling.tsx:59 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "admin/billing",
+      "notes": "Admin billing invoice list with org join."
+    },
+    "billing_subscriptions": {
+      "index": 8,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/AdminHome.tsx:120 (select)",
+        "src/pages/admin/AdminBilling.tsx:58 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "admin/billing",
+      "notes": "Admin subscription + MRR tracking. Used on admin home for revenue display."
+    },
+    "calendar_events": {
+      "index": 9,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useServiceRequests.ts:122 (insert)",
+        "src/hooks/useMobileTasks.ts:256 (select)",
+        "src/pages/Calendar.tsx:498 (select)",
+        "src/pages/Calendar.tsx:529 (insert)",
+        "src/pages/Calendar.tsx:616 (update)",
+        "src/pages/Calendar.tsx:693 (delete)",
+        "supabase/functions/process-service-request/index.ts:163 (insert)",
+        "supabase/functions/vendor-schedule-response/index.ts:213 (insert)"
+      ],
+      "operations": ["select", "insert", "update", "delete"],
+      "domain": "core",
+      "notes": "Core calendar system. Full CRUD from Calendar page + edge functions. Critical path."
+    },
+    "client_advisories": {
+      "index": 10,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/EvidLYIntelligence.tsx:738 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "admin/intelligence",
+      "notes": "Intelligence advisory dispatch to clients."
+    },
+    "corrective_action_history": {
+      "index": 11,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/lib/tempSignalDispatch.ts:73 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "compliance",
+      "notes": "Audit trail for corrective actions triggered by temp signals."
+    },
+    "demo_leads": {
+      "index": 12,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/hooks/useDemoLeadCapture.ts:19 (insert)",
+        "src/pages/DemoWizard.tsx:169 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "public/lead-gen",
+      "notes": "Captures demo request leads from wizard and hooks."
+    },
+    "emulation_audit_log": {
+      "index": 13,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/contexts/EmulationContext.tsx:117 (insert)",
+        "src/contexts/EmulationContext.tsx:155 (update)",
+        "src/pages/admin/UserProvisioning.tsx:119 (select)",
+        "src/pages/admin/UserEmulation.tsx:83 (select)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "admin/security",
+      "notes": "Audit trail for user emulation sessions. Security-critical."
+    },
+    "equipment": {
+      "index": 14,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/lib/standingQueries.ts:248 (select)",
+        "src/lib/standingQueries.ts:407 (select)",
+        "src/pages/Calendar.tsx:676 (select)",
+        "src/hooks/useOfflineCache.ts:29 (select)",
+        "src/hooks/useMobileTasks.ts:170 (select)",
+        "src/hooks/useMobileAlerts.ts:109 (select)",
+        "src/pages/Equipment.tsx:700 (select)",
+        "src/pages/Equipment.tsx:1798 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "core",
+      "notes": "Core equipment registry. Used across standing queries, calendar, mobile, offline cache. Critical path."
+    },
+    "equipment_qr_codes": {
+      "index": 15,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/IoTSensorPlatform.tsx:185 (select count)"
+      ],
+      "operations": ["select"],
+      "domain": "iot",
+      "notes": "QR code count for IoT sensor platform dashboard. Single count query."
+    },
+    "feature_flag_audit": {
+      "index": 16,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/FeatureFlags.tsx:182 (insert)",
+        "src/pages/admin/FeatureFlags.tsx:207 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "admin",
+      "notes": "Audit log for feature flag changes."
+    },
+    "frequency_change_log": {
+      "index": 17,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/Calendar.tsx:556 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "calendar",
+      "notes": "Logs frequency changes in calendar. Write-only, single reference."
+    },
+    "guided_tour_templates": {
+      "index": 18,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/GuidedTours.tsx:225 (select)",
+        "src/pages/admin/GuidedTours.tsx:1107 (update)",
+        "src/pages/admin/GuidedTours.tsx:1114 (insert)",
+        "src/pages/admin/GuidedTours.tsx:1121 (delete)",
+        "src/pages/admin/GuidedTours.tsx:1237 (update/insert)"
+      ],
+      "operations": ["select", "insert", "update", "delete"],
+      "domain": "admin/gtm",
+      "notes": "Full CRUD for guided tour template management."
+    },
+    "haccp_corrective_actions": {
+      "index": 19,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useMobileTasks.ts:229 (select)",
+        "src/pages/Calendar.tsx:688 (select)",
+        "src/pages/HACCP.tsx:890 (select)",
+        "src/pages/HACCP.tsx:980 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "compliance/haccp",
+      "notes": "HACCP corrective actions. Core compliance path, used in mobile + calendar + HACCP page."
+    },
+    "haccp_critical_control_points": {
+      "index": 20,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/pages/HACCP.tsx:487 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "compliance/haccp",
+      "notes": "HACCP critical control point definitions."
+    },
+    "haccp_plans": {
+      "index": 21,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/pages/HACCP.tsx:466 (select)",
+        "src/pages/HACCP.tsx:825 (select)",
+        "src/pages/HACCP.tsx:965 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "compliance/haccp",
+      "notes": "HACCP plan management. Core compliance feature."
+    },
+    "incident_comments": {
+      "index": 22,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/IncidentLog.tsx:933 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "compliance/incidents",
+      "notes": "Comments on incident records."
+    },
+    "incident_timeline": {
+      "index": 23,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/IncidentLog.tsx:736 (insert)",
+        "src/pages/IncidentLog.tsx:796 (insert)",
+        "src/pages/IncidentLog.tsx:841 (insert)",
+        "src/pages/IncidentLog.tsx:895 (insert)",
+        "src/pages/IncidentLog.tsx:908 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "compliance/incidents",
+      "notes": "Incident timeline events. Write-heavy, multiple insertion points."
+    },
+    "incidents": {
+      "index": 24,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useMobileTasks.ts:202 (select)",
+        "src/hooks/useMobileAlerts.ts:86 (select)",
+        "src/lib/standingQueries.ts:236 (select)",
+        "src/lib/standingQueries.ts:242 (select)",
+        "src/lib/standingQueries.ts:436 (select)",
+        "src/pages/IncidentLog.tsx:523 (select)",
+        "src/pages/IncidentLog.tsx:713 (insert)",
+        "src/pages/IncidentLog.tsx:789 (update)",
+        "src/pages/IncidentLog.tsx:832 (update)",
+        "src/pages/IncidentLog.tsx:888 (update)",
+        "src/pages/IncidentLog.tsx:902 (update)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "compliance/incidents",
+      "notes": "Core incident management. Full CRUD, standing queries, mobile. Critical path."
+    },
+    "inspections": {
+      "index": 25,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/hooks/useFeatureCriteriaProgress.ts:88 (select count)",
+        "src/pages/K12Compliance.tsx:205 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "compliance",
+      "notes": "Inspection records. Only read in feature criteria count and K12 module. May be intentionally deferred."
+    },
+    "intelligence_classification_log": {
+      "index": 26,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/IntelligenceAdmin.tsx:635 (select)",
+        "src/pages/admin/IntelligenceAdmin.tsx:636 (select)",
+        "src/pages/admin/IntelligenceAdmin.tsx:644 (select)",
+        "src/pages/admin/IntelligenceAdmin.tsx:653 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "admin/intelligence",
+      "notes": "AI classification cost tracking. Read-only from admin; likely written by edge functions."
+    },
+    "internal_reports": {
+      "index": 27,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/ClientReports.tsx:126 (select)",
+        "src/pages/admin/AdminReports.tsx:80 (select)",
+        "src/pages/admin/AdminReports.tsx:106 (insert)",
+        "src/pages/admin/AdminReports.tsx:123 (update)",
+        "src/pages/admin/AdminReports.tsx:132 (update)",
+        "src/pages/public/SharedReport.tsx:64 (select)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "reporting",
+      "notes": "Internal reports with sharing. Used by admin, clients, and public share links."
+    },
+    "location_custom_vendors": {
+      "index": 28,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/hooks/useCustomVendors.ts:36 (select)",
+        "src/hooks/useCustomVendors.ts:53 (upsert)"
+      ],
+      "operations": ["select", "upsert"],
+      "domain": "vendors",
+      "notes": "Custom vendor assignments per location."
+    },
+    "marketing_campaigns": {
+      "index": 29,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/MarketingCampaigns.tsx:48 (select)",
+        "src/pages/admin/MarketingCampaigns.tsx:323 (insert)",
+        "src/pages/admin/GuidedTours.tsx:223 (select)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "admin/gtm",
+      "notes": "Marketing campaign management."
+    },
+    "marketing_touchpoints": {
+      "index": 30,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/MarketingCampaigns.tsx:49 (select)",
+        "src/pages/admin/GuidedTours.tsx:224 (select)",
+        "src/pages/admin/GuidedTours.tsx:594 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "admin/gtm",
+      "notes": "Marketing touchpoint tracking tied to campaigns."
+    },
+    "mfa_policy": {
+      "index": 31,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/App.tsx:416 (select)",
+        "src/pages/admin/AdminSecurity.tsx:87 (select)",
+        "src/pages/admin/AdminSecurity.tsx:130 (update)",
+        "src/pages/admin/AdminSecurity.tsx:141 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "security",
+      "notes": "MFA policy per role. Queried on App.tsx boot — blocks login flow if missing. Critical."
+    },
+    "notifications": {
+      "index": 32,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useSignalNotifications.ts:37 (select)",
+        "src/hooks/useSignalNotifications.ts:91 (update)",
+        "src/hooks/useRescheduleRequests.ts:130 (insert)",
+        "src/hooks/useNotificationData.ts:41 (select)",
+        "src/hooks/useNotificationData.ts:148-181 (update)",
+        "supabase/functions/intelligence-webhook/index.ts:85 (insert)",
+        "supabase/functions/rfp-classify/index.ts:255 (insert)",
+        "supabase/functions/stripe-webhook/index.ts:189 (insert)",
+        "supabase/functions/stripe-webhook/index.ts:270 (insert)",
+        "supabase/functions/_shared/notify.ts:84 (select)",
+        "supabase/functions/_shared/notify.ts:117 (insert)",
+        "supabase/functions/_shared/notify.ts:153 (update)",
+        "supabase/functions/training-progress-reminder/index.ts:78 (insert)",
+        "supabase/functions/training-progress-reminder/index.ts:102 (insert)",
+        "supabase/functions/playbook-escalation-monitor/index.ts:167 (insert)",
+        "supabase/functions/playbook-auto-trigger/index.ts:141 (insert)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "core",
+      "notes": "Core notification system. Used by 8+ edge functions and multiple client hooks. Highest-traffic phantom table."
+    },
+    "nslp_claim_periods": {
+      "index": 33,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/K12Compliance.tsx:184 (select)",
+        "src/pages/K12Compliance.tsx:268 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "k12",
+      "notes": "K-12 NSLP claim period tracking. Feature may be intentionally deferred."
+    },
+    "outreach_touches": {
+      "index": 34,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/admin/ViolationOutreach.tsx:127 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "admin/gtm",
+      "notes": "Outreach touch history for violation outreach. Read-only."
+    },
+    "platform_audit_log": {
+      "index": 35,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/pages/admin/IntelligenceAdmin.tsx:556 (insert)",
+        "src/pages/admin/IntelligenceAdmin.tsx:602 (insert)",
+        "src/pages/admin/AdminUsers.tsx:139 (insert)",
+        "src/pages/admin/AdminSecurity.tsx:131 (insert)",
+        "src/pages/admin/AdminSecurity.tsx:163 (insert)",
+        "src/pages/admin/AdminSecurity.tsx:180 (insert)",
+        "src/pages/admin/AdminOrgs.tsx:126 (insert)",
+        "src/pages/admin/AdminHome.tsx:148 (select)",
+        "src/pages/admin/AdminAuditLog.tsx:71 (select)",
+        "src/pages/admin/AdminAuditLog.tsx:147 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "admin/security",
+      "notes": "Platform-wide audit log. 10 references across 6 admin pages. Security-critical."
+    },
+    "platform_settings": {
+      "index": 36,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/EvidLYIntelligence.tsx:512 (select)",
+        "src/pages/admin/EvidLYIntelligence.tsx:536 (upsert)"
+      ],
+      "operations": ["select", "upsert"],
+      "domain": "admin",
+      "notes": "Key-value platform settings (e.g. intelligence routing mode)."
+    },
+    "profiles": {
+      "index": 37,
+      "classification": "WRONG_NAME",
+      "severity": "critical",
+      "referenced_in": [
+        "src/hooks/useOnboardingChecklist.ts:188 (select)",
+        "src/pages/admin/UserProvisioning.tsx:110 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "auth",
+      "notes": "BUG: Should be 'user_profiles', not 'profiles'. Fix the code — do NOT create a 'profiles' table."
+    },
+    "push_subscriptions": {
+      "index": 38,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/hooks/usePushNotifications.ts:64 (upsert)"
+      ],
+      "operations": ["upsert"],
+      "domain": "notifications",
+      "notes": "Push notification subscription storage. Single write-only reference. Feature not yet live."
+    },
+    "referrals": {
+      "index": 39,
+      "classification": "PROHIBITED",
+      "severity": "critical",
+      "referenced_in": [
+        "src/pages/admin/EmailSequenceManager.tsx:230 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "HOODOPS_PRO",
+      "notes": "PROHIBITED per CLAUDE.md. HoodOps PRO table. Must NOT be created. Code reference should be removed or gated."
+    },
+    "risk_plans": {
+      "index": 40,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/BusinessIntelligence.tsx:130 (select)",
+        "src/pages/BusinessIntelligence.tsx:183 (upsert)"
+      ],
+      "operations": ["select", "upsert"],
+      "domain": "intelligence",
+      "notes": "Risk mitigation plans from business intelligence page."
+    },
+    "sales_pipeline": {
+      "index": 41,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/MarketingCampaigns.tsx:50 (select)",
+        "src/pages/admin/GuidedTours.tsx:222 (select)",
+        "src/pages/admin/GuidedTours.tsx:579 (insert)",
+        "src/pages/admin/GuidedTours.tsx:946 (update)",
+        "src/pages/admin/SalesPipeline.tsx:54 (select)",
+        "src/pages/admin/SalesPipeline.tsx:93 (update)",
+        "src/pages/admin/SalesPipeline.tsx:111 (update)",
+        "src/pages/admin/SalesPipeline.tsx:120 (update)",
+        "src/pages/admin/SalesPipeline.tsx:341 (update)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "admin/gtm",
+      "notes": "Sales pipeline deal tracking. Heavy use across 3 admin pages."
+    },
+    "sb1383_compliance": {
+      "index": 42,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/SB1383Compliance.tsx:137 (select)",
+        "src/pages/SB1383Compliance.tsx:225 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "compliance/sb1383",
+      "notes": "SB 1383 organic waste compliance. California-specific module, may be intentionally deferred."
+    },
+    "session_policy": {
+      "index": 43,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/AdminSecurity.tsx:88 (select)",
+        "src/pages/admin/AdminSecurity.tsx:151 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "admin/security",
+      "notes": "Session timeout/lockout policy per role. Security feature."
+    },
+    "signal_review_log": {
+      "index": 44,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/IntelligenceAdmin.tsx:373 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "admin/intelligence",
+      "notes": "Logs admin reviews of intelligence signals."
+    },
+    "system_messages": {
+      "index": 45,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/SystemMessages.tsx:66 (select)",
+        "src/pages/admin/SystemMessages.tsx:79 (insert)",
+        "src/pages/admin/SystemMessages.tsx:100 (update)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "admin",
+      "notes": "System-wide broadcast messages from admin."
+    },
+    "testimonials": {
+      "index": 46,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/lib/testimonialSystem.ts:39 (insert)",
+        "src/lib/testimonialSystem.ts:64 (select)",
+        "src/lib/testimonialSystem.ts:77 (select)",
+        "src/lib/testimonialSystem.ts:92 (select)",
+        "src/lib/testimonialSystem.ts:107 (select)",
+        "src/lib/testimonialSystem.ts:122 (select)",
+        "src/lib/testimonialSystem.ts:134 (select)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "marketing",
+      "notes": "Testimonial collection system. 7 references but feature may not yet be live."
+    },
+    "trial_email_sequences": {
+      "index": 47,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/EmailSequenceManager.tsx:227 (select)",
+        "src/pages/admin/EmailSequenceManager.tsx:409 (update)",
+        "src/pages/admin/EmailSequenceManager.tsx:446 (insert)",
+        "src/pages/admin/EmailSequenceManager.tsx:585 (update)"
+      ],
+      "operations": ["select", "insert", "update"],
+      "domain": "admin/gtm",
+      "notes": "Trial email drip sequence configuration. Used by trial-email-sender cron job."
+    },
+    "user_mfa_config": {
+      "index": 48,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/pages/SetupMFA.tsx:74 (upsert)",
+        "src/App.tsx:422 (select)"
+      ],
+      "operations": ["select", "upsert"],
+      "domain": "security",
+      "notes": "Per-user MFA configuration. Queried on App.tsx boot. Login-blocking."
+    },
+    "user_milestones": {
+      "index": 49,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/lib/ambassadorSystem.ts:141 (select)",
+        "src/lib/ambassadorSystem.ts:149 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "engagement",
+      "notes": "User milestone tracking for ambassador program. Feature may not be live."
+    },
+    "user_sessions": {
+      "index": 50,
+      "classification": "CREATE",
+      "severity": "high",
+      "referenced_in": [
+        "src/pages/admin/AdminUsers.tsx:206 (update)",
+        "src/pages/admin/AdminSecurity.tsx:89 (select)",
+        "src/pages/admin/AdminSecurity.tsx:159 (update)",
+        "src/pages/admin/AdminSecurity.tsx:175 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "admin/security",
+      "notes": "Active user session management. Session revocation from admin security."
+    },
+    "vendor_changes": {
+      "index": 51,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/Calendar.tsx:586 (insert)"
+      ],
+      "operations": ["insert"],
+      "domain": "calendar",
+      "notes": "Vendor change log from calendar. Single write-only reference."
+    },
+    "vendor_connect_applications": {
+      "index": 52,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/AdminVendorConnect.jsx:59 (select)",
+        "src/pages/admin/AdminVendorConnect.jsx:78 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "vendor-connect",
+      "notes": "Vendor Connect application submissions."
+    },
+    "vendor_connect_leads": {
+      "index": 53,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/AdminVendorConnect.jsx:62 (select)",
+        "src/pages/VendorPartnerDashboard.jsx:72 (select)",
+        "src/pages/VendorPartnerDashboard.jsx:88 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "vendor-connect",
+      "notes": "Vendor Connect lead capture and tracking."
+    },
+    "vendor_connect_profiles": {
+      "index": 54,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/AdminVendorConnect.jsx:60 (select)",
+        "src/pages/VendorPartnerDashboard.jsx:65 (select)",
+        "src/pages/VendorConnect.jsx:46 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "vendor-connect",
+      "notes": "Vendor Connect partner profiles."
+    },
+    "vendor_connect_spots": {
+      "index": 55,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/VendorConnect.jsx:57 (select)",
+        "src/pages/admin/AdminVendorConnect.jsx:61 (select)",
+        "src/pages/admin/AdminVendorConnect.jsx:88 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "vendor-connect",
+      "notes": "Vendor Connect geographic spot/territory management."
+    },
+    "vendor_notification_log": {
+      "index": 56,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/EmailSequenceManager.tsx:229 (select)"
+      ],
+      "operations": ["select"],
+      "domain": "admin/gtm",
+      "notes": "Vendor notification send history. Read-only from admin; likely written by edge functions."
+    },
+    "vendor_outreach_pipeline": {
+      "index": 57,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/pages/admin/EmailSequenceManager.tsx:228 (select)",
+        "src/pages/admin/EmailSequenceManager.tsx:677 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "admin/gtm",
+      "notes": "Vendor outreach pipeline tracking."
+    },
+    "vendor_service_records": {
+      "index": 58,
+      "classification": "CREATE",
+      "severity": "critical",
+      "referenced_in": [
+        "src/lib/opsIntelligenceEngine.js:39 (select)",
+        "src/lib/opsIntelligenceEngine.js:168 (select)",
+        "src/hooks/useVendorServiceRecords.ts:36 (select)",
+        "src/lib/standingQueries.ts:556 (select)",
+        "src/components/services/LogServiceModal.jsx:66 (select)",
+        "src/components/services/LogServiceModal.jsx:103 (insert)",
+        "src/pages/insights/ViolationRadar.jsx:37 (select)",
+        "src/pages/insights/VendorPerformance.jsx:31 (select)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "services",
+      "notes": "Vendor service records. 8 references across 6 files. Core services feature."
+    },
+    "violation_prospects": {
+      "index": 59,
+      "classification": "DEFERRED",
+      "severity": "low",
+      "referenced_in": [
+        "src/pages/admin/ViolationOutreach.tsx:126 (select)",
+        "src/pages/admin/ViolationOutreach.tsx:192 (update)"
+      ],
+      "operations": ["select", "update"],
+      "domain": "admin/gtm",
+      "notes": "Violation-based prospect targeting. Admin-only outreach feature."
+    },
+    "workforce_risk_signals": {
+      "index": 60,
+      "classification": "CREATE",
+      "severity": "medium",
+      "referenced_in": [
+        "src/lib/workforceRiskScanner.ts:143 (select)",
+        "src/lib/workforceRiskScanner.ts:155 (select)",
+        "src/lib/workforceRiskScanner.ts:168 (insert)"
+      ],
+      "operations": ["select", "insert"],
+      "domain": "intelligence",
+      "notes": "Workforce risk signal detection and storage."
+    },
+    "x": {
+      "index": 61,
+      "classification": "DOC_ONLY",
+      "severity": "none",
+      "referenced_in": [
+        "src/lib/supabaseGuard.ts:116 (doc comment example)"
+      ],
+      "operations": [],
+      "domain": "n/a",
+      "notes": "Only appears in a JSDoc comment as an example table name. No runtime query. No action needed."
+    }
+  },
+  "action_plan": {
+    "immediate_create": {
+      "count": 47,
+      "description": "Tables actively queried by production code that will cause runtime errors",
+      "critical": [
+        "alerts",
+        "calendar_events",
+        "equipment",
+        "haccp_corrective_actions",
+        "haccp_critical_control_points",
+        "haccp_plans",
+        "incidents",
+        "mfa_policy",
+        "notifications",
+        "platform_audit_log",
+        "user_mfa_config",
+        "vendor_service_records"
+      ],
+      "high": [
+        "admin_backups",
+        "admin_security_config",
+        "billing_invoices",
+        "billing_subscriptions",
+        "emulation_audit_log",
+        "incident_comments",
+        "incident_timeline",
+        "internal_reports",
+        "sales_pipeline",
+        "session_policy",
+        "user_sessions"
+      ],
+      "medium": [
+        "ai_budget_config",
+        "assessment_responses",
+        "assessment_results",
+        "client_advisories",
+        "corrective_action_history",
+        "demo_leads",
+        "feature_flag_audit",
+        "guided_tour_templates",
+        "intelligence_classification_log",
+        "location_custom_vendors",
+        "marketing_campaigns",
+        "marketing_touchpoints",
+        "platform_settings",
+        "risk_plans",
+        "signal_review_log",
+        "system_messages",
+        "trial_email_sequences",
+        "vendor_connect_applications",
+        "vendor_connect_leads",
+        "vendor_connect_profiles",
+        "vendor_connect_spots",
+        "vendor_notification_log",
+        "vendor_outreach_pipeline",
+        "workforce_risk_signals"
+      ]
+    },
+    "fix_code": {
+      "count": 1,
+      "tables": {
+        "profiles": "Change from('profiles') to from('user_profiles') in useOnboardingChecklist.ts:188 and UserProvisioning.tsx:110"
+      }
+    },
+    "prohibited": {
+      "count": 1,
+      "tables": {
+        "referrals": "HoodOps PRO table. Remove or gate the from('referrals') call in EmailSequenceManager.tsx:230"
+      }
+    },
+    "doc_only": {
+      "count": 1,
+      "tables": {
+        "x": "JSDoc example in supabaseGuard.ts. No action needed."
+      }
+    },
+    "deferred": {
+      "count": 11,
+      "description": "Tables referenced in code but for features not yet provisioned. Will fail silently. Create when feature goes live.",
+      "tables": [
+        "equipment_qr_codes",
+        "frequency_change_log",
+        "inspections",
+        "nslp_claim_periods",
+        "outreach_touches",
+        "push_subscriptions",
+        "sb1383_compliance",
+        "testimonials",
+        "user_milestones",
+        "vendor_changes",
+        "violation_prospects"
+      ]
+    }
+  }
+}

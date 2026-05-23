@@ -1,0 +1,20 @@
++    orgId: orgId ?? '',
++    tz: data.timezone ?? '',
++  });
++
+   const fetchData = useCallback(async () => {
+     // Only serve demo data when genuinely in demo mode (/demo route)
+     if (isDemoMode) {
+@@ -427,6 +437,7 @@ export function useDashboardData(): {
+           ops: 50,
+           docs: 50,
+         },
++        timezone: result.timezone,
+       });
+     } catch (err) {
+       if (!mountedRef.current) return;
+@@ -468,5 +479,12 @@ export function useDashboardData(): {
+     }).catch(() => {}); // fire and forget
+   }, [isDemoMode, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
+ 
+-  return { data, loading, error, refresh: fetchData };

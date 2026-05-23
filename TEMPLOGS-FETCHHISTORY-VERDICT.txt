@@ -1,0 +1,233 @@
+EVIDLY TEMPLOGS FETCHHISTORY ORG-SCOPING — VERIFICATION VERDICT
+================================================================
+Date:       2026-04-24
+Codebase:   HEAD 791ebcb (main)
+Auditor:    Claude Opus 4.6
+Scope:      Read-only investigation — zero code changes
+
+────────────────────────────────────────────────────────────────
+
+VERDICT:  A — NOT VULNERABLE (RLS catches it)
+
+fetchHistory() issues a bare SELECT on temperature_logs with no
+application-level org filter. However, Supabase Row Level Security
+on temperature_logs enforces org scoping at the database layer via
+a facility_id → locations → user_profiles chain. Every
+authenticated SELECT is restricted to rows whose facility_id
+belongs to a location in the caller's organization.
+
+No cross-org data leakage is possible through this code path.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 1 — fetchHistory() SOURCE (TempLogs.tsx:598-645)
+────────────────────────────────────────────────────────────────
+
+  const fetchHistory = async () => {
+    try {
+      // Query temperature_logs table
+      const { data, error } = await supabase
+        .from('temperature_logs')
+        .select(`
+          id, equipment_id, temperature, temp_pass, corrective_action,
+          reading_time, logged_by, input_method, shift, log_type
+        `)
+        .order('reading_time', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+
+      const formattedHistory = (data || []).map((entry: Record<string, unknown>) => ({
+        id: entry.id as string,
+        equipment_id: entry.equipment_id as string,
+        temperature: entry.temperature as number,
+        temp_pass: entry.temp_pass as boolean | null,
+        corrective_action: entry.corrective_action as string | null,
+        reading_time: entry.reading_time as string,
+        logged_by: entry.logged_by as string,
+        input_method: (entry.input_method as string) || 'manual',
+        shift: entry.shift as string | null,
+        log_type: (entry.log_type as string) || 'hot_holding',
+      }));
+      setHistory(formattedHistory);
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load temperature history');
+    }
+  };
+
+OBSERVATION: No .eq() filter on organization_id, facility_id, or
+any scoping column. Pure .order().limit(200).
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 2 — CALL SITES
+────────────────────────────────────────────────────────────────
+
+1. useEffect (line 232):
+     if (profile?.organization_id) { fetchHistory(); }
+   — Guards on org existence but does NOT pass org_id into the query.
+
+2. After single temp submit (line 745):
+     fetchHistory();
+
+3. After batch temp submit (line 880):
+     fetchHistory();
+
+4. Error retry (line 1656):
+     fetchHistory();
+
+All call sites invoke fetchHistory() with zero arguments.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 3 — PROD SCHEMA: temperature_logs
+────────────────────────────────────────────────────────────────
+
+Table: public.temperature_logs
+Columns (22):
+  id                 uuid NOT NULL DEFAULT gen_random_uuid()
+  facility_id        uuid NOT NULL   ← FK → locations(id)
+  equipment_id       uuid
+  temperature        numeric(5,1) NOT NULL
+  unit               text DEFAULT 'F'
+  temp_pass          boolean
+  corrective_action  text
+  reading_time       timestamptz DEFAULT now()
+  logged_by          uuid           ← FK → auth.users(id)
+  notes              text
+  log_type           text DEFAULT 'hot_holding'
+  shift              text
+  input_method       text DEFAULT 'manual'
+  photo_url          text
+  created_at         timestamptz DEFAULT now()
+  updated_at         timestamptz DEFAULT now()
+  batch_id           uuid
+  food_item          text
+  min_temp           numeric(5,1)
+  max_temp           numeric(5,1)
+  location_type      text
+  equipment_name     text
+
+KEY OBSERVATION: No organization_id column exists on this table.
+Org scoping is achieved via facility_id → locations.organization_id.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 4 — PROD RLS POLICIES ON temperature_logs
+────────────────────────────────────────────────────────────────
+
+Row Level Security: ENABLED (relrowsecurity = true)
+
+Policy 1: temperature_logs_select (PERMISSIVE, SELECT)
+  USING:
+    (facility_id IN (
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON (up.organization_id = l.organization_id)
+      WHERE (up.id = auth.uid())
+    ))
+
+Policy 2: temperature_logs_insert (PERMISSIVE, INSERT)
+  WITH CHECK:
+    (facility_id IN (
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON (up.organization_id = l.organization_id)
+      WHERE (up.id = auth.uid())
+    ))
+
+Policy 3: temperature_logs_service_insert (PERMISSIVE, INSERT)
+  WITH CHECK: (true)
+  ROLES: service_role
+  — Service-role bypass for edge functions/server-side inserts.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 5 — RLS SCOPING CHAIN WALKTHROUGH
+────────────────────────────────────────────────────────────────
+
+The SELECT policy enforces this chain:
+
+  temperature_logs.facility_id
+        ↓ IN
+  locations.id
+        ↓ JOIN ON
+  locations.organization_id = user_profiles.organization_id
+        ↓ WHERE
+  user_profiles.id = auth.uid()
+
+Translation: A user can only SELECT temperature_logs rows where
+the row's facility_id matches a location belonging to the user's
+organization. The scoping is transitive — even without an explicit
+organization_id column on temperature_logs, org isolation is
+enforced through the locations join.
+
+LOCATIONS TABLE RLS: Also ENABLED with full CRUD policies using
+the same user_profiles.organization_id pattern. No bypass path.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 6 — GIT HISTORY (recent commits touching TempLogs.tsx)
+────────────────────────────────────────────────────────────────
+
+Commit 4e2c6a5 (2026-04-24):
+  "revert: a846f28 TempLogs fetchHistory org filter (wrong column)"
+
+  This commit REVERTED a previous attempt to add an organization_id
+  filter to fetchHistory(). The revert was correct because
+  temperature_logs has NO organization_id column — the .eq() filter
+  errored on every request, breaking the History tab for all prod
+  users. The commit message explicitly states: "RLS already enforces
+  org scoping at the DB layer, so reverting does not reintroduce a
+  cross-org exposure."
+
+  Diff:
+    - if (!profile?.organization_id) {
+    -   setHistory([]);
+    -   return;
+    - }
+    ...
+    - .eq('organization_id', profile?.organization_id)
+
+Commit 04fd826 (2026-04-24):
+  "fix(security): correct batch temp-log facility_id + remove phantom location_id"
+  — Fixed batch INSERT (facility_id was set to org UUID instead of
+    location UUID). Did NOT touch fetchHistory.
+
+Commit 0ed0ec7 (2026-04-24):
+  "fix(security): rewrite cooldown persist to correct tables + fix false success toast"
+  — Rewrote cooldown_temp_checks INSERT logic. Did NOT touch fetchHistory.
+
+No other commits between 04fd826 and HEAD touch fetchHistory.
+
+────────────────────────────────────────────────────────────────
+
+EVIDENCE 7 — VERDICT RATIONALE
+────────────────────────────────────────────────────────────────
+
+The audit flag stated: "TempLogs fetchHistory() has no org_id filter"
+
+This is factually correct at the application layer — fetchHistory()
+does not apply any .eq() filter. However, the flag implied a
+cross-org vulnerability, which is FALSE.
+
+The database enforces org isolation through RLS:
+  1. temperature_logs has RLS ENABLED
+  2. The SELECT policy scopes via facility_id → locations → user_profiles
+  3. The locations table also has RLS ENABLED with matching policies
+  4. There is no bypass path for authenticated users (service_role
+     bypass only applies to INSERT, not SELECT)
+
+Additionally, commit 4e2c6a5 documents that a previous attempt to
+add an application-level org filter on this table was incorrect
+(used non-existent organization_id column) and had to be reverted.
+The correct architecture is: RLS handles org scoping via the
+facility_id chain.
+
+RECOMMENDATION: No code change needed for fetchHistory(). An
+optional defense-in-depth improvement would be to add a
+.eq('facility_id', selectedLocationId) filter at the application
+layer (using a location ID the user has selected), but this is
+a UX optimization (show only one location's logs), not a security
+fix. The RLS policy is the authoritative security boundary.
+
+────────────────────────────────────────────────────────────────
+END OF VERDICT
+────────────────────────────────────────────────────────────────
