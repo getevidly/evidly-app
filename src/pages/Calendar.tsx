@@ -218,8 +218,9 @@ export function Calendar() {
   const ttCalendarSubtitle = useTooltip('calendarSubtitle', userRole);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
-  // Feature flag: PRP layout
-  const { enabled: prpEnabled } = useFeatureFlag('calendar_prp_layout_v1');
+  // Feature flag: PRP layout — wait for async resolution before showing PRP
+  const { enabled: prpFlagEnabled, loading: prpFlagLoading } = useFeatureFlag('calendar_prp_layout_v1');
+  const prpEnabled = prpFlagEnabled && !prpFlagLoading;
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
