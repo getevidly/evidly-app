@@ -16,6 +16,12 @@ import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { useTooltip } from '../hooks/useTooltip';
 import { Modal } from '../components/ui/Modal';
 import ReadOnlyEventModal from '../components/calendar/ReadOnlyEventModal';
+import { useFeatureFlag } from '../hooks/useFeatureFlag';
+import { useCalendarPRPStats } from '../hooks/calendar/useCalendarPRPStats';
+import { useDueNotScheduled } from '../hooks/calendar/useDueNotScheduled';
+import { CalendarPRPBand } from '../components/calendar/CalendarPRPBand';
+import { CalendarSidebar } from '../components/calendar/CalendarSidebar';
+import { CalendarEmptyState } from '../components/calendar/CalendarEmptyState';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -36,6 +42,24 @@ const eventTypes: EventType[] = [
 ];
 
 const typeMap = Object.fromEntries(eventTypes.map(t => [t.id, t]));
+
+const PRP_EVENT_STYLES: Record<string, { color: string; bg: string; border: string; dashed?: boolean }> = {
+  predict: { color: '#B45309', bg: '#FEF3C7', border: '#B45309', dashed: true },
+  scheduled: { color: '#1E2D4D', bg: '#EFF6FF', border: '#1E2D4D' },
+  completed: { color: '#2E7D32', bg: '#F0FFF4', border: '#2E7D32' },
+  gap: { color: '#B91C1C', bg: '#FEF2F2', border: '#B91C1C' },
+};
+
+function getEventStyle(event: CalendarEvent, prpOn: boolean) {
+  if (prpOn && event.prpState && PRP_EVENT_STYLES[event.prpState]) {
+    const s = PRP_EVENT_STYLES[event.prpState];
+    return { color: s.color, bg: s.bg, border: s.border, dashed: s.dashed || false, label: event.title };
+  }
+  const t = typeMap[event.type];
+  return t
+    ? { color: t.color, bg: t.bg, border: t.color, dashed: false, label: t.label }
+    : { color: '#999', bg: '#f3f4f6', border: '#999', dashed: false, label: event.type };
+}
 
 const LOCATIONS = ['Location 1', 'Location 2', 'Location 3']; // demo
 
@@ -90,6 +114,9 @@ export interface CalendarEvent {
   recurrence?: string;
   recurrenceGroupId?: string;
   source: 'calendar_events';
+  status?: string;
+  completedAt?: string;
+  prpState?: 'predict' | 'scheduled' | 'completed' | 'gap';
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -190,6 +217,9 @@ export function Calendar() {
   const { userRole } = useRole();
   const ttCalendarSubtitle = useTooltip('calendarSubtitle', userRole);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+
+  // Feature flag: PRP layout
+  const { enabled: prpEnabled } = useFeatureFlag('calendar_prp_layout_v1');
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -254,6 +284,8 @@ export function Calendar() {
           recurrence: ce.recurrence || undefined,
           recurrenceGroupId: ce.recurrence_group_id || undefined,
           source: 'calendar_events',
+          status: ce.status || 'scheduled',
+          completedAt: ce.completed_at || undefined,
         });
       }
 
@@ -278,9 +310,51 @@ export function Calendar() {
     );
   }, [events, locationFilter, categoryFilter, userRole]);
 
+  // PRP hooks — read from unfiltered live events
+  const dueNotScheduled = useDueNotScheduled(liveEvents);
+  const calendarPRPStats = useCalendarPRPStats(liveEvents, prpEnabled, dueNotScheduled.length);
+
+  // When PRP enabled, tag events with PRP state and add synthetic predict entries
+  const displayEvents = useMemo(() => {
+    if (!prpEnabled) return filteredEvents;
+
+    const todayStr = formatDateKey(new Date());
+    const tagged: CalendarEvent[] = filteredEvents.map((e) => {
+      if (e.type !== 'vendor') return e;
+      if (e.status === 'completed') {
+        const hasRecords = !!(e.description && e.description.trim().length > 0);
+        return { ...e, prpState: (hasRecords ? 'completed' : 'gap') as CalendarEvent['prpState'] };
+      }
+      if (e.status === 'scheduled' && e.date >= todayStr) {
+        return { ...e, prpState: 'scheduled' as const };
+      }
+      return e;
+    });
+
+    // Add synthetic predict events for due-not-scheduled services
+    for (const item of dueNotScheduled) {
+      if (item.dueDate) {
+        tagged.push({
+          id: `predict-${item.cadenceId}`,
+          title: `${item.displayName} — due`,
+          type: 'vendor',
+          date: item.dueDate,
+          time: '9:00 AM',
+          location: '',
+          category: item.category,
+          source: 'calendar_events',
+          status: 'predicted',
+          prpState: 'predict',
+        });
+      }
+    }
+
+    return tagged;
+  }, [prpEnabled, filteredEvents, dueNotScheduled]);
+
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
-    for (const e of filteredEvents) {
+    for (const e of displayEvents) {
       if (!map[e.date]) map[e.date] = [];
       map[e.date].push(e);
     }
@@ -288,7 +362,7 @@ export function Calendar() {
       map[key].sort((a, b) => a.time.localeCompare(b.time));
     }
     return map;
-  }, [filteredEvents]);
+  }, [displayEvents]);
 
   // Navigation
   const navCalendar = (dir: number) => {
@@ -338,21 +412,20 @@ export function Calendar() {
 
   // ── Render Event Chip (month view) ──
   const renderEventChip = (event: CalendarEvent) => {
-    const t = typeMap[event.type];
-    if (!t) return null;
+    const s = getEventStyle(event, prpEnabled);
     return (
       <div
         key={event.id}
-        onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
+        onClick={(e) => { e.stopPropagation(); if (event.prpState !== 'predict') setSelectedEvent(event); }}
         style={{
           padding: '1px 5px',
           borderRadius: '3px',
           fontSize: '10px',
           fontWeight: 600,
-          color: t.color,
-          backgroundColor: t.bg,
-          borderLeft: `2px solid ${t.color}`,
-          cursor: 'pointer',
+          color: s.color,
+          backgroundColor: s.bg,
+          borderLeft: `2px ${s.dashed ? 'dashed' : 'solid'} ${s.border}`,
+          cursor: event.prpState === 'predict' ? 'default' : 'pointer',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -560,18 +633,18 @@ export function Calendar() {
                 {dayEvents.length > 0 && (
                   <div style={{ padding: '8px 14px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {dayEvents.slice(0, 4).map(event => {
-                      const t = typeMap[event.type];
+                      const s = getEventStyle(event, prpEnabled);
                       return (
                         <div
                           key={event.id}
-                          onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
+                          onClick={(e) => { e.stopPropagation(); if (event.prpState !== 'predict') setSelectedEvent(event); }}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '8px',
                             padding: '6px 8px', borderRadius: '6px',
-                            backgroundColor: t?.bg || '#f3f4f6',
-                            borderLeft: `3px solid ${t?.color || '#999'}`,
+                            backgroundColor: s.bg,
+                            borderLeft: `3px ${s.dashed ? 'dashed' : 'solid'} ${s.border}`,
                             fontSize: '12px', fontWeight: 600,
-                            color: t?.color || '#333',
+                            color: s.color,
                           }}
                         >
                           <span style={{ fontSize: '11px', color: '#6b7280', flexShrink: 0 }}>{event.time}</span>
@@ -669,20 +742,20 @@ export function Calendar() {
                       }}
                     >
                       {hourEvents.slice(0, 2).map(event => {
-                        const t = typeMap[event.type];
+                        const s = getEventStyle(event, prpEnabled);
                         return (
                           <div
                             key={event.id}
-                            onClick={() => setSelectedEvent(event)}
+                            onClick={() => { if (event.prpState !== 'predict') setSelectedEvent(event); }}
                             style={{
                               padding: '2px 4px',
                               borderRadius: '4px',
                               fontSize: '10px',
                               fontWeight: 600,
-                              color: t?.color || '#333',
-                              backgroundColor: t?.bg || '#f3f4f6',
-                              borderLeft: `2px solid ${t?.color || '#999'}`,
-                              cursor: 'pointer',
+                              color: s.color,
+                              backgroundColor: s.bg,
+                              borderLeft: `2px ${s.dashed ? 'dashed' : 'solid'} ${s.border}`,
+                              cursor: event.prpState === 'predict' ? 'default' : 'pointer',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -776,11 +849,11 @@ export function Calendar() {
                 </div>
                 <div style={{ flex: 1, padding: '4px 8px', borderLeft: '1px solid #e5e7eb', opacity: isOutside ? 0.5 : 1 }}>
                   {hourEvents.map(event => {
-                    const t = typeMap[event.type];
+                    const s = getEventStyle(event, prpEnabled);
                     return (
                       <div
                         key={event.id}
-                        onClick={() => setSelectedEvent(event)}
+                        onClick={() => { if (event.prpState !== 'predict') setSelectedEvent(event); }}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -788,9 +861,9 @@ export function Calendar() {
                           gap: '12px',
                           padding: '8px 12px',
                           borderRadius: '8px',
-                          backgroundColor: t?.bg || '#f3f4f6',
-                          borderLeft: `4px solid ${t?.color || '#999'}`,
-                          cursor: 'pointer',
+                          backgroundColor: s.bg,
+                          borderLeft: `4px ${s.dashed ? 'dashed' : 'solid'} ${s.border}`,
+                          cursor: event.prpState === 'predict' ? 'default' : 'pointer',
                           marginBottom: '4px',
                           fontFamily: "'DM Sans', sans-serif",
                           transition: 'box-shadow 0.15s',
@@ -803,6 +876,14 @@ export function Calendar() {
                           <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
                             {event.time}{event.endTime ? ` – ${event.endTime}` : ''}
                           </div>
+                          {event.prpState === 'gap' && (
+                            <span
+                              onClick={(e) => { e.stopPropagation(); navigate('/documents'); }}
+                              style={{ fontSize: '11px', fontWeight: 700, color: '#B91C1C', cursor: 'pointer', marginTop: '2px', display: 'inline-block' }}
+                            >
+                              Upload now {'\u2192'}
+                            </span>
+                          )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#6b7280' }}>
                           <MapPin size={12} />
@@ -884,8 +965,54 @@ export function Calendar() {
               Schedule a service
             </button>
           </div>
-          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
+          {prpEnabled ? (
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Predict</span> what&rsquo;s due.{' '}
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Reduce</span> what slips.{' '}
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Prove</span> what was done.
+            </p>
+          ) : (
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
+          )}
         </div>
+
+        {/* PRP Band — only when flag is on */}
+        {prpEnabled && (
+          <CalendarPRPBand
+            stats={calendarPRPStats}
+            onPredictClick={() => {/* scroll to sidebar due list handled by sidebar visibility */}}
+            onProveClick={() => {/* prove filter — future enhancement */}}
+          />
+        )}
+
+        {/* PRP Legend row */}
+        {prpEnabled && (
+          <div
+            style={{
+              display: 'flex', alignItems: 'center', gap: '16px',
+              marginBottom: '12px', flexWrap: 'wrap',
+              fontSize: '11px', fontFamily: "'DM Sans', sans-serif",
+              color: '#6b7280',
+            }}
+          >
+            <span style={{ fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '10px' }}>Legend:</span>
+            {[
+              { label: 'Due, not scheduled', color: '#B45309', dashed: true },
+              { label: 'Scheduled', color: '#1E2D4D', dashed: false },
+              { label: 'Completed with records', color: '#2E7D32', dashed: false },
+              { label: 'Completed, records missing', color: '#B91C1C', dashed: false },
+            ].map((item) => (
+              <span key={item.label} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{
+                  width: '14px', height: '10px', borderRadius: '2px',
+                  border: `2px ${item.dashed ? 'dashed' : 'solid'} ${item.color}`,
+                  backgroundColor: 'transparent',
+                }} />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
@@ -1029,124 +1156,131 @@ export function Calendar() {
         })()}
 
         {/* Content area: Calendar + Sidebar */}
-        <div className="flex flex-col lg:flex-row" style={{ gap: '24px', alignItems: 'flex-start' }}>
-          {/* Calendar */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {loading ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
-                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1E2D4D' }} />
-              </div>
-            ) : (
-              <>
-                {view === 'month' && renderMonthView()}
-                {view === 'week' && renderWeekView()}
-                {view === 'day' && renderDayView()}
-              </>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="w-full lg:w-[280px]" style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
-
-            {/* Today Card */}
-            <div style={{
-              backgroundColor: '#1E2D4D',
-              borderRadius: '12px',
-              padding: '16px',
-              color: 'white',
-              textAlign: 'center',
-            }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {tr('pages.calendar.today')}
-              </h3>
-              <div style={{ fontSize: '32px', fontWeight: 800, fontFamily: "'DM Sans', sans-serif", marginBottom: '4px' }}>
-                {todayEvents.length}
-              </div>
-              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
-                {tr('pages.calendar.scheduledItems')}
-              </div>
-              {Object.keys(todayByType).length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px' }}>
-                  {Object.entries(todayByType).map(([typeId, count]) => {
-                    const t = typeMap[typeId];
-                    return (
-                      <div key={typeId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontFamily: "'DM Sans', sans-serif" }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: t?.color || '#999' }} />
-                          <span style={{ color: 'rgba(255,255,255,0.85)' }}>{t?.label || typeId}</span>
-                        </div>
-                        <span style={{ fontWeight: 700 }}>{count}</span>
-                      </div>
-                    );
-                  })}
+        {/* Smart empty state when PRP on and no events at all */}
+        {prpEnabled && !loading && liveEvents.length === 0 ? (
+          <CalendarEmptyState />
+        ) : (
+          <div className="flex flex-col lg:flex-row" style={{ gap: '24px', alignItems: 'flex-start' }}>
+            {/* Calendar */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
+                  <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1E2D4D' }} />
                 </div>
+              ) : (
+                <>
+                  {view === 'month' && renderMonthView()}
+                  {view === 'week' && renderWeekView()}
+                  {view === 'day' && renderDayView()}
+                </>
               )}
             </div>
 
-            {/* Upcoming Events */}
-            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {tr('pages.calendar.upcoming')}
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {upcomingEvents.length === 0 && (
-                  <div style={{ padding: '4px 0' }}>
-                    <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
-                    <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
-                      EvidLY adds events automatically when vendor services are scheduled.
-                    </p>
+            {/* Sidebar — PRP version or legacy */}
+            {prpEnabled ? (
+              <CalendarSidebar stats={calendarPRPStats} dueNotScheduled={dueNotScheduled} />
+            ) : (
+              <div className="w-full lg:w-[280px]" style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Today Card */}
+                <div style={{
+                  backgroundColor: '#1E2D4D',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  color: 'white',
+                  textAlign: 'center',
+                }}>
+                  <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {tr('pages.calendar.today')}
+                  </h3>
+                  <div style={{ fontSize: '32px', fontWeight: 800, fontFamily: "'DM Sans', sans-serif", marginBottom: '4px' }}>
+                    {todayEvents.length}
                   </div>
-                )}
-                {upcomingEvents.map(event => {
-                  const t = typeMap[event.type];
-                  const eventDate = new Date(event.date + 'T12:00:00');
-                  const isEventToday = isSameDay(eventDate, today);
-
-                  return (
-                    <div
-                      key={event.id}
-                      onClick={() => setSelectedEvent(event)}
-                      style={{
-                        padding: '10px', borderRadius: '8px',
-                        backgroundColor: t?.bg || '#f3f4f6',
-                        borderLeft: `3px solid ${t?.color || '#999'}`,
-                        cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                        transition: 'box-shadow 0.15s',
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
-                      <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                        {isEventToday ? tr('pages.calendar.today') : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{event.location}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
+                    {tr('pages.calendar.scheduledItems')}
+                  </div>
+                  {Object.keys(todayByType).length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px' }}>
+                      {Object.entries(todayByType).map(([typeId, count]) => {
+                        const t = typeMap[typeId];
+                        return (
+                          <div key={typeId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontFamily: "'DM Sans', sans-serif" }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: t?.color || '#999' }} />
+                              <span style={{ color: 'rgba(255,255,255,0.85)' }}>{t?.label || typeId}</span>
+                            </div>
+                            <span style={{ fontWeight: 700 }}>{count}</span>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+                  )}
+                </div>
 
-            {/* Stats */}
-            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {tr('pages.calendar.thisMonth')}
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                {[
-                  { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1E2D4D' },
-                  { label: tr('pages.calendar.vendorVisits'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
-                ].map(stat => (
-                  <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{stat.label}</div>
+                {/* Upcoming Events */}
+                <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+                  <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {tr('pages.calendar.upcoming')}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {upcomingEvents.length === 0 && (
+                      <div style={{ padding: '4px 0' }}>
+                        <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
+                        <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
+                          EvidLY adds events automatically when vendor services are scheduled.
+                        </p>
+                      </div>
+                    )}
+                    {upcomingEvents.map(event => {
+                      const t = typeMap[event.type];
+                      const eventDate = new Date(event.date + 'T12:00:00');
+                      const isEventToday = isSameDay(eventDate, today);
+
+                      return (
+                        <div
+                          key={event.id}
+                          onClick={() => setSelectedEvent(event)}
+                          style={{
+                            padding: '10px', borderRadius: '8px',
+                            backgroundColor: t?.bg || '#f3f4f6',
+                            borderLeft: `3px solid ${t?.color || '#999'}`,
+                            cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                            transition: 'box-shadow 0.15s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
+                        >
+                          <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                            {isEventToday ? tr('pages.calendar.today') : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{event.location}</div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                </div>
+
+                {/* Stats */}
+                <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+                  <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {tr('pages.calendar.thisMonth')}
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    {[
+                      { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1E2D4D' },
+                      { label: tr('pages.calendar.vendorVisits'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
+                    ].map(stat => (
+                      <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+                        <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>
+                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Event detail modal */}
         <ReadOnlyEventModal
