@@ -48,7 +48,7 @@ CREATE POLICY "Org members can view their deficiency plans"
       WHERE d.id = deficiency_resolution_plans.deficiency_id
         AND d.organization_id = (
           SELECT organization_id FROM user_profiles
-          WHERE user_id = auth.uid()
+          WHERE id = auth.uid()
         )
     )
   );
@@ -61,7 +61,7 @@ CREATE POLICY "Org members can insert deficiency plans"
       WHERE d.id = deficiency_resolution_plans.deficiency_id
         AND d.organization_id = (
           SELECT organization_id FROM user_profiles
-          WHERE user_id = auth.uid()
+          WHERE id = auth.uid()
         )
     )
   );
@@ -74,7 +74,7 @@ CREATE POLICY "Org members can update their deficiency plans"
       WHERE d.id = deficiency_resolution_plans.deficiency_id
         AND d.organization_id = (
           SELECT organization_id FROM user_profiles
-          WHERE user_id = auth.uid()
+          WHERE id = auth.uid()
         )
     )
   );
