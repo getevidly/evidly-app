@@ -12,6 +12,8 @@ import { useUnifiedCurrentReadings, type UnifiedReadingRow } from '../../hooks/u
 import { useCurrentReadingsSummary } from '../../hooks/useCurrentReadingsSummary';
 import { Loader2 } from 'lucide-react';
 import { colors } from '../../lib/designSystem';
+import { useTemperatureDriftDetection, type DriftingUnit } from '../../hooks/temperatures/useTemperatureDriftDetection';
+import { TemperatureDriftCallout } from './TemperatureDriftCallout';
 
 const VARIANT_DOT_COLOR: Record<string, string> = {
   hot: '#EA580C',
@@ -68,7 +70,7 @@ function RangeBar({ row }: { row: UnifiedReadingRow }) {
   );
 }
 
-function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadingRow[] }) {
+function VariantSection({ variant, rows, driftingIds }: { variant: string; rows: UnifiedReadingRow[]; driftingIds: Set<string> }) {
   if (rows.length === 0) return null;
   const passing = rows.filter(r => r.status === 'pass').length;
   const failing = rows.filter(r => r.status === 'fail').length;
@@ -103,6 +105,7 @@ function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadi
       <div className="flex flex-col gap-2">
         {rows.map(row => {
           const tempStr = row.temperature_value != null ? `${row.temperature_value}\u00B0F` : '--';
+          const isDrifting = driftingIds.has(row.equipment_id);
           const subParts: string[] = [row.equipment_type.replace(/_/g, ' ')];
           if (row.held_food_count > 0) {
             subParts.push(`${row.held_food_count} food held`);
@@ -121,9 +124,19 @@ function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadi
                 style={{ backgroundColor: VARIANT_DOT_COLOR[variant] }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: colors.textPrimary }}>
-                  {row.equipment_name}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-medium truncate" style={{ color: colors.textPrimary }}>
+                    {row.equipment_name}
+                  </p>
+                  {isDrifting && (
+                    <span
+                      className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase flex-shrink-0"
+                      style={{ backgroundColor: 'rgba(194, 115, 26, 0.12)', color: '#c2731a' }}
+                    >
+                      Drifting
+                    </span>
+                  )}
+                </div>
                 <p className="text-[11px] truncate" style={{ color: colors.textSecondary }}>
                   {subParts.join(' \u00B7 ')}
                 </p>
@@ -149,8 +162,11 @@ function VariantSection({ variant, rows }: { variant: string; rows: UnifiedReadi
 export function CurrentReadingsUnified() {
   const { summary, loading: summaryLoading } = useCurrentReadingsSummary();
   const { rows, loading: rowsLoading } = useUnifiedCurrentReadings();
+  const { drifting, loading: driftLoading } = useTemperatureDriftDetection();
 
-  if (summaryLoading || rowsLoading) {
+  const driftingIds = new Set(drifting.map(d => d.equipment_id));
+
+  if (summaryLoading || rowsLoading || driftLoading) {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
@@ -167,7 +183,7 @@ export function CurrentReadingsUnified() {
           No temperature equipment configured yet
         </p>
         <p className="text-xs mb-4 max-w-sm" style={{ color: colors.textSecondary }}>
-          Add holding equipment, walk-ins, and cooldown stations to start tracking temperatures here.
+          Add holding equipment, walk-ins, and cooldown stations to see temperature readings here.
         </p>
         <Link
           to="/admin/equipment"
@@ -207,6 +223,11 @@ export function CurrentReadingsUnified() {
           {summary.totalUnits} units · {summary.totalFoodHeld} food items held
         </span>
       </div>
+      {drifting.length > 0 && (
+        <div className="px-4 py-3" style={{ borderBottom: `0.5px solid ${colors.border}` }}>
+          <TemperatureDriftCallout driftingUnits={drifting} />
+        </div>
+      )}
       {(() => {
         const failingRows = [
           ...rows.hot, ...rows.cold, ...rows.cooldown, ...rows.receiving,
@@ -260,10 +281,10 @@ export function CurrentReadingsUnified() {
           </div>
         );
       })()}
-      <VariantSection variant="hot" rows={rows.hot} />
-      <VariantSection variant="cold" rows={rows.cold} />
-      <VariantSection variant="cooldown" rows={rows.cooldown} />
-      <VariantSection variant="receiving" rows={rows.receiving} />
+      <VariantSection variant="hot" rows={rows.hot} driftingIds={driftingIds} />
+      <VariantSection variant="cold" rows={rows.cold} driftingIds={driftingIds} />
+      <VariantSection variant="cooldown" rows={rows.cooldown} driftingIds={driftingIds} />
+      <VariantSection variant="receiving" rows={rows.receiving} driftingIds={driftingIds} />
     </div>
   );
 }

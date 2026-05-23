@@ -30,7 +30,10 @@ import { VendorCombobox } from '../components/temp-logs/VendorCombobox';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { getShift, getLogType } from '../config/tempConfig';
 import { dispatchTempViolationSignal } from '../lib/tempSignalDispatch';
-import { TempIntelligenceCard } from '../components/temp-logs/TempIntelligenceCard';
+import { TemperaturesPRPBand } from '../components/temp-logs/TemperaturesPRPBand';
+import { useCurrentReadingsSummary } from '../hooks/useCurrentReadingsSummary';
+import { useTemperatureDriftDetection } from '../hooks/temperatures/useTemperatureDriftDetection';
+import { useTemperaturesPRPStats } from '../hooks/temperatures/useTemperaturesPRPStats';
 import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
 import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -140,6 +143,13 @@ export function TempLogs() {
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   usePageTitle('Temperature Logs');
+
+  // PRP band hooks
+  const { summary: prpSummary, loading: prpSummaryLoading } = useCurrentReadingsSummary();
+  const { drifting: prpDrifting, loading: prpDriftLoading } = useTemperatureDriftDetection();
+  const prpStats = useTemperaturesPRPStats(prpSummary, prpDrifting.length);
+  const prpLoading = prpSummaryLoading || prpDriftLoading;
+
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -1432,7 +1442,11 @@ export function TempLogs() {
             <div className="flex items-center gap-3 flex-wrap">
               <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em', color: colors.navy }}>{t('tempLogs.title')}</h1>
               </div>
-            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4 }}>{t('tempLogs.subtitle')}</p>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4 }}>
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Predict</span> the drift.{' '}
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Reduce</span> the loss.{' '}
+              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Prove</span> the temperature.
+            </p>
           </div>
           <button
             onClick={() => navigate('/temp-logs/scan')}
@@ -1452,8 +1466,8 @@ export function TempLogs() {
           </button>
         </div>
 
-        {/* AI Intelligence Card (live mode only) */}
-        {!isDemoMode && <TempIntelligenceCard />}
+        {/* PRP Band */}
+        <TemperaturesPRPBand stats={prpStats} loading={prpLoading} />
 
         {/* Tabs */}
         <div style={{ display: 'flex', overflowX: 'auto', borderBottom: `1px solid ${colors.borderLight}`, margin: '0 -4px' }}>
