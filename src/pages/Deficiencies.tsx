@@ -5,11 +5,9 @@ import {
   AlertCircle,
   AlertOctagon,
   Info,
-  Search,
   Plus,
-  ChevronRight,
-  ArrowUpDown,
   Bot,
+  CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -30,6 +28,11 @@ import {
   type DefStatus,
 } from '../data/deficienciesDemoData';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useDeficiencyRecurringPatterns } from '../hooks/deficiencies/useDeficiencyRecurringPatterns';
+import { useDeficienciesPRPStats } from '../hooks/deficiencies/useDeficienciesPRPStats';
+import { DeficienciesPRPBand } from '../components/deficiencies/DeficienciesPRPBand';
+import { DeficienciesFilterBar } from '../components/deficiencies/DeficienciesFilterBar';
+import { DeficienciesRecurringBar } from '../components/deficiencies/DeficienciesRecurringBar';
 
 const NAVY = '#1E2D4D';
 
@@ -40,11 +43,7 @@ const SEVERITY_ICONS = {
   advisory: Info,
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-type SortKey = 'severity' | 'foundDate' | 'daysOpen';
+type SortKey = 'severity' | 'foundDate' | 'deadline';
 
 export function Deficiencies() {
   const navigate = useNavigate();
@@ -58,6 +57,8 @@ export function Deficiencies() {
   const categoryFilter = (searchParams.get('category') || 'all') as DefCategory | 'all';
   const searchQuery = searchParams.get('q') || '';
   const sortBy = (searchParams.get('sort') || 'severity') as SortKey;
+  const locationFilter = searchParams.get('location') || 'all';
+  const inspectorFilter = searchParams.get('inspector') || 'all';
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
@@ -77,20 +78,37 @@ export function Deficiencies() {
     setSearchParams(next, { replace: true });
   };
 
-  // ── Stats ──────────────────────────────────────────────────
-  const stats = useMemo(() => {
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const openItems = localRecords.filter(d => d.status === 'open');
-    const critOpen = openItems.filter(d => d.severity === 'critical').length;
-    return {
-      open: openItems.length,
-      critOpen,
-      acknowledged: localRecords.filter(d => d.status === 'acknowledged').length,
-      inProgress: localRecords.filter(d => d.status === 'in_progress').length,
-      resolvedMonth: localRecords.filter(d => d.status === 'resolved' && d.resolvedAt && new Date(d.resolvedAt) >= monthStart).length,
-    };
+  // ── PRP hooks ──────────────────────────────────────────────
+  const recurringPatterns = useDeficiencyRecurringPatterns(localRecords);
+  const prpStats = useDeficienciesPRPStats(localRecords, recurringPatterns);
+
+  const recurringDeficiencyIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const p of recurringPatterns) {
+      for (const id of p.deficiencyIds) ids.add(id);
+    }
+    return ids;
+  }, [recurringPatterns]);
+
+  const locations = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const d of localRecords) {
+      if (d.locationId) map.set(d.locationId, d.locationName);
+    }
+    return Array.from(map, ([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name));
   }, [localRecords]);
+
+  const inspectors = useMemo(() => {
+    const set = new Set<string>();
+    for (const d of localRecords) {
+      if (d.foundBy) set.add(d.foundBy);
+    }
+    return Array.from(set).sort();
+  }, [localRecords]);
+
+  const hasAnyFilters = statusFilter !== 'all' || severityFilter !== 'all' || categoryFilter !== 'all' || locationFilter !== 'all' || inspectorFilter !== 'all' || searchQuery !== '';
+
+  const clearFilters = () => setSearchParams(new URLSearchParams(), { replace: true });
 
   // ── Filter + Sort ─────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -98,6 +116,8 @@ export function Deficiencies() {
     if (statusFilter !== 'all') items = items.filter(d => d.status === statusFilter);
     if (severityFilter !== 'all') items = items.filter(d => d.severity === severityFilter);
     if (categoryFilter !== 'all') items = items.filter(d => d.category === categoryFilter);
+    if (locationFilter !== 'all') items = items.filter(d => d.locationId === locationFilter);
+    if (inspectorFilter !== 'all') items = items.filter(d => d.foundBy === inspectorFilter);
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       items = items.filter(d =>
@@ -107,13 +127,37 @@ export function Deficiencies() {
         d.customerName.toLowerCase().includes(q)
       );
     }
+    const TIMELINE_DAYS: Record<string, number> = { immediate: 0, '30_days': 30, '90_days': 90 };
     items.sort((a, b) => {
       if (sortBy === 'severity') return SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
       if (sortBy === 'foundDate') return new Date(b.foundDate).getTime() - new Date(a.foundDate).getTime();
+      if (sortBy === 'deadline') {
+        const dA = TIMELINE_DAYS[a.timelineRequirement] !== undefined
+          ? new Date(a.foundDate + 'T00:00:00').getTime() + TIMELINE_DAYS[a.timelineRequirement] * 86400000
+          : Infinity;
+        const dB = TIMELINE_DAYS[b.timelineRequirement] !== undefined
+          ? new Date(b.foundDate + 'T00:00:00').getTime() + TIMELINE_DAYS[b.timelineRequirement] * 86400000
+          : Infinity;
+        return dA - dB;
+      }
       return daysOpen(b) - daysOpen(a);
     });
     return items;
-  }, [localRecords, statusFilter, severityFilter, categoryFilter, searchQuery, sortBy]);
+  }, [localRecords, statusFilter, severityFilter, categoryFilter, locationFilter, inspectorFilter, searchQuery, sortBy]);
+
+  // ── Section splits for PRP grouping ─────────────────────────
+  const approachingItems = useMemo(() =>
+    filtered.filter(d => prpStats.approachingIds.has(d.id)),
+    [filtered, prpStats.approachingIds]
+  );
+  const recurringOnlyItems = useMemo(() =>
+    filtered.filter(d => recurringDeficiencyIds.has(d.id) && !prpStats.approachingIds.has(d.id)),
+    [filtered, recurringDeficiencyIds, prpStats.approachingIds]
+  );
+  const remainingItems = useMemo(() =>
+    filtered.filter(d => !prpStats.approachingIds.has(d.id) && !recurringDeficiencyIds.has(d.id)),
+    [filtered, prpStats.approachingIds, recurringDeficiencyIds]
+  );
 
   // ── Add Deficiency Handler ────────────────────────────────
   const handleAddDeficiency = (data: {
@@ -165,14 +209,62 @@ export function Deficiencies() {
     return <ErrorState error={pageError} onRetry={() => { setPageError(null); setLocalRecords(isDemoMode ? DEMO_DEFICIENCIES : []); }} />;
   }
 
-  // ── Stats Card ────────────────────────────────────────────
-  const StatCard = ({ label, value, sub, accent }: { label: string; value: number; sub?: string; accent?: string }) => (
-    <div className="rounded-xl border p-4 text-center" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
-      <p className="text-sm font-medium" style={{ color: '#6B7F96' }}>{label}</p>
-      <p className="text-2xl font-bold tracking-tight mt-1" style={{ color: accent || '#0B1628' }}>{value}</p>
-      {sub && <p className="text-xs mt-0.5" style={{ color: '#dc2626' }}>{sub}</p>}
-    </div>
-  );
+  // ── Card renderer ─────────────────────────────────────────
+  const renderDeficiencyCard = (d: DeficiencyItem) => {
+    const sev = SEVERITY_CONFIG[d.severity];
+    const stat = STATUS_CONFIG[d.status];
+    const Icon = SEVERITY_ICONS[d.severity];
+    const isApproaching = prpStats.approachingIds.has(d.id);
+    const isRecurring = recurringDeficiencyIds.has(d.id);
+
+    return (
+      <div
+        key={d.id}
+        onClick={() => navigate(`/deficiencies/${d.id}`)}
+        className="bg-white rounded-xl border border-[#E2DDD4] p-4 cursor-pointer hover:shadow-md transition-shadow"
+        style={d.severity === 'critical' ? { borderLeftWidth: '4px', borderLeftColor: '#b3261e' } : undefined}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Icon size={16} style={{ color: sev.color }} />
+            <span className="text-xs font-mono font-medium" style={{ color: sev.color }}>{d.code}</span>
+            {d.aiDetected && <Bot size={14} style={{ color: '#2563eb' }} />}
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            {isApproaching && (
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                style={{ color: '#c2731a', backgroundColor: 'rgba(194,115,26,0.12)', border: '1px dashed #c2731a' }}
+              >
+                Predict · Deadline
+              </span>
+            )}
+            {isRecurring && (
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+              >
+                Recurring
+              </span>
+            )}
+            <span
+              className="text-xs px-2 py-0.5 rounded-full font-medium"
+              style={{ color: stat.color, backgroundColor: stat.bg }}
+            >
+              {stat.label}
+            </span>
+          </div>
+        </div>
+        <p className="text-sm font-medium mt-2" style={{ color: '#0B1628' }}>{d.title}</p>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs" style={{ color: '#6B7F96' }}>{d.locationName}</span>
+          <span className="text-xs font-medium" style={{ color: '#3D5068' }}>
+            {d.status === 'resolved' ? 'Corrected' : `${daysOpen(d)}d open`}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
@@ -183,7 +275,7 @@ export function Deficiencies() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#0B1628' }}>Deficiencies</h1>
           <p className="text-sm mt-1" style={{ color: '#3D5068' }}>
-            Compliance code violations found during service visits and inspections
+            Predict what's approaching deadline. Reduce open exposure. Prove every correction.
           </p>
         </div>
         <button
@@ -195,209 +287,99 @@ export function Deficiencies() {
         </button>
       </div>
 
-      {/* Empty state for non-demo users with no data */}
+      {/* Empty state */}
       {!isDemoMode && localRecords.length === 0 && (
-        <PageEmptyState
-          title="No deficiencies recorded"
-          description="Deficiencies found during inspections and service visits will appear here."
-        />
+        <div className="text-center py-16 space-y-4">
+          <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center" style={{ backgroundColor: 'rgba(47,122,77,0.1)' }}>
+            <CheckCircle size={28} style={{ color: '#2f7a4d' }} />
+          </div>
+          <div>
+            <p className="text-lg font-semibold" style={{ color: NAVY }}>No deficiencies recorded</p>
+            <p className="text-sm mt-1" style={{ color: '#6B7F96' }}>
+              When code violations are found during inspections and service visits, they appear here.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 max-w-md mx-auto gap-3 text-center">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</p>
+              <p className="text-[11px] text-[#8A93A6]">Approaching deadlines</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#8A93A6' }}>REDUCE</p>
+              <p className="text-[11px] text-[#8A93A6]">Exposure range</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</p>
+              <p className="text-[11px] text-[#8A93A6]">Every correction</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
+            style={{ backgroundColor: NAVY }}
+          >
+            <Plus className="w-4 h-4" /> Add first deficiency
+          </button>
+          <p className="text-[11px] italic text-[#8A93A6] max-w-sm mx-auto">
+            Deficiencies will flow in automatically from service reports and AI-detected findings.
+          </p>
+        </div>
       )}
 
       {localRecords.length > 0 && <>
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Open" value={stats.open} sub={stats.critOpen > 0 ? `${stats.critOpen} critical` : undefined} accent="#dc2626" />
-        <StatCard label="Acknowledged" value={stats.acknowledged} accent="#d97706" />
-        <StatCard label="In Progress" value={stats.inProgress} accent="#2563eb" />
-        <StatCard label="Resolved This Month" value={stats.resolvedMonth} accent="#16a34a" />
-      </div>
+      {/* PRP Band */}
+      <DeficienciesPRPBand stats={prpStats} loading={false} />
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={statusFilter}
-          onChange={(e) => setFilter('status', e.target.value)}
-          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-        >
-          <option value="all">All Statuses</option>
-          <option value="open">Open</option>
-          <option value="acknowledged">Acknowledged</option>
-          <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-          <option value="deferred">Deferred</option>
-        </select>
+      {/* Filter Bar */}
+      <DeficienciesFilterBar
+        statusFilter={statusFilter as 'all' | DefStatus}
+        severityFilter={severityFilter as 'all' | DefSeverity}
+        categoryFilter={categoryFilter as 'all' | DefCategory}
+        locationFilter={locationFilter}
+        inspectorFilter={inspectorFilter}
+        sortBy={sortBy}
+        locations={locations}
+        inspectors={inspectors}
+        hasAnyFilters={hasAnyFilters}
+        onStatusChange={(v) => setFilter('status', v)}
+        onSeverityChange={(v) => setFilter('severity', v)}
+        onCategoryChange={(v) => setFilter('category', v)}
+        onLocationChange={(v) => setFilter('location', v)}
+        onInspectorChange={(v) => setFilter('inspector', v)}
+        onSortChange={(v) => setFilter('sort', v)}
+        onClearFilters={clearFilters}
+      />
 
-        <select
-          value={severityFilter}
-          onChange={(e) => setFilter('severity', e.target.value)}
-          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-        >
-          <option value="all">All Severities</option>
-          <option value="critical">Critical</option>
-          <option value="major">Major</option>
-          <option value="minor">Minor</option>
-          <option value="advisory">Advisory</option>
-        </select>
+      <DeficienciesRecurringBar patterns={recurringPatterns} />
 
-        <select
-          value={categoryFilter}
-          onChange={(e) => setFilter('category', e.target.value)}
-          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-        >
-          <option value="all">All Categories</option>
-          <option value="food_safety">Food Safety</option>
-          <option value="fire_safety">Fire Safety</option>
-          <option value="facility_services">Facility Services</option>
-        </select>
-
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#6B7F96' }} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setFilter('q', e.target.value)}
-            placeholder="Search deficiencies..."
-            className="w-full pl-9 pr-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-            style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-          />
-        </div>
-
-        <select
-          value={sortBy}
-          onChange={(e) => setFilter('sort', e.target.value)}
-          className="px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-        >
-          <option value="severity">Sort: Severity</option>
-          <option value="foundDate">Sort: Date Found</option>
-          <option value="daysOpen">Sort: Days Open</option>
-        </select>
-      </div>
-
-      {/* Desktop Table */}
-      <div className="hidden lg:block rounded-xl border overflow-hidden" style={{ borderColor: '#D1D9E6' }}>
-        <table className="w-full">
-          <thead>
-            <tr style={{ backgroundColor: '#EEF1F7' }}>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Sev</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Code</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Title</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Location</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Found</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Status</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#6B7F96' }}>Days</th>
-              <th className="w-8"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((d) => {
-              const sev = SEVERITY_CONFIG[d.severity];
-              const stat = STATUS_CONFIG[d.status];
-              const Icon = SEVERITY_ICONS[d.severity];
-              return (
-                <tr
-                  key={d.id}
-                  onClick={() => navigate(`/deficiencies/${d.id}`)}
-                  className="cursor-pointer hover:bg-[#FAF7F0] transition-colors border-t"
-                  style={{
-                    borderColor: '#E8EDF5',
-                    ...(d.severity === 'critical' ? { borderLeft: '4px solid #dc2626' } : {}),
-                  }}
-                >
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <Icon className="w-4 h-4" style={{ color: sev.color }} />
-                      {d.aiDetected && <Bot className="w-3.5 h-3.5" style={{ color: '#2563eb' }} />}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-xs font-mono font-medium" style={{ color: sev.color }}>{d.code}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-medium" style={{ color: '#0B1628' }}>{d.title}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm" style={{ color: '#3D5068' }}>{d.locationName}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm" style={{ color: '#3D5068' }}>{formatDate(d.foundDate)}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className="text-xs px-2 py-1 rounded-full font-medium"
-                      style={{ color: stat.color, backgroundColor: stat.bg }}
-                    >
-                      {stat.label}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-medium" style={{ color: '#0B1628' }}>{daysOpen(d)}</span>
-                  </td>
-                  <td className="px-2 py-3">
-                    <ChevronRight className="w-4 h-4" style={{ color: '#6B7F96' }} />
-                  </td>
-                </tr>
-              );
-            })}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8}>
-                  <PageEmptyState
-                    title="No deficiencies match your filters"
-                    description="Try adjusting your status, severity, or search filters."
-                  />
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile Cards */}
-      <div className="lg:hidden space-y-3">
-        {filtered.map((d) => {
-          const sev = SEVERITY_CONFIG[d.severity];
-          const stat = STATUS_CONFIG[d.status];
-          const Icon = SEVERITY_ICONS[d.severity];
-          return (
-            <div
-              key={d.id}
-              onClick={() => navigate(`/deficiencies/${d.id}`)}
-              className="rounded-xl border p-4 cursor-pointer hover:shadow-md transition-shadow"
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderColor: '#D1D9E6',
-                ...(d.severity === 'critical' ? { borderLeftWidth: '4px', borderLeftColor: '#dc2626' } : {}),
-              }}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 flex-shrink-0" style={{ color: sev.color }} />
-                  <span className="text-xs font-mono font-medium" style={{ color: sev.color }}>{d.code}</span>
-                  {d.aiDetected && <Bot className="w-3.5 h-3.5" style={{ color: '#2563eb' }} />}
-                </div>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-                  style={{ color: stat.color, backgroundColor: stat.bg }}
-                >
-                  {stat.label}
-                </span>
-              </div>
-              <p className="text-sm font-medium mt-2" style={{ color: '#0B1628' }}>{d.title}</p>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-xs" style={{ color: '#6B7F96' }}>{d.locationName}</span>
-                <span className="text-xs font-medium" style={{ color: '#3D5068' }}>{daysOpen(d)}d open</span>
-              </div>
-            </div>
-          );
-        })}
+      {/* Deficiency list */}
+      <div className="space-y-3">
+        {approachingItems.length > 0 && (
+          <>
+            <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+              Approaching correction deadline
+            </p>
+            {approachingItems.map(renderDeficiencyCard)}
+          </>
+        )}
+        {recurringOnlyItems.length > 0 && (
+          <>
+            <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+              Recurring violations
+            </p>
+            {recurringOnlyItems.map(renderDeficiencyCard)}
+          </>
+        )}
+        {remainingItems.length > 0 && (approachingItems.length > 0 || recurringOnlyItems.length > 0) && (
+          <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+            All deficiencies
+          </p>
+        )}
+        {remainingItems.map(renderDeficiencyCard)}
         {filtered.length === 0 && (
           <PageEmptyState
             title="No deficiencies match your filters"
-            description="Try adjusting your status, severity, or search filters."
+            description="Try adjusting your status, severity, or category filters."
           />
         )}
       </div>

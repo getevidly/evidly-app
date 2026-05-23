@@ -29,6 +29,11 @@
  *   Each: { status: 'on_track'|'potential_gap'|'no_data', summary: string }
  * @param {Array} props.drifts — Array of drift objects grouped by category.
  *   Each: { id, name, category, last_seen, corrective_action_status }
+ *   Caller must pre-filter to the categories intended for display.
+ *   Component renders whatever categories it receives in order.
+ *   PENDING DECISION (Arthur): Does Food Overview surface ONLY
+ *   category='food_safety', or food_safety + facility_services
+ *   (grease trap, ventilation drifts)? Hold until confirmed.
  * @param {object|null} props.lastInspection — Most recent inspection result.
  *   { inspection_date, raw_result, raw_result_type, inspector_name,
  *     violations_count, source_document_url }
@@ -168,6 +173,14 @@ function PRPCard({ pillarKey, status }) {
 
 // ── Section 3: Drifts ──────────────────────────────────────────
 
+// B2: Human-readable labels for category enum values.
+// Renders the mapped label; falls back to raw enum if unmapped.
+const CATEGORY_LABELS = {
+  food_safety: 'Food Safety',
+  fire_safety: 'Fire Safety',
+  facility_services: 'Facility Services',
+};
+
 const CA_STATUS_STYLES = {
   open: { color: colors.danger, label: 'Open' },
   in_progress: { color: colors.warning, label: 'In Progress' },
@@ -228,7 +241,7 @@ function DriftCategory({ category, drifts }) {
           letterSpacing: '0.04em',
         }}
       >
-        {category}
+        {CATEGORY_LABELS[category] || category}
       </div>
       {drifts.map((drift) => (
         <DriftRow key={drift.id} drift={drift} />
@@ -351,6 +364,10 @@ export default function FoodOverviewBody({
               <span style={{ fontSize: '28px', fontWeight: 700, color: colors.navy }}>
                 {lastInspection.raw_result}
               </span>
+              {/* raw_result_type is the jurisdiction's own terminology
+                  (e.g., "score", "grade", "pass/fail"). EvidLY never
+                  substitutes its own label — the jurisdiction's published
+                  language supersedes all EvidLY brand language. */}
               <span style={{ fontSize: '12px', color: colors.textSecondary }}>
                 {lastInspection.raw_result_type}
               </span>
