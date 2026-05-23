@@ -1,0 +1,298 @@
+[
+  {
+    "jurisdiction_slug": "humboldt",
+    "county": "Humboldt",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://humboldtgov.org/564/Environmental-Health"],
+    "urls_failed": [],
+    "food": {
+      "agency_fax": { "value": "(707) 441-5699", "source_url": "https://humboldtgov.org/564/Environmental-Health", "confidence": "high", "reason": "Labeled 'Fax:' on contact page" },
+      "agency_email": { "value": "ENVHEALTH@co.humboldt.ca.us", "source_url": "https://humboldtgov.org/564/Environmental-Health", "confidence": "high", "reason": "Labeled email on contact page, .us TLD" },
+      "poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "No director/POC listed on contact page" },
+      "poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No director/POC listed on contact page" }
+    },
+    "fire": {},
+    "notes": ["Fax and email extracted from labeled contact section"]
+  },
+  {
+    "jurisdiction_slug": "del-norte",
+    "county": "Del Norte",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.co.del-norte.ca.us/departments/EnvironmentalHealth"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Heidi Kunstal", "source_url": "https://www.co.del-norte.ca.us/departments/EnvironmentalHealth", "confidence": "medium", "reason": "Community Development Department Director — oversees EH but not EH-specific title" },
+      "poc_title": { "value": "Community Development Department Director", "source_url": "https://www.co.del-norte.ca.us/departments/EnvironmentalHealth", "confidence": "medium", "reason": "Official county page, not EH-specific role" }
+    },
+    "fire": {},
+    "notes": ["Also found: Houawa Moua (Senior EH Specialist), Branden Hendrix (EH Specialist)"]
+  },
+  {
+    "jurisdiction_slug": "fresno",
+    "county": "Fresno",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.fresnocountyca.gov/Departments/Public-Health"],
+    "urls_failed": [{"url": "https://www.fcdph.org/about", "reason": "302 redirect to fresnocountyca.gov"}],
+    "food": {
+      "poc_name": { "value": "Joe Prado", "source_url": "https://www.fresnocountyca.gov/files/assets/county/v/4/public-health/about-us/dph-org-chart-02-12-2026.pdf", "confidence": "medium", "reason": "Director of Public Health per org chart — not EH-specific" },
+      "poc_title": { "value": "Director of Public Health", "source_url": "https://www.fresnocountyca.gov/files/assets/county/v/4/public-health/about-us/dph-org-chart-02-12-2026.pdf", "confidence": "medium", "reason": "Org chart PDF, DPH-level not EH division" }
+    },
+    "fire": {},
+    "notes": ["EH division director name not found separately from DPH director"]
+  },
+  {
+    "jurisdiction_slug": "san-diego",
+    "county": "San Diego",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.sandiegocounty.gov/content/sdc/deh/about/leadership.html"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Elizabeth A. Pozzebon", "source_url": "https://www.sandiegocounty.gov/content/sdc/deh/about/leadership.html", "confidence": "high", "reason": "Official leadership page" },
+      "poc_title": { "value": "Director of Environmental Health and Quality", "source_url": "https://www.sandiegocounty.gov/content/sdc/deh/about/leadership.html", "confidence": "high", "reason": "Official leadership page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "san-francisco",
+    "county": "San Francisco",
+    "city": "San Francisco",
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.sf.gov/reports--january-2025--environmental-health-branch-staff-directory"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Jennifer Callewaert", "source_url": "https://www.sf.gov/reports--january-2025--environmental-health-branch-staff-directory", "confidence": "medium", "reason": "Staff directory Jan 2025, Acting role may have changed" },
+      "poc_title": { "value": "Acting Director of Environmental Health", "source_url": "https://www.sf.gov/reports--january-2025--environmental-health-branch-staff-directory", "confidence": "medium", "reason": "Acting status from Jan 2025, may be permanent now" },
+      "agency_email": { "value": null, "source_url": null, "confidence": "null", "reason": "Only personal email found (Jennifer.Callewaert@sfdph.org) — rejected per extraction rules (personal, not dept inbox)" },
+      "agency_fax": { "value": null, "source_url": null, "confidence": "null", "reason": "No fax number found on staff directory or contact pages" }
+    },
+    "fire": {},
+    "notes": ["agency_email skipped — only personal email available, not department inbox"]
+  },
+  {
+    "jurisdiction_slug": "riverside",
+    "county": "Riverside",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://rivcoeh.org/contact-us"],
+    "urls_failed": [],
+    "food": {
+      "agency_fax": { "value": "(951) 358-5017", "source_url": "https://rivcoeh.org/contact-us", "confidence": "high", "reason": "Labeled fax on official contact page" },
+      "agency_email": { "value": null, "source_url": null, "confidence": "null", "reason": "Not found on contact page" },
+      "poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "Director name not listed on public contact page" },
+      "poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No POC found" }
+    },
+    "fire": {},
+    "notes": ["Partial extraction — only fax found"]
+  },
+  {
+    "jurisdiction_slug": "santa-clara",
+    "county": "Santa Clara",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://deh.santaclaracounty.gov/about-us/management"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Marilyn C. Underwood", "source_url": "https://deh.santaclaracounty.gov/about-us/management", "confidence": "medium", "reason": "Management page reference + RocketReach corroboration" },
+      "poc_title": { "value": "Director of Environmental Health", "source_url": "https://deh.santaclaracounty.gov/about-us/management", "confidence": "medium", "reason": "Management page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "san-mateo",
+    "county": "San Mateo",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.smchealth.org/contact-info/contact-environmental-health"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Heather Forshey", "source_url": "https://www.smchealth.org/contact-info/contact-environmental-health", "confidence": "medium", "reason": "Listed as Director on contact page" },
+      "poc_title": { "value": "Director of Environmental Health", "source_url": "https://www.smchealth.org/contact-info/contact-environmental-health", "confidence": "medium", "reason": "Contact page" },
+      "agency_email": { "value": "envhealth@smcgov.org", "source_url": "https://www.smchealth.org/contact-info/contact-environmental-health", "confidence": "high", "reason": "Official department email, .gov TLD" },
+      "agency_fax": { "value": "(650) 627-8244", "source_url": "https://www.smchealth.org/contact-info/contact-environmental-health", "confidence": "high", "reason": "Labeled fax on contact page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "napa",
+    "county": "Napa",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.napacounty.gov/1904/Environmental-Health-Division"],
+    "urls_failed": [],
+    "food": {
+      "agency_email": { "value": "envhealth@napacounty.gov", "source_url": "https://www.napacounty.gov/1904/Environmental-Health-Division", "confidence": "high", "reason": "Official department email, .gov TLD" },
+      "agency_fax": { "value": "(707) 253-4545", "source_url": "https://www.napacounty.gov/1904/Environmental-Health-Division", "confidence": "high", "reason": "Labeled fax on division page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "sonoma",
+    "county": "Sonoma",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://sonomacounty.gov/health-and-human-services/health-services/divisions/public-health/environmental-health/contact-us"],
+    "urls_failed": [],
+    "food": {
+      "agency_email": { "value": "eh@sonoma-county.org", "source_url": "https://sonomacounty.gov/.../contact-us", "confidence": "high", "reason": "Official contact page" },
+      "poc_name": { "value": null, "source_url": null, "confidence": "null", "reason": "Director name not found on contact page" },
+      "poc_title": { "value": null, "source_url": null, "confidence": "null", "reason": "No POC found" }
+    },
+    "fire": {},
+    "notes": ["Only email extracted"]
+  },
+  {
+    "jurisdiction_slug": "solano",
+    "county": "Solano",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.solanocounty.gov/government/resource-management/environmental-health"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Trey Strickland", "source_url": "https://www.linkedin.com/in/trey-strickland-680a6966/", "confidence": "medium", "reason": "LinkedIn + county directory crossref" },
+      "poc_title": { "value": "Environmental Health Director", "source_url": "https://www.solanocounty.gov/government/resource-management/environmental-health", "confidence": "medium", "reason": "County page + LinkedIn" }
+    },
+    "fire": {},
+    "notes": ["POC from LinkedIn, crossreferenced with county site"]
+  },
+  {
+    "jurisdiction_slug": "stanislaus",
+    "county": "Stanislaus",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.stancounty.com/er/contacts.shtm"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Robert Kostlivy", "source_url": "https://www.stancounty.com/er/contacts.shtm", "confidence": "medium", "reason": "Director of Environmental Resources (parent dept of EH)" },
+      "poc_title": { "value": "Director of Environmental Resources", "source_url": "https://www.stancounty.com/er/contacts.shtm", "confidence": "medium", "reason": "Contact page" },
+      "agency_fax": { "value": "(209) 525-6774", "source_url": "https://www.stancounty.com/er/contacts.shtm", "confidence": "high", "reason": "Labeled fax on contact page" }
+    },
+    "fire": {},
+    "notes": ["Karl Quinn is EH Manager, Robert Kostlivy is dept director"]
+  },
+  {
+    "jurisdiction_slug": "san-joaquin",
+    "county": "San Joaquin",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://sjcehd.com/contact-us/"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Linda Turkatte", "source_url": "https://sjcehd.com/contact-us/", "confidence": "medium", "reason": "CEC filing + job posting reference" },
+      "poc_title": { "value": "Director of Environmental Health", "source_url": "https://sjcehd.com/", "confidence": "medium", "reason": "Job specification HA1200" },
+      "agency_address": { "value": "1868 E. Hazelton Ave., Stockton, CA 95205", "source_url": "https://sjcehd.com/contact-us/", "confidence": "high", "reason": "Official contact page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "santa-cruz",
+    "county": "Santa Cruz",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://scceh.com/NewHome/AboutUs/ContactUs.aspx"],
+    "urls_failed": [],
+    "food": {
+      "agency_address": { "value": "701 Ocean Street, 3rd Floor, Room 312, Santa Cruz, CA 95060", "source_url": "https://scceh.com/NewHome/AboutUs/ContactUs.aspx", "confidence": "high", "reason": "Official contact page" }
+    },
+    "fire": {},
+    "notes": ["Only address extracted. Fax, POC not found."]
+  },
+  {
+    "jurisdiction_slug": "yolo",
+    "county": "Yolo",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.yolocounty.gov/government/general-government-departments/community-services/environmental-health-division"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "April Meneghetti, REHS", "source_url": "https://www.yolocounty.gov/home/showdocument?id=62713", "confidence": "high", "reason": "Official county document" },
+      "poc_title": { "value": "Director of Environmental Health", "source_url": "https://www.yolocounty.gov/home/showdocument?id=62713", "confidence": "high", "reason": "Official county document" },
+      "agency_fax": { "value": "(530) 669-1448", "source_url": "https://www.yolocounty.gov/government/general-government-departments/community-services/environmental-health-division", "confidence": "high", "reason": "Official division page" }
+    },
+    "fire": {},
+    "notes": ["All HIGH confidence from official county sources"]
+  },
+  {
+    "jurisdiction_slug": "nevada-ca",
+    "county": "Nevada",
+    "city": null,
+    "status": "completed",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.nevadacountyca.gov/1470/Environmental-Health"],
+    "urls_failed": [],
+    "food": {
+      "poc_name": { "value": "Amy Irani, REHS", "source_url": "https://www.nevadacountyca.gov/directory.aspx?EID=22", "confidence": "medium", "reason": "Staff directory entry" },
+      "poc_title": { "value": "Director of Environmental Health", "source_url": "https://www.nevadacountyca.gov/directory.aspx?EID=22", "confidence": "medium", "reason": "Staff directory" },
+      "agency_fax": { "value": "(530) 265-9854", "source_url": "https://www.nevadacountyca.gov/1470/Environmental-Health", "confidence": "high", "reason": "Official EH page" },
+      "agency_address": { "value": "950 Maidu Avenue, Suite 170, Nevada City, CA 95959-7902", "source_url": "https://www.nevadacountyca.gov/1470/Environmental-Health", "confidence": "high", "reason": "Official EH page" }
+    },
+    "fire": {},
+    "notes": []
+  },
+  {
+    "jurisdiction_slug": "mono",
+    "county": "Mono",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://monocounty.ca.gov/environmental-health/contact/environmental-health-contact-information"],
+    "urls_failed": [],
+    "food": {
+      "agency_fax": { "value": "(760) 924-1831", "source_url": "https://monocounty.ca.gov/environmental-health/contact/environmental-health-contact-information", "confidence": "high", "reason": "Mammoth Lakes office fax, labeled" },
+      "agency_address": { "value": "1290 Tavern Road, PO Box 3329, Mammoth Lakes, CA 93546", "source_url": "https://monocounty.ca.gov/environmental-health/contact/environmental-health-contact-information", "confidence": "high", "reason": "Mammoth Lakes office address" }
+    },
+    "fire": {},
+    "notes": ["Mammoth Lakes is primary office. Bridgeport satellite office also exists."]
+  },
+  {
+    "jurisdiction_slug": "marin",
+    "county": "Marin",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.marincounty.gov/departments/cda/env-health-svcs"],
+    "urls_failed": [],
+    "food": {
+      "agency_address": { "value": "3501 Civic Center Drive, Suite 236, San Rafael, CA 94903", "source_url": "https://www.marincounty.gov/departments/cda/env-health-svcs", "confidence": "high", "reason": "Official EH services page" }
+    },
+    "fire": {},
+    "notes": ["Only address extracted. Fax, email, POC not found on page."]
+  },
+  {
+    "jurisdiction_slug": "colusa",
+    "county": "Colusa",
+    "city": null,
+    "status": "partial",
+    "crawl_date": "2026-05-22",
+    "urls_crawled": ["https://www.countyofcolusaca.gov/425/Retail-Food-Safety"],
+    "urls_failed": [],
+    "food": {
+      "agency_address": { "value": "547 Market Street, Colusa, CA 95932", "source_url": "https://www.countyofcolusaca.gov/425/Retail-Food-Safety", "confidence": "high", "reason": "Office address on food safety page" }
+    },
+    "fire": {},
+    "notes": ["Phone, fax, email, POC remain unfilled. Directory page may have more data."]
+  }
+]
