@@ -23,6 +23,10 @@ import { EmptyState } from '../components/EmptyState';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { GhostInput } from '../components/ai/GhostInput';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useRecurringPatterns } from '../hooks/incidents/useRecurringPatterns';
+import { useIncidentsPRPStats } from '../hooks/incidents/useIncidentsPRPStats';
+import { IncidentsPRPBand } from '../components/incidents/IncidentsPRPBand';
+import { IncidentsRecurringBar } from '../components/incidents/IncidentsRecurringBar';
 import type { IncidentTemplate, IncidentStatus, IncidentCategory } from '../types/incidents';
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -722,6 +726,19 @@ export function IncidentLog() {
   }, [incidents]);
 
   const avgResolutionHours = Math.round(avgResolutionMs / 3600000);
+
+  // ── PRP signals ──────────────────────────────────────────────
+  const recurringPatterns = useRecurringPatterns(incidents);
+  const prpStats = useIncidentsPRPStats(incidents, recurringPatterns);
+
+  // Set of incident IDs that belong to any recurring pattern
+  const recurringIncidentIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const p of recurringPatterns) {
+      for (const id of p.incidentIds) ids.add(id);
+    }
+    return ids;
+  }, [recurringPatterns]);
 
   // ── Filtered & sorted incidents ────────────────────────────────
   const filteredIncidents = useMemo(() => {
@@ -1974,7 +1991,11 @@ export function IncidentLog() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('incidents.title')}</h1>
-            <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('incidents.subtitle')}</p>
+            <p className="text-[11px] text-[#8A93A6] mt-1">
+              <span className="font-semibold" style={{ color: '#1E2D4D' }}>Predict</span> what's escalating.{' '}
+              <span className="font-semibold" style={{ color: '#1E2D4D' }}>Reduce</span> open exposure.{' '}
+              <span className="font-semibold" style={{ color: '#1E2D4D' }}>Prove</span> every resolution.
+            </p>
           </div>
           <div className="flex gap-2">
             <button
@@ -1994,40 +2015,34 @@ export function IncidentLog() {
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #dc2626' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.openIncidents')}</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-600 text-center">{openIncidents}</div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-[#A08C5A]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.avgResolution')}</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{avgResolutionHours}h</div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.resolvedThisWeek')}</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">{resolvedThisWeek}</div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overdueCount > 0 ? '#dc2626' : '#6b7280'}` }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <XCircle className={`h-4 w-4 ${overdueCount > 0 ? 'text-red-600' : 'text-[#1E2D4D]/30'}`} />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.overdueMore24h')}</span>
-            </div>
-            <div className={`text-xl sm:text-3xl font-bold tracking-tight text-center ${overdueCount > 0 ? 'text-red-600' : 'text-[#1E2D4D]/30'}`}>{overdueCount}</div>
-          </div>
-        </div>
+        {/* PRP Band */}
+        <IncidentsPRPBand
+          stats={prpStats}
+          loading={loading}
+          onFilterPredict={() => {
+            setStatusFilter('all');
+            setSeverityFilter('all');
+            setTypeFilter('all');
+            setCategoryFilter('all');
+            setLocationFilter('all');
+            setAssigneeFilter('all');
+            setDateRange('all');
+            setSortBy('oldest');
+          }}
+          onFilterProve={() => {
+            setStatusFilter('resolved');
+            setSeverityFilter('all');
+            setTypeFilter('all');
+            setCategoryFilter('all');
+            setLocationFilter('all');
+            setAssigneeFilter('all');
+            setDateRange('7d');
+            setSortBy('newest');
+          }}
+        />
 
-        {/* Filters */}
-        <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+        {/* Filters — hidden when zero incidents exist */}
+        {incidents.length > 0 && <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-[#1E2D4D]/30" />
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
@@ -2072,7 +2087,12 @@ export function IncidentLog() {
               <option value="resolution">{t('incidents.byResolutionTime')}</option>
             </select>
           </div>
-        </div>
+        </div>}
+
+        {/* Recurring pattern callouts */}
+        {incidents.length > 0 && (
+          <IncidentsRecurringBar patterns={recurringPatterns} />
+        )}
 
         {/* Loading Spinner */}
         {loading && (
@@ -2082,12 +2102,60 @@ export function IncidentLog() {
         )}
 
         {/* Incident Cards */}
-        {!loading && <div className="space-y-3">
-          {filteredIncidents.map(inc => {
+        {!loading && (() => {
+          // True empty state: zero incidents in the system
+          if (incidents.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(47,122,77,0.1)' }}>
+                  <CheckCircle className="w-7 h-7" style={{ color: '#2f7a4d' }} />
+                </div>
+                <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">No incidents reported</h3>
+                <p className="text-sm font-semibold mb-3" style={{ color: '#2f7a4d' }}>Your kitchen is running clean.</p>
+                <p className="text-[13px] text-[#1E2D4D]/50 max-w-[480px] mb-6 leading-relaxed">
+                  When something does happen, EvidLY identifies risk signals early and keeps the resolution record together.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 max-w-[720px] w-full mb-6">
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #c2731a' }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</div>
+                    <p className="text-[11px] text-[#6B7F96] mt-1">Recurring patterns and aging incidents get flagged before they become citations.</p>
+                  </div>
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #b3261e' }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#b3261e' }}>REDUCE</div>
+                    <p className="text-[11px] text-[#6B7F96] mt-1">Open-incident exposure stays visible until resolved and documented.</p>
+                  </div>
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #2f7a4d' }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</div>
+                    <p className="text-[11px] text-[#6B7F96] mt-1">Every resolution is timestamped, assigned, and ready to send to inspectors or insurers.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="px-5 py-2.5 text-white rounded-xl font-medium transition-all hover:-translate-y-0.5 hover:shadow-md min-h-[44px]"
+                  style={{ backgroundColor: '#1E2D4D' }}
+                >
+                  + Report your first incident
+                </button>
+                <p className="text-[12px] italic text-[#1E2D4D]/40 mt-6 pt-4 max-w-[480px]" style={{ borderTop: '1px solid #E2DDD4' }}>
+                  An incident without a record is a problem you can't prove you fixed.
+                </p>
+              </div>
+            );
+          }
+
+          // Separate aging from non-aging for section headers
+          const agingList = filteredIncidents.filter(inc => prpStats.agingIncidentIds.has(inc.id));
+          const restList = filteredIncidents.filter(inc => !prpStats.agingIncidentIds.has(inc.id));
+          const hasAgingSection = agingList.length > 0;
+
+          const renderIncidentCard = (inc: Incident) => {
             const typeInfo = INCIDENT_TYPES.find(tp => tp.value === inc.type);
             const TypeIcon = typeInfo?.icon || AlertCircle;
             const overdue = isOverdue(inc);
             const resTime = getResolutionTime(inc);
+            const isRecurring = recurringIncidentIds.has(inc.id);
+            const isClosed = inc.status === 'resolved' || inc.status === 'verified';
+            const ageHours = Math.round((now - new Date(inc.createdAt).getTime()) / 3600000);
             return (
               <div
                 key={inc.id}
@@ -2106,8 +2174,18 @@ export function IncidentLog() {
                         <SeverityBadge severity={inc.severity} />
                         <StatusBadge status={inc.status} />
                         {overdue && (
-                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#dc2626', backgroundColor: '#fef2f2' }}>
-                            {t('common.overdue')}
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#c2731a', backgroundColor: 'rgba(194,115,26,0.12)', border: '1px dashed #c2731a' }}>
+                            Predict · Aging {ageHours}h
+                          </span>
+                        )}
+                        {isRecurring && !isClosed && (
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                            Recurring
+                          </span>
+                        )}
+                        {isRecurring && isClosed && (
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                            Same root cause
                           </span>
                         )}
                         {inc.regulatoryReportRequired && (
@@ -2139,15 +2217,37 @@ export function IncidentLog() {
                 </div>
               </div>
             );
-          })}
-          {filteredIncidents.length === 0 && (
-            <EmptyState
-              icon={AlertTriangle}
-              title="No incidents reported"
-              description="Your kitchen is running clean. No incidents match your current filters."
-            />
-          )}
-        </div>}
+          };
+
+          if (filteredIncidents.length === 0) {
+            return (
+              <div className="space-y-3">
+                <EmptyState
+                  icon={AlertTriangle}
+                  title="No incidents match filters"
+                  description="Adjust your filters to see incidents."
+                />
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-3">
+              {hasAgingSection && (
+                <>
+                  <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-1">
+                    Aging beyond 24h · Predict signal
+                  </p>
+                  {agingList.map(renderIncidentCard)}
+                  <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-3">
+                    All incidents
+                  </p>
+                </>
+              )}
+              {restList.map(renderIncidentCard)}
+            </div>
+          );
+        })()}
       </div>
       {CreateModal}
 
