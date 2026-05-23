@@ -1,10 +1,10 @@
 /**
  * usePRPStats — computes Predict / Reduce / Prove card values.
- * Uses static CA_REQUIRED_RECORDS for the "required not on file" count.
+ * Uses static COMMON_REQUIRED_RECORDS for the "required not on file" count.
  */
 import { useMemo } from 'react';
 import type { EnrichedDocument } from './useDocumentsByTab';
-import { CA_REQUIRED_RECORDS } from '../../data/caRequiredRecords';
+import { COMMON_REQUIRED_RECORDS } from '../../data/commonRequiredRecords';
 
 export interface PRPStats {
   predict: {
@@ -23,14 +23,14 @@ export interface PRPStats {
 
 export function usePRPStats(
   documents: EnrichedDocument[],
-  stateCode: string | null,
+  prpEnabled: boolean,
 ): PRPStats {
   return useMemo(() => {
     const expiringIn30Days = documents.filter(d => d.status === 'expiring').length;
 
     let requiredNotOnFile: number | null = null;
 
-    if (stateCode === 'CA') {
+    if (prpEnabled) {
       // Build set of document types currently on file (any non-archived status)
       const uploadedTypes = new Set(
         documents
@@ -38,9 +38,9 @@ export function usePRPStats(
           .map(d => (d.type || '').toLowerCase()),
       );
 
-      // Count CA required records whose id is not represented in uploaded types
+      // Count required records whose id is not represented in uploaded types
       let missing = 0;
-      for (const rec of CA_REQUIRED_RECORDS) {
+      for (const rec of COMMON_REQUIRED_RECORDS) {
         if (!uploadedTypes.has(rec.id.toLowerCase())) {
           missing++;
         }
@@ -56,5 +56,5 @@ export function usePRPStats(
       reduce: { state: 'pending' as const, dollarRange: null },
       prove: { currentCount },
     };
-  }, [documents, stateCode]);
+  }, [documents, prpEnabled]);
 }

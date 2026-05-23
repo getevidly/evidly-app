@@ -1,12 +1,12 @@
 /**
  * useRequiredDocsCounts — computes required-doc counts per tab from
- * CA_REQUIRED_RECORDS static data, then cross-references with uploaded
+ * COMMON_REQUIRED_RECORDS static data, then cross-references with uploaded
  * documents to produce tab-level indicators.
  */
 import { useMemo } from 'react';
 import type { EnrichedDocument } from './useDocumentsByTab';
 import type { DocumentTabId, RequiredCountEntry } from '../../components/documents/DocumentsTabs';
-import { CA_REQUIRED_RECORDS, TAB_TO_CA_SUBTAB } from '../../data/caRequiredRecords';
+import { COMMON_REQUIRED_RECORDS, TAB_TO_SUBTAB } from '../../data/commonRequiredRecords';
 
 const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
   kitchen:  ['kitchen', 'employee'],
@@ -15,13 +15,12 @@ const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
 };
 
 export function useRequiredDocsCounts(
-  stateCode: string | null,
+  prpEnabled: boolean,
   documents: EnrichedDocument[],
 ): Record<DocumentTabId, RequiredCountEntry | null> | undefined {
   return useMemo(() => {
-    if (stateCode !== 'CA') return undefined;
+    if (!prpEnabled) return undefined;
 
-    // Count required records per page tab
     const tabIds: DocumentTabId[] = ['kitchen', 'service', 'business'];
     const result: Record<DocumentTabId, RequiredCountEntry> = {
       kitchen: { required: 0, uploaded: 0 },
@@ -30,8 +29,8 @@ export function useRequiredDocsCounts(
     };
 
     for (const tabId of tabIds) {
-      const subTabKey = TAB_TO_CA_SUBTAB[tabId];
-      const requiredForTab = CA_REQUIRED_RECORDS.filter((r) => r.tab === subTabKey);
+      const subTabKey = TAB_TO_SUBTAB[tabId];
+      const requiredForTab = COMMON_REQUIRED_RECORDS.filter((r) => r.tab === subTabKey);
       result[tabId].required = requiredForTab.length;
 
       // Build set of uploaded doc type keys for this tab
@@ -56,5 +55,5 @@ export function useRequiredDocsCounts(
     }
 
     return result;
-  }, [stateCode, documents]);
+  }, [prpEnabled, documents]);
 }

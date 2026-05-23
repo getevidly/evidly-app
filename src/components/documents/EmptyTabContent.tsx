@@ -2,17 +2,16 @@ import { useState } from 'react';
 import { FileText, Upload, Send } from 'lucide-react';
 import type { DocumentTabId } from './DocumentsTabs';
 import {
-  CA_REQUIRED_RECORDS,
-  TAB_TO_CA_SUBTAB,
-  getCARecordsForTab,
+  TAB_TO_SUBTAB,
+  getRecordsForTab,
   type RequiredRecord,
-} from '../../data/caRequiredRecords';
+} from '../../data/commonRequiredRecords';
 
 interface EmptyTabContentProps {
   activeTab: DocumentTabId;
   onUpload: (typeHint?: string) => void;
   onAddVendorDoc: () => void;
-  stateCode: string | null;
+  prpEnabled?: boolean;
 }
 
 const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta: string; icon: 'upload' | 'send' }> = {
@@ -38,22 +37,22 @@ const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta
 type SubTabKey = RequiredRecord['tab'];
 
 const SUB_TABS: { key: SubTabKey; label: string; count: number }[] = [
-  { key: 'kitchen_employee', label: 'Kitchen & Employee', count: getCARecordsForTab('kitchen_employee').length },
-  { key: 'vendor_service', label: 'Vendor Service Records', count: getCARecordsForTab('vendor_service').length },
-  { key: 'vendor_business', label: 'Vendor Business Info', count: getCARecordsForTab('vendor_business').length },
+  { key: 'kitchen_employee', label: 'Kitchen & Employee', count: getRecordsForTab('kitchen_employee').length },
+  { key: 'vendor_service', label: 'Vendor Service Records', count: getRecordsForTab('vendor_service').length },
+  { key: 'vendor_business', label: 'Vendor Business Info', count: getRecordsForTab('vendor_business').length },
 ];
 
-export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode }: EmptyTabContentProps) {
+export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnabled }: EmptyTabContentProps) {
   const { message, subtitle, cta, icon } = TAB_EMPTY[activeTab];
   const handler = activeTab === 'kitchen' ? () => onUpload() : onAddVendorDoc;
 
   // Default sub-tab matches the main tab the user is currently viewing
-  const defaultSubTab = TAB_TO_CA_SUBTAB[activeTab] || 'kitchen_employee';
+  const defaultSubTab = TAB_TO_SUBTAB[activeTab] || 'kitchen_employee';
   const [activeSubTab, setActiveSubTab] = useState<SubTabKey>(defaultSubTab);
 
-  // CA smart empty state
-  if (stateCode === 'CA') {
-    const records = getCARecordsForTab(activeSubTab);
+  // Smart empty state (behind PRP flag)
+  if (prpEnabled) {
+    const records = getRecordsForTab(activeSubTab);
 
     return (
       <div className="py-8 flex flex-col items-center text-center">
@@ -67,7 +66,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode
             letterSpacing: '0.12em',
           }}
         >
-          REQUIRED RECORDS {'\u00B7'} CALIFORNIA
+          REQUIRED RECORDS
         </div>
 
         {/* Heading */}
@@ -80,7 +79,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode
             color: '#1E2D4D',
           }}
         >
-          California kitchens commonly need these records
+          Commercial kitchens commonly need these records
         </h3>
 
         {/* Subhead */}
@@ -92,7 +91,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode
             maxWidth: '480px',
           }}
         >
-          Here&rsquo;s a starting checklist for any CA commercial kitchen. Upload what
+          Here&rsquo;s a starting checklist for any commercial kitchen. Upload what
           you have. We&rsquo;ll identify renewal dates and what&rsquo;s missing as you go.
         </p>
 
@@ -210,8 +209,8 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode
             lineHeight: 1.5,
           }}
         >
-          Common required records for California commercial kitchens. Specific
-          requirements vary by county and city &mdash; confirm with your local jurisdiction.
+          Common required records for commercial kitchens. Specific
+          requirements vary by jurisdiction &mdash; confirm with your local authorities.
         </p>
 
         {/* Why line */}
@@ -233,7 +232,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, stateCode
     );
   }
 
-  // Default generic empty state (non-CA or no state)
+  // Default generic empty state (PRP flag off)
   return (
     <div className="border-2 border-dashed border-[#E2DDD4] rounded-lg py-16 px-6 flex flex-col items-center text-center">
       <FileText size={32} className="text-[#B0B8C8] mb-3" />

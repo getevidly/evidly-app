@@ -6,7 +6,7 @@ export type RequiredRecord = {
   short_description: string;
 };
 
-export const CA_REQUIRED_RECORDS: RequiredRecord[] = [
+export const COMMON_REQUIRED_RECORDS: RequiredRecord[] = [
   // ── KITCHEN & EMPLOYEE (5) ──────────────────────────────────────────
   {
     id: 'ca_health_permit',
@@ -105,14 +105,14 @@ export const CA_REQUIRED_RECORDS: RequiredRecord[] = [
   },
 ];
 
-/** Map from page tab ID to CA required records sub-tab key */
-export const TAB_TO_CA_SUBTAB: Record<string, RequiredRecord['tab']> = {
+/** Map from page tab ID to required records sub-tab key */
+export const TAB_TO_SUBTAB: Record<string, RequiredRecord['tab']> = {
   kitchen: 'kitchen_employee',
   service: 'vendor_service',
   business: 'vendor_business',
 };
 
-/** Get CA required records filtered by page tab */
-export function getCARecordsForTab(tab: RequiredRecord['tab']): RequiredRecord[] {
-  return CA_REQUIRED_RECORDS.filter((r) => r.tab === tab);
+/** Get required records filtered by page tab */
+export function getRecordsForTab(tab: RequiredRecord['tab']): RequiredRecord[] {
+  return COMMON_REQUIRED_RECORDS.filter((r) => r.tab === tab);
 }

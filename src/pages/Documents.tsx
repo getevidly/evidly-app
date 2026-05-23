@@ -10,7 +10,6 @@ import { useVendorBusinessIntelligence } from '../hooks/documents/useVendorBusin
 import { useVendorServiceIntelligence } from '../hooks/documents/useVendorServiceIntelligence';
 import { useKitchenEmployeeIntelligence } from '../hooks/documents/useKitchenEmployeeIntelligence';
 import { useFeatureFlag } from '../hooks/useFeatureFlag';
-import { useOrgLocationContext } from '../hooks/documents/useOrgLocationContext';
 import { usePRPStats } from '../hooks/documents/usePRPStats';
 import { useRequiredDocsCounts } from '../hooks/documents/useRequiredDocsCounts';
 import { pillarToCategory } from '../lib/documents/pillarToCategory';
@@ -46,17 +45,11 @@ export function DocumentsPage() {
   // Feature flag: PRP layout
   const { enabled: prpEnabled } = useFeatureFlag('documents_prp_layout_v1');
 
-  // Org location context (state-level)
-  const { stateCode } = useOrgLocationContext();
+  // PRP stats — uses static COMMON_REQUIRED_RECORDS
+  const prpStats = usePRPStats(documents, prpEnabled);
 
-  // PRP stats — uses static CA_REQUIRED_RECORDS when state is CA
-  const prpStats = usePRPStats(documents, prpEnabled ? stateCode : null);
-
-  // Required-docs counts per tab (static CA data, for tab indicator tags)
-  const requiredCounts = useRequiredDocsCounts(
-    prpEnabled ? stateCode : null,
-    documents,
-  );
+  // Required-docs counts per tab (static data, for tab indicator tags)
+  const requiredCounts = useRequiredDocsCounts(prpEnabled, documents);
 
   // Intelligence hooks
   const businessIntel = useVendorBusinessIntelligence(orgId);
@@ -232,7 +225,7 @@ export function DocumentsPage() {
             activeTab={activeTab}
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            stateCode={prpEnabled ? stateCode : null}
+            prpEnabled={prpEnabled}
           />
         );
       }
@@ -255,7 +248,7 @@ export function DocumentsPage() {
             activeTab={activeTab}
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            stateCode={prpEnabled ? stateCode : null}
+            prpEnabled={prpEnabled}
           />
         );
       }
@@ -280,7 +273,7 @@ export function DocumentsPage() {
             activeTab={activeTab}
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
-            stateCode={prpEnabled ? stateCode : null}
+            prpEnabled={prpEnabled}
           />
         );
       }
