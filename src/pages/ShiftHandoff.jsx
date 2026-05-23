@@ -19,7 +19,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ShiftSummaryCard } from '../components/superpowers/ShiftSummaryCard';
-import { ShiftPRPBlock } from '../components/shifts/ShiftPRPBlock';
+import { ShiftPRPBand } from '../components/shifts/ShiftPRPBand';
 import { computeShiftSummary } from '../lib/shiftIntelligence';
 import { getCurrentShift, getShiftLabel, DEFAULT_SHIFTS } from '../lib/shifts';
 import { useLocations } from '../hooks/api/useLocations';
@@ -238,6 +238,7 @@ export function ShiftHandoff() {
         <h1 className="text-lg font-bold mb-1" style={{ color: NAVY }}>
           End of {shiftLabel} Shift
         </h1>
+        <p className="text-[11px] text-[#8A93A6] mb-1">Predict &middot; Reduce &middot; Prove</p>
         <p className="text-sm text-[#1E2D4D]/50">
           {getShiftDateLabel()} &middot; {formatHour(displayStartHour)} – {formatHour(displayEndHour)}
           {locationName && <span> &middot; {locationName}</span>}
@@ -306,8 +307,8 @@ export function ShiftHandoff() {
         )}
       </div>
 
-      {/* Shift PRP Block */}
-      <ShiftPRPBlock metrics={prpMetrics} loading={isDemoMode ? false : prpLoading} />
+      {/* PRP band — handoff variant */}
+      <ShiftPRPBand metrics={prpMetrics} loading={isDemoMode ? false : prpLoading} />
 
       {/* Shift Intelligence Summary */}
       <ShiftSummaryCard summary={shiftSummary} />

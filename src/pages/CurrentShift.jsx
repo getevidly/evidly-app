@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Thermometer, CheckSquare, AlertTriangle, Wrench, Clock, ArrowRight } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { ShiftPRPBlock } from '../components/shifts/ShiftPRPBlock';
+import { ShiftPRPBand } from '../components/shifts/ShiftPRPBand';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -97,6 +97,7 @@ export function CurrentShift() {
           <Clock size={18} style={{ color: GOLD }} />
         </div>
         <h1 className="text-lg font-bold mb-1" style={{ color: NAVY }}>Current Shift</h1>
+        <p className="text-[11px] text-[#8A93A6] mb-1">Predict &middot; Reduce &middot; Prove</p>
         <p className="text-sm text-[#1E2D4D]/50">
           {getShiftDateLabel()} &middot; {formatHour(displayStartHour)} – {formatHour(displayEndHour)}
           {locationName && <span> &middot; {locationName}</span>}
@@ -145,8 +146,8 @@ export function CurrentShift() {
         )}
       </div>
 
-      {/* PRP — live variant */}
-      <ShiftPRPBlock metrics={prpMetrics} loading={isDemoMode ? false : loading} variant="live" />
+      {/* PRP band — live variant */}
+      <ShiftPRPBand metrics={prpMetrics} loading={isDemoMode ? false : loading} variant="live" />
 
       {/* Remaining tasks */}
       {openTasks.length > 0 && (
