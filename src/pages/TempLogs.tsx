@@ -41,6 +41,10 @@ import { colors, shadows, radius, typography, transitions } from '../lib/designS
 import { isStorageEquipment, isFreezerType } from '../lib/equipmentHelpers';
 import { HoldingActiveStatus } from '../components/temp-logs/HoldingActiveStatus';
 import { CurrentReadingsUnified } from '../components/temp-logs/CurrentReadingsUnified';
+import { ReceivingTabSignalStrip } from '../components/temp-logs/ReceivingTabSignalStrip';
+import { ReceivingSaveBar } from '../components/temp-logs/ReceivingSaveBar';
+import { useReceivingTabSignals } from '../hooks/temperatures/useReceivingTabSignals';
+import { useDraftReceivingNotes } from '../hooks/temperatures/useDraftReceivingNotes';
 
 interface TemperatureEquipment {
   id: string;
@@ -150,6 +154,10 @@ export function TempLogs() {
   const prpStats = useTemperaturesPRPStats(prpSummary, prpDrifting.length);
   const prpLoading = prpSummaryLoading || prpDriftLoading;
 
+  // Receiving tab hooks
+  const receivingSignals = useReceivingTabSignals();
+  const { generate: generateNotes, loading: notesAiLoading, draft: notesDraft, reset: resetNotesDraft } = useDraftReceivingNotes();
+
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -239,6 +247,14 @@ export function TempLogs() {
       setPageError(err instanceof Error ? err.message : 'Failed to load temperature data');
     }
   }, [profile, isDemoMode]);
+
+  // Sync AI-drafted receiving notes into the form field
+  useEffect(() => {
+    if (notesDraft) {
+      setReceivingNotes(notesDraft);
+      setAiFields(prev => new Set(prev).add('receivingNotes'));
+    }
+  }, [notesDraft]);
 
   // Live countdown timer — 1-second interval for active cooldowns
   const [, setTimerTick] = useState(0);
@@ -1521,7 +1537,11 @@ export function TempLogs() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('tempLogs.logReceivingTemp')}</h2>
-                  <p className="text-sm text-[#1E2D4D]/70">Record temperatures for incoming deliveries</p>
+                  <p className="text-sm text-[#1E2D4D]/70">
+                    {vendorName && foodCategory
+                      ? `${vendorName} · ${CATEGORY_TEMP_CONFIG[foodCategory]?.label || foodCategory}`
+                      : 'Record temperatures for incoming deliveries'}
+                  </p>
                 </div>
               </div>
               <button
@@ -1532,6 +1552,9 @@ export function TempLogs() {
                 <span>Add Reading</span>
               </button>
             </div>
+
+            {/* PRP Signal Strip */}
+            <ReceivingTabSignalStrip signals={receivingSignals} />
 
             <div className="space-y-6">
               {/* Food Category */}
@@ -1594,7 +1617,12 @@ export function TempLogs() {
                   if (cfg && !cfg.tempRequired) return null; // Hide temp input for non-temp categories
                   const maxTemp = cfg?.maxTemp ?? 41;
                   const tempVal = receivingTemp ? parseFloat(receivingTemp) : null;
-                  const isPass = tempVal !== null && !isNaN(tempVal) ? tempVal <= maxTemp : null;
+                  const tempStatus: 'ok' | 'warn' | 'crit' | null =
+                    tempVal !== null && !isNaN(tempVal)
+                      ? tempVal > maxTemp ? 'crit'
+                      : tempVal >= maxTemp - 2 ? 'warn'
+                      : 'ok'
+                      : null;
                   return (
                     <div>
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('tempLogs.temperatureF')}</label>
@@ -1606,24 +1634,39 @@ export function TempLogs() {
                         onChange={(e) => setReceivingTemp(e.target.value)}
                         required
                         className={`w-full px-4 py-6 text-4xl font-bold text-center border-4 rounded-lg focus:outline-none focus:ring-4 transition-all ${
-                          isPass === true
-                            ? 'border-green-500 focus:ring-green-200 bg-green-50'
-                            : isPass === false
-                            ? 'border-red-500 focus:ring-red-200 bg-red-50'
+                          tempStatus === 'ok'
+                            ? 'border-[#2f7a4d] focus:ring-green-200 bg-green-50'
+                            : tempStatus === 'warn'
+                            ? 'border-[#c2731a] focus:ring-amber-200 bg-amber-50'
+                            : tempStatus === 'crit'
+                            ? 'border-[#b3261e] focus:ring-red-200 bg-red-50'
                             : 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
                         }`}
                         placeholder="Enter temp"
                       />
-                      {isPass === true && (
-                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-green-50 rounded-xl border border-green-200">
-                          <Check className="h-5 w-5" style={{ color: '#2E7D32' }} />
-                          <span className="font-bold text-lg" style={{ color: '#2E7D32' }}>PASS — Within acceptable range</span>
+                      {tempStatus === 'ok' && (
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 rounded-xl" style={{ backgroundColor: 'rgba(47,122,77,0.08)', border: '1px solid rgba(47,122,77,0.25)' }}>
+                          <Check className="h-5 w-5" style={{ color: '#2f7a4d' }} />
+                          <span className="font-bold text-lg" style={{ color: '#2f7a4d' }}>PASS — Within acceptable range (≤{maxTemp}°F)</span>
                         </div>
                       )}
-                      {isPass === false && (
-                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-red-50 rounded-xl border border-red-200">
-                          <AlertTriangle className="h-5 w-5" style={{ color: '#C62828' }} />
-                          <span className="font-bold text-lg" style={{ color: '#C62828' }}>FAIL — Exceeds {maxTemp}°F limit</span>
+                      {tempStatus === 'warn' && (
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 rounded-xl" style={{ backgroundColor: 'rgba(194,115,26,0.08)', border: '1px solid rgba(194,115,26,0.25)' }}>
+                          <AlertTriangle className="h-5 w-5" style={{ color: '#c2731a' }} />
+                          <span className="font-bold text-lg" style={{ color: '#c2731a' }}>WARN — {tempVal}°F is near the {maxTemp}°F limit</span>
+                        </div>
+                      )}
+                      {tempStatus === 'crit' && (
+                        <div className="mt-3 space-y-2">
+                          <div className="flex items-center justify-center gap-2 p-3 rounded-xl" style={{ backgroundColor: 'rgba(179,38,30,0.08)', border: '1px solid rgba(179,38,30,0.25)' }}>
+                            <AlertTriangle className="h-5 w-5" style={{ color: '#b3261e' }} />
+                            <span className="font-bold text-lg" style={{ color: '#b3261e' }}>FAIL — Exceeds {maxTemp}°F limit</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg text-xs" style={{ backgroundColor: 'rgba(179,38,30,0.05)', color: '#b3261e' }}>
+                            {foodCategory === 'frozen'
+                              ? 'Frozen items above 0°F may indicate thaw during transit. Consider refusing or expediting to freezer.'
+                              : `Refrigerated item at ${tempVal}°F exceeds the ${maxTemp}°F CCP limit. Corrective action will be required.`}
+                          </div>
                         </div>
                       )}
                       {!receivingTemp && foodCategory && cfg?.tempRequired && (
@@ -1784,12 +1827,34 @@ export function TempLogs() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-[#1E2D4D]/80">{t('tempLogs.notesOptional')}</label>
-                  <AIAssistButton
-                    fieldLabel="Notes"
-                    context={{ temperature: String(receivingItems.length > 0 ? receivingItems[receivingItems.length - 1]?.temperature || '' : ''), equipmentName: vendorName }}
-                    currentValue={receivingNotes}
-                    onGenerated={(text) => { setReceivingNotes(text); setAiFields(prev => new Set(prev).add('receivingNotes')); }}
-                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cfg = getCategoryConfig(foodCategory);
+                      generateNotes({
+                        vendor_name: vendorName,
+                        food_category: foodCategory || 'mixed',
+                        received_at: new Date().toISOString(),
+                        items: receivingItems.map(item => ({
+                          description: item.itemDescription,
+                          temperature: item.temperature,
+                          target_max: item.maxTemp ?? cfg?.maxTemp ?? 41,
+                          in_range: item.isPass,
+                        })),
+                        received_by: receivedBy || 'staff',
+                        target_temp_label: cfg?.tempRequired ? `≤${cfg.maxTemp}°F` : '',
+                      });
+                    }}
+                    disabled={receivingItems.length === 0 || notesAiLoading}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
+                    style={{
+                      backgroundColor: 'rgba(160,140,90,0.1)',
+                      color: '#A08C5A',
+                      border: '1px solid rgba(160,140,90,0.25)',
+                    }}
+                  >
+                    {notesAiLoading ? 'Drafting...' : notesDraft ? 'Regenerate' : 'AI Assist'}
+                  </button>
                 </div>
                 <textarea
                   value={receivingNotes}
@@ -1798,31 +1863,21 @@ export function TempLogs() {
                   className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="Additional notes..."
                 />
-                {aiFields.has('receivingNotes') && <AIGeneratedIndicator />}
+                {aiFields.has('receivingNotes') && (
+                  <p className="mt-1 text-[10px]" style={{ color: '#A08C5A' }}>
+                    Drafted from your form data · review before saving
+                  </p>
+                )}
               </div>
 
-              {/* Summary Card */}
-              {receivingItems.length > 0 && vendorName && (
-                <div className="p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
-                  <h3 className="font-bold text-lg mb-2" style={{ color: '#1E2D4D' }}>{t('tempLogs.summary')}</h3>
-                  <p style={{ color: '#2A3F6B' }}>
-                    {receivingItems.length} items from {vendorName} - {' '}
-                    {receivingItems.every(i => i.isPass)
-                      ? <span className="font-bold text-green-700">{t('tempLogs.allPass')}</span>
-                      : <span className="font-bold text-red-700">{receivingItems.filter(i => !i.isPass).length} item(s) failed</span>
-                    }
-                  </p>
-                </div>
-              )}
-
-              {/* Finalize Button */}
-              <button
-                onClick={handleFinalizeReceiving}
-                disabled={loading || receivingItems.length === 0}
-                className="w-full px-6 py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 shadow-sm"
-              >
-                {loading ? t('common.saving') : t('tempLogs.saveReceivingLog')}
-              </button>
+              {/* Save Bar */}
+              <ReceivingSaveBar
+                items={receivingItems}
+                vendorName={vendorName}
+                receivedBy={receivedBy}
+                loading={loading}
+                onSave={handleFinalizeReceiving}
+              />
             </div>
           </div>
         )}
