@@ -120,6 +120,7 @@ const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m 
 const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
 const Deficiencies = lazy(() => import('./pages/Deficiencies').then(m => ({ default: m.Deficiencies })));
 const DeficiencyDetail = lazy(() => import('./pages/DeficiencyDetail').then(m => ({ default: m.DeficiencyDetail })));
+const DeficiencyUpload = lazy(() => import('./pages/DeficiencyUpload').then(m => ({ default: m.DeficiencyUpload })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
@@ -823,6 +824,7 @@ function AppRoutes() {
 
 
           <Route path="/deficiencies" element={<Deficiencies />} />
+          <Route path="/deficiencies/upload" element={<DeficiencyUpload />} />
           <Route path="/deficiencies/:deficiencyId" element={<DeficiencyDetail />} />
           {/* Blueprint route aliases — FIX-03 */}
           <Route path="/incident-playbook" element={<Navigate to="/playbooks" replace />} />
