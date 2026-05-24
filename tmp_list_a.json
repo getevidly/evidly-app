@@ -1,0 +1,274 @@
+[
+    {
+        "slug": "alameda-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "(510) 337-9432",
+        "agency_address": "1131 Harbor Bay Parkway, Alameda, CA 94502",
+        "agency_website": "https://www.acgov.org/aceh"
+    },
+    {
+        "slug": "alpine-ca",
+        "poc_name": "Dennis Lampson",
+        "agency_email": "dlampson@alpinecountyca.gov",
+        "agency_fax": "530.694.2252",
+        "agency_address": "75 A Diamond Valley Rd, Markleeville, CA 96120",
+        "agency_website": "https://alpinecountyca.gov/200/Environmental-Health"
+    },
+    {
+        "slug": "amador-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "810 Court Street, Jackson, CA 95642",
+        "agency_website": "https://www.amadorcounty.gov/departments/environmental-health"
+    },
+    {
+        "slug": "butte-ca",
+        "poc_name": "Elaine McSpadden",
+        "agency_email": "jveilleaux@buttecounty.net",
+        "agency_fax": "530-538-5339",
+        "agency_address": "202 Mira Loma Drive, Oroville, CA 95965",
+        "agency_website": "https://buttecounty.net/publichealth"
+    },
+    {
+        "slug": "calaveras-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "(209) 754-6722",
+        "agency_address": "891 Mountain Ranch Road, Building E, San Andreas, CA 95249",
+        "agency_website": null
+    },
+    {
+        "slug": "el-dorado-ca",
+        "poc_name": null,
+        "agency_email": "emd.info@edcgov.us",
+        "agency_fax": "530-642-1531",
+        "agency_address": "2850 Fairlane Court, Building C, Placerville, CA 95667",
+        "agency_website": "https://www.eldoradocounty.ca.gov/County-Government/County-Departments/Environmental-Management"
+    },
+    {
+        "slug": "glenn-ca",
+        "poc_name": "John H Wells",
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "225 N. Tehama Street, Willows, CA 95988",
+        "agency_website": "https://countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety"
+    },
+    {
+        "slug": "imperial-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "(442) 265-1903",
+        "agency_address": "797 Main Street, Suite B, El Centro, CA 92243",
+        "agency_website": "https://www.icphd.org/environmental-health"
+    },
+    {
+        "slug": "inyo-ca",
+        "poc_name": "Jerry Oser",
+        "agency_email": "inyoehd@inyocounty.us",
+        "agency_fax": null,
+        "agency_address": "1360 N. Main St., Bishop, CA 93514",
+        "agency_website": "https://www.inyocounty.us/services/environmental-health"
+    },
+    {
+        "slug": "kern-ca",
+        "poc_name": null,
+        "agency_email": "eh@kerncounty.com",
+        "agency_fax": "661-862-8701",
+        "agency_address": "2700 M Street, Suite 300, Bakersfield, CA 93301",
+        "agency_website": "https://www.kernpublichealth.com"
+    },
+    {
+        "slug": "kings-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "1400 W. Lacey Blvd, Hanford, CA 93230",
+        "agency_website": "https://www.countyofkingsca.gov/departments/environment-health-service"
+    },
+    {
+        "slug": "la-county-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": null,
+        "agency_website": "http://publichealth.lacounty.gov"
+    },
+    {
+        "slug": "lake-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "255 N Forbes Street, Lakeport, CA 95453",
+        "agency_website": "https://www.lakecountyca.gov/211/Environmental-Health"
+    },
+    {
+        "slug": "lassen-ca",
+        "poc_name": "Sara Chandler",
+        "agency_email": "ehe@co.lassen.ca.us",
+        "agency_fax": "(530) 251-8373",
+        "agency_address": "707 Nevada St Ste 5, Susanville, CA 96130",
+        "agency_website": "https://www.lassencounty.org/dept/environmental-health/environmental-health"
+    },
+    {
+        "slug": "long-beach-ca",
+        "poc_name": null,
+        "agency_email": "foodinspectors@longbeach.gov",
+        "agency_fax": null,
+        "agency_address": "2525 Grand Avenue, Room 220, Long Beach, CA, 90815",
+        "agency_website": "https://www.longbeach.gov/health/eh/food"
+    },
+    {
+        "slug": "madera-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "200 W. 4th Street, Madera, CA 93637",
+        "agency_website": "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division"
+    },
+    {
+        "slug": "mariposa-ca",
+        "poc_name": null,
+        "agency_email": "eh@mariposacounty.gov",
+        "agency_fax": "(209) 966-8248",
+        "agency_address": "5100 Bullion Street, Mariposa, CA 95338",
+        "agency_website": "http://www.mariposacounty.gov/235/Environmental-Health"
+    },
+    {
+        "slug": "mendocino-ca",
+        "poc_name": null,
+        "agency_email": "enviroh@mendocinocounty.gov",
+        "agency_fax": null,
+        "agency_address": null,
+        "agency_website": "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues"
+    },
+    {
+        "slug": "merced-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "209-384-1593",
+        "agency_address": "2222 \"M\" Street, Merced, CA 95340",
+        "agency_website": "https://www.countyofmerced.com/eh"
+    },
+    {
+        "slug": "modoc-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "202 West 4th Street, Alturas, CA 96101",
+        "agency_website": "https://environmentalhealth.co.modoc.ca.us/nav/food_sanitation_program.php"
+    },
+    {
+        "slug": "monterey-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": null,
+        "agency_website": null
+    },
+    {
+        "slug": "orange-ca",
+        "poc_name": null,
+        "agency_email": "ehealth@ochca.com",
+        "agency_fax": null,
+        "agency_address": "1241 E. Dyer Road, Suite 120, Santa Ana, CA 92705",
+        "agency_website": "https://www.ocfoodinfo.com/"
+    },
+    {
+        "slug": "plumas-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "(530) 283-6241",
+        "agency_address": "270 County Hospital Road, Suite 127, Quincy, CA 95971",
+        "agency_website": "https://www.plumascounty.us/275/Food-Safety"
+    },
+    {
+        "slug": "san-benito-ca",
+        "poc_name": "Darryl Wong, REHS",
+        "agency_email": "Environmentalhealth@sanbenitocountyca.gov",
+        "agency_fax": "(831) 636-4037",
+        "agency_address": "351 Tres Pinos Rd C-1, Hollister, CA 95023",
+        "agency_website": "https://hhsa.sanbenitocountyca.gov/environmental-health-2-2/"
+    },
+    {
+        "slug": "san-bernardino-ca",
+        "poc_name": null,
+        "agency_email": "EHS.CustomerService@dph.sbcounty.gov",
+        "agency_fax": "909-387-4323",
+        "agency_address": "385 N. Arrowhead Ave., 2nd Floor, San Bernardino, CA 92415",
+        "agency_website": "https://ehs.sbcounty.gov/programs/food-facilities/"
+    },
+    {
+        "slug": "shasta-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": "(530) 225-5413",
+        "agency_address": "1855 Placer Street, Redding, CA 96001",
+        "agency_website": "https://www.shastacounty.gov/environmental-health"
+    },
+    {
+        "slug": "sierra-ca",
+        "poc_name": "Elizabeth Morgan, MPH, REHS",
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "202 Front Street, P.O. Box 7, Loyalton, CA 96118",
+        "agency_website": "https://www.sierracounty.ca.gov/232/Food-Safety"
+    },
+    {
+        "slug": "siskiyou-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "806 South Main Street, Yreka, CA 96097",
+        "agency_website": "https://www.siskiyoucounty.gov/environmentalhealth/page/food"
+    },
+    {
+        "slug": "sutter-ca",
+        "poc_name": "Jeff Williams",
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": null,
+        "agency_website": "https://www.sutter.gov/government/county-departments/development-services/environmental-health/food"
+    },
+    {
+        "slug": "tehama-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "633 Washington Street, Room 36, Red Bluff, CA 96080",
+        "agency_website": "https://www.tehama.gov/government/departments/environmental-health/"
+    },
+    {
+        "slug": "trinity-ca",
+        "poc_name": null,
+        "agency_email": "environmentalhealth@trinitycounty.org",
+        "agency_fax": "(530) 623-1353",
+        "agency_address": "61 Airport Road / P.O. Box 476, Weaverville, CA 96093",
+        "agency_website": "https://www.trinitycounty.org/486/Food-Facilities"
+    },
+    {
+        "slug": "tulare-ca",
+        "poc_name": null,
+        "agency_email": "tularecountyeh@tularecounty.ca.gov",
+        "agency_fax": "(559) 749-9794",
+        "agency_address": null,
+        "agency_website": "https://tularecountyeh.org/"
+    },
+    {
+        "slug": "tuolumne-ca",
+        "poc_name": "Debbie Larson",
+        "agency_email": null,
+        "agency_fax": "(209) 533-5909",
+        "agency_address": "A. N. Francisco Building, 4th Floor (with some pages listing Floors 3 and 4 \u00e2\u20ac\u201d both EH-occupied), 48 W. Yaney Street, Sonora, CA 95370",
+        "agency_website": "https://www.tuolumnecounty.ca.gov/247/Safe-Food"
+    },
+    {
+        "slug": "yuba-ca",
+        "poc_name": null,
+        "agency_email": null,
+        "agency_fax": null,
+        "agency_address": "Yuba County Government Center, 915 8th Street, Marysville, CA 95901 (verify exact suite)",
+        "agency_website": "https://www.yuba.gov/departments/community_development/environmental_health/retail_food/index.php"
+    }
+]

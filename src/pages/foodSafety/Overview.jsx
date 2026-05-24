@@ -96,6 +96,7 @@ export default function FoodSafetyOverview() {
         // first county's agency on Identity Card. Acceptable for v1; revisit
         // when multi-jurisdiction orgs become a common pattern.
         const locationId = locationFilter[0] || orgLocations[0]?.id;
+        console.log('[C19.4-debug] locationId:', locationId, 'locationFilter:', locationFilter, 'orgLocations[0]:', orgLocations[0]);
         if (locationId) {
           const { data: ljRow } = await supabase
             .from('location_jurisdictions')

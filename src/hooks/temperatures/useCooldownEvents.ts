@@ -219,9 +219,18 @@ export function useCooldownEvents() {
 
       setEvents(enriched);
     } catch (err) {
-      const e = err instanceof Error ? err : new Error(String(err));
-      setError(e);
-      console.warn('[useCooldownEvents]', e.message);
+      let message: string;
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (err && typeof err === 'object' && 'message' in err) {
+        // PostgrestError or similar: { message, code, details, hint }
+        const pgErr = err as { message?: string; code?: string; details?: string };
+        message = pgErr.message || pgErr.details || pgErr.code || 'Unknown error';
+      } else {
+        message = String(err);
+      }
+      setError(new Error(message));
+      console.warn('[useCooldownEvents]', message);
     } finally {
       setIsLoading(false);
     }
