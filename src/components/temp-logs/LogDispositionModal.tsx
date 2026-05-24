@@ -1,61 +1,44 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { colors } from '../../lib/designSystem';
 import { useLogCooldownDisposition } from '../../hooks/temperatures/useCooldownMutations';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
-import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
 import Button from '../ui/Button';
+import { Combobox } from '../ui/Combobox';
+import { Avatar } from '../ui/Avatar';
+import { getMemberName, type OrgMember } from '../../hooks/useOrgMembers';
 import type { CooldownEventWithState } from '../../hooks/temperatures/useCooldownEvents';
 
 // ── Types ───────────────────────────────────────────────────
 
 type DispositionChoice = 'discarded' | 'reheated_recooled' | 'other';
 
-interface UserOption {
-  id: string;
-  full_name: string;
-}
-
 // ── Component ───────────────────────────────────────────────
 
 interface LogDispositionModalProps {
   event: CooldownEventWithState;
+  members: OrgMember[];
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export function LogDispositionModal({ event, onClose, onSuccess }: LogDispositionModalProps) {
+export function LogDispositionModal({ event, members, onClose, onSuccess }: LogDispositionModalProps) {
   const { profile } = useAuth();
   const { getAccessibleLocations } = useRole();
   const orgId = profile?.organization_id ?? '';
 
   const [disposition, setDisposition] = useState<DispositionChoice | null>(null);
   const [notes, setNotes] = useState('');
-  const [witnessedBy, setWitnessedBy] = useState<string | null>(null);
-  const [employees, setEmployees] = useState<UserOption[]>([]);
+  const [witnessId, setWitnessId] = useState<string | null>(null);
+  const [witnessName, setWitnessName] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { mutate: logDisposition, isLoading } = useLogCooldownDisposition();
 
-  const canSubmit = disposition !== null && notes.trim().length > 0 && !isLoading;
-
-  // Load employees for witness dropdown
-  useEffect(() => {
-    if (!orgId) return;
-    supabase
-      .from('user_profiles')
-      .select('id, full_name')
-      .eq('organization_id', orgId)
-      .order('full_name')
-      .then(({ data }) => {
-        if (data) {
-          setEmployees(
-            (data as UserOption[]).filter(u => u.id !== profile?.id)
-          );
-        }
-      });
-  }, [orgId, profile?.id]);
+  const operatorName = getMemberName(members, profile?.id);
+  const witnessSameAsOperator = witnessId !== null && witnessId === profile?.id;
+  const canSubmit = disposition !== null && notes.trim().length > 0 && !isLoading && !witnessSameAsOperator;
 
   const locationId = getAccessibleLocations()[0]?.locationId ?? '';
 
@@ -63,11 +46,16 @@ export function LogDispositionModal({ event, onClose, onSuccess }: LogDispositio
     if (!canSubmit || !disposition) return;
     setSubmitError(null);
     try {
+      // Prepend dual-signature line to notes for the corrective action description
+      const witnessLabel = witnessId ? getMemberName(members, witnessId) : 'None';
+      const sigLine = `Operator: ${operatorName}. Witness: ${witnessLabel}.`;
+      const fullNotes = `${sigLine} ${notes.trim()}`;
+
       await logDisposition({
         cooldownEventId: event.id,
         disposition,
-        dispositionNotes: notes.trim(),
-        witnessedBy,
+        dispositionNotes: fullNotes,
+        witnessedBy: witnessId,
         organizationId: orgId,
         locationId,
         foodItemName: event.food_item_name,
@@ -172,21 +160,90 @@ export function LogDispositionModal({ event, onClose, onSuccess }: LogDispositio
           />
         </div>
 
-        {/* Witnessed by */}
-        <div>
-          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
-            Witnessed by <span className="font-normal" style={{ color: colors.textMuted }}>(optional)</span>
-          </label>
-          <select
-            value={witnessedBy ?? ''}
-            onChange={(e) => setWitnessedBy(e.target.value || null)}
-            className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
+        {/* Dual Signature Block */}
+        <div
+          className="rounded-xl px-4 py-4"
+          style={{ backgroundColor: colors.cream, border: `1px solid ${colors.border}` }}
+        >
+          <p
+            className="text-[9px] uppercase font-semibold tracking-wide mb-3"
+            style={{ color: colors.textMuted }}
           >
-            <option value="">Select employee</option>
-            {employees.map(emp => (
-              <option key={emp.id} value={emp.id}>{emp.full_name}</option>
-            ))}
-          </select>
+            Signatures Required
+          </p>
+
+          {/* Operator — auto-attached */}
+          <div className="flex items-center gap-3 mb-3">
+            <Avatar name={operatorName} userId={profile?.id} size={28} />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold" style={{ color: colors.textPrimary }}>
+                {operatorName}
+              </p>
+              <p className="text-[10px]" style={{ color: colors.textMuted }}>
+                OPERATOR · auto-attached
+              </p>
+            </div>
+          </div>
+
+          {/* Witness — combobox or display */}
+          <div className="border-t pt-3" style={{ borderColor: colors.borderLight }}>
+            {witnessId && !witnessSameAsOperator ? (
+              <div className="flex items-center gap-3">
+                <Avatar name={getMemberName(members, witnessId)} userId={witnessId} size={28} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold" style={{ color: colors.textPrimary }}>
+                    {getMemberName(members, witnessId)}
+                  </p>
+                  <p className="text-[10px]" style={{ color: colors.textMuted }}>WITNESS</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setWitnessId(null); setWitnessName(''); }}
+                  className="text-[10px] font-semibold"
+                  style={{ color: colors.gold }}
+                >
+                  change
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className="text-[10px] uppercase font-semibold mb-2" style={{ color: colors.textMuted }}>
+                  Witness
+                </p>
+                <Combobox<OrgMember>
+                  value={witnessName}
+                  onChange={(text) => {
+                    setWitnessName(text);
+                    setWitnessId(null);
+                  }}
+                  onSelect={(item) => {
+                    if (typeof item !== 'string') {
+                      setWitnessName(item.full_name || item.email || '');
+                      setWitnessId(item.id);
+                    }
+                  }}
+                  items={members}
+                  getItemLabel={(m) => m.full_name || m.email || 'Unknown'}
+                  getItemMeta={(m) => m.id === profile?.id ? 'You' : m.role ?? undefined}
+                  getItemPrefix={(m) => <Avatar name={m.full_name || m.email || '?'} userId={m.id} size={22} />}
+                  placeholder="Select witness"
+                  sections={[{ title: 'Your team', filter: () => true }]}
+                  allowFreeText={false}
+                  emptyMessage="No team members found"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Witness = operator error */}
+          {witnessSameAsOperator && (
+            <div
+              className="rounded-lg px-3 py-2 mt-3 text-xs"
+              style={{ backgroundColor: colors.dangerSoft, color: colors.danger }}
+            >
+              Witness must be a different person than the operator.
+            </div>
+          )}
         </div>
 
         {/* Error */}

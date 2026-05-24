@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Snowflake, Play, AlertTriangle, Loader2 } from 'lucide-react';
 import { useCooldownEvents, type CooldownEventWithState } from '../../hooks/temperatures/useCooldownEvents';
+import { useOrgMembers } from '../../hooks/useOrgMembers';
 import { colors } from '../../lib/designSystem';
 import { Modal } from '../ui/Modal';
 import { StartCooldownForm } from './StartCooldownForm';
@@ -9,6 +10,7 @@ import { LogCoolingCheckModal } from './LogCoolingCheckModal';
 import { LogDispositionModal } from './LogDispositionModal';
 
 export function CooldownActiveList() {
+  const { members } = useOrgMembers();
   const [showStartForm, setShowStartForm] = useState(false);
   const [checkTarget, setCheckTarget] = useState<CooldownEventWithState | null>(null);
   const [dispoTarget, setDispoTarget] = useState<CooldownEventWithState | null>(null);
@@ -74,6 +76,7 @@ export function CooldownActiveList() {
           <CooldownCard
             key={ev.id}
             event={ev}
+            members={members}
             onLogCheck={setCheckTarget}
             onLogDisposition={setDispoTarget}
           />
@@ -107,6 +110,7 @@ export function CooldownActiveList() {
         {checkTarget && (
           <LogCoolingCheckModal
             event={checkTarget}
+            members={members}
             onClose={() => setCheckTarget(null)}
             onSuccess={() => refetch()}
           />
@@ -116,6 +120,7 @@ export function CooldownActiveList() {
         {dispoTarget && (
           <LogDispositionModal
             event={dispoTarget}
+            members={members}
             onClose={() => setDispoTarget(null)}
             onSuccess={() => refetch()}
           />

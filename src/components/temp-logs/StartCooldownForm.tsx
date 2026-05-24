@@ -1,12 +1,33 @@
-import { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useMenuItems, type MenuItem } from '../../hooks/api/useMenuItems';
 import { useCreateCooldownEvent } from '../../hooks/temperatures/useCooldownMutations';
+import { useOrgMembers, type OrgMember } from '../../hooks/useOrgMembers';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
+import { supabase } from '../../lib/supabase';
+import { HOLDING_COLD_TYPES, STORAGE_TYPES } from '../../lib/equipmentHelpers';
 import { colors } from '../../lib/designSystem';
 import { toast } from 'sonner';
 import Button from '../ui/Button';
+import { Combobox } from '../ui/Combobox';
+import { Avatar } from '../ui/Avatar';
+
+// ── Equipment type ──────────────────────────────────────────
+
+interface CoolingEquipment {
+  id: string;
+  name: string;
+  equipment_type: string;
+  is_active: boolean;
+}
+
+const COOLING_TYPES = [
+  ...HOLDING_COLD_TYPES,
+  ...STORAGE_TYPES,
+  'walk_in', 'reach_in', 'blast_chiller', 'blast_freezer', 'ice_bath',
+];
+
+// ── Component ───────────────────────────────────────────────
 
 interface StartCooldownFormProps {
   onClose: () => void;
@@ -16,47 +37,59 @@ interface StartCooldownFormProps {
 export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps) {
   const { profile } = useAuth();
   const { getAccessibleLocations } = useRole();
-  const locationId = getAccessibleLocations()[0]?.locationId ?? '';
+  const locationIds = getAccessibleLocations().map(l => l.locationId).filter(Boolean);
+  const locationId = locationIds[0] ?? '';
   const organizationId = profile?.organization_id ?? '';
 
   // Form state
   const [foodItemName, setFoodItemName] = useState('');
-  const [selectedMenuItemId, setSelectedMenuItemId] = useState<string | null>(null);
   const [startingTemp, setStartingTemp] = useState('');
-  const [coolingNotes, setCoolingNotes] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [coolingLocation, setCoolingLocation] = useState('');
+  const [assignedToId, setAssignedToId] = useState<string | null>(profile?.id ?? null);
+  const [assignedToName, setAssignedToName] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Data
   const { data: menuItems } = useMenuItems(locationId);
+  const { members } = useOrgMembers();
   const { mutate: createCooldownEvent, isLoading } = useCreateCooldownEvent();
+  const [equipment, setEquipment] = useState<CoolingEquipment[]>([]);
 
-  // Filter menu items as user types
-  const filteredItems = useMemo(() => {
-    if (!menuItems || !foodItemName.trim()) return [];
-    const query = foodItemName.toLowerCase();
-    return menuItems.filter(item =>
-      item.name.toLowerCase().includes(query)
-    ).slice(0, 6);
-  }, [menuItems, foodItemName]);
+  // Fetch cooling equipment
+  useEffect(() => {
+    if (locationIds.length === 0) return;
+    supabase
+      .from('temperature_equipment')
+      .select('id, name, equipment_type, is_active')
+      .in('location_id', locationIds)
+      .then(({ data }) => {
+        if (data) {
+          setEquipment(
+            (data as CoolingEquipment[]).filter(eq =>
+              COOLING_TYPES.includes(eq.equipment_type)
+            )
+          );
+        }
+      });
+  }, [locationIds.join(',')]);
+
+  // Default "responsible person" to current user
+  useEffect(() => {
+    if (profile?.id && members.length > 0 && !assignedToName) {
+      const me = members.find(m => m.id === profile.id);
+      if (me) {
+        setAssignedToName(me.full_name || me.email || '');
+        setAssignedToId(me.id);
+      }
+    }
+  }, [profile?.id, members]);
 
   // Validation
   const tempNumeric = parseFloat(startingTemp);
   const tempValid = !isNaN(tempNumeric) && tempNumeric > 0;
   const itemValid = foodItemName.trim().length > 0;
-  const canSubmit = tempValid && itemValid && !isLoading;
-
-  const handleSelectItem = (item: MenuItem) => {
-    setFoodItemName(item.name);
-    setSelectedMenuItemId(item.id);
-    setShowSuggestions(false);
-  };
-
-  const handleItemInputChange = (value: string) => {
-    setFoodItemName(value);
-    setSelectedMenuItemId(null);
-    setShowSuggestions(value.trim().length > 0);
-  };
+  const tempBelowStart = tempValid && tempNumeric < 135;
+  const canSubmit = tempValid && itemValid && assignedToId !== null && !isLoading;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -67,8 +100,9 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
         locationId,
         foodItemName: foodItemName.trim(),
         startingTemperature: tempNumeric,
-        coolingLocation: coolingNotes.trim() || null,
+        coolingLocation: coolingLocation.trim() || null,
         createdBy: profile?.id ?? null,
+        assignedTo: assignedToId,
       });
       toast.success(`Cooldown started for ${foodItemName.trim()}`);
       onSuccess?.(result.eventId);
@@ -98,7 +132,6 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
         </p>
 
         <div className="space-y-2.5 mb-3">
-          {/* Stage 1 */}
           <div className="flex items-start gap-2.5">
             <span
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -116,7 +149,6 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
             </div>
           </div>
 
-          {/* Stage 2 */}
           <div className="flex items-start gap-2.5">
             <span
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -146,54 +178,29 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
       </div>
 
       <div className="space-y-5">
-        {/* Food Item Name — with menu item search */}
+        {/* Food Item — Combobox */}
         <div>
           <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
             What are you cooling?
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="h-4 w-4" style={{ color: colors.textMuted }} />
-            </div>
-            <input
-              type="text"
-              value={foodItemName}
-              onChange={(e) => handleItemInputChange(e.target.value)}
-              onFocus={() => { if (foodItemName.trim()) setShowSuggestions(true); }}
-              onBlur={() => setShowSuggestions(false)}
-              className="w-full pl-10 pr-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
-              placeholder="e.g., Rice Pilaf, Chicken Soup"
-            />
-            {showSuggestions && filteredItems.length > 0 && (
-              <div
-                className="absolute z-10 w-full mt-1 rounded-xl border shadow-lg overflow-hidden"
-                style={{ backgroundColor: colors.white, borderColor: colors.border }}
-              >
-                {filteredItems.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => handleSelectItem(item)}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-cream transition-colors"
-                    style={{ color: colors.textPrimary }}
-                  >
-                    <span className="font-medium">{item.name}</span>
-                    {item.category && (
-                      <span className="ml-2 text-xs" style={{ color: colors.textMuted }}>
-                        {item.category}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          {selectedMenuItemId && (
-            <p className="text-xs mt-1" style={{ color: colors.success }}>
-              Linked to menu item
-            </p>
-          )}
+          <Combobox<MenuItem>
+            value={foodItemName}
+            onChange={setFoodItemName}
+            onSelect={(item) => {
+              if (typeof item === 'string') {
+                setFoodItemName(item);
+              } else {
+                setFoodItemName(item.name);
+              }
+            }}
+            items={menuItems ?? []}
+            getItemLabel={(item) => item.name}
+            getItemMeta={(item) => item.category ?? undefined}
+            placeholder="e.g., Rice Pilaf, Chicken Soup"
+            helper="Pick from your menu or use any name."
+            sections={[{ title: 'From your menu', filter: () => true }]}
+            allowFreeText
+          />
         </div>
 
         {/* Starting Temperature */}
@@ -207,29 +214,81 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
             inputMode="decimal"
             value={startingTemp}
             onChange={(e) => setStartingTemp(e.target.value)}
-            className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
+            className="w-full px-4 py-3 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
+            style={{
+              borderColor: tempBelowStart ? colors.warning : `${colors.navy}26`,
+              color: colors.navy,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 16,
+            }}
             placeholder="e.g., 165"
           />
-          <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
-            Enter the temperature when the food first dropped to 135°F. This starts your 6-hour clock.
-          </p>
+          {tempBelowStart ? (
+            <div
+              className="rounded-lg px-3 py-2 mt-2 text-xs"
+              style={{ backgroundColor: colors.warningSoft, color: colors.warning }}
+            >
+              {tempNumeric}°F is below the 135°F clock start. Verify the temp or wait until food drops to 135°F. You can still proceed if you confirm the value.
+            </div>
+          ) : (
+            <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
+              Enter the temperature when the food first dropped to 135°F. This starts your 6-hour clock.
+            </p>
+          )}
         </div>
 
-        {/* Cooling Location Notes */}
+        {/* Cooling Location — Combobox */}
         <div>
           <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
             Cooling Where?
           </label>
-          <input
-            type="text"
-            value={coolingNotes}
-            onChange={(e) => setCoolingNotes(e.target.value)}
-            className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
+          <Combobox<CoolingEquipment>
+            value={coolingLocation}
+            onChange={setCoolingLocation}
+            onSelect={(item) => {
+              if (typeof item === 'string') {
+                setCoolingLocation(item);
+              } else {
+                setCoolingLocation(item.name);
+              }
+            }}
+            items={equipment}
+            getItemLabel={(eq) => eq.name}
+            getItemMeta={(eq) => eq.is_active ? 'In service' : 'Inactive'}
             placeholder="e.g., Blast Chiller 1, Walk-in cooler"
+            helper="Pick a unit or describe where (ice bath, shallow pan in walk-in, etc.)."
+            sections={[{ title: 'Registered equipment', filter: () => true }]}
+            allowFreeText
           />
-          <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
-            Optional — describe where the item is cooling
-          </p>
+        </div>
+
+        {/* Responsible Person — Combobox */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
+            Who's responsible?
+          </label>
+          <Combobox<OrgMember>
+            value={assignedToName}
+            onChange={(text) => {
+              setAssignedToName(text);
+              setAssignedToId(null);
+            }}
+            onSelect={(item) => {
+              if (typeof item !== 'string') {
+                setAssignedToName(item.full_name || item.email || '');
+                setAssignedToId(item.id);
+              }
+            }}
+            items={members}
+            getItemLabel={(m) => m.full_name || m.email || 'Unknown'}
+            getItemMeta={(m) => m.id === profile?.id ? 'You · default' : m.role ?? undefined}
+            getItemPrefix={(m) => <Avatar name={m.full_name || m.email || '?'} userId={m.id} size={22} />}
+            placeholder="Select team member"
+            helper="Who'll monitor this cooldown? They'll get the deadline alerts."
+            sections={[{ title: 'Your team', filter: () => true }]}
+            allowFreeText={false}
+            emptyMessage="No team members found"
+          />
         </div>
 
         {/* Inline error */}

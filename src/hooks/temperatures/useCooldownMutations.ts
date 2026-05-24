@@ -20,6 +20,7 @@ export interface CreateCooldownEventInput {
   startingTemperature: number;
   coolingLocation?: string | null;
   createdBy?: string | null;
+  assignedTo?: string | null;
 }
 
 export interface CreateCooldownEventResult {
@@ -41,6 +42,7 @@ export function useCreateCooldownEvent(): ApiMutationResult<CreateCooldownEventI
         food_item_name: input.foodItemName,
         starting_temperature: input.startingTemperature,
         cooling_location: input.coolingLocation ?? null,
+        assigned_to: input.assignedTo ?? input.createdBy ?? null,
         started_at: now.toISOString(),
         stage_1_target_at: stage1Target.toISOString(),
         stage_2_target_at: stage2Target.toISOString(),

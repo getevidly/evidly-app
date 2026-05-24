@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Clock, Thermometer, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { colors, shadows } from '../../lib/designSystem';
 import { useCooldownChecks } from '../../hooks/temperatures/useCooldownChecks';
+import { getMemberName, type OrgMember } from '../../hooks/useOrgMembers';
+import { Avatar } from '../ui/Avatar';
 import type { CooldownEventWithState } from '../../hooks/temperatures/useCooldownEvents';
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -54,11 +56,12 @@ function borderColor(ev: CooldownEventWithState): string {
 
 interface CooldownCardProps {
   event: CooldownEventWithState;
+  members: OrgMember[];
   onLogCheck: (event: CooldownEventWithState) => void;
   onLogDisposition: (event: CooldownEventWithState) => void;
 }
 
-export function CooldownCard({ event, onLogCheck, onLogDisposition }: CooldownCardProps) {
+export function CooldownCard({ event, members, onLogCheck, onLogDisposition }: CooldownCardProps) {
   const [showChecks, setShowChecks] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(event.timeRemaining);
   const [pctElapsed, setPctElapsed] = useState(event.pctElapsed);
@@ -119,16 +122,37 @@ export function CooldownCard({ event, onLogCheck, onLogDisposition }: CooldownCa
             <p className="font-semibold text-sm truncate" style={{ color: colors.textPrimary }}>
               {event.food_item_name}
             </p>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
               <span className="text-xs" style={{ color: colors.textSecondary }}>
-                Started {formatTime(event.started_at)}
+                Started by{' '}
+                <span className="font-semibold" style={{ color: colors.textPrimary }}>
+                  {getMemberName(members, event.created_by)}
+                </span>
+              </span>
+              <span className="text-xs" style={{ color: colors.textMuted }}>·</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>
+                {formatTime(event.started_at)}
               </span>
               {event.cooling_location && (
-                <span className="text-xs" style={{ color: colors.textMuted }}>
-                  {event.cooling_location}
-                </span>
+                <>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>·</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>
+                    {event.cooling_location}
+                  </span>
+                </>
               )}
             </div>
+            {event.assigned_to && event.assigned_to !== event.created_by && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <Avatar name={getMemberName(members, event.assigned_to)} userId={event.assigned_to} size={16} />
+                <span className="text-xs" style={{ color: colors.textSecondary }}>
+                  Monitored by{' '}
+                  <span className="font-semibold" style={{ color: colors.textPrimary }}>
+                    {getMemberName(members, event.assigned_to)}
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
           <span
             className="px-2 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap flex-shrink-0"
@@ -245,16 +269,40 @@ export function CooldownCard({ event, onLogCheck, onLogDisposition }: CooldownCa
 
         {showChecks && checks && checks.length > 0 && (
           <div className="mt-2 space-y-1.5">
-            {checks.slice(0, 5).map(chk => (
-              <div key={chk.id} className="flex items-center justify-between text-xs">
-                <span style={{ color: colors.textSecondary }}>
-                  {formatTime(chk.checked_at)}
-                </span>
-                <span className="font-semibold" style={{ color: colors.textPrimary }}>
-                  {chk.temperature}°F
-                </span>
-              </div>
-            ))}
+            {checks.slice(0, 5).map(chk => {
+              const tempColor = chk.temperature <= 41 ? colors.success
+                : chk.temperature <= 70 ? colors.gold
+                : '#b3261e';
+              const startMs = new Date(event.started_at).getTime();
+              const checkMs = new Date(chk.checked_at).getTime();
+              const elapsedMs = checkMs - startMs;
+              const elapsedMin = Math.round(elapsedMs / 60000);
+              const elapsedLabel = elapsedMin < 60
+                ? `+${elapsedMin}m`
+                : `+${Math.floor(elapsedMin / 60)}h${elapsedMin % 60 > 0 ? ` ${elapsedMin % 60}m` : ''}`;
+              return (
+                <div key={chk.id} className="flex items-center gap-2 text-xs">
+                  <span
+                    className="font-bold w-12 text-right flex-shrink-0"
+                    style={{ fontFamily: "'JetBrains Mono', monospace", color: tempColor }}
+                  >
+                    {chk.temperature}°F
+                  </span>
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <Avatar name={getMemberName(members, chk.checked_by)} userId={chk.checked_by ?? undefined} size={18} />
+                    <span className="truncate" style={{ color: colors.textSecondary }}>
+                      {getMemberName(members, chk.checked_by)} · {formatTime(chk.checked_at)}
+                    </span>
+                  </div>
+                  <span
+                    className="flex-shrink-0 text-[10px]"
+                    style={{ fontFamily: "'JetBrains Mono', monospace", color: colors.textMuted }}
+                  >
+                    {elapsedLabel}
+                  </span>
+                </div>
+              );
+            })}
             {checks.length > 5 && (
               <p className="text-[10px] text-center" style={{ color: colors.textMuted }}>
                 +{checks.length - 5} more

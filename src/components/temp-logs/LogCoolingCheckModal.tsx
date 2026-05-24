@@ -1,23 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { colors } from '../../lib/designSystem';
 import { useLogCooldownCheck } from '../../hooks/temperatures/useCooldownMutations';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import Button from '../ui/Button';
+import { Combobox } from '../ui/Combobox';
+import { Avatar } from '../ui/Avatar';
+import type { OrgMember } from '../../hooks/useOrgMembers';
 import type { CooldownEventWithState } from '../../hooks/temperatures/useCooldownEvents';
 
 interface LogCoolingCheckModalProps {
   event: CooldownEventWithState;
+  members: OrgMember[];
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export function LogCoolingCheckModal({ event, onClose, onSuccess }: LogCoolingCheckModalProps) {
+export function LogCoolingCheckModal({ event, members, onClose, onSuccess }: LogCoolingCheckModalProps) {
   const { profile } = useAuth();
   const [temperature, setTemperature] = useState('');
   const [notes, setNotes] = useState('');
+  const [checkedById, setCheckedById] = useState<string | null>(profile?.id ?? null);
+  const [checkedByName, setCheckedByName] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { mutate: logCheck, isLoading } = useLogCooldownCheck();
+
+  // Default "logged by" to current user
+  useEffect(() => {
+    if (profile?.id && members.length > 0 && !checkedByName) {
+      const me = members.find(m => m.id === profile.id);
+      if (me) {
+        setCheckedByName(me.full_name || me.email || '');
+        setCheckedById(me.id);
+      }
+    }
+  }, [profile?.id, members]);
 
   const tempNumeric = parseFloat(temperature);
   const tempValid = !isNaN(tempNumeric) && tempNumeric > 0;
@@ -36,7 +53,7 @@ export function LogCoolingCheckModal({ event, onClose, onSuccess }: LogCoolingCh
         cooldownEventId: event.id,
         temperature: tempNumeric,
         notes: notes.trim() || null,
-        checkedBy: profile?.id ?? null,
+        checkedBy: checkedById ?? profile?.id ?? null,
         currentStatus: event.status,
       });
 
@@ -109,6 +126,34 @@ export function LogCoolingCheckModal({ event, onClose, onSuccess }: LogCoolingCh
             onChange={(e) => setNotes(e.target.value)}
             className="w-full px-4 py-3 border border-navy/15 rounded-xl text-sm text-navy placeholder:text-navy/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50"
             placeholder="e.g., Moved to ice bath"
+          />
+        </div>
+
+        {/* Logged by */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: `${colors.navy}cc` }}>
+            Logged by
+          </label>
+          <Combobox<OrgMember>
+            value={checkedByName}
+            onChange={(text) => {
+              setCheckedByName(text);
+              setCheckedById(null);
+            }}
+            onSelect={(item) => {
+              if (typeof item !== 'string') {
+                setCheckedByName(item.full_name || item.email || '');
+                setCheckedById(item.id);
+              }
+            }}
+            items={members}
+            getItemLabel={(m) => m.full_name || m.email || 'Unknown'}
+            getItemMeta={(m) => m.id === profile?.id ? 'You' : m.role ?? undefined}
+            getItemPrefix={(m) => <Avatar name={m.full_name || m.email || '?'} userId={m.id} size={22} />}
+            placeholder="Select team member"
+            sections={[{ title: 'Your team', filter: () => true }]}
+            allowFreeText={false}
+            emptyMessage="No team members found"
           />
         </div>
 
