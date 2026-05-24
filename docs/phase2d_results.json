@@ -1,0 +1,1295 @@
+{
+  "food": [
+    {
+      "slug": "alameda-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.acgov.org/aceh/contact",
+        "https://www.acgov.org/aceh/contact-us",
+        "https://www.acgov.org/aceh/staff"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "alpine-ca",
+      "type": "food",
+      "status": "no_gaps",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "All target fields already filled"
+      ]
+    },
+    {
+      "slug": "amador-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://www.amadorcounty.gov/departments/environmental-health/contact",
+        "https://www.amadorcounty.gov/departments/environmental-health/contact-us",
+        "https://www.amadorcounty.gov/departments/environmental-health/staff",
+        "https://www.amadorcounty.gov/departments/environmental-health/about",
+        "https://www.amadorcounty.gov/departments/environmental-health"
+      ],
+      "fills": {
+        "agency_email": {
+          "value": "ACEH@amadorcounty.gov",
+          "confidence": "HIGH",
+          "source": "https://www.amadorcounty.gov/departments/environmental-health/contact"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "butte-ca",
+      "type": "food",
+      "status": "no_gaps",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "All target fields already filled"
+      ]
+    },
+    {
+      "slug": "calaveras-ca",
+      "type": "food",
+      "status": "no_website",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "No website URL available"
+      ]
+    },
+    {
+      "slug": "el-dorado-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.eldoradocounty.ca.gov/County-Government/County-Departments/Environmental-Management/contact",
+        "https://www.eldoradocounty.ca.gov/County-Government/County-Departments/Environmental-Management/contact-us"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "glenn-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety/contact",
+        "https://countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety/contact-us",
+        "https://countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "imperial-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://www.icphd.org/environmental-health"
+      ],
+      "fills": {
+        "poc_name": {
+          "value": "Environmental Health Staff",
+          "confidence": "MEDIUM",
+          "source": "https://www.icphd.org/environmental-health"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_email",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "inyo-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.inyocounty.us/services/environmental-health/contact",
+        "https://www.inyocounty.us/services/environmental-health/contact-us",
+        "https://www.inyocounty.us/services/environmental-health/staff"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "kern-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.kernpublichealth.com/contact",
+        "https://www.kernpublichealth.com/staff",
+        "https://www.kernpublichealth.com/about",
+        "https://www.kernpublichealth.com"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "kings-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.countyofkingsca.gov/departments/environment-health-service/contact",
+        "https://www.countyofkingsca.gov/departments/environment-health-service/contact-us",
+        "https://www.countyofkingsca.gov/departments/environment-health-service/staff",
+        "https://www.countyofkingsca.gov/departments/environment-health-service/about",
+        "https://www.countyofkingsca.gov/departments/environment-health-service"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "la-county-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "http://publichealth.lacounty.gov/contact",
+        "http://publichealth.lacounty.gov/contact-us",
+        "http://publichealth.lacounty.gov/staff",
+        "http://publichealth.lacounty.gov/about",
+        "http://publichealth.lacounty.gov"
+      ],
+      "fills": {
+        "agency_email": {
+          "value": "phwebinformatics@ph.lacounty.gov",
+          "confidence": "HIGH",
+          "source": "http://publichealth.lacounty.gov/contact"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax, agency_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "lake-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.lakecountyca.gov/211/Environmental-Health/contact",
+        "https://www.lakecountyca.gov/211/Environmental-Health/contact-us",
+        "https://www.lakecountyca.gov/211/Environmental-Health/staff",
+        "https://www.lakecountyca.gov/211/Environmental-Health/about",
+        "https://www.lakecountyca.gov/211/Environmental-Health"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "lassen-ca",
+      "type": "food",
+      "status": "no_gaps",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "All target fields already filled"
+      ]
+    },
+    {
+      "slug": "long-beach-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://www.longbeach.gov/health/eh/food/contact-us"
+      ],
+      "fills": {
+        "poc_name": {
+          "value": "Public Works Services",
+          "confidence": "MEDIUM",
+          "source": "https://www.longbeach.gov/health/eh/food/contact-us"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_fax",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "madera-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/contact",
+        "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/contact-us",
+        "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/staff",
+        "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/about",
+        "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "mariposa-ca",
+      "type": "food",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "mendocino-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/contact",
+        "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/contact-us",
+        "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/staff",
+        "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/about",
+        "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues"
+      ],
+      "fills": {
+        "agency_address": {
+          "value": "860 N. Bush Street Ukiah, CA 95482",
+          "confidence": "HIGH",
+          "source": "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/contact"
+        },
+        "poc_name": {
+          "value": "Environmental Health",
+          "confidence": "MEDIUM",
+          "source": "https://www.mendocinocounty.gov/how-do-i/report/food-sanitation-issues/contact"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_fax, agency_address",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "merced-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.countyofmerced.com/eh/contact",
+        "https://www.countyofmerced.com/eh/contact-us"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "modoc-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://environmentalhealth.co.modoc.ca.us/nav/food_sanitation_program.php"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "monterey-ca",
+      "type": "food",
+      "status": "skipped_already_touched",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "Already processed in Phase 2/2b/2c"
+      ]
+    },
+    {
+      "slug": "orange-ca",
+      "type": "food",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_fax",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "plumas-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.plumascounty.us/275/Food-Safety/contact",
+        "https://www.plumascounty.us/275/Food-Safety/contact-us",
+        "https://www.plumascounty.us/275/Food-Safety/staff"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "san-benito-ca",
+      "type": "food",
+      "status": "no_gaps",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "All target fields already filled"
+      ]
+    },
+    {
+      "slug": "san-bernardino-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://ehs.sbcounty.gov/programs/food-facilities/contact",
+        "https://ehs.sbcounty.gov/programs/food-facilities/contact-us"
+      ],
+      "fills": {
+        "poc_name": {
+          "value": "Kristian Alfelor",
+          "confidence": "MEDIUM",
+          "source": "https://ehs.sbcounty.gov/programs/food-facilities/contact"
+        },
+        "poc_title": {
+          "value": "Chief of Environmental Health",
+          "confidence": "MEDIUM",
+          "source": "https://ehs.sbcounty.gov/programs/food-facilities/contact"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "shasta-ca",
+      "type": "food",
+      "status": "completed",
+      "urls_crawled": [
+        "https://www.shastacounty.gov/environmental-health/contact",
+        "https://www.shastacounty.gov/environmental-health/contact-us",
+        "https://www.shastacounty.gov/environmental-health/about",
+        "https://www.shastacounty.gov/environmental-health"
+      ],
+      "fills": {
+        "poc_name": {
+          "value": "Environmental Health",
+          "confidence": "MEDIUM",
+          "source": "https://www.shastacounty.gov/environmental-health/contact"
+        }
+      },
+      "notes": [
+        "NULL fields: poc_name, agency_email",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "sierra-ca",
+      "type": "food",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: agency_email, agency_fax",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "siskiyou-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.siskiyoucounty.gov/environmentalhealth/page/food/contact",
+        "https://www.siskiyoucounty.gov/environmentalhealth/page/food/contact-us",
+        "https://www.siskiyoucounty.gov/environmentalhealth/page/food/staff"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "sutter-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.sutter.gov/government/county-departments/development-services/environmental-health/food/contact",
+        "https://www.sutter.gov/government/county-departments/development-services/environmental-health/food/contact-us",
+        "https://www.sutter.gov/government/county-departments/development-services/environmental-health/food/staff",
+        "https://www.sutter.gov/government/county-departments/development-services/environmental-health/food/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: agency_email, agency_fax, agency_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "tehama-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.tehama.gov/government/departments/environmental-health/contact",
+        "https://www.tehama.gov/government/departments/environmental-health/contact-us",
+        "https://www.tehama.gov/government/departments/environmental-health/staff"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "trinity-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.trinitycounty.org/486/Food-Facilities/contact",
+        "https://www.trinitycounty.org/486/Food-Facilities/contact-us",
+        "https://www.trinitycounty.org/486/Food-Facilities/staff",
+        "https://www.trinitycounty.org/486/Food-Facilities/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "tulare-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://tularecountyeh.org/contact",
+        "https://tularecountyeh.org/contact-us",
+        "https://tularecountyeh.org/staff",
+        "https://tularecountyeh.org/about",
+        "https://tularecountyeh.org"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "tuolumne-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.tuolumnecounty.ca.gov/247/Safe-Food/contact",
+        "https://www.tuolumnecounty.ca.gov/247/Safe-Food/contact-us",
+        "https://www.tuolumnecounty.ca.gov/247/Safe-Food/staff",
+        "https://www.tuolumnecounty.ca.gov/247/Safe-Food/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: agency_email",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "yuba-ca",
+      "type": "food",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "https://www.yuba.gov/departments/community_development/environmental_health/retail_food/index.php"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: poc_name, agency_email, agency_fax",
+        "Extracted 0 fill(s)"
+      ]
+    }
+  ],
+  "fire": [
+    {
+      "slug": "alameda-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "alpine-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "alpinecountyca.gov/contact",
+        "alpinecountyca.gov/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "amador-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "amadorgov.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "berkeley-ca",
+      "type": "fire",
+      "status": "skipped_already_touched",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "Already processed in Phase 2/2b/2c"
+      ]
+    },
+    {
+      "slug": "butte-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "buttecounty.net/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "calaveras-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "colusa-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "countyofcolusa.org/contact",
+        "countyofcolusa.org/fire-prevention"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "del-norte-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.del-norte.ca.us"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "el-dorado-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "edcgov.us/fire",
+        "edcgov.us/fire/contact",
+        "edcgov.us/fire/fire-marshal",
+        "edcgov.us/fire/fire-prevention",
+        "edcgov.us/fire/staff",
+        "edcgov.us/fire/about"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "fresno-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "glenn-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "countyofglenn.net/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "humboldt-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "humboldtgov.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "imperial-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "inyo-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "inyocounty.us"
+      ],
+      "fills": {
+        "fire_ahj_poc_name": {
+          "value": "District Lookup",
+          "confidence": "MEDIUM",
+          "source": "inyocounty.us"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "kern-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "kerncountyfire.org"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "kings-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "countyofkings.com/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "la-county-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "fire.lacounty.gov/fire-prevention"
+      ],
+      "fills": {
+        "fire_ahj_address": {
+          "value": "1 Industry Hills Parkway Industry, CA 91744",
+          "confidence": "HIGH",
+          "source": "fire.lacounty.gov/fire-prevention"
+        },
+        "fire_ahj_poc_name": {
+          "value": "Alvin L. Brewer",
+          "confidence": "MEDIUM",
+          "source": "fire.lacounty.gov/fire-prevention"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "lake-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.lake.ca.us"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "lassen-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.lassen.ca.us/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "long-beach-ca",
+      "type": "fire",
+      "status": "no_website",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "No website URL available"
+      ]
+    },
+    {
+      "slug": "madera-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "maderacounty.com/government/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "marin-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "mariposa-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "mariposacounty.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "mendocino-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "mendocinocounty.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "merced-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.merced.ca.us/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "modoc-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.modoc.ca.us"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "mono-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "monocounty.ca.gov"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "napa-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "countyofnapa.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "nevada-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "nevadacountyca.gov/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "orange-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "ocfa.org"
+      ],
+      "fills": {
+        "fire_ahj_address": {
+          "value": "1 Fire Authority Road, Irvine, CA 92602",
+          "confidence": "HIGH",
+          "source": "ocfa.org"
+        },
+        "fire_ahj_poc_name": {
+          "value": "Craig Covey",
+          "confidence": "MEDIUM",
+          "source": "ocfa.org"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "pasadena-ca",
+      "type": "fire",
+      "status": "skipped_already_touched",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "Already processed in Phase 2/2b/2c"
+      ]
+    },
+    {
+      "slug": "plumas-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "riverside-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "rvcfire.org"
+      ],
+      "fills": {
+        "fire_ahj_poc_name": {
+          "value": "Riverside County Fire",
+          "confidence": "MEDIUM",
+          "source": "rvcfire.org"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "san-benito-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "sanbenitocountyca.gov"
+      ],
+      "fills": {
+        "fire_ahj_address": {
+          "value": "481 Fourth Street, 1st Floor, Hollister, CA 95023",
+          "confidence": "HIGH",
+          "source": "sanbenitocountyca.gov"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "san-bernardino-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "sbcfire.org"
+      ],
+      "fills": {
+        "fire_ahj_email": {
+          "value": "Smillerick@sbcfire.org",
+          "confidence": "HIGH",
+          "source": "sbcfire.org"
+        },
+        "fire_ahj_poc_name": {
+          "value": "Dan Munsey",
+          "confidence": "MEDIUM",
+          "source": "sbcfire.org"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Alt emails: cprater@sbcfire.org, smillerick@sbcfire.org",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "san-diego-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "san-francisco-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "sf.gov/departments/fire-department"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "san-joaquin-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "san-mateo-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "santa-clara-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "sccfd.org"
+      ],
+      "fills": {
+        "fire_ahj_email": {
+          "value": "publicinfo@sccfd.org",
+          "confidence": "HIGH",
+          "source": "sccfd.org"
+        },
+        "fire_ahj_poc_name": {
+          "value": "Geo Blackshire",
+          "confidence": "MEDIUM",
+          "source": "sccfd.org"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Alt emails: erica.ray@sccfd.org, slee@sccfd.org, slee@losaltosca.gov, info@sccfd.org",
+        "Extracted 2 fill(s)"
+      ]
+    },
+    {
+      "slug": "santa-cruz-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "shasta-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "sierra-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "siskiyou-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "co.siskiyou.ca.us/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "solano-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "fairfield.ca.gov/fire"
+      ],
+      "fills": {
+        "fire_ahj_address": {
+          "value": "37 1200 Kentucky Street Fairfield, CA 94533",
+          "confidence": "HIGH",
+          "source": "fairfield.ca.gov/fire"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "sonoma-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "sonomacounty.ca.gov/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "stanislaus-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    },
+    {
+      "slug": "sutter-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "suttercounty.org/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "tehama-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "tehamacountyfire.org"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "trinity-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "trinitycounty.org"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "tulare-ca",
+      "type": "fire",
+      "status": "completed",
+      "urls_crawled": [
+        "tularecounty.ca.gov/fire"
+      ],
+      "fills": {
+        "fire_ahj_poc_name": {
+          "value": "Fire Department\n\nFire",
+          "confidence": "MEDIUM",
+          "source": "tularecounty.ca.gov/fire"
+        }
+      },
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 1 fill(s)"
+      ]
+    },
+    {
+      "slug": "tuolumne-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "tuolumnecounty.ca.gov/fire"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "yolo-ca",
+      "type": "fire",
+      "status": "no_extractions",
+      "urls_crawled": [
+        "yolocounty.org/oes"
+      ],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "Extracted 0 fill(s)"
+      ]
+    },
+    {
+      "slug": "yuba-ca",
+      "type": "fire",
+      "status": "no_content",
+      "urls_crawled": [],
+      "fills": {},
+      "notes": [
+        "NULL fields: fire_ahj_poc_name, fire_ahj_email, fire_ahj_fax, fire_ahj_address",
+        "No usable content extracted"
+      ]
+    }
+  ],
+  "summary": {
+    "list_a_total": 34,
+    "list_a_completed": 7,
+    "list_a_fills": 9,
+    "list_a_deferred": 22,
+    "list_b_total": 54,
+    "list_b_completed": 9,
+    "list_b_fills": 13,
+    "list_b_deferred": 43,
+    "total_fills": 22,
+    "high_confidence": 9,
+    "medium_confidence": 13
+  }
+}
