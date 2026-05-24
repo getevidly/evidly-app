@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { useMenuItems, type MenuItem } from '../../hooks/api/useMenuItems';
-import { useStartCooldown } from '../../hooks/api/useCooldownLogs';
+import { useCreateCooldownEvent } from '../../hooks/temperatures/useCooldownMutations';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
 import { colors } from '../../lib/designSystem';
@@ -29,7 +29,7 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
 
   // Data
   const { data: menuItems } = useMenuItems(locationId);
-  const { mutate: startCooldown, isLoading } = useStartCooldown();
+  const { mutate: createCooldownEvent, isLoading } = useCreateCooldownEvent();
 
   // Filter menu items as user types
   const filteredItems = useMemo(() => {
@@ -62,16 +62,16 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
     if (!canSubmit) return;
     setSubmitError(null);
     try {
-      const result = await startCooldown({
+      const result = await createCooldownEvent({
         organizationId,
         locationId,
         foodItemName: foodItemName.trim(),
-        startingTemp: tempNumeric,
-        menuItemId: selectedMenuItemId,
-        notes: coolingNotes.trim() || null,
+        startingTemperature: tempNumeric,
+        coolingLocation: coolingNotes.trim() || null,
+        createdBy: profile?.id ?? null,
       });
       toast.success(`Cooldown started for ${foodItemName.trim()}`);
-      onSuccess?.(result.cooldownLogId);
+      onSuccess?.(result.eventId);
       onClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to start cooldown';
@@ -94,7 +94,7 @@ export function StartCooldownForm({ onClose, onSuccess }: StartCooldownFormProps
           className="text-xs uppercase tracking-wide font-semibold mb-3"
           style={{ color: colors.textSecondary }}
         >
-          FDA + CalCode — two-stage cooldown
+          CalCode §114002 · FDA §3-501.14 · Two-stage cooldown
         </p>
 
         <div className="space-y-2.5 mb-3">

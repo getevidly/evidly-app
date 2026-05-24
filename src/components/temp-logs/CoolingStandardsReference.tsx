@@ -19,23 +19,16 @@ export function CoolingStandardsReference() {
             Cooling Standards Reference
           </h3>
           <p className="text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            FDA and California require the same two-stage cooldown.
+            CalCode and FDA require the same two-stage cooldown.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span
-            className="px-2 py-0.5 text-xs font-semibold rounded"
-            style={{ backgroundColor: `${colors.navy}10`, color: colors.navy }}
-          >
-            FDA §3-501.14
-          </span>
-          <span
-            className="px-2 py-0.5 text-xs font-semibold rounded"
-            style={{ backgroundColor: `${colors.gold}15`, color: colors.gold }}
-          >
-            CalCode §114002(b)
-          </span>
-        </div>
+        <span
+          className="px-2 py-0.5 text-[10px] font-medium rounded"
+          style={{ backgroundColor: `${colors.navy}08`, color: colors.textSecondary, fontFamily: 'monospace' }}
+        >
+          <span style={{ fontWeight: 700, color: colors.navy }}>CalCode §114002</span>
+          <span style={{ color: colors.textMuted }}> · FDA §3-501.14</span>
+        </span>
       </div>
 
       {/* Stage rows */}

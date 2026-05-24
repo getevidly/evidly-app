@@ -1,68 +1,23 @@
 import { useState } from 'react';
-import { Snowflake, Clock, Play, AlertTriangle, Loader2, ChevronRight } from 'lucide-react';
-import { useCooldownLogs, type CooldownLog } from '../../hooks/api/useCooldownLogs';
-import { useRole } from '../../contexts/RoleContext';
-import { formatRelativeTime } from '../../lib/formatters';
-import { colors, shadows } from '../../lib/designSystem';
-import { EmptyState } from '../EmptyState';
+import { Snowflake, Play, AlertTriangle, Loader2 } from 'lucide-react';
+import { useCooldownEvents, type CooldownEventWithState } from '../../hooks/temperatures/useCooldownEvents';
+import { colors } from '../../lib/designSystem';
 import { Modal } from '../ui/Modal';
 import { StartCooldownForm } from './StartCooldownForm';
-import { CooldownTimelineDetail } from './CooldownTimelineDetail';
-
-// ── Helpers ──────────────────────────────────────────────────
-
-function deriveStatusInfo(log: CooldownLog): { label: string; color: 'green' | 'red' } {
-  if (!log.start_time) return { label: 'On Track', color: 'green' };
-
-  const elapsedMs = Date.now() - new Date(log.start_time).getTime();
-  const elapsedHours = elapsedMs / (1000 * 60 * 60);
-  const stage = log.current_stage ?? 1;
-
-  // FDA Food Code §3-501.14 / CalCode §114002(b):
-  // Stage 1: must reach 70°F within 2 hours from 135°F
-  // Stage 2: must reach 41°F within 6 hours total from 135°F
-  if (stage === 1 && elapsedHours > 2) return { label: 'Overdue — Stage 1', color: 'red' };
-  if (stage === 2 && elapsedHours > 6) return { label: 'Overdue — Total', color: 'red' };
-  return { label: 'On Track', color: 'green' };
-}
-
-function formatElapsed(startTime: string | null): string {
-  if (!startTime) return '—';
-  const ms = Date.now() - new Date(startTime).getTime();
-  const totalMin = Math.floor(ms / 60000);
-  const h = Math.floor(totalMin / 60);
-  const m = totalMin % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
-}
-
-// ── Component ────────────────────────────────────────────────
+import { CooldownCard } from './CooldownCard';
+import { LogCoolingCheckModal } from './LogCoolingCheckModal';
+import { LogDispositionModal } from './LogDispositionModal';
 
 export function CooldownActiveList() {
   const [showStartForm, setShowStartForm] = useState(false);
-  const [selectedLog, setSelectedLog] = useState<CooldownLog | null>(null);
-  const { getAccessibleLocations } = useRole();
-  const locationId = getAccessibleLocations()[0]?.locationId ?? '';
+  const [checkTarget, setCheckTarget] = useState<CooldownEventWithState | null>(null);
+  const [dispoTarget, setDispoTarget] = useState<CooldownEventWithState | null>(null);
 
-  const { data: cooldownLogs, isLoading, error, refetch } = useCooldownLogs(locationId, { isActiveOnly: true });
-
-  const logs = cooldownLogs ?? [];
+  const { data: events, isLoading, error, refetch } = useCooldownEvents();
 
   let content;
 
-  if (!locationId) {
-    content = (
-      <EmptyState
-        icon={Snowflake}
-        title="No active cooldowns"
-        description="Start a cooldown to track cooling events and stay compliant with FDA and CalCode requirements."
-        action={{
-          label: 'Start a New Cooldown',
-          onClick: () => setShowStartForm(true),
-        }}
-      />
-    );
-  } else if (isLoading) {
+  if (isLoading) {
     content = (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
@@ -83,112 +38,46 @@ export function CooldownActiveList() {
         </p>
       </div>
     );
-  } else if (logs.length === 0) {
+  } else if (events.length === 0) {
     content = (
-      <EmptyState
-        icon={Snowflake}
-        title="No active cooldowns"
-        description="Start a cooldown to track cooling events and stay compliant with FDA and CalCode requirements."
-        action={{
-          label: 'Start a New Cooldown',
-          onClick: () => setShowStartForm(true),
-        }}
-      />
+      <div
+        className="rounded-xl flex flex-col items-center justify-center text-center py-16 px-6"
+        style={{ backgroundColor: '#FAF7F0', border: '2px dashed #E2DDD4' }}
+      >
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+          style={{ backgroundColor: '#EFF6FF' }}
+        >
+          <Snowflake className="h-7 w-7" style={{ color: '#2563EB' }} />
+        </div>
+        <h4 className="text-base font-bold mb-2" style={{ color: '#1E2D4D' }}>
+          No active cooldowns
+        </h4>
+        <p className="text-sm mb-6 max-w-sm" style={{ color: '#6B7F96' }}>
+          Start a cooldown when cooked food begins cooling. EvidLY tracks the two-stage clock, alerts you when deadlines approach, and documents the outcome for your HACCP records.
+        </p>
+        <button
+          onClick={() => setShowStartForm(true)}
+          className="px-5 py-3 rounded-lg text-sm font-semibold inline-flex items-center gap-1.5"
+          style={{ backgroundColor: '#1E2D4D', color: 'white', minHeight: '44px' }}
+        >
+          <Play className="h-4 w-4" />
+          Start a Cooldown
+        </button>
+      </div>
     );
   } else {
     content = (
-      <div className="space-y-5">
-        {/* AI suggestion placeholder */}
-        <div
-          className="rounded-xl border px-5 py-4 flex items-start gap-3"
-          style={{
-            backgroundColor: `${colors.gold}08`,
-            borderColor: `${colors.gold}30`,
-          }}
-        >
-          <Snowflake className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: colors.gold }} />
-          <p className="text-sm" style={{ color: colors.textPrimary }}>
-            <span className="font-semibold">{logs.length} active cooldown{logs.length !== 1 ? 's' : ''}.</span>{' '}
-            AI-powered suggestions will appear here in a future update.
-          </p>
-        </div>
-
-        {/* Active cooldown rows */}
-        <div className="space-y-3">
-          {logs.map((log) => {
-            const status = deriveStatusInfo(log);
-            const statusBg = status.color === 'green' ? colors.successSoft : colors.dangerSoft;
-            const statusFg = status.color === 'green' ? colors.success : colors.danger;
-
-            return (
-              <div
-                key={log.id}
-                onClick={() => setSelectedLog(log)}
-                className="rounded-xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 cursor-pointer transition-shadow hover:shadow-md"
-                style={{
-                  backgroundColor: colors.white,
-                  borderColor: colors.border,
-                  boxShadow: shadows.sm,
-                }}
-              >
-                {/* Left: item info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate" style={{ color: colors.textPrimary }}>
-                    {log.food_item_name}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                    <span className="flex items-center gap-1 text-xs" style={{ color: colors.textSecondary }}>
-                      <Clock className="h-3 w-3" />
-                      Started {log.start_time ? formatRelativeTime(log.start_time) : '—'}
-                    </span>
-                    <span className="text-xs" style={{ color: colors.textSecondary }}>
-                      Elapsed: {formatElapsed(log.start_time)}
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: colors.textPrimary }}>
-                      Stage {log.current_stage ?? 1}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Middle: mini timeline dots */}
-                <div className="flex items-center gap-1.5 px-2">
-                  {[1, 2].map((stage) => {
-                    const currentStage = log.current_stage ?? 1;
-                    const dotColor =
-                      stage < currentStage ? colors.success :
-                      stage === currentStage ? colors.navy :
-                      colors.borderLight;
-                    return (
-                      <div key={stage} className="flex items-center gap-1.5">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: dotColor }}
-                        />
-                        {stage < 2 && (
-                          <div
-                            className="w-6 h-0.5 rounded"
-                            style={{ backgroundColor: stage < currentStage ? colors.success : colors.borderLight }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Right: status badge + nav hint */}
-                <div className="flex items-center gap-3">
-                  <span
-                    className="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
-                    style={{ backgroundColor: statusBg, color: statusFg }}
-                  >
-                    {status.label}
-                  </span>
-                  <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: colors.textMuted }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="space-y-4">
+        {/* Cooldown cards */}
+        {events.map(ev => (
+          <CooldownCard
+            key={ev.id}
+            event={ev}
+            onLogCheck={setCheckTarget}
+            onLogDisposition={setDispoTarget}
+          />
+        ))}
 
         {/* Start new cooldown button */}
         <div className="flex justify-center pt-2">
@@ -214,12 +103,21 @@ export function CooldownActiveList() {
           onSuccess={() => refetch()}
         />
       </Modal>
-      <Modal isOpen={!!selectedLog} onClose={() => setSelectedLog(null)} size="lg">
-        {selectedLog && (
-          <CooldownTimelineDetail
-            log={selectedLog}
-            onClose={() => setSelectedLog(null)}
-            onCheckLogged={() => refetch()}
+      <Modal isOpen={!!checkTarget} onClose={() => setCheckTarget(null)} size="lg">
+        {checkTarget && (
+          <LogCoolingCheckModal
+            event={checkTarget}
+            onClose={() => setCheckTarget(null)}
+            onSuccess={() => refetch()}
+          />
+        )}
+      </Modal>
+      <Modal isOpen={!!dispoTarget} onClose={() => setDispoTarget(null)} size="lg">
+        {dispoTarget && (
+          <LogDispositionModal
+            event={dispoTarget}
+            onClose={() => setDispoTarget(null)}
+            onSuccess={() => refetch()}
           />
         )}
       </Modal>

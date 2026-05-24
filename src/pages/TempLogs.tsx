@@ -51,6 +51,9 @@ import { useHotHoldingTabSignals } from '../hooks/temperatures/useHotHoldingTabS
 import { ColdHoldingTabSignalStrip } from '../components/temp-logs/ColdHoldingTabSignalStrip';
 import { ColdHoldingCriticalBanner } from '../components/temp-logs/ColdHoldingCriticalBanner';
 import { useColdHoldingTabSignals } from '../hooks/temperatures/useColdHoldingTabSignals';
+import { CooldownTabSignalStrip } from '../components/temp-logs/CooldownTabSignalStrip';
+import { CooldownCriticalBanner } from '../components/temp-logs/CooldownCriticalBanner';
+import { useCooldownTabSignals } from '../hooks/temperatures/useCooldownTabSignals';
 
 interface TemperatureEquipment {
   id: string;
@@ -171,6 +174,9 @@ export function TempLogs() {
   // Cold holding tab hooks
   const coldHoldingSignals = useColdHoldingTabSignals();
   const coldDriftingUnits = prpDrifting.filter(d => d.variant === 'cold');
+
+  // Cooldown tab hooks
+  const cooldownSignals = useCooldownTabSignals();
 
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -2265,6 +2271,8 @@ export function TempLogs() {
         {/* Cooldown Tab */}
         {activeTab === 'cooldown' && (
           <div className="space-y-4">
+            <CooldownCriticalBanner signals={cooldownSignals} />
+            <CooldownTabSignalStrip signals={cooldownSignals} />
             <CoolingStandardsReference />
             <CooldownActiveList />
           </div>
