@@ -45,6 +45,9 @@ import { ReceivingTabSignalStrip } from '../components/temp-logs/ReceivingTabSig
 import { ReceivingSaveBar } from '../components/temp-logs/ReceivingSaveBar';
 import { useReceivingTabSignals } from '../hooks/temperatures/useReceivingTabSignals';
 import { useDraftReceivingNotes } from '../hooks/temperatures/useDraftReceivingNotes';
+import { HotHoldingTabSignalStrip } from '../components/temp-logs/HotHoldingTabSignalStrip';
+import { HotHoldingCriticalBanner } from '../components/temp-logs/HotHoldingCriticalBanner';
+import { useHotHoldingTabSignals } from '../hooks/temperatures/useHotHoldingTabSignals';
 
 interface TemperatureEquipment {
   id: string;
@@ -157,6 +160,10 @@ export function TempLogs() {
   // Receiving tab hooks
   const receivingSignals = useReceivingTabSignals();
   const { generate: generateNotes, loading: notesAiLoading, draft: notesDraft, reset: resetNotesDraft } = useDraftReceivingNotes();
+
+  // Hot holding tab hooks
+  const hotHoldingSignals = useHotHoldingTabSignals();
+  const hotDriftingUnits = prpDrifting.filter(d => d.variant === 'hot');
 
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -2514,7 +2521,13 @@ export function TempLogs() {
         })()}
 
         {/* Hot Holding Tab */}
-        {activeTab === 'hot_holding' && <HoldingActiveStatus variant="hot" />}
+        {activeTab === 'hot_holding' && (
+          <>
+            <HotHoldingCriticalBanner signals={hotHoldingSignals} />
+            <HotHoldingTabSignalStrip signals={hotHoldingSignals} />
+            <HoldingActiveStatus variant="hot" driftingUnits={hotDriftingUnits} />
+          </>
+        )}
 
         {/* Cold Holding Tab */}
         {activeTab === 'cold_holding' && <HoldingActiveStatus variant="cold" />}

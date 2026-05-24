@@ -15,6 +15,10 @@ import { ReadingDetailModal } from './ReadingDetailModal';
 import { Modal } from '../ui/Modal';
 import { toast } from 'sonner';
 import type { TemperatureEquipment } from './types';
+import type { DriftingUnit } from '../../hooks/temperatures/useTemperatureDriftDetection';
+import { HotHoldingSectionHeader } from './HotHoldingSectionHeader';
+import { HotHoldingNoUnitsEmptyState } from './HotHoldingNoUnitsEmptyState';
+import { TrendingDown } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -173,9 +177,10 @@ function HoldingInsightBanner({ locationId, variant }: HoldingInsightBannerProps
 
 interface HoldingActiveStatusProps {
   variant: 'hot' | 'cold';
+  driftingUnits?: DriftingUnit[];
 }
 
-export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
+export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActiveStatusProps) {
   const { getAccessibleLocations } = useRole();
   const { profile } = useAuth();
   const locationId = getAccessibleLocations()[0]?.locationId ?? '';
@@ -434,17 +439,25 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
     ? 'FDA \u00A73-501.16(A)(1) \u00B7 CalCode \u00A7113996(a)'
     : 'FDA \u00A73-501.16(A)(2) \u00B7 CalCode \u00A7113996(b)';
 
+  // Drifting equipment IDs set for inline callouts
+  const driftingIds = useMemo(
+    () => new Set(driftingUnits.map(d => d.equipment_id)),
+    [driftingUnits],
+  );
+
   // ── Render branches ────────────────────────────
 
   let content;
 
   if (!locationId) {
-    content = (
+    content = isHot ? (
+      <HotHoldingNoUnitsEmptyState />
+    ) : (
       <EmptyState
         icon={Thermometer}
-        iconClassName={`w-8 h-8 ${isHot ? 'text-[#EA580C]' : 'text-[#2563EB]'}`}
-        title={`No ${title.toLowerCase()} equipment`}
-        description="Configure equipment in your location settings to start tracking holding temperatures."
+        iconClassName="w-8 h-8 text-[#2563EB]"
+        title="No cold holding equipment"
+        description="Configure equipment in your location settings to see cold holding temperatures."
       />
     );
   } else if (isLoading) {
@@ -469,12 +482,14 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
       </div>
     );
   } else if (equipmentWithStatus.length === 0) {
-    content = (
+    content = isHot ? (
+      <HotHoldingNoUnitsEmptyState />
+    ) : (
       <EmptyState
         icon={Thermometer}
-        iconClassName={`w-8 h-8 ${isHot ? 'text-[#EA580C]' : 'text-[#2563EB]'}`}
-        title={`No ${title.toLowerCase()} equipment`}
-        description="Configure equipment in your location settings to start tracking holding temperatures."
+        iconClassName="w-8 h-8 text-[#2563EB]"
+        title="No cold holding equipment"
+        description="Configure equipment in your location settings to see cold holding temperatures."
       />
     );
   } else {
@@ -505,14 +520,21 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
 
     content = (
       <div className="space-y-4">
-        {/* AI Insight Banner — scoped to this variant */}
-        <HoldingInsightBanner locationId={locationId} variant={variant} />
+        {/* AI Insight Banner — scoped to cold variant only (hot uses tab signal strip) */}
+        {!isHot && <HoldingInsightBanner locationId={locationId} variant={variant} />}
 
         {/* Header card */}
         <div
           className="rounded-xl border p-4 sm:p-5"
           style={{ backgroundColor: colors.white, borderColor: colors.border, boxShadow: shadows.sm }}
         >
+          {isHot ? (
+            <HotHoldingSectionHeader
+              headerLabel={headerLabel}
+              allPass={allMeasured && passCount === totalActive}
+              noneMeasured={noneMeasured}
+            />
+          ) : (
           <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
             <div className="flex items-center gap-3">
               <div
@@ -556,6 +578,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
               </span>
             </div>
           </div>
+          )}
 
           {/* Equipment rows */}
           <div className="space-y-2">
@@ -581,14 +604,36 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
               const ageMin = eq.last_check
                 ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60)
                 : null;
+
+              // Hot variant: compute card state for border/header tinting
+              const isDrifting = isHot && driftingIds.has(eq.id);
+              const cardState: 'crit' | 'warn' | 'ok' | 'stale' | 'neutral' = isHot
+                ? eq.status === 'fail' ? 'crit'
+                : (eq.status === 'overdue' || isDrifting) ? 'warn'
+                : eq.status === 'stale' ? 'stale'
+                : eq.status === 'pass' ? 'ok'
+                : 'neutral'
+                : 'neutral';
+
+              const hotBorderColor = cardState === 'crit' ? 'rgba(179,38,30,0.6)'
+                : cardState === 'warn' ? 'rgba(194,115,26,0.5)'
+                : cardState === 'ok' ? 'rgba(47,122,77,0.4)'
+                : colors.border;
+
+              // Hot variant: status line text
+              const hotStatusLine = cardState === 'crit' ? 'Below target'
+                : isDrifting ? 'Drifting down'
+                : eq.status === 'stale' ? 'Stale'
+                : 'In range';
+
               return (
                 <div
                   key={eq.id}
                   className="rounded-xl border p-4 flex flex-col gap-3 cursor-pointer"
                   style={{
                     backgroundColor: colors.white,
-                    borderColor: isFail ? `${colors.danger}80` : colors.border,
-                    borderWidth: isFail ? '1px' : '0.5px',
+                    borderColor: isHot ? hotBorderColor : (isFail ? `${colors.danger}80` : colors.border),
+                    borderWidth: (isHot && cardState !== 'neutral') || isFail ? '1px' : '0.5px',
                   }}
                   onClick={cardClick}
                   role="button"
@@ -600,19 +645,38 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       cardClick();
                     }
                   }}
+                  {...(isHot && eq.status === 'fail' ? { 'data-unit-critical': 'true' } : {})}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-base font-medium truncate" style={{ color: colors.textPrimary }}>
                         {eq.name}
                       </p>
-                      <p className="text-[11px]" style={{ color: colors.textMuted }}>
+                      <p
+                        className="text-[11px]"
+                        style={{
+                          color: isHot && eq.status === 'stale' ? '#c2731a' : colors.textMuted,
+                          fontWeight: isHot && eq.status === 'stale' ? 600 : 400,
+                        }}
+                      >
                         {isSetup ? 'no readings yet' : (ageMin != null ? formatTimeSince(ageMin) : '\u2014')}
                       </p>
                     </div>
-                    <span className="text-xl font-semibold whitespace-nowrap" style={{ color: tempColor }}>
-                      {hasReading ? `${tempValue}\u00B0F` : '--'}
-                    </span>
+                    <div className="text-right">
+                      <span className="text-xl font-semibold whitespace-nowrap block" style={{ color: isHot && eq.status === 'stale' ? colors.textMuted : tempColor }}>
+                        {isHot && eq.status === 'stale' ? '--' : (hasReading ? `${tempValue}\u00B0F` : '--')}
+                      </span>
+                      {isHot && !isSetup && (
+                        <span className="text-[10px] whitespace-nowrap" style={{
+                          color: cardState === 'crit' ? '#b3261e'
+                            : cardState === 'warn' ? '#c2731a'
+                            : cardState === 'ok' ? '#2f7a4d'
+                            : colors.textMuted,
+                        }}>
+                          {hotStatusLine}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
@@ -627,7 +691,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                     >
                       {methodLabel}
                     </span>
-                    {!isSetup && (
+                    {!isSetup && !isHot && (
                       <span
                         className="text-[11px] ml-auto whitespace-nowrap"
                         style={{ color: cfg.fg, fontWeight: isFail ? 500 : 400 }}
@@ -669,6 +733,28 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       />
                     )}
                   </div>
+                  {/* Inline drift callout for hot variant */}
+                  {isHot && isDrifting && (() => {
+                    const drift = driftingUnits.find(d => d.equipment_id === eq.id);
+                    if (!drift) return null;
+                    const slopeLabel = Math.abs(drift.slope).toFixed(1);
+                    return (
+                      <div
+                        className="rounded-lg p-3 flex items-start gap-2"
+                        style={{ backgroundColor: 'rgba(194,115,26,0.08)', border: '0.5px solid rgba(194,115,26,0.2)' }}
+                      >
+                        <TrendingDown className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: '#c2731a' }} />
+                        <div>
+                          <p className="text-xs font-semibold" style={{ color: '#c2731a' }}>
+                            {eq.name} is drifting
+                          </p>
+                          <p className="text-[10px] mt-0.5" style={{ color: '#c2731a', opacity: 0.85 }}>
+                            Cooling {slopeLabel}°/reading — {drift.readings.map(r => `${r.temp}°F`).join(' → ')}. Adjust burner before crossing 135°F.
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })()}
                   {isSetup ? (
                     <div className="text-center py-3 text-sm" style={{ color: colors.textSecondary }}>
                       Tap to add the first item
@@ -679,17 +765,51 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                       style={{ borderColor: colors.border }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <p className="text-[10px] uppercase tracking-wide font-medium mb-2" style={{ color: colors.textMuted }}>
+                      <p className="text-[10px] uppercase tracking-wide font-medium mb-1" style={{ color: colors.textMuted }}>
                         Food held in this unit
                       </p>
+                      {isHot && (
+                        <p className="text-[11px] mb-2" style={{ color: colors.textMuted }}>
+                          Tracking last temp checks. Place-time tracking pending.
+                        </p>
+                      )}
                       {(eq.held_items && eq.held_items.length > 0) ? (
                         <div className="flex flex-col gap-2">
                           {eq.held_items.map((item) => {
                             const itemAgeMin = (Date.now() - new Date(item.reading_time).getTime()) / (1000 * 60);
                             const itemDotPercent = Math.max(2, Math.min(98, ((item.temperature - barMin) / (barMax - barMin)) * 100));
                             const itemColor = item.temp_pass ? colors.success : colors.danger;
+
+                            // Hot variant: hold-time countdown
+                            const holdDurationMs = isHot ? Date.now() - new Date(item.reading_time).getTime() : 0;
+                            const discardDeadlineMs = isHot ? new Date(item.reading_time).getTime() + 4 * 60 * 60 * 1000 : 0;
+                            const timeRemainingMs = isHot ? discardDeadlineMs - Date.now() : 0;
+                            const holdHours = Math.floor(holdDurationMs / (1000 * 60 * 60));
+                            const holdMins = Math.floor((holdDurationMs % (1000 * 60 * 60)) / (1000 * 60));
+                            const itemState: 'ok' | 'warn' | 'crit' = !isHot ? 'ok'
+                              : (holdDurationMs >= 4 * 60 * 60 * 1000 || eq.status === 'fail') ? 'crit'
+                              : holdDurationMs >= 3 * 60 * 60 * 1000 ? 'warn'
+                              : 'ok';
+                            const itemBg = isHot
+                              ? itemState === 'crit' ? 'rgba(179,38,30,0.06)'
+                              : itemState === 'warn' ? 'rgba(194,115,26,0.06)'
+                              : 'rgba(47,122,77,0.04)'
+                              : 'transparent';
+
+                            // Format remaining time
+                            const formatRemaining = () => {
+                              if (timeRemainingMs <= 0) return null;
+                              const remH = Math.floor(timeRemainingMs / (1000 * 60 * 60));
+                              const remM = Math.floor((timeRemainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                              return remH > 0 ? `${remH}h ${remM}m` : `${remM}m`;
+                            };
+
                             return (
-                              <div key={item.menu_item_id} className="py-1">
+                              <div
+                                key={item.menu_item_id}
+                                className="py-1 rounded-lg"
+                                style={{ backgroundColor: itemBg, padding: isHot ? '8px' : undefined }}
+                              >
                                 <div className="flex items-center gap-3 mb-1.5">
                                   <span className="text-sm flex-1 min-w-0 truncate" style={{ color: colors.textPrimary }}>
                                     {item.menu_item_name}
@@ -697,10 +817,22 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                                   <span className="text-sm font-medium whitespace-nowrap" style={{ color: itemColor }}>
                                     {item.temperature}°F
                                   </span>
-                                  <span className="text-[10px] whitespace-nowrap" style={{ color: colors.textMuted }}>
-                                    {formatTimeSince(itemAgeMin)}
-                                  </span>
+                                  {!isHot && (
+                                    <span className="text-[10px] whitespace-nowrap" style={{ color: colors.textMuted }}>
+                                      {formatTimeSince(itemAgeMin)}
+                                    </span>
+                                  )}
                                 </div>
+                                {isHot && (
+                                  <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-[10px]" style={{ color: colors.textMuted }}>
+                                      Last checked {holdHours > 0 ? `${holdHours}h ${holdMins}m` : `${holdMins}m`} ago
+                                    </span>
+                                    <span className="text-[10px]" style={{ color: colors.textMuted }}>
+                                      Discard tracking pending batch placement
+                                    </span>
+                                  </div>
+                                )}
                                 <div className="relative h-2.5 rounded-full overflow-hidden flex">
                                   <div
                                     style={{
@@ -730,7 +862,7 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                         </div>
                       ) : (eq.held_items && eq.held_items.length === 0 && (queuedItems.get(eq.id)?.length ?? 0) === 0) ? (
                         <p className="text-xs py-3 text-center" style={{ color: colors.textMuted }}>
-                          Nothing held in this unit right now
+                          {isHot && eq.status === 'stale' ? 'No active readings. Tap Log Check to begin.' : 'Nothing held in this unit right now'}
                         </p>
                       ) : null}
 
@@ -770,13 +902,24 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                         </div>
                       )}
 
-                      {eq.status !== 'setup' && (
+                      {eq.status !== 'setup' && (() => {
+                        const btnBg = isHot
+                          ? cardState === 'crit' ? '#b3261e'
+                          : cardState === 'warn' ? '#c2731a'
+                          : colors.navy
+                          : colors.navy;
+                        const btnLabel = isHot
+                          ? cardState === 'crit' ? 'Log Recovery Check'
+                          : cardState === 'warn' ? 'Log Check Now'
+                          : 'Log Check'
+                          : 'Log Check';
+                        return (
                         <div className="mt-3 flex gap-2">
                           <button
                             type="button"
-                            className="flex-[0.65] px-3 py-2 rounded-lg text-sm font-medium"
+                            className="flex-[0.65] px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"
                             style={{
-                              backgroundColor: colors.navy,
+                              backgroundColor: btnBg,
                               color: 'white',
                               minHeight: '44px',
                             }}
@@ -785,7 +928,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                               setLogCheckEquipmentId(eq.id);
                             }}
                           >
-                            Log Check
+                            {isHot && cardState === 'crit' && <AlertTriangle className="w-3.5 h-3.5" />}
+                            {btnLabel}
                           </button>
                           <button
                             type="button"
@@ -804,7 +948,8 @@ export function HoldingActiveStatus({ variant }: HoldingActiveStatusProps) {
                             + Add item
                           </button>
                         </div>
-                      )}
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
