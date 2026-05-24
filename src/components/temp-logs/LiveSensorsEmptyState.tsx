@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Radio } from 'lucide-react';
-import { toast } from 'sonner';
 import { colors } from '../../lib/designSystem';
 import { SupportedSensorsCard } from './SupportedSensorsCard';
+import { SensorEarlyAccessModal } from './SensorEarlyAccessModal';
 
 // ── PRP tile data ────────────────────────────────────────────
 
@@ -26,12 +27,7 @@ const PRP_TILES = [
 // ── Component ────────────────────────────────────────────────
 
 export function LiveSensorsEmptyState() {
-  const handleConnect = () => {
-    // TODO: Wire to sensor integration flow once vendor APIs are integrated
-    toast.info(
-      'Sensor integration coming soon. Contact founders@getevidly.com to join the early access list.',
-    );
-  };
+  const [showEarlyAccess, setShowEarlyAccess] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -106,7 +102,7 @@ export function LiveSensorsEmptyState() {
         {/* CTA */}
         <button
           type="button"
-          onClick={handleConnect}
+          onClick={() => setShowEarlyAccess(true)}
           className="inline-flex items-center gap-1.5 rounded-lg font-bold"
           style={{
             backgroundColor: colors.navy,
@@ -125,6 +121,12 @@ export function LiveSensorsEmptyState() {
 
       {/* Supported sensors */}
       <SupportedSensorsCard />
+
+      {/* Early access modal */}
+      <SensorEarlyAccessModal
+        isOpen={showEarlyAccess}
+        onClose={() => setShowEarlyAccess(false)}
+      />
     </div>
   );
 }
