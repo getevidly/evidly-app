@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 import { ErrorState } from '../components/shared/PageStates';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts';
 import { generateTempDemoHistory } from '../data/tempDemoHistory';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -32,7 +32,7 @@ import { TemperaturesPRPBand } from '../components/temp-logs/TemperaturesPRPBand
 import { useCurrentReadingsSummary } from '../hooks/useCurrentReadingsSummary';
 import { useTemperatureDriftDetection } from '../hooks/temperatures/useTemperatureDriftDetection';
 import { useTemperaturesPRPStats } from '../hooks/temperatures/useTemperaturesPRPStats';
-import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
+import { TemperatureAnalyticsTab } from '../components/temp-logs/TemperatureAnalyticsTab';
 import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
@@ -620,6 +620,12 @@ export function TempLogs() {
 
   const fetchHistory = async () => {
     try {
+      // Fetch 180 days of data so Analytics trend arrows can compare
+      // current window (up to 90d) against an equal prior window.
+      const historyCutoff = new Date(
+        Date.now() - 180 * 24 * 60 * 60 * 1000,
+      ).toISOString();
+
       // Query temperature_logs table
       const { data, error } = await supabase
         .from('temperature_logs')
@@ -641,8 +647,9 @@ export function TempLogs() {
           menu_items:menu_item_id(name),
           user_profiles:logged_by(full_name)
         `)
+        .gte('reading_time', historyCutoff)
         .order('reading_time', { ascending: false })
-        .limit(200);
+        .limit(5000);
 
       if (error) throw error;
 
@@ -2037,169 +2044,14 @@ export function TempLogs() {
         )}
 
         {/* Analytics Tab */}
-        {activeTab === 'analytics' && (() => {
-          const allHistory = history;
-          const manualCount = allHistory.filter(h => (h.input_method || 'manual') === 'manual').length;
-          const qrCount = allHistory.filter(h => h.input_method === 'qr_scan').length;
-          const iotCount = allHistory.filter(h => h.input_method === 'iot_sensor').length;
-          const totalCount = allHistory.length;
-          const passCount = allHistory.filter(h => h.is_within_range).length;
-          const complianceRate = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 0;
-
-          const methodData = [
-            { name: 'Manual', value: manualCount, color: '#6b7280' },
-            { name: 'QR Scan', value: qrCount, color: '#1E2D4D' },
-            { name: 'IoT Sensor', value: iotCount, color: '#059669' },
-          ].filter(d => d.value > 0);
-
-          // Weekly compliance trend
-          const weeklyData: { week: string; rate: number; count: number }[] = [];
-          const weekFmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          for (let w = 3; w >= 0; w--) {
-            const weekStart = new Date();
-            weekStart.setDate(weekStart.getDate() - (w + 1) * 7);
-            const weekEnd = new Date();
-            weekEnd.setDate(weekEnd.getDate() - w * 7);
-            const weekLogs = allHistory.filter(h => {
-              const d = new Date(h.created_at);
-              return d >= weekStart && d < weekEnd;
-            });
-            const weekPass = weekLogs.filter(h => h.is_within_range).length;
-            const labelEnd = new Date(weekEnd);
-            labelEnd.setDate(labelEnd.getDate() - 1);
-            weeklyData.push({
-              week: w === 0 ? `This week` : `${weekFmt(weekStart)}–${weekFmt(labelEnd)}`,
-              rate: weekLogs.length > 0 ? Math.round((weekPass / weekLogs.length) * 100) : 0,
-              count: weekLogs.length,
-            });
-          }
-
-          // Equipment compliance
-          const eqNames = [...new Set(allHistory.map(h => h.equipment_name))];
-          const eqComplianceData = eqNames.slice(0, 8).map(name => {
-            const logs = allHistory.filter(h => h.equipment_name === name);
-            const pass = logs.filter(h => h.is_within_range).length;
-            return { name: name.length > 15 ? name.slice(0, 15) + '...' : name, rate: logs.length > 0 ? Math.round((pass / logs.length) * 100) : 0, total: logs.length };
-          });
-
-          // Time of day distribution
-          const hourBuckets: Record<string, number> = {};
-          for (const h of allHistory) {
-            const hour = new Date(h.created_at).getHours();
-            const label = hour < 10 ? `0${hour}:00` : `${hour}:00`;
-            hourBuckets[label] = (hourBuckets[label] || 0) + 1;
-          }
-          const timeData = Object.entries(hourBuckets)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([time, count]) => ({ time, count }));
-
-          return (
-            <div className="space-y-4">
-              {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                  <p className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{totalCount.toLocaleString()}</p>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">Total Readings</p>
-                </div>
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                  <p className={`text-2xl font-bold tracking-tight ${complianceRate >= 95 ? 'text-green-600' : complianceRate >= 85 ? 'text-yellow-600' : 'text-red-600'}`}>
-                    {complianceRate}%
-                  </p>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">Compliance Rate</p>
-                </div>
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                  <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{manualCount}</p>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">Manual Entries</p>
-                </div>
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                  <p className="text-2xl font-bold tracking-tight" style={{ color: '#059669' }}>{iotCount + qrCount}</p>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">QR + IoT Entries</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Method Breakdown */}
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Input Method Breakdown</h3>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={methodData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                          {methodData.map((entry, i) => (
-                            <Cell key={i} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="flex justify-center gap-4 mt-2">
-                    {methodData.map(d => (
-                      <div key={d.name} className="flex items-center gap-1.5 text-xs">
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-                        {d.name}: {d.value}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Weekly Compliance Trend */}
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Weekly Compliance Rate</h3>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={weeklyData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="week" tick={{ fontSize: 11 }} />
-                        <YAxis domain={[80, 100]} tick={{ fontSize: 11 }} />
-                        <Tooltip formatter={(v: number) => `${v}%`} />
-                        <ReferenceLine y={95} stroke="#A08C5A" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#A08C5A', fontSize: 10 }} />
-                        <Line type="monotone" dataKey="rate" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 4 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Equipment Compliance */}
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Equipment Compliance</h3>
-                  <div className="h-56">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={eqComplianceData} layout="vertical">
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" domain={[80, 100]} tick={{ fontSize: 10 }} />
-                        <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 10 }} />
-                        <Tooltip formatter={(v: number) => `${v}%`} />
-                        <Bar dataKey="rate" fill="#1E2D4D" radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Time of Day Distribution */}
-                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
-                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Time of Day Distribution</h3>
-                  <div className="h-56">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={timeData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="time" tick={{ fontSize: 10 }} />
-                        <YAxis tick={{ fontSize: 10 }} />
-                        <Tooltip />
-                        <Bar dataKey="count" fill="#A08C5A" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-
-              {/* AI Pattern Insights (live mode only) */}
-              {!isDemoMode && <TempPatternInsights />}
-            </div>
-          );
-        })()}
+        {activeTab === 'analytics' && (
+          <TemperatureAnalyticsTab
+            history={history}
+            equipment={equipment}
+            isDemoMode={isDemoMode}
+            guardAction={guardAction}
+          />
+        )}
       </div>
 
       {/* HACCP Deviation Report Modal */}
