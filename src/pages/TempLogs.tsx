@@ -54,6 +54,7 @@ import { useColdHoldingTabSignals } from '../hooks/temperatures/useColdHoldingTa
 import { CooldownTabSignalStrip } from '../components/temp-logs/CooldownTabSignalStrip';
 import { CooldownCriticalBanner } from '../components/temp-logs/CooldownCriticalBanner';
 import { useCooldownTabSignals } from '../hooks/temperatures/useCooldownTabSignals';
+import { LiveSensorsEmptyState } from '../components/temp-logs/LiveSensorsEmptyState';
 
 interface TemperatureEquipment {
   id: string;
@@ -2281,26 +2282,7 @@ export function TempLogs() {
 
         {/* Live Sensors Tab */}
         {activeTab === 'iot' && !isDemoMode && (
-          <div className="space-y-6">
-            <EmptyState
-              icon={Wifi}
-              title="No sensors connected"
-              description="Connect your first IoT sensor to start monitoring temperatures in real time."
-            />
-            {/* Supported Sensors CTA — informational, shown in all modes */}
-            <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#A08C5A]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
-              <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
-              <p className="text-xs text-[#1E2D4D]/70 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
-              <div className="flex flex-wrap gap-2">
-                {iotSensorProviders.filter(p => ['tempstick', 'sensorpush', 'compliancemate', 'cooper_atkins', 'monnit', 'testo'].includes(p.slug)).slice(0, 6).map(p => (
-                  <span key={p.slug} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-[#1E2D4D]/10">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                    {p.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+          <LiveSensorsEmptyState />
         )}
         {activeTab === 'iot' && isDemoMode && (() => {
           const locationSensors = locationFilter === 'all'
