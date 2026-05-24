@@ -18,7 +18,7 @@ interface JurisdictionMatch {
   opsWeight: number | null;
   docsWeight: number | null;
   fireAhjName: string;
-  layer: string; // food_primary | fire_primary | federal_overlay
+  layer: string; // food_safety | fire_safety | federal_overlay
 }
 
 // Main lookup function — called when user adds/edits a location address
@@ -52,7 +52,7 @@ export async function lookupJurisdiction(
     .limit(1);
 
   if (cityMatch && cityMatch.length > 0) {
-    matches.push(mapToMatch(cityMatch[0], 'food_primary'));
+    matches.push(mapToMatch(cityMatch[0], 'food_safety'));
   } else {
     // Step 2: County-level food safety jurisdiction
     const { data: countyMatch } = await supabase
@@ -65,7 +65,7 @@ export async function lookupJurisdiction(
       .limit(1);
 
     if (countyMatch && countyMatch.length > 0) {
-      matches.push(mapToMatch(countyMatch[0], 'food_primary'));
+      matches.push(mapToMatch(countyMatch[0], 'food_safety'));
     }
   }
 
@@ -79,7 +79,7 @@ export async function lookupJurisdiction(
     .limit(1);
 
   if (fireMatch && fireMatch.length > 0) {
-    matches.push(mapToMatch(fireMatch[0], 'fire_primary'));
+    matches.push(mapToMatch(fireMatch[0], 'fire_safety'));
   }
 
   // Step 4: Check for federal overlay (Yosemite, military bases, etc.)
@@ -106,9 +106,9 @@ export async function linkJurisdictionToLocation(
 
   // Determine most restrictive
   if (records.length > 0) {
-    // For now, food_primary is most restrictive (health dept drives the grade)
-    const foodPrimary = records.find(r => r.jurisdiction_layer === 'food_primary');
-    if (foodPrimary) foodPrimary.is_most_restrictive = true;
+    // For now, food_safety is most restrictive (health dept drives the grade)
+    const foodRow = records.find(r => r.jurisdiction_layer === 'food_safety');
+    if (foodRow) foodRow.is_most_restrictive = true;
   }
 
   // Upsert — don't duplicate if already linked

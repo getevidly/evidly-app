@@ -90,23 +90,25 @@ export default function FoodSafetyOverview() {
       setLoading(true);
 
       try {
-        // 1. Jurisdiction — from first location's jurisdiction_id
-        // TODO(C19): jurisdiction fetch uses first location's jurisdiction_id.
+        // 1. Jurisdiction — via location_jurisdictions junction table
+        // TODO(C19): uses first location's food_safety jurisdiction.
         // Multi-location orgs spanning multiple counties will render only the
         // first county's agency on Identity Card. Acceptable for v1; revisit
         // when multi-jurisdiction orgs become a common pattern.
-        if (locationFilter.length > 0) {
-          const { data: locRow } = await supabase
-            .from('locations')
+        const locationId = locationFilter[0] || orgLocations[0]?.id;
+        if (locationId) {
+          const { data: ljRow } = await supabase
+            .from('location_jurisdictions')
             .select('jurisdiction_id')
-            .eq('id', locationFilter[0])
+            .eq('location_id', locationId)
+            .eq('jurisdiction_layer', 'food_safety')
             .maybeSingle();
 
-          if (!cancelled && locRow?.jurisdiction_id) {
+          if (!cancelled && ljRow?.jurisdiction_id) {
             const { data: jurisdData } = await supabase
               .from('jurisdictions')
               .select('*')
-              .eq('id', locRow.jurisdiction_id)
+              .eq('id', ljRow.jurisdiction_id)
               .maybeSingle();
             if (!cancelled) setJurisdiction(jurisdData || null);
           } else if (!cancelled) {
