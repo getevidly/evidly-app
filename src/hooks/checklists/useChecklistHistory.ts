@@ -102,8 +102,8 @@ export function useChecklistHistory(
           name_override,
           master_checklist_definitions(name, code)
         ),
-        started_by_profile:user_profiles!customer_checklist_instance_completions_started_by_fkey(full_name),
-        completed_by_profile:user_profiles!customer_checklist_instance_completions_completed_by_fkey(full_name)
+        started_by_profile:user_profiles!started_by(full_name),
+        completed_by_profile:user_profiles!completed_by(full_name)
       `)
       .eq('organization_id', orgId)
       .order('started_at', { ascending: false })

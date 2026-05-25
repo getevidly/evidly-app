@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, X, Check, AlertTriangle, CheckCircle, Library, Clock, ClipboardList } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
@@ -271,12 +271,14 @@ export function Checklists() {
   const [historyTo, setHistoryTo] = useState('');
   const [historyInstanceFilter, setHistoryInstanceFilter] = useState('');
   const [historyStatusFilter, setHistoryStatusFilter] = useState('');
-  const historyDateFrom = historyRange === '7days'
-    ? new Date(Date.now() - 7 * 86400000).toISOString()
-    : historyRange === '30days'
-      ? new Date(Date.now() - 30 * 86400000).toISOString()
-      : historyFrom || undefined;
-  const historyDateTo = historyRange === 'custom' ? historyTo || undefined : undefined;
+  const historyDateFrom = useMemo(() => {
+    if (historyRange === '7days') return new Date(Date.now() - 7 * 86400000).toISOString();
+    if (historyRange === '30days') return new Date(Date.now() - 30 * 86400000).toISOString();
+    return historyFrom || undefined;
+  }, [historyRange, historyFrom]);
+  const historyDateTo = useMemo(() => {
+    return historyRange === 'custom' ? historyTo || undefined : undefined;
+  }, [historyRange, historyTo]);
   const { data: historyData, isLoading: historyLoading } = useChecklistHistory({
     dateFrom: historyDateFrom,
     dateTo: historyDateTo,
