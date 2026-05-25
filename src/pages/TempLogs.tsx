@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History, Gauge } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -189,7 +189,11 @@ export function TempLogs() {
   const [temperature, setTemperature] = useState('');
   const [correctiveAction, setCorrectiveAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot' | 'hot_holding' | 'cold_holding' | 'analytics'>('equipment');
+  const [searchParams] = useSearchParams();
+  const validTabs = ['equipment', 'receiving', 'history', 'cooldown', 'iot', 'hot_holding', 'cold_holding', 'analytics'] as const;
+  type TabKey = typeof validTabs[number];
+  const initialTab = validTabs.includes(searchParams.get('tab') as TabKey) ? (searchParams.get('tab') as TabKey) : 'equipment';
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');

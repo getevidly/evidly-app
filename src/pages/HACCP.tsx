@@ -33,6 +33,8 @@ interface HACCPPlan {
 interface CriticalControlPoint {
   id: string;
   ccpNumber: string;
+  ccpName?: string;
+  displayOrder?: number;
   hazard: string;
   criticalLimit: string;
   monitoringProcedure: string;
@@ -48,7 +50,11 @@ interface CriticalControlPoint {
   source: 'temp_log' | 'checklist' | 'iot_sensor';
   equipmentName?: string;
   sensorName?: string;
-  locationId: string; // '1'=Location 1, '2'=Location 2, '3'=Location 3
+  locationId: string;
+  // 24hr window status (set by live data path; optional for demo)
+  hasRecentData?: boolean;
+  recentReadingCount?: number;
+  ccpStatus?: 'in_limit' | 'deviation' | 'unmonitored';
 }
 
 interface CorrectiveActionRecord {
@@ -834,22 +840,25 @@ export function HACCP() {
         return;
       }
 
-      // For each CCP, get latest monitoring log
+      // For each CCP, get monitoring logs within last 24 hours
       const ccpIds = (plansData || []).flatMap((p: any) =>
         (p.haccp_critical_control_points || []).map((c: any) => c.id)
       );
 
-      let latestLogs: Record<string, any> = {};
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      let recentLogs: Record<string, any[]> = {};
       if (ccpIds.length > 0) {
         const { data: logsData } = await supabase
           .from('haccp_monitoring_logs')
           .select('*')
           .in('ccp_id', ccpIds)
+          .gte('monitored_at', twentyFourHoursAgo)
           .order('monitored_at', { ascending: false });
 
-        // Group by ccp_id, keep only latest
+        // Group by ccp_id
         (logsData || []).forEach((log: any) => {
-          if (!latestLogs[log.ccp_id]) latestLogs[log.ccp_id] = log;
+          if (!recentLogs[log.ccp_id]) recentLogs[log.ccp_id] = [];
+          recentLogs[log.ccp_id].push(log);
         });
       }
 
@@ -861,24 +870,35 @@ export function HACCP() {
         lastReviewed: p.last_reviewed || p.created_at,
         status: p.status as 'active' | 'needs_review',
         ccps: (p.haccp_critical_control_points || []).map((c: any) => {
-          const log = latestLogs[c.id];
+          const logs = recentLogs[c.id] || [];
+          const latestLog = logs[0] || null;
+          const hasRecentData = logs.length > 0;
+          const ccpStatus: 'in_limit' | 'deviation' | 'unmonitored' = !hasRecentData
+            ? 'unmonitored'
+            : latestLog.is_within_limit ? 'in_limit' : 'deviation';
+
           return {
             id: c.id,
             ccpNumber: c.ccp_number,
+            ccpName: c.ccp_name || '',
+            displayOrder: c.display_order ?? 0,
             hazard: c.hazard,
             criticalLimit: c.critical_limit,
             monitoringProcedure: c.monitoring_procedure,
             correctiveAction: c.corrective_action,
             verification: c.verification,
-            lastReading: log?.reading_text || (log?.reading_value != null ? `${log.reading_value}${log.reading_unit || ''}` : undefined),
-            lastReadingValue: log?.reading_value != null ? Number(log.reading_value) : undefined,
-            lastReadingUnit: log?.reading_unit || undefined,
-            isWithinLimit: log ? log.is_within_limit : true,
-            lastMonitoredAt: log?.monitored_at || c.created_at,
-            lastMonitoredBy: log?.monitored_by_name || 'System',
+            lastReading: latestLog?.reading_text || (latestLog?.reading_value != null ? `${latestLog.reading_value}${latestLog.reading_unit || ''}` : undefined),
+            lastReadingValue: latestLog?.reading_value != null ? Number(latestLog.reading_value) : undefined,
+            lastReadingUnit: latestLog?.reading_unit || undefined,
+            isWithinLimit: ccpStatus !== 'deviation',
+            lastMonitoredAt: latestLog?.monitored_at || c.created_at,
+            lastMonitoredBy: latestLog?.monitored_by_name || 'System',
             source: c.source as 'temp_log' | 'checklist' | 'iot_sensor',
             equipmentName: c.equipment_name || undefined,
             locationId: c.location_id || '',
+            hasRecentData,
+            recentReadingCount: logs.length,
+            ccpStatus,
           };
         }),
       }));
@@ -1025,137 +1045,197 @@ export function HACCP() {
 
   // ── Owner / Executive condensed view ──────────────────────────────
   if (isCondensedView) {
-    const REVERSE_LOC_MAP: Record<string, string> = { '1': 'downtown', '2': 'airport', '3': 'university' };
+    // Flatten all CCPs and derive status
+    const allCCPsFlat = allPlans.flatMap(p => p.ccps);
+    const enrichedCCPs = allCCPsFlat.map(ccp => ({
+      ...ccp,
+      ccpStatus: ccp.ccpStatus ?? (ccp.isWithinLimit ? 'in_limit' as const : 'deviation' as const),
+      hasRecentData: ccp.hasRecentData ?? !!ccp.lastReadingValue,
+      recentReadingCount: ccp.recentReadingCount ?? (ccp.lastReadingValue ? 1 : 0),
+    }));
+    const sortedCCPs = [...enrichedCCPs].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
-    // Build per-location CCP summaries
-    const locationSummaries = haccpAccessibleLocs.map(loc => {
-      const lid = LOCATION_ID_MAP[loc.locationUrlId];
-      const ccps = allPlans.flatMap(p => p.ccps).filter(c => c.locationId === lid);
-      const deviations = ccps.filter(c => !c.isWithinLimit);
-      const openCAs = allCorrectiveActions.filter(a => a.locationId === lid && (a.status === 'open' || a.status === 'in_progress'));
-      return {
-        locationName: loc.locationName,
-        locationUrlId: loc.locationUrlId,
-        totalCCPs: ccps.length,
-        deviations,
-        deviationCount: deviations.length,
-        openCACount: openCAs.length,
-        allClear: deviations.length === 0,
-      };
-    });
+    const totalCCPCount = enrichedCCPs.length;
+    const unmonitoredCount = enrichedCCPs.filter(c => c.ccpStatus === 'unmonitored').length;
+    const deviationCount = enrichedCCPs.filter(c => c.ccpStatus === 'deviation').length;
+    const monitoredCount = totalCCPCount - unmonitoredCount;
+    const totalOpenCAs = allCorrectiveActions.filter(a => a.status === 'open' || a.status === 'in_progress').length;
 
-    const totalDeviations = locationSummaries.reduce((s, l) => s + l.deviationCount, 0);
-    const totalOpenCAs = locationSummaries.reduce((s, l) => s + l.openCACount, 0);
+    // CCP → temp-logs tab mapping
+    const CCP_TAB_MAP: Record<string, string> = {
+      'CCP-01': 'receiving',
+      'CCP-02': 'equipment',
+      'CCP-03': 'cold_holding',
+      'CCP-04': 'hot_holding',
+      'CCP-05': 'cooldown',
+      'CCP-06': 'equipment',
+    };
+
+    // Status pill styles
+    const statusPill = (status: string) => {
+      if (status === 'in_limit') return { bg: '#E1F5EE', color: '#04342C', label: 'In limit' };
+      if (status === 'deviation') return { bg: '#FCEBEB', color: '#501313', label: 'Deviation' };
+      return { bg: '#F1EFE8', color: '#5F5E5A', label: 'Unmonitored' };
+    };
+
+    // Location status pill
+    const locPill = (() => {
+      if (monitoredCount === 0) return { bg: '#F1EFE8', color: '#5F5E5A' };
+      if (monitoredCount === totalCCPCount) return { bg: '#E1F5EE', color: '#04342C' };
+      return { bg: '#FAEEDA', color: '#633806' };
+    })();
+
+    const locationName = haccpAccessibleLocs.length > 1
+      ? 'All Locations'
+      : haccpAccessibleLocs[0]?.locationName || '';
+
+    const formatTime = (iso: string) => {
+      const d = new Date(iso);
+      const h = d.getHours();
+      const m = d.getMinutes().toString().padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return `${h12}:${m} ${ampm}`;
+    };
+
+    const handleCCPClick = (ccpNumber: string) => {
+      const tab = CCP_TAB_MAP[ccpNumber] || 'equipment';
+      navigate(`/temp-logs?tab=${tab}`);
+    };
+
+    const handleCCPKeyDown = (e: React.KeyboardEvent, ccpNumber: string) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleCCPClick(ccpNumber);
+      }
+    };
 
     return (
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
-        <div className="space-y-6">
+        <div style={{ maxWidth: 480 }} className="space-y-4">
           {/* Header */}
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Shield className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">HACCP Status</h1>
             </div>
-            <p className="text-sm text-[#1E2D4D]/50">
-              {haccpAccessibleLocs.length > 1 ? 'All Locations' : haccpAccessibleLocs[0]?.locationName} — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            <p className="text-sm" style={{ color: '#5F5E5A' }}>
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
 
-          {/* Summary stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1E2D4D' }}>
-              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Active CCPs</p>
-              <p className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{allPlans.flatMap(p => p.ccps).length}</p>
+          {/* 4-card metric grid (2x2) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+            <div className="bg-white rounded-lg" style={{ borderLeft: '4px solid #1E2D4D', padding: 12 }}>
+              <p style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Active CCPs</p>
+              <p style={{ fontSize: 22, fontWeight: 500, color: '#1E2D4D' }}>{totalCCPCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
-              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Deviations</p>
-              <p className="text-2xl font-bold tracking-tight" style={{ color: totalDeviations > 0 ? '#DC2626' : '#22c55e' }}>{totalDeviations}</p>
+            <div className="bg-white rounded-lg" style={{ borderLeft: '4px solid #8A93A6', padding: 12 }}>
+              <p style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Unmonitored today</p>
+              <p style={{ fontSize: 22, fontWeight: 500, color: '#5F5E5A' }}>{unmonitoredCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#f59e0b' : '#22c55e'}` }}>
-              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Open Corrective Actions</p>
-              <p className="text-2xl font-bold tracking-tight" style={{ color: totalOpenCAs > 0 ? '#f59e0b' : '#22c55e' }}>{totalOpenCAs}</p>
+            <div className="bg-white rounded-lg" style={{ borderLeft: `4px solid ${deviationCount > 0 ? '#b3261e' : '#2f7a4d'}`, padding: 12 }}>
+              <p style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Deviations</p>
+              <p style={{ fontSize: 22, fontWeight: 500, color: deviationCount > 0 ? '#b3261e' : '#2f7a4d' }}>{deviationCount}</p>
+            </div>
+            <div className="bg-white rounded-lg" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#b3261e' : '#2f7a4d'}`, padding: 12 }}>
+              <p style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Open CAs</p>
+              <p style={{ fontSize: 22, fontWeight: 500, color: totalOpenCAs > 0 ? '#b3261e' : '#2f7a4d' }}>{totalOpenCAs}</p>
             </div>
           </div>
 
-          {/* Per-location rows */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
-              <h2 className="text-sm font-semibold text-[#1E2D4D]/80">Location Status</h2>
+          {/* Location status */}
+          <div className="bg-white rounded-lg" style={{ padding: '12px 14px' }}>
+            <div className="flex items-center justify-between">
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1E2D4D' }}>Location status</p>
+              <span
+                className="rounded-full"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '3px 10px',
+                  backgroundColor: locPill.bg,
+                  color: locPill.color,
+                }}
+              >
+                {monitoredCount} of {totalCCPCount} monitored today
+              </span>
             </div>
-            <div className="divide-y divide-[#1E2D4D]/3">
-              {locationSummaries.map(loc => (
-                <div
-                  key={loc.locationUrlId}
-                  className="flex items-center justify-between px-5 py-4 hover:bg-[#FAF7F0] transition-colors"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    {loc.allClear ? (
-                      <CheckCircle className="h-5 w-5 shrink-0" style={{ color: '#22c55e' }} />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 shrink-0" style={{ color: '#DC2626' }} />
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#1E2D4D]">{loc.locationName}</p>
-                      <p className="text-xs text-[#1E2D4D]/50">
-                        {loc.allClear
-                          ? 'All CCPs in limit'
-                          : `${loc.deviationCount} deviation${loc.deviationCount !== 1 ? 's' : ''} — ${loc.deviations.map(d => d.hazard.split(' (')[0].split(' from ')[0].split(' in ')[0].split(' during ')[0]).join(', ')}`
-                        }
-                      </p>
+            {locationName && (
+              <p style={{ fontSize: 12, color: '#5F5E5A', marginTop: 4 }}>{locationName}</p>
+            )}
+          </div>
+
+          {/* CCP list */}
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 600, color: '#5F5E5A', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 8 }}>
+              Control points
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {sortedCCPs.map(ccp => {
+                const pill = statusPill(ccp.ccpStatus);
+                const isCooling = ccp.ccpNumber === 'CCP-05';
+                let subtitle = '';
+                if (ccp.ccpStatus === 'unmonitored') {
+                  subtitle = isCooling ? 'No cooling events in last 24 hr' : 'No reading in last 24 hr';
+                } else if (ccp.ccpStatus === 'in_limit') {
+                  const count = ccp.recentReadingCount;
+                  const timeStr = ccp.lastMonitoredAt ? formatTime(ccp.lastMonitoredAt) : '';
+                  subtitle = `${count} reading${count !== 1 ? 's' : ''} \u00b7 last ${ccp.lastReadingValue ?? ''}°${ccp.lastReadingUnit ?? 'F'} at ${timeStr}`;
+                } else {
+                  const timeStr = ccp.lastMonitoredAt ? formatTime(ccp.lastMonitoredAt) : '';
+                  subtitle = `Last reading ${ccp.lastReadingValue ?? ''}°${ccp.lastReadingUnit ?? 'F'} out of limit at ${timeStr}`;
+                }
+
+                const borderStyle = ccp.ccpStatus === 'in_limit'
+                  ? { borderLeft: '3px solid #2f7a4d' }
+                  : ccp.ccpStatus === 'deviation'
+                    ? { borderLeft: '3px solid #b3261e' }
+                    : { border: '0.5px solid #E2DDD4' };
+
+                return (
+                  <div
+                    key={ccp.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleCCPClick(ccp.ccpNumber)}
+                    onKeyDown={(e) => handleCCPKeyDown(e, ccp.ccpNumber)}
+                    className="bg-white rounded-lg"
+                    style={{
+                      padding: 12,
+                      cursor: 'pointer',
+                      ...borderStyle,
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p style={{ fontSize: 13, fontWeight: 500, color: '#1E2D4D' }}>
+                          {ccp.ccpNumber} {ccp.ccpName || ''}
+                        </p>
+                        <p style={{ fontSize: 11, color: '#5F5E5A', marginTop: 2 }}>
+                          {subtitle}
+                        </p>
+                      </div>
+                      <span
+                        className="rounded-full shrink-0"
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          padding: '3px 8px',
+                          backgroundColor: pill.bg,
+                          color: pill.color,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {pill.label}
+                      </span>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/haccp?location=${loc.locationUrlId}`)}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
-                    style={{ backgroundColor: '#1E2D4D', color: '#fff' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2A3F6B'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1E2D4D'; }}
-                  >
-                    View Details
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-
-          {/* Open corrective actions (if any) */}
-          {totalOpenCAs > 0 && (
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
-                <h2 className="text-sm font-semibold text-[#1E2D4D]/80">Open Corrective Actions</h2>
-              </div>
-              <div className="divide-y divide-[#1E2D4D]/3">
-                {allCorrectiveActions
-                  .filter(a => a.status === 'open' || a.status === 'in_progress')
-                  .map(ca => {
-                    const locName = haccpAccessibleLocs.find(l => LOCATION_ID_MAP[l.locationUrlId] === ca.locationId)?.locationName || 'Unknown';
-                    return (
-                      <div key={ca.id} className="px-5 py-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold text-[#1E2D4D]">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
-                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{locName} — {ca.deviation}</p>
-                            <p className="text-xs mt-1" style={{ color: '#1E2D4D' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
-                          </div>
-                          <span
-                            className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
-                            style={{
-                              backgroundColor: ca.status === 'open' ? '#fef2f2' : '#fef9c3',
-                              color: ca.status === 'open' ? '#991b1b' : '#854d0e',
-                            }}
-                          >
-                            {ca.status === 'open' ? 'Open' : 'In Progress'}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            </div>
-          )}
 
           {/* Export button for owner */}
           {canExportPackage && (
