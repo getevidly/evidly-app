@@ -28,7 +28,7 @@ export function PerformanceTab() {
           className="w-[54px] h-[54px] rounded-2xl flex items-center justify-center mb-4"
           style={{ backgroundColor: '#FEF3C7' }}
         >
-          <BarChart3 className="h-[38px] w-[38px]" style={{ color: '#A08C5A' }} />
+          <BarChart3 className="h-[38px] w-[38px]" style={{ color: '#2f7a4d' }} />
         </div>
 
         <h3

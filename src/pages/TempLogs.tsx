@@ -1374,14 +1374,14 @@ export function TempLogs() {
         {/* Tabs */}
         <div style={{ display: 'flex', overflowX: 'auto', borderBottom: `1px solid ${colors.borderLight}`, margin: '0 -4px' }}>
           {([
-            { key: 'equipment', label: t('tempLogs.currentReadings'), icon: <Gauge className="h-3.5 w-3.5" /> },
-            { key: 'receiving', label: t('tempLogs.receiving'), icon: <Package className="h-3.5 w-3.5" /> },
+            { key: 'equipment', label: t('tempLogs.currentReadings'), icon: <Gauge className="h-3.5 w-3.5" style={{ color: colors.navy }} /> },
+            { key: 'receiving', label: t('tempLogs.receiving'), icon: <Package className="h-3.5 w-3.5" style={{ color: '#D97706' }} /> },
             { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: '#EA580C' }} /> },
             { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: colors.info }} /> },
-            { key: 'cooldown', label: t('tempLogs.cooldown'), icon: <Snowflake className="h-3.5 w-3.5" /> },
-            { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" /> },
-            { key: 'history', label: t('tempLogs.history'), icon: <History className="h-3.5 w-3.5" /> },
-            { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" /> },
+            { key: 'cooldown', label: t('tempLogs.cooldown'), icon: <Snowflake className="h-3.5 w-3.5" style={{ color: '#0891B2' }} /> },
+            { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" style={{ color: '#059669' }} /> },
+            { key: 'history', label: t('tempLogs.history'), icon: <History className="h-3.5 w-3.5" style={{ color: '#6B7F96' }} /> },
+            { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-3.5 w-3.5" style={{ color: '#7C3AED' }} /> },
           ] as { key: string; label: string; icon?: React.ReactNode }[]).map(tab => (
             <button
               key={tab.key}

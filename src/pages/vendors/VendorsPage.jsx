@@ -7,7 +7,7 @@ const TABS = [
   { id: 'services',   label: 'Services',          icon: Wrench,     color: '#D97706' },
   { id: 'requests',   label: 'Service requests',  icon: Send,       color: '#2563EB' },
   { id: 'documents',  label: 'Doc review queue',  icon: FileCheck,  color: '#059669' },
-  { id: 'performance',label: 'Performance',        icon: TrendingUp, color: '#A08C5A' },
+  { id: 'performance',label: 'Performance',        icon: TrendingUp, color: '#2f7a4d' },
 ];
 
 /* Lazy tab imports — filled in Commits 2-3 */
@@ -77,7 +77,7 @@ export default function VendorsPage() {
                 marginBottom: '-1px',
               }}
             >
-              <Icon size={14} style={{ color: isActive ? tab.color : '#94A3B8' }} />
+              <Icon size={14} style={{ color: tab.color }} />
               {tab.label}
             </button>
           );

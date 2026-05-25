@@ -28,13 +28,13 @@ const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
 type Tab = 'monitor' | 'fleet' | 'alerts' | 'integrations' | 'analytics' | 'settings';
 
-const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
-  { key: 'monitor', label: 'Live Monitor', icon: Activity },
-  { key: 'fleet', label: 'Sensor Fleet', icon: Radio },
-  { key: 'alerts', label: 'Alerts & Thresholds', icon: AlertTriangle },
-  { key: 'integrations', label: 'Integrations', icon: Cloud },
-  { key: 'analytics', label: 'Analytics', icon: BarChart3 },
-  { key: 'settings', label: 'Settings', icon: SettingsIcon },
+const TABS: { key: Tab; label: string; icon: React.ElementType; color: string }[] = [
+  { key: 'monitor', label: 'Live Monitor', icon: Activity, color: '#059669' },
+  { key: 'fleet', label: 'Sensor Fleet', icon: Radio, color: '#2563EB' },
+  { key: 'alerts', label: 'Alerts & Thresholds', icon: AlertTriangle, color: '#D97706' },
+  { key: 'integrations', label: 'Integrations', icon: Cloud, color: '#7C3AED' },
+  { key: 'analytics', label: 'Analytics', icon: BarChart3, color: '#1E2D4D' },
+  { key: 'settings', label: 'Settings', icon: SettingsIcon, color: '#6B7F96' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -377,8 +377,8 @@ export function IoTSensorHub() {
             {TABS.map(t => {
               const active = activeTab === t.key;
               return (
-                <button key={t.key} onClick={() => setActiveTab(t.key)} className="flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors" style={{ color: active ? '#1E2D4D' : '#6b7280', borderBottom: active ? '2px solid #1E2D4D' : '2px solid transparent' }}>
-                  <t.icon className="h-4 w-4" /> {t.label}
+                <button key={t.key} onClick={() => setActiveTab(t.key)} className="flex items-center gap-2 px-4 py-3 text-sm whitespace-nowrap transition-colors" style={{ color: active ? '#1E2D4D' : '#6b7280', fontWeight: active ? 600 : 500, borderBottom: active ? `2px solid ${t.color}` : '2px solid transparent' }}>
+                  <t.icon className="h-4 w-4" style={{ color: t.color }} /> {t.label}
                 </button>
               );
             })}
