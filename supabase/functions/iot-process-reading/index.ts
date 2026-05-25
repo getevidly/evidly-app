@@ -126,6 +126,7 @@ Deno.serve(async (req: Request) => {
         monitored_by: null,
         monitored_by_name: sensor.name,
         monitored_at: new Date().toISOString(),
+        source_temperature_log_id: tempLog.id,
       });
       if (haccpErr) {
         console.error("[iot-process-reading] HACCP cross-post failed:", haccpErr);
