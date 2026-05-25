@@ -44,7 +44,7 @@ export function TeamLeaderboard() {
         // Get checklist completions and temp logs for the team
         const [checklistRes, tempRes, caRes] = await Promise.all([
           supabase
-            .from('checklist_template_completions')
+            .from('customer_checklist_instance_completions')
             .select('completed_by, status')
             .eq('organization_id', orgId)
             .gte('completed_at', thirtyDaysAgo),

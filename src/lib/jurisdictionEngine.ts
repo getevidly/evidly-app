@@ -575,7 +575,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
  * - Per AB 1147 requirements — date, observations, corrective actions
  */
 export function _generateChecklistTemplates(_profile: MergedJurisdictionProfile): void {
-  // TODO: Create checklist_templates in Supabase
+  // TODO: Reference master_checklist_definitions in Supabase
   // TODO: Use profile.temperatureThresholds for temp check items
   // TODO: Use profile.requiredPostings for posting verification items
   // TODO: Use profile.coolingRequirements for cooling log items

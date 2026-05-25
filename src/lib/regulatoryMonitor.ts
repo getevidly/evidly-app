@@ -381,7 +381,7 @@ export function determineImpact(
 export async function autoUpdateChecklists(
   _change: RegulatoryAlert,
 ): Promise<{ updated: string[]; requiresManualReview: string[] }> {
-  // TODO: Query checklist_templates table for related templates
+  // TODO: Query master_checklist_definitions for related definitions
   // TODO: Update threshold values, time windows, etc.
   // TODO: Log changes to audit trail
   // TODO: Notify template owners of auto-updates

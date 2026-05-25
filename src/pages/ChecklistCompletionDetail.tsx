@@ -6,14 +6,14 @@ import { supabase } from '../lib/supabase';
 
 interface CompletionDetail {
   id: string;
-  template_id: string;
+  instance_id: string;
   location_id: string;
   completed_by: string;
   completed_at: string | null;
   score_percentage: number | null;
   notes: string | null;
   status: string | null;
-  template_name: string;
+  checklist_name: string;
   cadence: string;
   location_name: string;
   completed_by_name: string;
@@ -50,11 +50,15 @@ export function ChecklistCompletionDetail() {
         setError(null);
 
         const { data: c, error: cErr } = await supabase
-          .from('checklist_template_completions')
+          .from('customer_checklist_instance_completions')
           .select(`
-            id, template_id, location_id, completed_by, completed_at,
+            id, instance_id, location_id, completed_by, completed_at,
             score_percentage, notes, status,
-            checklist_templates ( name, cadence ),
+            customer_checklist_instances (
+              name_override,
+              cadence_override,
+              master_checklist_definitions ( name, cadence )
+            ),
             locations ( name )
           `)
           .eq('id', completionId)
@@ -75,64 +79,66 @@ export function ChecklistCompletionDetail() {
 
         const completedByName = profile?.full_name || 'Unknown';
 
-        const template = Array.isArray(c.checklist_templates)
-          ? c.checklist_templates[0]
-          : c.checklist_templates;
+        const instance = Array.isArray(c.customer_checklist_instances)
+          ? c.customer_checklist_instances[0]
+          : c.customer_checklist_instances;
+        const masterDef = instance?.master_checklist_definitions;
         const location = Array.isArray(c.locations)
           ? c.locations[0]
           : c.locations;
 
         setCompletion({
           id: c.id,
-          template_id: c.template_id,
+          instance_id: c.instance_id,
           location_id: c.location_id,
           completed_by: c.completed_by,
           completed_at: c.completed_at,
           score_percentage: c.score_percentage,
           notes: c.notes,
           status: c.status,
-          template_name: template?.name || 'Unknown Template',
-          cadence: template?.cadence || 'on_demand',
+          checklist_name: instance?.name_override || masterDef?.name || 'Unknown Checklist',
+          cadence: instance?.cadence_override || masterDef?.cadence || 'on_demand',
           location_name: location?.name || 'Unknown Location',
           completed_by_name: completedByName,
         });
 
         const { data: itemRows, error: iErr } = await supabase
-          .from('checklist_template_items')
-          .select('id, title, "order"')
-          .eq('template_id', c.template_id)
-          .order('order', { ascending: true });
+          .from('customer_checklist_instance_items')
+          .select('id, master_item_id, master_checklist_definition_items(sort_order, prompt, display_label)')
+          .eq('instance_id', c.instance_id)
+          .eq('is_active', true);
 
         if (iErr) throw iErr;
 
         const { data: respRows, error: rErr } = await supabase
-          .from('checklist_responses')
-          .select('id, template_item_id, response_value, is_pass, photo_url, temperature_reading, corrective_action, responded_at')
+          .from('customer_checklist_instance_responses')
+          .select('id, master_item_id, response_value, is_pass, photo_url, temperature_reading, corrective_action, responded_at')
           .eq('completion_id', completionId);
 
         if (rErr) throw rErr;
 
         const respByItem = new Map(
-          (respRows || []).map(r => [r.template_item_id, r])
+          (respRows || []).map(r => [r.master_item_id, r])
         );
 
-        setItems(
-          (itemRows || []).map(item => {
-            const r = respByItem.get(item.id);
-            return {
-              item_id: item.id,
-              title: item.title,
-              order: item.order ?? 0,
-              response_id: r?.id ?? null,
-              response_value: r?.response_value ?? null,
-              is_pass: r?.is_pass ?? null,
-              photo_url: r?.photo_url ?? null,
-              temperature_reading: r?.temperature_reading ?? null,
-              corrective_action: r?.corrective_action ?? null,
-              responded_at: r?.responded_at ?? null,
-            };
-          })
-        );
+        const mappedItems = (itemRows || []).map(item => {
+          const mi = item.master_checklist_definition_items;
+          const r = respByItem.get(item.master_item_id);
+          return {
+            item_id: item.id,
+            title: mi?.display_label || mi?.prompt || 'Untitled',
+            order: mi?.sort_order ?? 0,
+            response_id: r?.id ?? null,
+            response_value: r?.response_value ?? null,
+            is_pass: r?.is_pass ?? null,
+            photo_url: r?.photo_url ?? null,
+            temperature_reading: r?.temperature_reading ?? null,
+            corrective_action: r?.corrective_action ?? null,
+            responded_at: r?.responded_at ?? null,
+          };
+        });
+        mappedItems.sort((a, b) => a.order - b.order);
+        setItems(mappedItems);
       } catch (err) {
         console.error('Error loading completion:', err);
         setError('Failed to load completion details');
@@ -182,7 +188,7 @@ export function ChecklistCompletionDetail() {
       </button>
 
       <div>
-        <h1 className="text-2xl font-bold text-[#1E2D4D]">{completion.template_name}</h1>
+        <h1 className="text-2xl font-bold text-[#1E2D4D]">{completion.checklist_name}</h1>
         <div className="text-sm text-[#1E2D4D]/50 mt-1 capitalize">
           {completion.cadence.replace('_', ' ')}
         </div>

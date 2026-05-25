@@ -126,12 +126,12 @@ export default function FoodSafetyTrajectory() {
   async function fetchActivityCompletion() {
     const periodStart = daysAgo(timeRange);
 
-    // Checklists due and completed on time
+    // Checklists started and completed in period
     const { data: clData } = await supabase
-      .from('checklist_template_completions')
-      .select('completed_at, due_date, status')
+      .from('customer_checklist_instance_completions')
+      .select('completed_at, started_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', periodStart.split('T')[0]);
+      .gte('started_at', periodStart);
 
     // Temperature logs (all are "scheduled" in the sense they were recorded)
     const { data: tempData } = await supabase
@@ -141,7 +141,7 @@ export default function FoodSafetyTrajectory() {
       .gte('reading_time', periodStart);
 
     const clTotal = clData ? clData.length : 0;
-    const clOnTime = clData ? clData.filter(r => r.completed_at && r.due_date && r.completed_at.split('T')[0] <= r.due_date).length : 0;
+    const clCompleted = clData ? clData.filter(r => r.status === 'completed').length : 0;
     const tempTotal = tempData ? tempData.length : 0;
     const totalActivities = clTotal + tempTotal;
 
@@ -150,8 +150,8 @@ export default function FoodSafetyTrajectory() {
       return;
     }
 
-    // "Completed on time" = checklist completed by due date + all temp logs (they exist = completed)
-    const completedOnTime = clOnTime + tempTotal;
+    // "Completed" = checklist with status completed + all temp logs (they exist = completed)
+    const completedOnTime = clCompleted + tempTotal;
     const pct = Math.round((completedOnTime / totalActivities) * 100);
     setActivityCompletion(pct);
   }
@@ -195,19 +195,18 @@ export default function FoodSafetyTrajectory() {
     const periodStart = daysAgo(timeRange);
 
     const { data } = await supabase
-      .from('checklist_template_completions')
-      .select('completed_at, due_date, status')
+      .from('customer_checklist_instance_completions')
+      .select('completed_at, started_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', periodStart.split('T')[0]);
+      .gte('started_at', periodStart);
 
     if (!data || data.length === 0) {
       setChecklistsOnTime(null);
       return;
     }
 
-    const completed = data.filter(r => r.completed_at || r.status === 'completed');
-    const onTime = completed.filter(r => r.completed_at && r.due_date && r.completed_at.split('T')[0] <= r.due_date);
-    const pct = data.length > 0 ? Math.round((onTime.length / data.length) * 100) : null;
+    const completed = data.filter(r => r.status === 'completed');
+    const pct = data.length > 0 ? Math.round((completed.length / data.length) * 100) : null;
     setChecklistsOnTime(pct);
   }
 
@@ -237,10 +236,10 @@ export default function FoodSafetyTrajectory() {
 
     // Get all data in one batch
     const { data: clData } = await supabase
-      .from('checklist_template_completions')
-      .select('completed_at, due_date, status')
+      .from('customer_checklist_instance_completions')
+      .select('completed_at, started_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', periodStart.split('T')[0]);
+      .gte('started_at', periodStart);
 
     const { data: tempData } = await supabase
       .from('temperature_logs')
@@ -258,16 +257,16 @@ export default function FoodSafetyTrajectory() {
       let pct = null;
 
       if (metric === 'activity' || metric === 'checklists') {
-        const dayChecklists = clData ? clData.filter(r => r.due_date === dayStr) : [];
-        const dayOnTime = dayChecklists.filter(r => r.completed_at && r.completed_at.split('T')[0] <= r.due_date);
+        const dayChecklists = clData ? clData.filter(r => r.started_at && r.started_at.split('T')[0] === dayStr) : [];
+        const dayCompleted = dayChecklists.filter(r => r.status === 'completed');
 
         if (metric === 'checklists') {
-          pct = dayChecklists.length > 0 ? Math.round((dayOnTime.length / dayChecklists.length) * 100) : null;
+          pct = dayChecklists.length > 0 ? Math.round((dayCompleted.length / dayChecklists.length) * 100) : null;
         } else {
           // Activity = checklists + temps
           const dayTemps = tempData ? tempData.filter(r => r.reading_time >= dayStart.toISOString() && r.reading_time < dayEnd.toISOString()) : [];
           const total = dayChecklists.length + dayTemps.length;
-          const completed = dayOnTime.length + dayTemps.length;
+          const completed = dayCompleted.length + dayTemps.length;
           pct = total > 0 ? Math.round((completed / total) * 100) : null;
         }
       } else if (metric === 'temperatures') {
@@ -303,15 +302,15 @@ export default function FoodSafetyTrajectory() {
 
     // Get all checklist data
     const { data: clData } = await supabase
-      .from('checklist_template_completions')
-      .select('location_id, completed_at, due_date, status')
+      .from('customer_checklist_instance_completions')
+      .select('location_id, completed_at, started_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', periodStart.split('T')[0]);
+      .gte('started_at', periodStart);
 
     const results = locations.map(loc => {
       const locChecklists = clData ? clData.filter(r => r.location_id === loc.id) : [];
-      const onTime = locChecklists.filter(r => r.completed_at && r.due_date && r.completed_at.split('T')[0] <= r.due_date);
-      const pct = locChecklists.length > 0 ? Math.round((onTime.length / locChecklists.length) * 100) : 0;
+      const completed = locChecklists.filter(r => r.status === 'completed');
+      const pct = locChecklists.length > 0 ? Math.round((completed.length / locChecklists.length) * 100) : 0;
       return { name: loc.name, percentage: pct };
     }).sort((a, b) => b.percentage - a.percentage);
 

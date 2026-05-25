@@ -156,10 +156,10 @@ export default function FoodSafetyAnalysis() {
     const priorEnd = daysAgo(7);
 
     let query = supabase
-      .from('checklist_template_completions')
-      .select('completed_at, due_date, status')
+      .from('customer_checklist_instance_completions')
+      .select('completed_at, started_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', priorStart.split('T')[0]);
+      .gte('started_at', priorStart);
 
     const { data } = await query;
     if (!data || data.length === 0) {
@@ -167,8 +167,8 @@ export default function FoodSafetyAnalysis() {
       return;
     }
 
-    const currentItems = data.filter(r => r.due_date >= currentStart.split('T')[0]);
-    const priorItems = data.filter(r => r.due_date >= priorStart.split('T')[0] && r.due_date < priorEnd.split('T')[0]);
+    const currentItems = data.filter(r => r.started_at >= currentStart);
+    const priorItems = data.filter(r => r.started_at >= priorStart && r.started_at < priorEnd);
 
     const calcRate = (items) => {
       if (items.length === 0) return null;
@@ -185,22 +185,22 @@ export default function FoodSafetyAnalysis() {
     const priorPeriodEnd = daysAgo(timeRange).split('T')[0];
 
     const { data } = await supabase
-      .from('checklist_template_completions')
-      .select('due_date, completed_at, status')
+      .from('customer_checklist_instance_completions')
+      .select('started_at, completed_at, status')
       .eq('organization_id', orgId)
       .is('completed_at', null)
       .neq('status', 'completed')
-      .lt('due_date', now);
+      .lt('started_at', now);
 
     const currentCount = data ? data.length : null;
 
-    // Prior period: count items that were overdue at that time (approximation)
+    // Prior period: count items that were abandoned at that time (approximation)
     const { data: priorData } = await supabase
-      .from('checklist_template_completions')
-      .select('due_date, completed_at, status')
+      .from('customer_checklist_instance_completions')
+      .select('started_at, completed_at, status')
       .eq('organization_id', orgId)
-      .lt('due_date', priorPeriodEnd)
-      .gte('due_date', priorPeriodStart)
+      .lt('started_at', priorPeriodEnd)
+      .gte('started_at', priorPeriodStart)
       .is('completed_at', null)
       .neq('status', 'completed');
 
@@ -334,12 +334,12 @@ export default function FoodSafetyAnalysis() {
       .eq('pillar', 'food_safety')
       .gte('created_at', rangeStart);
 
-    // Fetch overdue checklists in range
+    // Fetch incomplete checklists in range
     const { data: clData } = await supabase
-      .from('checklist_template_completions')
-      .select('due_date, completed_at, status')
+      .from('customer_checklist_instance_completions')
+      .select('started_at, completed_at, status')
       .eq('organization_id', orgId)
-      .gte('due_date', rangeStart.split('T')[0])
+      .gte('started_at', rangeStart)
       .is('completed_at', null)
       .neq('status', 'completed');
 
@@ -348,7 +348,7 @@ export default function FoodSafetyAnalysis() {
         ? caData.filter(r => r.created_at >= week.start && r.created_at < week.end && !OPEN_STATUSES_EXCLUDE.includes(r.status)).length
         : 0;
       const clCount = clData
-        ? clData.filter(r => r.due_date >= week.start.split('T')[0] && r.due_date < week.end.split('T')[0]).length
+        ? clData.filter(r => r.started_at >= week.start && r.started_at < week.end).length
         : 0;
 
       return { name: week.label, openCAs: caCount, overdueChecklists: clCount };

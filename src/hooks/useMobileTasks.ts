@@ -49,32 +49,36 @@ export function useMobileTasks(orgId: string | undefined, role: UserRole): UseMo
       const today = new Date().toISOString().split('T')[0];
 
       try {
-        // 1. Checklists — active templates without today's completion
+        // 1. Checklists — active instances without today's completion
         if (sources.includes('checklists')) {
           try {
-            const [{ data: templates }, { data: completions }] = await Promise.all([
+            const [{ data: instances }, { data: completions }] = await Promise.all([
               supabase
-                .from('checklist_templates')
-                .select('id, name, frequency')
+                .from('customer_checklist_instances')
+                .select('id, name_override, cadence_override, master_checklist_definitions(name, cadence)')
                 .eq('organization_id', orgId)
                 .eq('is_active', true)
                 .limit(20),
               supabase
-                .from('checklist_template_completions')
-                .select('template_id')
+                .from('customer_checklist_instance_completions')
+                .select('instance_id')
                 .eq('organization_id', orgId)
-                .gte('completed_at', today + 'T00:00:00')
-                .lte('completed_at', today + 'T23:59:59'),
+                .eq('status', 'completed')
+                .gte('started_at', today + 'T00:00:00')
+                .lte('started_at', today + 'T23:59:59'),
             ]);
 
-            if (templates) {
-              const completedIds = new Set((completions || []).map((c: any) => c.template_id));
-              templates.forEach((t: any) => {
-                if (!completedIds.has(t.id)) {
+            if (instances) {
+              const completedIds = new Set((completions || []).map((c: any) => c.instance_id));
+              instances.forEach((inst: any) => {
+                if (!completedIds.has(inst.id)) {
+                  const masterDef = inst.master_checklist_definitions;
+                  const name = inst.name_override || masterDef?.name || 'Checklist';
+                  const cadence = inst.cadence_override || masterDef?.cadence || 'on_demand';
                   allTasks.push({
-                    id: `checklist-${t.id}`,
-                    title: t.name,
-                    subtitle: t.frequency === 'daily' ? 'Daily checklist' : (t.frequency || 'Checklist'),
+                    id: `checklist-${inst.id}`,
+                    title: name,
+                    subtitle: cadence === 'once_daily' ? 'Daily checklist' : (cadence === 'per_shift' ? 'Per shift' : 'Checklist'),
                     icon: '📋',
                     status: 'due',
                     time: 'Due today',
