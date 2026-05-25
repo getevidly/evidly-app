@@ -376,8 +376,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     kitchen_staff: 'The number of food safety checkpoints that are currently passing.',
   },
   haccpOpenActions: {
-    platform_admin: 'Corrective actions created from CCP deviations but not yet resolved. These are audit findings waiting to happen.',
-    owner_operator: 'Corrective actions created from CCP deviations but not yet resolved. These are audit findings waiting to happen.',
+    platform_admin: 'Corrective actions created from CCP deviations but not yet resolved. These are inspection findings waiting to happen.',
+    owner_operator: 'Corrective actions created from CCP deviations but not yet resolved. These are inspection findings waiting to happen.',
     executive: 'Unresolved corrective actions from HACCP deviations. High counts indicate systemic food safety issues.',
     compliance_manager: 'Open corrective actions requiring resolution and verification. Each must be closed with documented evidence.',
     chef: 'Corrective actions that need your attention. Resolve these to keep your HACCP plan in compliance.',

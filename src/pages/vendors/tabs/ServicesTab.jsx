@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Wrench } from 'lucide-react';
 import { useLocationServiceSchedules } from '../../../hooks/useLocationServiceSchedules';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
@@ -99,19 +100,73 @@ export function ServicesTab() {
 function DayOneServices() {
   return (
     <div
-      className="bg-white rounded-lg px-4 py-4"
-      style={{ border: '1px solid #E2DDD4' }}
+      className="rounded-xl flex flex-col items-center text-center py-14 px-6"
+      style={{ backgroundColor: '#FAF7F0', border: '2px dashed #E5E0D8' }}
     >
-      <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-        Every recurring service across every location, tracked at the
-        service level — hood cleaning quarterly, pest control monthly,
-        grease collection on cadence, linen weekly. The view shows
-        what's on schedule, what's overdue, and where your network has
-        coverage gaps before they become audit findings.
+      <div
+        className="w-[54px] h-[54px] rounded-2xl flex items-center justify-center mb-4"
+        style={{ backgroundColor: '#FEF3C7' }}
+      >
+        <Wrench className="h-[38px] w-[38px]" style={{ color: '#D97706' }} />
+      </div>
+
+      <h3
+        className="text-[22px] font-bold tracking-tight mb-3"
+        style={{ color: '#1E2D4D', fontFamily: "'Montserrat', sans-serif" }}
+      >
+        No services recorded yet
+      </h3>
+
+      <p
+        className="text-sm mb-6"
+        style={{ color: '#94A3B8', maxWidth: 520, lineHeight: 1.55 }}
+      >
+        Every recurring service across every location — hood cleaning quarterly,
+        pest control monthly, grease collection on cadence, linen weekly. Services
+        populate automatically once vendors are in your Roster and start logging visits.
       </p>
-      <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-        Services populate automatically once vendors are in your Roster
-        and start logging visits. No vendors yet, no services yet.
+
+      <div
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mb-5"
+        style={{ maxWidth: 720 }}
+      >
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#D97706' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#D97706', letterSpacing: '0.12em' }}>
+            PREDICT
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Identifies services approaching expiration or cadence gaps before they become inspection findings.
+          </p>
+        </div>
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#DC2626' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#DC2626', letterSpacing: '0.12em' }}>
+            REDUCE
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Each service carries its own cadence, coverage area, and compliance requirements — reducing missed renewals.
+          </p>
+        </div>
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#059669' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#059669', letterSpacing: '0.12em' }}>
+            PROVE
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Every service visit, schedule change, and coverage gap is logged with date and vendor attribution.
+          </p>
+        </div>
+      </div>
+
+      <p className="text-xs" style={{ color: '#94A3B8' }}>
+        Add vendors to your Roster to begin recording services.
       </p>
     </div>
   );

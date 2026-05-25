@@ -1,6 +1,6 @@
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, BarChart3 } from 'lucide-react';
 import { useVendorPerformance } from '../../../hooks/useVendorPerformance';
 
 /**
@@ -21,18 +21,75 @@ export function PerformanceTab() {
   if (vendors.length === 0) {
     return (
       <div
-        className="bg-white rounded-lg px-4 py-4"
-        style={{ border: '1px solid #E2DDD4', borderRadius: '8px' }}
+        className="rounded-xl flex flex-col items-center text-center py-14 px-6"
+        style={{ backgroundColor: '#FAF7F0', border: '2px dashed #E5E0D8' }}
       >
-        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-          Performance signals build as your vendors complete service visits
-          over time. On-time rate, response time, and document health appear
-          once each vendor has logged at least three service records.
+        <div
+          className="w-[54px] h-[54px] rounded-2xl flex items-center justify-center mb-4"
+          style={{ backgroundColor: '#FEF3C7' }}
+        >
+          <BarChart3 className="h-[38px] w-[38px]" style={{ color: '#A08C5A' }} />
+        </div>
+
+        <h3
+          className="text-[22px] font-bold tracking-tight mb-3"
+          style={{ color: '#1E2D4D', fontFamily: "'Montserrat', sans-serif" }}
+        >
+          No performance data yet
+        </h3>
+
+        <p
+          className="text-sm mb-6"
+          style={{ color: '#94A3B8', maxWidth: 520, lineHeight: 1.55 }}
+        >
+          Performance signals build as your vendors complete service visits over
+          time. On-time rate, response time, and document health appear once each
+          vendor has logged at least three service records. EvidLY doesn't
+          fabricate metrics — as records accumulate, vendors appear here ranked
+          by reliability.
         </p>
-        <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6', marginTop: '14px' }}>
-          Until then, this view stays quiet on purpose — EvidLY doesn't
-          fabricate metrics. As records accumulate, vendors begin appearing
-          here ranked by reliability.
+
+        <div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mb-5"
+          style={{ maxWidth: 720 }}
+        >
+          <div
+            className="rounded-lg border text-left p-3.5"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#D97706' }}
+          >
+            <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#D97706', letterSpacing: '0.12em' }}>
+              PREDICT
+            </p>
+            <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+              Identifies vendors trending toward late service or declining response times before patterns become problems.
+            </p>
+          </div>
+          <div
+            className="rounded-lg border text-left p-3.5"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#DC2626' }}
+          >
+            <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#DC2626', letterSpacing: '0.12em' }}>
+              REDUCE
+            </p>
+            <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+              Performance baselines help you address service issues with data, reducing guesswork in vendor conversations.
+            </p>
+          </div>
+          <div
+            className="rounded-lg border text-left p-3.5"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#059669' }}
+          >
+            <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#059669', letterSpacing: '0.12em' }}>
+              PROVE
+            </p>
+            <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+              On-time rates, response times, and document health are calculated from real service records — never fabricated.
+            </p>
+          </div>
+        </div>
+
+        <p className="text-xs" style={{ color: '#94A3B8' }}>
+          Vendor performance appears once service records begin accumulating.
         </p>
       </div>
     );

@@ -73,7 +73,7 @@ export const ALL_MODULES = [
   },
   {
     group: 'Reporting',
-    description: 'Exports, summaries, and audit-ready documentation',
+    description: 'Exports, summaries, and inspection-ready documentation',
     modules: [
       { id: 'compliance_reports', label: 'Compliance Reports', description: 'Auto-generated inspection-ready report packages' },
       { id: 'data_export', label: 'Data Export', description: 'CSV/Excel export of any dataset on demand or scheduled' },

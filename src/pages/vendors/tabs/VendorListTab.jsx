@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Building2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDemo } from '../../../contexts/DemoContext';
 import { useVendors } from '../../../hooks/useVendors';
@@ -175,37 +175,80 @@ function getInitials(name) {
 function DayOneVendorList({ onAdd }) {
   return (
     <div
-      className="bg-white rounded-lg px-4 py-4"
-      style={{ border: '1px solid #E2DDD4' }}
+      className="rounded-xl flex flex-col items-center text-center py-14 px-6"
+      style={{ backgroundColor: '#FAF7F0', border: '2px dashed #E5E0D8' }}
     >
-      <p style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-        Your Roster is every vendor who actively touches your operation
-        — hood cleaners, pest control, grease collection, linen, anyone
-        whose work shows up in your kitchens. Each entry surfaces their
-        state, the services they cover, their locations, and what's
-        coming due.
-      </p>
-      <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-        Add a vendor manually if you already work with them. Invite a
-        vendor to self-fill if you'd rather they confirm their own
-        details and upload current docs. Browse Vendor Network when
-        you're hiring someone new and want a pre-vetted starting point.
-      </p>
-      <p className="mt-3.5" style={{ fontSize: '15px', color: '#1E2D4D', lineHeight: '1.6' }}>
-        Performance signals and document review become available once
-        the first vendor is in the roster.
-      </p>
-      <div className="flex items-center gap-2.5 mt-4">
-        <button
-          type="button"
-          onClick={onAdd}
-          className="px-4 py-2 rounded-md flex items-center gap-1.5"
-          style={{ fontSize: '12px', fontWeight: 500, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
-        >
-          <Plus size={14} />
-          Add vendor
-        </button>
+      <div
+        className="w-[54px] h-[54px] rounded-2xl flex items-center justify-center mb-4"
+        style={{ backgroundColor: '#DBEAFE' }}
+      >
+        <Building2 className="h-[38px] w-[38px]" style={{ color: '#1E2D4D' }} />
       </div>
+
+      <h3
+        className="text-[22px] font-bold tracking-tight mb-3"
+        style={{ color: '#1E2D4D', fontFamily: "'Montserrat', sans-serif" }}
+      >
+        No vendors in your roster yet
+      </h3>
+
+      <p
+        className="text-sm mb-6"
+        style={{ color: '#94A3B8', maxWidth: 520, lineHeight: 1.55 }}
+      >
+        Your Roster is every vendor who actively touches your operation — hood
+        cleaners, pest control, grease collection, linen. Add a vendor manually
+        or invite them to self-fill their details and upload current docs.
+      </p>
+
+      <div
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mb-5"
+        style={{ maxWidth: 720 }}
+      >
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#D97706' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#D97706', letterSpacing: '0.12em' }}>
+            PREDICT
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Identifies vendors approaching service expiration, missing coverage, or incomplete documentation before gaps affect your operation.
+          </p>
+        </div>
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#DC2626' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#DC2626', letterSpacing: '0.12em' }}>
+            REDUCE
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Each vendor entry captures service scope, location coverage, and document status — reducing the chance of missed renewals or expired credentials.
+          </p>
+        </div>
+        <div
+          className="rounded-lg border text-left p-3.5"
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#059669' }}
+        >
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#059669', letterSpacing: '0.12em' }}>
+            PROVE
+          </p>
+          <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
+            Every vendor interaction, document submission, and service update carries a timestamp and author trail.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={onAdd}
+        className="inline-flex items-center gap-1.5 rounded-lg font-bold"
+        style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0', padding: '12px 22px', fontSize: 14, minHeight: 44 }}
+      >
+        <Plus size={14} />
+        Add your first vendor
+      </button>
     </div>
   );
 }

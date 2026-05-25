@@ -3,11 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { Building2, Wrench, TrendingUp, Send, FileCheck } from 'lucide-react';
 
 const TABS = [
-  { id: 'vendors',    label: 'Roster',            icon: Building2 },
-  { id: 'services',   label: 'Services',          icon: Wrench },
-  { id: 'requests',   label: 'Service requests',  icon: Send },
-  { id: 'documents',  label: 'Document review',   icon: FileCheck },
-  { id: 'performance',label: 'Performance',        icon: TrendingUp },
+  { id: 'vendors',    label: 'Roster',            icon: Building2,  color: '#1E2D4D' },
+  { id: 'services',   label: 'Services',          icon: Wrench,     color: '#D97706' },
+  { id: 'requests',   label: 'Service requests',  icon: Send,       color: '#2563EB' },
+  { id: 'documents',  label: 'Doc review queue',  icon: FileCheck,  color: '#059669' },
+  { id: 'performance',label: 'Performance',        icon: TrendingUp, color: '#A08C5A' },
 ];
 
 /* Lazy tab imports — filled in Commits 2-3 */
@@ -71,13 +71,13 @@ export default function VendorsPage() {
               className="flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap transition-colors"
               style={{
                 fontSize: '12px',
-                fontWeight: 500,
-                color: isActive ? '#1E2D4D' : '#5A6478',
-                borderBottom: isActive ? '2px solid #1E2D4D' : '2px solid transparent',
+                fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1E2D4D' : '#94A3B8',
+                borderBottom: isActive ? `2px solid ${tab.color}` : '2px solid transparent',
                 marginBottom: '-1px',
               }}
             >
-              <Icon size={14} />
+              <Icon size={14} style={{ color: isActive ? tab.color : '#94A3B8' }} />
               {tab.label}
             </button>
           );
