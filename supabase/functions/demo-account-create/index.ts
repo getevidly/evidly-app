@@ -222,7 +222,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // ── 6. Update demo_sessions row (if linked) ─────────
+    // ── 6. Seed canonical HACCP plan ───────────────────────
+    await supabase.rpc('fn_seed_canonical_haccp', { target_org_id: org.id });
+
+    // ── 7. Update demo_sessions row (if linked) ─────────
     if (demo_session_id) {
       await supabase
         .from("demo_sessions")
