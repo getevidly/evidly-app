@@ -19,6 +19,8 @@ import { colors } from '../lib/designSystem';
 import { ChecklistsPRPBand } from '../components/checklists/ChecklistsPRPBand';
 import { ChecklistsEmptyState } from '../components/checklists/ChecklistsEmptyState';
 import { ChecklistsLibraryPreview } from '../components/checklists/ChecklistsLibraryPreview';
+import { ChecklistsHistoryEmptyState } from '../components/checklists/ChecklistsHistoryEmptyState';
+import { ChecklistsHistoryRoadmap } from '../components/checklists/ChecklistsHistoryRoadmap';
 import {
   useMasterChecklistDefinitions,
   useMasterChecklistDefinitionItems,
@@ -267,6 +269,8 @@ export function Checklists() {
   const [historyRange, setHistoryRange] = useState('7days');
   const [historyFrom, setHistoryFrom] = useState('');
   const [historyTo, setHistoryTo] = useState('');
+  const [historyInstanceFilter, setHistoryInstanceFilter] = useState('');
+  const [historyStatusFilter, setHistoryStatusFilter] = useState('');
   const historyDateFrom = historyRange === '7days'
     ? new Date(Date.now() - 7 * 86400000).toISOString()
     : historyRange === '30days'
@@ -276,6 +280,8 @@ export function Checklists() {
   const { data: historyData, isLoading: historyLoading } = useChecklistHistory({
     dateFrom: historyDateFrom,
     dateTo: historyDateTo,
+    instanceId: historyInstanceFilter || undefined,
+    status: historyStatusFilter || undefined,
   });
 
   // ── Adoption modal state ────────────────────────────────────────────────
@@ -803,32 +809,35 @@ export function Checklists() {
         <div className="flex space-x-2 border-b border-[#1E2D4D]/10 overflow-x-auto">
           <button
             onClick={() => setActiveView('today')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'today'
                 ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
+            <span style={{ fontSize: 14, marginRight: 7 }}>{'\uD83D\uDCCB'}</span>
             {t('checklists.todaysChecklists')}
           </button>
           <button
             onClick={() => setActiveView('library')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'library'
                 ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
-            Library
+            <span style={{ fontSize: 14, marginRight: 7 }}>{'\uD83D\uDCDA'}</span>
+            Templates
           </button>
           <button
             onClick={() => setActiveView('history')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'history'
                 ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
+            <span style={{ fontSize: 14, marginRight: 7 }}>{'\uD83D\uDD50'}</span>
             History
           </button>
         </div>
@@ -1217,32 +1226,119 @@ export function Checklists() {
 
         {/* ═══ HISTORY TAB ═════════════════════════════════════════════════ */}
         {activeView === 'history' && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-[#1E2D4D]">Completion History</h2>
-              <div className="flex gap-2">
+          <div className="space-y-5">
+            <h2 className="text-xl font-bold text-[#1E2D4D]">Completion History</h2>
+
+            {/* ── Filter bar ──────────────────────────────────────────── */}
+            <div
+              className="bg-white border rounded-[10px] flex flex-wrap items-end gap-3"
+              style={{ borderColor: colors.border, padding: '14px 18px' }}
+            >
+              {/* Date Range */}
+              <div className="flex flex-col gap-1" style={{ minWidth: 140 }}>
+                <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>Date Range</span>
                 <select
                   value={historyRange}
                   onChange={(e) => setHistoryRange(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
                 >
                   <option value="7days">Last 7 days</option>
                   <option value="30days">Last 30 days</option>
                   <option value="custom">Custom</option>
                 </select>
-                {historyRange === 'custom' && (
-                  <>
-                    <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-2 py-1 border border-[#1E2D4D]/15 rounded-lg text-sm" />
-                    <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-2 py-1 border border-[#1E2D4D]/15 rounded-lg text-sm" />
-                  </>
-                )}
+              </div>
+              {historyRange === 'custom' && (
+                <>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>From</span>
+                    <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>To</span>
+                    <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50" />
+                  </div>
+                </>
+              )}
+
+              {/* Checklist */}
+              <div className="flex flex-col gap-1" style={{ minWidth: 140 }}>
+                <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>Checklist</span>
+                <select
+                  value={historyInstanceFilter}
+                  onChange={(e) => setHistoryInstanceFilter(e.target.value)}
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                >
+                  <option value="">All checklists</option>
+                  {(instances ?? []).filter(i => i.isActive).map(inst => (
+                    <option key={inst.id} value={inst.id}>
+                      {inst.nameOverride ?? inst.masterDefinitionName ?? 'Untitled'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status */}
+              <div className="flex flex-col gap-1" style={{ minWidth: 140 }}>
+                <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>Status</span>
+                <select
+                  value={historyStatusFilter}
+                  onChange={(e) => setHistoryStatusFilter(e.target.value)}
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                >
+                  <option value="">All statuses</option>
+                  <option value="completed">Completed</option>
+                  <option value="in_progress">Partial</option>
+                  <option value="abandoned">Failed</option>
+                </select>
+              </div>
+
+              {/* Right side action buttons */}
+              <div className="flex gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => toast.info('Inspection packet PDF coming soon. We\u2019ll bundle all completions, gaps, and linked CAs into a single inspector-ready document. Want early access? Contact founders@getevidly.com')}
+                  className="font-bold transition-colors"
+                  style={{
+                    backgroundColor: colors.white,
+                    color: colors.navy,
+                    border: `1px solid ${colors.border}`,
+                    padding: '9px 16px',
+                    borderRadius: 6,
+                    fontSize: '12.5px',
+                    fontWeight: 700,
+                  }}
+                >
+                  {'\u2B07'} Inspection Packet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast.info('CSV export coming soon.')}
+                  className="font-bold transition-colors"
+                  style={{
+                    backgroundColor: colors.navy,
+                    color: colors.cream,
+                    border: 'none',
+                    padding: '9px 16px',
+                    borderRadius: 6,
+                    fontSize: '12.5px',
+                    fontWeight: 700,
+                  }}
+                >
+                  {'\u2B07'} Export CSV
+                </button>
               </div>
             </div>
 
+            {/* ── Content ─────────────────────────────────────────────── */}
             {historyLoading && <div className="text-center py-8 text-[#1E2D4D]/50">Loading history...</div>}
+
             {!historyLoading && (historyData ?? []).length === 0 && (
-              <PageEmptyState title="No checklist entries found for this date range" description="Try adjusting the date range filter." />
+              <>
+                <ChecklistsHistoryEmptyState onStartChecklist={() => setActiveView('today')} />
+                <ChecklistsHistoryRoadmap />
+              </>
             )}
+
             {!historyLoading && (historyData ?? []).length > 0 && (
               <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#1E2D4D]/10">
