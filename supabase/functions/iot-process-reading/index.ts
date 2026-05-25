@@ -19,15 +19,6 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-// HACCP CCP mapping: equipment type → CCP number
-const CCP_MAP: Record<string, string> = {
-  cooler: "CCP-01",      // Cold storage
-  freezer: "CCP-01",     // Cold storage
-  cold_holding: "CCP-02", // Hot/cold holding
-  hot_holding: "CCP-02",  // Hot/cold holding
-  hot_hold: "CCP-02",
-};
-
 // Default alert delay (minutes) — prevents false alarms from door opens
 const ALERT_DELAY_MINUTES = 15;
 
@@ -69,22 +60,24 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Sensor not found", details: sensorErr?.message }, 404);
     }
 
-    // 2. Look up equipment for threshold and type info
+    // 2. Look up equipment for threshold, type, and CCP link
     let equipmentType: string | null = null;
     let equipmentName: string | null = null;
+    let equipmentCcpId: string | null = null;
     let minTemp: number | null = null;
     let maxTemp: number | null = null;
 
     if (sensor.equipment_link_id) {
       const { data: equipment } = await supabase
         .from("temperature_equipment")
-        .select("id, name, equipment_type, min_temp, max_temp")
+        .select("id, name, equipment_type, ccp_id, min_temp, max_temp")
         .eq("id", sensor.equipment_link_id)
         .single();
 
       if (equipment) {
         equipmentType = equipment.equipment_type;
         equipmentName = equipment.name;
+        equipmentCcpId = equipment.ccp_id;
         minTemp = equipment.min_temp;
         maxTemp = equipment.max_temp;
       }
@@ -120,25 +113,30 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Failed to create temperature log", details: logErr.message }, 500);
     }
 
-    // 4. HACCP CCP mapping
+    // 4. HACCP cross-post via equipment.ccp_id FK
     let ccpMapped = false;
-    if (equipmentType && CCP_MAP[equipmentType]) {
-      const ccpNumber = CCP_MAP[equipmentType];
-      await supabase.from("haccp_monitoring_logs").insert({
+    if (equipmentCcpId) {
+      const { error: haccpErr } = await supabase.from("haccp_monitoring_logs").insert({
+        ccp_id: equipmentCcpId,
         organization_id: sensor.organization_id,
-        location_id: sensor.location_id,
-        ccp_number: ccpNumber,
+        facility_id: sensor.location_id,
         reading_value: tempF,
         reading_unit: "°F",
         is_within_limit: isWithinRange,
-        source: "iot_sensor",
-        source_id: tempLog.id,
-        equipment_name: equipmentName,
-        sensor_name: sensor.name,
-        monitored_by: "IoT Sensor",
-        monitored_at: body.reading_at || new Date().toISOString(),
+        monitored_by: null,
+        monitored_by_name: sensor.name,
+        monitored_at: new Date().toISOString(),
       });
-      ccpMapped = true;
+      if (haccpErr) {
+        console.error("[iot-process-reading] HACCP cross-post failed:", haccpErr);
+      } else {
+        ccpMapped = true;
+      }
+    } else if (sensor.equipment_link_id) {
+      console.warn("[iot-process-reading] Equipment has no ccp_id — skipping HACCP cross-post", {
+        equipment_link_id: sensor.equipment_link_id,
+        equipment_name: equipmentName,
+      });
     }
 
     // 5. Alert triggering (with delay logic)
