@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Activity, AlertTriangle, BarChart3, Bell, BookOpen, Bot, Brain, Bug, Building,
-  Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock,
+  Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock, CreditCard,
   DollarSign, Download, FileEdit, FileText, Flame, GraduationCap, Hammer,
   Handshake, HardHat, Heart, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
   Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
-  Shield, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
-  Timer, Trophy, TrendingUp, Truck, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
+  Shield, ShieldCheck, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
+  Timer, Trophy, TrendingUp, Truck, Upload, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
 } from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
@@ -108,6 +108,16 @@ const SIDEBAR_ICONS: Record<string, any> = {
   '👨‍🍳': ChefHat,
   '📥': Download,
   '💡': Lightbulb,
+  // PascalCase keys for admin section items
+  'MapPin': MapPin,
+  'Users': Users,
+  'ShieldCheck': ShieldCheck,
+  'Store': Store,
+  'Wrench': Wrench,
+  'Upload': Upload,
+  'Plug': Plug,
+  'CreditCard': CreditCard,
+  'Settings': Settings,
 };
 
 // ── Item descriptions (EN) ───────────────────────────────
@@ -388,7 +398,7 @@ const SidebarNavItem: React.FC<{
         {...(testId ? { 'data-testid': testId } : {})}
       >
         {IconComponent
-          ? <IconComponent className="h-4 w-4 flex-shrink-0" style={{ color: isActive ? '#ffffff' : '#94a3b8' }} />
+          ? <IconComponent className="h-4 w-4 flex-shrink-0" style={{ color: isActive ? '#ffffff' : (item.iconColor || '#94a3b8') }} />
           : <span style={{ fontSize: 15, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
         }
         <span style={{

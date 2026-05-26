@@ -229,39 +229,39 @@ const I: Record<string, NavItem> = {
   // ── Administration section items ────────────────────────
 
   'ad-locations': {
-    id: 'ad-locations', label: 'Locations', path: '/org-hierarchy', icon: 'icon:map-pin', iconColor: '#1E2D4D',
+    id: 'ad-locations', label: 'Locations', path: '/org-hierarchy', icon: 'MapPin', iconColor: '#1E2D4D',
     roles: [], description: 'Add, edit, or configure locations including jurisdiction mapping and compliance requirements.',
   },
   'ad-team': {
-    id: 'ad-team', label: 'Team', path: '/team', icon: 'icon:users', iconColor: '#0F6E56',
+    id: 'ad-team', label: 'Team', path: '/team', icon: 'Users', iconColor: '#0F6E56',
     roles: [], description: 'Manage staff roles, access levels, and location assignments across your organization.',
   },
   'ad-roles': {
-    id: 'ad-roles', label: 'Role Permissions', path: '/settings/roles-permissions', icon: 'icon:shield-check', iconColor: '#534AB7',
+    id: 'ad-roles', label: 'Role Permissions', path: '/settings/roles-permissions', icon: 'ShieldCheck', iconColor: '#534AB7',
     roles: [], description: 'Manage role-based permissions and user exceptions across your organization.',
   },
   'ad-vendors': {
-    id: 'ad-vendors', label: 'Vendors', path: '/vendors?tab=vendors', icon: 'icon:store', iconColor: '#c2731a',
+    id: 'ad-vendors', label: 'Vendors', path: '/vendors?tab=vendors', icon: 'Store', iconColor: '#c2731a',
     roles: [], description: 'Your vendor roster — hood cleaning, pest control, grease collection, and every vendor who touches your operation.',
   },
   'ad-equipment': {
-    id: 'ad-equipment', label: 'Equipment', path: '/equipment', icon: 'icon:wrench', iconColor: '#993C1D',
+    id: 'ad-equipment', label: 'Equipment', path: '/equipment', icon: 'Wrench', iconColor: '#993C1D',
     roles: [], description: 'Asset register for all kitchen equipment with service history, maintenance dates, and warranty tracking.',
   },
   'ad-import': {
-    id: 'ad-import', label: 'Import Data', path: '/import', icon: 'icon:upload', iconColor: '#2f7a4d',
+    id: 'ad-import', label: 'Import Data', path: '/import', icon: 'Upload', iconColor: '#2f7a4d',
     roles: [], description: 'Import temperature logs and compliance data from Zenput, Squadle, ComplianceMate, or CSV exports.',
   },
   'ad-integrations': {
-    id: 'ad-integrations', label: 'Integrations', path: '/integrations', icon: 'icon:plug', iconColor: '#185FA5',
+    id: 'ad-integrations', label: 'Integrations', path: '/integrations', icon: 'Plug', iconColor: '#185FA5',
     roles: [], description: 'Connect EvidLY with POS, accounting, HR, IoT, insurance, and 25+ other platforms.',
   },
   'ad-billing': {
-    id: 'ad-billing', label: 'Billing', path: '/admin/billing', icon: 'icon:credit-card', iconColor: '#A08C5A',
+    id: 'ad-billing', label: 'Billing', path: '/admin/billing', icon: 'CreditCard', iconColor: '#A08C5A',
     roles: [], description: 'Manage your subscription plan, view invoices, and update payment details.',
   },
   'ad-settings': {
-    id: 'ad-settings', label: 'Settings', path: '/settings', icon: 'icon:settings', iconColor: '#5F5E5A',
+    id: 'ad-settings', label: 'Settings', path: '/settings', icon: 'Settings', iconColor: '#5F5E5A',
     roles: [], description: 'Account preferences, notification settings, language, and platform configuration.',
   },
 };
