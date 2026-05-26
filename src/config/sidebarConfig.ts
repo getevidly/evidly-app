@@ -50,38 +50,38 @@ const I: Record<string, NavItem> = {
   // ── Top-level items (outside sections) ──────────────────
 
   dashboard: {
-    id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: '🏠',
+    id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: 'BarChart3', iconColor: '#5B7CFA',
     roles: [], description: 'Your compliance overview — scores, open items, alerts, and priorities.',
   },
   calendar: {
-    id: 'calendar', label: 'Calendar', path: '/calendar', icon: '📅',
+    id: 'calendar', label: 'Calendar', path: '/calendar', icon: 'Calendar', iconColor: '#c2731a',
     roles: [], description: 'Inspections, permit renewals, service appointments, and compliance deadlines in one view.',
   },
   documents: {
-    id: 'documents', label: 'Documents', path: '/documents', icon: '📄',
+    id: 'documents', label: 'Documents', path: '/documents', icon: 'FileText', iconColor: '#D85A30',
     roles: [], description: 'Compliance certificates, inspection reports, permits, and signed documentation — organized and searchable.',
   },
   kitchenToCommunity: {
-    id: 'kitchenToCommunity', label: 'Kitchen to Community', path: '/kitchen-to-community', icon: '❤️',
+    id: 'kitchenToCommunity', label: 'Kitchen to Community', path: '/kitchen-to-community', icon: 'Heart', iconColor: '#b3261e',
     roles: [], description: 'Cross-org participation and referral program — Kitchen to Community.',
   },
 
   // ── Food Safety section items ───────────────────────────
 
   'fs-overview': {
-    id: 'fs-overview', label: 'Overview', path: '/food-safety/overview', icon: '🍽️',
+    id: 'fs-overview', label: 'Overview', path: '/food-safety/overview', icon: 'Utensils', iconColor: '#0F6E56',
     roles: [], description: 'Food safety compliance scoring, critical control points, and inspection readiness overview.',
   },
   'fs-temp': {
-    id: 'fs-temp', label: 'Temperatures', path: '/temp-logs', icon: '🌡️',
+    id: 'fs-temp', label: 'Temperatures', path: '/temp-logs', icon: 'Thermometer', iconColor: '#185FA5',
     roles: [], description: 'Record temperatures manually, via QR Code scan, or from IoT sensors — storage, receiving, and cooking.',
   },
   'fs-checklists': {
-    id: 'fs-checklists', label: 'Checklists', path: '/checklists', icon: '✓',
+    id: 'fs-checklists', label: 'Checklists', path: '/checklists', icon: 'CheckSquare', iconColor: '#2f7a4d',
     roles: [], description: 'Opening, closing, food safety, and custom daily task lists with completion tracking.',
   },
   'fs-haccp': {
-    id: 'fs-haccp', label: 'HACCP', path: '/haccp', icon: '🎯',
+    id: 'fs-haccp', label: 'HACCP', path: '/haccp', icon: 'Target', iconColor: '#c2731a',
     roles: [], description: 'Monitor critical control points, hazard analysis, and HACCP plan compliance.',
   },
   'fs-incidents': {
@@ -100,34 +100,34 @@ const I: Record<string, NavItem> = {
   // ── Operations section items ───────────────────────────
 
   'op-self': {
-    id: 'op-self', label: 'Self-Inspection', path: '/self-inspection', icon: '🔍',
+    id: 'op-self', label: 'Self-Inspection', path: '/self-inspection', icon: 'Search', iconColor: '#534AB7',
     roles: [], description: 'Run a self-inspection using the same criteria your health department applies.',
   },
   'op-incidents': {
-    id: 'op-incidents', label: 'Incidents', path: '/incidents', icon: '⚠️',
+    id: 'op-incidents', label: 'Incidents', path: '/incidents', icon: 'AlertTriangle', iconColor: '#b3261e',
     roles: [], description: 'Log and track incidents with timestamped, immutable records.',
   },
   'op-deficiencies': {
-    id: 'op-deficiencies', label: 'Deficiencies', path: '/deficiencies', icon: '⚠️',
+    id: 'op-deficiencies', label: 'Deficiencies', path: '/deficiencies', icon: 'AlertCircle', iconColor: '#b3261e',
     roles: [], description: 'Track compliance code violations found during service visits — severity, status, and remediation.',
   },
   'op-corrective': {
-    id: 'op-corrective', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
+    id: 'op-corrective', label: 'Corrective Actions', path: '/corrective-actions', icon: 'Wrench', iconColor: '#c2731a',
     roles: [], description: 'Track and resolve violations with documented corrective action plans.',
   },
   'op-current-shift': {
-    id: 'op-current-shift', label: 'Current', path: '/current-shift', icon: '📊',
+    id: 'op-current-shift', label: 'Current', path: '/current-shift', icon: 'TrendingUp', iconColor: '#2f7a4d',
     roles: [], description: 'Live mid-shift snapshot — task progress, temperatures, incidents, and PRP outlook.',
   },
   'op-shift': {
-    id: 'op-shift', label: 'Handoff', path: '/shift-handoff', icon: '🤝',
+    id: 'op-shift', label: 'Handoff', path: '/shift-handoff', icon: 'Handshake', iconColor: '#c2731a',
     roles: [], description: 'End-of-shift handoff — stats, notes, and auto-send to next team.',
   },
 
   // ── Fire Safety section items ───────────────────────────
 
   'fr-overview': {
-    id: 'fr-overview', label: 'Overview', path: '/fire-safety/overview', icon: '🔥',
+    id: 'fr-overview', label: 'Overview', path: '/fire-safety/overview', icon: 'Flame', iconColor: '#D85A30',
     roles: [], description: 'PSE status, open findings, and fire system compliance overview.',
   },
   'fr-incidents': {
@@ -176,11 +176,11 @@ const I: Record<string, NavItem> = {
   // ── Vendors section items ───────────────────────────────
 
   've-network': {
-    id: 've-network', label: 'Vendor Network', path: '/vendor-network', icon: '👥',
+    id: 've-network', label: 'Vendor Network', path: '/vendor-network', icon: 'Users', iconColor: '#0F6E56',
     roles: [], description: 'EvidLY\'s vetted ecosystem of approved vendors — connect, manage, and track service providers.',
   },
   've-services': {
-    id: 've-services', label: 'Vendor Services', path: '/vendors', icon: '🛠️',
+    id: 've-services', label: 'Vendor Services', path: '/vendors', icon: 'Wrench', iconColor: '#c2731a',
     roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
   },
 
@@ -229,7 +229,7 @@ const I: Record<string, NavItem> = {
   // ── Administration section items ────────────────────────
 
   'ad-locations': {
-    id: 'ad-locations', label: 'Locations', path: '/org-hierarchy', icon: 'MapPin', iconColor: '#1E2D4D',
+    id: 'ad-locations', label: 'Locations', path: '/org-hierarchy', icon: 'MapPin', iconColor: '#5B7CFA',
     roles: [], description: 'Add, edit, or configure locations including jurisdiction mapping and compliance requirements.',
   },
   'ad-team': {
