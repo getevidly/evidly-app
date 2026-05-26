@@ -244,7 +244,7 @@ export function SignupLocations() {
                 </div>
               </div>
               <div className="text-sm text-[#1E2D4D]/70">
-                Standard (Founder Locked) • 36-month price lock
+                Founder • 36-month price lock
               </div>
             </div>
 

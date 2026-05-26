@@ -38,7 +38,7 @@ interface AddLocationModalProps {
 const TIER_SUBTITLES: Record<string, string> = {
   trial: 'Add a new location to your organization.',
   essentials: 'Each additional location adds $39/mo to your Essentials subscription.',
-  founder: 'Each additional location adds $49/mo to your Standard subscription. Rate locked for 36 months.',
+  founder: 'Each additional location adds $49/mo to your Founder subscription. Rate locked for 36 months.',
   standard: 'Each additional location adds $99/mo to your Standard subscription.',
   enterprise: 'Contact your account representative for location pricing.',
 };

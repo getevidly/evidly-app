@@ -61,7 +61,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'blur',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'industry-benchmarks': {
     id: 'industry-benchmarks',
@@ -72,7 +72,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'sample',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'insurance-risk-score': {
     id: 'insurance-risk-score',
@@ -83,7 +83,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'sample',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'advanced-analytics': {
     id: 'advanced-analytics',
@@ -94,7 +94,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'blur',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'ai-training-recommendations': {
     id: 'ai-training-recommendations',
@@ -105,7 +105,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'locked',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'enterprise-dashboard': {
     id: 'enterprise-dashboard',
@@ -161,7 +161,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'blur',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   'health-dept-drafts': {
     id: 'health-dept-drafts',
@@ -172,7 +172,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'sample',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
   // ── Module-gated features (org-type restricted) ────────────
   'sb-1383-tracking': {
@@ -184,7 +184,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'locked',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
     requiredKitchenTypes: ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
   },
   'usda-k12-module': {
@@ -196,7 +196,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'locked',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
     requiredKitchenTypes: ['k12_school'],
   },
   'mock-inspection': {
@@ -208,7 +208,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'sample',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Standard',
+    upgradeLabel: 'Founder',
   },
 };
 
