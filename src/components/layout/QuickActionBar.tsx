@@ -2,19 +2,22 @@ import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
+import { Thermometer, CheckSquare, Upload, AlertTriangle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface ActionDef {
   key: string;
   label: string;
-  icon: string;
+  Icon: LucideIcon;
+  iconColor: string;
   route: string;
 }
 
 const ACTION_DEFS: Record<string, ActionDef> = {
-  log_temp:     { key: 'log_temp',     label: 'Log temp',      icon: 'ti-temperature',     route: '/temp-logs' },
-  checklist:    { key: 'checklist',    label: 'Checklist',     icon: 'ti-clipboard-check', route: '/checklists' },
-  upload_doc:   { key: 'upload_doc',   label: 'Upload doc',    icon: 'ti-upload',          route: '/documents' },
-  report_issue: { key: 'report_issue', label: 'Report issue',  icon: 'ti-alert-triangle',  route: '/incidents' },
+  log_temp:     { key: 'log_temp',     label: 'Log temp',      Icon: Thermometer,    iconColor: '#185FA5', route: '/temp-logs' },
+  checklist:    { key: 'checklist',    label: 'Checklist',     Icon: CheckSquare,    iconColor: '#2f7a4d', route: '/checklists' },
+  upload_doc:   { key: 'upload_doc',   label: 'Upload doc',    Icon: Upload,         iconColor: '#D85A30', route: '/documents' },
+  report_issue: { key: 'report_issue', label: 'Report issue',  Icon: AlertTriangle,  iconColor: '#b3261e', route: '/incidents' },
 };
 
 const ACTIONS_BY_ROLE: Record<UserRole, string[]> = {
@@ -52,7 +55,7 @@ export function QuickActionBar() {
           onClick={() => navigate(action.route)}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(action.route); }}
         >
-          <i className={`ti ${action.icon}`} />
+          <action.Icon className="h-5 w-5" style={{ color: action.iconColor }} />
           {action.label}
         </span>
       ))}

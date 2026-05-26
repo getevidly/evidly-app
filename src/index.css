@@ -165,7 +165,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: #A08C5A;
+  color: #E0E2E6;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -178,18 +178,11 @@
   opacity: 0.8;
 }
 
-.qai .ti {
-  font-size: 20px;
-}
-
 /* Mobile: icon-only below 480px */
 @media (max-width: 479px) {
   .qai {
     font-size: 0;
     gap: 0;
-  }
-  .qai .ti {
-    font-size: 22px;
   }
 }
 
