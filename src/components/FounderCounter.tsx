@@ -51,7 +51,7 @@ export function FounderCounter() {
         {spotsRemaining} of {FOUNDER_CAP} Founder spots remaining
       </span>
       <span style={{ display: 'block', fontSize: 12, color: '#1E2D4D', opacity: 0.5, marginTop: 4 }}>
-        $99/mo — locked for life
+        $99/mo — locked for 36 months
       </span>
     </div>
   );

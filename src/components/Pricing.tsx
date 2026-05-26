@@ -1,4 +1,4 @@
-import { Check, Mail, Phone, Gift, CreditCard } from 'lucide-react';
+import { Check, Mail, Phone, Gift } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,9 +18,9 @@ export default function Pricing() {
     monthlyPrice: 99,
     annualPrice: 990,
     features: [
-      'Full dual-pillar compliance intelligence',
+      'Full dual-pillar kitchen intelligence — food safety and fire safety in one view',
       'Jurisdiction Intelligence Engine (169 Counties · 5 States)',
-      'AI-powered HACCP plan generation',
+      'HACCP plan generation',
       'Real-time regulatory alerts',
       'Self-inspection & mock inspection tools',
       'Temperature logging with AI anomaly detection',
@@ -31,7 +31,7 @@ export default function Pricing() {
 
   const founderMulti = {
     name: 'Founder',
-    subtitle: '2\u201310 Locations',
+    subtitle: '2+ Locations',
     basePrice: 99,
     additionalPrice: 49,
     features: [
@@ -66,7 +66,7 @@ export default function Pricing() {
             Lock in founder pricing today
           </h2>
           <p className="text-[#1E2D4D]/70 mt-3 max-w-lg mx-auto">
-            Limited to first 250 customers. Price locked forever when you sign up.
+            Limited to first 250 customers. Price locked for 36 months when you sign up.
           </p>
         </div>
 
@@ -74,19 +74,15 @@ export default function Pricing() {
         <div className="max-w-3xl mx-auto mb-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
           <div className="flex items-center justify-center gap-3 mb-3">
             <EvidlyIcon size={28} />
-            <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>60-Day Risk-Free Guarantee</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>45-Day Money-Back Guarantee</h3>
           </div>
           <p className="text-[#1E2D4D]/80 max-w-xl mx-auto leading-relaxed">
-            Try EvidLY with full access. Complete setup within 15 days, use the platform for 45 days.
-            Not convinced? Get a <strong>100% refund of your subscription fees</strong> (setup fees are non-refundable).
-          </p>
-          <p className="text-[#1E2D4D]/60 text-sm max-w-md mx-auto mt-3 font-medium">
-            Founder: $250 setup &bull; Standard: $500 setup
+            Try EvidLY with full access for 45 days.
+            Not convinced? Get a <strong>100% refund of your subscription fees</strong> — no questions asked.
           </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-[#1E2D4D]/70">
-            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />60-day money-back</span>
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />45-day money-back</span>
             <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />Founder price lock</span>
-            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#A08C5A]" />One-time setup fee</span>
           </div>
         </div>
 
@@ -111,7 +107,7 @@ export default function Pricing() {
                 <div className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-1">
                   {founderSingle.name}
                 </div>
-                <div className="text-sm font-semibold text-[#1E2D4D]">{founderSingle.subtitle} &mdash; Price Locked Forever</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]">{founderSingle.subtitle} &mdash; 36-Month Price Lock</div>
               </div>
 
               <div className="mb-4">
@@ -170,7 +166,7 @@ export default function Pricing() {
                 >
                   Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`} + $250 one-time setup — price locked forever.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">${billingCycle === 'monthly' ? `${founderSingle.monthlyPrice}/mo` : `${founderSingle.annualPrice}/yr`} — price locked for 36 months.</p>
               </div>
             </div>
           </div>
@@ -193,7 +189,7 @@ export default function Pricing() {
                   <span className="text-lg text-[#1E2D4D]/70">/mo base</span>
                 </div>
                 <div className="text-sm text-[#1E2D4D]/80 font-medium mt-2">
-                  + ${founderMulti.additionalPrice}/mo per additional location (up to 10)
+                  + ${founderMulti.additionalPrice}/mo per additional location
                 </div>
               </div>
 
@@ -213,7 +209,7 @@ export default function Pricing() {
                 >
                   Lock in Founder Pricing
                 </button>
-                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">+ $250 one-time setup — price locked forever.</p>
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">Price locked for 36 months.</p>
               </div>
             </div>
           </div>
@@ -230,7 +226,7 @@ export default function Pricing() {
             <div className="mb-8">
               <div className="text-4xl font-extrabold text-[#1E2D4D] mb-2">Custom</div>
               <div className="text-[#1E2D4D]/70">Tailored to your needs</div>
-              <div className="text-xs text-[#1E2D4D]/50 mt-1">Setup fee: custom</div>
+              <div className="text-xs text-[#1E2D4D]/50 mt-1">Tailored for your organization</div>
             </div>
 
             <ul className="space-y-3 mb-8 flex-grow">
@@ -278,7 +274,7 @@ export default function Pricing() {
         {/* Trust Statement */}
         <div className="text-center mt-12">
           <p className="text-sm text-[#1E2D4D]/50">
-            60-day money-back guarantee &bull; One-time setup fee &bull; Price locked forever
+            45-day money-back guarantee &bull; 36-month price lock
           </p>
         </div>
       </div>

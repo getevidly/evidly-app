@@ -28,21 +28,12 @@ export function TermsOfService() {
           <section>
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">4. Subscription and Billing</h2>
             <p>Access to EvidLY requires a paid subscription. Subscription begins immediately upon signup — there is no free trial period.</p>
-            <p className="mt-3"><strong>Founder Pricing.</strong> The first 250 organizations to sign up receive Founder Pricing, which locks the subscription rate at the price in effect at the time of signup for the lifetime of the continuous subscription. Founder Pricing is forfeited upon cancellation; re-subscription after cancellation will be at the then-current Standard pricing.</p>
+            <p className="mt-3"><strong>Founder Pricing.</strong> The first 250 organizations to sign up receive Founder Pricing, which locks the subscription rate at the price in effect at the time of signup for 36 months from the date of signup. After the 36-month lock period expires, Standard pricing applies. Founder Pricing is forfeited upon cancellation; re-subscription after cancellation will be at the then-current Standard pricing.</p>
             <p className="mt-3"><strong>Billing.</strong> Subscription fees are billed monthly or annually as selected during signup. Annual billing provides a discount equivalent to two months free compared to monthly billing. Annual subscriptions commit the subscriber for a 12-month term. Monthly subscriptions renew each calendar month. Annual subscribers who cancel mid-term forfeit any remaining months but are not issued a refund; the subscription continues to run, and the subscriber retains access, through the end of the paid 12-month term.</p>
-            <p className="mt-3"><strong>Risk-Free Guarantee.</strong> The Risk-Free Guarantee provides a 60-calendar-day window from signup. The first 15 days constitute the setup period; the remaining 45 days constitute the usage period. Subscribers who satisfy all criteria below and remain dissatisfied may request a 100% refund of subscription fees at any point within the 60-day window:</p>
-            <p className="mt-2 pl-4">(a) <strong>Locations.</strong> All locations declared at signup must be entered in the Service within 15 calendar days of signup. Single-location and multi-location organizations alike must reach 100% of declared locations. If criterion (a) is not satisfied by the end of the 15-day setup period, the Risk-Free Guarantee is forfeited regardless of subsequent activity.</p>
-            <p className="mt-2 pl-4">(b) <strong>Food safety activity.</strong> Food safety activity must be logged on at least 36 days within the 60-day Risk-Free Guarantee window. Food safety activity is defined as: a temperature log entry OR a checklist entry. Criterion (b) is measured through the end of the 60-day window.</p>
+            <p className="mt-3"><strong>Money-Back Guarantee.</strong> EvidLY offers a 45-day money-back guarantee from the date of purchase. Subscribers who are dissatisfied for any reason may request a full refund of subscription fees within 45 calendar days of signup — no questions asked.</p>
             <p className="mt-3">Eligibility status is tracked automatically by the Service. Subscribers may check their current eligibility status at any time.</p>
-            <p className="mt-3"><strong>Setup Fees.</strong> Setup fees are non-refundable under all circumstances, including approved Risk-Free Guarantee refunds. Setup fees by tier:</p>
-            <ul className="list-disc pl-10 mt-1 space-y-1">
-              <li>Founder subscriptions: $250</li>
-              <li>Standard subscriptions: $500</li>
-              <li>Enterprise subscriptions (10+ locations): custom pricing</li>
-            </ul>
-            <p className="mt-1">Setup fees cover initial account configuration, location onboarding, and integration setup performed by EvidLY at the start of the subscription. Refunds issued under the Risk-Free Guarantee return all subscription fees paid but exclude the setup fee.</p>
-            <p className="mt-3">Outside the 60-day window, or if the Guarantee is forfeited, all fees are non-refundable except as required by law.</p>
-            <p className="mt-3"><strong>Price Changes.</strong> EvidLY reserves the right to modify Standard pricing with 30 days written notice. Founder Pricing rates are not subject to increases for the duration of continuous subscription.</p>
+            <p className="mt-3">Outside the 45-day window, all fees are non-refundable except as required by law.</p>
+            <p className="mt-3"><strong>Price Changes.</strong> EvidLY reserves the right to modify Standard pricing with 30 days written notice. Founder Pricing rates are not subject to increases during the 36-month lock period.</p>
           </section>
 
           <section>

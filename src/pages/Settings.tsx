@@ -223,8 +223,9 @@ export function Settings() {
   // Billing features
   const billingFeatures = [
     t('settings.unlimitedTeamMembers'),
-    t('settings.upTo10Locations'),
-    t('settings.aiComplianceAdvisor'),
+    t('settings.multiLocationSupport'),
+    t('settings.foodSafetyAdvisor'),
+    t('settings.fireSafetyAdvisor'),
     t('settings.haccpPlanManagement'),
     t('settings.vendorServiceTracking'),
     t('settings.customReports'),

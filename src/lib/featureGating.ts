@@ -1,4 +1,4 @@
-export type PlanTier = 'founder' | 'professional' | 'enterprise' | 'cpp_free';
+export type PlanTier = 'trial' | 'essentials' | 'founder' | 'standard' | 'enterprise';
 
 export interface FeatureDefinition {
   id: string;
@@ -8,17 +8,18 @@ export interface FeatureDefinition {
   enabled: boolean;             // Admin kill-switch: false = disabled platform-wide
   previewType: 'blur' | 'sample' | 'locked';
   upgradeTier: PlanTier;       // The tier they need to upgrade TO
-  upgradePrice: string;         // e.g., "$149/mo"
-  upgradeLabel: string;         // e.g., "Professional"
+  upgradePrice: string;         // e.g., "$99/mo"
+  upgradeLabel: string;         // e.g., "Founder"
   /** If set, feature is only available to these kitchen types. Omit for all. */
   requiredKitchenTypes?: string[];
 }
 
 const TIER_LEVEL: Record<PlanTier, number> = {
-  cpp_free: -1,
-  founder: 1,
-  professional: 2,
-  enterprise: 3,
+  trial: 0,
+  essentials: 1,
+  founder: 2,
+  standard: 3,
+  enterprise: 4,
 };
 
 export function hasAccess(
@@ -53,58 +54,58 @@ export function isFeatureEnabled(featureId: string): boolean {
 export const FEATURES: Record<string, FeatureDefinition> = {
   'ai-predictive-insights': {
     id: 'ai-predictive-insights',
-    name: 'AI Predictive Insights',
-    description: 'AI-powered pattern analysis that predicts compliance risks before they become violations.',
-    requiredTier: 'professional',
+    name: 'Food Safety Advisor and Fire Safety Advisor',
+    description: 'Pattern analysis that predicts risks before they become violations — one advisor for food safety, one for fire safety.',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'blur',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'industry-benchmarks': {
     id: 'industry-benchmarks',
     name: 'Industry Benchmarks',
-    description: 'Compare your compliance scores against industry averages and top performers.',
-    requiredTier: 'professional',
+    description: 'Compare your performance against industry averages and top performers.',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'sample',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'insurance-risk-score': {
     id: 'insurance-risk-score',
     name: 'Insurance Risk Score',
     description: 'Risk rating aligned with insurer underwriting criteria to help reduce your premiums.',
-    requiredTier: 'professional',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'sample',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'advanced-analytics': {
     id: 'advanced-analytics',
     name: 'Advanced Analytics',
     description: 'Deep-dive charts, custom date ranges, trend analysis, and exportable analytics.',
-    requiredTier: 'professional',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'blur',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'ai-training-recommendations': {
     id: 'ai-training-recommendations',
     name: 'AI Training Recommendations',
-    description: 'Personalized staff training suggestions based on compliance gaps and patterns.',
-    requiredTier: 'professional',
+    description: 'Personalized staff training suggestions based on operational gaps and patterns.',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'locked',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'enterprise-dashboard': {
     id: 'enterprise-dashboard',
@@ -131,7 +132,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
   'api-access': {
     id: 'api-access',
     name: 'API Access',
-    description: 'Programmatic access to compliance data via REST API.',
+    description: 'Programmatic access to your EvidLY data via REST API.',
     requiredTier: 'enterprise',
     enabled: true,
     previewType: 'locked',
@@ -153,25 +154,25 @@ export const FEATURES: Record<string, FeatureDefinition> = {
   // ── AI Features (merged from aiTier.ts) ────────────────────────────
   'predictive-alerts': {
     id: 'predictive-alerts',
-    name: 'AI Predictive Alerts',
-    description: 'Proactive alerts that predict compliance failures before they happen using pattern analysis.',
-    requiredTier: 'professional',
+    name: 'Predictive Alerts',
+    description: 'Proactive alerts that predict failures before they happen using pattern analysis.',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'blur',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   'health-dept-drafts': {
     id: 'health-dept-drafts',
     name: 'Health Dept AI Drafts',
     description: 'AI-generated response drafts for health department inquiries and inspection follow-ups.',
-    requiredTier: 'professional',
+    requiredTier: 'founder',
     enabled: false,               // Needs data to accumulate
     previewType: 'sample',
-    upgradeTier: 'professional',
-    upgradePrice: '$149/mo',
-    upgradeLabel: 'Professional',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Standard',
   },
   // ── Module-gated features (org-type restricted) ────────────
   'sb-1383-tracking': {
@@ -183,7 +184,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'locked',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Founder',
+    upgradeLabel: 'Standard',
     requiredKitchenTypes: ['restaurant', 'healthcare_facility', 'senior_living', 'k12_school', 'higher_education'],
   },
   'usda-k12-module': {
@@ -195,7 +196,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'locked',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Founder',
+    upgradeLabel: 'Standard',
     requiredKitchenTypes: ['k12_school'],
   },
   'mock-inspection': {
@@ -207,7 +208,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     previewType: 'sample',
     upgradeTier: 'founder',
     upgradePrice: '$99/mo',
-    upgradeLabel: 'Founder',
+    upgradeLabel: 'Standard',
   },
 };
 

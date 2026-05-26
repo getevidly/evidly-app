@@ -60,13 +60,13 @@ function PendingContent({ e }: { e: RiskFreeEligibility }) {
       <div className="mb-5">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs font-medium text-[#1E2D4D]/60">
-            Day {e.days_elapsed} of 60
+            Day {e.days_elapsed} of 45
           </span>
           <span className="text-xs font-medium text-[#1E2D4D]/60">
             {e.days_remaining} days remaining
           </span>
         </div>
-        <ProgressBar value={e.days_elapsed} max={60} />
+        <ProgressBar value={e.days_elapsed} max={45} />
       </div>
 
       {/* Criterion A — Locations */}
@@ -104,7 +104,7 @@ function PendingContent({ e }: { e: RiskFreeEligibility }) {
           <StatusBadge status={e.criterion_b_status} />
         </div>
         <p className="text-xs text-[#1E2D4D]/60 mb-2">
-          Log food safety activity on at least {e.criterion_b_required_days} days within the 60-day window.
+          Log food safety activity on at least {e.criterion_b_required_days} days within the 45-day window.
         </p>
         <div className="flex items-center justify-between">
           <span className="text-xs text-[#1E2D4D]/70">
@@ -118,7 +118,7 @@ function PendingContent({ e }: { e: RiskFreeEligibility }) {
 
       {/* Summary */}
       <div className="rounded-lg bg-[#eef4f8] p-3 text-xs text-[#3a6d8a]">
-        Meet both criteria and remain dissatisfied? You can request a full refund of subscription fees at any time within the 60-day window. Setup fees are non-refundable.
+        Meet both criteria and remain dissatisfied? You can request a full refund of subscription fees at any time within the 45-day window.
       </div>
     </>
   );
@@ -138,9 +138,9 @@ function EligibleContent({ e }: { e: RiskFreeEligibility }) {
       </div>
 
       <div className="rounded-lg bg-[#eef4f8] p-4 mb-4 text-sm text-[#1E2D4D]/80 leading-relaxed">
-        You're fully eligible. Your Risk-Free Guarantee is active through{' '}
+        You're fully eligible. Your Money-Back Guarantee is active through{' '}
         <strong>{formatDate(e.guarantee_window_end)}</strong>. If EvidLY isn't right for you,
-        you can request a full refund of subscription fees (setup fees non-refundable) at any
+        you can request a full refund of subscription fees at any
         time before {formatDate(e.guarantee_window_end)}. Otherwise, no action needed — keep
         using the system.
       </div>

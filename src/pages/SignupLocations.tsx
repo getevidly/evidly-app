@@ -240,11 +240,11 @@ export function SignupLocations() {
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Your Plan</h2>
                 <div className="inline-flex items-center bg-[#A08C5A] text-white px-4 py-2 rounded-full text-sm font-bold">
-                  Founder Pricing — Locked Forever
+                  Founder Pricing — 36-Month Lock
                 </div>
               </div>
               <div className="text-sm text-[#1E2D4D]/70">
-                Founder Tier 1 • Up to 10 locations
+                Standard (Founder Locked) • 36-month price lock
               </div>
             </div>
 

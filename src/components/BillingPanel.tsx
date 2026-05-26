@@ -93,7 +93,7 @@ export function BillingPanel() {
                 : 'No Active Subscription'}
             </h4>
             {isSubscribed && (
-              <p className="text-xs text-white/60 mt-1">Founder pricing locked for the lifetime of your subscription</p>
+              <p className="text-xs text-white/60 mt-1">Founder pricing locked for 36 months from your signup date</p>
             )}
           </div>
           {isSubscribed && (
@@ -118,9 +118,9 @@ export function BillingPanel() {
         <div className="flex items-start gap-3">
           <EvidlyIcon size={20} className="flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>60-Day Risk-Free Guarantee</p>
+            <p className="font-semibold text-sm" style={{ color: '#1E2D4D' }}>45-Day Money-Back Guarantee</p>
             <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
-              Complete account setup within 15 days of signup. Use the platform for 45 days. If dissatisfied within 60 days, request a 100% refund of subscription fees. Setup fees ($250 Founder / $500 Standard) are non-refundable.
+              Try EvidLY for 45 days. If it doesn't deliver, get a full refund of your subscription fees — no questions asked.
             </p>
             {riskFreeEligibility && (
               <button

@@ -146,7 +146,7 @@ function FounderUrgency() {
         Only 250 Founder spots available
       </p>
       <p style={{ textAlign: "center", fontSize: "0.7rem", color: "rgba(255,255,255,0.22)", marginTop: 10, marginBottom: 0, fontFamily: FF_SANS }}>
-        $99/mo first location + $49/mo per additional (up to 10), locked for life. After 250 Founders — standard rates apply.
+        $99/mo first location + $49/mo per additional, locked for 36 months. After 250 Founders — standard rates apply.
       </p>
     </div>
   );
@@ -819,7 +819,7 @@ function PricingSection({ onTour, onIRR }) {
                 <span style={{ fontSize: "0.88rem", color: C.g4, fontFamily: FF_SANS }}>/mo per additional</span>
               </div>
             </div>
-            <div style={{ display: "inline-block", background: C.greenBg, color: C.green, fontWeight: 700, fontSize: "0.74rem", padding: "6px 16px", borderRadius: 8, marginBottom: 22, fontFamily: FF_SANS }}>Locked for life — never increases</div>
+            <div style={{ display: "inline-block", background: C.greenBg, color: C.green, fontWeight: 700, fontSize: "0.74rem", padding: "6px 16px", borderRadius: 8, marginBottom: 22, fontFamily: FF_SANS }}>Locked for 36 months — never increases</div>
             <FeatureList items={founderFeatures} check={C.gold} />
             <button className="btn-lift" onClick={onTour} style={{ ...btn.navy, width: "100%", padding: "15px", fontSize: "0.94rem", borderRadius: 10 }}>Get Started →</button>
           </div>

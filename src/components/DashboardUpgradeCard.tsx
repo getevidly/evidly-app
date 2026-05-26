@@ -53,7 +53,7 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
           </span>
           <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
             <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
-            Price locked forever
+            Price locked for 36 months
           </span>
         </div>
       </div>

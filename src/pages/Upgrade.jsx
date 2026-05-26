@@ -164,7 +164,7 @@ export function Upgrade() {
           <div>
             <p className="text-sm font-medium text-[#1E2D4D]/90">What is Founder pricing?</p>
             <p className="text-xs text-[#1E2D4D]/50 mt-1">
-              Early adopters lock in $99/mo forever. This rate is only available to the first 250 customers. Price locked for life.
+              Early adopters lock in $99/mo for 36 months. This rate is only available to the first 250 customers. Price locked for 36 months from signup.
             </p>
           </div>
         </div>

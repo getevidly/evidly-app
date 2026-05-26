@@ -29,11 +29,21 @@ interface AddLocationModalProps {
   onClose: () => void;
   onSave: (data: NewLocationData) => void;
   existingCodes?: string[];
+  /** Plan tier for pricing subtitle. */
+  planTier?: 'trial' | 'essentials' | 'founder' | 'standard' | 'enterprise';
 }
 
 // ── Component ────────────────────────────────────────────────
 
-export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: AddLocationModalProps) {
+const TIER_SUBTITLES: Record<string, string> = {
+  trial: 'Add a new location to your organization.',
+  essentials: 'Each additional location adds $39/mo to your Essentials subscription.',
+  founder: 'Each additional location adds $49/mo to your Standard subscription. Rate locked for 36 months.',
+  standard: 'Each additional location adds $99/mo to your Standard subscription.',
+  enterprise: 'Contact your account representative for location pricing.',
+};
+
+export function AddLocationModal({ open, onClose, onSave, existingCodes = [], planTier }: AddLocationModalProps) {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [street, setStreet] = useState('');
@@ -98,7 +108,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
   };
 
   return (
-    <ModalShell open={open} onClose={handleClose} title="Add Location" subtitle="Add a new location to your organization">
+    <ModalShell open={open} onClose={handleClose} title="Add Location" subtitle={planTier ? TIER_SUBTITLES[planTier] || TIER_SUBTITLES.trial : 'Add a new location to your organization.'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Location Name */}
         <FormField label="Location Name" required>

@@ -13,8 +13,9 @@ interface PremiumFeaturePreviewProps {
 function tierLabel(tier: PlanTier): string {
   const labels: Record<PlanTier, string> = {
     trial: 'Trial',
+    essentials: 'Essentials',
     founder: 'Founder',
-    professional: 'Professional',
+    standard: 'Standard',
     enterprise: 'Enterprise',
   };
   return labels[tier];

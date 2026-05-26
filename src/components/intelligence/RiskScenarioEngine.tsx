@@ -122,7 +122,7 @@ export const RiskScenarioEngine: React.FC = () => {
       toast.error(`Please fill in: ${missing.map(f => f.label).join(', ')}`);
       return;
     }
-    toast.info('Scenario analysis requires EvidLY AI Advisor — available on Professional plan');
+    toast.info('Scenario analysis requires the Food Safety Advisor or Fire Safety Advisor — available on the Standard plan');
   };
 
   const categories = [...new Set(SCENARIOS.map(s => s.category))];
