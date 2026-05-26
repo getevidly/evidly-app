@@ -15,14 +15,55 @@ import { useRole } from '../../contexts/RoleContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useServiceHistory } from '../../hooks/useServiceHistory';
 import { useServiceCostIntelligence } from '../../hooks/useServiceCostIntelligence';
+import { useServiceSubscriptions } from '../../hooks/useServiceSubscriptions';
 import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
+const RequestServiceModal = lazy(() => import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal })));
 
 // ── Constants ────────────────────────────────────────────────
 const KEC_SAFEGUARD_TYPES = ['hood_cleaning'];
 const COST_ROLES = ['owner_operator', 'executive', 'facilities_manager', 'platform_admin'];
+
+const ADDON_SERVICES = [
+  {
+    key: 'FPM',
+    subKey: 'hasFPM',
+    title: 'Fan Performance Management',
+    cadence: 'Preventive maintenance \u00b7 semi-annual',
+    riskPill: 'PSE AT RISK',
+    riskExplanation: 'Fan failure risk unidentified. Belts, bearings, and motor amperage degrade between cleanings \u2014 preventive maintenance catches failure before it shuts down ventilation.',
+    priceConfigKey: 'fpm_default_visit_cents',
+    fallbackCents: 18500,
+    route: '/fire-safety/fpm',
+    requestServiceType: 'FPM',
+  },
+  {
+    key: 'RGC',
+    subKey: 'hasRGC',
+    title: 'Rooftop Grease Containment',
+    cadence: 'Grease capture \u00b7 quarterly',
+    riskPill: 'PSE + CWA AT RISK',
+    riskExplanation: 'Rooftop grease accumulates between cleanings, creates fire spread vector, and discharges into roof drains in violation of CWA wastewater pH requirements.',
+    priceConfigKey: 'rgc_default_visit_cents',
+    fallbackCents: 14500,
+    route: '/fire-safety/rgc',
+    requestServiceType: 'RGC',
+  },
+  {
+    key: 'GFX',
+    subKey: 'hasGFX',
+    title: 'Filter Exchange',
+    cadence: 'Clean filter swap \u00b7 quarterly',
+    riskPill: 'PSE AT RISK',
+    riskExplanation: 'Filters saturate with grease between cleanings, increasing fire load and reducing exhaust capture. CWA-compliant exchange replaces filters off-site without wastewater discharge.',
+    priceConfigKey: 'gfx_default_visit_cents',
+    fallbackCents: 9500,
+    route: '/fire-safety/gfx',
+    requestServiceType: 'GFX',
+  },
+];
 
 const SUB_SYSTEMS = [
   { code: 'KEC', label: 'Hood / Exhaust System', Icon: Fan, ref: 'NFPA 96 §11.4' },
@@ -77,6 +118,11 @@ export default function KitchenExhaustCleaning() {
 
   // Sub-system latest records
   const [subSystemStatus, setSubSystemStatus] = useState({});
+
+  // Add-on service subscriptions
+  const subs = useServiceSubscriptions(orgId, locationId);
+  const [pricingConfig, setPricingConfig] = useState(null);
+  const [requestModal, setRequestModal] = useState({ open: false, serviceType: '' });
 
   // Fetch locations
   useEffect(() => {
@@ -146,6 +192,16 @@ export default function KitchenExhaustCleaning() {
         setSubSystemStatus(map);
       });
   }, [orgId, locationId]);
+
+  // Fetch pricing_config for add-on default prices
+  useEffect(() => {
+    supabase
+      .from('pricing_config')
+      .select('fpm_default_visit_cents, rgc_default_visit_cents, gfx_default_visit_cents')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => { if (data) setPricingConfig(data); });
+  }, []);
 
   // Hooks
   const { data: history, isLoading: historyLoading } = useServiceHistory(orgId, locationId, KEC_SAFEGUARD_TYPES, 5);
@@ -384,6 +440,84 @@ export default function KitchenExhaustCleaning() {
         </div>
       </div>
 
+      {/* ── 6b. Services Impacting PSE ────────────────────── */}
+      {(() => {
+        if (subs.loading) return null;
+        const allActive = subs.hasFPM && subs.hasRGC && subs.hasGFX;
+        const unsubscribed = ADDON_SERVICES.filter(s => !subs[s.subKey]);
+
+        if (allActive) {
+          return (
+            <div className="rounded-lg" style={{ borderLeft: `3px solid ${colors.success}`, background: colors.white, padding: '10px 14px', boxShadow: shadows.sm }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <CheckCircle size={16} color={colors.success} />
+                <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
+                  All add-on services active — PSE protected
+                </p>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div>
+            <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: '#b3261e', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+              Services Impacting PSE
+            </p>
+            <p style={{ fontSize: typography.size.xs, color: colors.textSecondary, marginBottom: 8, lineHeight: 1.4 }}>
+              Standard KEC no longer includes these services. Adding them protects Protective Safeguards Endorsement (PSE) and Clean Water Act compliance.
+            </p>
+            <div className="space-y-2">
+              {unsubscribed.map((svc) => {
+                const cents = pricingConfig?.[svc.priceConfigKey] ?? svc.fallbackCents;
+                const priceDisplay = '$' + Math.round(cents / 100);
+                return (
+                  <div
+                    key={svc.key}
+                    className="rounded-lg"
+                    style={{ borderLeft: '3px solid #b3261e', background: colors.white, padding: '10px 12px', boxShadow: shadows.sm }}
+                  >
+                    {/* Top row */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <div>
+                        <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.textPrimary }}>{svc.title}</p>
+                        <p style={{ fontSize: 10, color: colors.textSecondary }}>{svc.cadence}</p>
+                      </div>
+                      <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: '#FCEBEB', color: '#501313', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                        {svc.riskPill}
+                      </span>
+                    </div>
+                    {/* Risk explanation */}
+                    <p style={{ fontSize: typography.size.xs, color: '#501313', lineHeight: 1.4, marginBottom: 8 }}>
+                      {svc.riskExplanation}
+                    </p>
+                    {/* Bottom row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <p style={{ fontSize: typography.size.xs, color: colors.textSecondary }}>Est. {priceDisplay}/visit</p>
+                      <button
+                        onClick={() => setRequestModal({ open: true, serviceType: svc.requestServiceType })}
+                        style={{
+                          padding: '5px 12px',
+                          fontSize: typography.size.xs,
+                          fontWeight: typography.weight.semibold,
+                          color: colors.white,
+                          background: colors.navy,
+                          border: 'none',
+                          borderRadius: radius.md,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Add to plan
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ── 7. Service History ─────────────────────────────── */}
       <div>
         <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, marginBottom: 6 }}>
@@ -489,6 +623,21 @@ export default function KitchenExhaustCleaning() {
             defaultLocationId={locationId}
             onClose={() => setShowUpload(false)}
             onSuccess={() => { setShowUpload(false); window.location.reload(); }}
+          />
+        </Suspense>
+      )}
+
+      {/* ── Request Service Modal (Add to plan CTA) ───────── */}
+      {requestModal.open && orgId && (
+        <Suspense fallback={null}>
+          <RequestServiceModal
+            isOpen
+            onClose={() => setRequestModal({ open: false, serviceType: '' })}
+            locationId={locationId || ''}
+            organizationId={orgId}
+            defaultServiceType={requestModal.serviceType}
+            vendorId={schedule?.vendor_id || undefined}
+            vendorName={schedule?.vendor_name || undefined}
           />
         </Suspense>
       )}

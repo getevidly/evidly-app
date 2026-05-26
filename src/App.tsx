@@ -249,6 +249,9 @@ const DemoExpired = lazy(() => import('./pages/DemoExpired'));
 const SetupMFA = lazy(() => import('./pages/SetupMFA').then(m => ({ default: m.SetupMFA })));
 const MFAChallenge = lazy(() => import('./pages/MFAChallenge').then(m => ({ default: m.MFAChallenge })));
 const KitchenExhaustCleaning = lazy(() => import('./pages/fire-safety/KitchenExhaustCleaning'));
+const FanPerformanceManagement = lazy(() => import('./pages/fire-safety/FanPerformanceManagement'));
+const RooftopGreaseContainment = lazy(() => import('./pages/fire-safety/RooftopGreaseContainment'));
+const FilterExchange = lazy(() => import('./pages/fire-safety/FilterExchange'));
 const FireProtection = lazy(() => import('./pages/fire-safety/FireProtection'));
 
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
@@ -676,6 +679,9 @@ function AppRoutes() {
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/fire-safety" element={<Navigate to="/fire-safety/kec" replace />} />
           <Route path="/fire-safety/kec" element={<KitchenExhaustCleaning />} />
+          <Route path="/fire-safety/fpm" element={<FanPerformanceManagement />} />
+          <Route path="/fire-safety/rgc" element={<RooftopGreaseContainment />} />
+          <Route path="/fire-safety/gfx" element={<FilterExchange />} />
           <Route path="/fire-safety/protection" element={<FireProtection />} />
           <Route path="/fire-safety/analysis" element={<FireSafetyAnalysis />} />
           <Route path="/fire-safety/trajectory" element={<FireSafetyTrajectory />} />

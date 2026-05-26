@@ -126,6 +126,18 @@ const I: Record<string, NavItem> = {
     id: 'fr-kec', label: 'Kitchen Exhaust Cleaning', path: '/fire-safety/kec', icon: 'Fan', iconColor: '#D85A30',
     roles: [], description: 'NFPA 96 hood and duct cleaning, filter exchange, fan performance, and rooftop grease containment.',
   },
+  'fr-fpm': {
+    id: 'fr-fpm', label: 'Fan Performance', path: '/fire-safety/fpm', icon: 'Fan', iconColor: '#D85A30',
+    roles: [], description: 'Exhaust fan preventive maintenance — belt service, bearing lubrication, airflow verification.',
+  },
+  'fr-rgc': {
+    id: 'fr-rgc', label: 'Rooftop Grease', path: '/fire-safety/rgc', icon: 'Droplet', iconColor: '#D85A30',
+    roles: [], description: 'Rooftop grease containment — CWA wastewater compliance and roof protection.',
+  },
+  'fr-gfx': {
+    id: 'fr-gfx', label: 'Filter Exchange', path: '/fire-safety/gfx', icon: 'Filter', iconColor: '#D85A30',
+    roles: [], description: 'Grease filter exchange — off-site cleaned baffle filter swap program.',
+  },
   'fr-protection': {
     id: 'fr-protection', label: 'Fire Protection', path: '/fire-safety/protection', icon: 'Flame', iconColor: '#D85A30',
     roles: [], description: 'Fire suppression, alarm, sprinkler, and extinguisher inspection and certification status.',
@@ -304,7 +316,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'fire-safety', label: 'Fire Safety', icon: '🔥',
     tooltipTitle: 'Fire Safety',
     tooltipDescription: 'Kitchen exhaust cleaning and fire protection systems.',
-    itemIds: ['fr-kec', 'fr-protection'],
+    itemIds: ['fr-kec', 'fr-fpm', 'fr-rgc', 'fr-gfx', 'fr-protection'],
     path: '/fire-safety',
   },
   programs: {

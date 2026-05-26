@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Activity, AlertCircle, AlertTriangle, BarChart3, Bell, BookOpen, Bot, Brain, Bug, Building,
   Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock, CreditCard,
-  DollarSign, Download, Fan, FileEdit, FileText, Flame, GraduationCap, Hammer,
+  DollarSign, Download, Droplet, Fan, FileEdit, FileText, Filter, Flame, GraduationCap, Hammer,
   Handshake, HardHat, Heart, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
   Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
@@ -123,7 +123,9 @@ const SIDEBAR_ICONS: Record<string, any> = {
   'Thermometer': Thermometer,
   'CheckSquare': CheckSquare,
   'Target': Target,
+  'Droplet': Droplet,
   'Fan': Fan,
+  'Filter': Filter,
   'Flame': Flame,
   'Users': Users,
   'MapPin': MapPin,

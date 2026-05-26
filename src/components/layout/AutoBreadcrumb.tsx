@@ -17,6 +17,9 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/admin': { label: 'Administration', parent: '/dashboard' },
 
   '/fire-safety/kec': { label: 'Kitchen Exhaust Cleaning', parent: '/facility-safety' },
+  '/fire-safety/fpm': { label: 'Fan Performance Management', parent: '/facility-safety' },
+  '/fire-safety/rgc': { label: 'Rooftop Grease Containment', parent: '/facility-safety' },
+  '/fire-safety/gfx': { label: 'Filter Exchange', parent: '/facility-safety' },
   '/fire-safety/protection': { label: 'Fire Protection', parent: '/facility-safety' },
 
   // ── Food Safety children ──
