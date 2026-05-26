@@ -6,10 +6,10 @@ import type { UserRole } from '../contexts/RoleContext';
 
 const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Insights — roles with the Insights sidebar section
-  ['/food-safety/overview',  ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
+  ['/fire-safety/kec',       ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
+  ['/fire-safety/protection',['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/food-safety/analysis',  ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
   ['/food-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
-  ['/fire-safety/overview',  ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/fire-safety/analysis',  ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/fire-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/compliance-overview',   ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'facilities_manager']],

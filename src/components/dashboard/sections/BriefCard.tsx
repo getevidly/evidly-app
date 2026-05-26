@@ -34,8 +34,8 @@ const CONSULT_LABEL: Record<AdvisorType, string> = {
 
 const CONSULT_ROUTE: Record<AdvisorType, string> = {
   compliance_officer: '/dashboard',
-  food_safety: '/food-safety/overview',
-  fire_safety: '/fire-safety/overview',
+  food_safety: '/temp-logs',
+  fire_safety: '/fire-safety/kec',
 };
 
 const ITEMS_LABEL: Record<AdvisorType, string> = {

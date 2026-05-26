@@ -16,7 +16,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/tools': { label: 'Tools', parent: '/dashboard' },
   '/admin': { label: 'Administration', parent: '/dashboard' },
 
-  '/food-safety/overview': { label: 'Overview', parent: '/food-safety' },
+  '/fire-safety/kec': { label: 'Kitchen Exhaust Cleaning', parent: '/facility-safety' },
+  '/fire-safety/protection': { label: 'Fire Protection', parent: '/facility-safety' },
 
   // ── Food Safety children ──
   '/temp-logs': { label: 'Temperature Readings', parent: '/food-safety' },
@@ -46,7 +47,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/ai-advisor': { label: 'AI Advisor', parent: '/insights' },
   '/food-safety/analysis': { label: 'Analysis', parent: '/food-safety' },
   '/food-safety/trajectory': { label: 'Trajectory', parent: '/food-safety' },
-  '/fire-safety/overview': { label: 'Overview', parent: '/facility-safety' },
   '/fire-safety/analysis': { label: 'Analysis', parent: '/facility-safety' },
   '/fire-safety/trajectory': { label: 'Trajectory', parent: '/facility-safety' },
   '/benchmarks': { label: 'Benchmarks', parent: '/insights' },

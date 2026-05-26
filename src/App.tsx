@@ -248,8 +248,8 @@ const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const DemoExpired = lazy(() => import('./pages/DemoExpired'));
 const SetupMFA = lazy(() => import('./pages/SetupMFA').then(m => ({ default: m.SetupMFA })));
 const MFAChallenge = lazy(() => import('./pages/MFAChallenge').then(m => ({ default: m.MFAChallenge })));
-const FoodSafetyOverview = lazy(() => import('./pages/foodSafety/Overview'));
-const FireSafetyOverview = lazy(() => import('./pages/fireSafety/Overview'));
+const KitchenExhaustCleaning = lazy(() => import('./pages/fire-safety/KitchenExhaustCleaning'));
+const FireProtection = lazy(() => import('./pages/fire-safety/FireProtection'));
 
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
 const InspectionForecastPage = lazy(() => import('./pages/insights/InspectionForecast').then(m => ({ default: m.InspectionForecast })));
@@ -624,8 +624,7 @@ function AppRoutes() {
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/inspection-package/send" element={<SendInspectionPage />} />
-          <Route path="/food-safety" element={<Navigate to="/food-safety/overview" replace />} />
-          <Route path="/food-safety/overview" element={<FoodSafetyOverview />} />
+          <Route path="/food-safety" element={<Navigate to="/temp-logs" replace />} />
 
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
@@ -675,8 +674,9 @@ function AppRoutes() {
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/facility-safety" element={<FacilitySafety />} />
-          <Route path="/fire-safety" element={<Navigate to="/fire-safety/overview" replace />} />
-          <Route path="/fire-safety/overview" element={<FireSafetyOverview />} />
+          <Route path="/fire-safety" element={<Navigate to="/fire-safety/kec" replace />} />
+          <Route path="/fire-safety/kec" element={<KitchenExhaustCleaning />} />
+          <Route path="/fire-safety/protection" element={<FireProtection />} />
           <Route path="/fire-safety/analysis" element={<FireSafetyAnalysis />} />
           <Route path="/fire-safety/trajectory" element={<FireSafetyTrajectory />} />
           <Route path="/workforce-risk" element={<WorkforceRisk />} />

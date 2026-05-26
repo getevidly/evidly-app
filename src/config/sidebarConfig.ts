@@ -68,10 +68,6 @@ const I: Record<string, NavItem> = {
 
   // ── Food Safety section items ───────────────────────────
 
-  'fs-overview': {
-    id: 'fs-overview', label: 'Overview', path: '/food-safety/overview', icon: 'Utensils', iconColor: '#0F6E56',
-    roles: [], description: 'Food safety compliance scoring, critical control points, and inspection readiness overview.',
-  },
   'fs-temp': {
     id: 'fs-temp', label: 'Temperatures', path: '/temp-logs', icon: 'Thermometer', iconColor: '#185FA5',
     roles: [], description: 'Record temperatures manually, via QR Code scan, or from IoT sensors — storage, receiving, and cooking.',
@@ -126,9 +122,13 @@ const I: Record<string, NavItem> = {
 
   // ── Fire Safety section items ───────────────────────────
 
-  'fr-overview': {
-    id: 'fr-overview', label: 'Overview', path: '/fire-safety/overview', icon: 'Flame', iconColor: '#D85A30',
-    roles: [], description: 'PSE status, open findings, and fire system compliance overview.',
+  'fr-kec': {
+    id: 'fr-kec', label: 'Kitchen Exhaust Cleaning', path: '/fire-safety/kec', icon: 'Fan', iconColor: '#D85A30',
+    roles: [], description: 'NFPA 96 hood and duct cleaning, filter exchange, fan performance, and rooftop grease containment.',
+  },
+  'fr-protection': {
+    id: 'fr-protection', label: 'Fire Protection', path: '/fire-safety/protection', icon: 'Flame', iconColor: '#D85A30',
+    roles: [], description: 'Fire suppression, alarm, sprinkler, and extinguisher inspection and certification status.',
   },
   'fr-incidents': {
     id: 'fr-incidents', label: 'Incidents', path: '/incidents?pillar=fire', icon: '⚠️',
@@ -297,14 +297,14 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'food-safety', label: 'Food Safety', icon: '🍽️',
     tooltipTitle: 'Food Safety',
     tooltipDescription: 'Checklists, temperature monitoring, and HACCP plans.',
-    itemIds: ['fs-overview', 'fs-temp', 'fs-checklists', 'fs-haccp'],
+    itemIds: ['fs-temp', 'fs-checklists', 'fs-haccp'],
     path: '/food-safety',
   },
   fireSafety: {
     id: 'fire-safety', label: 'Fire Safety', icon: '🔥',
     tooltipTitle: 'Fire Safety',
-    tooltipDescription: 'Fire safety compliance overview.',
-    itemIds: ['fr-overview'],
+    tooltipDescription: 'Kitchen exhaust cleaning and fire protection systems.',
+    itemIds: ['fr-kec', 'fr-protection'],
     path: '/fire-safety',
   },
   programs: {
