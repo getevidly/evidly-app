@@ -1,6 +1,6 @@
 /**
  * FilterExchange — Grease filter swap status + Cost Intelligence.
- * Route: /fire-safety/gfx
+ * Route: /fire-safety/kec/gfx
  */
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';

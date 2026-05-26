@@ -1,6 +1,6 @@
 /**
  * FanPerformanceManagement — Exhaust fan preventive maintenance status + Cost Intelligence.
- * Route: /fire-safety/fpm
+ * Route: /fire-safety/kec/fpm
  */
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';

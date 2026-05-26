@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Fan, CheckCircle, AlertTriangle, Clock, Calendar, DollarSign,
   TrendingUp, TrendingDown, Minus, FileText, Upload, ChevronRight,
-  Loader2, Building2, Wrench, Shield, Filter, Wind, Flame,
+  Loader2, Building2, Wrench, Shield, Filter, Wind, Flame, Info,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
@@ -26,51 +26,40 @@ const RequestServiceModal = lazy(() => import('../../components/services/Request
 const KEC_SAFEGUARD_TYPES = ['hood_cleaning'];
 const COST_ROLES = ['owner_operator', 'executive', 'facilities_manager', 'platform_admin'];
 
-const ADDON_SERVICES = [
-  {
-    key: 'FPM',
-    subKey: 'hasFPM',
-    title: 'Fan Performance Management',
-    cadence: 'Preventive maintenance \u00b7 semi-annual',
-    riskPill: 'PSE AT RISK',
-    riskExplanation: 'Fan failure risk unidentified. Belts, bearings, and motor amperage degrade between cleanings \u2014 preventive maintenance catches failure before it shuts down ventilation.',
-    priceConfigKey: 'fpm_default_visit_cents',
-    fallbackCents: 18500,
-    route: '/fire-safety/fpm',
-    requestServiceType: 'FPM',
-  },
-  {
-    key: 'RGC',
-    subKey: 'hasRGC',
-    title: 'Rooftop Grease Containment',
-    cadence: 'Grease capture \u00b7 quarterly',
-    riskPill: 'PSE + CWA AT RISK',
-    riskExplanation: 'Rooftop grease accumulates between cleanings, creates fire spread vector, and discharges into roof drains in violation of CWA wastewater pH requirements.',
-    priceConfigKey: 'rgc_default_visit_cents',
-    fallbackCents: 14500,
-    route: '/fire-safety/rgc',
-    requestServiceType: 'RGC',
-  },
-  {
-    key: 'GFX',
-    subKey: 'hasGFX',
-    title: 'Filter Exchange',
-    cadence: 'Clean filter swap \u00b7 quarterly',
-    riskPill: 'PSE AT RISK',
-    riskExplanation: 'Filters saturate with grease between cleanings, increasing fire load and reducing exhaust capture. CWA-compliant exchange replaces filters off-site without wastewater discharge.',
-    priceConfigKey: 'gfx_default_visit_cents',
-    fallbackCents: 9500,
-    route: '/fire-safety/gfx',
-    requestServiceType: 'GFX',
-  },
-];
-
 const SUB_SYSTEMS = [
-  { code: 'KEC', label: 'Hood / Exhaust System', Icon: Fan, ref: 'NFPA 96 §11.4' },
-  { code: 'GFX', label: 'Baffle Filters', Icon: Filter, ref: 'NFPA 96 §11.4.1' },
-  { code: null, label: 'Ductwork', Icon: Wind, ref: 'NFPA 96 §11.5' },
-  { code: 'FPM', label: 'Fan Performance', Icon: Wind, ref: 'NFPA 96 §11.6' },
-  { code: 'RGC', label: 'Rooftop Grease Containment', Icon: Shield, ref: 'NFPA 96 §14.4' },
+  {
+    code: 'GFX',
+    label: 'Grease Filter Exchange (GFX)',
+    Icon: Filter,
+    cadence: 'quarterly',
+    pse: 'PSE-required',
+    tooltip: 'Replaces saturated baffle filters off-site. Required for PSE coverage. Without GFX, filter grease saturation increases fire load and reduces exhaust capture.',
+    route: '/fire-safety/kec/gfx',
+    requestServiceType: 'GFX',
+    subKey: 'hasGFX',
+  },
+  {
+    code: 'FPM',
+    label: 'Fan Performance Management (FPM)',
+    Icon: Fan,
+    cadence: 'semi-annual',
+    pse: 'PSE-required',
+    tooltip: 'Preventive maintenance for the exhaust fan \u2014 belts, bearings, motor amperage, vibration. Required for PSE coverage. Without FPM, fan failure risk goes unidentified between cleanings.',
+    route: '/fire-safety/kec/fpm',
+    requestServiceType: 'FPM',
+    subKey: 'hasFPM',
+  },
+  {
+    code: 'RGC',
+    label: 'Rooftop Grease Containment (RGC)',
+    Icon: Shield,
+    cadence: 'quarterly',
+    pse: 'PSE + CWA-required',
+    tooltip: 'Captures grease before roof drain discharge. Required for PSE coverage AND Clean Water Act wastewater pH compliance. Without RGC, rooftop grease creates fire spread vector and violates federal CWA.',
+    route: '/fire-safety/kec/rgc',
+    requestServiceType: 'RGC',
+    subKey: 'hasRGC',
+  },
 ];
 
 function fmtDate(d) {
@@ -121,8 +110,8 @@ export default function KitchenExhaustCleaning() {
 
   // Add-on service subscriptions
   const subs = useServiceSubscriptions(orgId, locationId);
-  const [pricingConfig, setPricingConfig] = useState(null);
   const [requestModal, setRequestModal] = useState({ open: false, serviceType: '' });
+  const [tooltipOpen, setTooltipOpen] = useState(null);
 
   // Fetch locations
   useEffect(() => {
@@ -192,16 +181,6 @@ export default function KitchenExhaustCleaning() {
         setSubSystemStatus(map);
       });
   }, [orgId, locationId]);
-
-  // Fetch pricing_config for add-on default prices
-  useEffect(() => {
-    supabase
-      .from('pricing_config')
-      .select('fpm_default_visit_cents, rgc_default_visit_cents, gfx_default_visit_cents')
-      .eq('id', 1)
-      .single()
-      .then(({ data }) => { if (data) setPricingConfig(data); });
-  }, []);
 
   // Hooks
   const { data: history, isLoading: historyLoading } = useServiceHistory(orgId, locationId, KEC_SAFEGUARD_TYPES, 5);
@@ -399,124 +378,87 @@ export default function KitchenExhaustCleaning() {
         </p>
         <div className="space-y-2">
           {SUB_SYSTEMS.map((sys) => {
-            const rec = sys.code ? subSystemStatus[sys.code] : null;
-            const days = rec ? daysUntil(rec.next_due_date) : null;
-            const st = statusColor(days);
+            const isActive = !subs.loading && subs[sys.subKey];
             return (
               <div
-                key={sys.label}
+                key={sys.code}
                 className="rounded-lg"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(sys.route)}
+                onKeyDown={(e) => { if (e.key === 'Enter') navigate(sys.route); }}
                 style={{
-                  borderLeft: `3px solid ${st.border}`,
                   background: colors.white,
-                  padding: '10px 12px',
+                  padding: 10,
                   boxShadow: shadows.sm,
+                  cursor: 'pointer',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <sys.Icon size={16} color="#D85A30" />
-                    <div>
-                      <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{sys.label}</p>
-                      <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{sys.ref}</p>
-                    </div>
-                  </div>
-                  <span
-                    className="rounded-full"
-                    style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: st.bg, color: st.text }}
+                {/* Title row: icon + name + ⓘ */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <sys.Icon size={16} color="#D85A30" style={{ flexShrink: 0 }} />
+                  <p style={{ flex: 1, fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>
+                    {sys.label}
+                  </p>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sys.code ? null : sys.code); }}
+                    style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
+                    aria-label={`Info about ${sys.label}`}
                   >
-                    {st.label}
-                  </span>
+                    <Info size={14} color={colors.textMuted} />
+                  </button>
                 </div>
-                {rec && (
-                  <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
-                    <span>Last: {fmtDate(rec.service_date)}</span>
-                    <span>Next: {fmtDate(rec.next_due_date)}</span>
+
+                {/* Tooltip (shown on tap) */}
+                {tooltipOpen === sys.code && (
+                  <div style={{ fontSize: typography.size.xs, color: colors.textSecondary, background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
+                    {sys.tooltip}
                   </div>
                 )}
+
+                {/* Sub-detail line */}
+                <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, marginBottom: 0 }}>
+                  {sys.cadence} · {sys.pse}
+                </p>
+
+                {/* Divider */}
+                <div style={{ borderTop: `1px solid ${colors.border}`, margin: '8px 0' }} />
+
+                {/* Bottom row: status pill + Schedule button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span
+                    className="rounded-full"
+                    style={{
+                      fontSize: 10,
+                      fontWeight: typography.weight.semibold,
+                      padding: '2px 8px',
+                      backgroundColor: isActive ? '#D1FAE5' : '#FCEBEB',
+                      color: isActive ? '#065F46' : '#501313',
+                    }}
+                  >
+                    {subs.loading ? '...' : isActive ? 'Active' : 'Not active'}
+                  </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sys.requestServiceType }); }}
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: typography.size.xs,
+                      fontWeight: typography.weight.semibold,
+                      color: colors.white,
+                      background: colors.navy,
+                      border: 'none',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Schedule
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
-
-      {/* ── 6b. Services Impacting PSE ────────────────────── */}
-      {(() => {
-        if (subs.loading) return null;
-        const allActive = subs.hasFPM && subs.hasRGC && subs.hasGFX;
-        const unsubscribed = ADDON_SERVICES.filter(s => !subs[s.subKey]);
-
-        if (allActive) {
-          return (
-            <div className="rounded-lg" style={{ borderLeft: `3px solid ${colors.success}`, background: colors.white, padding: '10px 14px', boxShadow: shadows.sm }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <CheckCircle size={16} color={colors.success} />
-                <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
-                  All add-on services active — PSE protected
-                </p>
-              </div>
-            </div>
-          );
-        }
-
-        return (
-          <div>
-            <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: '#b3261e', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
-              Services Impacting PSE
-            </p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textSecondary, marginBottom: 8, lineHeight: 1.4 }}>
-              Standard KEC no longer includes these services. Adding them protects Protective Safeguards Endorsement (PSE) and Clean Water Act compliance.
-            </p>
-            <div className="space-y-2">
-              {unsubscribed.map((svc) => {
-                const cents = pricingConfig?.[svc.priceConfigKey] ?? svc.fallbackCents;
-                const priceDisplay = '$' + Math.round(cents / 100);
-                return (
-                  <div
-                    key={svc.key}
-                    className="rounded-lg"
-                    style={{ borderLeft: '3px solid #b3261e', background: colors.white, padding: '10px 12px', boxShadow: shadows.sm }}
-                  >
-                    {/* Top row */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
-                      <div>
-                        <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.textPrimary }}>{svc.title}</p>
-                        <p style={{ fontSize: 10, color: colors.textSecondary }}>{svc.cadence}</p>
-                      </div>
-                      <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: '#FCEBEB', color: '#501313', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                        {svc.riskPill}
-                      </span>
-                    </div>
-                    {/* Risk explanation */}
-                    <p style={{ fontSize: typography.size.xs, color: '#501313', lineHeight: 1.4, marginBottom: 8 }}>
-                      {svc.riskExplanation}
-                    </p>
-                    {/* Bottom row */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <p style={{ fontSize: typography.size.xs, color: colors.textSecondary }}>Est. {priceDisplay}/visit</p>
-                      <button
-                        onClick={() => setRequestModal({ open: true, serviceType: svc.requestServiceType })}
-                        style={{
-                          padding: '5px 12px',
-                          fontSize: typography.size.xs,
-                          fontWeight: typography.weight.semibold,
-                          color: colors.white,
-                          background: colors.navy,
-                          border: 'none',
-                          borderRadius: radius.md,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Add to plan
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })()}
 
       {/* ── 7. Service History ─────────────────────────────── */}
       <div>

@@ -1,6 +1,6 @@
 /**
  * RooftopGreaseContainment — Rooftop grease capture status + Cost Intelligence.
- * Route: /fire-safety/rgc
+ * Route: /fire-safety/kec/rgc
  */
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';

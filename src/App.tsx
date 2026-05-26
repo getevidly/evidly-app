@@ -679,9 +679,9 @@ function AppRoutes() {
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/fire-safety" element={<Navigate to="/fire-safety/kec" replace />} />
           <Route path="/fire-safety/kec" element={<KitchenExhaustCleaning />} />
-          <Route path="/fire-safety/fpm" element={<FanPerformanceManagement />} />
-          <Route path="/fire-safety/rgc" element={<RooftopGreaseContainment />} />
-          <Route path="/fire-safety/gfx" element={<FilterExchange />} />
+          <Route path="/fire-safety/kec/fpm" element={<FanPerformanceManagement />} />
+          <Route path="/fire-safety/kec/rgc" element={<RooftopGreaseContainment />} />
+          <Route path="/fire-safety/kec/gfx" element={<FilterExchange />} />
           <Route path="/fire-safety/protection" element={<FireProtection />} />
           <Route path="/fire-safety/analysis" element={<FireSafetyAnalysis />} />
           <Route path="/fire-safety/trajectory" element={<FireSafetyTrajectory />} />
