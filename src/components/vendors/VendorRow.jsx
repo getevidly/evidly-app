@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Star } from 'lucide-react';
 import { StateDot } from './StateDot';
 
 /**
@@ -7,8 +7,10 @@ import { StateDot } from './StateDot';
  *
  * Props:
  *   vendor: MockVendor
+ *   isRecommended: boolean — whether an active recommendation exists
+ *   onRecommend: (vendor) => void — open recommend modal
  */
-export function VendorRow({ vendor }) {
+export function VendorRow({ vendor, isRecommended, onRecommend }) {
   const navigate = useNavigate();
 
   return (
@@ -28,11 +30,27 @@ export function VendorRow({ vendor }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          {/* Name + services */}
+          {/* Name + star */}
           <div className="flex items-center gap-2">
             <p className="truncate" style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
               {vendor.name}
             </p>
+            {isRecommended ? (
+              <span title="Recommendation sent to Partner Recruitment">
+                <Star size={14} fill="#A08C5A" style={{ color: '#A08C5A', flexShrink: 0 }} />
+              </span>
+            ) : (
+              <span
+                role="button"
+                tabIndex={0}
+                title="Recommend to Vendor Network"
+                onClick={(e) => { e.stopPropagation(); onRecommend?.(vendor); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onRecommend?.(vendor); } }}
+                className="hover:opacity-70 transition-opacity"
+              >
+                <Star size={14} style={{ color: '#A08C5A', flexShrink: 0 }} />
+              </span>
+            )}
           </div>
           <p className="mt-0.5 truncate" style={{ fontSize: '11px', color: '#5A6478' }}>
             {[...(vendor.services || []), vendor.coverageLine].filter(Boolean).join(' · ')}

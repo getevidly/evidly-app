@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Building2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDemo } from '../../../contexts/DemoContext';
 import { useVendors } from '../../../hooks/useVendors';
 import { useLocations } from '../../../hooks/api/useLocations';
+import { supabase } from '../../../lib/supabase';
 import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { VendorRow } from '../../../components/vendors/VendorRow';
 import { AddVendorModal } from '../../../components/vendor/AddVendorModal';
+import { RecommendVendorModal } from '../../../components/vendors/RecommendVendorModal';
 
 /**
  * VendorListTab — Surface 1 (populated) + Surface 13 (day-one zero vendors).
@@ -21,6 +23,26 @@ export function VendorListTab() {
 
   const [filter, setFilter] = useState('all');
   const [addOpen, setAddOpen] = useState(false);
+  const [recommendVendor, setRecommendVendor] = useState(null);
+  const [recommendedIds, setRecommendedIds] = useState(new Set());
+
+  // Fetch existing active recommendations for this org's vendors
+  useEffect(() => {
+    if (!organizationId) return;
+    supabase
+      .from('vendor_recommendations')
+      .select('source_roster_vendor_id')
+      .eq('organization_id', organizationId)
+      .in('status', ['pending_review', 'under_review', 'approved'])
+      .not('source_roster_vendor_id', 'is', null)
+      .then(({ data }) => {
+        if (data) setRecommendedIds(new Set(data.map(r => r.source_roster_vendor_id)));
+      });
+  }, [organizationId]);
+
+  const handleRecommended = (vendorId) => {
+    if (vendorId) setRecommendedIds(prev => new Set(prev).add(vendorId));
+  };
 
   // Map DB rows → VendorRow shape
   const vendors = (vendorRows ?? []).map(row => {
@@ -35,6 +57,11 @@ export function VendorListTab() {
       locationCoverage: [],
       state,
       cta: deriveCta(state),
+      // Raw fields for recommend modal prefill
+      contactName: row.primary_contact_name || '',
+      email: row.primary_contact_email || row.email || '',
+      phone: row.phone || '',
+      serviceType: row.service_type || '',
     };
   });
 
@@ -134,7 +161,12 @@ export function VendorListTab() {
       {/* Vendor cards */}
       <div className="flex flex-col gap-2.5">
         {filteredVendors.map(vendor => (
-          <VendorRow key={vendor.id} vendor={vendor} />
+          <VendorRow
+            key={vendor.id}
+            vendor={vendor}
+            isRecommended={recommendedIds.has(vendor.id)}
+            onRecommend={(v) => setRecommendVendor(v)}
+          />
         ))}
       </div>
 
@@ -146,6 +178,13 @@ export function VendorListTab() {
         organizationId={organizationId}
         accessibleLocations={accessibleLocations}
         existingEmails={existingEmails}
+      />
+
+      <RecommendVendorModal
+        isOpen={!!recommendVendor}
+        onClose={() => setRecommendVendor(null)}
+        prefilledVendor={recommendVendor}
+        onRecommended={handleRecommended}
       />
     </div>
   );

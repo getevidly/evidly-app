@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Search, X as XIcon, ChevronDown, Check,
+  Search, X as XIcon, ChevronDown, Check, Star, Send,
   Wind, Fan, Filter, ShieldCheck, FlameKindling, Bell, Droplets, FireExtinguisher,
   Droplet, Bug, ArrowDownUp, Thermometer, Wrench, Zap, Snowflake, Sparkles,
   Waves, Lock, Home, Settings, Trash2, Shirt, Maximize, TreePine, Flame,
@@ -10,6 +10,7 @@ import {
 import { useVendorNetwork } from '../../hooks/useVendorNetwork';
 import { VendorNetworkCard } from '../../components/vendors/VendorNetworkCard';
 import { VendorContactModal } from '../../components/vendors/modals/VendorContactModal';
+import { RecommendVendorModal } from '../../components/vendors/RecommendVendorModal';
 import { CA_COUNTIES_BY_REGION } from '../../data/californiaCounties';
 
 // ── Service code → icon map ─────────────────────────────────────────────────
@@ -172,6 +173,7 @@ export default function VendorNetworkPlaceholder() {
   const [availability, setAvailability] = useState('');
   const [sort, setSort] = useState({ key: 'tier_gold_first' });
   const [selectedVendorId, setSelectedVendorId] = useState(urlModal === 'contact' ? urlVendor : null);
+  const [showRecommendModal, setShowRecommendModal] = useState(false);
 
   const filters = useMemo(() => ({
     search,
@@ -510,6 +512,41 @@ export default function VendorNetworkPlaceholder() {
             </p>
           </div>
         )}
+
+        {/* Recommend a vendor CTA card */}
+        {!loading && !error && (
+          <div
+            className="bg-white rounded-lg px-4 py-4 mt-3"
+            style={{ border: '1px solid #E2DDD4' }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Star className="w-[18px] h-[18px] flex-shrink-0" style={{ color: '#A08C5A' }} />
+              <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
+                Have a vendor you trust?
+              </p>
+            </div>
+            <p className="text-sm leading-relaxed mb-3" style={{ color: '#5A6478' }}>
+              Your Roster is your own private vendor list — the vendors you've vetted, the vendors you work
+              with every day, visible only to your team. The Vendor Network is different: it's the shared
+              directory across every EvidLY customer.
+            </p>
+            <p className="text-sm leading-relaxed mb-4" style={{ color: '#5A6478' }}>
+              If a vendor in your Roster consistently delivers five-star work, recommend them to EvidLY
+              Partner Recruitment. We verify their credentials, check references, confirm county-specific
+              qualifications — and if they pass, we add them to the Vendor Network so other kitchen leaders
+              can find them too. Your vendors stay yours. The strongest ones can become available to the ecosystem.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowRecommendModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg"
+              style={{ fontSize: '13px', fontWeight: 600, backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+            >
+              <Send size={14} />
+              Recommend a vendor
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Contact modal */}
@@ -517,6 +554,14 @@ export default function VendorNetworkPlaceholder() {
         isOpen={!!selectedVendorId}
         onClose={handleCloseModal}
         vendorId={selectedVendorId}
+      />
+
+      {/* Recommend vendor modal (blank — no prefilled vendor) */}
+      <RecommendVendorModal
+        isOpen={showRecommendModal}
+        onClose={() => setShowRecommendModal(false)}
+        prefilledVendor={null}
+        onRecommended={() => {}}
       />
     </div>
   );
