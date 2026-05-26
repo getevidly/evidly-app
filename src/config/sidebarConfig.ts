@@ -257,7 +257,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Connect EvidLY with POS, accounting, HR, IoT, insurance, and 25+ other platforms.',
   },
   'ad-billing': {
-    id: 'ad-billing', label: 'Billing', path: '/admin/billing', icon: 'CreditCard', iconColor: '#A08C5A',
+    id: 'ad-billing', label: 'Billing', path: '/settings/billing', icon: 'CreditCard', iconColor: '#A08C5A',
     roles: [], description: 'Manage your subscription plan, view invoices, and update payment details.',
   },
   'ad-settings': {
