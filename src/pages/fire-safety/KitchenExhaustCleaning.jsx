@@ -31,9 +31,8 @@ const SUB_SYSTEMS = [
     code: 'GFX',
     label: 'Grease Filter Exchange (GFX)',
     Icon: Filter,
-    cadence: 'quarterly',
-    pse: 'PSE-required',
-    tooltip: 'Replaces saturated baffle filters off-site. Required for PSE coverage. Without GFX, filter grease saturation increases fire load and reduces exhaust capture.',
+    subDetail: 'NFPA 96 \u00b7 CWA-required',
+    tooltip: 'Replaces saturated baffle filters off-site under NFPA 96. Required for Clean Water Act compliance \u2014 on-site wash discharges into sanitary drain in violation of CWA wastewater pH limits. Without GFX, filter grease saturation also increases fire load.',
     route: '/fire-safety/kec/gfx',
     requestServiceType: 'GFX',
     subKey: 'hasGFX',
@@ -42,9 +41,8 @@ const SUB_SYSTEMS = [
     code: 'FPM',
     label: 'Fan Performance Management (FPM)',
     Icon: Fan,
-    cadence: 'semi-annual',
-    pse: 'PSE-required',
-    tooltip: 'Preventive maintenance for the exhaust fan \u2014 belts, bearings, motor amperage, vibration. Required for PSE coverage. Without FPM, fan failure risk goes unidentified between cleanings.',
+    subDetail: 'NFPA 96',
+    tooltip: 'Preventive maintenance for the exhaust fan under NFPA 96 \u2014 belts, bearings, motor amperage, vibration. Without FPM, fan failure risk goes unidentified between cleanings.',
     route: '/fire-safety/kec/fpm',
     requestServiceType: 'FPM',
     subKey: 'hasFPM',
@@ -53,9 +51,8 @@ const SUB_SYSTEMS = [
     code: 'RGC',
     label: 'Rooftop Grease Containment (RGC)',
     Icon: Shield,
-    cadence: 'quarterly',
-    pse: 'PSE + CWA-required',
-    tooltip: 'Captures grease before roof drain discharge. Required for PSE coverage AND Clean Water Act wastewater pH compliance. Without RGC, rooftop grease creates fire spread vector and violates federal CWA.',
+    subDetail: 'NFPA 96',
+    tooltip: 'Captures rooftop grease before it accumulates under NFPA 96. Without RGC, rooftop grease creates fire spread vector.',
     route: '/fire-safety/kec/rgc',
     requestServiceType: 'RGC',
     subKey: 'hasRGC',
@@ -186,9 +183,26 @@ export default function KitchenExhaustCleaning() {
   const { data: history, isLoading: historyLoading } = useServiceHistory(orgId, locationId, KEC_SAFEGUARD_TYPES, 5);
   const { data: costData, isLoading: costLoading } = useServiceCostIntelligence(orgId, locationId, KEC_SAFEGUARD_TYPES, jurisdictionId);
 
-  // Derived
-  const overallDays = schedule ? daysUntil(schedule.next_due_date) : null;
-  const overallStatus = statusColor(overallDays);
+  // Derived — KEC banner status from vendor_service_records (not schedule)
+  const latestKecServiceDate = (() => {
+    const records = Object.values(subSystemStatus);
+    if (records.length === 0) return null;
+    return records.reduce((latest, r) => {
+      if (!r?.service_date) return latest;
+      if (!latest) return r.service_date;
+      return r.service_date > latest ? r.service_date : latest;
+    }, null);
+  })();
+
+  const kecBannerStatus = (() => {
+    if (!latestKecServiceDate) {
+      return { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: 'Not yet monitored' };
+    }
+    const daysSince = Math.ceil((new Date() - new Date(latestKecServiceDate + 'T00:00:00')) / 86400000);
+    if (daysSince <= 90) return { bg: '#D1FAE5', text: '#065F46', border: colors.success, label: 'In compliance' };
+    if (daysSince <= 120) return { bg: '#FEF3C7', text: '#92400E', border: colors.warning, label: 'Due soon' };
+    return { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: 'Overdue' };
+  })();
 
   if (!profile) return null;
 
@@ -221,7 +235,7 @@ export default function KitchenExhaustCleaning() {
       <div
         className="rounded-lg"
         style={{
-          borderLeft: `4px solid ${overallStatus.border}`,
+          borderLeft: `4px solid ${kecBannerStatus.border}`,
           background: colors.white,
           padding: '12px 14px',
           boxShadow: shadows.sm,
@@ -232,7 +246,6 @@ export default function KitchenExhaustCleaning() {
             <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
               Hood &amp; Duct System
             </p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>NFPA 96 compliance</p>
           </div>
           <span
             className="rounded-full"
@@ -240,11 +253,11 @@ export default function KitchenExhaustCleaning() {
               fontSize: typography.size.xs,
               fontWeight: typography.weight.semibold,
               padding: '3px 10px',
-              backgroundColor: overallStatus.bg,
-              color: overallStatus.text,
+              backgroundColor: kecBannerStatus.bg,
+              color: kecBannerStatus.text,
             }}
           >
-            {overallStatus.label}
+            {kecBannerStatus.label}
           </span>
         </div>
       </div>
@@ -259,7 +272,7 @@ export default function KitchenExhaustCleaning() {
         </div>
         <div className="rounded-lg" style={{ background: colors.white, padding: '10px 12px', boxShadow: shadows.sm }}>
           <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginBottom: 2 }}>Next Due</p>
-          <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: overallDays != null && overallDays < 0 ? colors.danger : colors.textPrimary }}>
+          <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: schedule?.next_due_date && daysUntil(schedule.next_due_date) < 0 ? colors.danger : colors.textPrimary }}>
             {scheduleLoading ? '...' : fmtDate(schedule?.next_due_date)}
           </p>
         </div>
@@ -418,7 +431,7 @@ export default function KitchenExhaustCleaning() {
 
                 {/* Sub-detail line */}
                 <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, marginBottom: 0 }}>
-                  {sys.cadence} · {sys.pse}
+                  {sys.subDetail}
                 </p>
 
                 {/* Divider */}

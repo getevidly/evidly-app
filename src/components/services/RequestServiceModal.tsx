@@ -9,6 +9,7 @@ import { X, Send, Calendar, AlertCircle, CalendarDays } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { buildCalendarEvent, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../../lib/calendarSync';
+import { SERVICE_OPTIONS, getServicesByPillar, PILLAR_LABELS } from '../../lib/serviceOptions';
 import { Modal } from '../ui/Modal';
 
 interface RequestServiceModalProps {
@@ -21,12 +22,8 @@ interface RequestServiceModalProps {
   vendorName?: string;
 }
 
-const SERVICE_TYPES = [
-  { id: 'HC', label: 'Hood Cleaning', desc: 'Kitchen exhaust system cleaning' },
-  { id: 'FPM', label: 'Fan & Parts', desc: 'Fan maintenance and parts replacement' },
-  { id: 'GFX', label: 'Grease Trap', desc: 'Grease interceptor cleaning' },
-  { id: 'FS', label: 'Fire Suppression', desc: 'Ansul system inspection' },
-];
+const SERVICE_GROUPS = getServicesByPillar();
+const PILLAR_ORDER = ['fire_safety', 'food_safety'] as const;
 
 const URGENCY_OPTIONS = [
   { id: 'normal', label: 'Normal', desc: 'Within 2-4 weeks' },
@@ -208,28 +205,39 @@ export function RequestServiceModal({
               </div>
             )}
 
-            {/* Services */}
+            {/* Services — grouped by pillar */}
             <div>
               <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Services Needed *</label>
-              <div className="space-y-2">
-                {SERVICE_TYPES.map(svc => (
-                  <button
-                    key={svc.id}
-                    type="button"
-                    onClick={() => toggleService(svc.id)}
-                    className={`w-full flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
-                      selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center ${selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-[#1E2D4D]/15'}`}>
-                      {selectedServices.includes(svc.id) && <div className="w-2 h-2 bg-white rounded-full" />}
+              <div className="space-y-3">
+                {PILLAR_ORDER.map(pillar => {
+                  const items = SERVICE_GROUPS[pillar] || [];
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={pillar}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#1E2D4D]/40 mb-1.5">{PILLAR_LABELS[pillar]}</p>
+                      <div className="space-y-2">
+                        {items.map(svc => (
+                          <button
+                            key={svc.code}
+                            type="button"
+                            onClick={() => toggleService(svc.code)}
+                            className={`w-full flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
+                              selectedServices.includes(svc.code) ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
+                            }`}
+                          >
+                            <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center ${selectedServices.includes(svc.code) ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-[#1E2D4D]/15'}`}>
+                              {selectedServices.includes(svc.code) && <div className="w-2 h-2 bg-white rounded-full" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-[#1E2D4D] text-sm">{svc.label}</p>
+                              <p className="text-xs text-[#1E2D4D]/50">{svc.sub}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-[#1E2D4D] text-sm">{svc.label}</p>
-                      <p className="text-xs text-[#1E2D4D]/50">{svc.desc}</p>
-                    </div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

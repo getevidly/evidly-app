@@ -25,11 +25,31 @@ const FP_SAFEGUARD_TYPES = ['fire_suppression', 'fire_alarm', 'sprinklers'];
 const COST_ROLES = ['owner_operator', 'executive', 'facilities_manager', 'platform_admin'];
 
 const PROTECTION_SYSTEMS = [
-  { safeguardType: 'fire_suppression', code: 'FS', label: 'Fire Suppression', Icon: Flame, ref: 'NFPA 17A / NFPA 96 §10' },
-  { safeguardType: 'fire_alarm',       code: 'FA', label: 'Fire Alarm',       Icon: Bell,  ref: 'NFPA 72' },
-  { safeguardType: 'sprinklers',       code: 'SP', label: 'Sprinkler System', Icon: Droplets, ref: 'NFPA 25' },
-  { safeguardType: null,               code: null, label: 'Fire Extinguishers', Icon: FireExtinguisher, ref: 'NFPA 10', emptyState: true },
+  { safeguardType: 'fire_suppression',  code: 'FS', label: 'Fire Suppression',      Icon: Flame,            subDetail: 'NFPA 17A \u00b7 NFPA 96 \u00b7 PSE-required', group: 'pse' },
+  { safeguardType: 'fire_alarm',        code: 'FA', label: 'Automatic Fire Alarm',   Icon: Bell,             subDetail: 'NFPA 72 \u00b7 PSE-required',                  group: 'pse' },
+  { safeguardType: 'sprinklers',        code: 'SP', label: 'Fire Sprinkler',         Icon: Droplets,         subDetail: 'NFPA 25 \u00b7 PSE-required',                  group: 'pse' },
+  { safeguardType: 'fire_extinguisher', code: 'FE', label: 'Fire Extinguishers',     Icon: FireExtinguisher,  subDetail: 'NFPA 10',                                     group: 'other' },
 ];
+
+const FP_CYCLE_DAYS = 365; // default annual inspection cycle
+const FP_GRACE_DAYS = 30;
+
+function deriveSystemState(record) {
+  if (!record?.service_date) return 'not_monitored';
+  const daysSince = Math.ceil((new Date() - new Date(record.service_date + 'T00:00:00')) / 86400000);
+  if (daysSince <= FP_CYCLE_DAYS) return 'current';
+  if (daysSince <= FP_CYCLE_DAYS + FP_GRACE_DAYS) return 'due_soon';
+  return 'overdue';
+}
+
+function systemStatePill(state) {
+  switch (state) {
+    case 'current':  return { bg: '#D1FAE5', text: '#065F46', label: 'Current' };
+    case 'due_soon': return { bg: '#FEF3C7', text: '#92400E', label: 'Due soon' };
+    case 'overdue':  return { bg: '#FEE2E2', text: '#991B1B', label: 'Overdue' };
+    default:         return { bg: '#F3F4F6', text: '#6B7280', label: 'Not yet monitored' };
+  }
+}
 
 function fmtDate(d) {
   if (!d) return '—';
@@ -73,6 +93,9 @@ export default function FireProtection() {
   const [systemSchedules, setSystemSchedules] = useState({});
   const [scheduleLoading, setScheduleLoading] = useState(true);
 
+  // Per-system latest vendor_service_records (for status derivation)
+  const [fpServiceRecords, setFpServiceRecords] = useState({});
+
   // Fetch locations
   useEffect(() => {
     if (!orgId) return;
@@ -110,7 +133,7 @@ export default function FireProtection() {
       .select('service_type_code, vendor_name, last_service_date, next_due_date, negotiated_price')
       .eq('organization_id', orgId)
       .eq('location_id', locationId)
-      .in('service_type_code', ['FS', 'FA', 'SP'])
+      .in('service_type_code', ['FS', 'FA', 'SP', 'FE'])
       .eq('is_active', true)
       .then(({ data }) => {
         const map = {};
@@ -122,32 +145,53 @@ export default function FireProtection() {
       });
   }, [orgId, locationId]);
 
+  // Fetch latest vendor_service_records per protection system
+  useEffect(() => {
+    if (!orgId || !locationId) return;
+    supabase
+      .from('vendor_service_records')
+      .select('safeguard_type, service_date, vendor_name')
+      .eq('organization_id', orgId)
+      .eq('location_id', locationId)
+      .eq('is_sample', false)
+      .in('safeguard_type', ['fire_suppression', 'fire_alarm', 'sprinklers', 'fire_extinguisher'])
+      .order('service_date', { ascending: false })
+      .then(({ data }) => {
+        const map = {};
+        for (const r of (data || [])) {
+          if (!map[r.safeguard_type]) map[r.safeguard_type] = r;
+        }
+        setFpServiceRecords(map);
+      });
+  }, [orgId, locationId]);
+
   // Hooks
   const { data: history, isLoading: historyLoading } = useServiceHistory(orgId, locationId, FP_SAFEGUARD_TYPES, 5);
   const { data: costData, isLoading: costLoading } = useServiceCostIntelligence(orgId, locationId, FP_SAFEGUARD_TYPES, jurisdictionId);
 
-  // Aggregate overdue count
-  const overdueCount = PROTECTION_SYSTEMS.filter(sys => {
-    if (!sys.code) return false;
-    const sched = systemSchedules[sys.code];
-    if (!sched?.next_due_date) return false;
-    return daysUntil(sched.next_due_date) < 0;
-  }).length;
+  // Derive per-system state from vendor_service_records
+  const systemStates = PROTECTION_SYSTEMS.map(sys => ({
+    ...sys,
+    state: deriveSystemState(fpServiceRecords[sys.safeguardType]),
+  }));
 
-  // Overall banner status
-  const bannerStatus = overdueCount > 0
-    ? { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: `${overdueCount} system${overdueCount > 1 ? 's' : ''} overdue` }
-    : { bg: '#D1FAE5', text: '#065F46', border: colors.success, label: 'All systems current' };
+  const overdueCount = systemStates.filter(s => s.state === 'overdue').length;
+  const dueSoonCount = systemStates.filter(s => s.state === 'due_soon').length;
+  const notMonitoredCount = systemStates.filter(s => s.state === 'not_monitored').length;
+  const monitoredCount = 4 - notMonitoredCount;
 
-  // Check if any schedule data loaded
-  const hasAnySchedule = Object.keys(systemSchedules).length > 0;
-  if (!hasAnySchedule && !scheduleLoading) {
-    // If no schedules at all, use neutral status
-    bannerStatus.bg = '#F3F4F6';
-    bannerStatus.text = '#6B7280';
-    bannerStatus.border = colors.border;
-    bannerStatus.label = 'No systems configured';
-  }
+  // Aggregate banner status — priority: overdue > due soon > not yet monitored > all current
+  const bannerStatus = (() => {
+    if (overdueCount > 0) return { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: `${overdueCount} overdue` };
+    if (dueSoonCount > 0) return { bg: '#FEF3C7', text: '#92400E', border: colors.warning, label: `${dueSoonCount} due soon` };
+    if (notMonitoredCount > 0) return { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: `${notMonitoredCount} not yet monitored` };
+    return { bg: '#D1FAE5', text: '#065F46', border: colors.success, label: 'All systems current' };
+  })();
+
+  // Banner sub-detail
+  const bannerSubParts = [`${monitoredCount} active`];
+  if (notMonitoredCount > 0) bannerSubParts.push(`${notMonitoredCount} not yet monitored`);
+  const bannerSubDetail = bannerSubParts.join(' \u00b7 ');
 
   if (!profile) return null;
 
@@ -191,7 +235,7 @@ export default function FireProtection() {
             <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
               Protection Systems
             </p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>Suppression, alarm, sprinkler, extinguisher</p>
+            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>{bannerSubDetail}</p>
           </div>
           <span
             className="rounded-full"
@@ -288,60 +332,94 @@ export default function FireProtection() {
       )}
 
       {/* ── 4. Protection Systems ──────────────────────────── */}
-      <div>
-        <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, marginBottom: 6 }}>
-          Protection Systems
+      <div className="space-y-2">
+        {/* PSE Systems sub-header */}
+        <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2, marginTop: 4 }}>
+          PSE Systems
         </p>
-        <div className="space-y-2">
-          {PROTECTION_SYSTEMS.map((sys) => {
-            const sched = sys.code ? systemSchedules[sys.code] : null;
-            const days = sched ? daysUntil(sched.next_due_date) : null;
-            const st = sys.emptyState
-              ? { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: 'No data' }
-              : statusColor(days);
-
-            return (
-              <div
-                key={sys.label}
-                className="rounded-lg"
-                style={{
-                  borderLeft: `3px solid ${st.border}`,
-                  background: colors.white,
-                  padding: '10px 12px',
-                  boxShadow: shadows.sm,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <sys.Icon size={16} color="#D85A30" />
-                    <div>
-                      <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{sys.label}</p>
-                      <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{sys.ref}</p>
-                    </div>
+        {systemStates.filter(s => s.group === 'pse').map((sys) => {
+          const sched = systemSchedules[sys.code];
+          const pill = systemStatePill(sys.state);
+          return (
+            <div
+              key={sys.label}
+              className="rounded-lg"
+              style={{
+                borderLeft: `3px solid ${sys.state === 'overdue' ? colors.danger : sys.state === 'due_soon' ? colors.warning : sys.state === 'current' ? colors.success : colors.border}`,
+                background: colors.white,
+                padding: '10px 12px',
+                boxShadow: shadows.sm,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <sys.Icon size={16} color="#D85A30" />
+                  <div>
+                    <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{sys.label}</p>
+                    <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{sys.subDetail}</p>
                   </div>
-                  <span
-                    className="rounded-full"
-                    style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: st.bg, color: st.text }}
-                  >
-                    {st.label}
-                  </span>
                 </div>
-                {sched && (
-                  <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
-                    <span>Last: {fmtDate(sched.last_service_date)}</span>
-                    <span>Next: {fmtDate(sched.next_due_date)}</span>
-                    {sched.vendor_name && <span>Vendor: {sched.vendor_name}</span>}
-                  </div>
-                )}
-                {sys.emptyState && (
-                  <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, fontStyle: 'italic' }}>
-                    No inspection tracking configured. Add extinguisher equipment to begin.
-                  </p>
-                )}
+                <span
+                  className="rounded-full"
+                  style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text }}
+                >
+                  {pill.label}
+                </span>
               </div>
-            );
-          })}
-        </div>
+              {sched && (
+                <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
+                  <span>Last: {fmtDate(sched.last_service_date)}</span>
+                  <span>Next: {fmtDate(sched.next_due_date)}</span>
+                  {sched.vendor_name && <span>Vendor: {sched.vendor_name}</span>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Other Fire Safety sub-header */}
+        <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2, marginTop: 12 }}>
+          Other Fire Safety
+        </p>
+        {systemStates.filter(s => s.group === 'other').map((sys) => {
+          const sched = systemSchedules[sys.code];
+          const pill = systemStatePill(sys.state);
+          return (
+            <div
+              key={sys.label}
+              className="rounded-lg"
+              style={{
+                borderLeft: `3px solid ${sys.state === 'overdue' ? colors.danger : sys.state === 'due_soon' ? colors.warning : sys.state === 'current' ? colors.success : colors.border}`,
+                background: colors.white,
+                padding: '10px 12px',
+                boxShadow: shadows.sm,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <sys.Icon size={16} color="#D85A30" />
+                  <div>
+                    <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{sys.label}</p>
+                    <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{sys.subDetail}</p>
+                  </div>
+                </div>
+                <span
+                  className="rounded-full"
+                  style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text }}
+                >
+                  {pill.label}
+                </span>
+              </div>
+              {sched && (
+                <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
+                  <span>Last: {fmtDate(sched.last_service_date)}</span>
+                  <span>Next: {fmtDate(sched.next_due_date)}</span>
+                  {sched.vendor_name && <span>Vendor: {sched.vendor_name}</span>}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* ── 5. Inspection History ──────────────────────────── */}

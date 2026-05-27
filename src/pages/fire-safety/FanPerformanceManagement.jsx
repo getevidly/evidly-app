@@ -163,7 +163,7 @@ export default function FanPerformanceManagement() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>Exhaust Fan System</p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>NFPA 96 Chapter 11</p>
+            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>NFPA 96</p>
           </div>
           <span className="rounded-full" style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, padding: '3px 10px', backgroundColor: overallStatus.bg, color: overallStatus.text }}>
             {overallStatus.label}
@@ -175,7 +175,7 @@ export default function FanPerformanceManagement() {
       {isEmpty && (
         <div className="rounded-lg" style={{ background: colors.white, padding: '16px', boxShadow: shadows.sm, textAlign: 'center' }}>
           <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginBottom: 8, lineHeight: 1.4 }}>
-            This service is not currently active. Activating protects PSE and CWA compliance.
+            This service is not currently active. Activating reduces exhaust fan failure risk under NFPA 96.
           </p>
           <button
             onClick={() => setShowRequest(true)}

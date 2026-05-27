@@ -148,7 +148,7 @@ export default function RooftopGreaseContainment() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>Rooftop Containment System</p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>NFPA 96 §14.4 · CWA compliance</p>
+            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>NFPA 96</p>
           </div>
           <span className="rounded-full" style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, padding: '3px 10px', backgroundColor: overallStatus.bg, color: overallStatus.text }}>{overallStatus.label}</span>
         </div>
@@ -157,7 +157,7 @@ export default function RooftopGreaseContainment() {
       {isEmpty && (
         <div className="rounded-lg" style={{ background: colors.white, padding: '16px', boxShadow: shadows.sm, textAlign: 'center' }}>
           <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginBottom: 8, lineHeight: 1.4 }}>
-            This service is not currently active. Activating protects PSE and CWA compliance.
+            This service is not currently active. Activating reduces rooftop grease accumulation and fire spread risk under NFPA 96.
           </p>
           <button onClick={() => setShowRequest(true)} style={{ padding: '8px 20px', fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: radius.md, cursor: 'pointer' }}>Add to plan</button>
         </div>
