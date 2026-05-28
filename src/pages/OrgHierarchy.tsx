@@ -12,6 +12,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours } from '../contexts/OperatingHoursContext';
 import { getAvailableCounties } from '../lib/jurisdictionScoring';
 import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
+import { colors, prp } from '../lib/designSystem';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -487,14 +488,16 @@ export function OrgHierarchy() {
           </button>
           <button
             onClick={() => navigate('/import?type=locations')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D] text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            style={{ backgroundColor: colors.borderLight, color: colors.navy, border: '1px solid transparent' }}
           >
             <Upload className="h-4 w-4" />
             Import
           </button>
           <button
             onClick={() => toast.info('Hierarchy configuration')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-[#1E2D4D]/5 rounded-lg"
+            style={{ padding: '8px 10px', color: colors.textSecondary, background: 'transparent', border: 'none' }}
           >
             <Settings className="h-4 w-4" />
             Hierarchy Config
@@ -502,22 +505,105 @@ export function OrgHierarchy() {
         </div>
       </div>
 
-      {/* Empty state for live mode */}
-      {!isDemoMode ? (
-        <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-          <MapPin className="h-12 w-12 text-[#1E2D4D]/30 mb-4" />
-          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No locations added yet</h3>
-          <p className="text-sm text-[#1E2D4D]/50 max-w-md mb-4">Add your first location to get started.</p>
+      {/* Empty state — shown when no locations exist (demo or real) */}
+      {allLocations.length === 0 ? (
+        <div className="rounded-xl border border-[#1E2D4D]/10 bg-white flex flex-col items-center text-center" style={{ padding: '28px 16px 36px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          {/* Icon circle */}
+          <div
+            className="flex items-center justify-center mb-4"
+            style={{ width: 52, height: 52, borderRadius: '50%', backgroundColor: '#E6F1FB' }}
+          >
+            <MapPin className="w-6 h-6" style={{ color: '#185FA5' }} />
+          </div>
+
+          {/* Title */}
+          <h3 style={{ fontSize: 17, fontWeight: 500, color: colors.textPrimary, margin: '0 0 8px' }}>
+            No locations added yet
+          </h3>
+
+          {/* Body */}
+          <p style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 1.6, maxWidth: 460, margin: '0 0 20px' }}>
+            A location anchors every signal EvidLY tracks &mdash; jurisdiction, vendor cadence,
+            inspection trail. Add your first location to start scoring.
+          </p>
+
+          {/* PRP three-card row */}
+          <div
+            className="grid grid-cols-3 w-full mb-5"
+            style={{ gap: 10, maxWidth: 600 }}
+          >
+            {/* PREDICT */}
+            <div
+              className="bg-white text-left"
+              style={{
+                border: '0.5px solid #E2DDD4',
+                borderTop: `3px solid ${prp.predict.accent}`,
+                borderRadius: '0 0 8px 8px',
+                padding: '12px 12px',
+              }}
+            >
+              <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.predict.text, marginBottom: 4 }}>
+                Predict
+              </div>
+              <p style={{ fontSize: 11, color: colors.textSecondary, lineHeight: 1.5, margin: 0 }}>
+                Identifies when each location's jurisdiction inspections are coming due.
+              </p>
+            </div>
+
+            {/* REDUCE */}
+            <div
+              className="bg-white text-left"
+              style={{
+                border: '0.5px solid #E2DDD4',
+                borderTop: `3px solid ${prp.reduce.accent}`,
+                borderRadius: '0 0 8px 8px',
+                padding: '12px 12px',
+              }}
+            >
+              <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.reduce.text, marginBottom: 4 }}>
+                Reduce
+              </div>
+              <p style={{ fontSize: 11, color: colors.textSecondary, lineHeight: 1.5, margin: 0 }}>
+                Compliance gaps surface per location &mdash; not buried in an org-wide aggregate.
+              </p>
+            </div>
+
+            {/* PROVE */}
+            <div
+              className="bg-white text-left"
+              style={{
+                border: '0.5px solid #E2DDD4',
+                borderTop: `3px solid ${prp.prove.accent}`,
+                borderRadius: '0 0 8px 8px',
+                padding: '12px 12px',
+              }}
+            >
+              <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.prove.text, marginBottom: 4 }}>
+                Prove
+              </div>
+              <p style={{ fontSize: 11, color: colors.textSecondary, lineHeight: 1.5, margin: 0 }}>
+                Every inspection, document, and service visit carries the location and timestamp.
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
           <button
+            type="button"
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1E2D4D] text-sm font-medium text-white hover:bg-[#162340] transition-colors cursor-pointer"
+            className="inline-flex items-center font-medium cursor-pointer hover:bg-[#162340] transition-colors"
+            style={{
+              gap: 6, padding: '11px 22px', borderRadius: 8,
+              backgroundColor: colors.navy, color: '#FFFFFF', fontSize: 13,
+              border: 'none',
+            }}
           >
             <Plus className="h-4 w-4" />
             Add Location
           </button>
         </div>
 
-      ) : isDemoMode && isSingleLocation ? (
+      ) : isSingleLocation ? (
         /* Single-location flat view — location IS the organization */
         <div className="max-w-2xl">
           <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-5" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
@@ -525,7 +611,7 @@ export function OrgHierarchy() {
           </div>
         </div>
 
-      ) : isDemoMode ? (
+      ) : (
       <>
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[40%_1px_1fr] gap-5 items-stretch">
@@ -559,7 +645,7 @@ export function OrgHierarchy() {
         </div>
       </div>
       </>
-      ) : null}
+      )}
 
       {/* Add Location Modal */}
       <AddLocationModal
