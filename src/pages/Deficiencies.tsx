@@ -33,6 +33,7 @@ import { useDeficienciesPRPStats } from '../hooks/deficiencies/useDeficienciesPR
 import { DeficienciesPRPBand } from '../components/deficiencies/DeficienciesPRPBand';
 import { DeficienciesFilterBar } from '../components/deficiencies/DeficienciesFilterBar';
 import { DeficienciesRecurringBar } from '../components/deficiencies/DeficienciesRecurringBar';
+import { prp } from '../lib/designSystem';
 
 const NAVY = '#1E2D4D';
 
@@ -301,15 +302,15 @@ export function Deficiencies() {
           </div>
           <div className="grid grid-cols-3 max-w-md mx-auto gap-3 text-center">
             <div>
-              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</p>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.predict.accent }}>PREDICT</p>
               <p className="text-[11px] text-[#8A93A6]">Approaching deadlines</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#8A93A6' }}>REDUCE</p>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.reduce.accent }}>REDUCE</p>
               <p className="text-[11px] text-[#8A93A6]">Exposure range</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</p>
+              <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.prove.accent }}>PROVE</p>
               <p className="text-[11px] text-[#8A93A6]">Every correction</p>
             </div>
           </div>

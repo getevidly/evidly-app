@@ -51,7 +51,7 @@ import { CARecurringBar } from '../components/corrective-actions/CARecurringBar'
 
 // ── Constants ────────────────────────────────────────────────
 
-import { colors, shadows, radius, typography } from '../lib/designSystem';
+import { colors, shadows, radius, typography, prp } from '../lib/designSystem';
 
 const NAVY = colors.navy;
 
@@ -608,15 +608,15 @@ export function CorrectiveActions() {
             </p>
             <div className="flex items-center justify-center gap-6 mt-6">
               <div className="text-center">
-                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</p>
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.predict.accent }}>PREDICT</p>
                 <p className="text-[10px] text-[#8A93A6] mt-0.5">Overdue + due soon</p>
               </div>
               <div className="text-center">
-                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#8A93A6' }}>REDUCE</p>
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.reduce.accent }}>REDUCE</p>
                 <p className="text-[10px] text-[#8A93A6] mt-0.5">Open exposure</p>
               </div>
               <div className="text-center">
-                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</p>
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.prove.accent }}>PROVE</p>
                 <p className="text-[10px] text-[#8A93A6] mt-0.5">Verified + documented</p>
               </div>
             </div>
@@ -746,7 +746,7 @@ export function CorrectiveActions() {
           return (
             <>
               {showHeaders && (
-                <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#c2731a] pt-2">
+                <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#BA7517] pt-2">
                   Overdue or due within 48h · Predict signal
                 </p>
               )}

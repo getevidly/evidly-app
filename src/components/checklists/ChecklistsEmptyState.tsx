@@ -1,20 +1,20 @@
 import { ClipboardList } from 'lucide-react';
-import { colors } from '../../lib/designSystem';
+import { colors, prp } from '../../lib/designSystem';
 
 const PRP_TILES = [
   {
     eyebrow: 'PREDICT',
-    color: colors.warning,
+    color: prp.predict.accent,
     body: 'Identifies which checks are due, which are at risk of being missed, and which routines are falling behind.',
   },
   {
     eyebrow: 'REDUCE',
-    color: colors.danger,
+    color: prp.reduce.accent,
     body: 'Failed items get linked corrective actions and citation references. No missed items become inspection violations.',
   },
   {
     eyebrow: 'PROVE',
-    color: colors.success,
+    color: prp.prove.accent,
     body: 'Every completion has a signature, timestamp, and primary-source citation. Inspector-ready proof at a moment\u2019s notice.',
   },
 ] as const;

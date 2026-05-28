@@ -28,6 +28,7 @@ import { useIncidentsPRPStats } from '../hooks/incidents/useIncidentsPRPStats';
 import { IncidentsPRPBand } from '../components/incidents/IncidentsPRPBand';
 import { IncidentsRecurringBar } from '../components/incidents/IncidentsRecurringBar';
 import type { IncidentTemplate, IncidentStatus, IncidentCategory } from '../types/incidents';
+import { prp } from '../lib/designSystem';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -2116,16 +2117,16 @@ export function IncidentLog() {
                   When something does happen, EvidLY identifies risk signals early and keeps the resolution record together.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 max-w-[720px] w-full mb-6">
-                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #c2731a' }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#c2731a' }}>PREDICT</div>
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.predict.accent}` }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.predict.accent }}>PREDICT</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Recurring patterns and aging incidents get flagged before they become citations.</p>
                   </div>
-                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #b3261e' }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#b3261e' }}>REDUCE</div>
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.reduce.accent}` }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.reduce.accent }}>REDUCE</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Open-incident exposure stays visible until resolved and documented.</p>
                   </div>
-                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: '3px solid #2f7a4d' }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: '#2f7a4d' }}>PROVE</div>
+                  <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.prove.accent}` }}>
+                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.prove.accent }}>PROVE</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Every resolution is timestamped, assigned, and ready to send to inspectors or insurers.</p>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Radio } from 'lucide-react';
-import { colors } from '../../lib/designSystem';
+import { colors, prp } from '../../lib/designSystem';
 import { SupportedSensorsCard } from './SupportedSensorsCard';
 import { SensorEarlyAccessModal } from './SensorEarlyAccessModal';
 
@@ -9,17 +9,17 @@ import { SensorEarlyAccessModal } from './SensorEarlyAccessModal';
 const PRP_TILES = [
   {
     eyebrow: 'PREDICT',
-    color: colors.warning,
+    color: prp.predict.accent,
     body: 'Sensors detect drift between manual checks. Catches problems hours before an operator\u2019s next probe reading.',
   },
   {
     eyebrow: 'REDUCE',
-    color: colors.danger,
+    color: prp.reduce.accent,
     body: 'Sensor + probe disagreement flags miscalibration or placement issues before they create a violation.',
   },
   {
     eyebrow: 'PROVE',
-    color: colors.success,
+    color: prp.prove.accent,
     body: 'Continuous 24-hour coverage per unit. Every minute logged. Nothing missed between manual checks.',
   },
 ] as const;

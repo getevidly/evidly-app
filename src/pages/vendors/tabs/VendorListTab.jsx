@@ -10,6 +10,7 @@ import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { VendorRow } from '../../../components/vendors/VendorRow';
 import { AddVendorModal } from '../../../components/vendor/AddVendorModal';
 import { RecommendVendorModal } from '../../../components/vendors/RecommendVendorModal';
+import { prp } from '../../../lib/designSystem';
 
 /**
  * VendorListTab — Surface 1 (populated) + Surface 13 (day-one zero vendors).
@@ -246,9 +247,9 @@ function DayOneVendorList({ onAdd }) {
       >
         <div
           className="rounded-lg border text-left p-3.5"
-          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#D97706' }}
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: prp.predict.accent }}
         >
-          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#D97706', letterSpacing: '0.12em' }}>
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: prp.predict.accent, letterSpacing: '0.12em' }}>
             PREDICT
           </p>
           <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
@@ -257,9 +258,9 @@ function DayOneVendorList({ onAdd }) {
         </div>
         <div
           className="rounded-lg border text-left p-3.5"
-          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#DC2626' }}
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: prp.reduce.accent }}
         >
-          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#DC2626', letterSpacing: '0.12em' }}>
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: prp.reduce.accent, letterSpacing: '0.12em' }}>
             REDUCE
           </p>
           <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>
@@ -268,9 +269,9 @@ function DayOneVendorList({ onAdd }) {
         </div>
         <div
           className="rounded-lg border text-left p-3.5"
-          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: '#059669' }}
+          style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E0D8', borderTopWidth: 3, borderTopColor: prp.prove.accent }}
         >
-          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: '#059669', letterSpacing: '0.12em' }}>
+          <p className="text-[10px] font-semibold uppercase mb-1.5" style={{ color: prp.prove.accent, letterSpacing: '0.12em' }}>
             PROVE
           </p>
           <p className="text-xs" style={{ color: '#94A3B8', lineHeight: 1.45 }}>

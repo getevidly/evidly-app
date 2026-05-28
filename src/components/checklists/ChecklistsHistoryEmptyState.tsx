@@ -1,20 +1,20 @@
 import { Clock } from 'lucide-react';
-import { colors } from '../../lib/designSystem';
+import { colors, prp } from '../../lib/designSystem';
 
 const PRP_TILES = [
   {
     eyebrow: 'PREDICT',
-    color: colors.warning,
+    color: prp.predict.accent,
     body: 'Pattern detection across completion history identifies which items recurrently fail, which shifts skip checks, and where you\u2019re at risk of citation.',
   },
   {
     eyebrow: 'REDUCE',
-    color: colors.danger,
+    color: prp.reduce.accent,
     body: 'Coverage gaps are identified here proactively. Every missed completion can be logged retroactively with an audit reason, before it becomes a violation.',
   },
   {
     eyebrow: 'PROVE',
-    color: colors.success,
+    color: prp.prove.accent,
     body: 'Every completion is a verified record. Filter by date, equipment, or user. Export the proof packet your inspector wants.',
   },
 ] as const;

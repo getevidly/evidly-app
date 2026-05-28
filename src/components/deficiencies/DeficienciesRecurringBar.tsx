@@ -8,18 +8,18 @@ function PatternCard({ pattern }: { pattern: DefRecurringPattern }) {
     <div
       className="rounded-lg p-4 flex items-start gap-3"
       style={{
-        background: 'linear-gradient(90deg, rgba(194,115,26,0.06) 0%, rgba(255,255,255,1) 100%)',
-        borderLeft: '4px solid #c2731a',
+        background: 'linear-gradient(90deg, rgba(186,117,23,0.06) 0%, rgba(255,255,255,1) 100%)',
+        borderLeft: '4px solid #BA7517',
       }}
     >
       <div
         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-        style={{ backgroundColor: 'rgba(194,115,26,0.12)' }}
+        style={{ backgroundColor: 'rgba(186,117,23,0.12)' }}
       >
-        <AlertCircle className="w-4 h-4" style={{ color: '#c2731a' }} />
+        <AlertCircle className="w-4 h-4" style={{ color: '#BA7517' }} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold" style={{ color: '#c2731a' }}>
+        <p className="text-sm font-semibold" style={{ color: '#BA7517' }}>
           Recurring violation identified
         </p>
         <p className="text-[12px] text-[#1E2D4D]/70 mt-0.5">
@@ -51,7 +51,7 @@ export function DeficienciesRecurringBar({
         <PatternCard key={p.patternId} pattern={p} />
       ))}
       {remaining > 0 && (
-        <p className="text-[11px] font-medium text-[#c2731a] pl-1">
+        <p className="text-[11px] font-medium text-[#BA7517] pl-1">
           View all {patterns.length} recurring violations →
         </p>
       )}

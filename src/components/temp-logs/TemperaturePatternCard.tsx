@@ -1,9 +1,9 @@
 import type { TemperaturePattern } from '../../hooks/temperatures/useTemperaturePatternAnalysis';
 
 const PRP_COLORS: Record<string, string> = {
-  predict: '#c2731a',
-  reduce: '#DC2626',
-  prove: '#2f7a4d',
+  predict: '#BA7517',
+  reduce: '#185FA5',
+  prove: '#0F6E56',
 };
 
 const PRP_LABELS: Record<string, string> = {
