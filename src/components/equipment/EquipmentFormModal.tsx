@@ -45,11 +45,13 @@ const CUSTOM_FIELDS_BY_TYPE: Record<string, { key: string; label: string; type: 
 
 interface EquipmentFormModalProps {
   equipment?: EquipmentItem;
+  /** Pre-select equipment type dropdown in create mode. Ignored in edit mode. */
+  defaultEquipmentType?: string;
   onClose: () => void;
   onSuccess?: () => void;
 }
 
-export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentFormModalProps) {
+export function EquipmentFormModal({ equipment, defaultEquipmentType, onClose, onSuccess }: EquipmentFormModalProps) {
   const isEdit = !!equipment;
   const { mutate: create, isLoading: creating } = useCreateEquipment();
   const { mutate: update, isLoading: updating } = useUpdateEquipment();
@@ -57,7 +59,7 @@ export function EquipmentFormModal({ equipment, onClose, onSuccess }: EquipmentF
   const saving = creating || updating;
 
   const [name, setName] = useState(equipment?.name || '');
-  const [equipmentType, setEquipmentType] = useState(equipment?.equipmentType || '');
+  const [equipmentType, setEquipmentType] = useState(equipment?.equipmentType || defaultEquipmentType || '');
   const [locationId, setLocationId] = useState(equipment?.locationId || '');
   const [manufacturer, setManufacturer] = useState(equipment?.manufacturer || '');
   const [model, setModel] = useState(equipment?.model || '');

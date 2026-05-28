@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
+const EquipmentFormModal = lazy(() => import('../../components/equipment/EquipmentFormModal').then(m => ({ default: m.EquipmentFormModal })));
 
 // ── Constants ────────────────────────────────────────────────
 const FP_SAFEGUARD_TYPES = ['fire_suppression', 'fire_alarm', 'sprinklers'];
@@ -88,6 +89,7 @@ export default function FireProtection() {
   const [locationName, setLocationName] = useState('');
   const [jurisdictionId, setJurisdictionId] = useState(undefined);
   const [showUpload, setShowUpload] = useState(false);
+  const [showAddEquipment, setShowAddEquipment] = useState(false);
 
   // Per-system schedule data
   const [systemSchedules, setSystemSchedules] = useState({});
@@ -501,7 +503,7 @@ export default function FireProtection() {
           <Upload size={16} /> Upload Inspection Report
         </button>
         <button
-          onClick={() => navigate('/equipment')}
+          onClick={() => setShowAddEquipment(true)}
           style={{
             flex: 1,
             display: 'flex',
@@ -530,6 +532,17 @@ export default function FireProtection() {
             defaultLocationId={locationId}
             onClose={() => setShowUpload(false)}
             onSuccess={() => { setShowUpload(false); window.location.reload(); }}
+          />
+        </Suspense>
+      )}
+
+      {/* ── Add Equipment Modal ──────────────────────────── */}
+      {showAddEquipment && (
+        <Suspense fallback={null}>
+          <EquipmentFormModal
+            defaultEquipmentType="suppression"
+            onClose={() => setShowAddEquipment(false)}
+            onSuccess={() => setShowAddEquipment(false)}
           />
         </Suspense>
       )}

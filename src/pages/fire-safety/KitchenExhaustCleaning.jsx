@@ -529,7 +529,7 @@ export default function KitchenExhaustCleaning() {
       {/* ── 8. Action Buttons ──────────────────────────────── */}
       <div style={{ display: 'flex', gap: 8 }}>
         <button
-          onClick={() => navigate('/calendar')}
+          onClick={() => setRequestModal({ open: true, serviceType: 'KEC' })}
           style={{
             flex: 1,
             display: 'flex',
