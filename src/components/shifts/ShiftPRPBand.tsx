@@ -1,4 +1,5 @@
 import type { ShiftPRPMetrics } from '../../hooks/useShiftPRPMetrics';
+import { prp } from '../../lib/designSystem';
 
 type PRPVariant = 'handoff' | 'live';
 
@@ -53,21 +54,19 @@ const COPY: Record<PRPVariant, {
 export function ShiftPRPBand({ metrics, loading, variant = 'handoff' }: ShiftPRPBandProps) {
   const copy = COPY[variant];
 
-  const reduceColor = '#b3261e';
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* PREDICT */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #c2731a' }}
+        style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#c2731a' }}>PREDICT</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">{copy.predictSub}</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
         ) : (
-          <div className="text-2xl font-bold mt-2" style={{ color: '#c2731a' }}>
+          <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
             {metrics.predict}
           </div>
         )}
@@ -83,14 +82,14 @@ export function ShiftPRPBand({ metrics, loading, variant = 'handoff' }: ShiftPRP
       {/* REDUCE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: `3px solid ${reduceColor}` }}
+        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: reduceColor }}>REDUCE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">{copy.reduceSub}</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
         ) : (
-          <div className="text-2xl font-bold mt-2" style={{ color: reduceColor }}>
+          <div className="text-2xl font-bold mt-2" style={{ color: prp.reduce.accent }}>
             {metrics.reduce}
           </div>
         )}
@@ -106,14 +105,14 @@ export function ShiftPRPBand({ metrics, loading, variant = 'handoff' }: ShiftPRP
       {/* PROVE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #2f7a4d' }}
+        style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#2f7a4d' }}>PROVE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">{copy.proveSub}</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
         ) : (
-          <div className="text-2xl font-bold mt-2" style={{ color: '#2f7a4d' }}>
+          <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>
             {metrics.prove.total > 0
               ? `${metrics.prove.ready} of ${metrics.prove.total}`
               : '\u2014'}

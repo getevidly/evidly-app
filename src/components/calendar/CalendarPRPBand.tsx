@@ -1,4 +1,5 @@
 import type { CalendarPRPStats } from '../../hooks/calendar/useCalendarPRPStats';
+import { prp } from '../../lib/designSystem';
 
 interface CalendarPRPBandProps {
   stats: CalendarPRPStats;
@@ -12,11 +13,11 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
       {/* PREDICT */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #B45309' }}
+        style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#B45309' }}>PREDICT</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Services due, not scheduled</div>
-        <div className="text-2xl font-bold mt-2" style={{ color: '#B45309' }}>
+        <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
           {stats.predictCount}
         </div>
         <div className="mt-3 pt-3" style={{ borderTop: '1px dashed #E2DDD4' }}>
@@ -28,7 +29,7 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
             disabled
             aria-disabled="true"
             className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-white cursor-not-allowed"
-            style={{ backgroundColor: '#B45309', opacity: 0.5 }}
+            style={{ backgroundColor: prp.predict.accent, opacity: 0.5 }}
           >
             Schedule from list {'\u2192'}
           </button>
@@ -38,11 +39,11 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
       {/* REDUCE (pending) */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #8A93A6' }}
+        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#8A93A6' }}>REDUCE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
-        <div className="mt-2 font-normal" style={{ color: '#8A93A6', fontSize: '18px' }}>
+        <div className="mt-2 font-normal" style={{ color: prp.reduce.accent, fontSize: '18px' }}>
           Exposure pending
         </div>
         <div className="mt-3 pt-3" style={{ borderTop: '1px dashed #E2DDD4' }}>
@@ -56,11 +57,11 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
       {/* PROVE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #2E7D32' }}
+        style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#2E7D32' }}>PROVE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Completed with records</div>
-        <div className="text-2xl font-bold mt-2" style={{ color: '#2E7D32' }}>
+        <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>
           {stats.proveCount} of {stats.proveTotal}
         </div>
         <div className="mt-3 pt-3" style={{ borderTop: '1px dashed #E2DDD4' }}>
@@ -72,7 +73,7 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
             disabled
             aria-disabled="true"
             className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-white cursor-not-allowed"
-            style={{ backgroundColor: '#2E7D32', opacity: 0.5 }}
+            style={{ backgroundColor: prp.prove.accent, opacity: 0.5 }}
           >
             View proof packets {'\u2192'}
           </button>

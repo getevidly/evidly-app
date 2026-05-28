@@ -1,4 +1,5 @@
 import type { PRPStats } from '../../hooks/documents/usePRPStats';
+import { prp } from '../../lib/designSystem';
 
 interface PRPBandProps {
   stats: PRPStats;
@@ -16,13 +17,13 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
         type="button"
         onClick={onPredictClick}
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-card-md"
-        style={{ borderTop: '3px solid #B45309' }}
+        style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#B45309' }}>
+        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>
           PREDICT
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Renewal Radar</div>
-        <div className="text-2xl font-bold mt-2" style={{ color: '#B45309' }}>
+        <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
           {stats.predict.total}
         </div>
 
@@ -41,15 +42,15 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
       {/* ── REDUCE (pending state) ─────────────────────── */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left pending"
-        style={{ borderTop: '3px solid #8A93A6' }}
+        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#8A93A6' }}>
+        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>
           REDUCE
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
         <div
           className="mt-2 font-normal"
-          style={{ color: '#8A93A6', fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
+          style={{ color: prp.reduce.accent, fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
         >
           Exposure pending
         </div>
@@ -65,13 +66,13 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
       {/* ── PROVE ──────────────────────────────────────── */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-card-md"
-        style={{ borderTop: '3px solid #2E7D32' }}
+        style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: '#2E7D32' }}>
+        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>
           PROVE
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Ready to Send</div>
-        <div className="text-2xl font-bold mt-2" style={{ color: '#2E7D32' }}>
+        <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>
           {stats.prove.currentCount}
         </div>
 
@@ -83,7 +84,7 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
             type="button"
             onClick={(e) => { e.stopPropagation(); onSendToThirdParty(); }}
             className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#2E7D32' }}
+            style={{ backgroundColor: prp.prove.accent }}
           >
             Send selection {'\u2192'}
           </button>

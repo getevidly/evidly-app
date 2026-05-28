@@ -514,8 +514,8 @@ export default function FireProtection() {
             fontSize: typography.size.sm,
             fontWeight: typography.weight.semibold,
             color: colors.navy,
-            background: colors.white,
-            border: `1px solid ${colors.border}`,
+            background: colors.borderLight,
+            border: '1px solid transparent',
             borderRadius: radius.md,
             cursor: 'pointer',
           }}

@@ -13,14 +13,19 @@
  * CPP gold styling gated to is_cleaning_pros_plus + KEC-stack codes.
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   MessageCircle, ArrowLeft, Clock, CheckCircle2,
-  XCircle, ShieldCheck, Inbox,
+  XCircle, ShieldCheck, Inbox, Plus,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { prp } from '../../lib/designSystem';
+
+const RequestServiceModal = lazy(() =>
+  import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal }))
+);
 
 // ── Constants ─────────────────────────────────────────────
 
@@ -122,6 +127,7 @@ export default function ServiceThreadListPage() {
   const [threads, setThreads] = useState<MergedThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
 
   useEffect(() => {
     if (!orgId) return;
@@ -278,14 +284,112 @@ export default function ServiceThreadListPage() {
           <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#1E2D4D]" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16">
-          <Inbox className="w-10 h-10 text-[#1E2D4D]/15 mx-auto mb-3" />
-          <p className="text-sm text-[#1E2D4D]/40">
-            {threads.length === 0
-              ? 'No service threads yet. Submit a service request to start one.'
-              : 'No threads match the selected filter.'}
-          </p>
-        </div>
+        threads.length === 0 ? (
+          /* ── Zero-thread empty state (PPP-framed) ────────── */
+          <div className="flex flex-col items-center text-center" style={{ padding: '24px 16px 36px' }}>
+            {/* Icon circle */}
+            <div
+              className="flex items-center justify-center mb-4"
+              style={{ width: 52, height: 52, borderRadius: '50%', backgroundColor: '#E6F1FB' }}
+            >
+              <MessageCircle className="w-6 h-6" style={{ color: '#185FA5' }} />
+            </div>
+
+            {/* Title */}
+            <h3 style={{ fontSize: 17, fontWeight: 500, color: '#0F1A2B', margin: '0 0 8px' }}>
+              No service threads yet
+            </h3>
+
+            {/* Body */}
+            <p style={{ fontSize: 13, color: '#6B7F96', lineHeight: 1.6, maxWidth: 380, margin: '0 0 20px' }}>
+              A thread opens every time you request a service from a vendor &mdash; every
+              message, date change, and confirmation lives in one place.
+            </p>
+
+            {/* PPP three-card row */}
+            <div
+              className="grid grid-cols-3 w-full mb-5"
+              style={{ gap: 10, maxWidth: 520 }}
+            >
+              {/* PREDICT */}
+              <div
+                className="bg-white text-left"
+                style={{
+                  border: '0.5px solid #E2DDD4',
+                  borderTop: `3px solid ${prp.predict.accent}`,
+                  borderRadius: '0 0 8px 8px',
+                  padding: '12px 10px',
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.predict.text, marginBottom: 4 }}>
+                  Predict
+                </div>
+                <p style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.5, margin: 0 }}>
+                  Identifies which requests are still waiting on a vendor reply.
+                </p>
+              </div>
+
+              {/* REDUCE */}
+              <div
+                className="bg-white text-left"
+                style={{
+                  border: '0.5px solid #E2DDD4',
+                  borderTop: `3px solid ${prp.reduce.accent}`,
+                  borderRadius: '0 0 8px 8px',
+                  padding: '12px 10px',
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.reduce.text, marginBottom: 4 }}>
+                  Reduce
+                </div>
+                <p style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.5, margin: 0 }}>
+                  One trail per request &mdash; no lost emails, no missed confirmations.
+                </p>
+              </div>
+
+              {/* PROVE */}
+              <div
+                className="bg-white text-left"
+                style={{
+                  border: '0.5px solid #E2DDD4',
+                  borderTop: `3px solid ${prp.prove.accent}`,
+                  borderRadius: '0 0 8px 8px',
+                  padding: '12px 10px',
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase' as const, color: prp.prove.text, marginBottom: 4 }}>
+                  Prove
+                </div>
+                <p style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.5, margin: 0 }}>
+                  Every message and date carries a timestamp and author.
+                </p>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <button
+              type="button"
+              onClick={() => setRequestModalOpen(true)}
+              className="inline-flex items-center font-medium"
+              style={{
+                gap: 6, padding: '11px 20px', borderRadius: 8,
+                backgroundColor: '#1E2D4D', color: '#FFFFFF', fontSize: 13,
+                border: 'none', cursor: 'pointer',
+              }}
+            >
+              <Plus size={14} />
+              Request a service
+            </button>
+          </div>
+        ) : (
+          /* ── Filter-no-match empty state ──────────────────── */
+          <div className="text-center py-16">
+            <Inbox className="w-10 h-10 text-[#1E2D4D]/15 mx-auto mb-3" />
+            <p className="text-sm text-[#1E2D4D]/40">
+              No threads match the selected filter.
+            </p>
+          </div>
+        )
       ) : (
         <div className="flex flex-col gap-2">
           {filtered.map((t) => {
@@ -380,6 +484,17 @@ export default function ServiceThreadListPage() {
             );
           })}
         </div>
+      )}
+
+      {requestModalOpen && (
+        <Suspense fallback={null}>
+          <RequestServiceModal
+            isOpen
+            onClose={() => setRequestModalOpen(false)}
+            locationId=""
+            organizationId={orgId || ''}
+          />
+        </Suspense>
       )}
     </div>
   );

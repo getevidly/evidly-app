@@ -1,4 +1,5 @@
 import type { TemperaturesPRPStats } from '../../hooks/temperatures/useTemperaturesPRPStats';
+import { prp } from '../../lib/designSystem';
 
 const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
 
@@ -13,17 +14,17 @@ export function TemperaturesPRPBand({ stats, loading }: TemperaturesPRPBandProps
       {/* PREDICT */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #c2731a' }}
+        style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#c2731a' }}>PREDICT</span>
-          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#c2731a20', color: '#c2731a' }}>LIVE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</span>
+          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${prp.predict.accent}20`, color: prp.predict.accent }}>LIVE</span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Risk signals</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
         ) : (
-          <div className="text-2xl font-bold mt-2" style={{ color: '#c2731a' }}>
+          <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
             {stats.predictCount}
           </div>
         )}
@@ -50,16 +51,16 @@ export function TemperaturesPRPBand({ stats, loading }: TemperaturesPRPBandProps
       {/* REDUCE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #8A93A6' }}
+        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#8A93A6' }}>REDUCE</span>
-          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#8A93A620', color: '#8A93A6' }}>LIVE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</span>
+          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${prp.reduce.accent}20`, color: prp.reduce.accent }}>LIVE</span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
         <div
           className="mt-2 font-normal"
-          style={{ color: '#8A93A6', fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
+          style={{ color: prp.reduce.accent, fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
         >
           Exposure pending
         </div>
@@ -74,17 +75,17 @@ export function TemperaturesPRPBand({ stats, loading }: TemperaturesPRPBandProps
       {/* PROVE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #2f7a4d' }}
+        style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#2f7a4d' }}>PROVE</span>
-          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#2f7a4d20', color: '#2f7a4d' }}>LIVE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</span>
+          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${prp.prove.accent}20`, color: prp.prove.accent }}>LIVE</span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Current status</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
         ) : (
-          <div className="text-2xl font-bold mt-2" style={{ color: '#2f7a4d' }}>
+          <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>
             {stats.proveTotal > 0
               ? `${stats.proveInRange} of ${stats.proveTotal}`
               : '\u2014'}

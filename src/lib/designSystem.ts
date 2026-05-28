@@ -38,6 +38,13 @@ export const colors = {
   infoSoft: '#DBEAFE',
 } as const;
 
+// ─── PRP (Predict / Reduce / Prove) ─────────────────────────────
+export const prp = {
+  predict: { accent: '#BA7517', text: '#633806' },
+  reduce:  { accent: '#185FA5', text: '#0C447C' },
+  prove:   { accent: '#0F6E56', text: '#085041' },
+} as const;
+
 // ─── Shadows ───────────────────────────────────────────────────
 export const shadows = {
   sm: '0 1px 3px rgba(30,45,77,0.06), 0 1px 2px rgba(30,45,77,0.04)',

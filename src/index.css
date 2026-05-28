@@ -88,9 +88,18 @@
   --scoretable-bg:  rgba(0,212,170,.1);
   --scoretable-border: rgba(0,212,170,.3);
 
-  /* ── V10 Layout Shell (C7) ── */
+  /* ── PRP Canonical Palette ── */
+  --predict:      #BA7517;
+  --predict-dark: #633806;
+  --predict-text: #633806;
+  --predict-bg:   #FAEEDA;
+  --reduce:       #185FA5;
+  --reduce-dark:  #0C447C;
+  --reduce-text:  #0C447C;
+  --reduce-bg:    #DBEAFE;
   --prove:        #0F6E56;
   --prove-dark:   #085041;
+  --prove-text:   #085041;
   --prove-bg:     #E1F5EE;
 
   /* ── V10 Dashboard (C9) ── */
@@ -99,12 +108,6 @@
   --line:         #E5E2DA;
   --line-strong:  #D5CFBE;
   --muted:        #6B6960;
-  --predict:      #534AB7;
-  --predict-dark: #3C3489;
-  --predict-bg:   #EEEDFE;
-  --reduce:       #BA7517;
-  --reduce-dark:  #633806;
-  --reduce-bg:    #FAEEDA;
 }
 
 /* ── V10 Last Action Banner ─────────────────────────────── */

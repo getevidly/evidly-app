@@ -1,4 +1,5 @@
 import type { TodayChecklist } from '../../hooks/checklists';
+import { prp } from '../../lib/designSystem';
 
 const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
 
@@ -50,13 +51,13 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
       {/* PREDICT */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #c2731a' }}
+        style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#c2731a' }}>PREDICT</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</span>
           <span
             className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
-            style={{ backgroundColor: '#c2731a20', color: '#c2731a' }}
+            style={{ backgroundColor: `${prp.predict.accent}20`, color: prp.predict.accent }}
           >
             LIVE
           </span>
@@ -67,7 +68,7 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         ) : (
           <div
             className="mt-2 font-extrabold"
-            style={{ color: '#c2731a', fontSize: '32px', fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: prp.predict.accent, fontSize: '32px', fontFamily: "'Montserrat', sans-serif" }}
           >
             {dueCount}
           </div>
@@ -84,13 +85,13 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
       {/* REDUCE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #8A93A6' }}
+        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#8A93A6' }}>REDUCE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</span>
           <span
             className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
-            style={{ backgroundColor: '#8A93A620', color: '#8A93A6' }}
+            style={{ backgroundColor: `${prp.reduce.accent}20`, color: prp.reduce.accent }}
           >
             LIVE
           </span>
@@ -98,7 +99,7 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
         <div
           className="mt-2 font-semibold"
-          style={{ color: '#8A93A6', fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
+          style={{ color: prp.reduce.accent, fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
         >
           Exposure pending
         </div>
@@ -112,13 +113,13 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
       {/* PROVE */}
       <div
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
-        style={{ borderTop: '3px solid #2f7a4d' }}
+        style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: '#2f7a4d' }}>PROVE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</span>
           <span
             className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
-            style={{ backgroundColor: '#2f7a4d20', color: '#2f7a4d' }}
+            style={{ backgroundColor: `${prp.prove.accent}20`, color: prp.prove.accent }}
           >
             LIVE
           </span>
@@ -129,7 +130,7 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         ) : (
           <div
             className="mt-2 font-extrabold"
-            style={{ color: '#2f7a4d', fontSize: '32px', fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: prp.prove.accent, fontSize: '32px', fontFamily: "'Montserrat', sans-serif" }}
           >
             {totalScheduled > 0 ? `${completedCount} of ${totalScheduled}` : '\u2014'}
           </div>
