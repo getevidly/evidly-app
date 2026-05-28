@@ -5,7 +5,7 @@ import {
   Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock, CreditCard,
   DollarSign, Download, Droplet, Fan, FileEdit, FileText, Filter, Flame, GraduationCap, Hammer,
   Handshake, HardHat, Heart, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
-  Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
+  Lock, LogOut, Mail, MapPin, Medal, MessageCircle, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
   Shield, ShieldCheck, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
   Timer, Trophy, TrendingUp, Truck, Upload, Utensils, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
@@ -135,6 +135,7 @@ const SIDEBAR_ICONS: Record<string, any> = {
   'Plug': Plug,
   'CreditCard': CreditCard,
   'Settings': Settings,
+  'MessageCircle': MessageCircle,
 };
 
 // ── Item descriptions (EN) ───────────────────────────────

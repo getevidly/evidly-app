@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle, Plus } from 'lucide-react';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -21,6 +21,10 @@ import { useDueNotScheduled } from '../hooks/calendar/useDueNotScheduled';
 import { CalendarPRPBand } from '../components/calendar/CalendarPRPBand';
 import { CalendarSidebar } from '../components/calendar/CalendarSidebar';
 import { CalendarEmptyState } from '../components/calendar/CalendarEmptyState';
+
+const RequestServiceModal = lazy(() =>
+  import('../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal }))
+);
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -222,6 +226,7 @@ export function Calendar() {
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -949,7 +954,7 @@ export function Calendar() {
             <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
             {/* Schedule a service */}
             <button
-              onClick={() => navigate('/vendors')}
+              onClick={() => setRequestModalOpen(true)}
               style={{
                 padding: '8px 16px', borderRadius: '8px',
                 border: 'none', backgroundColor: '#3B6D11',
@@ -977,11 +982,7 @@ export function Calendar() {
 
         {/* PRP Band — only when flag is on */}
         {prpEnabled && (
-          <CalendarPRPBand
-            stats={calendarPRPStats}
-            onPredictClick={() => {/* scroll to sidebar due list handled by sidebar visibility */}}
-            onProveClick={() => {/* prove filter — future enhancement */}}
-          />
+          <CalendarPRPBand stats={calendarPRPStats} />
         )}
 
         {/* PRP Legend row */}
@@ -1312,6 +1313,17 @@ export function Calendar() {
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
         />
+      )}
+
+      {requestModalOpen && (
+        <Suspense fallback={null}>
+          <RequestServiceModal
+            isOpen
+            onClose={() => setRequestModalOpen(false)}
+            locationId=""
+            organizationId={profile?.organization_id || ''}
+          />
+        </Suspense>
       )}
     </>
   );

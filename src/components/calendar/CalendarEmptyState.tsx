@@ -162,7 +162,7 @@ export function CalendarEmptyState() {
       {/* Primary button */}
       <button
         type="button"
-        onClick={() => navigate('/vendors')}
+        onClick={() => { setModalServiceCode(''); setModalOpen(true); }}
         className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-[13px] font-bold transition-opacity hover:opacity-90 mb-5"
         style={{ backgroundColor: '#3B6D11', color: 'white' }}
       >
