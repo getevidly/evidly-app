@@ -8,7 +8,7 @@
  * When user_profiles.primary_location_id lands, filter team to that location.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -30,6 +30,7 @@ interface UseTeamGridResult {
   members: TeamMember[];
   loading: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 const TEAM_ROLES = ['chef', 'kitchen_manager', 'kitchen_staff', 'facilities_manager', 'compliance_manager'];
@@ -67,6 +68,8 @@ export function useTeamGrid(): UseTeamGridResult {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [trigger, setTrigger] = useState(0);
+  const refetch = useCallback(() => setTrigger(t => t + 1), []);
 
   useEffect(() => {
     if (!orgId) { setLoading(false); return; }
@@ -197,7 +200,7 @@ export function useTeamGrid(): UseTeamGridResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId]);
+  }, [orgId, trigger]);
 
-  return { members, loading, error };
+  return { members, loading, error, refetch };
 }

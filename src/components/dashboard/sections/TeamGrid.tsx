@@ -6,11 +6,14 @@
  * All others → null
  */
 
+import { useState } from 'react';
 import { useRole } from '../../../contexts/RoleContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useTeamGrid } from '../../../hooks/useTeamGrid';
 import { TeamCard } from './TeamCard';
 import { TeamEmptyState } from './TeamEmptyState';
+import { TeamInviteModal } from '../../TeamInviteModal';
 
 const HEADING: Record<string, string> = {
   owner_operator: 'Where your team stands',
@@ -20,9 +23,11 @@ const HEADING: Record<string, string> = {
 };
 
 export function TeamGrid() {
-  const { userRole } = useRole();
+  const { userRole, getAccessibleLocations } = useRole();
+  const { profile } = useAuth();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { members, loading } = useTeamGrid();
+  const { members, loading, refetch } = useTeamGrid();
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   const heading = HEADING[role];
   if (!heading) return null;
@@ -60,7 +65,7 @@ export function TeamGrid() {
         )}
       </div>
       {members.length === 0 ? (
-        <TeamEmptyState />
+        <TeamEmptyState onInviteClick={() => setInviteOpen(true)} />
       ) : (
         <div className="team-grid">
           {members.map(m => (
@@ -68,6 +73,14 @@ export function TeamGrid() {
           ))}
         </div>
       )}
+
+      <TeamInviteModal
+        isOpen={inviteOpen}
+        onClose={() => setInviteOpen(false)}
+        organizationId={profile?.organization_id || ''}
+        onInviteSent={() => { setInviteOpen(false); refetch(); }}
+        locations={getAccessibleLocations?.() || []}
+      />
     </div>
   );
 }

@@ -8,6 +8,11 @@
 
 import { Link } from 'react-router-dom';
 
+interface TeamEmptyStateProps {
+  /** When provided, CTA opens modal directly instead of navigating to /team */
+  onInviteClick?: () => void;
+}
+
 /* ── Ghost roles ────────────────────────────────────────────────── */
 
 const GHOST_ROWS: { initials: string; role: string; opacity: number }[] = [
@@ -89,7 +94,7 @@ const subText: React.CSSProperties = {
 
 /* ── Component ──────────────────────────────────────────────────── */
 
-export function TeamEmptyState() {
+export function TeamEmptyState({ onInviteClick }: TeamEmptyStateProps = {}) {
   return (
     <div style={cardStyle}>
       {/* Header icon + title */}
@@ -116,9 +121,15 @@ export function TeamEmptyState() {
       </div>
 
       {/* CTA */}
-      <Link to="/team" style={ctaButton}>
-        Invite first team member
-      </Link>
+      {onInviteClick ? (
+        <button type="button" onClick={onInviteClick} style={ctaButton}>
+          Invite first team member
+        </button>
+      ) : (
+        <Link to="/team" style={ctaButton}>
+          Invite first team member
+        </Link>
+      )}
       <p style={subText}>4 seats included on your Founder plan</p>
     </div>
   );
