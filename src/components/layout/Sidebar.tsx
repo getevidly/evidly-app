@@ -646,8 +646,8 @@ export function Sidebar() {
   if (location.pathname === '/onboarding') return null;
 
   return (
-    <div data-sidebar data-testid="sidebar" className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
-      <div className="flex flex-col h-full min-h-0" style={{ backgroundColor: branding.colors.sidebarBg }}>
+    <div data-sidebar data-testid="sidebar" className="hidden lg:fixed lg:inset-y-0 lg:flex lg:h-screen lg:w-60 lg:flex-col z-[9999]">
+      <div className="flex flex-col h-full min-h-0 max-h-screen" style={{ backgroundColor: branding.colors.sidebarBg }}>
         {/* Logo */}
         <div className="flex-shrink-0 px-6 py-5">
           {branding.brandName === 'EvidLY' ? (
@@ -681,7 +681,7 @@ export function Sidebar() {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
+        <nav className="sidebar-nav-scroll flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
 
           {/* Home — ungrouped at top, per-role label */}
           <div data-tour="tour-dashboard">
