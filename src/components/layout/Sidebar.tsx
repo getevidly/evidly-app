@@ -23,7 +23,6 @@ import {
   getRoleConfig,
   getSectionsForRole,
   checkTestMode,
-  DEMO_ROLES,
   type NavItem,
   type SidebarSection,
 } from '../../config/sidebarConfig';
@@ -882,7 +881,7 @@ export function Sidebar() {
 
         {/* Logout button — pinned to bottom */}
         <div className="flex-shrink-0 border-t border-white/10" data-tour="tour-logout">
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center px-4 py-3">
             <button
               onClick={handleLogout}
               className="flex items-center gap-3 text-white/70 hover:text-white transition-colors"
@@ -890,19 +889,6 @@ export function Sidebar() {
               <LogOut size={16} />
               <span className="text-sm">Log Out</span>
             </button>
-            <span style={{
-              fontSize: 10,
-              fontWeight: 600,
-              fontFamily: typography.family.body,
-              color: colors.textMuted,
-              backgroundColor: 'rgba(148, 163, 184, 0.1)',
-              padding: '2px 8px',
-              borderRadius: 10,
-              lineHeight: '18px',
-              whiteSpace: 'nowrap' as const,
-            }}>
-              {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
-            </span>
           </div>
         </div>
       </div>
