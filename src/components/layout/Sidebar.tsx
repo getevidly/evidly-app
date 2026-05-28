@@ -681,7 +681,7 @@ export function Sidebar() {
         )}
 
         {/* Navigation */}
-        <nav className="sidebar-nav-scroll flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
+        <nav className="sidebar-nav-scroll flex-1 min-h-0 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
 
           {/* Home — ungrouped at top, per-role label */}
           <div data-tour="tour-dashboard">
