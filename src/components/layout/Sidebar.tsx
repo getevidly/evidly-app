@@ -272,19 +272,34 @@ const SectionTooltip: React.FC<{
   description: string;
   items: { label: string; description: string; path: string }[];
   visible: boolean;
-  anchorRect: { top: number; left: number; right: number } | null;
+  anchorRect: { top: number; bottom: number; left: number; right: number; viewportHeight: number } | null;
   onItemClick: (path: string) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }> = ({ title, description, items, visible, anchorRect, onItemClick, onMouseEnter, onMouseLeave }) => {
   if (!visible || !anchorRect) return null;
+
+  const GAP = 8;
+  const VIEWPORT_MARGIN = 16;
+  const { top, bottom, right, viewportHeight } = anchorRect;
+
+  const spaceBelow = viewportHeight - top - VIEWPORT_MARGIN;
+  const spaceAbove = bottom - VIEWPORT_MARGIN;
+  const anchorFromBelow = spaceBelow >= spaceAbove;
+  const maxHeight = Math.max(200, anchorFromBelow ? spaceBelow : spaceAbove);
+
   return (
     <div
+      className="sidebar-nav-scroll"
       style={{
         position: 'fixed',
-        top: anchorRect.top,
-        left: anchorRect.right + 8,
+        left: right + GAP,
         width: 260,
+        maxHeight: `${maxHeight}px`,
+        overflowY: 'auto',
+        ...(anchorFromBelow
+          ? { top: `${top}px` }
+          : { bottom: `${viewportHeight - bottom}px` }),
         background: '#1a2d4a',
         border: '1px solid #2d4a6e',
         borderRadius: 10,
@@ -545,7 +560,7 @@ export function Sidebar() {
   // ── Section tooltip hover state ──
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
-  const [sectionRect, setSectionRect] = useState<{ top: number; left: number; right: number } | null>(null);
+  const [sectionRect, setSectionRect] = useState<{ top: number; bottom: number; left: number; right: number; viewportHeight: number } | null>(null);
   const tooltipTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSectionEnter = (sectionId: string) => {
@@ -556,7 +571,7 @@ export function Sidebar() {
     const el = sectionRefs.current[sectionId];
     if (el) {
       const r = el.getBoundingClientRect();
-      setSectionRect({ top: r.top, left: r.left, right: r.right });
+      setSectionRect({ top: r.top, bottom: r.bottom, left: r.left, right: r.right, viewportHeight: window.innerHeight });
     }
     setHoveredSection(sectionId);
   };
@@ -577,6 +592,15 @@ export function Sidebar() {
   const handleTooltipLeave = () => {
     setHoveredSection(null);
   };
+
+  // ── Close flyout on viewport resize (stale anchorRect safety) ──
+  useEffect(() => {
+    const handler = () => {
+      if (hoveredSection) setHoveredSection(null);
+    };
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [hoveredSection]);
 
   // ── Description helper (locale-aware) ──
   const getDescription = useCallback((item: NavItem): string => {
