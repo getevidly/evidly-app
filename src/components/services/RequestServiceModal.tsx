@@ -11,6 +11,7 @@
  * Submit wired to submitServiceRequest → route-service-request edge fn.
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   X, Send, Calendar, AlertCircle, CalendarDays,
   Ban, ShieldCheck, MessageCircle, ChevronRight,
@@ -102,6 +103,7 @@ export function RequestServiceModal({
   requestSubtype: propRequestSubtype = 'schedule',
 }: RequestServiceModalProps) {
   const { isDemoMode } = useDemo();
+  const navigate = useNavigate();
 
   // ── View state ────────────────────────────────────────────
   const [view, setView] = useState<ViewState>('form');
@@ -565,11 +567,18 @@ export function RequestServiceModal({
               </div>
             )}
 
-            {submitResult.thread_id && (
-              <p className="text-xs text-[#1E2D4D]/40 mb-4">
-                <MessageCircle className="w-3 h-3 inline mr-1" />
-                Vendor message thread created
-              </p>
+            {submitResult.thread_id && submitResult.routing_target === 'vendor_thread' && (
+              <button
+                type="button"
+                onClick={() => {
+                  handleClose();
+                  navigate(`/vendors/threads/${submitResult.thread_id}`);
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] text-[#1E2D4D]/70 mb-4 transition-all"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Open thread
+              </button>
             )}
 
             {calEvent && !isDemoMode && (

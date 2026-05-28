@@ -195,6 +195,10 @@ const I: Record<string, NavItem> = {
     id: 've-services', label: 'Vendor Services', path: '/vendors', icon: 'Wrench', iconColor: '#c2731a',
     roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
   },
+  've-threads': {
+    id: 've-threads', label: 'Service Threads', path: '/vendors/threads', icon: 'MessageCircle', iconColor: '#185FA5',
+    roles: [], description: 'Track vendor communication and scheduling for your service requests.',
+  },
 
   // ── Insights section items ──────────────────────────────
 
@@ -335,7 +339,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'vendors', label: 'Vendors', icon: '👥',
     tooltipTitle: 'Vendors',
     tooltipDescription: 'Vendor network, service records, and performance tracking.',
-    itemIds: ['ve-services', 've-network'],
+    itemIds: ['ve-services', 've-threads', 've-network'],
   },
   insights: {
     id: 'insights', label: 'Insights', icon: '✨',

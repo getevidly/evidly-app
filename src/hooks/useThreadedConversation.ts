@@ -10,6 +10,7 @@ import { supabase } from '../lib/supabase';
 export interface ThreadMessage {
   id: string;
   direction: 'inbound' | 'outbound';
+  sender_type: 'operator' | 'vendor' | 'system' | null;
   subject: string | null;
   body_text: string | null;
   body_html: string | null;
@@ -117,13 +118,14 @@ export function useThreadedConversation({
 
         const { data: msgs } = await supabase
           .from('messages')
-          .select('id, direction, subject, body_text, body_html, sender_identifier, created_at')
+          .select('id, direction, sender_type, subject, body_text, body_html, sender_identifier, created_at')
           .eq('thread_id', threadData.id)
           .order('created_at', { ascending: true });
 
         const messageList: ThreadMessage[] = (msgs || []).map((m) => ({
           id: m.id as string,
           direction: m.direction as 'inbound' | 'outbound',
+          sender_type: (m.sender_type as 'operator' | 'vendor' | 'system') || null,
           subject: (m.subject as string) || null,
           body_text: (m.body_text as string) || null,
           body_html: (m.body_html as string) || null,
@@ -169,6 +171,7 @@ export function useThreadedConversation({
         const newMsg: ThreadMessage = {
           id: row.id as string,
           direction: row.direction as 'inbound' | 'outbound',
+          sender_type: (row.sender_type as 'operator' | 'vendor' | 'system') || null,
           subject: (row.subject as string) || null,
           body_text: (row.body_text as string) || null,
           body_html: (row.body_html as string) || null,
@@ -196,23 +199,54 @@ export function useThreadedConversation({
   }, [thread?.id, fetchAttachmentsForMessages]);
 
   const sendMessage = useCallback(async (subject: string, body: string): Promise<boolean> => {
-    if (!entityId || !organizationId || !sendVia) return false;
+    if (!entityId || !organizationId) return false;
     setSending(true);
     setError(null);
 
     try {
-      const res = await supabase.functions.invoke(sendVia, {
-        body: {
-          vendorNetworkId: entityId,
-          subject,
-          body,
-          organizationId,
-        },
-      });
+      if (sendVia) {
+        // Edge function path (existing behavior for vendor_network_contact etc.)
+        const res = await supabase.functions.invoke(sendVia, {
+          body: {
+            vendorNetworkId: entityId,
+            subject,
+            body,
+            organizationId,
+          },
+        });
 
-      if (res.error) {
-        setError(res.error.message || 'Failed to send message');
-        return false;
+        if (res.error) {
+          setError(res.error.message || 'Failed to send message');
+          return false;
+        }
+      } else {
+        // Direct DB write path — inserts into messages table.
+        // Used by service_request threads where no outbound edge function exists yet.
+        const threadId = threadIdRef.current;
+        if (!threadId) {
+          setError('No active thread');
+          return false;
+        }
+
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { error: insertErr } = await supabase
+          .from('messages')
+          .insert({
+            thread_id: threadId,
+            organization_id: organizationId,
+            sender_type: 'operator',
+            sender_identifier: user?.email || user?.id || 'unknown',
+            direction: 'outbound',
+            channel: 'in_app',
+            subject: subject || null,
+            body_text: body,
+          });
+
+        if (insertErr) {
+          setError(insertErr.message || 'Failed to send message');
+          return false;
+        }
       }
 
       await fetchData();

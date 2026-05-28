@@ -225,6 +225,8 @@ const ScoreTableCountyDetail = lazy(() => import('./pages/public/ScoreTableCount
 
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
+const ServiceThreadListPage = lazy(() => import('./pages/vendors/ServiceThreadListPage'));
+const ServiceThreadDetailPage = lazy(() => import('./pages/vendors/ServiceThreadDetailPage'));
 const VendorScheduleResponse = lazy(() => import('./pages/VendorScheduleResponse').then(m => ({ default: m.VendorScheduleResponse })));
 
 const VendorConnectApply = lazy(() => import('./pages/VendorConnectApply').then(m => ({ default: m.VendorConnectApply })));
@@ -643,6 +645,8 @@ function AppRoutes() {
           <Route path="/vendors/services/:serviceId" element={<ServiceDetail />} />
           <Route path="/vendors/requests/:requestId" element={<RequestDetail />} />
           <Route path="/vendors/documents/:docId" element={<DocumentReviewDetail />} />
+          <Route path="/vendors/threads" element={<ServiceThreadListPage />} />
+          <Route path="/vendors/threads/:threadId" element={<ServiceThreadDetailPage />} />
           <Route path="/vendor-network" element={<VendorNetworkPlaceholder />} />
 
 
