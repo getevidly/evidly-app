@@ -874,9 +874,8 @@ body {
 }
 
 /* ── C12: drift catches ────────────────────────────────────────── */
-.catches { display: flex; flex-direction: column; gap: 0; border: 0.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
-.catch { display: flex; gap: 12px; padding: 14px 16px; border-top: 0.5px solid var(--line); }
-.catch:first-child { border-top: none; }
+.catches { display: flex; flex-direction: column; gap: 12px; }
+.catch { display: flex; gap: 12px; padding: 14px 16px; border: 0.5px solid var(--line); border-radius: 12px; background: #fff; }
 .catch-icon { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .catch-icon.reduced { background: rgba(34,197,94,0.1); color: #16a34a; }
 .catch-icon.proven { background: rgba(245,158,11,0.1); color: #d97706; }
@@ -900,12 +899,13 @@ body {
 .catch-ack-btn i { font-size: 12px; }
 .catch-ack-btn.done { background: rgba(34,197,94,0.08); color: #16a34a; border-color: rgba(34,197,94,0.2); cursor: default; pointer-events: none; }
 
-/* ── C12: weekly drift report card ─────────────────────────────── */
-.report-card { display: flex; gap: 12px; padding: 14px 16px; border: 0.5px solid var(--line); border-radius: 12px; background: #fff; align-items: flex-start; }
-.report-icon { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--cream); color: var(--gold); }
-.report-h { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 2px; }
-.report-meta { font-size: 11px; color: var(--muted); line-height: 1.4; }
-.report-meta strong { font-weight: 600; color: var(--primary); }
+/* ── C12: weekly drift report footer ────────────────────────────── */
+.report-footer { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px 0; margin-top: 4px; border-top: 0.5px dashed #E2DDD4; }
+.report-footer-left { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.report-footer-left i { font-size: 14px; color: var(--muted); }
+.report-footer-right { font-size: 11px; color: var(--muted); }
+.report-footer-right.failed { color: #791F1F; }
+.report-footer-right.failed i { font-size: 13px; vertical-align: -1px; margin-right: 3px; }
 
 /* ── C13a: county readiness ────────────────────────────────────── */
 .cnty-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
@@ -925,9 +925,8 @@ body {
 .cnty-attribution { font-size: 10px; color: var(--muted); opacity: 0.7; }
 
 /* ── C13a: decisions queue ─────────────────────────────────────── */
-.decisions { display: flex; flex-direction: column; gap: 0; border: 0.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
-.dec-row { display: flex; gap: 10px; padding: 12px 16px; border-top: 0.5px solid var(--line); align-items: flex-start; }
-.dec-row:first-child { border-top: none; }
+.decisions { display: flex; flex-direction: column; gap: 12px; }
+.dec-row { display: flex; gap: 10px; padding: 12px 16px; border: 0.5px solid var(--line); border-radius: 12px; background: #fff; align-items: flex-start; }
 .dec-prio { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; }
 .dec-prio.urgent { background: var(--red); }
 .dec-prio.soon { background: var(--reduce); }

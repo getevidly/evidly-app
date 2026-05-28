@@ -3,9 +3,13 @@
  *
  * Static reserved slot for predictive analysis.
  * No data source. Same content for all roles that receive this section.
+ * Gated by 'evidly-intelligence' feature flag (default: off).
  */
 
+import { isFeatureEnabled } from '../../../lib/featureGating';
+
 export function IntelligenceSlot() {
+  if (!isFeatureEnabled('evidly-intelligence')) return null;
   return (
     <div className="intel">
       <div className="il">

@@ -20,7 +20,6 @@ export type SectionKey =
   | 'checklists_block_readonly'
   | 'drifts_caught'
   | 'drifts_caught_audit'
-  | 'weekly_drift_report'
   | 'county_readiness'
   | 'decisions_queue'
   | 'approval_queue'
@@ -51,7 +50,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'advisor_pair',
     'checklists_block',
     'drifts_caught',
-    'weekly_drift_report',
     'county_readiness',
     'decisions_queue',
     'team_grid',
@@ -68,7 +66,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'portfolio_snapshot',
     'checklists_block',
     'drifts_caught',
-    'weekly_drift_report',
     'county_readiness',
     'decisions_queue',
     'team_grid',
@@ -84,7 +81,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'advisor_pair',
     'checklists_block',
     'drifts_caught_audit',
-    'weekly_drift_report',
     'county_readiness',
     'team_grid',
     'intelligence_slot',
@@ -96,7 +92,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'advisor_single_fire',
     'facility_services_bucket',
     'drifts_caught',
-    'weekly_drift_report',
     'decisions_queue',
     'intelligence_slot',
   ],
@@ -107,7 +102,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'advisor_single_food',
     'checklists_block',
     'drifts_caught',
-    'weekly_drift_report',
     'intelligence_slot',
   ],
   kitchen_manager: [

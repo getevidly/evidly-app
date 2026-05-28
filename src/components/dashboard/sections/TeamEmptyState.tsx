@@ -7,18 +7,29 @@
  */
 
 import { Link } from 'react-router-dom';
+import { useSubscription } from '../../../hooks/useSubscription';
 
 interface TeamEmptyStateProps {
   /** When provided, CTA opens modal directly instead of navigating to /team */
   onInviteClick?: () => void;
 }
 
+/* ── Tier → display name ───────────────────────────────────────── */
+
+const TIER_DISPLAY: Record<string, string> = {
+  trial: 'Trial',
+  essentials: 'Essentials',
+  founder: 'Founder',
+  standard: 'Standard',
+  enterprise: 'Enterprise',
+};
+
 /* ── Ghost roles ────────────────────────────────────────────────── */
 
 const GHOST_ROWS: { initials: string; role: string; opacity: number }[] = [
-  { initials: 'KM', role: 'Kitchen Manager', opacity: 0.5 },
-  { initials: 'SL', role: 'Shift Lead', opacity: 0.38 },
-  { initials: 'PC', role: 'Prep Cook', opacity: 0.26 },
+  { initials: 'KM', role: 'Kitchen Manager', opacity: 0.7 },
+  { initials: 'SL', role: 'Shift Lead', opacity: 0.6 },
+  { initials: 'PC', role: 'Prep Cook', opacity: 0.5 },
 ];
 
 /* ── Styles ─────────────────────────────────────────────────────── */
@@ -95,6 +106,9 @@ const subText: React.CSSProperties = {
 /* ── Component ──────────────────────────────────────────────────── */
 
 export function TeamEmptyState({ onInviteClick }: TeamEmptyStateProps = {}) {
+  const { currentTier } = useSubscription();
+  const planDisplayName = TIER_DISPLAY[currentTier] || 'current';
+
   return (
     <div style={cardStyle}>
       {/* Header icon + title */}
@@ -130,7 +144,7 @@ export function TeamEmptyState({ onInviteClick }: TeamEmptyStateProps = {}) {
           Invite first team member
         </Link>
       )}
-      <p style={subText}>4 seats included on your Founder plan</p>
+      <p style={subText}>4 seats included on your {planDisplayName} plan</p>
     </div>
   );
 }

@@ -210,6 +210,17 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     upgradePrice: '$99/mo',
     upgradeLabel: 'Founder',
   },
+  'evidly-intelligence': {
+    id: 'evidly-intelligence',
+    name: 'EvidLY Intelligence',
+    description: 'Predictive analysis dashboard tile — reserved slot for future Intelligence features.',
+    requiredTier: 'founder',
+    enabled: false,
+    previewType: 'locked',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Founder',
+  },
 };
 
 export function getFeatureDefinition(id: string): FeatureDefinition | undefined {

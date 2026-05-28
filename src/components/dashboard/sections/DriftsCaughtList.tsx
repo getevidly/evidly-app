@@ -7,6 +7,7 @@
 
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { DriftCatchCard } from './DriftCatchCard';
+import { WeeklyDriftReport } from './WeeklyDriftReport';
 
 interface DriftsCaughtListProps {
   variant: 'standard' | 'audit';
@@ -49,18 +50,11 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
     : '';
 
   return (
-    <div>
-      <div className="section-h" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+    <div style={{ marginBottom: 24 }}>
+      <div className="section-h" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Drifts EvidLY caught</span>
         {chipText && (
-          <span style={{
-            fontSize: 11,
-            color: 'var(--muted)',
-            background: 'var(--cream)',
-            border: '0.5px solid var(--line)',
-            borderRadius: 10,
-            padding: '2px 8px',
-          }}>
+          <span style={{ fontSize: 11, color: 'var(--muted)' }}>
             {chipText}
           </span>
         )}
@@ -83,6 +77,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
           ))
         )}
       </div>
+      <WeeklyDriftReport />
     </div>
   );
 }

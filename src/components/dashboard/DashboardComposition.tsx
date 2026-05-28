@@ -15,7 +15,6 @@ import { ChecklistsBlock } from './sections/ChecklistsBlock';
 import { ChecklistsBlockReadonly } from './sections/ChecklistsBlockReadonly';
 import { DriftsCaught } from './sections/DriftsCaught';
 import { DriftsCaughtAudit } from './sections/DriftsCaughtAudit';
-import { WeeklyDriftReport } from './sections/WeeklyDriftReport';
 import { CountyReadiness } from './sections/CountyReadiness';
 import { DecisionsQueue } from './sections/DecisionsQueue';
 import { ApprovalQueue } from './sections/ApprovalQueue';
@@ -43,7 +42,6 @@ const SECTION_COMPONENTS: Record<SectionKey, React.ComponentType> = {
   checklists_block_readonly: ChecklistsBlockReadonly,
   drifts_caught: DriftsCaught,
   drifts_caught_audit: DriftsCaughtAudit,
-  weekly_drift_report: WeeklyDriftReport,
   county_readiness: CountyReadiness,
   decisions_queue: DecisionsQueue,
   approval_queue: ApprovalQueue,
