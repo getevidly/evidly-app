@@ -13,14 +13,16 @@ import { CheckCircle, Shield, Calendar, FileText, BarChart3 } from 'lucide-react
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
 
-// Demo provider lookup — in production this would be an API call
-const DEMO_PROVIDERS: Record<string, { name: string; services: string[]; serviceArea: string }> = {
-  'cleaning-pros-plus-llc': {
-    name: 'Cleaning Pros Plus, LLC',
-    services: ['Hood Cleaning / Exhaust Cleaning', 'Fan Performance Management', 'Grease Filter Exchange', 'Rooftop Grease Containment'],
-    serviceArea: 'Central Valley, Northern California',
-  },
-};
+const BIZ_SUFFIXES = new Set(['LLC', 'INC', 'LP', 'LLP', 'CO', 'CORP', 'LTD']);
+
+function slugToName(slug: string): string {
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase())
+    .split(' ')
+    .map(w => BIZ_SUFFIXES.has(w.toUpperCase()) ? w.toUpperCase() : w)
+    .join(' ');
+}
 
 const BENEFITS = [
   { icon: Shield, title: 'All compliance records in one place', description: 'Food safety + fire safety tracking with real-time scoring' },
@@ -33,8 +35,8 @@ export function VendorInviteLanding() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
 
-  const provider = DEMO_PROVIDERS[code || ''] || {
-    name: code?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Your Service Provider',
+  const provider = {
+    name: code ? slugToName(code) : 'Your Service Provider',
     services: ['Service management'],
     serviceArea: '',
   };
