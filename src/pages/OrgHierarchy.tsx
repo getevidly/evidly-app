@@ -1,5 +1,3 @@
-// SOURCE: A — Hardcoded UI labels. "(Demo)" suffixes and placeholder org name
-// replaced with dynamic values from account hierarchy configuration.
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,7 +5,6 @@ import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
   Building2, Upload, MapPin, Plus,
 } from 'lucide-react';
-import { LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours } from '../contexts/OperatingHoursContext';
 import { getAvailableCounties } from '../lib/jurisdictionScoring';
@@ -30,116 +27,30 @@ interface OrgTreeNode {
   children?: OrgTreeNode[];
 }
 
-// ── Demo Data ────────────────────────────────────────────────
+// ── Status Pill ──────────────────────────────────────────────
+// Unified rounded pill with semantic dot — Pass / Satisfactory / Fail.
+// Maps canonical status strings to prp token colors.
 
-const INITIAL_ORG_TREE: OrgTreeNode = {
-  id: 'pcd',
-  name: 'Your Organization',
-  code: 'PCD',
-  type: 'corporate',
-  locationCount: 3,
-  openItems: 12,
-  children: [
-    {
-      id: 'pcd-cv',
-      name: 'Central Valley',
-      code: 'PCD-CV',
-      type: 'region',
-      locationCount: 3,
-      openItems: 12,
-      children: [
-        {
-          id: 'downtown-kitchen',
-          name: 'Location 1',
-          code: 'DK',
-          type: 'location',
-          foodSafetyStatus: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.gradeDisplay,
-          foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.authority,
-          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.downtown.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
-          facilitySafetyAhj: 'City of Fresno Fire Department',
-          openItems: 2,
-        },
-        {
-          id: 'airport-cafe',
-          name: 'Location 2',
-          code: 'AC',
-          type: 'location',
-          foodSafetyStatus: LOCATION_JURISDICTION_STATUS.airport.foodSafety.gradeDisplay,
-          foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.airport.foodSafety.authority,
-          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.airport.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
-          facilitySafetyAhj: 'City of Merced Fire Department',
-          openItems: 4,
-        },
-        {
-          id: 'university-dining',
-          name: 'Location 3',
-          code: 'UD',
-          type: 'location',
-          foodSafetyStatus: LOCATION_JURISDICTION_STATUS.university.foodSafety.gradeDisplay,
-          foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.university.foodSafety.authority,
-          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.university.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
-          facilitySafetyAhj: 'Modesto Fire Department, Fire Prevention Division',
-          openItems: 6,
-        },
-      ],
-    },
-  ],
+const STATUS_PILL_STYLES: Record<string, { bg: string; color: string; dot: string }> = {
+  Pass:              { bg: '#E1F5EE', color: prp.prove.text,   dot: prp.prove.accent },
+  Compliant:         { bg: '#E1F5EE', color: prp.prove.text,   dot: prp.prove.accent },
+  Good:              { bg: '#E1F5EE', color: prp.prove.text,   dot: prp.prove.accent },
+  Satisfactory:      { bg: '#FAEEDA', color: prp.predict.text, dot: prp.predict.accent },
+  Fail:              { bg: '#FCEBEB', color: '#791F1F',        dot: '#A32D2D' },
+  'Action Required': { bg: '#FCEBEB', color: '#791F1F',        dot: '#A32D2D' },
+  Unsatisfactory:    { bg: '#FCEBEB', color: '#791F1F',        dot: '#A32D2D' },
 };
 
-// Fire safety equipment data per location
-const FIRE_EQUIPMENT: Record<string, { permit: boolean; hood: boolean; ext: boolean; ansul: boolean }> = {
-  'downtown-kitchen': { permit: true, hood: true, ext: true, ansul: true },
-  'airport-cafe':     { permit: true, hood: false, ext: true, ansul: false },
-  'university-dining': { permit: false, hood: false, ext: true, ansul: false },
-};
-
-// Open item descriptions per location
-const OPEN_ITEMS_LIST: Record<string, string[]> = {
-  'downtown-kitchen': [
-    'Pest control log missing for January',
-    'Walk-in cooler door gasket showing wear',
-  ],
-  'airport-cafe': [
-    'Hood cleaning certificate expired Feb 1',
-    'Fire extinguisher monthly check overdue',
-    'Walk-in Cooler #2 temp above 41°F (3 days)',
-    'Opening checklist incomplete Feb 4',
-  ],
-  'university-dining': [
-    'Health permit renewal overdue',
-    'Multiple vendor COIs expired',
-    'Ansul system inspection overdue',
-    'Fire suppression hood cleaning past due',
-    '8 missed temperature logs this week',
-    'Closing checklist skip rate above 20%',
-  ],
-};
-
-// ── Inline Components ────────────────────────────────────────
-
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    'Compliant':       'bg-green-50 text-green-700 border-green-300',
-    'Good':            'bg-green-50 text-green-700 border-green-300',
-    'Satisfactory':    'bg-yellow-50 text-yellow-700 border-yellow-300',
-    'Action Required': 'bg-red-50 text-red-700 border-red-300',
-    'Unsatisfactory':  'bg-red-50 text-red-700 border-red-300',
-  };
+function StatusPill({ label }: { label: string }) {
+  const s = STATUS_PILL_STYLES[label] || { bg: '#F4F6FA', color: colors.textSecondary, dot: colors.textMuted };
   return (
-    <span className={`text-xs px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/15'}`}>
-      {status}
-    </span>
-  );
-}
-
-function FireVerdictBadge({ verdict }: { verdict: 'Pass' | 'Fail' }) {
-  return (
-    <span className={`text-xs px-1.5 py-0.5 rounded border ${
-      verdict === 'Pass'
-        ? 'bg-green-50 text-green-700 border-green-300'
-        : 'bg-red-50 text-red-700 border-red-300'
-    }`}>
-      🔥 {verdict}
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      padding: '3px 9px', borderRadius: 999,
+      backgroundColor: s.bg, fontSize: 11, fontWeight: 500, color: s.color, lineHeight: '16px',
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: s.dot, flexShrink: 0 }} />
+      {label}
     </span>
   );
 }
@@ -152,48 +63,64 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
   const [open, setOpen] = useState(depth < 2);
   const hasChildren = node.children && node.children.length > 0;
   const isSelected = selectedId === node.id;
+  const isLocation = node.type === 'location';
 
   return (
     <div>
       <button
         onClick={() => { onSelect(node.id); if (hasChildren) setOpen(!open); }}
-        className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg text-left transition-colors cursor-pointer ${
-          isSelected
-            ? 'bg-[#EEF1F7] border-l-2 border-yellow-600'
-            : 'hover:bg-[#1E2D4D]/5'
-        }`}
-        style={{ marginLeft: depth * 20 }}
+        style={{
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: '1fr auto auto auto',
+          alignItems: 'center',
+          gap: 8,
+          padding: '8px 6px',
+          paddingLeft: depth === 1 ? 22 : depth >= 2 ? 38 : 6,
+          borderRadius: 6,
+          backgroundColor: isSelected ? '#E6F1FB' : 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          textAlign: 'left' as const,
+          transition: 'background 0.1s',
+        }}
+        onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.backgroundColor = '#FAF7F0'; }}
+        onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.backgroundColor = isSelected ? '#E6F1FB' : 'transparent'; }}
       >
-        {hasChildren ? (
-          open
-            ? <ChevronDown className="h-3.5 w-3.5 text-[#1E2D4D]/30 flex-shrink-0" />
-            : <ChevronRight className="h-3.5 w-3.5 text-[#1E2D4D]/30 flex-shrink-0" />
-        ) : (
-          <div className="w-3.5 flex-shrink-0" />
-        )}
-
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <span className="text-sm font-medium text-[#1E2D4D] truncate">{node.name}</span>
-          <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0">{node.code}</span>
-        </div>
-
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {node.type === 'location' ? (
-            <>
-              {node.foodSafetyStatus && <StatusBadge status={node.foodSafetyStatus} />}
-              {node.facilitySafetyVerdict && <FireVerdictBadge verdict={node.facilitySafetyVerdict} />}
-              {node.openItems > 0 && (
-                <span className="text-xs text-amber-600">{node.openItems} open</span>
-              )}
-            </>
+        {/* Col 1: chevron + name + code */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+          {hasChildren ? (
+            open
+              ? <ChevronDown className="h-3.5 w-3.5 flex-shrink-0" style={{ color: colors.textMuted }} />
+              : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: colors.textMuted }} />
           ) : (
-            <>
-              <span className="text-xs text-[#1E2D4D]/50">{node.locationCount} loc</span>
-              <span className="text-xs text-[#1E2D4D]/30">&middot;</span>
-              <span className="text-xs text-amber-600">{node.openItems} open items</span>
-            </>
+            <div style={{ width: 14, flexShrink: 0 }} />
           )}
+          <span style={{
+            fontSize: 13, fontWeight: 500, color: colors.textPrimary,
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const,
+          }}>
+            {node.name}
+          </span>
+          <span style={{ fontSize: 11, color: colors.textMuted, fontFamily: 'monospace', flexShrink: 0 }}>
+            {node.code}
+          </span>
         </div>
+
+        {/* Col 2: secondary count (regions only) */}
+        <span style={{ fontSize: 11, color: colors.textSecondary }}>
+          {!isLocation && node.locationCount != null ? `${node.locationCount} locations` : ''}
+        </span>
+
+        {/* Col 3: open-items count */}
+        <span style={{ fontSize: 11, color: node.openItems > 0 ? '#791F1F' : colors.textSecondary }}>
+          {node.openItems > 0 ? `${node.openItems} open` : '0 open'}
+        </span>
+
+        {/* Col 4: status pill (locations only) */}
+        <span style={{ minWidth: 80, textAlign: 'right' as const }}>
+          {isLocation && node.foodSafetyStatus ? <StatusPill label={node.foodSafetyStatus} /> : null}
+        </span>
       </button>
       {open && hasChildren && (
         <div>
@@ -206,99 +133,90 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
   );
 }
 
-// ── Fire Equipment Bar ───────────────────────────────────────
-
-function FireEquipmentBar({ label, pass }: { label: string; pass: boolean }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-[#1E2D4D]/50 w-14">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-[#1E2D4D]/8">
-        <div
-          className={`h-2 rounded-full ${pass ? 'bg-green-500' : 'bg-red-500'}`}
-          style={{ width: pass ? '100%' : '30%' }}
-        />
-      </div>
-      <span className={`text-xs ${pass ? 'text-green-600' : 'text-red-600'}`}>
-        {pass ? 'Current' : 'Overdue'}
-      </span>
-    </div>
-  );
-}
-
 // ── Location Detail Panel ────────────────────────────────────
+// Renders real data from the location node. Fields not yet in the data shape
+// (Last Inspection date, Address, Vendor count, Equipment count) show "—".
 
 function LocationDetail({ node }: { node: OrgTreeNode }) {
-  const equip = FIRE_EQUIPMENT[node.id] || { permit: false, hood: false, ext: false, ansul: false };
-  const items = OPEN_ITEMS_LIST[node.id] || [];
-
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 500, color: colors.textPrimary, margin: 0 }}>{node.name}</h2>
+          <p style={{ fontSize: 12, color: colors.textSecondary, fontFamily: 'monospace', margin: '4px 0 0' }}>
+            {node.code} &middot; Location
+          </p>
+        </div>
+        {node.foodSafetyStatus && <StatusPill label={node.foodSafetyStatus} />}
+      </div>
+
+      {/* Summary stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        <div style={{ background: '#FAFAF9', border: '0.5px solid #E2DDD4', padding: 10, borderRadius: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 4 }}>
+            Open Items
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 600, color: node.openItems > 0 ? '#791F1F' : colors.textPrimary }}>
+            {node.openItems}
+          </div>
+        </div>
+        <div style={{ background: '#FAFAF9', border: '0.5px solid #E2DDD4', padding: 10, borderRadius: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 4 }}>
+            Fire Safety
+          </div>
+          <div>
+            {node.facilitySafetyVerdict
+              ? <StatusPill label={node.facilitySafetyVerdict} />
+              : <span style={{ fontSize: 13, color: colors.textMuted }}>&mdash;</span>}
+          </div>
+        </div>
+        <div style={{ background: '#FAFAF9', border: '0.5px solid #E2DDD4', padding: 10, borderRadius: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 4 }}>
+            Last Inspection
+          </div>
+          <div style={{ fontSize: 13, color: colors.textMuted }}>
+            &mdash;
+          </div>
+        </div>
+      </div>
+
+      {/* Jurisdiction */}
       <div>
-        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
-        <p className="text-[#1E2D4D]/50 text-sm">{node.code} &middot; Location</p>
-      </div>
-
-      {/* Food Safety */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-[#1E2D4D]">🍽 Food Safety</span>
+        <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 8 }}>
+          Jurisdiction
         </div>
-        <p className="text-[#1E2D4D]/50 text-xs">{node.foodSafetyJurisdiction}</p>
-        <div className="flex items-center gap-3">
-          {node.foodSafetyStatus && <StatusBadge status={node.foodSafetyStatus} />}
-          <span className="text-xs text-[#1E2D4D]/70">
-            {node.foodSafetyStatus === 'Compliant' && 'No critical violations on last inspection'}
-            {node.foodSafetyStatus === 'Satisfactory' && 'Minor violations noted — corrective actions in progress'}
-            {node.foodSafetyStatus === 'Action Required' && 'Critical violations require immediate correction'}
-          </span>
-        </div>
-        {node.foodSafetyStatus === 'Compliant' && (
-          <p className="text-[#1E2D4D]/30 text-xs italic">Last inspected Jan 2026 — next due Jul 2026</p>
+        {node.foodSafetyJurisdiction && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderLight}` }}>
+            <span style={{ fontSize: 12, color: colors.textSecondary }}>Food Safety</span>
+            <span style={{ fontSize: 12, color: colors.textPrimary }}>{node.foodSafetyJurisdiction}</span>
+          </div>
         )}
-        {node.foodSafetyStatus === 'Satisfactory' && (
-          <p className="text-[#1E2D4D]/30 text-xs italic">Re-inspection scheduled within 60 days</p>
-        )}
-        {node.foodSafetyStatus === 'Action Required' && (
-          <p className="text-[#1E2D4D]/30 text-xs italic">Compliance deadline: 30 days from last inspection</p>
+        {node.facilitySafetyAhj && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderLight}` }}>
+            <span style={{ fontSize: 12, color: colors.textSecondary }}>Fire Safety</span>
+            <span style={{ fontSize: 12, color: colors.textPrimary }}>{node.facilitySafetyAhj}</span>
+          </div>
         )}
       </div>
 
-      {/* Fire Safety */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Fire Safety</span>
+      {/* Key Facts */}
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 8 }}>
+          Key Facts
         </div>
-        <div className="flex items-center justify-between">
-          <p className="text-[#1E2D4D]/50 text-xs">{node.facilitySafetyAhj}</p>
-          <p className="text-[#1E2D4D]/30 text-xs">NFPA 96</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderLight}` }}>
+          <span style={{ fontSize: 12, color: colors.textSecondary }}>Address</span>
+          <span style={{ fontSize: 12, color: colors.textMuted }}>&mdash;</span>
         </div>
-        <div className="space-y-2">
-          <FireEquipmentBar label="Permit" pass={equip.permit} />
-          <FireEquipmentBar label="Hood" pass={equip.hood} />
-          <FireEquipmentBar label="Ext" pass={equip.ext} />
-          <FireEquipmentBar label="Ansul" pass={equip.ansul} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderLight}` }}>
+          <span style={{ fontSize: 12, color: colors.textSecondary }}>Vendors</span>
+          <span style={{ fontSize: 12, color: colors.textMuted }}>&mdash;</span>
         </div>
-        {node.facilitySafetyVerdict && <FireVerdictBadge verdict={node.facilitySafetyVerdict} />}
-      </div>
-
-      {/* Open Items */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <div className="flex items-center gap-2 mb-1">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
+          <span style={{ fontSize: 12, color: colors.textSecondary }}>Equipment</span>
+          <span style={{ fontSize: 12, color: colors.textMuted }}>&mdash;</span>
         </div>
-        <p className="text-[#1E2D4D]/50 text-xs">{node.openItems} item{node.openItems !== 1 ? 's' : ''} requiring attention</p>
-        {items.length > 0 && (
-          <ul className="space-y-1">
-            {items.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-[#1E2D4D]/80">
-                <span className="text-amber-500 mt-0.5">•</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );
@@ -309,33 +227,39 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
 function RegionDetail({ node }: { node: OrgTreeNode }) {
   const locations = collectLocations(node);
   const foodSafeCount = locations.filter(l =>
-    l.foodSafetyStatus === 'Compliant' || l.foodSafetyStatus === 'Good'
+    l.foodSafetyStatus === 'Compliant' || l.foodSafetyStatus === 'Good' || l.foodSafetyStatus === 'Pass'
   ).length;
   const fireSafeCount = locations.filter(l => l.facilitySafetyVerdict === 'Pass').length;
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Header */}
       <div>
-        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
-        <p className="text-[#1E2D4D]/50 text-sm">{node.code} &middot; {node.type === 'corporate' ? 'Corporate' : 'Region'} &middot; {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
+        <h2 style={{ fontSize: 16, fontWeight: 500, color: colors.textPrimary, margin: 0 }}>{node.name}</h2>
+        <p style={{ fontSize: 12, color: colors.textSecondary, fontFamily: 'monospace', margin: '4px 0 0' }}>
+          {node.code} &middot; {node.type === 'corporate' ? 'Corporate' : 'Region'} &middot; {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}
+        </p>
       </div>
 
       {/* Location list */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Locations</h3>
-        <div className="space-y-2">
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase' as const, color: colors.textSecondary, marginBottom: 8 }}>
+          Locations
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {locations.map(loc => (
-            <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0]">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-sm text-[#1E2D4D] truncate">{loc.name}</span>
-                <span className="text-xs text-[#1E2D4D]/30">{loc.code}</span>
+            <div key={loc.id} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '8px 10px', borderRadius: 6, backgroundColor: '#FAF7F0',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                <span style={{ fontSize: 13, color: colors.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{loc.name}</span>
+                <span style={{ fontSize: 11, color: colors.textMuted, fontFamily: 'monospace' }}>{loc.code}</span>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {loc.foodSafetyStatus && <StatusBadge status={loc.foodSafetyStatus} />}
-                {loc.facilitySafetyVerdict && <FireVerdictBadge verdict={loc.facilitySafetyVerdict} />}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                {loc.foodSafetyStatus && <StatusPill label={loc.foodSafetyStatus} />}
                 {loc.openItems > 0 && (
-                  <span className="text-xs text-amber-600">{loc.openItems} open</span>
+                  <span style={{ fontSize: 11, color: '#791F1F' }}>{loc.openItems} open</span>
                 )}
               </div>
             </div>
@@ -344,26 +268,23 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Summary */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <p className="text-sm text-[#1E2D4D]/80">
-          <span className={foodSafeCount === locations.length ? 'text-green-600' : 'text-amber-600'}>
-            {foodSafeCount} of {locations.length}
-          </span>
-          {' '}locations food-safe &middot;{' '}
-          <span className={fireSafeCount === locations.length ? 'text-green-600' : 'text-amber-600'}>
-            {fireSafeCount} of {locations.length}
-          </span>
-          {' '}locations fire-safe
-        </p>
+      <div style={{ fontSize: 13, color: colors.textSecondary }}>
+        <span style={{ color: foodSafeCount === locations.length ? prp.prove.accent : prp.predict.accent }}>
+          {foodSafeCount} of {locations.length}
+        </span>
+        {' '}locations food-safe &middot;{' '}
+        <span style={{ color: fireSafeCount === locations.length ? prp.prove.accent : prp.predict.accent }}>
+          {fireSafeCount} of {locations.length}
+        </span>
+        {' '}locations fire-safe
       </div>
 
       {/* Open Items */}
-      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
-        </div>
-        <p className="text-[#1E2D4D]/50 text-xs">{node.openItems} total items requiring attention across {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <AlertTriangle className="h-4 w-4" style={{ color: prp.predict.accent }} />
+        <span style={{ fontSize: 13, color: colors.textSecondary }}>
+          {node.openItems} total items requiring attention across {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}
+        </span>
       </div>
     </div>
   );
@@ -398,9 +319,21 @@ function collectCodes(node: OrgTreeNode): string[] {
 
 export function OrgHierarchy() {
   const navigate = useNavigate();
-  const { isDemoMode, companyName } = useDemo();
+  const { companyName } = useDemo();
   const { locationHours, setLocationHours } = useOperatingHours();
-  const [orgTreeState, setOrgTreeState] = useState<OrgTreeNode>(INITIAL_ORG_TREE);
+
+  // Empty initial tree — no demo seed data. Real locations will come from
+  // a Supabase query (future hook). Until then, the page shows the PRP
+  // empty state when no locations have been added.
+  const [orgTreeState, setOrgTreeState] = useState<OrgTreeNode>({
+    id: 'org-root',
+    name: 'Your Organization',
+    code: '',
+    type: 'corporate',
+    locationCount: 0,
+    openItems: 0,
+    children: [],
+  });
   const [selectedId, setSelectedId] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -411,7 +344,7 @@ export function OrgHierarchy() {
     }
   }, [companyName]);
 
-  const selectedNode = isDemoMode && selectedId ? findTreeNode(orgTreeState, selectedId) : null;
+  const selectedNode = selectedId ? findTreeNode(orgTreeState, selectedId) : null;
   const allLocations = collectLocations(orgTreeState);
   const isSingleLocation = allLocations.length === 1;
   const existingCodes = collectCodes(orgTreeState);
@@ -505,7 +438,7 @@ export function OrgHierarchy() {
         </div>
       </div>
 
-      {/* Empty state — shown when no locations exist (demo or real) */}
+      {/* Empty state — shown when no locations exist */}
       {allLocations.length === 0 ? (
         <div className="rounded-xl border border-[#1E2D4D]/10 bg-white flex flex-col items-center text-center" style={{ padding: '28px 16px 36px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
           {/* Icon circle */}
@@ -636,9 +569,19 @@ export function OrgHierarchy() {
                 ? <LocationDetail node={selectedNode} />
                 : <RegionDetail node={selectedNode} />
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <Building2 className="h-10 w-10 text-[#1E2D4D]/30 mb-3" />
-                <p className="text-[#1E2D4D]/50 text-sm">Select a location or region to view details</p>
+              <div className="flex flex-col items-center justify-center h-full text-center" style={{ padding: '40px 16px' }}>
+                <div
+                  className="flex items-center justify-center mb-4"
+                  style={{ width: 48, height: 48, borderRadius: '50%', backgroundColor: '#E6F1FB' }}
+                >
+                  <Building2 className="w-[22px] h-[22px]" style={{ color: '#185FA5' }} />
+                </div>
+                <p style={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, margin: '0 0 6px' }}>
+                  Select a location to view details
+                </p>
+                <p style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 1.5, maxWidth: 320, margin: 0 }}>
+                  Open-items, jurisdiction, vendors, and inspection trail appear here once a location is selected.
+                </p>
               </div>
             )}
           </div>
