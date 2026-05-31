@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap, ShieldAlert } from 'lucide-react';
+import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap, ShieldAlert, Shield, ChevronRight, Pencil, Trash2 } from 'lucide-react';
+import { prp } from '../lib/designSystem';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -25,6 +26,7 @@ interface TeamMember {
   role: string;
   avatar_url: string | null;
   created_at: string;
+  updated_at?: string;
   last_active?: string;
   location?: string;
   certifications?: DemoCert[];
@@ -186,7 +188,7 @@ export function Team() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showInviteModal, setShowInviteModal] = useState(searchParams.get('action') === 'add');
-  const [showBulkInviteModal, setShowBulkInviteModal] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
@@ -206,6 +208,10 @@ export function Team() {
   const { isEmulating, startEmulation, isOperationBlocked, showBlockedModal } = useEmulation();
   usePageTitle('Team');
   const [showEmulationDemoModal, setShowEmulationDemoModal] = useState(false);
+  const [tempCoverageOpen, setTempCoverageOpen] = useState(false);
+  const [certsByUser, setCertsByUser] = useState<Record<string, { total: number; active: number }>>({});
+  const [trainingByUser, setTrainingByUser] = useState<Record<string, { completed: number; total: number }>>({});
+  const [prpCounts, setPrpCounts] = useState({ expiring60: 0, trainingGaps: 0, completedPct: null as number | null });
 
   useEffect(() => {
     if (isDemoMode) {
@@ -213,20 +219,89 @@ export function Team() {
     } else if (profile?.organization_id) {
       fetchTeam();
       fetchInvitations();
+      fetchOrgCertifications();
+      fetchOrgTraining();
     } else {
       // Live mode but no org — show empty state
       setMembers([]);
     }
   }, [profile, isDemoMode]);
 
+  // Auto-expand temp coverage when grants exist
+  useEffect(() => {
+    if (tempCoverageAssignments.length > 0) setTempCoverageOpen(true);
+  }, [tempCoverageAssignments.length]);
+
   const fetchTeam = async () => {
     const { data } = await supabase
       .from('user_profiles')
-      .select('id, full_name, email, phone, role, avatar_url, created_at')
+      .select('id, full_name, email, phone, role, avatar_url, created_at, updated_at')
       .eq('organization_id', profile?.organization_id)
       .order('created_at', { ascending: false });
 
     if (data) setMembers(data);
+  };
+
+  const fetchOrgCertifications = async () => {
+    try {
+      const { data } = await supabase
+        .from('employee_certifications')
+        .select('user_id, status, expiration_date')
+        .eq('organization_id', profile?.organization_id);
+
+      if (data) {
+        const grouped: Record<string, { total: number; active: number }> = {};
+        let expiring60 = 0;
+        const now = new Date();
+        const in60 = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+        for (const cert of data) {
+          if (!grouped[cert.user_id]) grouped[cert.user_id] = { total: 0, active: 0 };
+          grouped[cert.user_id].total++;
+          const exp = cert.expiration_date ? new Date(cert.expiration_date) : null;
+          if (cert.status === 'active' && (!exp || exp > now)) {
+            grouped[cert.user_id].active++;
+          }
+          if (exp && exp > now && exp <= in60) expiring60++;
+        }
+        setCertsByUser(grouped);
+        setPrpCounts(prev => ({ ...prev, expiring60 }));
+      }
+    } catch { /* table may not exist — fall back to 0 */ }
+  };
+
+  const fetchOrgTraining = async () => {
+    try {
+      const { data } = await supabase
+        .from('training_records')
+        .select('user_id, completed_date, next_due_date')
+        .not('user_id', 'is', null);
+
+      if (data) {
+        const grouped: Record<string, { completed: number; total: number }> = {};
+        let gaps = 0;
+        let completedThisMonth = 0;
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        for (const rec of data) {
+          if (!grouped[rec.user_id]) grouped[rec.user_id] = { completed: 0, total: 0 };
+          grouped[rec.user_id].total++;
+          if (rec.completed_date) {
+            grouped[rec.user_id].completed++;
+            if (new Date(rec.completed_date) >= monthStart) completedThisMonth++;
+          } else {
+            gaps++;
+          }
+        }
+        setTrainingByUser(grouped);
+        const total = data.length;
+        const completedAll = data.filter(r => r.completed_date).length;
+        setPrpCounts(prev => ({
+          ...prev,
+          trainingGaps: gaps,
+          completedPct: total > 0 ? Math.round((completedAll / total) * 100) : null,
+        }));
+      }
+    } catch { /* table may not exist — fall back to 0 */ }
   };
 
   const fetchInvitations = async () => {
@@ -384,16 +459,15 @@ export function Team() {
     setResetMember(null);
   };
 
-  const getRoleBadge = (role: string) => {
-    const badges = {
-      admin: { label: 'Owner', color: 'bg-[#A08C5A] text-[#1E2D4D]' },
-      manager: { label: 'Manager', color: 'bg-[#eef4f8] text-[#1E2D4D]' },
-      staff: { label: 'Staff', color: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70' },
-    };
-    const badge = badges[role as keyof typeof badges] || badges.staff;
+  const getRolePill = (role: string) => {
+    const label = ROLE_LABELS[role] || role;
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}>
-        {badge.label}
+      <span
+        className="inline-flex items-center gap-1 rounded-full"
+        style={{ backgroundColor: '#E6F1FB', color: '#0C447C', padding: '3px 9px', fontSize: 11, fontWeight: 500 }}
+      >
+        <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#185FA5', flexShrink: 0 }} />
+        {label}
       </span>
     );
   };
@@ -417,44 +491,31 @@ export function Team() {
           <p className="text-sm text-[#1E2D4D]/70 mt-1">Manage team members and permissions</p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">Team Members</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{filteredMembers.length}</div>
+        {/* PRP Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* PREDICT — cert expirations */}
+          <div style={{ backgroundColor: '#fff', border: '0.5px solid #E2DDD4', borderTop: `3px solid ${prp.predict.accent}`, borderRadius: '0 0 8px 8px', padding: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: prp.predict.text, marginBottom: 2 }}>Predict</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: '#1E2D4D', marginBottom: 4 }}>Cert expirations</div>
+            <div style={{ fontSize: 22, fontWeight: 500, color: '#1E2D4D' }}>{isDemoMode ? filteredMembers.reduce((s, m) => s + (m.certifications?.filter(c => { const d = c.expiration_date ? Math.floor((new Date(c.expiration_date).getTime() - Date.now()) / 86400000) : null; return d !== null && d >= 0 && d <= 60; }).length || 0), 0) : prpCounts.expiring60}</div>
+            <div style={{ fontSize: 12, color: '#6B7F96' }}>expiring in 60 days</div>
+            <div style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.45, marginTop: 6 }}>Watches every staff certification for upcoming expiration windows.</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">Certs Current</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">
-              {filteredMembers.filter(m => m.certifications && m.certifications.every(c => {
-                if (!c.expiration_date) return true;
-                return new Date(c.expiration_date) > new Date();
-              })).length}
-            </div>
+          {/* REDUCE — training gaps */}
+          <div style={{ backgroundColor: '#fff', border: '0.5px solid #E2DDD4', borderTop: `3px solid ${prp.reduce.accent}`, borderRadius: '0 0 8px 8px', padding: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: prp.reduce.text, marginBottom: 2 }}>Reduce</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: '#1E2D4D', marginBottom: 4 }}>Training gaps</div>
+            <div style={{ fontSize: 22, fontWeight: 500, color: '#1E2D4D' }}>{isDemoMode ? filteredMembers.filter(m => (m.training_completed || 0) < (m.training_total || 0)).length : prpCounts.trainingGaps}</div>
+            <div style={{ fontSize: 12, color: '#6B7F96' }}>staff with incomplete required training</div>
+            <div style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.45, marginTop: 6 }}>Identifies who needs which course before it becomes a finding.</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Award className="h-4 w-4 text-[#A08C5A]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">Total Certs</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">
-              {filteredMembers.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">Training Progress</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">
-              {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + ((m.training_completed || 0) / (m.training_total || 1) * 100), 0) / filteredMembers.length) : 0}%
-            </div>
+          {/* PROVE — training completion */}
+          <div style={{ backgroundColor: '#fff', border: '0.5px solid #E2DDD4', borderTop: `3px solid ${prp.prove.accent}`, borderRadius: '0 0 8px 8px', padding: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: prp.prove.text, marginBottom: 2 }}>Prove</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: '#1E2D4D', marginBottom: 4 }}>Training completion</div>
+            <div style={{ fontSize: 22, fontWeight: 500, color: '#1E2D4D' }}>{isDemoMode ? `${Math.round(filteredMembers.reduce((s, m) => s + ((m.training_completed || 0) / (m.training_total || 1) * 100), 0) / (filteredMembers.length || 1))}%` : (prpCounts.completedPct !== null ? `${prpCounts.completedPct}%` : '—')}</div>
+            <div style={{ fontSize: 12, color: '#6B7F96' }}>{(!isDemoMode && prpCounts.completedPct === null) ? 'no completions logged yet' : 'completed this month'}</div>
+            <div style={{ fontSize: 11, color: '#6B7F96', lineHeight: 1.45, marginTop: 6 }}>Every course, every cert renewal carries a timestamp and trainer.</div>
           </div>
         </div>
 
@@ -496,17 +557,18 @@ export function Team() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
-                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-all duration-150 active:scale-[0.98] duration-150"
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-all duration-150 active:scale-[0.98]"
                 >
                   <Plus className="h-5 w-5" />
-                  <span>Invite Member</span>
+                  <span>Invite Members</span>
                 </button>
                 <button
-                  onClick={() => guardAction('bulk-invite', 'team management', () => setShowBulkInviteModal(true))}
-                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#FAF7F0] transition-colors duration-150"
+                  onClick={() => navigate('/settings/roles-permissions')}
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] rounded-lg transition-colors duration-150"
+                  style={{ backgroundColor: '#F0EDE6', color: '#1E2D4D', border: '1px solid transparent' }}
                 >
-                  <Users className="h-5 w-5" />
-                  <span>Invite Multiple</span>
+                  <Shield className="h-4 w-4" />
+                  <span>Permissions</span>
                 </button>
               </div>
             )}
@@ -595,15 +657,29 @@ export function Team() {
           </div>
         )}
 
-        {/* Temporary Coverage Assignments */}
+        {/* Temporary Coverage Assignments — Collapsible */}
         {canAssignTempCoverage() && (
-          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#1E2D4D]" />
-                Temporary Coverage Assignments
-              </h3>
-            </div>
+          <div style={{ backgroundColor: '#fff', border: '0.5px solid #E2DDD4', borderRadius: 8 }}>
+            <button
+              onClick={() => setTempCoverageOpen(!tempCoverageOpen)}
+              className="w-full flex items-center justify-between"
+              style={{ padding: '10px 14px', cursor: 'pointer' }}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" style={{ color: '#6B7F96' }} />
+                <span style={{ fontSize: 13, fontWeight: 500, color: '#1E2D4D' }}>Temporary Coverage Assignments</span>
+                <span style={{ fontSize: 11, color: '#94A3B8' }}>
+                  {tempCoverageAssignments.length > 0 ? `${tempCoverageAssignments.length} active grant${tempCoverageAssignments.length !== 1 ? 's' : ''}` : 'No active grants'}
+                </span>
+              </span>
+              <span style={{ fontSize: 12, color: '#6B7F96', display: 'flex', alignItems: 'center', gap: 2 }}>
+                {tempCoverageOpen ? 'Collapse' : 'Grant access'}
+                <ChevronRight className="w-3.5 h-3.5" style={{ transform: tempCoverageOpen ? 'rotate(90deg)' : undefined, transition: 'transform 0.15s' }} />
+              </span>
+            </button>
+
+            {tempCoverageOpen && <div className="px-4 pb-4 sm:px-6 sm:pb-6">
 
             {tempCoverageAssignments.length > 0 && (
               <div className="space-y-3 mb-6">
@@ -727,6 +803,7 @@ export function Team() {
                 </button>
               </div>
             </div>
+            </div>}
           </div>
         )}
 
@@ -747,13 +824,20 @@ export function Team() {
               </thead>
               <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                 {filteredMembers.map((member) => {
-                  const certCount = member.certifications?.length || 0;
-                  const expiringSoon = member.certifications?.filter(c => {
-                    if (!c.expiration_date) return false;
-                    const days = Math.floor((new Date(c.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                    return days >= 0 && days <= 30;
-                  }).length || 0;
-                  const trainingPct = member.training_total ? Math.round((member.training_completed || 0) / member.training_total * 100) : null;
+                  const userCerts = certsByUser[member.id];
+                  const certCount = isDemoMode ? (member.certifications?.length || 0) : (userCerts?.total || 0);
+                  const certActive = isDemoMode ? certCount : (userCerts?.active || 0);
+                  const expiringSoon = isDemoMode
+                    ? (member.certifications?.filter(c => {
+                        if (!c.expiration_date) return false;
+                        const days = Math.floor((new Date(c.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                        return days >= 0 && days <= 30;
+                      }).length || 0)
+                    : 0;
+                  const userTraining = trainingByUser[member.id];
+                  const trainingPct = isDemoMode
+                    ? (member.training_total ? Math.round((member.training_completed || 0) / member.training_total * 100) : null)
+                    : (userTraining?.total ? Math.round(userTraining.completed / userTraining.total * 100) : null);
 
                   return (
                     <tr key={member.id} className="hover:bg-[#FAF7F0]">
@@ -769,7 +853,7 @@ export function Team() {
                         </div>
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                        {getRoleBadge(member.role)}
+                        {getRolePill(member.role)}
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden md:table-cell">
                         {member.location ? (
@@ -781,12 +865,8 @@ export function Team() {
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell">
                         {certCount > 0 ? (
-                          <div
-                            className="flex items-center gap-1 cursor-pointer hover:underline"
-                            onClick={(e) => { e.stopPropagation(); const idx = DEMO_MEMBERS.findIndex(m => m.id === member.id); if (idx >= 0) navigate(`/training/employee/${idx + 1}`); }}
-                            style={{ color: '#1E2D4D' }}
-                          >
-                            <span className="font-medium">{certCount}</span>
+                          <div className="flex items-center gap-1.5" style={{ color: '#1E2D4D' }}>
+                            <span className="font-medium">{certActive}/{certCount}</span>
                             {expiringSoon > 0 && (
                               <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold">
                                 {expiringSoon} expiring
@@ -816,10 +896,10 @@ export function Team() {
                         )}
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">
-                        {member.last_active ? (
+                        {(member.last_active || member.updated_at) ? (
                           <span className="flex items-center gap-1">
                             <span className="h-2 w-2 bg-green-500 rounded-full" />
-                            {getTimeAgo(member.last_active)}
+                            {getTimeAgo(member.last_active || member.updated_at!)}
                           </span>
                         ) : '—'}
                       </td>
@@ -843,6 +923,18 @@ export function Team() {
                                 View Details
                               </button>
                               {canManageTeam() && (
+                                <>
+                                <button
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => {
+                                    setOpenActionMenu(null);
+                                    guardAction('edit', 'team management', () => navigate(`/settings/roles-permissions?user=${member.id}`));
+                                  }}
+                                  className="w-full text-left px-4 py-2.5 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] flex items-center gap-2"
+                                >
+                                  <Pencil className="h-4 w-4 text-[#1E2D4D]/30" />
+                                  Edit Role
+                                </button>
                                 <button
                                   onMouseDown={(e) => e.preventDefault()}
                                   onClick={() => {
@@ -858,6 +950,18 @@ export function Team() {
                                   <KeyRound className="h-4 w-4 text-[#1E2D4D]/30" />
                                   Reset Password
                                 </button>
+                                <button
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => {
+                                    setOpenActionMenu(null);
+                                    guardAction('delete', 'team management', () => toast.info('Remove member flow coming soon'));
+                                  }}
+                                  className="w-full text-left px-4 py-2.5 text-sm text-red-600/80 hover:bg-red-50 flex items-center gap-2"
+                                >
+                                  <Trash2 className="h-4 w-4 text-red-400/50" />
+                                  Remove
+                                </button>
+                                </>
                               )}
                               {userRole === 'platform_admin' && !isEmulating && (
                                 <button
@@ -903,9 +1007,28 @@ export function Team() {
           </div>
 
           {filteredMembers.length === 0 && (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-[#1E2D4D]/30 mx-auto mb-4" />
-              <p className="text-[#1E2D4D]/70 font-medium">{!isDemoMode && members.length === 0 ? 'No team members yet. Add your first team member to get started.' : 'No team members found'}</p>
+            <div className="text-center py-12 px-4">
+              <div className="mx-auto mb-4 w-14 h-14 rounded-full flex items-center justify-center" style={{ backgroundColor: '#E6F1FB' }}>
+                <Users className="h-7 w-7" style={{ color: '#185FA5' }} />
+              </div>
+              {!isDemoMode && members.length === 0 ? (
+                <>
+                  <p className="text-[#1E2D4D] font-semibold text-sm mb-1">No team members yet</p>
+                  <p className="text-[#1E2D4D]/50 text-xs mb-4">Invite your first team member to start tracking certs, training, and coverage.</p>
+                  {canManageTeam() && (
+                    <button
+                      onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors"
+                      style={{ backgroundColor: '#1E2D4D' }}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Invite Members
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className="text-[#1E2D4D]/50 text-sm">No team members match your filters</p>
+              )}
             </div>
           )}
         </div>
@@ -923,7 +1046,7 @@ export function Team() {
                 <div>
                   <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">{selectedMember.full_name}</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    {getRoleBadge(selectedMember.role)}
+                    {getRolePill(selectedMember.role)}
                     {selectedMember.location && (
                       <span className="text-sm text-[#1E2D4D]/50 flex items-center gap-1">
                         <MapPin className="h-3.5 w-3.5" />
@@ -1158,15 +1281,6 @@ export function Team() {
         onClose={() => { setShowInviteModal(false); if (searchParams.has('action')) { searchParams.delete('action'); setSearchParams(searchParams, { replace: true }); } }}
         organizationId={profile?.organization_id || ''}
         onInviteSent={handleInviteSent}
-        locations={accessibleLocations.map(l => ({ locationId: l.locationId, locationName: l.locationName }))}
-      />
-
-      <TeamInviteModal
-        isOpen={showBulkInviteModal}
-        onClose={() => setShowBulkInviteModal(false)}
-        organizationId={profile?.organization_id || ''}
-        onInviteSent={handleInviteSent}
-        mode="bulk"
         locations={accessibleLocations.map(l => ({ locationId: l.locationId, locationName: l.locationName }))}
       />
 

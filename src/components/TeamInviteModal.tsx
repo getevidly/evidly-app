@@ -286,7 +286,8 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
   };
 
   const bulkEmailCount = parseBulkEmails(bulkEmails).length;
-  const isBulk = mode === 'bulk';
+  const [internalMode, setInternalMode] = useState<'single' | 'bulk'>(mode);
+  const isBulk = internalMode === 'bulk';
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size={isBulk ? 'lg' : 'md'} className="border border-[#1E2D4D]/10">
@@ -295,9 +296,19 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             <div className="p-2 bg-[#A08C5A]/10 rounded-lg">
               {isBulk ? <Users className="w-6 h-6 text-[#A08C5A]" /> : <UserPlus className="w-6 h-6 text-[#A08C5A]" />}
             </div>
-            <h2 className="text-xl font-bold text-[#1E2D4D]">
-              {isBulk ? 'Invite Multiple Members' : 'Invite Team Member'}
-            </h2>
+            <div>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">
+                {isBulk ? 'Invite Multiple Members' : 'Invite Team Member'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setInternalMode(isBulk ? 'single' : 'bulk')}
+                className="text-xs font-medium hover:underline transition-colors mt-0.5"
+                style={{ color: '#185FA5' }}
+              >
+                {isBulk ? 'or invite one at a time' : 'or invite many at once'}
+              </button>
+            </div>
           </div>
           <button
             onClick={handleClose}
