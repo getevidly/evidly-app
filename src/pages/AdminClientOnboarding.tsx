@@ -177,13 +177,13 @@ export function AdminClientOnboarding() {
           full_name: ownerName,
           phone: ownerPhone,
           organization_id: orgData.id,
-          role: 'owner',
+          role: 'owner_operator',
         });
 
         await supabase.from('user_location_access').insert({
           user_id: authData.user.id,
           organization_id: orgData.id,
-          role: 'owner',
+          role: 'owner_operator',
         });
       }
 
