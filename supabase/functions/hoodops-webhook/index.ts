@@ -108,23 +108,23 @@ Deno.serve(async (req: Request) => {
   const eventId = data.event_id ||
     `${organization_id}-${location_id}-${service_type_code}-${effectiveDate}`;
 
-  // H-4: Audit logging helper — platform_audit_log created in Sprint A commit 1
+  // H-4: Audit logging helper — routes through log_audit_event RPC
   const logAudit = async (success: boolean, errorMessage?: string) => {
-    const { error } = await supabase.from("platform_audit_log").insert({
-      organization_id,
-      action: "edge_fn.hoodops_webhook",
-      resource_type: "vendor_service_record",
-      resource_id: eventId,
-      success,
-      error_message: errorMessage || null,
-      metadata: {
+    const { error } = await supabase.rpc("log_audit_event", {
+      p_action: "edge_fn.hoodops_webhook",
+      p_organization_id: organization_id,
+      p_resource_type: "vendor_service_record",
+      p_resource_id: eventId,
+      p_success: success,
+      p_error_message: errorMessage || null,
+      p_metadata: {
         event,
         service_type_code,
         location_id,
       },
     });
     if (error) {
-      console.error("[hoodops-webhook] Audit log insert failed:", error.message);
+      console.error("[hoodops-webhook] Audit log failed:", error.message);
     }
   };
 
