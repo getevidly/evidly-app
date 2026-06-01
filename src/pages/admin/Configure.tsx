@@ -30,7 +30,6 @@ interface Vendor { id: string; company_name: string; service_type: string | null
 
 import { SUPPORTED_STATES, getCountiesForState, type StateAbbrev } from '../../data/stateCounties';
 
-const ROLES = ['owner_operator','executive','kitchen_manager','compliance_manager','chef','facilities_manager','kitchen_staff','platform_admin'];
 const SERVICE_TYPES = ['Hood Cleaning','Fire Suppression','Pest Control','Grease Disposal','Oil Management','Equipment Repair','HVAC','Plumbing','Electrical','Other'];
 const CERTIFICATIONS = ['IKECA','NFPA','EPA','State Licensed','Insured','Bonded'];
 
@@ -84,7 +83,6 @@ export default function Configure() {
   // Modal states
   const [addOrgOpen, setAddOrgOpen] = useState(false);
   const [addLocOpen, setAddLocOpen] = useState(false);
-  const [addUserOpen, setAddUserOpen] = useState(false);
   const [addVendorOpen, setAddVendorOpen] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -117,14 +115,13 @@ export default function Configure() {
 
   const addButtonLabel = tab === 'organizations' ? '+ Add Organization'
     : tab === 'locations' ? '+ Add Location'
-    : tab === 'users' ? '+ Invite User'
-    : '+ Add Vendor';
+    : tab === 'vendors' ? '+ Add Vendor'
+    : null;
 
   const openModal = () => {
     if (tab === 'organizations') setAddOrgOpen(true);
     else if (tab === 'locations') setAddLocOpen(true);
-    else if (tab === 'users') setAddUserOpen(true);
-    else setAddVendorOpen(true);
+    else if (tab === 'vendors') setAddVendorOpen(true);
   };
 
   return (
@@ -135,7 +132,7 @@ export default function Configure() {
           <h1 className="text-2xl font-bold tracking-tight text-navy">Configure</h1>
           <p className="text-[13px] text-slate_ui mt-1">Manage organizations, locations, users, and vendors.</p>
         </div>
-        <Button variant="primary" size="sm" onClick={openModal}>{addButtonLabel}</Button>
+        {addButtonLabel && <Button variant="primary" size="sm" onClick={openModal}>{addButtonLabel}</Button>}
       </div>
 
       {/* Tabs + search */}
@@ -163,7 +160,7 @@ export default function Configure() {
         ) : tab === 'locations' ? (
           <LocsTable locs={locs} search={search} onAdd={() => setAddLocOpen(true)} onSelect={setSelectedLoc} />
         ) : tab === 'users' ? (
-          <UsersTable users={users} orgs={orgs} search={search} onAdd={() => setAddUserOpen(true)} onSelect={setSelectedUser} />
+          <UsersTable users={users} orgs={orgs} search={search} onSelect={setSelectedUser} />
         ) : (
           <VendorsTable vendors={vendors} search={search} onAdd={() => setAddVendorOpen(true)} onSelect={setSelectedVendor} />
         )}
@@ -172,7 +169,6 @@ export default function Configure() {
       {/* Modals */}
       {addOrgOpen && <AddOrgModal onClose={() => setAddOrgOpen(false)} onSaved={loadData} />}
       {addLocOpen && <AddLocModal orgs={orgs} onClose={() => setAddLocOpen(false)} onSaved={loadData} />}
-      {addUserOpen && <AddUserModal orgs={orgs} onClose={() => setAddUserOpen(false)} onSaved={loadData} userEmail={user?.email} />}
       {addVendorOpen && <AddVendorModal onClose={() => setAddVendorOpen(false)} onSaved={loadData} />}
 
       {/* Detail drawers */}
@@ -249,10 +245,16 @@ function LocsTable({ locs, search, onAdd, onSelect }: { locs: Location[]; search
   );
 }
 
-function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfile[]; orgs: Org[]; search: string; onAdd: () => void; onSelect: (u: UserProfile) => void }) {
+function UsersTable({ users, orgs, search, onSelect }: { users: UserProfile[]; orgs: Org[]; search: string; onSelect: (u: UserProfile) => void }) {
   const q = search.toLowerCase();
   const filtered = users.filter(u => !q || (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
-  if (filtered.length === 0) return <EmptyAction icon="👥" title="No users yet" subtitle="Invite or provision users to get started." actionLabel="+ Invite User" onAction={onAdd} />;
+  if (filtered.length === 0) return (
+    <div className="text-center py-[60px] px-5 bg-cream-warm border-2 border-dashed border-border_ui-warm rounded-xl m-4">
+      <div className="text-[40px] mb-4">👥</div>
+      <div className="text-base font-bold text-navy mb-2">No users yet</div>
+      <div className="text-[13px] text-slate_ui max-w-[400px] mx-auto">Users appear here after onboarding via Client Onboarding.</div>
+    </div>
+  );
   return (
     <table className="w-full border-collapse text-[13px]">
       <thead><tr className="border-b border-border_ui-warm"><TH>Name</TH><TH>Email</TH><TH>Role</TH><TH>Organization</TH><TH>Last Login</TH><TH>Created</TH></tr></thead>
@@ -493,47 +495,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   );
 }
 
-function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onClose: () => void; onSaved: () => void; userEmail?: string }) {
-  const { isDemoMode } = useDemo();
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [role, setRole] = useState('kitchen_staff');
-  const [selectedOrg, setSelectedOrg] = useState<OrgOption | null>(null);
-  const [saving, setSaving] = useState(false);
 
-  const handleInvite = async () => {
-    if (isDemoMode) return;
-    if (!email.trim()) return;
-    setSaving(true);
-    await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `User invited: ${email} (${role})` });
-    setSaving(false); onSaved(); onClose();
-  };
-
-  return (
-    <ConfigModal title="Invite User" onClose={onClose}>
-      <div className="flex flex-col gap-[14px]">
-        <div><label className={labelCls}>Email *</label><input className={inputCls} value={email} onChange={e => setEmail(e.target.value)} placeholder="user@example.com" type="email" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><label className={labelCls}>Full Name</label><input className={inputCls} value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Jane Smith" /></div>
-          <div><label className={labelCls}>Phone Number</label><input className={inputCls} value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 000-0000" type="tel" /></div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><label className={labelCls}>Role</label>
-            <select className={`${inputCls} cursor-pointer`} value={role} onChange={e => setRole(e.target.value)}>
-              {ROLES.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
-            </select>
-          </div>
-          <OrgCombobox label="Organization" orgs={orgs} value={selectedOrg} onChange={setSelectedOrg} placeholder="Search or create..." />
-        </div>
-        <div className="flex gap-[10px] justify-end mt-2">
-          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" size="sm" onClick={handleInvite} disabled={!email.trim() || saving} isLoading={saving}>{saving ? 'Sending...' : 'Send Invitation'}</Button>
-        </div>
-      </div>
-    </ConfigModal>
-  );
-}
 
 function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
   const { isDemoMode } = useDemo();
