@@ -5,69 +5,61 @@
 -- ============================================================================
 
 -- ────────────────────────────────────────────────────────────────────────────
--- 1. PLATFORM AUDIT LOG — SOX-grade immutable audit trail
+-- 1. PLATFORM AUDIT LOG — **SUPERSEDED**
 -- ────────────────────────────────────────────────────────────────────────────
--- Complements existing admin_event_log with full SOX compliance fields:
--- actor context, resource tracking, old/new values, IP/user-agent.
--- IMMUTABLE: no UPDATE or DELETE policies. Insert via service role only.
+-- THIS SECTION NEVER WON IN PROD. The live table uses the 10-column slim
+-- schema from 20260804000000_create_audit_logs.sql. This SOX-rich definition
+-- (16 columns, actor_email/actor_role/old_value/new_value etc.) was created
+-- with IF NOT EXISTS but the slim migration ran as CREATE TABLE (no IF NOT
+-- EXISTS) and is the canonical PROD table.
+--
+-- All writes now route through the log_audit_event SECURITY DEFINER RPC
+-- created in 20260902000000_log_audit_event_rpc.sql.
+--
+-- DO NOT UNCOMMENT OR RE-APPLY this section — it conflicts with live PROD.
+-- Retained for historical reference only.
+-- ────────────────────────────────────────────────────────────────────────────
+
+/* SUPERSEDED — see 20260804000000 + 20260902000000
 
 CREATE TABLE IF NOT EXISTS platform_audit_log (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-
-  -- Who
   actor_id uuid REFERENCES auth.users(id),
-  actor_email text,           -- denormalized for audit trail permanence
+  actor_email text,
   actor_role text,
   actor_ip inet,
   actor_user_agent text,
-
-  -- What
   action text NOT NULL,
-  -- Categories:
-  --   auth:     login, logout, mfa_enabled, mfa_disabled, password_changed, session_expired
-  --   admin:    flag_toggled, user_role_changed, user_suspended, user_deleted
-  --   data:     record_created, record_updated, record_deleted, record_exported
-  --   security: rls_bypass_attempted, unauthorized_route_access, rate_limit_hit
-  --   edge_fn:  function_invoked, function_failed
-
-  resource_type text,         -- 'feature_flag', 'user', 'intelligence_signal', 'document', etc.
-  resource_id text,           -- UUID or key of the affected record
-
-  -- Detail
+  resource_type text,
+  resource_id text,
   old_value jsonb,
   new_value jsonb,
-  metadata jsonb,             -- IP, headers, additional context
-
-  -- Result
+  metadata jsonb,
   success boolean DEFAULT true,
   error_message text,
-
-  -- When
   created_at timestamptz DEFAULT now()
 );
 
--- Indexes for SOX audit queries
 CREATE INDEX IF NOT EXISTS idx_pal_actor    ON platform_audit_log(actor_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_pal_action   ON platform_audit_log(action, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_pal_resource ON platform_audit_log(resource_type, resource_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_pal_created  ON platform_audit_log(created_at DESC);
 
--- Immutable: no updates or deletes on audit log ever
 ALTER TABLE platform_audit_log ENABLE ROW LEVEL SECURITY;
 
--- Only platform_admin can read. Nobody can update or delete.
 DROP POLICY IF EXISTS "admin_read_audit_log" ON platform_audit_log;
 CREATE POLICY "admin_read_audit_log" ON platform_audit_log
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
   );
 
--- Service role can insert (edge functions). Revoke insert from authenticated users.
 DROP POLICY IF EXISTS "service_role_insert_audit" ON platform_audit_log;
 CREATE POLICY "service_role_insert_audit" ON platform_audit_log
   FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
 REVOKE INSERT ON platform_audit_log FROM authenticated;
+
+END SUPERSEDED */
 
 
 -- ────────────────────────────────────────────────────────────────────────────
