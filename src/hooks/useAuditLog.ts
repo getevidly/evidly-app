@@ -16,12 +16,13 @@ export function useAuditLog() {
     metadata?: Record<string, unknown>,
   ) => {
     try {
-      await supabase.rpc('log_audit_event', {
+      const { error } = await supabase.rpc('log_audit_event', {
         p_action: action,
         p_resource_type: resourceType,
         p_resource_id: resourceId,
         p_metadata: metadata || {},
       });
+      if (error) console.error('[useAuditLog] log_audit_event failed:', error);
     } catch (err) {
       console.error('[useAuditLog] log_audit_event failed:', err);
     }
