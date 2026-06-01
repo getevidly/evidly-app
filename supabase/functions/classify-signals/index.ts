@@ -249,16 +249,18 @@ Guidelines:
       budgetConfig &&
       dailySpend >= budgetConfig.daily_budget_usd * (budgetConfig.alert_threshold_pct / 100)
     ) {
-      await supabaseAdmin.from("platform_audit_log").insert({
-        action: "security.ai_budget_threshold_reached",
-        resource_type: "ai_budget",
-        success: true,
-        metadata: {
+      const { error: auditErr } = await supabaseAdmin.rpc("log_audit_event", {
+        p_action: "security.ai_budget_threshold_reached",
+        p_resource_type: "ai_budget",
+        p_actor_id: user.id,
+        p_success: true,
+        p_metadata: {
           daily_spend: dailySpend,
           daily_budget: budgetConfig.daily_budget_usd,
           threshold_pct: budgetConfig.alert_threshold_pct,
         },
-      }).catch(() => {});
+      });
+      if (auditErr) console.error("[classify-signals] audit log failed:", auditErr.message);
     }
   } catch {
     // Budget check is best-effort — never block classification
