@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Building2, MapPin, Users, Mail, Send, ShieldAlert } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
@@ -148,7 +149,15 @@ export function AdminClientOnboarding() {
 
       const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Isolated client — signUp on the shared singleton would replace the
+      // admin's session.  This throwaway client never persists tokens.
+      const isolatedClient = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        { auth: { persistSession: false, autoRefreshToken: false } },
+      );
+
+      const { data: authData, error: authError } = await isolatedClient.auth.signUp({
         email: ownerEmail,
         password: tempPassword,
         options: {
