@@ -22,8 +22,8 @@ export function useAuditLog() {
         p_resource_id: resourceId,
         p_metadata: metadata || {},
       });
-    } catch {
-      // Fire-and-forget — never block the UI
+    } catch (err) {
+      console.error('[useAuditLog] log_audit_event failed:', err);
     }
   }, []);
 
