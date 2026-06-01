@@ -45,96 +45,123 @@ interface NavSection {
   items: NavItem[];
 }
 
+// ═══════════════════════════════════════════════════════════
+// NAV_SECTIONS — admin sidebar menu (audit-corrected 2026-06-01)
+//
+// 45 → 27 items.  Cut items are in the KILLED block below.
+// Pages, routes, tables, and edge functions are NOT deleted —
+// cut pages remain reachable by direct URL.
+//
+// MERGE: Jurisdiction Intelligence removed from nav; page stays
+// at /admin/jurisdiction-intelligence.  EvidLY Intelligence
+// already has a jurisdiction_intel_updates tab.  Wiring the
+// publish toggle into that tab is a separate ticket.
+// ═══════════════════════════════════════════════════════════
 const NAV_SECTIONS: NavSection[] = [
   {
-    title: 'System Status',
+    title: 'Tenants',
     items: [
-      { label: 'Status Rollup',       path: '/admin/dashboard' },
-      { label: 'Crawl Monitor',       path: '/admin/crawl-monitor',         perm: 'canCrawlManage' },
-      { label: 'Event Log',           path: '/admin/event-log' },
-      { label: 'Audit Log',           path: '/admin/audit-log',             perm: 'canSecurity' },
-      { label: 'Edge Functions',      path: '/admin/system/edge-functions' },
-      { label: 'Verification',        path: '/admin/verification' },
+      { label: 'Organizations',       path: '/admin/orgs' },
+      { label: 'Users',               path: '/admin/users' },
+      { label: 'Staff & Roles',       path: '/admin/staff',              perm: 'canStaffManage' },
+      { label: 'Client Onboarding',   path: '/admin/onboarding' },
       { label: 'Feature Flags',       path: '/admin/feature-flags' },
-      { label: 'Feature Baseline',    path: '/admin/feature-baseline' },
-      { label: 'Maintenance Mode',    path: '/admin/maintenance' },
-      { label: 'Database Backup',     path: '/admin/backup' },
-      { label: 'System Messages',     path: '/admin/messages' },
+    ],
+  },
+  {
+    title: 'Sales',
+    items: [
+      { label: 'Sales Pipeline',      path: '/admin/sales',              salesOnly: true },
+      { label: 'Demo Pipeline',       path: '/admin/demo-pipeline',      salesOnly: true },
+      { label: 'Kitchen Checkup',     path: '/admin/kitchen-checkup',    salesOnly: true },
+      { label: 'Marketing Campaigns', path: '/admin/campaigns',          salesOnly: true },
+    ],
+  },
+  {
+    title: 'Accounting & Program',
+    items: [
+      { label: 'Billing',             path: '/admin/billing',            perm: 'canBilling' },
+      { label: 'K2C Program',         path: '/admin/k2c' },
+      { label: 'Reports',             path: '/admin/reports' },
     ],
   },
   {
     title: 'Operations',
     items: [
       { label: 'Admin Home',          path: '/admin' },
-      { label: 'Command Center',      path: '/admin/command-center' },
-      { label: 'Configure',           path: '/admin/configure',             perm: 'canConfigure' },
-      { label: 'Support Tickets',     path: '/admin/support',               perm: 'canSupportTickets' },
-      { label: 'Remote Connect',      path: '/admin/remote-connect',        perm: 'canRemoteConnect' },
-      { label: 'EvidLY Vault',        path: '/admin/evidly-vault',          hidden: true },
-    ],
-  },
-  {
-    title: 'Tenants',
-    items: [
-      { label: 'Organizations',       path: '/admin/orgs' },
-      { label: 'Users',               path: '/admin/users' },
-      { label: 'Provisioning',        path: '/admin/provisioning' },
-      { label: 'Staff & Roles',       path: '/admin/staff',                 perm: 'canStaffManage' },
-      { label: 'User Emulation',      path: '/admin/emulate',               perm: 'canEmulate' },
-      { label: 'Role Preview',        path: '/admin/role-preview',          perm: 'canEmulate' },
-      { label: 'Client Onboarding',   path: '/admin/onboarding' },
+      { label: 'Configure',           path: '/admin/configure',          perm: 'canConfigure' },
+      { label: 'Support Tickets',     path: '/admin/support',            perm: 'canSupportTickets' },
     ],
   },
   {
     title: 'Content & Intelligence',
     items: [
-      { label: 'Jurisdiction Intelligence', path: '/admin/jurisdiction-intelligence', perm: 'canIntelligence' },
+      { label: 'EvidLY Intelligence',       path: '/admin/intelligence',              perm: 'canIntelligence' },
       { label: 'Intelligence Curation',     path: '/admin/intelligence-admin',        perm: 'canIntelligence' },
       { label: 'Regulatory Changes',        path: '/admin/regulatory-changes',        perm: 'canIntelligence' },
-      { label: 'Vendor Connect Admin',      path: '/admin/vendor-connect' },
-      { label: 'EvidLY Intelligence',       path: '/admin/intelligence',              perm: 'canIntelligence' },
       { label: 'RFP Monitor',               path: '/admin/rfp-monitor',               perm: 'canIntelligence' },
+      { label: 'Vendor Connect Admin',      path: '/admin/vendor-connect' },
       { label: 'ScoreTable Admin',          path: '/admin/scoretable' },
     ],
   },
   {
-    title: 'Accounting & Program Performance',
+    title: 'System Status',
     items: [
-      { label: 'Billing',             path: '/admin/billing',               perm: 'canBilling' },
-      { label: 'K2C Program',         path: '/admin/k2c' },
-      { label: 'Reports',             path: '/admin/reports' },
-      { label: 'Usage Analytics',     path: '/admin/usage-analytics' },
+      { label: 'Status Rollup',       path: '/admin/dashboard' },
+      { label: 'Audit Log',           path: '/admin/audit-log',          perm: 'canSecurity' },
+      { label: 'Edge Functions',      path: '/admin/system/edge-functions' },
     ],
   },
   {
     title: 'Security',
     items: [
-      { label: 'Security',            path: '/admin/security',              perm: 'canSecurity' },
-      { label: 'Security Settings',   path: '/admin/security-settings',     perm: 'canSecurity' },
-      { label: 'Carrier API Keys',    path: '/admin/api-keys',              perm: 'canSecurity' },
-    ],
-  },
-  {
-    title: 'Sales & GTM',
-    items: [
-      { label: 'Sales Pipeline',      path: '/admin/sales',              salesOnly: true },
-      { label: 'GTM Dashboard',       path: '/admin/gtm',                salesOnly: true },
-      { label: 'Demo Pipeline',       path: '/admin/demo-pipeline',      salesOnly: true },
-      { label: 'Demo Generator',      path: '/admin/demo-generator',     salesOnly: true },
-      { label: 'Demo Launcher',       path: '/admin/demo-launcher',      salesOnly: true },
-      { label: 'Demo Tours',          path: '/admin/demo-tours',         salesOnly: true },
-      { label: 'Demo Dashboard',      path: '/admin/demo/dashboard',     salesOnly: true },
-      { label: 'Partner Demos',       path: '/admin/partner-demos',      salesOnly: true },
-      { label: 'Guided Tours',        path: '/admin/guided-tours',       salesOnly: true },
-      { label: 'Kitchen Checkup',     path: '/admin/kitchen-checkup',    salesOnly: true },
-      { label: 'Marketing Campaigns', path: '/admin/campaigns',          salesOnly: true },
-      { label: 'Email Sequences',     path: '/admin/email-sequences',    salesOnly: true },
-      { label: 'Violation Outreach',  path: '/admin/violation-outreach', salesOnly: true },
-      { label: 'Trial Health',        path: '/admin/trial-health',       salesOnly: true },
-      { label: 'Testimonials',        path: '/admin/testimonials',       salesOnly: true },
+      { label: 'Security',            path: '/admin/security',           perm: 'canSecurity' },
+      { label: 'Security Settings',   path: '/admin/security-settings',  perm: 'canSecurity' },
+      { label: 'Carrier API Keys',    path: '/admin/api-keys',           perm: 'canSecurity' },
     ],
   },
 ];
+
+// ═══════════════════════════════════════════════════════════
+// KILLED — removed from nav 2026-06-01.  Pages/routes/tables
+// still exist; re-enable by moving back into NAV_SECTIONS.
+//
+// MERGED into EvidLY Intelligence (page stays at URL):
+//   { label: 'Jurisdiction Intelligence', path: '/admin/jurisdiction-intelligence', perm: 'canIntelligence' },
+//
+// BROKEN / SUPERSEDED:
+//   { label: 'GTM Dashboard',       path: '/admin/gtm',                salesOnly: true },   // queries non-existent sales_pipeline_deals table
+//   { label: 'Usage Analytics',     path: '/admin/usage-analytics' },                        // 100% hardcoded fake data; real-data rebuild is separate project
+//   { label: 'Trial Health',        path: '/admin/trial-health',       salesOnly: true },    // calls non-existent edge function
+//
+// DEMO TOOLING (Demo Pipeline KEPT — manages real trial accounts):
+//   { label: 'Demo Generator',      path: '/admin/demo-generator',     salesOnly: true },
+//   { label: 'Demo Launcher',       path: '/admin/demo-launcher',      salesOnly: true },
+//   { label: 'Demo Tours',          path: '/admin/demo-tours',         salesOnly: true },
+//   { label: 'Demo Dashboard',      path: '/admin/demo/dashboard',     salesOnly: true },
+//   { label: 'Partner Demos',       path: '/admin/partner-demos',      salesOnly: true },
+//   { label: 'Guided Tours',        path: '/admin/guided-tours',       salesOnly: true },
+//
+// DUPLICATES / OVERLAP:
+//   { label: 'Event Log',           path: '/admin/event-log' },                              // overlaps Audit Log
+//   { label: 'Crawl Monitor',       path: '/admin/crawl-monitor',      perm: 'canCrawlManage' },  // intel plumbing; page stays at URL
+//   { label: 'Provisioning',        path: '/admin/provisioning' },                           // overlaps Users + Client Onboarding
+//   { label: 'User Emulation',      path: '/admin/emulate',            perm: 'canEmulate' }, // may re-enable for support
+//   { label: 'Role Preview',        path: '/admin/role-preview',       perm: 'canEmulate' },
+//
+// LOW-USE (pages stay at URL):
+//   { label: 'Command Center',      path: '/admin/command-center' },
+//   { label: 'Remote Connect',      path: '/admin/remote-connect',     perm: 'canRemoteConnect' },
+//   { label: 'EvidLY Vault',        path: '/admin/evidly-vault',       hidden: true },
+//   { label: 'Verification',        path: '/admin/verification' },
+//   { label: 'Feature Baseline',    path: '/admin/feature-baseline' },
+//   { label: 'Maintenance Mode',    path: '/admin/maintenance' },
+//   { label: 'Database Backup',     path: '/admin/backup' },
+//   { label: 'System Messages',     path: '/admin/messages' },
+//   { label: 'Email Sequences',     path: '/admin/email-sequences',    salesOnly: true },
+//   { label: 'Violation Outreach',  path: '/admin/violation-outreach', salesOnly: true },
+//   { label: 'Testimonials',        path: '/admin/testimonials',       salesOnly: true },
+// ═══════════════════════════════════════════════════════════
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const location = useLocation();
