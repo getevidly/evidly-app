@@ -107,10 +107,21 @@ export default function UserProvisioning() {
     setLoading(true);
     if (tab === 'all-users') {
       const [userRes, orgRes] = await Promise.all([
-        supabase.from('profiles').select('id, full_name, email, role, organization_id, created_at').order('created_at', { ascending: false }),
+        supabase.from('user_profiles').select('id, full_name, role, organization_id, created_at').order('created_at', { ascending: false }),
         supabase.from('organizations').select('id, name').order('name'),
       ]);
-      if (userRes.data) setUsers(userRes.data);
+      // Email lives on auth.users — fetch via SECURITY DEFINER RPC
+      const provProfiles = (userRes.data || []) as UserRow[];
+      if (provProfiles.length > 0) {
+        const { data: emailRows } = await supabase.rpc('admin_get_user_emails', {
+          p_user_ids: provProfiles.map(p => p.id),
+        });
+        if (emailRows) {
+          const emailMap = new Map((emailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
+          provProfiles.forEach(p => { p.email = emailMap.get(p.id) ?? ''; });
+        }
+      }
+      setUsers(provProfiles);
       if (orgRes.data) setOrgs(orgRes.data);
     } else if (tab === 'invite-create') {
       const { data } = await supabase.from('organizations').select('id, name').order('name');

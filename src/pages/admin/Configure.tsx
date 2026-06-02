@@ -261,7 +261,7 @@ function UsersTable({ users, orgs, search, onSelect }: { users: UserProfile[]; o
       <tbody>{filtered.map(u => {
         const org = orgs.find(o => o.id === u.organization_id);
         return (
-          <tr key={u.user_id} onClick={() => onSelect(u)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
+          <tr key={u.id} onClick={() => onSelect(u)} className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50">
             <TD fw>{u.full_name || '—'}</TD><TD fs={12}>{u.email || '—'}</TD><TD>{u.role}</TD>
             <TD fs={12}>{org?.name || '—'}</TD>
             <TD fs={12}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString() : 'Never'}</TD>
@@ -677,13 +677,24 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
       setRelLoading(true);
       const [locRes, userRes, ticketRes, vendorRes, eventRes] = await Promise.all([
         supabase.from('locations').select('id, name, county, address, city, status').eq('organization_id', org.id).order('name'),
-        supabase.from('user_profiles').select('user_id, full_name, email, role, last_sign_in_at').eq('organization_id', org.id).order('full_name'),
+        supabase.from('user_profiles').select('id, full_name, role, last_login_at').eq('organization_id', org.id).order('full_name'),
         supabase.from('support_tickets').select('id, ticket_number, subject, priority, status, created_at').eq('org_id', org.id).order('created_at', { ascending: false }).limit(20),
         supabase.from('vendors').select('id, company_name, service_type, status, is_partner').order('company_name'),
         supabase.from('admin_event_log').select('id, event_time, level, message').ilike('message', `%${org.name}%`).order('event_time', { ascending: false }).limit(30),
       ]);
       if (locRes.data) setLocs(locRes.data);
-      if (userRes.data) setUsers(userRes.data);
+      // Email lives on auth.users — fetch via SECURITY DEFINER RPC
+      const profileRows = userRes.data || [];
+      if (profileRows.length > 0) {
+        const { data: emailRows } = await supabase.rpc('admin_get_user_emails', {
+          p_user_ids: profileRows.map((p: any) => p.id),
+        });
+        if (emailRows) {
+          const emailMap = new Map((emailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
+          profileRows.forEach((p: any) => { p.email = emailMap.get(p.id); });
+        }
+      }
+      setUsers(profileRows);
       if (ticketRes.data) setTickets(ticketRes.data);
       if (vendorRes.data) setOrgVendors(vendorRes.data);
       if (eventRes.data) setEvents(eventRes.data);
@@ -767,7 +778,7 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
             ) : (
               <div className="flex flex-col gap-1.5">
                 {users.map((u: any) => (
-                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
+                  <div key={u.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{u.full_name || u.email}</div>
                       <div className="text-[11px] text-slate_ui">{u.email}</div>
@@ -861,7 +872,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
       ];
       if (loc.organization_id) {
         queries.push(
-          supabase.from('user_profiles').select('user_id, full_name, email, role, last_sign_in_at')
+          supabase.from('user_profiles').select('id, full_name, role, last_login_at')
             .eq('organization_id', loc.organization_id).order('full_name'),
           supabase.from('support_tickets').select('id, ticket_number, subject, priority, status, created_at')
             .eq('org_id', loc.organization_id).order('created_at', { ascending: false }).limit(20),
@@ -876,7 +887,18 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
       const results = await Promise.all(queries);
       if (results[0]?.data) setEvents(results[0].data);
       if (loc.organization_id) {
-        if (results[1]?.data) setUsers(results[1].data);
+        // Email lives on auth.users — fetch via SECURITY DEFINER RPC
+        const locProfileRows = results[1]?.data || [];
+        if (locProfileRows.length > 0) {
+          const { data: locEmailRows } = await supabase.rpc('admin_get_user_emails', {
+            p_user_ids: locProfileRows.map((p: any) => p.id),
+          });
+          if (locEmailRows) {
+            const locEmailMap = new Map((locEmailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
+            locProfileRows.forEach((p: any) => { p.email = locEmailMap.get(p.id); });
+          }
+        }
+        setUsers(locProfileRows);
         if (results[2]?.data) setTickets(results[2].data);
         if (loc.county && results[3]?.data) setJurisdiction(results[3].data);
       } else if (loc.county && results[1]?.data) {
@@ -974,7 +996,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
             ) : (
               <div className="flex flex-col gap-1.5">
                 {users.map((u: any) => (
-                  <div key={u.user_id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
+                  <div key={u.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md border border-border_ui-warm">
                     <div>
                       <div className="font-semibold text-navy text-[13px]">{u.full_name || u.email}</div>
                       <div className="text-[11px] text-slate_ui">{u.email}</div>

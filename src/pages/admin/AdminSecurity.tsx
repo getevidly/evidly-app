@@ -97,14 +97,19 @@ export default function AdminSecurity() {
         const userIds = [...new Set(activeRes.data.map((s: any) => s.user_id))];
         const { data: profiles } = await supabase
           .from('user_profiles')
-          .select('id, full_name, email')
+          .select('id, full_name')
           .in('id', userIds);
+        // Email lives on auth.users — fetch via SECURITY DEFINER RPC
+        const { data: emailRows } = await supabase.rpc('admin_get_user_emails', {
+          p_user_ids: userIds,
+        });
+        const emailMap = new Map((emailRows || []).map((r: any) => [r.user_id, r.email]));
         const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
         const enriched = activeRes.data.map((s: any) => {
           const profile = profileMap.get(s.user_id);
           return {
             ...s,
-            user_email: profile?.email || 'Unknown',
+            user_email: emailMap.get(s.user_id) || 'Unknown',
             user_name: profile?.full_name || 'Unknown',
           };
         });

@@ -41,7 +41,8 @@ const QUICK_ACCESS: QuickCard[] = [
   { label: 'User Provisioning', path: '/admin/provisioning', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
   { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
   { label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧', color: '#7C3AED', bg: '#F5F3FF' },
-  { label: 'Trial Health', path: '/admin/trial-health', icon: '💊', color: '#059669', bg: '#ECFDF5' },
+  // POST-LAUNCH: TrialHealth hidden — dead legacy page with phantom columns
+  // { label: 'Trial Health', path: '/admin/trial-health', icon: '💊', color: '#059669', bg: '#ECFDF5' },
   { label: 'Demo Tours', path: '/admin/demo-tours', icon: '🎯', color: '#059669', bg: '#ECFDF5' },
 ];
 

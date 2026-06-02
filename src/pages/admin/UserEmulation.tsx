@@ -21,7 +21,7 @@ interface OrgRow {
 interface UserRow {
   id: string;
   full_name: string | null;
-  email: string;
+  email?: string;
   role: string;
   organization_id: string | null;
 }
@@ -79,11 +79,22 @@ export default function UserEmulation() {
     try {
       const [orgRes, userRes, auditRes] = await Promise.all([
         supabase.from('organizations').select('id, name, created_at').order('name'),
-        supabase.from('user_profiles').select('id, full_name, email, role, organization_id').order('full_name'),
+        supabase.from('user_profiles').select('id, full_name, role, organization_id').order('full_name'),
         supabase.from('emulation_audit_log').select('*').order('started_at', { ascending: false }).limit(20),
       ]);
       if (orgRes.data) setOrgs(orgRes.data);
-      if (userRes.data) setUsers(userRes.data);
+      // Email lives on auth.users — fetch via SECURITY DEFINER RPC
+      const profiles = (userRes.data || []) as UserRow[];
+      if (profiles.length > 0) {
+        const { data: emailRows } = await supabase.rpc('admin_get_user_emails', {
+          p_user_ids: profiles.map(p => p.id),
+        });
+        if (emailRows) {
+          const emailMap = new Map((emailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
+          profiles.forEach(p => { p.email = emailMap.get(p.id) ?? undefined; });
+        }
+      }
+      setUsers(profiles);
       if (auditRes.data) setAuditLog(auditRes.data);
     } catch {
       setLoadError(true);
@@ -101,7 +112,7 @@ export default function UserEmulation() {
     if (selectedOrgId && u.organization_id !== selectedOrgId) return false;
     if (userSearch) {
       const q = userSearch.toLowerCase();
-      return (u.full_name || '').toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+      return (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
     }
     return true;
   });
@@ -114,8 +125,8 @@ export default function UserEmulation() {
     await startEmulation(
       {
         id: user.id,
-        full_name: user.full_name || user.email,
-        email: user.email,
+        full_name: user.full_name || user.email || 'Unknown',
+        email: user.email || '',
         role: user.role as UserRole,
       },
       {

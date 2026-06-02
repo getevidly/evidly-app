@@ -37,8 +37,8 @@ interface OrgRow {
   id: string;
   name: string;
   industry_type: string | null;
-  plan: string | null;
-  status: string | null;
+  plan_tier: string | null;
+  subscription_status: string | null;
   timezone: string | null;
   notes: string | null;
   created_at: string | null;
@@ -61,7 +61,7 @@ export default function AdminOrgs() {
     try {
       const { data, error } = await supabase
         .from('organizations')
-        .select('id, name, industry_type, plan, status, timezone, notes, created_at, updated_at')
+        .select('id, name, industry_type, plan_tier, subscription_status, timezone, notes, created_at, updated_at')
         .eq('is_system', false)
         .order('created_at', { ascending: false });
 
@@ -86,7 +86,7 @@ export default function AdminOrgs() {
     setEditForm({
       name: org.name,
       industry_type: org.industry_type || '',
-      plan: org.plan || 'founder',
+      plan_tier: org.plan_tier || 'founder',
       timezone: org.timezone || 'America/Los_Angeles',
       notes: org.notes || '',
     });
@@ -105,7 +105,7 @@ export default function AdminOrgs() {
       const updates: Record<string, any> = {};
       if (editForm.name && editForm.name !== org?.name) updates.name = editForm.name;
       if (editForm.industry_type !== org?.industry_type) updates.industry_type = editForm.industry_type || null;
-      if (editForm.plan !== org?.plan) updates.plan = editForm.plan || null;
+      if (editForm.plan_tier !== org?.plan_tier) updates.plan_tier = editForm.plan_tier || null;
       if (editForm.timezone !== org?.timezone) updates.timezone = editForm.timezone || null;
       if (editForm.notes !== org?.notes) updates.notes = editForm.notes || null;
 
@@ -130,7 +130,7 @@ export default function AdminOrgs() {
         p_resource_id: editingId,
         p_metadata: {
           actor_email: user?.email,
-          old_value: org ? { name: org.name, industry_type: org.industry_type, plan: org.plan, timezone: org.timezone, notes: org.notes } : null,
+          old_value: org ? { name: org.name, industry_type: org.industry_type, plan_tier: org.plan_tier, timezone: org.timezone, notes: org.notes } : null,
           new_value: updates,
         },
       });
@@ -146,9 +146,9 @@ export default function AdminOrgs() {
   };
 
   const totalOrgs = orgs.length;
-  const activeOrgs = orgs.filter(o => o.status !== 'suspended').length;
+  const activeOrgs = orgs.filter(o => o.subscription_status !== 'suspended').length;
   const planCounts = orgs.reduce<Record<string, number>>((acc, o) => {
-    const p = o.plan || 'unknown';
+    const p = o.plan_tier || 'unknown';
     acc[p] = (acc[p] || 0) + 1;
     return acc;
   }, {});
@@ -210,13 +210,13 @@ export default function AdminOrgs() {
                   {/* Badges */}
                   {!isEditing && (
                     <div className="flex gap-1.5 flex-wrap mb-2">
-                      {org.plan && (
+                      {org.plan_tier && (
                         <span className={`text-[10px] font-bold py-0.5 px-2 rounded-[10px] ${
-                          org.plan === 'enterprise' ? 'bg-blue-50 text-blue-700' :
-                          org.plan === 'founder' ? 'bg-amber-100 text-amber-600' :
+                          org.plan_tier === 'enterprise' ? 'bg-blue-50 text-blue-700' :
+                          org.plan_tier === 'founder' ? 'bg-amber-100 text-amber-600' :
                           'bg-gray-50 text-slate_ui'
                         }`}>
-                          {PLAN_LABELS[org.plan] || org.plan}
+                          {PLAN_LABELS[org.plan_tier] || org.plan_tier}
                         </span>
                       )}
                       {org.industry_type && (
@@ -249,8 +249,8 @@ export default function AdminOrgs() {
                       <div>
                         <label className="text-[11px] font-semibold text-slate_ui block mb-1">Plan Tier</label>
                         <select
-                          value={editForm.plan || 'founder'}
-                          onChange={e => setEditForm(prev => ({ ...prev, plan: e.target.value }))}
+                          value={editForm.plan_tier || 'founder'}
+                          onChange={e => setEditForm(prev => ({ ...prev, plan_tier: e.target.value }))}
                           className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                         >
                           {PLAN_OPTIONS.map(p => <option key={p} value={p}>{PLAN_LABELS[p]}</option>)}
