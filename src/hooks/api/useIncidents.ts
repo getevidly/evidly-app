@@ -1,7 +1,12 @@
 /**
- * Equipment incidents & safety incident report hooks — stubbed with empty data.
+ * Equipment incidents & safety incident report hooks.
+ *
+ * Reads from the `incidents` table, org-scoped.
+ * Mutations remain stubs until write paths are built.
  */
 import { useCallback } from 'react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import { useApiQuery, useApiMutation, type ApiQueryResult, type ApiMutationResult } from './useApiQuery';
 
 // ── Types ─────────────────────────────────────────────────────
@@ -108,11 +113,87 @@ export interface InvestigateInput {
   causedByNegligence: boolean;
 }
 
+// ── Row mappers ───────────────────────────────────────────────
+
+function mapEquipmentIncident(row: any): EquipmentIncident {
+  return {
+    id: row.id,
+    employeeId: row.reported_by || '',
+    incidentType: (row.type || 'malfunction') as EquipmentIncidentType,
+    equipmentName: row.title || '',
+    equipmentId: null,
+    serialNumber: null,
+    description: row.description || row.title || '',
+    incidentDate: row.created_at,
+    location: row.location_name || null,
+    estimatedCost: null,
+    photos: row.photos || [],
+    resolution: row.resolution_summary || null,
+    resolvedAt: row.resolved_at || null,
+    impactsBonus: false,
+    createdAt: row.created_at,
+  };
+}
+
+function mapIncidentReport(row: any): IncidentReport {
+  return {
+    id: row.id,
+    reportedBy: row.reported_by || '',
+    incidentType: (row.type || 'near_miss') as SafetyIncidentType,
+    severity: (row.severity || 'minor') as IncidentSeverity,
+    incidentDate: row.created_at,
+    incidentTime: null,
+    location: row.location_name || '',
+    jobId: null,
+    injuredEmployeeId: null,
+    thirdPartyInvolved: false,
+    thirdPartyName: null,
+    description: row.description || row.title || '',
+    immediateActions: row.corrective_action || null,
+    witnesses: null,
+    photos: row.photos || [],
+    medicalAttentionRequired: false,
+    medicalFacility: null,
+    workersCompFiled: false,
+    workersCompClaimNumber: null,
+    rootCause: row.root_cause || null,
+    preventiveMeasures: null,
+    investigatedBy: null,
+    investigatedAt: null,
+    status: (row.status || 'reported') as IncidentReportStatus,
+    causedByNegligence: false,
+    createdAt: row.created_at,
+  };
+}
+
+const INCIDENT_COLS = 'id, title, description, type, severity, status, category, location_name, reported_by, assigned_to, created_at, resolved_at, corrective_action, resolution_summary, root_cause, photos';
+
 // ── Equipment Incident Queries ────────────────────────────────
 
 export function useEquipmentIncidents(filters?: EquipmentIncidentFilters): ApiQueryResult<EquipmentIncident[]> {
-  const queryFn = useCallback(async (): Promise<EquipmentIncident[]> => [], []);
-  return useApiQuery(`equipment-incidents-${JSON.stringify(filters || {})}`, queryFn, []);
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
+
+  const queryFn = useCallback(async (): Promise<EquipmentIncident[]> => {
+    if (!orgId) return [];
+    let query = supabase
+      .from('incidents')
+      .select(INCIDENT_COLS)
+      .eq('organization_id', orgId)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false });
+
+    if (filters?.incidentType) query = query.eq('type', filters.incidentType);
+    if (filters?.employeeId) query = query.eq('reported_by', filters.employeeId);
+    if (filters?.resolved === true) query = query.not('resolved_at', 'is', null);
+    if (filters?.resolved === false) query = query.is('resolved_at', null);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data ?? []).map(mapEquipmentIncident);
+  }, [orgId, filters?.incidentType, filters?.employeeId, filters?.resolved]);
+
+  return useApiQuery(`equipment-incidents-${orgId}-${JSON.stringify(filters || {})}`, queryFn, []);
 }
 
 export function useCreateEquipmentIncident(): ApiMutationResult<CreateEquipmentIncidentInput> {
@@ -134,13 +215,48 @@ export function useResolveEquipmentIncident(): ApiMutationResult<{ id: string; r
 // ── Safety Incident Report Queries ────────────────────────────
 
 export function useIncidentReports(filters?: SafetyIncidentFilters): ApiQueryResult<IncidentReport[]> {
-  const queryFn = useCallback(async (): Promise<IncidentReport[]> => [], []);
-  return useApiQuery(`incident-reports-${JSON.stringify(filters || {})}`, queryFn, []);
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
+
+  const queryFn = useCallback(async (): Promise<IncidentReport[]> => {
+    if (!orgId) return [];
+    let query = supabase
+      .from('incidents')
+      .select(INCIDENT_COLS)
+      .eq('organization_id', orgId)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false });
+
+    if (filters?.incidentType) query = query.eq('type', filters.incidentType);
+    if (filters?.severity) query = query.eq('severity', filters.severity);
+    if (filters?.status) query = query.eq('status', filters.status);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data ?? []).map(mapIncidentReport);
+  }, [orgId, filters?.incidentType, filters?.severity, filters?.status]);
+
+  return useApiQuery(`incident-reports-${orgId}-${JSON.stringify(filters || {})}`, queryFn, []);
 }
 
 export function useIncidentReport(id: string): ApiQueryResult<IncidentReport | null> {
-  const queryFn = useCallback(async (): Promise<IncidentReport | null> => null, []);
-  return useApiQuery(`incident-report-${id}`, queryFn, null);
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
+
+  const queryFn = useCallback(async (): Promise<IncidentReport | null> => {
+    if (!id || !orgId) return null;
+    const { data, error } = await supabase
+      .from('incidents')
+      .select(INCIDENT_COLS)
+      .eq('id', id)
+      .eq('organization_id', orgId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? mapIncidentReport(data) : null;
+  }, [id, orgId]);
+
+  return useApiQuery(`incident-report-${orgId}-${id}`, queryFn, null);
 }
 
 export function useCreateIncidentReport(): ApiMutationResult<CreateIncidentReportInput> {
