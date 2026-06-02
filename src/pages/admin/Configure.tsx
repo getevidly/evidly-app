@@ -329,7 +329,8 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
       alternate_contact_name: acName || null, alternate_contact_email: acEmail || null, alternate_contact_phone: acPhone || null,
     });
     if (error) { console.error(error.message); setSaving(false); return; }
-    await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Org created: "${name.trim()}" (${plan})` });
+    const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Org created: "${name.trim()}" (${plan})` });
+    if (auditErr) console.error('[Configure] audit log failed:', auditErr.message);
     onSaved(); onClose();
   };
 
@@ -436,7 +437,8 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
       site_phone: sitePhone || null, manager_name: mgrName || null, manager_phone: mgrPhone || null,
     });
     if (error) { console.error(error.message); setSaving(false); return; }
-    await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}" (${county || 'N/A'})` });
+    const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}" (${county || 'N/A'})` });
+    if (auditErr) console.error('[Configure] audit log failed:', auditErr.message);
     onSaved(); onClose();
   };
 
@@ -536,7 +538,8 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
       is_partner: isPartner, status, notes: notes || null,
     });
     if (error) { console.error(error.message); setSaving(false); return; }
-    await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Vendor created: "${companyName.trim()}" (${serviceType})` });
+    const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Vendor created: "${companyName.trim()}" (${serviceType})` });
+    if (auditErr) console.error('[Configure] audit log failed:', auditErr.message);
     onSaved(); onClose();
   };
 

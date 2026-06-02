@@ -131,7 +131,7 @@ export function useRolePermissions(): UseRolePermissionsReturn {
   // ── Mutations ───────────────────────────────────────────────────
 
   const toggleRolePermission = useCallback(
-    (role: UserRole, permissionKey: string, granted: boolean) => {
+    async (role: UserRole, permissionKey: string, granted: boolean) => {
       // Block protected permissions for non-admin roles
       if (isProtectedPermission(permissionKey) && !ADMIN_ONLY_ROLES.includes(role)) {
         toast.error('This permission is restricted to Owner and Executive roles');
@@ -181,7 +181,7 @@ export function useRolePermissions(): UseRolePermissionsReturn {
 
       if (!isDemoMode) {
         // Production: upsert to Supabase
-        supabase
+        const { error } = await supabase
           .from('role_permissions')
           .upsert(
             {
@@ -193,10 +193,16 @@ export function useRolePermissions(): UseRolePermissionsReturn {
               updated_at: now,
             },
             { onConflict: 'organization_id,role,permission_key' },
-          )
-          .then(({ error }) => {
-            if (error) toast.error('Failed to save permission change');
-          });
+          );
+
+        if (error) {
+          // Revert optimistic update
+          setRoleOverrides(prev => prev.filter(
+            o => !(o.role === role && o.permissionKey === permissionKey && o.modifiedAt === now),
+          ));
+          toast.error('Failed to save permission change');
+          return;
+        }
       }
 
       toast.success(`Permission updated${isDemoMode ? ' (Demo)' : ''}`);
@@ -205,7 +211,7 @@ export function useRolePermissions(): UseRolePermissionsReturn {
   );
 
   const addUserException = useCallback(
-    (
+    async (
       userId: string,
       userName: string,
       userEmail: string,
@@ -222,8 +228,10 @@ export function useRolePermissions(): UseRolePermissionsReturn {
       const now = new Date().toISOString();
       const id = nextId('ue');
 
-      // Remove existing exception for same user+permission (replace)
+      // Capture previous state for revert
+      let previousExceptions: typeof userExceptions | null = null;
       setUserExceptions(prev => {
+        previousExceptions = prev;
         const filtered = prev.filter(
           e => !(e.userId === userId && e.permissionKey === permissionKey),
         );
@@ -260,7 +268,7 @@ export function useRolePermissions(): UseRolePermissionsReturn {
       ]);
 
       if (!isDemoMode) {
-        supabase
+        const { error } = await supabase
           .from('user_permission_overrides')
           .upsert(
             {
@@ -273,19 +281,22 @@ export function useRolePermissions(): UseRolePermissionsReturn {
               updated_at: now,
             },
             { onConflict: 'organization_id,user_id,permission_key' },
-          )
-          .then(({ error }) => {
-            if (error) toast.error('Failed to save user exception');
-          });
+          );
+
+        if (error) {
+          if (previousExceptions) setUserExceptions(previousExceptions);
+          toast.error('Failed to save user exception');
+          return;
+        }
       }
 
       toast.success(`Exception added for ${userName}${isDemoMode ? ' (Demo)' : ''}`);
     },
-    [currentUserName, isDemoMode, profile],
+    [currentUserName, isDemoMode, profile, userExceptions],
   );
 
   const removeUserException = useCallback(
-    (exceptionId: string) => {
+    async (exceptionId: string) => {
       const exception = userExceptions.find(e => e.id === exceptionId);
       if (!exception) return;
 
@@ -307,15 +318,19 @@ export function useRolePermissions(): UseRolePermissionsReturn {
       ]);
 
       if (!isDemoMode) {
-        supabase
+        const { error } = await supabase
           .from('user_permission_overrides')
           .delete()
           .eq('organization_id', profile?.organization_id)
           .eq('user_id', exception.userId)
-          .eq('permission_key', exception.permissionKey)
-          .then(({ error }) => {
-            if (error) toast.error('Failed to remove exception');
-          });
+          .eq('permission_key', exception.permissionKey);
+
+        if (error) {
+          // Revert: re-add the exception
+          setUserExceptions(prev => [...prev, exception]);
+          toast.error('Failed to remove exception');
+          return;
+        }
       }
 
       toast.success(`Exception removed${isDemoMode ? ' (Demo)' : ''}`);

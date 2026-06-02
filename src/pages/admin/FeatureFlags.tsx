@@ -179,13 +179,14 @@ export default function FeatureFlags() {
     }
 
     // Audit log
-    await supabase.from('feature_flag_audit').insert({
+    const { error: auditErr } = await supabase.from('feature_flag_audit').insert({
       flag_key: f.key,
       changed_by: user?.id,
       change_type: newVal ? 'enabled' : 'disabled',
       old_value: { is_enabled: !newVal },
       new_value: { is_enabled: newVal },
     });
+    if (auditErr) console.error('[FeatureFlags] audit log failed:', auditErr.message);
   };
 
   const saveFlag = async (f: FeatureFlag) => {
@@ -204,13 +205,14 @@ export default function FeatureFlags() {
       alert('Failed to save: ' + err.message);
     } else {
       // Audit
-      await supabase.from('feature_flag_audit').insert({
+      const { error: auditErr } = await supabase.from('feature_flag_audit').insert({
         flag_key: f.key,
         changed_by: user?.id,
         change_type: 'updated',
         old_value: { trigger_type: f.trigger_type, date_config: f.date_config },
         new_value: payload,
       });
+      if (auditErr) console.error('[FeatureFlags] audit log failed:', auditErr.message);
 
       setFlags(prev => prev.map(p => p.key === f.key ? { ...p, ...edit } : p));
       setEdits(prev => { const next = { ...prev }; delete next[f.key]; return next; });

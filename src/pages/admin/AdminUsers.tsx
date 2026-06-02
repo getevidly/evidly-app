@@ -152,24 +152,26 @@ export default function AdminUsers() {
     try {
       switch (actionType) {
         case 'suspend': {
-          await supabase.from('user_profiles').update({
+          const { error } = await supabase.from('user_profiles').update({
             is_suspended: true,
             suspended_at: new Date().toISOString(),
             suspended_by: user?.id,
             suspend_reason: actionReason || 'Admin action',
           }).eq('id', actionUser.id);
+          if (error) { toast.error(`Suspend failed: ${error.message}`); break; }
           await logAuditEvent('admin.user_suspended', actionUser.id,
             { is_suspended: false }, { is_suspended: true, reason: actionReason });
           toast.success(`${actionUser.full_name} suspended`);
           break;
         }
         case 'unsuspend': {
-          await supabase.from('user_profiles').update({
+          const { error } = await supabase.from('user_profiles').update({
             is_suspended: false,
             suspended_at: null,
             suspended_by: null,
             suspend_reason: null,
           }).eq('id', actionUser.id);
+          if (error) { toast.error(`Unsuspend failed: ${error.message}`); break; }
           await logAuditEvent('admin.user_unsuspended', actionUser.id,
             { is_suspended: true }, { is_suspended: false });
           toast.success(`${actionUser.full_name} unsuspended`);
@@ -177,34 +179,38 @@ export default function AdminUsers() {
         }
         case 'change_role': {
           const oldRole = actionUser.role;
-          await supabase.from('user_profiles').update({ role: actionRole }).eq('id', actionUser.id);
+          const { error } = await supabase.from('user_profiles').update({ role: actionRole }).eq('id', actionUser.id);
+          if (error) { toast.error(`Role change failed: ${error.message}`); break; }
           await logAuditEvent('admin.user_role_changed', actionUser.id,
             { role: oldRole }, { role: actionRole });
           toast.success(`${actionUser.full_name} role changed to ${ROLE_LABELS[actionRole] || actionRole}`);
           break;
         }
         case 'unlock': {
-          await supabase.from('user_profiles').update({
+          const { error } = await supabase.from('user_profiles').update({
             failed_login_count: 0,
             locked_until: null,
           }).eq('id', actionUser.id);
+          if (error) { toast.error(`Unlock failed: ${error.message}`); break; }
           await logAuditEvent('admin.user_unlocked', actionUser.id,
             { locked: true }, { locked: false });
           toast.success(`${actionUser.full_name} unlocked`);
           break;
         }
         case 'reset_password': {
-          await supabase.auth.resetPasswordForEmail(actionUser.email || '');
+          const { error } = await supabase.auth.resetPasswordForEmail(actionUser.email || '');
+          if (error) { toast.error(`Password reset failed: ${error.message}`); break; }
           await logAuditEvent('admin.password_reset_sent', actionUser.id, null,
             { email: actionUser.email });
           toast.success(`Password reset email sent to ${actionUser.email}`);
           break;
         }
         case 'revoke_sessions': {
-          await supabase.from('user_sessions').update({
+          const { error } = await supabase.from('user_sessions').update({
             revoked_at: new Date().toISOString(),
             revoke_reason: 'admin_forced',
           }).eq('user_id', actionUser.id).is('revoked_at', null);
+          if (error) { toast.error(`Session revoke failed: ${error.message}`); break; }
           await logAuditEvent('admin.sessions_revoked', actionUser.id, null,
             { reason: 'admin_forced' });
           toast.success(`All sessions revoked for ${actionUser.full_name}`);

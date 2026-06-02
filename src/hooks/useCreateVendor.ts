@@ -52,11 +52,19 @@ export function useCreateVendor() {
     }
 
     if (vendorData) {
-      await supabase.from('vendor_client_relationships').insert({
+      const { error: relError } = await supabase.from('vendor_client_relationships').insert({
         vendor_id: vendorData.id,
         organization_id: organizationId,
         status: 'active',
       });
+
+      if (relError) {
+        // Clean up orphaned vendor row
+        await supabase.from('vendors').delete().eq('id', vendorData.id);
+        setError(relError.message);
+        setIsLoading(false);
+        return null;
+      }
     }
 
     setIsLoading(false);

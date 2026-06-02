@@ -2,7 +2,7 @@
 // Fetches service_requests for the org + realtime subscription.
 // Demo mode returns empty array (no fake data per CLAUDE.md).
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -27,6 +27,7 @@ export function useServiceRequests(statusFilter?: ServiceRequestStatus | 'all'):
   const [error, setError] = useState<string | null>(null);
 
   const orgId = profile?.organization_id;
+  const acceptingRef = useRef(false);
 
   const fetchRequests = useCallback(async () => {
     if (isDemoMode || !orgId) {
@@ -104,39 +105,51 @@ export function useServiceRequests(statusFilter?: ServiceRequestStatus | 'all'):
 
   const acceptAlternative = async (requestId: string, selectedSlot: string) => {
     if (isDemoMode) return;
+    if (acceptingRef.current) return;
+    acceptingRef.current = true;
 
-    const slotDate = new Date(selectedSlot);
+    try {
+      const slotDate = new Date(selectedSlot);
 
-    // Update service request to confirmed
-    await supabase
-      .from('service_requests')
-      .update({
-        confirmed_datetime: selectedSlot,
-        confirmed_by: 'operator',
-        status: 'confirmed',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', requestId);
+      // Update service request to confirmed
+      const { error } = await supabase
+        .from('service_requests')
+        .update({
+          confirmed_datetime: selectedSlot,
+          confirmed_by: 'operator',
+          status: 'confirmed',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', requestId);
 
-    // Find the request to get vendor info for calendar event
-    const req = requests.find(r => r.id === requestId);
-    if (req && orgId) {
-      await supabase.from('calendar_events').insert({
-        organization_id: orgId,
-        location_id: req.location_id,
-        title: `${req.service_type} — ${req.vendor_name || 'Vendor'}`,
-        type: 'vendor',
-        category: req.service_type,
-        date: slotDate.toISOString().slice(0, 10),
-        start_time: slotDate.toTimeString().slice(0, 5),
-        end_time: new Date(slotDate.getTime() + 120 * 60000).toTimeString().slice(0, 5),
-        vendor_id: req.vendor_id,
-        vendor_name: req.vendor_name || 'Vendor',
-        service_request_id: requestId,
-      });
+      if (error) {
+        console.error('[useServiceRequests] confirm failed:', error.message);
+        return;
+      }
+
+      // Find the request to get vendor info for calendar event
+      const req = requests.find(r => r.id === requestId);
+      if (req && orgId) {
+        const { error: calError } = await supabase.from('calendar_events').insert({
+          organization_id: orgId,
+          location_id: req.location_id,
+          title: `${req.service_type} — ${req.vendor_name || 'Vendor'}`,
+          type: 'vendor',
+          category: req.service_type,
+          date: slotDate.toISOString().slice(0, 10),
+          start_time: slotDate.toTimeString().slice(0, 5),
+          end_time: new Date(slotDate.getTime() + 120 * 60000).toTimeString().slice(0, 5),
+          vendor_id: req.vendor_id,
+          vendor_name: req.vendor_name || 'Vendor',
+          service_request_id: requestId,
+        });
+        if (calError) console.error('[useServiceRequests] calendar insert failed:', calError.message);
+      }
+
+      fetchRequests();
+    } finally {
+      acceptingRef.current = false;
     }
-
-    fetchRequests();
   };
 
   const cancelRequest = async (requestId: string) => {
