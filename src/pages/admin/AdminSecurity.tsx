@@ -128,11 +128,17 @@ export default function AdminSecurity() {
     const newVal = !currentVal;
     setMfaPolicy(prev => prev.map(r => r.role === role ? { ...r, mfa_required: newVal } : r));
     await supabase.from('mfa_policy').update({ mfa_required: newVal }).eq('role', role);
-    await supabase.from('platform_audit_log').insert({
-      actor_id: user?.id, actor_email: user?.email,
-      action: 'admin.mfa_policy_changed', resource_type: 'mfa_policy', resource_id: role,
-      old_value: { mfa_required: currentVal }, new_value: { mfa_required: newVal },
-    }).catch(() => {});
+    const { error: auditErr } = await supabase.rpc('log_audit_event', {
+      p_action: 'admin.mfa_policy_changed',
+      p_resource_type: 'mfa_policy',
+      p_resource_id: role,
+      p_metadata: {
+        actor_email: user?.email,
+        old_value: { mfa_required: currentVal },
+        new_value: { mfa_required: newVal },
+      },
+    });
+    if (auditErr) console.error('[AdminSecurity] audit log failed:', auditErr.message);
     toast.success(`MFA ${newVal ? 'required' : 'optional'} for ${ROLE_LABELS[role] || role}`);
   };
 
@@ -160,10 +166,13 @@ export default function AdminSecurity() {
       revoked_at: new Date().toISOString(),
       revoke_reason: 'admin_forced',
     }).eq('id', sessionId);
-    await supabase.from('platform_audit_log').insert({
-      actor_id: user?.id, actor_email: user?.email,
-      action: 'admin.session_revoked', resource_type: 'user_session', resource_id: sessionId,
-    }).catch(() => {});
+    const { error: auditErr2 } = await supabase.rpc('log_audit_event', {
+      p_action: 'admin.session_revoked',
+      p_resource_type: 'user_session',
+      p_resource_id: sessionId,
+      p_metadata: { actor_email: user?.email },
+    });
+    if (auditErr2) console.error('[AdminSecurity] audit log failed:', auditErr2.message);
     setSessions(prev => prev.filter(s => s.id !== sessionId));
     setRevoking(null);
     toast.success('Session revoked');
@@ -177,11 +186,12 @@ export default function AdminSecurity() {
         revoke_reason: 'admin_forced',
       }).eq('id', s.id);
     }
-    await supabase.from('platform_audit_log').insert({
-      actor_id: user?.id, actor_email: user?.email,
-      action: 'admin.all_sessions_revoked', resource_type: 'user_session',
-      metadata: { count: sessions.length },
-    }).catch(() => {});
+    const { error: auditErr3 } = await supabase.rpc('log_audit_event', {
+      p_action: 'admin.all_sessions_revoked',
+      p_resource_type: 'user_session',
+      p_metadata: { actor_email: user?.email, count: sessions.length },
+    });
+    if (auditErr3) console.error('[AdminSecurity] audit log failed:', auditErr3.message);
     setSessions([]);
     toast.success('All sessions revoked');
   };

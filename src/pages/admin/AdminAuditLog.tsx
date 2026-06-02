@@ -144,19 +144,19 @@ export default function AdminAuditLog() {
     toast.success('Audit log exported');
 
     // Log the export itself to the audit trail
-    await supabase.from('platform_audit_log').insert({
-      action: 'data.audit_log_exported',
-      actor_id: user?.id || null,
-      actor_email: user?.email || null,
-      resource_type: 'audit_log',
-      metadata: {
+    const { error: auditErr } = await supabase.rpc('log_audit_event', {
+      p_action: 'data.audit_log_exported',
+      p_resource_type: 'audit_log',
+      p_success: true,
+      p_metadata: {
+        actor_email: user?.email || null,
         date_range_start: dateFrom || null,
         date_range_end: dateTo || null,
         row_count: entries.length,
         filters_applied: hasFilters,
       },
-      success: true,
-    }).catch(() => {}); // non-blocking — audit insert must never break export
+    });
+    if (auditErr) console.error('[AdminAuditLog] audit log failed:', auditErr.message);
   };
 
   // ── Stats ──

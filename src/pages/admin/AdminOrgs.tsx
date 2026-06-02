@@ -123,15 +123,17 @@ export default function AdminOrgs() {
       if (error) throw error;
 
       // Audit log
-      await supabase.from('platform_audit_log').insert({
-        actor_id: user?.id,
-        actor_email: user?.email,
-        action: 'admin.org_updated',
-        resource_type: 'organization',
-        resource_id: editingId,
-        old_value: org ? { name: org.name, industry_type: org.industry_type, plan: org.plan, timezone: org.timezone, notes: org.notes } : null,
-        new_value: updates,
-      }).catch(() => {});
+      const { error: auditErr } = await supabase.rpc('log_audit_event', {
+        p_action: 'admin.org_updated',
+        p_resource_type: 'organization',
+        p_resource_id: editingId,
+        p_metadata: {
+          actor_email: user?.email,
+          old_value: org ? { name: org.name, industry_type: org.industry_type, plan: org.plan, timezone: org.timezone, notes: org.notes } : null,
+          new_value: updates,
+        },
+      });
+      if (auditErr) console.error('[AdminOrgs] audit log failed:', auditErr.message);
 
       toast.success('Organization updated');
       setEditingId(null);

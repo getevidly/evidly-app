@@ -553,14 +553,15 @@ export default function IntelligenceAdmin() {
         affected_jurisdictions: createForm.affected_jurisdictions.length > 0 ? createForm.affected_jurisdictions : null,
       });
       if (error) throw error;
-      await supabase.from('platform_audit_log').insert({
-        actor_id: user?.id,
-        actor_email: user?.email,
-        action: 'signal.created_manual',
-        resource_type: 'intelligence_signal',
-        old_value: null,
-        new_value: { title: createForm.title, signal_type: createForm.signal_type },
-      }).catch(() => {});
+      const { error: auditErr } = await supabase.rpc('log_audit_event', {
+        p_action: 'signal.created_manual',
+        p_resource_type: 'intelligence_signal',
+        p_metadata: {
+          actor_email: user?.email,
+          new_value: { title: createForm.title, signal_type: createForm.signal_type },
+        },
+      });
+      if (auditErr) console.error('[IntelligenceAdmin] audit log failed:', auditErr.message);
       toast.success('Signal created');
       setShowCreateModal(false);
       setCreateForm({ title: '', summary: '', detail_markdown: '', signal_type: 'intelligence', category: 'food_safety', priority: 'medium', affected_jurisdictions: [], game_plan_steps: [], affected_ingredient: '', affected_supplier: '' });
@@ -599,15 +600,16 @@ export default function IntelligenceAdmin() {
       updates.edit_count = (currentSig?.edit_count || 0) + 1;
       const { error } = await supabase.from('intelligence_signals').update(updates).eq('id', editingId);
       if (error) throw error;
-      await supabase.from('platform_audit_log').insert({
-        actor_id: user?.id,
-        actor_email: user?.email,
-        action: 'signal.edited',
-        resource_type: 'intelligence_signal',
-        resource_id: editingId,
-        old_value: null,
-        new_value: updates,
-      }).catch(() => {});
+      const { error: auditErr2 } = await supabase.rpc('log_audit_event', {
+        p_action: 'signal.edited',
+        p_resource_type: 'intelligence_signal',
+        p_resource_id: editingId,
+        p_metadata: {
+          actor_email: user?.email,
+          new_value: updates,
+        },
+      });
+      if (auditErr2) console.error('[IntelligenceAdmin] audit log failed:', auditErr2.message);
       await logReviewAction(editingId, 'edit', null, updates);
       toast.success('Signal updated');
       setSignals(prev => prev.map(s => s.id === editingId ? { ...s, ...updates } : s));

@@ -136,15 +136,17 @@ export default function AdminUsers() {
   };
 
   const logAuditEvent = async (action: string, resourceId: string, oldValue: any, newValue: any) => {
-    await supabase.from('platform_audit_log').insert({
-      actor_id: user?.id,
-      actor_email: user?.email,
-      action,
-      resource_type: 'user',
-      resource_id: resourceId,
-      old_value: oldValue,
-      new_value: newValue,
-    }).catch(() => {});
+    const { error: auditErr } = await supabase.rpc('log_audit_event', {
+      p_action: action,
+      p_resource_type: 'user',
+      p_resource_id: resourceId,
+      p_metadata: {
+        actor_email: user?.email,
+        old_value: oldValue,
+        new_value: newValue,
+      },
+    });
+    if (auditErr) console.error('[AdminUsers] audit log failed:', auditErr.message);
   };
 
   const executeAction = async () => {
