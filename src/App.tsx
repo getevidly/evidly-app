@@ -61,10 +61,11 @@ const FireSafetyAnalysis = lazy(() => import('./pages/fireSafety/Analysis'));
 const FireSafetyTrajectory = lazy(() => import('./pages/fireSafety/Trajectory'));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const CompanyProfilePage = lazy(() => import('./pages/settings/CompanyProfilePage').then(m => ({ default: m.CompanyProfilePage })));
-const TeamRolesPage = lazy(() => import('./pages/settings/TeamRolesPage').then(m => ({ default: m.TeamRolesPage })));
-const ServiceTypesPage = lazy(() => import('./pages/settings/ServiceTypesPage').then(m => ({ default: m.ServiceTypesPage })));
-const SettingsIntegrationsPage = lazy(() => import('./pages/settings/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+// POST-LAUNCH: Settings sub-pages hidden — backing tables absent or stubs unconnected. Restore when wired.
+// const CompanyProfilePage = lazy(() => import('./pages/settings/CompanyProfilePage').then(m => ({ default: m.CompanyProfilePage })));
+// const TeamRolesPage = lazy(() => import('./pages/settings/TeamRolesPage').then(m => ({ default: m.TeamRolesPage })));
+// const ServiceTypesPage = lazy(() => import('./pages/settings/ServiceTypesPage').then(m => ({ default: m.ServiceTypesPage })));
+// const SettingsIntegrationsPage = lazy(() => import('./pages/settings/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
 const NotificationsPage = lazy(() => import('./pages/settings/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
 const BillingPage = lazy(() => import('./pages/settings/BillingPage').then(m => ({ default: m.BillingPage })));
 const ReportCenter = lazy(() => import('./pages/ReportCenter').then(m => ({ default: m.ReportCenter })));
@@ -667,10 +668,11 @@ function AppRoutes() {
           {/* <Route path="/reports" element={<ReportsPage />} /> */}
           {/* <Route path="/reports/:slug" element={<ReportGeneratorPage />} /> */}
           <Route path="/settings" element={<SettingsPage />}>
-            <Route index element={<Navigate to="/settings/company" replace />} />
-            <Route path="company" element={<CompanyProfilePage />} />
-            <Route path="team-roles" element={<TeamRolesPage />} />
-            <Route path="service-types" element={<ServiceTypesPage />} />
+            {/* POST-LAUNCH: Settings sub-pages hidden — backing tables absent or stubs unconnected. Restore when wired. */}
+            <Route index element={<Navigate to="/settings/notifications" replace />} />
+            {/* <Route path="company" element={<CompanyProfilePage />} /> */}
+            {/* <Route path="team-roles" element={<TeamRolesPage />} /> */}
+            {/* <Route path="service-types" element={<ServiceTypesPage />} /> */}
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="billing" element={<BillingPage />} />
           </Route>
@@ -725,7 +727,8 @@ function AppRoutes() {
           <Route element={<RequireAdmin />}>
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
-          <Route path="/settings/integrations" element={<SettingsIntegrationsPage />} />
+          {/* POST-LAUNCH: Integrations hidden — no connect/sync engine. Restore when wired. */}
+          {/* <Route path="/settings/integrations" element={<SettingsIntegrationsPage />} /> */}
           <Route path="/settings/api-keys" element={<IntegrationHub />} />
           <Route path="/settings/webhooks" element={<IntegrationHub />} />
           <Route path="/developers" element={<DeveloperPortal />} />

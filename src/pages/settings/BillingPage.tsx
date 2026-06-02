@@ -152,7 +152,8 @@ export function BillingPage() {
   }, [organizationId]);
 
   if (userRole !== 'owner_operator' && userRole !== 'platform_admin') {
-    return <Navigate to="/settings/company" replace />;
+    // POST-LAUNCH: was /settings/company — hidden, redirect to notifications instead.
+    return <Navigate to="/settings/notifications" replace />;
   }
 
   if (loading || !billingData) {

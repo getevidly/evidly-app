@@ -68,7 +68,8 @@ export function IntegrationsPage() {
     <div style={{ ...FONT }}>
       {/* Back link */}
       <button
-        onClick={() => navigate('/settings/company')}
+        // POST-LAUNCH: was /settings/company — hidden, redirect to settings root instead.
+        onClick={() => navigate('/settings')}
         className="flex items-center gap-1.5 bg-none border-none text-slate_ui text-[13px] cursor-pointer p-0 mb-4"
       >
         <ArrowLeft size={16} /> Back to Settings

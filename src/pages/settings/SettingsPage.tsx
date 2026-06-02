@@ -8,10 +8,14 @@ import {
 } from '../../components/dashboard/shared/constants';
 
 const NAV_ITEMS = [
-  { path: '/settings/company', label: 'Company Profile', icon: Building2, roles: null },
-  { path: '/settings/team-roles', label: 'Team & Roles', icon: Shield, roles: ['owner_operator', 'executive'] },
-  { path: '/settings/service-types', label: 'Service Types', icon: Wrench, roles: ['owner_operator', 'executive'] },
-  { path: '/settings/integrations', label: 'Integrations', icon: Plug, roles: ['owner_operator', 'executive'] },
+  // POST-LAUNCH: Company Profile hidden — no org_settings table. Restore when wired.
+  // { path: '/settings/company', label: 'Company Profile', icon: Building2, roles: null },
+  // POST-LAUNCH: Team & Roles hidden — stub uses incompatible role shape; real system at /settings/roles-permissions via Team Management.
+  // { path: '/settings/team-roles', label: 'Team & Roles', icon: Shield, roles: ['owner_operator', 'executive'] },
+  // POST-LAUNCH: Service Types hidden — table exists but mutations not built. Restore when wired.
+  // { path: '/settings/service-types', label: 'Service Types', icon: Wrench, roles: ['owner_operator', 'executive'] },
+  // POST-LAUNCH: Integrations hidden — catalog exists but no connect/sync engine. Restore when wired.
+  // { path: '/settings/integrations', label: 'Integrations', icon: Plug, roles: ['owner_operator', 'executive'] },
   { path: '/settings/notifications', label: 'Notifications', icon: Bell, roles: null },
   { path: '/settings/billing', label: 'Billing', icon: CreditCard, roles: ['owner_operator'] },
 ] as const;

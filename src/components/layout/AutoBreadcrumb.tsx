@@ -77,7 +77,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/team': { label: 'Team', parent: '/admin' },
   '/settings': { label: 'Settings', parent: '/admin' },
   '/settings/branding': { label: 'Branding', parent: '/settings' },
-  '/settings/integrations': { label: 'Integrations', parent: '/settings' },
+  // POST-LAUNCH: Integrations hidden — route removed. Restore when wired.
+  // '/settings/integrations': { label: 'Integrations', parent: '/settings' },
   '/settings/api-keys': { label: 'API Keys', parent: '/settings' },
   '/settings/webhooks': { label: 'Webhooks', parent: '/settings' },
   '/settings/roles-permissions': { label: 'Roles & Permissions', parent: '/settings' },

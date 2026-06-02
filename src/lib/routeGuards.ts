@@ -83,8 +83,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
 
   // Settings — role-gated sections
   ['/settings/roles-permissions', ['owner_operator', 'executive']],
-  ['/settings/team-roles',        ['owner_operator', 'executive']],
-  ['/settings/service-types',     ['owner_operator', 'executive']],
+  // POST-LAUNCH: Settings sub-pages hidden — backing tables absent or stubs unconnected. Restore when wired.
+  // ['/settings/team-roles',        ['owner_operator', 'executive']],
+  // ['/settings/service-types',     ['owner_operator', 'executive']],
   ['/settings/billing',           ['owner_operator']],
   ['/iot/hub',               ['owner_operator', 'executive', 'compliance_manager']],
 
