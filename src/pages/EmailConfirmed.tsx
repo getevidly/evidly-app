@@ -76,7 +76,7 @@ async function provisionNewUser(userId: string, meta: Record<string, string>): P
     .insert([{
       user_id: userId,
       organization_id: orgId,
-      role: 'owner',
+      role: 'owner_operator',
     }]);
 
   if (accessError) {

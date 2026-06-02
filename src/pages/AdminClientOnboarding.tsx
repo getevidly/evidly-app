@@ -164,6 +164,7 @@ export function AdminClientOnboarding() {
           emailRedirectTo: `${window.location.origin}/email-confirmed`,
           data: {
             full_name: ownerName,
+            skip_trigger_org: true,
             user_type: isTribal ? 'tribal_casino' : 'restaurant',
           }
         }
