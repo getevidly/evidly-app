@@ -53,12 +53,25 @@ If uncertain — STOP and ask Arthur. Do not create it.
 
 Tables that must NEVER be created in this repo:
 - customer_surveys, survey_settings (HoodOps PRO)
-- referrals, service_requests (HoodOps PRO)
+- referrals (HoodOps PRO)
 - mobile_inspections (HoodOps PRO)
 - service_reports (HoodOps PRO)
 - vendor_employees (HoodOps PRO)
 - jobs (HoodOps PRO)
 - Any table referencing vendor_id as a foreign key to a jobs or vendor system
+
+### EvidLY ↔ HoodOps shared tables (intended integration — not violations)
+
+These tables are EvidLY-owned. HoodOps writes to them exclusively via the
+`hoodops-webhook` edge function (shared-secret auth, idempotent, audit-logged).
+This is the intended inbound integration, not a scope leak.
+
+- `service_requests` — EvidLY vendor-cadence management (migration 20260820000000).
+  Used by useServiceRequests.ts, route-service-request edge fn. HoodOps never touches it.
+- `vendor_service_records` — HoodOps writes service completions; EvidLY reads for PSE reconciliation.
+- `location_service_schedules` — HoodOps updates next_due_date after service; EvidLY reads and manages cadence.
+- `service_reschedule_requests` — EvidLY creates requests; HoodOps confirms/declines via webhook.
+- `service_type_definitions` — Canonical taxonomy (7 codes). EvidLY owns; both systems read.
 
 ---
 
