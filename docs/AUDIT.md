@@ -36,307 +36,227 @@ than reacting after. Every feature is judged against that purpose.
 
 ---
 
-## CLUSTER 1: PROACTIVE INTELLIGENCE ENGINE
+## CLUSTER 1: JURISDICTION INTELLIGENCE ENGINE (JIE)
 
-Audited path: inbound signal → jurisdiction bind → dual-pillar scoring → proactive surface.
+Corrected lens: EvidLY REPORTS what each jurisdiction requires — food safety
+(EHD) and fire safety (AHJ/NFPA), two pillars, NEVER blended. It does NOT
+score kitchens. Scoring/benchmarking is a FUTURE PHASE (not a current gap).
+PRP (Predict/Reduce/Prove) is a UI presentation pattern with design tokens,
+not DB data.
+
+Audited path: jurisdiction rulebook → bound to tenant's location →
+inbound signals / requirements / due-dates → surfaced PROACTIVELY in tenant UI.
 
 ### PRODUCTION SCHEMA REALITY (tested via PostgREST REST API)
 
-**Tables confirmed NOT EXISTING in production (HTTP 404 from PostgREST):**
-- `compliance_score_snapshots` (PostgREST suggested: compliance_photos)
-- `readiness_snapshots` (PostgREST suggested: sync_snapshots)
-- `score_model_versions` (PostgREST suggested: remote_connect_sessions)
-- `score_calculations` (PostgREST: not found)
-- `alerts` (PostgREST suggested: allergens)
-- `risk_assessments` (PostgREST suggested: shift_assignments)
-- `predictive_alerts` (PostgREST suggested: prediction_accuracy_log)
-- `signal_reads` (PostgREST suggested: message_threads)
-- `executive_snapshots` (PostgREST suggested: sync_snapshots)
-- `location_compliance_scores` (PostgREST suggested: location_jurisdiction_scores)
+**Tables confirmed NOT EXISTING in production (HTTP 404):**
+- `signal_reads` (suggested: message_threads)
+- `alerts` (suggested: allergens)
+- `equipment_maintenance_schedule` (not found)
+- `federal_overlay_jurisdictions` (not found)
+- `location_jurisdiction_profiles` (not found)
+- `certification_requirements` (not found)
 
-**Phantom columns (column referenced in code, does not exist on table):**
-- `intelligence_signals.org_id` — PHANTOM
-- `intelligence_signals.workforce_risk_level` — PHANTOM
-- `intelligence_signals.is_sample` — PHANTOM
-- `intelligence_signals.summary` — PHANTOM
-- `intelligence_signals.priority` — PHANTOM
-- `intelligence_signals.county` — PHANTOM
-- `intelligence_signals.feed_type` — PHANTOM
-- `intelligence_sources.slug` — PHANTOM
-- `intelligence_sources.source_type` — PHANTOM
+**FUTURE PHASE tables — not current gaps (planned scoring/benchmarking phase):**
+- `compliance_score_snapshots` — scoring engine output
+- `score_calculations` — scoring audit trail
+- `score_model_versions` — engine version registry
+- `readiness_snapshots` — daily readiness tracking
+- `risk_assessments` — risk correlation output
+- `predictive_alerts` — predictive alerting output
+- `location_compliance_scores` — sensor aggregation output
+- `executive_snapshots` — executive intelligence briefs
+
+**Phantom columns (referenced in code, does not exist on table):**
+- `locations.jurisdiction_id` — breaks useJurisdiction hook
+- `locations.address_line1`, `locations.county` — PHANTOM
+- `locations.next_hood_cleaning_due`, `next_suppression_semi_annual_due`, `next_fire_extinguisher_check_due` — PHANTOM
+- `intelligence_signals.org_id` — breaks all frontend intelligence surfaces
+- `intelligence_signals.workforce_risk_level`, `is_sample`, `summary`, `priority`, `county`, `feed_type` — PHANTOM
+- `intelligence_sources.slug`, `source_type` — PHANTOM
+- `equipment.next_maintenance_due`, `equipment.is_active` — PHANTOM
+- `location_service_schedules.service_type`, `frequency_months`, `last_completed_date` — PHANTOM
+- `corrective_actions.priority` — PHANTOM
+- `vendor_service_records.service_type`, `completed_date` — PHANTOM
+- `jurisdictions.food_agency_id`, `food_agency_name`, `food_scoring_type`, `food_grading_type` — PHANTOM (code falls back via `||`)
+- `jurisdictions.fire_agency_id`, `fire_agency_name`, `fire_inspection_frequency`, `food_inspection_frequency` — PHANTOM (code falls back via `||`)
 
 **Tables confirmed EXISTING with valid columns (HTTP 200):**
-- `intelligence_signals` (exists; 7 phantom columns listed above)
-- `intelligence_sources` (exists; 2 phantom columns listed above)
-- `jurisdictions` (169 rows — real jurisdiction data)
-- `location_jurisdictions` (exists; 0 rows via anon key)
-- `location_jurisdiction_scores` (exists; 0 rows)
-- `jurisdiction_scoring_profiles` (exists; 0 rows)
-- `calcode_violation_map` (exists; 0 rows)
-- `jurisdiction_violation_overrides` (exists; 0 rows)
-- `drift_catches` (exists; all columns valid; 0 rows)
-- `drift_acknowledgments` (exists; all columns valid; 0 rows)
-- `owner_decisions` (exists; all columns valid; 0 rows)
-- `crawl_runs` (exists; 0 rows)
-- `crawl_health` (exists; 0 rows)
-- `entity_correlations` (exists; 0 rows)
-- `weekly_drift_reports` (exists; 0 rows)
-- `advisor_briefings` (exists; 0 rows)
-- `evidence_signals` (exists; 0 rows)
+- `jurisdictions` (169 rows — real California/Nevada jurisdiction data)
+- `location_jurisdictions` (0 rows; valid: location_id, jurisdiction_layer, is_most_restrictive)
+- `jurisdiction_scoring_profiles` (0 rows)
+- `calcode_violation_map` (0 rows)
+- `jurisdiction_violation_overrides` (0 rows)
+- `drift_catches` (0 rows; all 15 columns valid)
+- `drift_acknowledgments` (0 rows; all 4 columns valid)
+- `owner_decisions` (0 rows; all 4 columns valid)
+- `crawl_runs` (0 rows)
+- `crawl_health` (0 rows)
+- `entity_correlations` (0 rows)
+- `weekly_drift_reports` (0 rows)
+- `advisor_briefings` (0 rows)
+- `evidence_signals` (0 rows)
+- `compliance_documents` (0 rows; valid: id, location_id, status, expiry_date)
+- `location_service_schedules` (0 rows; valid: id, is_active, next_due_date)
+- `corrective_actions` (0 rows; valid: id, location_id, status)
+- `intelligence_signals` (0 rows; 7 phantom columns listed above)
+- `intelligence_sources` (0 rows; 2 phantom columns listed above)
 
 ---
 
-### FEATURE: Intelligence Signal Collection
-- does: Daily cron crawl of external food-safety + facility-safety sources (openFDA, USDA FSIS, CDC, CDPH, CA Fire Marshal, NFPA). Transforms raw data via Claude API, inserts into intelligence_insights with status pending_review.
-- proactive?: PROACTIVE — cron at 14:00 UTC daily (supabase/functions/intelligence-collect/index.ts); fires ahead of any incident affecting tenant kitchens
-- affects: classify-signals, canonical-correlate, intelligence-approve, intelligence-deliver
-- scope: system — no org filter on collection; RLS column: service_role only
-- reads: external APIs (openFDA, USDA FSIS, CDC, CDPH, CDFA, FoodSafety.gov, CA Fire Marshal), platform_settings
-- writes: intelligence_insights, admin_event_log
-- related_to: Crawl Infrastructure, Signal Classification & Routing
-- status: UNVERIFIED
-- EVIDENCE: crawl_execution_log table exists but 0 rows via anon key (may be RLS-blocked). intelligence_signals table exists but 0 rows. Cannot confirm cron has ever fired without service_role access. Edge function code exists at supabase/functions/intelligence-collect/index.ts.
-- COLUMN CHECK: Edge function uses service_role client — not subject to frontend .select() column issues. intelligence_sources.slug = PHANTOM, intelligence_sources.source_type = PHANTOM (used by trigger-crawl/crawl-monitor, not intelligence-collect directly).
-
-### FEATURE: Crawl Infrastructure
-- does: trigger-crawl fetches Firecrawl-method sources; crawl-monitor fetches direct-fetch sources; both update intelligence_sources status and write run logs to crawl_runs.
-- proactive?: PROACTIVE — crawl-monitor runs on schedule; trigger-crawl is manual but feeds proactive pipeline
-- affects: Intelligence Signal Collection (upstream health monitoring)
-- scope: system — RLS column: service_role only
-- reads: intelligence_sources (fetch_method, url, status)
-- writes: intelligence_sources (last_crawled_at, status), crawl_runs, crawl_health, admin_event_log
-- related_to: Intelligence Signal Collection
-- status: UNVERIFIED
-- EVIDENCE: crawl_runs table exists (HTTP 200), 0 rows. crawl_health table exists (HTTP 200), 0 rows. intelligence_sources table exists but has phantom columns slug and source_type. Edge function code exists at supabase/functions/trigger-crawl/index.ts and supabase/functions/crawl-monitor/index.ts.
-- COLUMN CHECK: intelligence_sources.slug = PHANTOM. intelligence_sources.source_type = PHANTOM. If trigger-crawl or crawl-monitor select these columns, those queries return 400.
-
-### FEATURE: Signal Classification & Routing
-- does: classify-signals classifies raw signals (category, severity, pillar assignment, jurisdiction mapping). canonical-correlate maps signals to jurisdictions and organizations. intelligence-auto-publish auto-publishes low-risk signals when platform_settings.intelligence_routing_mode='autonomous'. intelligenceRouter.ts computes severity scores and routing tier (auto/notify/hold).
-- proactive?: PROACTIVE — auto-publish runs hourly at :30 (cron); classification triggers ahead of operator review
-- affects: Signal Delivery, Intelligence Feed UI
-- scope: system (classification) + org-scoped (routing) — RLS column: service_role
-- reads: intelligence_signals, jurisdictions, locations, organizations, platform_settings
-- writes: intelligence_signals (update: category, severity, is_classified, is_correlated, status), entity_correlations, notifications, admin_event_log
-- related_to: Intelligence Signal Collection, Signal Delivery
-- status: UNVERIFIED
-- EVIDENCE: entity_correlations table exists (HTTP 200), 0 rows. intelligence_signals table exists but org_id is PHANTOM — canonical-correlate writes orgs_affected count but reads org from locations table, so correlation may still work. Edge function code exists at supabase/functions/classify-signals/index.ts, supabase/functions/canonical-correlate/index.ts, supabase/functions/intelligence-auto-publish/index.ts. Client library at src/lib/intelligenceRouter.ts:81-228.
-- COLUMN CHECK: intelligence_signals.org_id = PHANTOM (used in auto-publish filter). If auto-publish filters on org_id, that query fails. classify-signals uses service_role client but may reference phantom columns on intelligence_sources.
-
-### FEATURE: Signal Delivery
-- does: intelligence-deliver routes published signals to org users via notifications. intelligence-feed returns published signals as paginated JSON feed. intelligence-approve provides admin review workflow.
-- proactive?: PROACTIVE — delivers alerts to operators before the issue hits their kitchen
-- affects: Intelligence Feed UI, Unread Signal Badge
-- scope: org-scoped — RLS column: organization_id on notifications
-- reads: intelligence_signals (status='published'), user_profiles, locations, organizations
-- writes: notifications, intelligence_signals (status update), intelligence_signal_approvals, admin_event_log
-- related_to: Signal Classification & Routing, Intelligence Feed UI
-- status: UNVERIFIED
-- EVIDENCE: Edge function code exists at supabase/functions/intelligence-deliver/index.ts, supabase/functions/intelligence-feed/index.ts, supabase/functions/intelligence-approve/index.ts. Cannot confirm execution without service_role access.
-- COLUMN CHECK: intelligence-deliver reads intelligence_signals via service_role — may filter on phantom columns. If it filters on org_id (PHANTOM), delivery queries fail silently.
+### LAYER A — JURISDICTION RULEBOOK
 
 ### FEATURE: Jurisdictions Reference Data
-- does: Master reference table of 169 California + Nevada jurisdictions. Each row carries food-safety agency config (scoring_type, grading_type, grading_config, pass_threshold) and fire-safety config (fire_jurisdiction_config, fire_ahj_name, fire_code_edition, nfpa96_edition). Created in migration 20260301000020_jurisdiction_intelligence.sql.
+- does: Master reference table of 169 California + Nevada jurisdictions. Each row carries food-safety agency config (scoring_type, grading_type, grading_config, pass_threshold) and fire-safety config (fire_jurisdiction_config, fire_ahj_name, fire_code_edition, nfpa96_edition). Dual-pillar by design — food and fire config stored separately on each row. Created in migration 20260301000020_jurisdiction_intelligence.sql.
 - proactive?: NEUTRAL — reference data, not an active process
-- affects: Location-Jurisdiction Binding, Compliance Score Engine, Jurisdiction Config Drift Monitor, Signal Classification
-- scope: system — shared reference table; RLS: service_role + select for authenticated users
+- affects: Location-Jurisdiction Binding, useJurisdiction Hook, Signal Classification, Drift Detection
+- scope: system — shared reference table; RLS: service_role + select for authenticated
 - reads: N/A (reference table)
 - writes: N/A (seeded by migration, updated by admin)
-- related_to: Location-Jurisdiction Binding, Jurisdiction Scoring Configuration
+- related_to: Location-Jurisdiction Binding, Jurisdiction Config Drift Monitor
 - status: LIVE-WORKING
-- EVIDENCE: REST query returned 169 rows (HTTP 200). Sample row confirmed columns: id, county, state, agency_name, data_source_tier, scoring_type, grading_type, grading_config, fire_jurisdiction_config all present and populated with real jurisdiction data. Verified via: `GET /rest/v1/jurisdictions?select=id,county,state,agency_name,data_source_tier,scoring_type,grading_type,grading_config,fire_jurisdiction_config&limit=1` → HTTP 200, 1 row returned with actual California county data.
-- COLUMN CHECK: All columns tested (id, county, state, agency_name, data_source_tier, scoring_type, grading_type, grading_config, fire_jurisdiction_config) — PASS. Note: columns `name`, `state_code`, `food_safety_weight`, `facility_safety_weight` DO NOT EXIST on this table (referenced in some edge function code but weights live in pillar_weights JSONB on score_model_versions, which itself DOES NOT EXIST).
-
-### FEATURE: Location-Jurisdiction Binding
-- does: location_jurisdictions maps each location to one or more jurisdictions with jurisdiction_layer (food_ehd, fire_ahj, etc.) and is_most_restrictive flag. Created in migration 20260301000020_jurisdiction_intelligence.sql.
-- proactive?: NEUTRAL — binding data, not an active process
-- affects: Compliance Score Engine (determines which jurisdiction rules apply), County Readiness UI, Drift Detection
-- scope: org-scoped (via location → organization FK) — RLS column: location_id → organization_id chain
-- reads: locations, jurisdictions
-- writes: N/A (populated by admin or auto-detection)
-- related_to: Jurisdictions Reference Data, Compliance Score Engine
-- status: LIVE-STUBBED
-- EVIDENCE: REST query returned 0 rows (HTTP 200 with []). Table exists, all tested columns valid (location_id, jurisdiction_layer, is_most_restrictive). Zero bindings means no location is attached to any jurisdiction — downstream scoring has no jurisdiction context to apply. Column test: `GET /rest/v1/location_jurisdictions?select=location_id,jurisdiction_layer,is_most_restrictive&limit=0` → HTTP 200.
-- COLUMN CHECK: location_id, jurisdiction_layer, is_most_restrictive — PASS. Note: `is_primary` referenced in some code DOES NOT EXIST (actual column is is_most_restrictive).
-
-### FEATURE: Jurisdiction Scoring Configuration
-- does: jurisdiction_scoring_profiles stores per-jurisdiction scoring parameters (scoring_type, grade_thresholds, violation_weights). calcode_violation_map maps CalCode sections to severity + point deductions. jurisdiction_violation_overrides stores per-jurisdiction exceptions.
-- proactive?: NEUTRAL — configuration data
-- affects: Compliance Score Engine
-- scope: system — shared config tables
-- reads: N/A (config tables)
-- writes: N/A (populated by admin)
-- related_to: Jurisdictions Reference Data, Compliance Score Engine
-- status: LIVE-STUBBED
-- EVIDENCE: jurisdiction_scoring_profiles exists (HTTP 200), 0 rows. calcode_violation_map exists (HTTP 200), 0 rows. jurisdiction_violation_overrides exists (HTTP 200), 0 rows. Config tables are present but empty — no scoring parameters loaded for any jurisdiction. This blocks the scoring engine from computing jurisdiction-native grades.
-- COLUMN CHECK: jurisdiction_scoring_profiles columns tested (id, jurisdiction_id removed — PHANTOM). calcode_violation_map: id — PASS. jurisdiction_violation_overrides: id — PASS. Note: jurisdiction_scoring_profiles.jurisdiction_id = PHANTOM (table does not have a direct FK to jurisdictions; may use jurisdiction_name or county instead).
-
-### FEATURE: Compliance Score Engine
-- does: Edge function calculate-compliance-score computes per-location, dual-pillar (food_safety + facility_safety) scores using jurisdiction-verified weights and CalCode violation mapping. Implements 7 scoring types. Writes audit trail to score_calculations and persists snapshots to compliance_score_snapshots.
-- proactive?: PROACTIVE — designed to run on cron + on-demand, producing scores BEFORE an inspection occurs
-- affects: Location Jurisdiction Scores, Risk Correlation Engine, Advisor Briefings, Insurance Scoring
-- scope: org-scoped (per location) — RLS column: service_role
-- reads: location_jurisdictions, jurisdictions, calcode_violation_map, jurisdiction_violation_overrides, temperature_logs, checklist_completions, documents, equipment, haccp_plans, training_records, locations
-- writes: score_calculations, compliance_score_snapshots
-- related_to: Jurisdiction Scoring Configuration, Compliance Score Storage
-- status: BROKEN
-- EVIDENCE: **score_calculations TABLE DOES NOT EXIST** (HTTP 404 from PostgREST). **compliance_score_snapshots TABLE DOES NOT EXIST** (HTTP 404, suggested: compliance_photos). The edge function code exists at supabase/functions/calculate-compliance-score/index.ts and is well-structured (jurisdiction weight validation at ~line 118-130, no-default enforcement), but BOTH output tables are missing from production. The function will throw on write. Additionally, calcode_violation_map and jurisdiction_violation_overrides are empty (0 rows), so even if tables existed, the CalCode mapping inputs are absent.
-- COLUMN CHECK: Edge function uses service_role. Output tables do not exist — N/A.
-
-### FEATURE: Compliance Score Storage
-- does: Three tables meant to store scoring engine output: compliance_score_snapshots (daily snapshots with overall_score, food_safety_score, facility_safety_score, engine_version), score_calculations (per-jurisdiction audit trail), score_model_versions (version registry with pillar_weights and algorithm).
-- proactive?: NEUTRAL — storage layer
-- affects: ALL downstream consumers: Advisor Briefings, Risk Correlation, Insurance, Readiness, Frontend dashboards
-- scope: org-scoped — RLS column: organization_id on compliance_score_snapshots
-- reads: N/A (written by Compliance Score Engine)
-- writes: N/A (storage tables)
-- related_to: Compliance Score Engine, Risk Correlation Engine
-- status: BROKEN
-- EVIDENCE: **ALL THREE TABLES DO NOT EXIST IN PRODUCTION.** compliance_score_snapshots: HTTP 404. score_calculations: HTTP 404. score_model_versions: HTTP 404. Migrations that create these tables (20260226000000_benchmark_scoring_tables.sql, 20260318000000_canonical_scoring_phase1.sql) exist in the codebase but were never applied to production.
-- COLUMN CHECK: Tables do not exist — no column check possible.
-
-### FEATURE: Client-Side Compliance Engine
-- does: complianceEngine.ts (src/lib/complianceEngine.ts:78-150) computes compliance snapshots client-side: foodSafetyOps (weighted avg of temp, checklists, HACCP, incidents), facilitySafetyOps, then blends ops+docs per pillar. selfInspectionScoring.ts implements 6 jurisdiction scoring types (weighted_deduction, color_placard, pass_fail, point_accumulation, major_minor_reinspect, report_only).
-- proactive?: NEUTRAL — computation library, not an active process
-- affects: Dashboard rendering, ComplianceIntelligence page
-- scope: org-scoped (computes per location) — no RLS (client-side)
-- reads: ComplianceDataSnapshot objects (passed in, not queried directly)
-- writes: None (pure functions, returns ComplianceEngineResult)
-- related_to: Compliance Score Engine, useComplianceScore hook
-- status: LIVE-STUBBED
-- EVIDENCE: Code exists and exports computeComplianceSnapshot() at src/lib/complianceEngine.ts:78. Functions are pure — they will compute scores from whatever data is passed in. However, useComplianceScore hook (src/hooks/useComplianceScore.ts:165) invokes the edge function calculate-compliance-score rather than calling these libraries directly. The edge function is BROKEN (output tables missing). The client library would work if given data, but no upstream feeds it real data in production.
-- COLUMN CHECK: No .select() calls — N/A (pure functions).
-
-### FEATURE: Sensor Compliance Aggregation
-- does: Edge function sensor-compliance-aggregate runs every 15 min, aggregates IoT sensor + manual temp log compliance rates per location, upserts to location_compliance_scores with data_completeness_score.
-- proactive?: PROACTIVE — cron-scheduled, computes compliance rates ahead of manual review
-- affects: Dashboard compliance percentage displays
-- scope: org-scoped (per location) — RLS column: service_role
-- reads: locations, iot_sensors, iot_sensor_readings, iot_integration_configs, temperature_logs
-- writes: location_compliance_scores
-- related_to: Compliance Score Engine
-- status: BROKEN
-- EVIDENCE: **location_compliance_scores TABLE DOES NOT EXIST** (HTTP 404, suggested: location_jurisdiction_scores). Edge function code exists at supabase/functions/sensor-compliance-aggregate/index.ts. The function will throw on upsert.
-- COLUMN CHECK: Output table does not exist — N/A.
-
-### FEATURE: Operational Drift Detection
-- does: Edge function detect-operational-drift runs every 15 min via pg_cron. Evaluates 13 drift triggers per org (temperature_out_of_range, missed_checklist, document_expiration, hood_cleaning_approaching, etc.). Inserts drift_catches with idempotent partial unique index. Auto-resolves prior open catches on pass. Creates notifications for DM-role users.
-- proactive?: PROACTIVE — cron */15 * * * * (migration 20260519200000); detects drift BEFORE it becomes a violation
-- affects: Weekly Drift Report, Drift & Readiness UI, County Readiness
-- scope: org-scoped — RLS column: org_id on drift_catches
-- reads: organizations, locations, user_profiles, temperature_logs, checklist_completions, documents, training_records, equipment, vendor_cois
-- writes: drift_catches, notifications, admin_event_log
-- related_to: Weekly Drift Report, Drift & Readiness UI
-- status: LIVE-STUBBED
-- EVIDENCE: drift_catches table exists (HTTP 200), all 15 columns valid (id, org_id, location_id, drift_type, pillar, status, severity, detected_at, resolved_at, source_table, source_record_id, expected_value, actual_value, estimated_savings_cents, resolution_type). 0 rows via anon key. The edge function code exists at supabase/functions/detect-operational-drift/index.ts. With 0 locations bound to jurisdictions and no operational data flowing, the cron fires but finds nothing to flag. Tables are sound — would produce drift_catches if locations + data existed.
-- COLUMN CHECK: drift_catches — ALL 15 COLUMNS PASS. notifications table — not independently verified (write-only from edge function via service_role).
-
-### FEATURE: Weekly Drift Report
-- does: Edge function generate-weekly-drift-report runs hourly, fires weekly on Monday 7 AM org-local time. Aggregates drift_catches for prior week, sends role-filtered email + in-app notifications. Idempotent (skips if org_id + week_start already reported).
-- proactive?: PROACTIVE — scheduled weekly summary delivered to DM roles ahead of the work week
-- affects: Operator awareness of drift patterns
-- scope: org-scoped — RLS column: org_id
-- reads: organizations, locations, drift_catches, user_profiles, weekly_drift_reports
-- writes: weekly_drift_reports, notifications
-- related_to: Operational Drift Detection
-- status: LIVE-STUBBED
-- EVIDENCE: weekly_drift_reports table exists (HTTP 200), 0 rows. Edge function code exists at supabase/functions/generate-weekly-drift-report/index.ts. With 0 drift_catches, the weekly report has nothing to aggregate. Table schema is sound.
-- COLUMN CHECK: weekly_drift_reports: id — PASS. Full column set not individually tested but table creation confirmed.
+- EVIDENCE: REST query returned 169 rows (HTTP 200). Sample row confirmed: id, county, state, agency_name, data_source_tier, scoring_type, grading_type, grading_config, fire_jurisdiction_config — all present and populated with real California county data.
+- COLUMN CHECK: id, county, state, agency_name, data_source_tier, scoring_type, grading_type, grading_config, fire_jurisdiction_config — ALL PASS. Note: 8 prefixed columns (food_agency_id, food_agency_name, food_scoring_type, food_grading_type, fire_agency_id, fire_agency_name, fire_inspection_frequency, food_inspection_frequency) are PHANTOM — code in useJurisdiction falls back via `||` to the real column names.
 
 ### FEATURE: Jurisdiction Config Drift Monitor
-- does: Database trigger fn_jurisdiction_config_drift_check fires AFTER UPDATE on jurisdictions table when grading_config or fire_jurisdiction_config changes. Compares SHA-256 hashes against jurisdiction_config_baselines. On mismatch: logs to drift_alert_log (immutable), auto-creates support_tickets, records execution in drift_monitor_executions, fires webhook to edge function. Uses SECURITY DEFINER with vault.decrypted_secrets.
-- proactive?: PROACTIVE — detects jurisdiction configuration changes immediately on UPDATE, before downstream scoring uses stale config
+- does: Database trigger fn_jurisdiction_config_drift_check fires AFTER UPDATE on jurisdictions table when grading_config or fire_jurisdiction_config changes. Compares SHA-256 hashes against jurisdiction_config_baselines. On mismatch: logs to drift_alert_log (immutable), auto-creates support_tickets, records in drift_monitor_executions, fires webhook. Uses SECURITY DEFINER with vault.decrypted_secrets.
+- proactive?: PROACTIVE — detects jurisdiction config changes immediately on UPDATE, before downstream consumers use stale config
 - affects: Jurisdictions Reference Data integrity, support ticket queue
 - scope: system — operates on jurisdictions table (169 rows)
 - reads: jurisdictions, jurisdiction_config_baselines
 - writes: drift_alert_log, support_tickets, drift_monitor_executions
 - related_to: Jurisdictions Reference Data
 - status: LIVE-WORKING
-- EVIDENCE: jurisdictions table has 169 rows (confirmed). Trigger is defined in migration 20260605000000_jurisdiction_drift_monitor_02.sql. The trigger fires on any UPDATE to grading_config or fire_jurisdiction_config columns — both columns confirmed present on jurisdictions table. jurisdiction_config_baselines, drift_alert_log, support_tickets, drift_monitor_executions — not independently tested via REST but created in same migration with SECURITY DEFINER function. The trigger is wired to a populated table.
+- EVIDENCE: jurisdictions table has 169 rows (confirmed). Trigger defined in migration 20260605000000_jurisdiction_drift_monitor_02.sql. Fires on UPDATE to grading_config or fire_jurisdiction_config — both columns confirmed present.
 - COLUMN CHECK: jurisdictions.grading_config — PASS. jurisdictions.fire_jurisdiction_config — PASS.
 
-### FEATURE: Readiness Snapshots
-- does: Edge function snapshot-readiness runs daily at 6 AM UTC. Queries current compliance state per org/location (open corrective_actions, overdue temp_checks, expired documents), computes readiness score (100 minus deductions), inserts into readiness_snapshots.
-- proactive?: PROACTIVE — daily snapshot runs ahead of business hours, surfaces readiness gaps before the day begins
-- affects: Dashboard readiness displays, advisor briefings
-- scope: org-scoped — RLS column: org_id on readiness_snapshots
-- reads: locations, corrective_actions, temperature_logs, documents
-- writes: readiness_snapshots
-- related_to: Advisor Briefings, Compliance Score Engine
-- status: BROKEN
-- EVIDENCE: **readiness_snapshots TABLE DOES NOT EXIST** (HTTP 404, suggested: sync_snapshots). Edge function code exists at supabase/functions/snapshot-readiness/index.ts. The function will throw on upsert. Migration 20260625000000_readiness_snapshots.sql exists in codebase but was never applied to production.
-- COLUMN CHECK: Output table does not exist — N/A.
+### FEATURE: CalCode Violation Map
+- does: calcode_violation_map maps CalCode sections to severity and point deductions. jurisdiction_violation_overrides stores per-jurisdiction exceptions. Used to translate jurisdiction violation codes into structured data.
+- proactive?: NEUTRAL — configuration data for jurisdiction requirement interpretation
+- affects: Jurisdiction requirement detail display
+- scope: system — shared config tables
+- reads: N/A (config tables)
+- writes: N/A (populated by admin)
+- related_to: Jurisdictions Reference Data
+- status: LIVE-STUBBED
+- EVIDENCE: calcode_violation_map exists (HTTP 200), 0 rows. jurisdiction_violation_overrides exists (HTTP 200), 0 rows. Tables present but empty — no CalCode mappings loaded.
+- COLUMN CHECK: calcode_violation_map: id — PASS. jurisdiction_violation_overrides: id — PASS.
 
-### FEATURE: Risk Correlation Engine
-- does: Edge function correlation-engine evaluates 8 deterministic rules correlating published intelligence signals with compliance snapshots to produce risk_assessments (revenue_risk, cost_risk, liability_risk, operational_risk → weighted insurance_overall). No AI/LLM — pure rule-based logic.
-- proactive?: PROACTIVE — designed to produce risk scores proactively from intelligence + compliance data
-- affects: Insurance scoring, advisor briefings, enterprise dashboards
-- scope: org-scoped (per location) — RLS column: service_role
-- reads: locations, location_jurisdictions, jurisdictions, compliance_score_snapshots, intelligence_insights, score_calculations
-- writes: risk_assessments
-- related_to: Intelligence Signal Collection, Compliance Score Engine
+### FEATURE: Jurisdiction Scoring Configuration
+- does: jurisdiction_scoring_profiles stores per-jurisdiction grading parameters (how each jurisdiction grades kitchens — scoring_type, grade_thresholds, violation_weights). This is jurisdiction-native grading config, NOT EvidLY-computed scores.
+- proactive?: NEUTRAL — configuration data
+- affects: Jurisdiction requirement display (what score thresholds each jurisdiction uses)
+- scope: system — shared config table
+- reads: N/A (config table)
+- writes: N/A (populated by admin)
+- related_to: Jurisdictions Reference Data, CalCode Violation Map
+- status: LIVE-STUBBED
+- EVIDENCE: jurisdiction_scoring_profiles exists (HTTP 200), 0 rows. No jurisdiction grading parameters loaded.
+- COLUMN CHECK: id — PASS.
+
+---
+
+### LAYER B — LOCATION-JURISDICTION BINDING
+
+### FEATURE: Location-Jurisdiction Binding
+- does: location_jurisdictions maps each location to one or more jurisdictions with jurisdiction_layer (food_ehd, fire_ahj, etc.) and is_most_restrictive flag. Implements the dual-pillar architecture — a location can have separate food and fire jurisdiction bindings.
+- proactive?: NEUTRAL — binding data, not an active process
+- affects: useJurisdiction Hook, County Readiness UI, Drift Detection, all per-location requirements display
+- scope: org-scoped (via location → organization FK) — RLS column: location_id chain
+- reads: locations, jurisdictions
+- writes: N/A (populated by admin or auto-detection)
+- related_to: Jurisdictions Reference Data, useJurisdiction Hook
+- status: LIVE-STUBBED
+- EVIDENCE: REST query returned 0 rows (HTTP 200). Table exists, all columns valid (location_id, jurisdiction_layer, is_most_restrictive). Zero bindings means no location is attached to any jurisdiction — all downstream per-location jurisdiction features have no context. Column test confirmed HTTP 200.
+- COLUMN CHECK: location_id, jurisdiction_layer, is_most_restrictive — ALL PASS. Note: `is_primary` referenced in some code DOES NOT EXIST (actual column is is_most_restrictive).
+
+### FEATURE: useJurisdiction Hook
+- does: Frontend hook (src/hooks/useJurisdiction.ts) returns dual-authority jurisdiction data for a location. Step 1: queries locations table for jurisdiction_id. Step 2: queries location_jurisdictions joined with jurisdictions. Returns separate food and fire authority objects with agency names, scoring types, grading types.
+- proactive?: NEUTRAL — data-fetch hook
+- affects: All frontend jurisdiction displays, location detail panels
+- scope: org-scoped — filter by locationId
+- reads: locations (jurisdiction_id), location_jurisdictions, jurisdictions
+- writes: None
+- related_to: Location-Jurisdiction Binding, Jurisdictions Reference Data
 - status: BROKEN
-- EVIDENCE: **risk_assessments TABLE DOES NOT EXIST** (HTTP 404, suggested: shift_assignments). Additionally, the function reads from compliance_score_snapshots (DOES NOT EXIST) and score_calculations (DOES NOT EXIST) — both input AND output tables are missing. Triple failure point. Edge function code exists at supabase/functions/correlation-engine/index.ts.
-- COLUMN CHECK: Input and output tables do not exist — N/A.
+- EVIDENCE: src/hooks/useJurisdiction.ts:34 queries `locations.jurisdiction_id` — **PHANTOM COLUMN** → PostgREST HTTP 400 → locError is set → hook returns early with error. Even if Step 1 is bypassed, Step 2 (location_jurisdictions join) would return 0 rows (table is empty). Lines 57-90 map jurisdiction data using 8 phantom column names (food_agency_id, food_agency_name, etc.) but these fall back via `||` operators to real columns (agency_name, scoring_type, etc.).
+- COLUMN CHECK: `locations.jurisdiction_id` = **PHANTOM** (root failure). jurisdictions.food_agency_id, food_agency_name, food_scoring_type, food_grading_type, fire_agency_id, fire_agency_name = **PHANTOM** (non-fatal, `||` fallback to real columns).
+
+---
+
+### LAYER C — INBOUND SIGNALS / REQUIREMENTS / DUE-DATES
+
+### FEATURE: Compliance Documents Tracking
+- does: compliance_documents tracks documents per location with status and expiry_date. Expiring documents feed drift detection (document_expiration trigger) and PRP metrics (Predict: expiring within 14 days).
+- proactive?: PROACTIVE — expiry dates surface upcoming requirements before they lapse
+- affects: Drift Detection (document_expiration trigger), Shift PRP Metrics, document management UI
+- scope: org-scoped — RLS via location_id chain
+- reads: N/A (source table)
+- writes: N/A (populated by document upload flow)
+- related_to: Operational Drift Detection, Shift PRP Metrics
+- status: LIVE-STUBBED
+- EVIDENCE: compliance_documents table exists (HTTP 200), 0 rows. Valid columns confirmed: id, location_id, status, expiry_date. Table schema is sound — would feed drift detection and PRP metrics if documents existed.
+- COLUMN CHECK: id, location_id, status, expiry_date — ALL PASS.
+
+### FEATURE: Location Service Schedules
+- does: location_service_schedules tracks recurring service schedules per location (hood cleaning, suppression inspection, etc.) with is_active flag and next_due_date. Upcoming services feed PRP metrics (Predict: due within 14 days).
+- proactive?: PROACTIVE — next_due_date surfaces upcoming service requirements before they lapse
+- affects: Shift PRP Metrics (Predict count), service management UI
+- scope: org-scoped — RLS via location_id chain
+- reads: N/A (source table)
+- writes: N/A (populated by service configuration)
+- related_to: Shift PRP Metrics, Operational Drift Detection
+- status: LIVE-STUBBED
+- EVIDENCE: Table exists (HTTP 200), 0 rows. Core columns valid: id, is_active, next_due_date. Note: service_type, frequency_months, last_completed_date are PHANTOM — these extended columns were never migrated. Core scheduling columns (is_active, next_due_date) used by useShiftPRPMetrics are present.
+- COLUMN CHECK: id, is_active, next_due_date — PASS. service_type = **PHANTOM**. frequency_months = **PHANTOM**. last_completed_date = **PHANTOM**.
+
+### FEATURE: Corrective Actions Tracking
+- does: corrective_actions tracks open corrective actions per location with status. Open actions feed PRP metrics (Reduce count) and drift detection.
+- proactive?: PROACTIVE — open action tracking surfaces unresolved issues requiring attention
+- affects: Shift PRP Metrics (Reduce count), Drift Detection, corrective action UI
+- scope: org-scoped — RLS via location_id chain
+- reads: N/A (source table)
+- writes: N/A (populated by corrective action workflow)
+- related_to: Shift PRP Metrics, Operational Drift Detection
+- status: LIVE-STUBBED
+- EVIDENCE: Table exists (HTTP 200), 0 rows. Core columns valid: id, location_id, status. Note: priority is PHANTOM. Core columns used by useShiftPRPMetrics are present.
+- COLUMN CHECK: id, location_id, status — PASS. priority = **PHANTOM**.
+
+### FEATURE: Operational Drift Detection
+- does: Edge function detect-operational-drift runs every 15 min via pg_cron. Evaluates 13 drift triggers per org (temperature_out_of_range, missed_checklist, document_expiration, hood_cleaning_approaching, etc.). Inserts drift_catches with idempotent partial unique index. Auto-resolves prior open catches on pass. Creates notifications for DM-role users.
+- proactive?: PROACTIVE — cron */15 detects drift BEFORE it becomes a violation
+- affects: Weekly Drift Report, Drift Catches UI, County Readiness
+- scope: org-scoped — RLS column: org_id on drift_catches
+- reads: organizations, locations, user_profiles, temperature_logs, checklist_completions, documents, training_records, equipment, vendor_cois
+- writes: drift_catches, notifications, admin_event_log
+- related_to: Weekly Drift Report, Drift Catches UI
+- status: LIVE-STUBBED
+- EVIDENCE: drift_catches table exists (HTTP 200), all 15 columns valid, 0 rows. Edge function code exists at supabase/functions/detect-operational-drift/index.ts. With 0 locations bound to jurisdictions and no operational data flowing, cron fires but finds nothing to flag. Tables are sound — would produce drift_catches if locations + data existed.
+- COLUMN CHECK: drift_catches (id, org_id, location_id, drift_type, pillar, status, severity, detected_at, resolved_at, source_table, source_record_id, expected_value, actual_value, estimated_savings_cents, resolution_type) — ALL 15 PASS.
+
+### FEATURE: Weekly Drift Report
+- does: Edge function generate-weekly-drift-report runs hourly, fires weekly Monday 7 AM org-local time. Aggregates drift_catches for prior week, sends role-filtered email + in-app notifications. Idempotent (skips if org_id + week_start already reported).
+- proactive?: PROACTIVE — scheduled weekly summary delivered to DM roles ahead of work week
+- affects: Operator awareness of drift patterns
+- scope: org-scoped — RLS column: org_id
+- reads: organizations, locations, drift_catches, user_profiles, weekly_drift_reports
+- writes: weekly_drift_reports, notifications
+- related_to: Operational Drift Detection
+- status: LIVE-STUBBED
+- EVIDENCE: weekly_drift_reports table exists (HTTP 200), 0 rows. Edge function code exists at supabase/functions/generate-weekly-drift-report/index.ts. With 0 drift_catches, nothing to aggregate.
+- COLUMN CHECK: weekly_drift_reports: id — PASS.
 
 ### FEATURE: Advisor Briefings
 - does: Edge function generate-advisor-briefing generates role-specific compliance briefings (compliance_officer, food_safety, fire_safety) per org/location. Dual-mode: HTTP for individual requests, cron for daily cache warming at 6 AM org-local time. Cache lifetime 25 hours.
 - proactive?: PROACTIVE — daily cron warms briefing cache before business hours
 - affects: Operator morning compliance posture awareness
-- scope: org-scoped — RLS column: organization_id via user JWT
-- reads: organizations, locations, user_profiles, compliance/food/fire data sources, advisor_briefings (cache lookup)
+- scope: org-scoped — RLS column: organization_id
+- reads: organizations, locations, user_profiles, compliance/food/fire data sources, advisor_briefings (cache)
 - writes: advisor_briefings
-- related_to: Operational Drift Detection, Compliance Score Engine
-- status: LIVE-STUBBED
-- EVIDENCE: advisor_briefings table exists (HTTP 200), 0 rows. Edge function code exists at supabase/functions/generate-advisor-briefing/index.ts. Table schema is sound but no briefings have been generated. Cron warming exists (migration 20260519230000) but with no locations and no compliance data, briefings produce empty content.
-- COLUMN CHECK: advisor_briefings: id — PASS. Table exists with valid schema.
-
-### FEATURE: Predictive Alerts
-- does: Cron job generate-predictive-alerts fires daily at 6 AM UTC per org. Edge function generate-alerts evaluates location data against predictive rules and writes to predictive_alerts table. Trigger trigger_predictions_for_new_location fires on new location INSERT.
-- proactive?: PROACTIVE — cron-scheduled, predicts issues before they manifest
-- affects: Mobile Alerts surface, operator notifications
-- scope: org-scoped — RLS column: organization_id on predictive_alerts
-- reads: organizations, locations, temperature_logs, equipment, documents, deficiencies
-- writes: predictive_alerts
-- related_to: Operational Drift Detection, Mobile Alerts
-- status: BROKEN
-- EVIDENCE: **predictive_alerts TABLE DOES NOT EXIST** (HTTP 404, suggested: prediction_accuracy_log). Migration 20260505000001_predictive_alerts_table.sql exists in codebase but was never applied. Cron defined in migration 20260603000000_enable_predictive_cron.sql. Edge function code exists at supabase/functions/generate-alerts/index.ts.
-- COLUMN CHECK: Output table does not exist — N/A.
-
-### FEATURE: Intelligence Feed UI
-- does: Three frontend surfaces consume intelligence signals: (1) useIntelligenceFeed (src/hooks/useIntelligenceFeed.ts:51-57) — widget feed of 5 latest published signals; (2) BusinessIntelligence.tsx (src/pages/BusinessIntelligence.tsx:81-87) — full 4-format intelligence view; (3) IntelligenceHub.tsx — uses useIntelligenceHub which invokes intelligence-feed edge function.
-- proactive?: PROACTIVE — surfaces predicted/detected signals to operators before issues manifest
-- affects: Operator awareness, decision-making
-- scope: org-scoped — filter: .eq('org_id', orgId)
-- reads: intelligence_signals table
-- writes: None (read-only display)
-- related_to: Signal Delivery, Signal Classification & Routing
-- status: BROKEN
-- EVIDENCE: **intelligence_signals.org_id = PHANTOM COLUMN.** useIntelligenceFeed.ts:55 filters `.eq('org_id', orgId)` → PostgREST returns HTTP 400 (column does not exist) → queryError is set → line 60: `setError('Unable to load updates')` → user sees error state. BusinessIntelligence.tsx:83 filters `.eq('org_id', orgId)` AND `.eq('is_sample', false)` — BOTH org_id and is_sample are PHANTOM → HTTP 400. IntelligenceHub uses intelligence-feed edge function (server-side) — status depends on edge function's query pattern.
-- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM**. intelligence_signals.is_sample = **PHANTOM**. intelligence_signals.workforce_risk_level = **PHANTOM**. intelligence_signals.summary = **PHANTOM**. intelligence_signals.priority = **PHANTOM**. intelligence_signals.county = **PHANTOM**. intelligence_signals.feed_type = **PHANTOM**. Confirmed valid: id, title, content_summary, category, signal_type, severity_score, is_published, published_at, created_at, revenue_risk_level, liability_risk_level, cost_risk_level, operational_risk_level, recommended_action, source_name.
-
-### FEATURE: Drift & Readiness UI
-- does: Three hooks display drift catches and county readiness: (1) useDriftCatches (src/hooks/useDriftCatches.ts:75-81) — last 90 days of drift_catches with acknowledgments; (2) useYesterdayCatches (src/hooks/useYesterdayCatches.ts:51-71) — yesterday's catches; (3) useCountyReadiness (src/hooks/useCountyReadiness.ts:63-96) — county-level readiness from location_jurisdictions + drift_catches + owner_decisions + expiring documents.
-- proactive?: PROACTIVE — surfaces drift catches and readiness gaps to operators ahead of inspections
-- affects: Dashboard morning view, county readiness posture
-- scope: org-scoped — filter: .eq('org_id', orgId) on drift_catches, .eq('locations.organization_id', orgId) on location_jurisdictions
-- reads: drift_catches, drift_acknowledgments, location_jurisdictions, jurisdictions, locations, owner_decisions, documents
-- writes: drift_acknowledgments (acknowledge action at useDriftCatches.ts:177-179)
 - related_to: Operational Drift Detection, Jurisdictions Reference Data
 - status: LIVE-STUBBED
-- EVIDENCE: ALL tables exist with valid columns. drift_catches: 15 columns all PASS (tested via REST). drift_acknowledgments: 4 columns all PASS. location_jurisdictions: 3 columns all PASS. jurisdictions: 9 columns all PASS. owner_decisions: 4 columns all PASS. Zero rows in all tables via anon key. Code would function correctly if data existed — no phantom columns in any .select() call.
-- COLUMN CHECK: drift_catches (id, org_id, location_id, drift_type, pillar, status, severity, detected_at, resolved_at, source_table, source_record_id, expected_value, actual_value, estimated_savings_cents, resolution_type) — ALL PASS. drift_acknowledgments (drift_catch_id, user_id, role, acknowledged_at) — ALL PASS. location_jurisdictions (location_id, jurisdiction_layer, is_most_restrictive) — ALL PASS. jurisdictions join (county, state, agency_name, data_source_tier) — ALL PASS.
-
-### FEATURE: Unread Signal Badge & Mobile Alerts
-- does: (1) useUnreadSignals (src/hooks/useUnreadSignals.ts:29-44) — computes unread signal count for bell badge via two-step fetch (published signals minus read signals). (2) useMobileAlerts (src/hooks/useMobileAlerts.ts:31-37) — aggregates unresolved alerts, expiring docs, open incidents, overdue equipment into mobile alert list.
-- proactive?: PROACTIVE — badge and alerts surface proactive signals in nav chrome
-- affects: Navigation bell badge count, mobile alert panel
-- scope: org-scoped — filter: org_id on intelligence_signals, organization_id on alerts/documents/incidents/equipment
-- reads: intelligence_signals, signal_reads, alerts, documents, incidents, equipment
-- writes: None
-- related_to: Intelligence Feed UI, Predictive Alerts
-- status: BROKEN
-- EVIDENCE: useUnreadSignals.ts:33 filters `.eq('org_id', orgId)` on intelligence_signals — **org_id is PHANTOM** → HTTP 400 → sigError → line 36: returns 0 silently. useUnreadSignals.ts:42 queries signal_reads — **TABLE DOES NOT EXIST** (HTTP 404). useMobileAlerts.ts:32 queries alerts table — **TABLE DOES NOT EXIST** (HTTP 404) → caught by try/catch on line 52 (`/* table may not exist */`) → graceful degradation, shows 0 system alerts. Documents/incidents/equipment queries may work independently (not tested in this cluster).
-- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM**. signal_reads = **TABLE DOES NOT EXIST**. alerts = **TABLE DOES NOT EXIST**. useMobileAlerts degrades gracefully via try/catch blocks; useUnreadSignals silently returns 0.
+- EVIDENCE: advisor_briefings table exists (HTTP 200), 0 rows. Edge function exists. No briefings generated — no locations and no compliance data to brief on.
+- COLUMN CHECK: advisor_briefings: id — PASS.
 
 ### FEATURE: Evidence Pattern Detection
 - does: Edge function evidence-pattern-detect scans onboarding conversation threads (60-day window), matches text against seed phrases ("hasn't arrived", "broken", "missed deadline"), upserts evidence_signals when 3+ threads match.
@@ -347,103 +267,271 @@ Audited path: inbound signal → jurisdiction bind → dual-pillar scoring → p
 - writes: evidence_signals
 - related_to: Operational Drift Detection
 - status: LIVE-STUBBED
-- EVIDENCE: evidence_signals table exists (HTTP 200), 0 rows. Edge function code exists at supabase/functions/evidence-pattern-detect/index.ts. Table schema is sound. No evidence of execution (0 rows), but with no onboarding threads, pattern detection has nothing to scan.
-- COLUMN CHECK: evidence_signals: id — PASS. Table exists with valid schema.
+- EVIDENCE: evidence_signals table exists (HTTP 200), 0 rows. Edge function exists. No onboarding threads to scan.
+- COLUMN CHECK: evidence_signals: id — PASS.
+
+### FEATURE: Equipment Lifecycle Tracking
+- does: Equipment records with maintenance schedules and due dates. equipment_maintenance_schedule table for recurring schedules. Feeds drift detection (equipment_maintenance_overdue trigger) and mobile alerts.
+- proactive?: PROACTIVE — maintenance due dates surface upcoming requirements
+- affects: Drift Detection, Mobile Alerts, equipment management UI
+- scope: org-scoped — RLS via location chain
+- reads: equipment, equipment_maintenance_schedule
+- writes: N/A
+- related_to: Operational Drift Detection, Mobile Alerts Surface
+- status: BROKEN
+- EVIDENCE: `equipment` table exists but `equipment.is_active` = **PHANTOM** and `equipment.next_maintenance_due` = **PHANTOM**. `equipment_maintenance_schedule` **TABLE DOES NOT EXIST** (HTTP 404). Any code querying equipment lifecycle columns gets HTTP 400. useMobileAlerts.ts catches the error via try/catch (graceful degradation).
+- COLUMN CHECK: equipment.is_active = **PHANTOM**. equipment.next_maintenance_due = **PHANTOM**. equipment_maintenance_schedule = **TABLE MISSING**.
 
 ---
 
-### END-TO-END REAL-DATA TRACE (Step C)
+### LAYER D — INTELLIGENCE SIGNAL PIPELINE
 
-Target: trace one real location through the full path: signal in → jurisdiction bind → scoring → proactive surface.
+### FEATURE: Intelligence Signal Collection
+- does: Daily cron crawl of external food-safety + facility-safety sources (openFDA, USDA FSIS, CDC, CDPH, CA Fire Marshal, NFPA). Transforms raw data via Claude API, inserts into intelligence_insights with status pending_review.
+- proactive?: PROACTIVE — cron at 14:00 UTC daily; collects jurisdiction-level intelligence ahead of any incident
+- affects: Signal Classification, Signal Delivery, Intelligence Feed UI
+- scope: system — no org filter on collection; RLS: service_role only
+- reads: external APIs, platform_settings
+- writes: intelligence_insights, admin_event_log
+- related_to: Crawl Infrastructure, Signal Classification & Routing
+- status: UNVERIFIED
+- EVIDENCE: intelligence_signals table exists but 0 rows. crawl_execution_log exists but 0 rows. Cannot confirm cron has ever fired without service_role access. Edge function code exists at supabase/functions/intelligence-collect/index.ts.
+- COLUMN CHECK: Edge function uses service_role client — not subject to frontend phantom column issues.
 
-**Hop 1 — Signal In:**
-- `intelligence_signals` table: EXISTS but has 0 rows via anon key.
-- Frontend query (.eq('org_id', orgId)) returns HTTP 400 because org_id is PHANTOM COLUMN.
-- `crawl_execution_log` table: EXISTS, 0 rows. No evidence any crawl has ever executed.
-- VERDICT: No inbound signals exist. Frontend queries for signals are BROKEN.
+### FEATURE: Crawl Infrastructure
+- does: trigger-crawl fetches Firecrawl-method sources; crawl-monitor fetches direct-fetch sources; both update intelligence_sources status and write run logs to crawl_runs.
+- proactive?: PROACTIVE — crawl-monitor runs on schedule; feeds proactive intelligence pipeline
+- affects: Intelligence Signal Collection (upstream health monitoring)
+- scope: system — RLS: service_role only
+- reads: intelligence_sources (fetch_method, url, status)
+- writes: intelligence_sources (last_crawled_at, status), crawl_runs, crawl_health, admin_event_log
+- related_to: Intelligence Signal Collection
+- status: UNVERIFIED
+- EVIDENCE: crawl_runs exists (HTTP 200), 0 rows. crawl_health exists (HTTP 200), 0 rows. Edge function code exists. Cannot confirm execution without service_role.
+- COLUMN CHECK: intelligence_sources.slug = **PHANTOM**. intelligence_sources.source_type = **PHANTOM**. If crawl functions select these, those queries fail.
 
-**Hop 2 — Jurisdiction Bind:**
+### FEATURE: Signal Classification & Routing
+- does: classify-signals classifies raw signals (category, severity, pillar assignment, jurisdiction mapping). canonical-correlate maps signals to jurisdictions and organizations. intelligence-auto-publish auto-publishes low-risk signals. intelligenceRouter.ts computes severity scores and routing tier (auto/notify/hold).
+- proactive?: PROACTIVE — auto-publish runs hourly at :30; classification triggers ahead of operator review
+- affects: Signal Delivery, Intelligence Feed UI
+- scope: system (classification) + org-scoped (routing) — RLS: service_role
+- reads: intelligence_signals, jurisdictions, locations, organizations, platform_settings
+- writes: intelligence_signals (update status), entity_correlations, notifications, admin_event_log
+- related_to: Intelligence Signal Collection, Signal Delivery
+- status: UNVERIFIED
+- EVIDENCE: entity_correlations exists (HTTP 200), 0 rows. Edge function code exists. intelligence_signals.org_id = PHANTOM — auto-publish filter on org_id would fail.
+- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM** (used in auto-publish filter).
+
+### FEATURE: Signal Delivery
+- does: intelligence-deliver routes published signals to org users via notifications. intelligence-feed returns published signals as paginated JSON feed. intelligence-approve provides admin review workflow.
+- proactive?: PROACTIVE — delivers jurisdiction intelligence to operators before issues manifest
+- affects: Intelligence Feed UI, Unread Signal Badge
+- scope: org-scoped — RLS column: organization_id on notifications
+- reads: intelligence_signals (status='published'), user_profiles, locations, organizations
+- writes: notifications, intelligence_signals (status update), intelligence_signal_approvals
+- related_to: Signal Classification & Routing, Intelligence Feed UI
+- status: UNVERIFIED
+- EVIDENCE: Edge function code exists. Cannot confirm execution without service_role. If delivery queries filter on org_id (PHANTOM), delivery fails silently.
+- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM** (may be used in delivery filter).
+
+---
+
+### LAYER E — PROACTIVE UI SURFACES
+
+### FEATURE: Intelligence Feed UI
+- does: Three frontend surfaces consume intelligence signals: (1) useIntelligenceFeed (src/hooks/useIntelligenceFeed.ts:51-57) — widget feed of 5 latest published signals; (2) BusinessIntelligence.tsx (src/pages/BusinessIntelligence.tsx:81-87) — full 4-format intelligence view; (3) IntelligenceHub.tsx — uses intelligence-feed edge function.
+- proactive?: PROACTIVE — surfaces jurisdiction intelligence to operators
+- affects: Operator awareness, decision-making
+- scope: org-scoped — filter: .eq('org_id', orgId)
+- reads: intelligence_signals
+- writes: None
+- related_to: Signal Delivery
+- status: BROKEN
+- EVIDENCE: useIntelligenceFeed.ts:55 filters `.eq('org_id', orgId)` → **org_id is PHANTOM** → HTTP 400 → error state. BusinessIntelligence.tsx:83 filters `.eq('org_id', orgId)` AND `.eq('is_sample', false)` — BOTH phantom → HTTP 400.
+- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM**. intelligence_signals.is_sample = **PHANTOM**. Confirmed valid: id, title, content_summary, category, signal_type, severity_score, is_published, published_at, created_at, recommended_action, source_name.
+
+### FEATURE: Unread Signal Badge
+- does: useUnreadSignals (src/hooks/useUnreadSignals.ts:29-44) computes unread signal count for bell badge via two-step fetch (published signals minus read signals).
+- proactive?: PROACTIVE — badge surfaces unread jurisdiction intelligence in nav chrome
+- affects: Navigation bell badge count
+- scope: org-scoped — filter: org_id on intelligence_signals
+- reads: intelligence_signals, signal_reads
+- writes: None
+- related_to: Intelligence Feed UI
+- status: BROKEN
+- EVIDENCE: useUnreadSignals.ts:33 filters `.eq('org_id', orgId)` — **org_id is PHANTOM** → HTTP 400 → returns 0 silently. useUnreadSignals.ts:42 queries `signal_reads` — **TABLE DOES NOT EXIST** (HTTP 404).
+- COLUMN CHECK: intelligence_signals.org_id = **PHANTOM**. signal_reads = **TABLE MISSING**.
+
+### FEATURE: Mobile Alerts Surface
+- does: useMobileAlerts (src/hooks/useMobileAlerts.ts:31-37) aggregates unresolved alerts, expiring docs, open incidents, overdue equipment into mobile alert list.
+- proactive?: PROACTIVE — surfaces proactive alerts in mobile nav
+- affects: Mobile alert panel
+- scope: org-scoped — filter: organization_id on alerts/documents/incidents/equipment
+- reads: alerts, documents, incidents, equipment
+- writes: None
+- related_to: Equipment Lifecycle Tracking
+- status: LIVE-STUBBED
+- EVIDENCE: `alerts` table DOES NOT EXIST (HTTP 404) → caught by try/catch at useMobileAlerts.ts:52 → graceful degradation, shows 0 system alerts. Equipment queries use phantom columns (is_active, next_maintenance_due) but also caught. Hook degrades gracefully — no crash, returns empty arrays.
+- COLUMN CHECK: alerts = **TABLE MISSING** (gracefully caught). equipment.is_active = **PHANTOM** (caught). equipment.next_maintenance_due = **PHANTOM** (caught).
+
+### FEATURE: County Readiness UI
+- does: useCountyReadiness (src/hooks/useCountyReadiness.ts:63-96) computes county-level readiness from location_jurisdictions joined with jurisdictions, cross-referenced with drift_catches, owner_decisions, and expiring documents.
+- proactive?: PROACTIVE — surfaces county-level readiness posture ahead of inspections
+- affects: Dashboard county readiness view
+- scope: org-scoped — filter: .eq('locations.organization_id', orgId)
+- reads: location_jurisdictions, jurisdictions, locations, drift_catches, owner_decisions, documents
+- writes: None
+- related_to: Location-Jurisdiction Binding, Operational Drift Detection
+- status: LIVE-STUBBED
+- EVIDENCE: ALL columns verified valid via REST. location_jurisdictions: location_id, jurisdiction_layer, is_most_restrictive — PASS. jurisdictions join: county, state, agency_name, data_source_tier — PASS. Returns 0 results due to empty tables. Code would function correctly if data existed.
+- COLUMN CHECK: ALL PASS — no phantom columns in any .select() call.
+
+### FEATURE: Drift Catches UI
+- does: Two hooks display drift catches: (1) useDriftCatches (src/hooks/useDriftCatches.ts:75-81) — last 90 days with acknowledgments; (2) useYesterdayCatches (src/hooks/useYesterdayCatches.ts:51-71) — yesterday's catches. Users can acknowledge catches via drift_acknowledgments insert.
+- proactive?: PROACTIVE — surfaces drift catches to operators ahead of inspections
+- affects: Dashboard morning view, drift management
+- scope: org-scoped — filter: .eq('org_id', orgId) on drift_catches
+- reads: drift_catches, drift_acknowledgments
+- writes: drift_acknowledgments (acknowledge action)
+- related_to: Operational Drift Detection
+- status: LIVE-STUBBED
+- EVIDENCE: ALL tables exist with valid columns. drift_catches: 15 columns ALL PASS. drift_acknowledgments: 4 columns ALL PASS. Zero rows. Code would function correctly if data existed.
+- COLUMN CHECK: drift_catches (id, org_id, location_id, drift_type, pillar, status, severity, detected_at, resolved_at, source_table, source_record_id, expected_value, actual_value, estimated_savings_cents, resolution_type) — ALL PASS. drift_acknowledgments (drift_catch_id, user_id, role, acknowledged_at) — ALL PASS.
+
+### FEATURE: PRP Bands (8 components)
+- does: Eight PRP band components render Predict/Reduce/Prove metrics on feature pages. Each band uses the design token system (predict=amber #BA7517, reduce=blue #185FA5, prove=green #0F6E56) from src/lib/designSystem.ts:41-46. PRP is a UI presentation pattern — tokens are in code, not DB.
+- proactive?: PROACTIVE — PRP framework surfaces jurisdiction requirements proactively as what's coming due (Predict), what needs action (Reduce), what's documented (Prove)
+- affects: Shifts, Checklists, Calendar, Temperature Logs, Corrective Actions, Deficiencies, Incidents, Documents pages
+- scope: org-scoped — rendered per location context
+- reads: Varies by component (location-specific data via parent hooks)
+- writes: None (display only)
+- related_to: Shift PRP Metrics, all feature pages
+- status: LIVE-STUBBED
+- EVIDENCE: All 8 components exist and are structurally sound: ShiftPRPBand.tsx, ChecklistsPRPBand.tsx, CalendarPRPBand.tsx, TemperaturesPRPBand.tsx, CorrectiveActionsPRPBand.tsx, DeficienciesPRPBand.tsx, IncidentsPRPBand.tsx, documents/PRPBand.tsx. Design tokens confirmed at src/lib/designSystem.ts:41-46. Components render but show zero counts due to empty upstream data.
+- COLUMN CHECK: N/A — PRP bands consume data from hooks, no direct .select() calls.
+
+### FEATURE: Shift PRP Metrics
+- does: useShiftPRPMetrics (src/hooks/useShiftPRPMetrics.ts) queries three tables to compute PRP counts for ShiftPRPBand: Predict = active service schedules due within 14 days + expiring documents; Reduce = open corrective actions; Prove = resolved corrective actions (last 30 days).
+- proactive?: PROACTIVE — surfaces upcoming requirements and open actions in shift context
+- affects: ShiftPRPBand display
+- scope: org-scoped — filter by locationId
+- reads: location_service_schedules, compliance_documents, corrective_actions
+- writes: None
+- related_to: PRP Bands, Compliance Documents Tracking, Location Service Schedules, Corrective Actions Tracking
+- status: LIVE-STUBBED
+- EVIDENCE: All three queries use valid columns. location_service_schedules: `select('id', { count: 'exact' }).eq('location_id', ...).eq('is_active', true).gte('next_due_date', today).lte('next_due_date', in14)` — all columns valid. compliance_documents: `select('id', { count: 'exact' }).eq('location_id', ...).eq('status', 'active').lte('expiry_date', in14)` — all columns valid. corrective_actions: `select('id', { count: 'exact' }).eq('location_id', ...).eq('status', 'open')` — all columns valid. Returns 0 counts due to empty tables.
+- COLUMN CHECK: location_service_schedules (id, location_id, is_active, next_due_date) — ALL PASS. compliance_documents (id, location_id, status, expiry_date) — ALL PASS. corrective_actions (id, location_id, status) — ALL PASS.
+
+---
+
+### FUTURE PHASE NOTE
+
+The following features exist in the codebase but are part of a planned scoring/benchmarking phase. They are NOT current gaps — EvidLY reports what jurisdictions require, it does not compute scores. These are logged here for completeness, not as failures:
+
+- **Compliance Score Engine** (calculate-compliance-score) — computes dual-pillar scores; output tables not yet migrated
+- **Compliance Score Storage** (compliance_score_snapshots, score_calculations, score_model_versions) — tables not migrated
+- **Client-Side Compliance Engine** (src/lib/complianceEngine.ts, selfInspectionScoring.ts) — pure functions, would work if given data
+- **Sensor Compliance Aggregation** (sensor-compliance-aggregate → location_compliance_scores) — output table not migrated
+- **Readiness Snapshots** (snapshot-readiness → readiness_snapshots) — output table not migrated
+- **Risk Correlation Engine** (correlation-engine → risk_assessments) — output table not migrated
+- **Predictive Alerts** (generate-alerts → predictive_alerts) — output table not migrated
+
+---
+
+### END-TO-END REAL-DATA TRACE (corrected JIE lens)
+
+Target: trace one real location through the JIE path: jurisdiction rulebook → binding → requirements/due-dates → proactive UI surface.
+
+**Hop 1 — Jurisdiction Rulebook:**
 - `jurisdictions` table: 169 rows of real California/Nevada jurisdiction data. LIVE-WORKING.
+- Each row carries dual-pillar config: food-safety (scoring_type, grading_type, grading_config) and fire-safety (fire_jurisdiction_config, fire_ahj_name, fire_code_edition, nfpa96_edition).
+- VERDICT: Rulebook is populated and structurally sound. Dual-pillar separation confirmed.
+
+**Hop 2 — Location Binding:**
 - `location_jurisdictions` table: EXISTS, 0 rows. No location is bound to any jurisdiction.
-- Without bindings, no location can receive jurisdiction-specific scoring or intelligence routing.
-- VERDICT: Reference data exists. Zero bindings. Path blocked.
+- `useJurisdiction` hook: BROKEN — queries `locations.jurisdiction_id` (PHANTOM COLUMN) → HTTP 400 → hook returns error.
+- Without bindings, no location can receive jurisdiction-specific requirements or intelligence routing.
+- VERDICT: Binding layer is schema-sound but empty. Frontend binding hook is BROKEN (phantom column).
 
-**Hop 3 — Scoring Ran:**
-- `compliance_score_snapshots`: **TABLE DOES NOT EXIST** (HTTP 404).
-- `score_calculations`: **TABLE DOES NOT EXIST** (HTTP 404).
-- `score_model_versions`: **TABLE DOES NOT EXIST** (HTTP 404).
-- `location_jurisdiction_scores`: EXISTS, 0 rows.
-- The scoring engine cannot persist results. Even if called, it throws on write.
-- VERDICT: No scores exist. Scoring engine output tables never migrated.
+**Hop 3 — Requirements / Due-Dates:**
+- `compliance_documents`: EXISTS, 0 rows. Valid columns (id, location_id, status, expiry_date).
+- `location_service_schedules`: EXISTS, 0 rows. Valid core columns (id, is_active, next_due_date).
+- `corrective_actions`: EXISTS, 0 rows. Valid core columns (id, location_id, status).
+- `drift_catches`: EXISTS, 0 rows. All 15 columns valid.
+- No requirements or due-dates exist for any location. Tables are structurally sound.
+- VERDICT: Requirement tables exist and have valid schemas. Zero data flowing.
 
-**Hop 4 — Correctness:**
-- No score rows exist to evaluate.
-- Cannot verify two-pillar separation because no scores have been computed.
-- Cannot verify jurisdiction-native grading because no jurisdiction scoring profiles are populated (0 rows).
-- VERDICT: N/A — no data to assess correctness.
-
-**Hop 5 — Proactive Surface:**
-- useIntelligenceFeed: BROKEN — org_id phantom column → HTTP 400 → error state.
-- BusinessIntelligence.tsx: BROKEN — org_id + is_sample phantom → HTTP 400.
-- useDriftCatches: Returns empty array (0 drift_catches rows). Code is sound.
-- useCountyReadiness: Returns empty array (0 location_jurisdictions). Code is sound.
-- useUnreadSignals: Silently returns 0 (org_id phantom + signal_reads missing).
-- useMobileAlerts: Silently returns 0 alerts (alerts table missing, try/catch handles).
-- VERDICT: Intelligence surfaces are BROKEN. Drift/readiness surfaces are sound but empty.
+**Hop 4 — Proactive UI Surface:**
+- useShiftPRPMetrics: Returns 0 counts (all queries valid, empty tables). STUBBED.
+- PRP Bands (8 components): Render with 0 counts. Structurally sound. STUBBED.
+- useCountyReadiness: Returns empty (all columns valid, empty tables). STUBBED.
+- useDriftCatches: Returns empty (all columns valid, 0 drift_catches). STUBBED.
+- useIntelligenceFeed: BROKEN — org_id phantom → HTTP 400 → error state.
+- useUnreadSignals: BROKEN — org_id phantom + signal_reads missing → silently returns 0.
+- useMobileAlerts: Degrades gracefully — alerts table missing, try/catch handles.
+- VERDICT: PRP/drift/readiness surfaces are structurally sound but data-empty. Intelligence surfaces are BROKEN (phantom org_id).
 
 ---
 
 ### INTERCONNECT (cluster 1)
 
 ```
-intelligence-collect → intelligence_signals → classify-signals → canonical-correlate
-    ↓                                              ↓
-crawl infra (trigger-crawl, crawl-monitor)    intelligence-auto-publish
-                                                   ↓
-                                              intelligence-deliver → intelligence-feed → UI
-                                                                                         ↓
-                                                           useIntelligenceFeed [BROKEN: phantom org_id]
-                                                           BusinessIntelligence [BROKEN: phantom org_id + is_sample]
-                                                           useUnreadSignals [BROKEN: phantom org_id + missing signal_reads]
+LAYER A — RULEBOOK
+jurisdictions (169 rows) ──→ jurisdiction_config_baselines
+    │                              │
+    │                    fn_jurisdiction_config_drift_check [LIVE-WORKING]
+    │                              │
+    │                        drift_alert_log, support_tickets
+    │
+    ├── calcode_violation_map (0 rows) [STUBBED]
+    └── jurisdiction_scoring_profiles (0 rows) [STUBBED]
 
-jurisdictions (169 rows) → location_jurisdictions (0 rows) → calculate-compliance-score
-    ↓                              ↓                              ↓
-jurisdiction_config_baselines   jurisdiction_scoring_profiles   score_calculations [TABLE MISSING]
-    ↓                           (0 rows)                        compliance_score_snapshots [TABLE MISSING]
-drift_alert_log                                                     ↓
-                                                              correlation-engine → risk_assessments [TABLE MISSING]
+LAYER B — BINDING
+location_jurisdictions (0 rows) [STUBBED]
+    │
+    └── useJurisdiction hook [BROKEN: phantom locations.jurisdiction_id]
 
-detect-operational-drift (cron q15min) → drift_catches (0 rows) → useDriftCatches [STUBBED]
-    ↓                                         ↓
-generate-weekly-drift-report            useYesterdayCatches [STUBBED]
-    ↓                                         ↓
-weekly_drift_reports (0 rows)           useCountyReadiness [STUBBED]
+LAYER C — REQUIREMENTS / DUE-DATES
+compliance_documents (0 rows) [STUBBED] ──→ drift detection (document_expiration)
+location_service_schedules (0 rows) [STUBBED] ──→ drift detection (hood_cleaning_approaching)
+corrective_actions (0 rows) [STUBBED] ──→ drift detection
+equipment lifecycle [BROKEN: phantom is_active/next_maintenance_due + missing table]
+    │
+    └── detect-operational-drift (cron q15min) → drift_catches (0 rows) [STUBBED]
+            │
+            ├── generate-weekly-drift-report → weekly_drift_reports (0 rows) [STUBBED]
+            └── advisor_briefings (0 rows) [STUBBED]
 
-snapshot-readiness → readiness_snapshots [TABLE MISSING]
-generate-alerts → predictive_alerts [TABLE MISSING]
-sensor-compliance-aggregate → location_compliance_scores [TABLE MISSING]
+LAYER D — INTELLIGENCE PIPELINE
+intelligence-collect → intelligence_signals (0 rows) [UNVERIFIED]
+    → classify-signals → canonical-correlate [UNVERIFIED]
+    → intelligence-auto-publish → intelligence-deliver [UNVERIFIED]
+
+LAYER E — PROACTIVE UI
+useShiftPRPMetrics → PRP Bands (8 components) [STUBBED — valid columns, 0 data]
+useCountyReadiness [STUBBED — valid columns, 0 data]
+useDriftCatches [STUBBED — valid columns, 0 data]
+useIntelligenceFeed [BROKEN: phantom org_id]
+useUnreadSignals [BROKEN: phantom org_id + missing signal_reads]
+useMobileAlerts [STUBBED — graceful degradation]
 ```
 
 ### PROACTIVE GAP (cluster 1) — ranked by centrality
 
-1. **compliance_score_snapshots TABLE MISSING** — blocks ALL scoring output. Every downstream consumer (risk correlation, insurance, advisor briefings, readiness, dashboards) depends on this table. Most central failure point.
-2. **intelligence_signals.org_id PHANTOM COLUMN** — breaks ALL frontend intelligence surfaces (useIntelligenceFeed, BusinessIntelligence, useUnreadSignals, realtime subscriptions). Tenants cannot see any intelligence.
-3. **score_calculations TABLE MISSING** — blocks scoring audit trail. Compliance Score Engine cannot persist jurisdiction-grade results.
-4. **score_model_versions TABLE MISSING** — blocks engine versioning. No scoring model can be activated or referenced.
-5. **readiness_snapshots TABLE MISSING** — blocks daily readiness tracking. Morning posture snapshot cannot persist.
-6. **risk_assessments TABLE MISSING** — blocks risk correlation. 8-rule deterministic engine has no output table.
-7. **predictive_alerts TABLE MISSING** — blocks predictive alerting. Daily generate-alerts cron has no output table.
-8. **alerts TABLE MISSING** — blocks system alert display in mobile alerts surface.
-9. **signal_reads TABLE MISSING** — blocks unread signal tracking. Bell badge always shows 0.
-10. **location_compliance_scores TABLE MISSING** — blocks sensor compliance aggregation.
-11. **executive_snapshots TABLE MISSING** — blocks executive intelligence briefs in IntelligenceHub.
-12. **location_jurisdictions has 0 rows** — no location is bound to any jurisdiction. Scoring engine has no jurisdiction context. This is a data gap, not a schema gap.
-13. **jurisdiction_scoring_profiles has 0 rows** — no scoring parameters loaded. Even with bindings, CalCode severity/deduction config is empty.
-14. **intelligence_sources phantom columns (slug, source_type)** — crawl infrastructure may fail on source metadata queries.
+1. **location_jurisdictions has 0 rows** — no location is bound to any jurisdiction. This is the central data gap: the entire JIE path from rulebook to tenant UI depends on this binding. Schema is sound; no data exists.
+2. **locations.jurisdiction_id PHANTOM COLUMN** — breaks useJurisdiction hook (src/hooks/useJurisdiction.ts:34). Tenants cannot display jurisdiction authority info for any location. Fix: query location_jurisdictions directly instead of locations.jurisdiction_id.
+3. **intelligence_signals.org_id PHANTOM COLUMN** — breaks ALL frontend intelligence surfaces (useIntelligenceFeed, BusinessIntelligence, useUnreadSignals). Tenants cannot see any intelligence signals.
+4. **signal_reads TABLE MISSING** — breaks unread signal tracking. Bell badge always shows 0.
+5. **equipment.is_active + equipment.next_maintenance_due PHANTOM + equipment_maintenance_schedule TABLE MISSING** — breaks equipment lifecycle tracking. Drift detection cannot evaluate equipment triggers.
+6. **alerts TABLE MISSING** — blocks system alert display. useMobileAlerts degrades gracefully (try/catch).
+7. **intelligence_sources.slug + source_type PHANTOM** — crawl infrastructure may fail on source metadata queries.
+8. **location_service_schedules extended columns PHANTOM** (service_type, frequency_months, last_completed_date) — non-fatal (core scheduling columns work), but limits service schedule detail display.
+9. **corrective_actions.priority PHANTOM** — non-fatal (core query works), but limits priority-based filtering/display.
+10. **All requirement tables have 0 rows** — compliance_documents, location_service_schedules, corrective_actions, drift_catches are structurally sound but empty. This is a data gap, not a schema gap.
 
 ### CLUSTER 1 VERDICT
 
-The proactive intelligence engine does NOT work on real data today. 10 critical tables were never migrated to production. The scoring engine's output tables (compliance_score_snapshots, score_calculations, score_model_versions) do not exist — the dual-pillar scoring path is structurally impossible. The intelligence feed is broken at the UI layer by a phantom org_id column on intelligence_signals. The only LIVE-WORKING components are the jurisdictions reference table (169 rows) and the jurisdiction config drift monitor trigger. The drift detection infrastructure (drift_catches, weekly_drift_reports) is schema-sound but data-empty. Status tally: 2 LIVE-WORKING, 7 LIVE-STUBBED, 8 BROKEN, 0 DEAD, 4 UNVERIFIED — 21 features total.
+The JIE correctly DEFINES each jurisdiction's dual-pillar requirements (169 jurisdictions with separate food/fire config) and has a complete proactive detection architecture (13 drift triggers, 8 PRP bands, daily cron pipeline). The path from jurisdiction rulebook to tenant UI is broken at two points: (1) useJurisdiction fails on phantom `locations.jurisdiction_id`, and (2) all intelligence UI surfaces fail on phantom `intelligence_signals.org_id`. The PRP/drift/readiness UI surfaces are structurally sound — valid columns, no phantom breaks — but show zero data because no location-jurisdiction bindings exist and no operational data is flowing. Scoring/benchmarking features are FUTURE PHASE, not current gaps. Status tally: 2 LIVE-WORKING, 14 LIVE-STUBBED, 4 BROKEN, 0 DEAD, 4 UNVERIFIED — 24 features total.
 
 ---
 
