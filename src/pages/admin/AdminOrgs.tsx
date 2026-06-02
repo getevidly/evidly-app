@@ -67,7 +67,8 @@ export default function AdminOrgs() {
 
       if (error) throw error;
       setOrgs((data || []) as OrgRow[]);
-    } catch {
+    } catch (e) {
+      console.error('[AdminOrgs] loadOrgs failed:', e);
       setOrgs([]);
     }
     setLoading(false);

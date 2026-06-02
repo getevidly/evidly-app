@@ -102,7 +102,8 @@ export default function AdminUsers() {
       }
 
       setUsers(profiles);
-    } catch {
+    } catch (e) {
+      console.error('[AdminUsers] loadUsers failed:', e);
       setUsers([]);
     }
     setLoading(false);
