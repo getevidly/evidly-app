@@ -345,7 +345,8 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'insights', label: 'Insights', icon: '✨',
     tooltipTitle: 'Insights',
     tooltipDescription: 'Food Safety Advisor, Fire Safety Advisor, inspection forecast, trends, benchmarks, leaderboard, reporting, audit log, and IoT.',
-    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-reports', 'in-audit'],
+    // POST-LAUNCH: 'in-reports' removed — backend not built (report_runs absent, no generation engine). Restore when wired.
+    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-audit'],
     path: '/insights',
   },
   tools: {

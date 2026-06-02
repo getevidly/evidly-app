@@ -25,7 +25,8 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '',
       color: '#8b5cf6',
       bgColor: '#f5f3ff',
-      link: '/reports',
+      // POST-LAUNCH: was '/reports' — backend not built. Restore when wired.
+      link: '/dashboard',
     },
     {
       icon: DollarSign,
@@ -35,7 +36,8 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '$',
       color: '#A08C5A',
       bgColor: '#fefce8',
-      link: '/reports',
+      // POST-LAUNCH: was '/reports' — backend not built. Restore when wired.
+      link: '/dashboard',
     },
     {
       icon: Thermometer,

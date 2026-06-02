@@ -69,8 +69,9 @@ const NotificationsPage = lazy(() => import('./pages/settings/NotificationsPage'
 const BillingPage = lazy(() => import('./pages/settings/BillingPage').then(m => ({ default: m.BillingPage })));
 const ReportCenter = lazy(() => import('./pages/ReportCenter').then(m => ({ default: m.ReportCenter })));
 const ReportDetail = lazy(() => import('./pages/ReportDetail').then(m => ({ default: m.ReportDetail })));
-const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
-const ReportGeneratorPage = lazy(() => import('./pages/reports/ReportGeneratorPage').then(m => ({ default: m.ReportGeneratorPage })));
+// POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired.
+// const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
+// const ReportGeneratorPage = lazy(() => import('./pages/reports/ReportGeneratorPage').then(m => ({ default: m.ReportGeneratorPage })));
 const EquipmentPage = lazy(() => import('./pages/equipment/EquipmentPage').then(m => ({ default: m.EquipmentPage })));
 const EquipmentDetailPage = lazy(() => import('./pages/equipment/EquipmentDetailPage').then(m => ({ default: m.EquipmentDetailPage })));
 const QRScanLandingPage = lazy(() => import('./pages/equipment/QRScanLandingPage').then(m => ({ default: m.QRScanLandingPage })));
@@ -662,8 +663,9 @@ function AppRoutes() {
           <Route path="/food-safety/analysis" element={<FoodSafetyAnalysis />} />
           <Route path="/food-safety/trajectory" element={<FoodSafetyTrajectory />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/reports/:slug" element={<ReportGeneratorPage />} />
+          {/* POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired. */}
+          {/* <Route path="/reports" element={<ReportsPage />} /> */}
+          {/* <Route path="/reports/:slug" element={<ReportGeneratorPage />} /> */}
           <Route path="/settings" element={<SettingsPage />}>
             <Route index element={<Navigate to="/settings/company" replace />} />
             <Route path="company" element={<CompanyProfilePage />} />

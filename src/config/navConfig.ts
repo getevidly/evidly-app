@@ -53,7 +53,8 @@ const ROLE_NAV_ITEMS: Record<Exclude<UserRole, 'kitchen_staff'>, BottomNavItem[]
   executive: [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/food-safety/analysis', icon: BarChart3, label: 'Analysis' },
-    { path: '/reports', icon: FileText, label: 'Reports' },
+    // POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired.
+    // { path: '/reports', icon: FileText, label: 'Reports' },
     { path: '/calendar', icon: Calendar, label: 'Calendar' },
   ],
   compliance_manager: [

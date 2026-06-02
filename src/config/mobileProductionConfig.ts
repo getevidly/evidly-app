@@ -10,21 +10,24 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
       return [
         { id: 'scores', label: 'Scores', icon: '📊', path: '/scoring-breakdown' },
         { id: 'locations', label: 'Locations', icon: '📍', path: '/org-hierarchy' },
-        { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
+        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
         { id: 'alerts', label: 'Alerts', icon: '🔔', path: '/action-items' },
       ];
     case 'executive':
       return [
         { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
-        { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-        { id: 'export', label: 'Export', icon: '📥', path: '/reports' },
+        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
+        // { id: 'export', label: 'Export', icon: '📥', path: '/reports' },
       ];
     case 'compliance_manager':
       return [
         { id: 'audit', label: 'Audit', icon: '🔍', path: '/self-diagnosis' },
         { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
         { id: 'violations', label: 'Violations', icon: '⚠️', path: '/action-items' },
-        { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
+        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        // { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
       ];
     case 'facilities_manager':
       return [
@@ -72,14 +75,16 @@ export function getMobileBottomNav(role: UserRole): MobileNavTab[] {
     case 'executive':
       return [
         { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
+        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
         { id: 'more', label: 'More', icon: '☰', path: '#more' },
       ];
     case 'compliance_manager':
       return [
         { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
         { id: 'docs', label: 'Docs', icon: '📄', path: '/documents' },
-        { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/reports/inspection-readiness' },
+        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        // { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/reports/inspection-readiness' },
         { id: 'more', label: 'More', icon: '☰', path: '#more' },
       ];
     case 'facilities_manager':
