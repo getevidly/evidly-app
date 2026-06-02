@@ -62,6 +62,7 @@ export default function AdminOrgs() {
       const { data, error } = await supabase
         .from('organizations')
         .select('id, name, industry_type, plan, status, timezone, notes, created_at, updated_at')
+        .eq('is_system', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

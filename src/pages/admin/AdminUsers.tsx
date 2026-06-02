@@ -84,11 +84,24 @@ export default function AdminUsers() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('user_profiles')
-        .select('id, full_name, email, role, is_suspended, suspended_at, suspend_reason, failed_login_count, locked_until, last_login_at, last_login_ip, created_at, organization_id')
+        .select('id, full_name, role, is_suspended, suspended_at, suspend_reason, failed_login_count, locked_until, last_login_at, last_login_ip, created_at, organization_id')
         .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;
-      setUsers((data || []) as UserRow[]);
+      const profiles = (data || []) as UserRow[];
+
+      // Email lives on auth.users, not user_profiles — fetch via SECURITY DEFINER RPC
+      if (profiles.length > 0) {
+        const { data: emailRows } = await supabase.rpc('admin_get_user_emails', {
+          p_user_ids: profiles.map(p => p.id),
+        });
+        if (emailRows) {
+          const emailMap = new Map((emailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
+          profiles.forEach(p => { p.email = emailMap.get(p.id) ?? undefined; });
+        }
+      }
+
+      setUsers(profiles);
     } catch {
       setUsers([]);
     }
