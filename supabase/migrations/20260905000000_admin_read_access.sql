@@ -5,9 +5,9 @@
  * org (via user_location_access). Platform admins see ~nothing because there
  * is no bypass policy. AdminOrgs shows 0 orgs; AdminUsers shows 0 users.
  *
- * Fix: Add SELECT-only bypass for platform_admin, matching the signal used by
- * user_sessions and user_mfa_config in 20260520000000_admin_security_hardening:
- *   EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
+ * Fix: A SECURITY DEFINER helper (is_platform_admin) checks the caller's role
+ * without triggering RLS on user_profiles — avoids 42P17 infinite recursion.
+ * Both SELECT bypass policies and the email RPC call is_platform_admin().
  *
  * Also adds a SECURITY DEFINER RPC so AdminUsers can fetch emails from
  * auth.users (email is not a column on user_profiles).
@@ -18,15 +18,31 @@
  * Tenant users are unaffected — their existing org-scoped policies remain.
  */
 
+-- ── 0. Helper: check platform_admin without triggering RLS ────────
+--    SECURITY DEFINER runs as the function owner (superuser), so the
+--    internal SELECT on user_profiles bypasses RLS. Policies can call
+--    this safely without recursion.
+
+CREATE OR REPLACE FUNCTION public.is_platform_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM user_profiles
+    WHERE id = auth.uid() AND role = 'platform_admin'
+  );
+$$;
+
 -- ── 1. Organizations: platform_admin can read all orgs ────────────
 
 DROP POLICY IF EXISTS "admin_read_all_organizations" ON organizations;
 CREATE POLICY "admin_read_all_organizations"
   ON organizations FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
-  );
+  USING ( public.is_platform_admin() );
 
 -- ── 2. User profiles: platform_admin can read all profiles ────────
 
@@ -34,9 +50,7 @@ DROP POLICY IF EXISTS "admin_read_all_profiles" ON user_profiles;
 CREATE POLICY "admin_read_all_profiles"
   ON user_profiles FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'platform_admin')
-  );
+  USING ( public.is_platform_admin() );
 
 -- ── 3. is_system flag on organizations ─────────────────────────────
 
@@ -55,8 +69,5 @@ AS $$
   SELECT au.id AS user_id, au.email::text
   FROM auth.users au
   WHERE au.id = ANY(p_user_ids)
-    AND EXISTS (
-      SELECT 1 FROM user_profiles
-      WHERE id = auth.uid() AND role = 'platform_admin'
-    );
+    AND public.is_platform_admin();
 $$;
