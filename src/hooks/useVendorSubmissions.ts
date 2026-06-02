@@ -121,13 +121,13 @@ export function useVendorSubmissions(
 
     if (subError) {
       console.error('Error approving submission:', subError);
-      return;
+      throw new Error(`Failed to approve submission: ${subError.message}`);
     }
 
     // Also update the vendor_document status
     const submission = submissions.find(s => s.id === submissionId);
     if (submission?.vendor_document_id) {
-      await supabase
+      const { error: docError } = await supabase
         .from('vendor_documents')
         .update({
           status: 'accepted',
@@ -136,6 +136,21 @@ export function useVendorSubmissions(
           review_notes: notes || null,
         })
         .eq('id', submission.vendor_document_id);
+
+      if (docError) {
+        // Revert submission to avoid split state
+        await supabase
+          .from('vendor_document_submissions')
+          .update({
+            review_status: 'pending_review',
+            reviewed_by: null,
+            reviewed_at: null,
+            review_notes: null,
+          })
+          .eq('id', submissionId);
+
+        throw new Error(`Document update failed after submission approved — reverted to pending. ${docError.message}`);
+      }
     }
 
     fetchSubmissions();
@@ -156,13 +171,13 @@ export function useVendorSubmissions(
 
     if (subError) {
       console.error('Error declining submission:', subError);
-      return;
+      throw new Error(`Failed to decline submission: ${subError.message}`);
     }
 
     // Update vendor_document status to flagged
     const submission = submissions.find(s => s.id === submissionId);
     if (submission?.vendor_document_id) {
-      await supabase
+      const { error: docError } = await supabase
         .from('vendor_documents')
         .update({
           status: 'flagged',
@@ -171,6 +186,21 @@ export function useVendorSubmissions(
           review_notes: `Declined: ${reason}`,
         })
         .eq('id', submission.vendor_document_id);
+
+      if (docError) {
+        // Revert submission to avoid split state
+        await supabase
+          .from('vendor_document_submissions')
+          .update({
+            review_status: 'pending_review',
+            reviewed_by: null,
+            reviewed_at: null,
+            decline_reason: null,
+          })
+          .eq('id', submissionId);
+
+        throw new Error(`Document update failed after submission declined — reverted to pending. ${docError.message}`);
+      }
     }
 
     fetchSubmissions();
@@ -198,7 +228,7 @@ export function useVendorSubmissions(
 
         const submission = submissions.find(s => s.id === id);
         if (submission?.vendor_document_id) {
-          await supabase
+          const { error: docError } = await supabase
             .from('vendor_documents')
             .update({
               status: 'accepted',
@@ -206,6 +236,22 @@ export function useVendorSubmissions(
               reviewed_at: new Date().toISOString(),
             })
             .eq('id', submission.vendor_document_id);
+
+          if (docError) {
+            // Revert submission to avoid split state
+            await supabase
+              .from('vendor_document_submissions')
+              .update({
+                review_status: 'pending_review',
+                reviewed_by: null,
+                reviewed_at: null,
+                review_notes: null,
+              })
+              .eq('id', id);
+
+            failed++;
+            continue;
+          }
         }
         succeeded++;
       } catch {
