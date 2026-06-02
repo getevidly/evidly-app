@@ -74,10 +74,6 @@ export default function AdminUsers() {
   const [actionRole, setActionRole] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Invite
-  const [showInvite, setShowInvite] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('kitchen_staff');
 
   // AUDIT-FIX-06 / A-2: More-menu state
   const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
@@ -222,21 +218,6 @@ export default function AdminUsers() {
     closeAction();
   };
 
-  const sendInvite = async () => {
-    if (!inviteEmail) return;
-    setActionLoading(true);
-    try {
-      await supabase.auth.admin.inviteUserByEmail(inviteEmail);
-      await logAuditEvent('admin.user_invited', inviteEmail, null,
-        { email: inviteEmail, role: inviteRole });
-      toast.success(`Invitation sent to ${inviteEmail}`);
-      setShowInvite(false);
-      setInviteEmail('');
-    } catch (err: any) {
-      toast.error(`Invite failed: ${err?.message || 'Unknown error'}`);
-    }
-    setActionLoading(false);
-  };
 
   // ── Helpers ──
   const getStatus = (u: UserRow) => {
@@ -278,12 +259,6 @@ export default function AdminUsers() {
             Manage user accounts, roles, and access across EvidLY
           </p>
         </div>
-        <Button
-          onClick={() => setShowInvite(true)}
-          variant="gold" size="sm"
-        >
-          + Invite User
-        </Button>
       </div>
 
       {/* KPI row */}
@@ -505,41 +480,6 @@ export default function AdminUsers() {
         </Modal>
       )}
 
-      {/* Invite modal */}
-      {showInvite && (
-        <Modal isOpen={true} onClose={() => setShowInvite(false)} size="sm">
-          <div className="p-7">
-            <h3 className="text-base font-bold text-navy mb-4">Invite New User</h3>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="text-xs font-semibold text-slate_ui block mb-1">Email</label>
-                <input
-                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
-                  placeholder="user@example.com"
-                  value={inviteEmail}
-                  onChange={e => setInviteEmail(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-slate_ui block mb-1">Role</label>
-                <select
-                  className="py-[7px] px-2.5 text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
-                  value={inviteRole}
-                  onChange={e => setInviteRole(e.target.value)}
-                >
-                  {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r] || r}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className="flex gap-2 justify-end mt-5">
-              <Button onClick={() => setShowInvite(false)} variant="ghost" size="sm" className="bg-[#F0F4F8] text-slate_ui">Cancel</Button>
-              <Button onClick={sendInvite} disabled={actionLoading || !inviteEmail} variant="gold" size="sm">
-                {actionLoading ? 'Sending...' : 'Send Invite'}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
