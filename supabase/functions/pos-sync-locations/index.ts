@@ -69,6 +69,9 @@ Deno.serve(async (req: Request) => {
         // Column whitelist must match PROD locations schema.
         // See src/lib/locations/createLocation.ts for the canonical contract.
         // Removed: county (phantom), source (phantom).
+        // jurisdiction_id intentionally absent: POS-synced locations have no
+        // operator at creation time. Strategy (post-sync assignment queue vs
+        // sync-time mapping) is an open decision for Arthur. Tracked.
         const { data: newLoc, error: locError } = await supabase
           .from('locations')
           .insert({

@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ModalShell, FormField, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from '../temp-logs/shared';
 import {
   DAY_LABELS,
   generateOpeningTimes,
   generateClosingTimes,
 } from '../../contexts/OperatingHoursContext';
-import { getAvailableCounties } from '../../lib/jurisdictionScoring';
 import { US_STATES } from '../../types/rfp';
 import { GhostInput } from '../ai/GhostInput';
+import { JurisdictionSelect } from '../jurisdiction/JurisdictionSelect';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -18,7 +18,7 @@ export interface NewLocationData {
   city: string;
   state: string;
   zip: string;
-  jurisdictionSlug: string;
+  jurisdictionId: string;
   days: boolean[];
   openTime: string;
   closeTime: string;
@@ -50,22 +50,17 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [], pl
   const [city, setCity] = useState('');
   const [state, setState] = useState('CA');
   const [zip, setZip] = useState('');
-  const [jurisdictionSlug, setJurisdictionSlug] = useState('');
+  const [jurisdictionId, setJurisdictionId] = useState('');
+  const [jurisdictionTouched, setJurisdictionTouched] = useState(false);
   const [days, setDays] = useState<boolean[]>([false, true, true, true, true, true, false]);
   const [openTime, setOpenTime] = useState('06:00');
   const [closeTime, setCloseTime] = useState('22:00');
 
-  const counties = getAvailableCounties(state);
   const openingTimes = generateOpeningTimes();
-
-  // Reset jurisdiction when state changes
-  useEffect(() => {
-    setJurisdictionSlug('');
-  }, [state]);
   const closingTimes = generateClosingTimes();
 
   const codeConflict = code.length > 0 && existingCodes.includes(code.toUpperCase());
-  const canSubmit = name.trim().length > 0 && code.trim().length > 0 && !codeConflict;
+  const canSubmit = name.trim().length > 0 && code.trim().length > 0 && !codeConflict && !!jurisdictionId;
 
   const resetForm = () => {
     setName('');
@@ -74,7 +69,8 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [], pl
     setCity('');
     setState('CA');
     setZip('');
-    setJurisdictionSlug('');
+    setJurisdictionId('');
+    setJurisdictionTouched(false);
     setDays([false, true, true, true, true, true, false]);
     setOpenTime('06:00');
     setCloseTime('22:00');
@@ -87,6 +83,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [], pl
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setJurisdictionTouched(true);
     if (!canSubmit) return;
     onSave({
       name: name.trim(),
@@ -95,7 +92,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [], pl
       city: city.trim(),
       state,
       zip: zip.trim(),
-      jurisdictionSlug,
+      jurisdictionId,
       days,
       openTime,
       closeTime,
@@ -184,19 +181,13 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [], pl
         </div>
 
         {/* Jurisdiction */}
-        <FormField label="Jurisdiction / Health Dept">
-          <select
-            value={jurisdictionSlug}
-            onChange={e => setJurisdictionSlug(e.target.value)}
-            className={`${INPUT_CLASS} bg-white`}
-          >
-            <option value="">Select jurisdiction...</option>
-            {counties.map(c => (
-              <option key={c.slug} value={c.slug}>
-                {c.name} ({c.systemType})
-              </option>
-            ))}
-          </select>
+        <FormField label="Governing Jurisdiction" required>
+          <JurisdictionSelect
+            value={jurisdictionId || null}
+            onChange={(id) => setJurisdictionId(id || '')}
+            prefilter={{ city }}
+            touched={jurisdictionTouched}
+          />
         </FormField>
 
         {/* Operating Days */}

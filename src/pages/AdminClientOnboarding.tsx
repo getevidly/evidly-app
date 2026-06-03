@@ -3,6 +3,7 @@ import { Building2, MapPin, Users, Mail, Send, ShieldAlert } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
+import { JurisdictionSelect } from '../components/jurisdiction/JurisdictionSelect';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -43,6 +44,9 @@ export function AdminClientOnboarding() {
   // Tribal casino fields
   const [selectedTribe, setSelectedTribe] = useState('');
   const [outletCount, setOutletCount] = useState(5);
+
+  // Jurisdiction — one selection for all outlets in this onboarding
+  const [jurisdictionId, setJurisdictionId] = useState('');
 
   const isTribal = industryType === 'tribal_casino';
 
@@ -143,6 +147,7 @@ export function AdminClientOnboarding() {
           await createLocation({
             organization_id: orgData.id,
             name: DEFAULT_OUTLET_NAMES[i] || `Outlet ${i + 1}`,
+            jurisdiction_id: jurisdictionId,
             status: 'active',
           });
         }
@@ -200,6 +205,7 @@ export function AdminClientOnboarding() {
         setLocationCount(1);
         setSelectedTribe('');
         setOutletCount(5);
+        setJurisdictionId('');
         setSuccess('');
       }, 5000);
     } catch (err: any) {
@@ -358,6 +364,26 @@ export function AdminClientOnboarding() {
               )}
             </div>
 
+            {/* Governing Jurisdiction — applies to all locations in this onboarding */}
+            <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#A08C5A]" />
+                Governing Jurisdiction
+              </h3>
+              <div>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                  Jurisdiction *
+                </label>
+                <JurisdictionSelect
+                  value={jurisdictionId || null}
+                  onChange={(id) => setJurisdictionId(id || '')}
+                />
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">
+                  All locations for this organization will be assigned to the selected jurisdiction.
+                </p>
+              </div>
+            </div>
+
             {/* Tribal advisory mode info */}
             {isTribal && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -445,7 +471,7 @@ export function AdminClientOnboarding() {
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !jurisdictionId}
                 className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (

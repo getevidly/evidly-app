@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { createLocation } from '../../lib/locations/createLocation';
+import { JurisdictionSelect } from '../../components/jurisdiction/JurisdictionSelect';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
@@ -410,7 +411,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [locState, setLocState] = useState<StateAbbrev>('CA');
-  const [county, setCounty] = useState('');
+  const [jurisdictionId, setJurisdictionId] = useState('');
   const [zip, setZip] = useState('');
   const [status, setStatus] = useState('pending');
   const [scName, setScName] = useState('');
@@ -431,12 +432,11 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
       if (orgErr) { console.error(orgErr.message); setSaving(false); return; }
       orgId = newOrg.id;
     }
-    // TODO(jurisdiction-selector): county is collected in the UI but not written to DB
-    // (phantom column). Wire to jurisdiction lookup when the selector ships.
     try {
       await createLocation({
         organization_id: orgId!,
         name: name.trim(),
+        jurisdiction_id: jurisdictionId,
         address: address || undefined,
         city: city || undefined,
         state: locState,
@@ -452,7 +452,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
     } catch (err: any) {
       console.error(err.message); setSaving(false); return;
     }
-    const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}" (${county || 'N/A'})` });
+    const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}"` });
     if (auditErr) console.error('[Configure] audit log failed:', auditErr.message);
     onSaved(); onClose();
   };
@@ -466,14 +466,8 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
           <div><label className={labelCls}>Address</label><input className={inputCls} value={address} onChange={e => setAddress(e.target.value)} placeholder="123 Main St" /></div>
           <div><label className={labelCls}>City</label><input className={inputCls} value={city} onChange={e => setCity(e.target.value)} placeholder="Fresno" /></div>
           <div><label className={labelCls}>State</label>
-            <select className={`${inputCls} cursor-pointer`} value={locState} onChange={e => { setLocState(e.target.value as StateAbbrev); setCounty(''); }}>
+            <select className={`${inputCls} cursor-pointer`} value={locState} onChange={e => setLocState(e.target.value as StateAbbrev)}>
               {SUPPORTED_STATES.map(s => <option key={s.abbrev} value={s.abbrev}>{s.name}</option>)}
-            </select>
-          </div>
-          <div><label className={labelCls}>County</label>
-            <select className={`${inputCls} cursor-pointer`} value={county} onChange={e => setCounty(e.target.value)}>
-              <option value="">Select county...</option>
-              {getCountiesForState(locState).map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div><label className={labelCls}>ZIP</label><input className={inputCls} value={zip} onChange={e => setZip(e.target.value)} placeholder="93721" /></div>
@@ -482,6 +476,14 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
               <option value="pending">Pending</option><option value="active">Active</option>
             </select>
           </div>
+        </div>
+        {/* Governing Jurisdiction */}
+        <div><label className={labelCls}>Governing Jurisdiction *</label>
+          <JurisdictionSelect
+            value={jurisdictionId || null}
+            onChange={(id) => setJurisdictionId(id || '')}
+            prefilter={{ city }}
+          />
         </div>
         {/* Site Contact */}
         <div className="border-t border-gray-200 pt-[14px] mt-[2px]">
@@ -505,7 +507,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
         <div><label className={labelCls}>Site Phone (main line)</label><input className={inputCls} value={sitePhone} onChange={e => setSitePhone(e.target.value)} placeholder="(555) 000-0000" type="tel" /></div>
         <div className="flex gap-[10px] justify-end mt-2">
           <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Location'}</Button>
+          <Button variant="primary" size="sm" onClick={handleSave} disabled={!name.trim() || !jurisdictionId || saving} isLoading={saving}>{saving ? 'Saving...' : 'Create Location'}</Button>
         </div>
       </div>
     </ConfigModal>

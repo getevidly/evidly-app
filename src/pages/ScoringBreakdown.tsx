@@ -131,12 +131,10 @@ export function ScoringBreakdown() {
     try {
       const orgId = profile?.organization_id;
       if (!orgId) { toast.error('No organization found'); return; }
-      // TODO(jurisdiction-selector): code and jurisdictionSlug collected in
-      // AddLocationModal but not written — no matching PROD columns. Wire to
-      // jurisdiction lookup when the selector ships.
       await createLocation({
         organization_id: orgId,
         name: data.name,
+        jurisdiction_id: data.jurisdictionId,
         address: data.street,
         city: data.city,
         state: data.state,
