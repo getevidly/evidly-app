@@ -535,6 +535,32 @@ The JIE correctly DEFINES each jurisdiction's dual-pillar requirements (169 juri
 
 ---
 
+## BINDING MODEL RULING (locked 2026-06-03)
+
+- **1 location → 1 jurisdiction** (place: county or independent city; CA = 62:
+  58 counties + 4 independent cities Berkeley / Long Beach / Pasadena / Vernon).
+  5 states currently seeded: CA 62, NV 17, OR 36, WA 39, AZ 15 = 169 rows.
+- **Food + fire are pillars/columns within the one jurisdiction row**, never two
+  rows. Each jurisdictions row carries food-safety config (scoring_type,
+  grading_type, grading_config) AND fire-safety config (fire_ahj_name,
+  fire_code_edition, nfpa96_edition) as adjacent column groups.
+- **Source of truth: `locations.jurisdiction_id` FK → `jurisdictions.id`**
+  (UUID FK added, verified live in PROD).
+- **Overlays** → `federal_overlay_jurisdictions` (separate table; migration
+  exists in codebase but NOT yet applied to PROD — future phase).
+- **Tribal** → `governmental_level` attribute on the jurisdictions row +
+  `organizations.tribal_jurisdiction_id` FK (migration exists in codebase but
+  NOT yet applied to PROD — future phase).
+- **`location_jurisdictions`: RETIRED.** To be dropped after all consumers cut
+  over to `locations.jurisdiction_id`. Do NOT add new writes. 3 phantom columns
+  in prod (pillar, current_status, agency_name — multi_ahj migration never
+  applied). 0 rows.
+- **DATA-QUALITY FINDING:** `jurisdiction_type` column has inconsistent values:
+  165 rows = `'food_safety'`, 4 rows = `'county'` (Monterey, SLO, Santa Barbara,
+  Ventura). Needs normalization — logged for later cleanup.
+
+---
+
 ## Cross-cluster synthesis (filled after all clusters)
 - INTERCONNECT MAP:
 - PROACTIVE GAP (ranked punch list):

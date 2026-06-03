@@ -91,34 +91,35 @@ export async function lookupJurisdiction(
   return matches;
 }
 
-// Auto-link jurisdiction to location in the database
+// Bind a location to its ONE jurisdiction (place).
+// Binding model (locked 2026-06-03): 1 location → 1 jurisdiction.
+// Food and fire are pillar columns within the one jurisdiction row.
+// Writes locations.jurisdiction_id; does NOT write location_jurisdictions.
 export async function linkJurisdictionToLocation(
   locationId: string,
   jurisdictionMatches: JurisdictionMatch[],
-): Promise<void> {
-  const records = jurisdictionMatches.map(match => ({
-    location_id: locationId,
-    jurisdiction_id: match.jurisdictionId,
-    jurisdiction_layer: match.layer,
-    is_most_restrictive: false, // Will be calculated
-    auto_detected: true,
-  }));
+): Promise<{ jurisdictionId: string | null; error: string | null }> {
+  // Resolve the ONE place: prefer food_safety match (the place row),
+  // then any non-overlay match, then first match.
+  const placeMatch =
+    jurisdictionMatches.find(m => m.layer === 'food_safety') ??
+    jurisdictionMatches.find(m => m.layer !== 'federal_overlay') ??
+    jurisdictionMatches[0] ?? null;
 
-  // Determine most restrictive
-  if (records.length > 0) {
-    // For now, food_safety is most restrictive (health dept drives the grade)
-    const foodRow = records.find(r => r.jurisdiction_layer === 'food_safety');
-    if (foodRow) foodRow.is_most_restrictive = true;
+  if (!placeMatch) {
+    return { jurisdictionId: null, error: 'No jurisdiction match found' };
   }
 
-  // Upsert — don't duplicate if already linked
-  for (const record of records) {
-    await supabase
-      .from('location_jurisdictions')
-      .upsert(record, {
-        onConflict: 'location_id,jurisdiction_id,jurisdiction_layer',
-      });
+  const { error } = await supabase
+    .from('locations')
+    .update({ jurisdiction_id: placeMatch.jurisdictionId })
+    .eq('id', locationId);
+
+  if (error) {
+    return { jurisdictionId: null, error: error.message };
   }
+
+  return { jurisdictionId: placeMatch.jurisdictionId, error: null };
 }
 
 function mapToMatch(row: any, layer: string): JurisdictionMatch {
