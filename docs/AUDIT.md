@@ -561,6 +561,315 @@ The JIE correctly DEFINES each jurisdiction's dual-pillar requirements (169 juri
 
 ---
 
+## SERVICE MONITORING MODEL (cluster: core)
+
+Audited 2026-06-03. Read-only — no code changes.
+
+### Mental model
+
+EvidLY monitors ALL facility-related service records for a commercial kitchen.
+PSE (Hood, Ansul, Sprinkler, Auto Fire Alarm) is ONE insurance-critical
+category, not the whole system. The schema supports any service type via the
+`service_type_definitions` config table.
+
+---
+
+### 1. SERVICE TYPES — complete inventory
+
+#### 1a. `service_type_definitions` table (canonical catalog)
+
+Created: `supabase/migrations/20260801000000_service_type_definitions.sql:15-34`
+Expanded: `supabase/migrations/20260824000000_service_taxonomy_expansion.sql`
+PSE columns added: `supabase/migrations/20260829000000_service_catalog_foundation.sql:13-29`
+
+**Schema columns:** code, name, short_name, description, parent_code,
+category (`food_safety` | `fire_safety` | `facility_services`),
+is_pse, is_cwa, regulatory_floor_days, default_cadence_days,
+default_frequency, nfpa_citation, managed_by_category, sort_order, icon, color
+
+**24 service codes defined across migrations:**
+
+| Code | Name | Category | is_pse | Cadence (days) | Reg. floor | Standard |
+|------|------|----------|--------|----------------|------------|----------|
+| KEC | Kitchen Exhaust Cleaning | fire_safety | true | 90 | 90 | NFPA 96 |
+| FPM | Fan Performance Management | fire_safety | false | 180 | 180 | NFPA 96 |
+| GFX | Grease Filter Exchange | fire_safety | false (is_cwa=true) | 90 | 90 | NFPA 96/CWA |
+| RGC | Rooftop Grease Containment | fire_safety | false | 90 | 90 | NFPA 96 |
+| FS | Fire Suppression System | fire_safety | true | 180 | 180 | NFPA 17A/96/UL-300 |
+| FA | Auto Fire Alarm | fire_safety | true | 365 | 365 | NFPA 72 |
+| SP | Fire Sprinkler | fire_safety | true | 90 | 90 | NFPA 25 |
+| FE | Fire Extinguisher | fire_safety | false | 365 | 365 | NFPA 10 |
+| PC | Pest Control | food_safety | false | 30 | NULL | CalCode §114259.1 |
+| GT | Grease Trap/Interceptor | food_safety | false | 90 | NULL | Local FOG |
+| BFT | Backflow Prevention Testing | food_safety | false | 365 | NULL | — |
+| HVAC | HVAC Service | facility_services | false | 90 | NULL | — |
+| PLMB | Plumbing Service | facility_services | false | 365 | NULL | — |
+| ELEC | Electrical Service | facility_services | false | 365 | NULL | — |
+| REFR | Refrigeration Service | facility_services | false | 90 | NULL | — |
+| JANI | Cleaning/Janitorial | facility_services | false | 30 | NULL | — |
+| PRES | Pressure Washing | facility_services | false | 90 | NULL | — |
+| LOCK | Locksmith Service | facility_services | false | 365 | NULL | — |
+| ROOF | Roofing Service | facility_services | false | 365 | NULL | — |
+| EQRP | Equipment Repair | facility_services | false | 90 | NULL | — |
+| WDSP | Waste/Recycling/Disposal | facility_services | false | 30 | NULL | — |
+| LINN | Linen Service | facility_services | false | 30 | NULL | — |
+| WINC | Window Cleaning | facility_services | false | 90 | NULL | — |
+| LAND | Landscaping | facility_services | false | 30 | NULL | — |
+
+Parent-child: KEC is parent of FPM, GFX, RGC (via parent_code FK).
+
+**PROD STATUS: 0 rows.** `service_type_definitions` table exists but seed
+migration `20260801000000` was never applied. All 24 codes are migration-defined
+only. Evidence: REST API `GET /rest/v1/service_type_definitions` returns `[]`.
+
+#### 1b. Additional record-type tables (not in service_type_definitions)
+
+| Table | Purpose | PROD rows | Evidence |
+|-------|---------|-----------|----------|
+| temperature_logs | Equipment temp readings (coolers, freezers) | 0 | REST */0 |
+| temp_logs | Legacy temp logs | MISSING | REST 404 |
+| receiving_temp_logs | Delivery receiving temps | 0 | REST */0 |
+| cooldown_events | CalCode §114002 two-stage cooling | 0 | REST */0 |
+| checklist_template_completions | Daily checklist completions | 0 | REST */0 |
+| checklist_templates | Checklist template definitions | 0 | REST */0 |
+| master_checklist_definitions | Master checklist library | 0 | REST */0 |
+| haccp_plans | HACCP plan lifecycle | 0 | REST */0 |
+| grease_trap_services | FOG pumping events (standalone table) | UNVERIFIED | — |
+| equipment | Fire safety equipment lifecycle | 0 | REST */0 |
+| equipment_service_records | Service events per equipment item | UNVERIFIED | — |
+| deficiencies | Deficiency/finding records | 0 | REST */0 |
+| incidents | Compliance incidents | UNVERIFIED | REST 401 (RLS) |
+| corrective_actions | Action items and follow-up | 0 | REST */0 |
+| training_records | Employee training logs | MISSING | REST 404 |
+| alerts | Alert system | MISSING | REST 404 |
+
+Three tables missing from PROD: `temp_logs`, `training_records`, `alerts`.
+All existing tables: 0 rows. No production service data has been written yet.
+
+---
+
+### 2. PSE FLAGGING
+
+**Yes — `is_pse` boolean column on `service_type_definitions`.**
+
+Added: `supabase/migrations/20260829000000_service_catalog_foundation.sql:14`
+```sql
+ALTER TABLE service_type_definitions
+  ADD COLUMN IF NOT EXISTS is_pse boolean NOT NULL DEFAULT false;
+```
+
+**Four PSE systems (is_pse = true):**
+1. KEC — Hood Cleaning (NFPA 96)
+2. FS — Fire Suppression (NFPA 17A/96/UL-300)
+3. FA — Auto Fire Alarm (NFPA 72)
+4. SP — Fire Sprinkler (NFPA 25)
+
+**Non-PSE services (is_pse = false):** FPM, GFX (is_cwa=true), RGC, FE, PC, GT,
+BFT, and all 13 facility_services codes.
+
+**TypeScript mirror:** `src/constants/serviceTypes.ts:137-142`
+```
+PSE_SAFEGUARD_CONFIG = [
+  { key: 'hood_cleaning',    service_codes: ['KEC'] },
+  { key: 'fire_suppression', service_codes: ['FS']  },
+  { key: 'fire_alarm',       service_codes: []      },  // FA not in TS type yet
+  { key: 'sprinklers',       service_codes: []      },  // SP not in TS type yet
+]
+```
+
+**`vendor_service_records.safeguard_type`** enforces a 4-value CHECK constraint:
+`'hood_cleaning' | 'fire_suppression' | 'fire_alarm' | 'sprinklers'`
+(`supabase/migrations/20260802000000_vendor_service_records.sql:21-23`).
+This column maps service events to their PSE safeguard.
+
+**STATUS:** Schema is sound. is_pse column defined, CHECK constraint on
+safeguard_type enforced. But `service_type_definitions` has 0 rows in PROD,
+so the is_pse flag is not queryable at runtime.
+
+---
+
+### 3. EXTENSIBILITY
+
+**Architecture: config-table + migration.** New service types are added by
+INSERTing rows into `service_type_definitions`. The table is a runtime-queryable
+catalog with FK constraints from:
+- `vendor_service_records.service_type_code` → `service_type_definitions.code`
+- `location_service_schedules.service_type_code` → `service_type_definitions.code`
+- `service_configurations.service_code` → `service_type_definitions.code`
+- `vendor_service_capabilities.service_code` → `service_type_definitions.code`
+- `service_requests.service_code` → `service_type_definitions.code`
+
+**How new types are actually added today:**
+1. SQL migration adds row to `service_type_definitions` (evidence: `20260824000000`
+   added 15 new codes in one migration)
+2. TypeScript constants must be updated in parallel:
+   - `src/constants/serviceTypes.ts:10` — `ServiceTypeCode` union type (only 5 of 24)
+   - `src/constants/serviceTypes.ts:40-121` — `SERVICE_TYPES` record (only 5 of 24)
+   - `src/lib/serviceOptions.ts:17-30` — `SERVICE_OPTIONS` array (10 of 24)
+   - `src/data/commonServiceCadences.ts:14-128` — `COMMON_SERVICE_CADENCES` (10 of 24)
+   - `src/components/services/RequestServiceModal.tsx` — `SERVICE_CODE_MAP`
+
+**No admin UI exists** for adding service types. No runtime INSERT path.
+All additions require a code deploy.
+
+**Assessment:** The DB schema IS extensible (any row can be INSERTed to
+`service_type_definitions` and the FK chain picks it up). But the TypeScript
+layer is NOT extensible — it hardcodes a subset of codes as a union type. The
+gap: DB has 24 codes defined in migrations, TypeScript `ServiceTypeCode` type
+knows only 5 (`'KEC' | 'FPM' | 'GFX' | 'RGC' | 'FS'`). FA and SP exist in
+`PSE_SAFEGUARD_CONFIG` but NOT in the union type. The 13 facility_services
+codes exist only in migrations.
+
+The admin vendor config page has a separate hardcoded list of 10 display labels
+(`src/pages/admin/Configure.tsx:33`) that does NOT reference
+`service_type_definitions` at all.
+
+---
+
+### 4. FOOD vs FIRE GROUPING
+
+**Three-category grouping exists in the schema:**
+
+`service_type_definitions.category` column added in
+`supabase/migrations/20260824000000_service_taxonomy_expansion.sql:11` with
+CHECK constraint: `category IN ('food_safety', 'fire_safety', 'facility_services')`.
+
+| Category | Codes |
+|----------|-------|
+| fire_safety | KEC, FPM, GFX, RGC, FS, FA, SP, FE (8) |
+| food_safety | PC, GT, BFT (3) |
+| facility_services | HVAC, PLMB, ELEC, REFR, JANI, PRES, LOCK, ROOF, EQRP, WDSP, LINN, WINC, LAND (13) |
+
+**TypeScript mirrors this as `pillar`:** `src/lib/serviceOptions.ts:13`
+defines `pillar: 'fire_safety' | 'food_safety'` — only TWO pillars in the UI
+options, no `facility_services` pillar. The 13 facility_services codes are
+invisible in the UI service selector.
+
+**`src/data/commonServiceCadences.ts`** groups 10 services into `fire_safety` (8)
+and `food_safety` (2) with `pillar` field.
+
+**Checklist templates** have their own `pillar` column (`'food_safety' | 'fire_safety'`)
+at `supabase/migrations/20260304000001_daily_checklists_module.sql:25`.
+
+**Corrective actions, incidents, documents** use a three-value `category` column:
+`'food_safety' | 'fire_safety' | 'facility_services'`
+(evidence: `20260812000000_rename_ca_categories.sql:17`,
+`20260813000000_incidents_pillar_to_category.sql:10`,
+`20260519220000_dashboard_v10_document_taxonomy.sql:24`).
+
+**Assessment:** Grouping lives in the DB (`category` column) AND the TypeScript
+layer (`pillar` field). The DB has 3 categories; the UI service selectors expose
+only 2. The `facility_services` category is structurally present but not surfaced
+in service modals.
+
+---
+
+### 5. REAL-TIME STATUS (current / overdue / due_soon)
+
+**Two independent status mechanisms:**
+
+#### 5a. Client-side (TypeScript)
+`src/constants/serviceTypes.ts:201-211` — `getServiceStatus()`:
+```typescript
+if (diffDays < 0) return 'overdue';
+if (diffDays <= 30) return 'due_soon';
+return 'current';
+```
+Reads `next_due_date` from `location_service_schedules` or `vendor_service_records`.
+Pure date math — no DB function involved.
+
+#### 5b. Server-side (edge function cron)
+`supabase/functions/vendor-service-record-trigger/index.ts:118-183`
+
+Daily cron at 13:00 UTC. Three severity levels:
+1. **vendor_lapse**: No service record within `(frequency_interval_days + 60)` days.
+   Supersedes overdue/due_soon. (`index.ts:141-170`)
+2. **overdue**: `next_due_date < today` (`index.ts:176-178`)
+3. **due_soon**: `next_due_date` within next 7 days (`index.ts:179-181`)
+
+Cron scheduled: `supabase/migrations/20260823000000_service_alert_log_and_cron.sql`
+Dedup: 23-hour window per (schedule_id, severity).
+
+**Cadence configuration lives in `location_service_schedules`:**
+- `frequency` (text label: quarterly, monthly, etc.)
+- `frequency_interval_days` (integer: 90, 30, etc.)
+- `next_due_date` (computed from last_service_date + interval)
+- `last_service_date`
+- Per-location, per-service-code. UNIQUE (organization_id, location_id, service_type_code).
+- Source: `supabase/migrations/20260803000000_location_schedules_and_reschedule_requests.sql:19-42`
+
+**Second cadence table:** `service_configurations`
+(`supabase/migrations/20260830000000_service_configurations.sql`)
+- `cadence_days`, `last_service_at`, `next_due_at`, `assigned_vendor_id`
+- UNIQUE (organization_id, location_id, service_code)
+- Auto-backfilled from vendor_service_records.
+
+**Both tables have 0 rows in PROD.** No cadence data exists yet.
+
+**Alert audit trail:** `service_alert_log` table (0 rows in PROD).
+Columns: schedule_id, severity, days_overdue, recipient_type, send_status, fired_at.
+
+---
+
+### 6. SCOPING — FK path
+
+```
+vendor_service_records
+  ├─ organization_id → organizations.id (ON DELETE CASCADE)
+  ├─ location_id     → locations.id     (ON DELETE CASCADE)
+  └─ service_type_code → service_type_definitions.code
+
+location_service_schedules
+  ├─ organization_id → organizations.id (ON DELETE CASCADE)
+  ├─ location_id     → locations.id     (ON DELETE CASCADE)
+  └─ service_type_code → service_type_definitions.code
+
+service_configurations
+  ├─ organization_id → organizations.id
+  ├─ location_id     → locations.id
+  └─ service_code    → service_type_definitions.code
+```
+
+Every service record ties to a specific kitchen (location) via `location_id` FK,
+and to an organization via `organization_id` FK. Both are NOT NULL with CASCADE
+deletes. RLS policies scope reads to the user's organization via `user_profiles`.
+
+Evidence: `supabase/migrations/20260802000000_vendor_service_records.sql:17-18`,
+`20260803000000_location_schedules_and_reschedule_requests.sql:21-23`.
+
+---
+
+### Summary — STATUS TALLY
+
+| # | Feature | Status | Evidence |
+|---|---------|--------|----------|
+| 1 | service_type_definitions (24 codes) | **SCHEMA-ONLY** | Table exists, 0 rows in PROD |
+| 2 | is_pse flag (4 PSE systems) | **SCHEMA-ONLY** | Column defined, 0 rows to query |
+| 3 | category grouping (3 categories) | **SCHEMA-ONLY** | Column + CHECK defined, 0 rows |
+| 4 | vendor_service_records | **LIVE-EMPTY** | Table + RLS + indexes exist, 0 rows |
+| 5 | location_service_schedules | **LIVE-EMPTY** | Table + RLS + FK chain, 0 rows |
+| 6 | service_configurations | **LIVE-EMPTY** | Table + unique constraint, 0 rows |
+| 7 | vendor_service_capabilities | **LIVE-EMPTY** | Table exists, UNVERIFIED rows |
+| 8 | service_alert_log | **LIVE-EMPTY** | Table + cron configured, 0 rows |
+| 9 | Cron (vendor-service-record-trigger) | **LIVE-IDLE** | Edge function deployed, no data to evaluate |
+| 10 | Client status calc (getServiceStatus) | **LIVE-WORKING** | Pure date math, no DB dependency |
+| 11 | TypeScript SERVICE_TYPES (5 codes) | **STALE** | Only 5 of 24 DB codes represented |
+| 12 | SERVICE_OPTIONS (10 codes) | **STALE** | Only 10 of 24 DB codes represented |
+| 13 | Admin Configure vendor types | **DETACHED** | Hardcoded 10-label array, no FK to catalog |
+| 14 | temp_logs table | **MISSING** | REST 404 — migration not applied |
+| 15 | training_records table | **MISSING** | REST 404 — migration not applied |
+| 16 | alerts table | **MISSING** | REST 404 — migration not applied |
+
+**CRITICAL GAP:** `service_type_definitions` has 0 rows. This is the root
+reference table — `vendor_service_records.service_type_code`,
+`location_service_schedules.service_type_code`, and
+`vendor_service_capabilities.service_code` all FK to it. Until the seed
+migration is applied, NO service record with a service_type_code can be
+INSERTed (FK violation). The PSE cadence pipeline, service scheduling,
+and vendor capability assignment are all structurally blocked.
+
+---
+
 ## Cross-cluster synthesis (filled after all clusters)
 - INTERCONNECT MAP:
 - PROACTIVE GAP (ranked punch list):
