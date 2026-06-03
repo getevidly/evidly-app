@@ -396,6 +396,8 @@ export function OrgHierarchy() {
     setSelectedId(id);
   };
 
+  // Local React state only — no DB write. If this is ever wired to persist,
+  // it MUST use createLocation() from src/lib/locations/createLocation.ts.
   const handleAddLocation = (data: NewLocationData) => {
     const newId = `loc-${Date.now()}`;
     const counties = getAvailableCounties();

@@ -17,6 +17,7 @@ import { ErrorState } from '../components/shared/PageStates';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
 import { supabase } from '../lib/supabase';
+import { createLocation } from '../lib/locations/createLocation';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -130,17 +131,17 @@ export function ScoringBreakdown() {
     try {
       const orgId = profile?.organization_id;
       if (!orgId) { toast.error('No organization found'); return; }
-      const { error } = await supabase.from('locations').insert({
+      // TODO(jurisdiction-selector): code and jurisdictionSlug collected in
+      // AddLocationModal but not written — no matching PROD columns. Wire to
+      // jurisdiction lookup when the selector ships.
+      await createLocation({
         organization_id: orgId,
         name: data.name,
-        code: data.code,
-        street: data.street,
+        address: data.street,
         city: data.city,
         state: data.state,
         zip: data.zip,
-        jurisdiction_slug: data.jurisdictionSlug,
       });
-      if (error) throw error;
       setShowAddLocation(false);
       toast.success(`${data.name} added successfully`);
     } catch (err: any) {

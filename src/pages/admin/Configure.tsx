@@ -5,6 +5,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { createLocation } from '../../lib/locations/createLocation';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
@@ -430,13 +431,27 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
       if (orgErr) { console.error(orgErr.message); setSaving(false); return; }
       orgId = newOrg.id;
     }
-    const { error } = await supabase.from('locations').insert({
-      name: name.trim(), organization_id: orgId, address: address || null,
-      city: city || null, state: locState, zip: zip || null, county: county || null, status,
-      site_contact_name: scName || null, site_contact_email: scEmail || null, site_contact_phone: scPhone || null,
-      site_phone: sitePhone || null, manager_name: mgrName || null, manager_phone: mgrPhone || null,
-    });
-    if (error) { console.error(error.message); setSaving(false); return; }
+    // TODO(jurisdiction-selector): county is collected in the UI but not written to DB
+    // (phantom column). Wire to jurisdiction lookup when the selector ships.
+    try {
+      await createLocation({
+        organization_id: orgId!,
+        name: name.trim(),
+        address: address || undefined,
+        city: city || undefined,
+        state: locState,
+        zip: zip || undefined,
+        status,
+        site_contact_name: scName || undefined,
+        site_contact_email: scEmail || undefined,
+        site_contact_phone: scPhone || undefined,
+        site_phone: sitePhone || undefined,
+        manager_name: mgrName || undefined,
+        manager_phone: mgrPhone || undefined,
+      });
+    } catch (err: any) {
+      console.error(err.message); setSaving(false); return;
+    }
     const { error: auditErr } = await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}" (${county || 'N/A'})` });
     if (auditErr) console.error('[Configure] audit log failed:', auditErr.message);
     onSaved(); onClose();

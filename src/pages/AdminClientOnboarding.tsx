@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Building2, MapPin, Users, Mail, Send, ShieldAlert } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { createLocation } from '../lib/locations/createLocation';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -133,16 +134,18 @@ export function AdminClientOnboarding() {
       if (orgError) throw orgError;
 
       // Create outlet locations for tribal casinos
+      // KNOWN ISSUE: RLS INSERT policy requires the caller to have a
+      // user_location_access row for this org. Newly onboarded orgs may not
+      // satisfy this. Fix pending decision (seed access vs service-role).
+      // Do not change auth behavior here.
       if (isTribal && outletCount > 0) {
-        const outlets = [];
         for (let i = 0; i < outletCount; i++) {
-          outlets.push({
+          await createLocation({
             organization_id: orgData.id,
             name: DEFAULT_OUTLET_NAMES[i] || `Outlet ${i + 1}`,
             status: 'active',
           });
         }
-        await supabase.from('locations').insert(outlets);
       }
 
       const { data: { user: currentUser } } = await supabase.auth.getUser();

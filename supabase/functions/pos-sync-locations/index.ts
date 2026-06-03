@@ -66,19 +66,21 @@ Deno.serve(async (req: Request) => {
 
       if (!existing) {
         // Create new EvidLY location
+        // Column whitelist must match PROD locations schema.
+        // See src/lib/locations/createLocation.ts for the canonical contract.
+        // Removed: county (phantom), source (phantom).
         const { data: newLoc, error: locError } = await supabase
           .from('locations')
           .insert({
-            organization_id: conn.org_id,
-            name:            loc.name,
-            address:         loc.address,
-            city:            loc.city,
-            state:           loc.state,
-            zip:             loc.zip,
-            phone:           loc.phone,
-            county:          county,
-            status:          loc.isActive ? 'active' : 'inactive',
-            source:          type,
+            organization_id:       conn.org_id,
+            name:                  loc.name,
+            address:               loc.address,
+            city:                  loc.city,
+            state:                 loc.state,
+            zip:                   loc.zip,
+            phone:                 loc.phone,
+            status:                loc.isActive ? 'active' : 'inactive',
+            business_hours_timezone: 'America/Los_Angeles',
           })
           .select()
           .single();
