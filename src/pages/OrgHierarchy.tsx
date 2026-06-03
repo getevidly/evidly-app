@@ -10,6 +10,8 @@ import { useOperatingHours } from '../contexts/OperatingHoursContext';
 import { getAvailableCounties } from '../lib/jurisdictionScoring';
 import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
 import { colors, prp } from '../lib/designSystem';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -321,10 +323,9 @@ export function OrgHierarchy() {
   const navigate = useNavigate();
   const { companyName } = useDemo();
   const { locationHours, setLocationHours } = useOperatingHours();
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id;
 
-  // Empty initial tree — no demo seed data. Real locations will come from
-  // a Supabase query (future hook). Until then, the page shows the PRP
-  // empty state when no locations have been added.
   const [orgTreeState, setOrgTreeState] = useState<OrgTreeNode>({
     id: 'org-root',
     name: 'Your Organization',
@@ -336,6 +337,8 @@ export function OrgHierarchy() {
   });
   const [selectedId, setSelectedId] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Sync root org name with account's actual company name
   useEffect(() => {
@@ -343,6 +346,46 @@ export function OrgHierarchy() {
       setOrgTreeState(prev => ({ ...prev, name: companyName }));
     }
   }, [companyName]);
+
+  // Load locations from Supabase
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setLoadError(null);
+
+    supabase
+      .from('locations')
+      .select('id, name, city, state, status')
+      .eq('organization_id', orgId)
+      .order('name')
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Locations query failed:', error.message);
+          setLoadError(error.message);
+          setLoading(false);
+          return;
+        }
+
+        const locationNodes: OrgTreeNode[] = (data || []).map(row => ({
+          id: row.id,
+          name: row.name,
+          code: [row.city, row.state].filter(Boolean).join(', '),
+          type: 'location' as const,
+          openItems: 0,
+        }));
+
+        setOrgTreeState(prev => ({
+          ...prev,
+          children: locationNodes,
+          locationCount: locationNodes.length,
+        }));
+        setLoading(false);
+      });
+  }, [orgId]);
 
   const selectedNode = selectedId ? findTreeNode(orgTreeState, selectedId) : null;
   const allLocations = collectLocations(orgTreeState);
@@ -438,8 +481,24 @@ export function OrgHierarchy() {
         </div>
       </div>
 
-      {/* Empty state — shown when no locations exist */}
-      {allLocations.length === 0 ? (
+      {/* Loading state */}
+      {loading ? (
+        <div className="rounded-xl border border-[#1E2D4D]/10 bg-white flex items-center justify-center" style={{ padding: '40px 16px', minHeight: 200, boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <p style={{ fontSize: 14, color: colors.textSecondary }}>Loading locations…</p>
+        </div>
+
+      ) : loadError ? (
+        <div className="rounded-xl border border-[#1E2D4D]/10 bg-white flex flex-col items-center justify-center text-center" style={{ padding: '28px 16px 36px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <AlertTriangle className="w-6 h-6 mb-3" style={{ color: '#A32D2D' }} />
+          <p style={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, margin: '0 0 6px' }}>
+            Unable to load locations
+          </p>
+          <p style={{ fontSize: 12, color: colors.textSecondary }}>
+            {loadError}
+          </p>
+        </div>
+
+      ) : allLocations.length === 0 ? (
         <div className="rounded-xl border border-[#1E2D4D]/10 bg-white flex flex-col items-center text-center" style={{ padding: '28px 16px 36px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
           {/* Icon circle */}
           <div
