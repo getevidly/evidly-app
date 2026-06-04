@@ -95,10 +95,6 @@ export function AdminClientOnboarding() {
       if (orgError) throw orgError;
 
       // Create outlet locations for tribal casinos
-      // KNOWN ISSUE: RLS INSERT policy requires the caller to have a
-      // user_location_access row for this org. Newly onboarded orgs may not
-      // satisfy this. Fix pending decision (seed access vs service-role).
-      // Do not change auth behavior here.
       if (isTribal && outletCount > 0) {
         for (let i = 0; i < outletCount; i++) {
           await createLocation({
