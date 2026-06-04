@@ -482,9 +482,8 @@ export function Vendors() {
     if (isDemoMode || !profile?.organization_id) return;
     async function fetchVendorSignals() {
       const { data } = await supabase
-        .from('intelligence_signals')
+        .rpc('get_signals_for_org', { p_org_id: profile!.organization_id })
         .select('id, title, content_summary, created_at')
-        .eq('is_published', true)
         .eq('signal_type', 'vendor_intelligence')
         .order('created_at', { ascending: false })
         .limit(3);

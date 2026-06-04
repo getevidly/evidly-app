@@ -78,9 +78,8 @@ export function BusinessIntelligence() {
 
     try {
       const { data, error } = await supabase
-        .from('intelligence_signals')
+        .rpc('get_signals_for_org', { p_org_id: orgId })
         .select('*')
-        .eq('is_published', true)
         .order('published_at', { ascending: false })
         .limit(50);
 

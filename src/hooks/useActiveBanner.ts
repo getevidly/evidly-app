@@ -35,9 +35,8 @@ export function useActiveBanner() {
     }
 
     const { data, error } = await supabase
-      .from('intelligence_signals')
+      .rpc('get_signals_for_org', { p_org_id: orgId })
       .select('id, title, content_summary, signal_type, severity_score')
-      .eq('is_published', true)
       .in('signal_type', ['outbreak', 'game_plan', 'health_alert', 'fda_recall', 'recall', 'allergen_alert'])
       .order('severity_score', { ascending: false, nullsFirst: false })
       .limit(1);

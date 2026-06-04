@@ -25,11 +25,10 @@ export function useUnreadSignals() {
       return;
     }
 
-    // Step 1: Get all published signal IDs for this org
+    // Step 1: Get all published signal IDs relevant to this org (county-matched)
     const { data: signals, error: sigError } = await supabase
-      .from('intelligence_signals')
-      .select('id')
-      .eq('is_published', true);
+      .rpc('get_signals_for_org', { p_org_id: orgId })
+      .select('id');
 
     if (sigError || !signals) {
       setUnreadCount(0);
