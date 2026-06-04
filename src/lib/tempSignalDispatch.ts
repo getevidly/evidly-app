@@ -40,16 +40,15 @@ export async function dispatchTempViolationSignal(
 
     await supabase.from('intelligence_signals').insert({
       signal_type: 'temperature_violation',
-      priority: violation.corrective_action ? 'medium' : 'high',
       title: `Temperature Violation — ${violation.equipment_name}`,
-      summary: `${violation.equipment_name} recorded ${violation.temperature}°F. ` +
+      content_summary: `${violation.equipment_name} recorded ${violation.temperature}°F. ` +
         `Safe range: ${rangeText}.` +
         (violation.corrective_action ? ` Corrective action taken.` : ` No corrective action recorded.`),
       source_name: 'manual_entry',
-      risk_revenue: null,
-      risk_liability: violation.corrective_action ? 'medium' : 'high',
-      risk_cost: 'low',
-      risk_operational: 'medium',
+      revenue_risk_level: null,
+      liability_risk_level: violation.corrective_action ? 'moderate' : 'high',
+      cost_risk_level: 'low',
+      operational_risk_level: 'moderate',
       is_published: true,
       created_at: new Date().toISOString(),
     });

@@ -135,40 +135,11 @@ export default function DemoLauncher() {
     setForm({ prospectName: '', company: '', demoState: 'CA' as StateAbbrev, counties: [], industry: '', locationCount: '', notes: '' });
   };
 
-  // Fire Demo Signal — inserts a published signal for the guided tour org
+  // Fire Demo Signal — simulated only, never inserts real data
   const fireDemoSignal = async () => {
     setFiringSignal(true);
-    try {
-      if (isDemoMode) {
-        // In demo mode, just show success
-        await new Promise(r => setTimeout(r, 800));
-        toast.success('Demo signal fired (simulated in demo mode)');
-      } else {
-        const { error } = await supabase.from('intelligence_signals').insert({
-          title: 'FDA recall affecting leafy greens — California suppliers',
-          summary: 'An FDA recall has been issued affecting romaine lettuce from California suppliers. Review your receiving logs for the past 30 days.',
-          content_summary: 'The FDA has issued a Class I recall for romaine lettuce originating from Central Valley, CA growing regions due to potential E. coli O157:H7 contamination. Commercial kitchens sourcing from California suppliers should review receiving logs and supplier invoices from the past 30 days.',
-          signal_type: 'fda_recall',
-          category: 'food_safety',
-          cic_pillar: 'liability_risk',
-          severity_score: 90,
-          confidence_score: 95,
-          revenue_risk_level: 'high',
-          liability_risk_level: 'critical',
-          cost_risk_level: 'low',
-          operational_risk_level: 'high',
-          recommended_action: 'Check receiving logs for romaine lettuce from California suppliers in the last 30 days. Quarantine any affected product.',
-          is_published: true,
-          published_at: new Date().toISOString(),
-          status: 'published',
-          routing_tier: 'notify',
-        });
-        if (error) throw error;
-        toast.success('Demo signal fired — check the notification bell');
-      }
-    } catch (err: any) {
-      toast.error(`Failed to fire signal: ${err.message}`);
-    }
+    await new Promise(r => setTimeout(r, 800));
+    toast.success('Demo signal fired (simulated)');
     setFiringSignal(false);
   };
 

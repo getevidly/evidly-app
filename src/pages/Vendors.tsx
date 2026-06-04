@@ -486,7 +486,6 @@ export function Vendors() {
         .select('id, title, content_summary, created_at')
         .eq('is_published', true)
         .eq('signal_type', 'vendor_intelligence')
-        .eq('org_id', profile!.organization_id)
         .order('created_at', { ascending: false })
         .limit(3);
       if (data) setVendorSignals(data.map((s: any) => ({

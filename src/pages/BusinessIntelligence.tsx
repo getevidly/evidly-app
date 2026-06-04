@@ -80,9 +80,7 @@ export function BusinessIntelligence() {
       const { data, error } = await supabase
         .from('intelligence_signals')
         .select('*')
-        .eq('org_id', orgId)
         .eq('is_published', true)
-        .eq('is_sample', false)
         .order('published_at', { ascending: false })
         .limit(50);
 
@@ -92,17 +90,17 @@ export function BusinessIntelligence() {
         setSignals(data.map((row: any) => ({
           id: row.id,
           title: row.title || '',
-          summary: row.summary || row.ai_summary || '',
+          summary: row.content_summary || '',
           category: row.category || 'regulatory',
           signal_type: row.signal_type || '',
           source_name: row.source_name || null,
-          priority: row.ai_urgency || 'low',
-          county: row.county || 'Statewide',
-          published_at: row.published_at || row.discovered_at || row.created_at,
-          risk_revenue: row.risk_revenue === 'none' ? null : row.risk_revenue,
-          risk_liability: row.risk_liability === 'none' ? null : row.risk_liability,
-          risk_cost: row.risk_cost === 'none' ? null : row.risk_cost,
-          risk_operational: row.risk_operational === 'none' ? null : row.risk_operational,
+          priority: row.severity_score >= 80 ? 'critical' : row.severity_score >= 60 ? 'high' : row.severity_score >= 40 ? 'medium' : 'low',
+          county: (row.counties_affected || [])[0] || 'Statewide',
+          published_at: row.published_at || row.created_at,
+          risk_revenue: row.revenue_risk_level === 'none' ? null : row.revenue_risk_level,
+          risk_liability: row.liability_risk_level === 'none' ? null : row.liability_risk_level,
+          risk_cost: row.cost_risk_level === 'none' ? null : row.cost_risk_level,
+          risk_operational: row.operational_risk_level === 'none' ? null : row.operational_risk_level,
           workforce_risk_level: row.workforce_risk_level || null,
           client_impact_revenue: row.client_impact_revenue || null,
           client_impact_liability: row.client_impact_liability || null,

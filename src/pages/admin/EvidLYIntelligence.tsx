@@ -46,7 +46,7 @@ interface Signal {
   source_key: string | null;
   signal_type: string;
   title: string;
-  summary: string | null;
+  content_summary: string | null;
   source_url: string | null;
   created_at: string;
   scope: string | null;
@@ -58,10 +58,10 @@ interface Signal {
   ai_platform_impact: string | null;
   ai_confidence: number | null;
   status: string;
-  risk_revenue: string | null;
-  risk_liability: string | null;
-  risk_cost: string | null;
-  risk_operational: string | null;
+  revenue_risk_level: string | null;
+  liability_risk_level: string | null;
+  cost_risk_level: string | null;
+  operational_risk_level: string | null;
   orgs_affected: number;
   target_industries: string[] | null;
   target_counties: string[] | null;
@@ -568,7 +568,7 @@ export default function EvidLYIntelligence() {
   const totalSignals = signals.length;
   const pendingSignals = signals.filter(s => !s.published_at).length;
   const publishedSignals = signals.filter(s => !!s.published_at).length;
-  const criticalSignals = signals.filter(s => s.risk_revenue === 'critical' || s.risk_liability === 'critical').length;
+  const criticalSignals = signals.filter(s => s.revenue_risk_level === 'critical' || s.liability_risk_level === 'critical').length;
   const totalCorrelations = correlations.length;
   const regulatoryCount = regulatoryChanges.length;
   const rfpCount = rfpListings.length;
@@ -622,7 +622,7 @@ export default function EvidLYIntelligence() {
   };
 
   const updateSignalRisk = async (signalId: string, dimension: string, level: string) => {
-    const col = `risk_${dimension}` as keyof Signal;
+    const col = `${dimension}_risk_level` as keyof Signal;
     await supabase.from('intelligence_signals')
       .update({ [col]: level })
       .eq('id', signalId);
@@ -653,11 +653,11 @@ export default function EvidLYIntelligence() {
   const openPublishModal = (signal: Signal) => {
     setPubForm({
       title: signal.title,
-      summary: signal.ai_summary || signal.summary || '',
-      revenueRisk: signal.risk_revenue || 'none',
-      liabilityRisk: signal.risk_liability || 'none',
-      costRisk: signal.risk_cost || 'none',
-      operationalRisk: signal.risk_operational || 'none',
+      summary: signal.ai_summary || signal.content_summary || '',
+      revenueRisk: signal.revenue_risk_level || 'none',
+      liabilityRisk: signal.liability_risk_level || 'none',
+      costRisk: signal.cost_risk_level || 'none',
+      operationalRisk: signal.operational_risk_level || 'none',
       revenueNote: '', liabilityNote: '', costNote: '', operationalNote: '',
       oppRevenue: signal.opp_revenue || 'none', oppLiability: signal.opp_liability || 'none',
       oppCost: signal.opp_cost || 'none', oppOperational: signal.opp_operational || 'none',
@@ -699,10 +699,10 @@ export default function EvidLYIntelligence() {
     const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
     // 1. Update signal with risk + opportunity dimensions + targeting + published status
     await supabase.from('intelligence_signals').update({
-      risk_revenue: pubForm.revenueRisk,
-      risk_liability: pubForm.liabilityRisk,
-      risk_cost: pubForm.costRisk,
-      risk_operational: pubForm.operationalRisk,
+      revenue_risk_level: pubForm.revenueRisk,
+      liability_risk_level: pubForm.liabilityRisk,
+      cost_risk_level: pubForm.costRisk,
+      operational_risk_level: pubForm.operationalRisk,
       revenue_risk_note: pubForm.revenueNote || null,
       liability_risk_note: pubForm.liabilityNote || null,
       cost_risk_note: pubForm.costNote || null,
@@ -1102,14 +1102,14 @@ export default function EvidLYIntelligence() {
                       </div>
                     )}
                     {/* Risk Dimensions */}
-                    {(sig.risk_revenue && sig.risk_revenue !== 'none') || (sig.risk_liability && sig.risk_liability !== 'none') ||
-                     (sig.risk_cost && sig.risk_cost !== 'none') || (sig.risk_operational && sig.risk_operational !== 'none') ? (
+                    {(sig.revenue_risk_level && sig.revenue_risk_level !== 'none') || (sig.liability_risk_level && sig.liability_risk_level !== 'none') ||
+                     (sig.cost_risk_level && sig.cost_risk_level !== 'none') || (sig.operational_risk_level && sig.operational_risk_level !== 'none') ? (
                       <div className="flex gap-1.5 mt-2 flex-wrap">
                         {([
-                          { key: 'Revenue', dim: 'revenue' as const, val: sig.risk_revenue },
-                          { key: 'Liability', dim: 'liability' as const, val: sig.risk_liability },
-                          { key: 'Cost', dim: 'cost' as const, val: sig.risk_cost },
-                          { key: 'Operational', dim: 'operational' as const, val: sig.risk_operational },
+                          { key: 'Revenue', dim: 'revenue' as const, val: sig.revenue_risk_level },
+                          { key: 'Liability', dim: 'liability' as const, val: sig.liability_risk_level },
+                          { key: 'Cost', dim: 'cost' as const, val: sig.cost_risk_level },
+                          { key: 'Operational', dim: 'operational' as const, val: sig.operational_risk_level },
                         ] as const).filter(d => d.val && d.val !== 'none').map(d => {
                           const rc = RISK_DIM_COLORS[d.val!] || RISK_DIM_COLORS.low;
                           return (
@@ -1173,7 +1173,7 @@ export default function EvidLYIntelligence() {
                     {/* Risk dimension quick-tag */}
                     <div className="grid grid-cols-2 gap-[3px] mt-1">
                       {(['revenue','liability','cost','operational'] as const).map(dim => (
-                        <select key={dim} value={(sig as any)[`risk_${dim}`] || 'none'}
+                        <select key={dim} value={(sig as any)[`${dim}_risk_level`] || 'none'}
                           onChange={e => updateSignalRisk(sig.id, dim, e.target.value)}
                           className="text-[9px] py-[2px] px-[3px] border border-border_ui rounded bg-[#FAFAFA] text-slate_ui cursor-pointer">
                           <option value="none">{dim.slice(0,3).toUpperCase()}</option>
@@ -1463,10 +1463,10 @@ export default function EvidLYIntelligence() {
           const sig = signals.find(s => s.id === c.source_id);
           if (sig) {
             if (sig.created_at > entry.lastDate) entry.lastDate = sig.created_at;
-            if (sig.risk_revenue && sig.risk_revenue !== 'none') entry.dims.rev = true;
-            if (sig.risk_liability && sig.risk_liability !== 'none') entry.dims.liab = true;
-            if (sig.risk_cost && sig.risk_cost !== 'none') entry.dims.cost = true;
-            if (sig.risk_operational && sig.risk_operational !== 'none') entry.dims.ops = true;
+            if (sig.revenue_risk_level && sig.revenue_risk_level !== 'none') entry.dims.rev = true;
+            if (sig.liability_risk_level && sig.liability_risk_level !== 'none') entry.dims.liab = true;
+            if (sig.cost_risk_level && sig.cost_risk_level !== 'none') entry.dims.cost = true;
+            if (sig.operational_risk_level && sig.operational_risk_level !== 'none') entry.dims.ops = true;
             if (isWfSignal(sig)) entry.dims.wkf = true;
           }
         }

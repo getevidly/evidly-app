@@ -29,8 +29,7 @@ export function useUnreadSignals() {
     const { data: signals, error: sigError } = await supabase
       .from('intelligence_signals')
       .select('id')
-      .eq('is_published', true)
-      .eq('org_id', orgId);
+      .eq('is_published', true);
 
     if (sigError || !signals) {
       setUnreadCount(0);
@@ -62,7 +61,7 @@ export function useUnreadSignals() {
         event: '*',
         schema: 'public',
         table: 'intelligence_signals',
-        filter: `org_id=eq.${orgId}`,
+        filter: `is_published=eq.true`,
       }, () => {
         fetchCount();
       })

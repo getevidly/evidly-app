@@ -14,9 +14,9 @@ import { useDemo } from '../contexts/DemoContext';
 export interface BannerSignal {
   id: string;
   title: string;
-  summary: string;
+  content_summary: string | null;
   signal_type: string;
-  priority: string;
+  severity_score: number | null;
 }
 
 export function useActiveBanner() {
@@ -36,11 +36,10 @@ export function useActiveBanner() {
 
     const { data, error } = await supabase
       .from('intelligence_signals')
-      .select('id, title, summary, signal_type, priority')
+      .select('id, title, content_summary, signal_type, severity_score')
       .eq('is_published', true)
-      .eq('org_id', orgId)
       .in('signal_type', ['outbreak', 'game_plan', 'health_alert', 'fda_recall', 'recall', 'allergen_alert'])
-      .order('priority', { ascending: true })
+      .order('severity_score', { ascending: false, nullsFirst: false })
       .limit(1);
 
     if (!error && data && data.length > 0) {
@@ -62,7 +61,7 @@ export function useActiveBanner() {
         event: '*',
         schema: 'public',
         table: 'intelligence_signals',
-        filter: `org_id=eq.${orgId}`,
+        filter: `is_published=eq.true`,
       }, () => {
         fetchBanner();
       })

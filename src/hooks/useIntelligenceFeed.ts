@@ -52,7 +52,6 @@ export function useIntelligenceFeed(orgId: string | undefined) {
         .from('intelligence_signals')
         .select('*')
         .eq('is_published', true)
-        .eq('org_id', orgId)
         .order('published_at', { ascending: false })
         .limit(5);
 
@@ -86,7 +85,7 @@ export function useIntelligenceFeed(orgId: string | undefined) {
         event: '*',
         schema: 'public',
         table: 'intelligence_signals',
-        filter: `org_id=eq.${orgId}`,
+        filter: `is_published=eq.true`,
       }, () => {
         refetch();
       })

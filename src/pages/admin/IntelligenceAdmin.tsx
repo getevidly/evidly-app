@@ -1028,31 +1028,6 @@ export default function IntelligenceAdmin() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant="destructive"
-            size="sm"
-            onClick={async () => {
-              try {
-                const { error } = await supabase.from('intelligence_signals').insert({
-                  title: 'FDA recall affecting leafy greens — California suppliers',
-                  summary: 'An FDA recall has been issued affecting romaine lettuce from California suppliers. Review your receiving logs for the past 30 days.',
-                  content_summary: 'The FDA has issued a Class I recall for romaine lettuce from Central Valley, CA due to potential E. coli O157:H7 contamination.',
-                  signal_type: 'fda_recall', category: 'food_safety', cic_pillar: 'liability_risk',
-                  severity_score: 90, confidence_score: 95,
-                  revenue_risk_level: 'high', liability_risk_level: 'critical',
-                  cost_risk_level: 'low', operational_risk_level: 'high',
-                  recommended_action: 'Check receiving logs for romaine lettuce from California suppliers. Quarantine any affected product.',
-                  is_published: true, published_at: new Date().toISOString(), status: 'published', routing_tier: 'notify',
-                });
-                if (error) throw error;
-                toast.success('Demo signal fired — check the notification bell');
-                loadQueue();
-              } catch (err: any) { toast.error(`Failed: ${err.message}`); }
-            }}
-            className="shrink-0"
-          >
-            Fire Demo Signal
-          </Button>
-          <Button
             variant="gold"
             size="sm"
             onClick={() => setShowCreateModal(true)}
