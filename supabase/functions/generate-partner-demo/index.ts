@@ -746,21 +746,6 @@ async function generateTribalCasinoDemo(
   const casinoName =
     (ctx.partner_config?.casino_name as string) || "Eagle Mountain Casino";
 
-  // Set tribal org flags
-  await ctx.supabase
-    .from("organizations")
-    .update({
-      is_tribal: true,
-      food_safety_mode: "advisory",
-      food_safety_authority: "Tribal Environmental Health Office (TEHO)",
-      food_safety_advisory_text:
-        `Food safety compliance for ${tribeName} is governed by the ` +
-        "Tribal Environmental Health Office (TEHO) under tribal sovereignty. " +
-        "EvidLY tracks fire safety and operational compliance in full. " +
-        "Tribe-specific food safety intelligence is in active development.",
-    })
-    .eq("id", ctx.org_id);
-
   // Create outlet locations
   const defaultOutletNames = [
     "Main Buffet",

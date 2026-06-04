@@ -102,24 +102,6 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Set tribal casino advisory mode if applicable
-    if (industry_type === "tribal_casino") {
-      await supabase
-        .from("organizations")
-        .update({
-          food_safety_mode: "advisory",
-          food_safety_authority:
-            "Tribal Environmental Health Office (TEHO)",
-          food_safety_advisory_text:
-            "Food safety compliance for this property is governed by the " +
-            "Tribal Environmental Health Office (TEHO) under tribal sovereignty. " +
-            "EvidLY tracks operational compliance and fire safety in full. " +
-            "Food safety intelligence specific to your tribe's food code " +
-            "is in active development.",
-        })
-        .eq("id", org_id);
-    }
-
     // Update tour status to active
     await supabase
       .from("demo_tours")

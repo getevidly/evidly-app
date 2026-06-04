@@ -75,36 +75,6 @@ export function AdminClientOnboarding() {
     }
 
     try {
-      // For tribal, look up jurisdiction IDs
-      let tribalJurisdictionId: string | null = null;
-      let countyJurisdictionId: string | null = null;
-
-      if (isTribal && selectedTribe) {
-        const tribe = TRIBAL_OPTIONS.find(t => t.label === selectedTribe);
-        if (tribe) {
-          // Find tribal TEHO jurisdiction
-          const { data: tribalJ } = await supabase
-            .from('jurisdictions')
-            .select('id')
-            .eq('tribal_entity_name', selectedTribe)
-            .eq('governmental_level', 'tribal')
-            .maybeSingle();
-
-          tribalJurisdictionId = tribalJ?.id || null;
-
-          // Find county jurisdiction for fire safety
-          const { data: countyJ } = await supabase
-            .from('jurisdictions')
-            .select('id')
-            .eq('county', tribe.county)
-            .eq('governmental_level', 'county')
-            .is('city', null)
-            .maybeSingle();
-
-          countyJurisdictionId = countyJ?.id || null;
-        }
-      }
-
       const orgInsert: Record<string, any> = {
         name: orgName,
         industry_type: industryType,
@@ -113,21 +83,8 @@ export function AdminClientOnboarding() {
         primary_contact_name: ownerName,
         primary_contact_email: ownerEmail,
         primary_contact_phone: ownerPhone || null,
-        status: 'pending',
-        plan: 'founder',
+        plan_tier: 'founder',
       };
-
-      if (isTribal) {
-        orgInsert.is_tribal = true;
-        orgInsert.food_safety_mode = 'advisory';
-        orgInsert.food_safety_authority = 'Tribal Environmental Health Office (TEHO)';
-        orgInsert.food_safety_advisory_text =
-          `Food safety compliance for this property is governed by the ` +
-          `${selectedTribe || 'Tribal'} Environmental Health Office (TEHO) under tribal sovereignty. ` +
-          `EvidLY tracks fire safety and operational compliance in full.`;
-        if (tribalJurisdictionId) orgInsert.tribal_jurisdiction_id = tribalJurisdictionId;
-        if (countyJurisdictionId) orgInsert.county_jurisdiction_id = countyJurisdictionId;
-      }
 
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')

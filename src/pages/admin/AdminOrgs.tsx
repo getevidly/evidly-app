@@ -61,12 +61,12 @@ export default function AdminOrgs() {
     try {
       const { data, error } = await supabase
         .from('organizations')
-        .select('id, name, industry_type, plan_tier, subscription_status, timezone, created_at, updated_at')
+        .select('id, name, industry_type, plan_tier, subscription_status, timezone, notes, created_at, updated_at')
         .eq('is_system', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      const rows = (data || []).map(row => ({ ...row, notes: null })) as OrgRow[];
+      const rows = (data || []) as OrgRow[];
       setOrgs(rows);
     } catch (e) {
       console.error('[AdminOrgs] loadOrgs failed:', e);
@@ -109,7 +109,7 @@ export default function AdminOrgs() {
       if (editForm.industry_type !== org?.industry_type) updates.industry_type = editForm.industry_type || null;
       if (editForm.plan_tier !== org?.plan_tier) updates.plan_tier = editForm.plan_tier || null;
       if (editForm.timezone !== org?.timezone) updates.timezone = editForm.timezone || null;
-      // notes column does not exist on organizations table — skip write
+      if ((editForm.notes || '') !== (org?.notes || '')) updates.notes = editForm.notes || null;
 
       if (Object.keys(updates).length === 0) {
         setSaving(false);

@@ -17,7 +17,7 @@ import { Modal } from '../../components/ui/Modal';
 
 type Tab = 'organizations' | 'locations' | 'users' | 'vendors';
 
-interface Org { id: string; name: string; plan: string | null; status: string; industry_type: string | null; created_at: string; locations?: { count: number }[];
+interface Org { id: string; name: string; plan_tier: string | null; subscription_status: string; industry_type: string | null; created_at: string; locations?: { count: number }[];
   primary_contact_name?: string | null; primary_contact_email?: string | null; primary_contact_phone?: string | null;
   alternate_contact_name?: string | null; alternate_contact_email?: string | null; alternate_contact_phone?: string | null;
   main_phone?: string | null; billing_email?: string | null; }
@@ -219,8 +219,8 @@ function OrgsTable({ orgs, search, onAdd, onSelect }: { orgs: Org[]; search: str
             {o.primary_contact_email && <div className="text-[11px] text-slate_ui">{o.primary_contact_email}</div>}
           </td>
           <TD fs={12}>{o.primary_contact_phone || o.main_phone || '—'}</TD>
-          <TD>{o.plan || '—'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
-          <td className="px-[14px] py-[10px]"><span className={statusBadgeClass(o.status)}>{o.status}</span></td>
+          <TD>{o.plan_tier || '—'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
+          <td className="px-[14px] py-[10px]"><span className={statusBadgeClass(o.subscription_status)}>{o.subscription_status}</span></td>
         </tr>
       ))}</tbody>
     </table>
@@ -304,10 +304,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   const { isDemoMode } = useDemo();
   const [name, setName] = useState('');
   const [type, setType] = useState('restaurant');
-  const [orgState, setOrgState] = useState<StateAbbrev>('CA');
-  const [county, setCounty] = useState('');
   const [plan, setPlan] = useState('founder');
-  const [status, setStatus] = useState('pending');
   const [mainPhone, setMainPhone] = useState('');
   const [billingEmail, setBillingEmail] = useState('');
   const [pcName, setPcName] = useState('');
@@ -324,8 +321,8 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
     if (!name.trim()) return;
     setSaving(true);
     const { error } = await supabase.from('organizations').insert({
-      name: name.trim(), industry_type: type, primary_county: county || null,
-      plan, status, notes: notes || null,
+      name: name.trim(), industry_type: type,
+      plan_tier: plan, notes: notes || null,
       main_phone: mainPhone || null, billing_email: billingEmail || null,
       primary_contact_name: pcName || null, primary_contact_email: pcEmail || null, primary_contact_phone: pcPhone || null,
       alternate_contact_name: acName || null, alternate_contact_email: acEmail || null, alternate_contact_phone: acPhone || null,
@@ -346,27 +343,11 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
               {['restaurant','healthcare','hospitality','institutional','k12_education','other'].map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
             </select>
           </div>
-          <div><label className={labelCls}>State</label>
-            <select className={`${inputCls} cursor-pointer`} value={orgState} onChange={e => { setOrgState(e.target.value as StateAbbrev); setCounty(''); }}>
-              {SUPPORTED_STATES.map(s => <option key={s.abbrev} value={s.abbrev}>{s.name}</option>)}
-            </select>
-          </div>
-          <div><label className={labelCls}>Primary County</label>
-            <select className={`${inputCls} cursor-pointer`} value={county} onChange={e => setCounty(e.target.value)}>
-              <option value="">Select county...</option>
-              {getCountiesForState(orgState).map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
           <div><label className={labelCls}>Plan</label>
             <select className={`${inputCls} cursor-pointer`} value={plan} onChange={e => setPlan(e.target.value)}>
               <option value="founder">Founder ($99/mo)</option>
               <option value="standard">Standard ($199/mo)</option>
               <option value="enterprise">Enterprise (custom)</option>
-            </select>
-          </div>
-          <div><label className={labelCls}>Status</label>
-            <select className={`${inputCls} cursor-pointer`} value={status} onChange={e => setStatus(e.target.value)}>
-              <option value="pending">Pending</option><option value="active">Active</option><option value="trial">Trial</option>
             </select>
           </div>
           <div><label className={labelCls}>Main Phone</label><input className={inputCls} value={mainPhone} onChange={e => setMainPhone(e.target.value)} placeholder="(555) 000-0000" type="tel" /></div>
@@ -428,7 +409,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
     setSaving(true);
     let orgId = selectedOrg?.id || null;
     if (selectedOrg?.isNew) {
-      const { data: newOrg, error: orgErr } = await supabase.from('organizations').insert({ name: selectedOrg.name, status: 'pending' }).select('id').single();
+      const { data: newOrg, error: orgErr } = await supabase.from('organizations').insert({ name: selectedOrg.name }).select('id').single();
       if (orgErr) { console.error(orgErr.message); setSaving(false); return; }
       orgId = newOrg.id;
     }
@@ -728,8 +709,8 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
             <div>
               <h2 className="text-lg font-bold text-navy m-0">{org.name}</h2>
               <div className="flex gap-1.5 mt-1.5">
-                <span className={statusBadgeClass(org.status)}>{org.status}</span>
-                {org.plan && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-blue-50 text-blue-600">{org.plan}</span>}
+                <span className={statusBadgeClass(org.subscription_status)}>{org.subscription_status}</span>
+                {org.plan_tier && <span className="px-2 py-[2px] rounded text-[10px] font-bold bg-blue-50 text-blue-600">{org.plan_tier}</span>}
                 {org.industry_type && <span className="px-2 py-[2px] rounded text-[10px] font-semibold bg-gray-100 text-slate_ui">{org.industry_type.replace(/_/g, ' ')}</span>}
               </div>
             </div>
