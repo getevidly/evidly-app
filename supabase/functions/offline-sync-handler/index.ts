@@ -3,6 +3,19 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
 const corsHeaders = getCorsHeaders(null);
 
+// ── FEATURE GATE ─────────────────────────────────────────────
+// Offline sync is not active — no client code path invokes this
+// function (syncEngine.ts simulates sync locally with a setTimeout).
+// Set to true and review ALLOWED_TABLES when the feature ships.
+const OFFLINE_SYNC_ENABLED = false;
+
+// Server-side allowlist: only these tables may be written via
+// offline sync. Any table_name not in this set → 400 + logged.
+const ALLOWED_TABLES: ReadonlySet<string> = new Set([
+  "temperature_logs",
+  "corrective_actions",
+]);
+
 function jsonResponse(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -37,30 +50,78 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ success: false, error: "Method not allowed" }, 405);
   }
 
+  // ── Feature gate ───────────────────────────────────────────
+  if (!OFFLINE_SYNC_ENABLED) {
+    return jsonResponse(
+      { success: false, error: "Offline sync is not enabled" },
+      503,
+    );
+  }
+
   try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // ── Auth: derive caller identity + org server-side ───────
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return jsonResponse(
+        { success: false, error: "Authorization header required" },
+        401,
+      );
+    }
+
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const {
+      data: { user },
+      error: authError,
+    } = await userClient.auth.getUser();
+    if (authError || !user) {
+      return jsonResponse(
+        { success: false, error: "Invalid or expired token" },
+        401,
+      );
+    }
+
+    const adminClient = createClient(supabaseUrl, serviceKey);
+
+    const { data: profile } = await adminClient
+      .from("user_profiles")
+      .select("organization_id")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.organization_id) {
+      return jsonResponse(
+        { success: false, error: "User has no organization" },
+        403,
+      );
+    }
+
+    const callerOrgId: string = profile.organization_id;
+
+    // ── Parse + validate body ────────────────────────────────
     const { device_id, actions } = (await req.json()) as SyncRequest;
 
     if (!device_id) {
       return jsonResponse(
         { success: false, error: "device_id is required" },
-        400
+        400,
       );
     }
 
     if (!actions || !Array.isArray(actions) || actions.length === 0) {
       return jsonResponse(
         { success: false, error: "actions array is required and must not be empty" },
-        400
+        400,
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
-    // Verify device exists in device_registrations
-    const { data: device, error: deviceError } = await supabase
+    // Verify device exists and is active
+    const { data: device, error: deviceError } = await adminClient
       .from("device_registrations")
       .select("id, is_active")
       .eq("id", device_id)
@@ -69,52 +130,73 @@ Deno.serve(async (req: Request) => {
     if (deviceError || !device) {
       return jsonResponse(
         { success: false, error: "Device not found" },
-        404
+        404,
       );
     }
 
     if (!device.is_active) {
       return jsonResponse(
         { success: false, error: "Device is deactivated" },
-        403
+        403,
       );
     }
 
+    // ── Process actions ──────────────────────────────────────
     const results: ActionResult[] = [];
     let syncedCount = 0;
     let failedCount = 0;
 
-    // Iterate each action and perform the appropriate database operation
     for (let i = 0; i < actions.length; i++) {
       const action = actions[i];
       let actionError: string | null = null;
 
+      // ── Table allowlist ──────────────────────────────────
+      if (!ALLOWED_TABLES.has(action.table_name)) {
+        console.warn(
+          `[offline-sync] BLOCKED: user ${user.id} attempted write to disallowed table "${action.table_name}"`,
+        );
+        actionError = `Table "${action.table_name}" is not permitted for offline sync`;
+        failedCount++;
+        results.push({ action_index: i, success: false, error: actionError });
+        continue;
+      }
+
       try {
         if (action.action_type === "insert") {
-          const { error } = await supabase
+          // Force caller's org — never trust client-supplied organization_id
+          const payload = { ...action.payload, organization_id: callerOrgId };
+          const { error } = await adminClient
             .from(action.table_name)
-            .insert(action.payload);
+            .insert(payload);
           if (error) actionError = error.message;
+
         } else if (action.action_type === "update") {
           if (!action.record_id) {
             actionError = "record_id is required for update actions";
           } else {
-            const { error } = await supabase
+            // Strip organization_id from payload (immutable); scope by org
+            const { organization_id: _drop, ...payload } = action.payload;
+            const { error } = await adminClient
               .from(action.table_name)
-              .update(action.payload)
-              .eq("id", action.record_id);
+              .update(payload)
+              .eq("id", action.record_id)
+              .eq("organization_id", callerOrgId);
             if (error) actionError = error.message;
           }
+
         } else if (action.action_type === "delete") {
           if (!action.record_id) {
             actionError = "record_id is required for delete actions";
           } else {
-            const { error } = await supabase
+            // Scope delete to caller's org
+            const { error } = await adminClient
               .from(action.table_name)
               .delete()
-              .eq("id", action.record_id);
+              .eq("id", action.record_id)
+              .eq("organization_id", callerOrgId);
             if (error) actionError = error.message;
           }
+
         } else {
           actionError = `Unknown action_type: ${action.action_type}`;
         }
@@ -134,7 +216,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Update device last_sync_at timestamp
-    await supabase
+    await adminClient
       .from("device_registrations")
       .update({ last_sync_at: new Date().toISOString() })
       .eq("id", device_id);
