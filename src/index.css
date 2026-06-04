@@ -304,20 +304,32 @@
 .met-foot.timeline { color: var(--predict-dark); }
 .met-foot.detail { color: var(--prove-dark); }
 
-.prp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
-.prp { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid #ccc; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.prp-accent { width: 24px; height: 2px; background: var(--gold); margin: 0 auto 14px; border-radius: 1px; }
+.prp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 12px; }
+.prp { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid #ccc; border-radius: 10px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
 .prp.predict { border-top-color: var(--predict); }
 .prp.reduce { border-top-color: var(--reduce); }
 .prp.prove { border-top-color: var(--prove); }
-.prp-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.prp-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; margin-top: 2px; }
 .prp.predict .prp-icon { background: var(--predict-bg); color: var(--predict); }
 .prp.reduce .prp-icon { background: var(--reduce-bg); color: var(--reduce); }
 .prp.prove .prp-icon { background: var(--prove-bg); color: var(--prove); }
-.prp-label { font-size: 14px; font-weight: 500; margin: 0; }
+.prp-label { font-size: 11px; font-weight: 500; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.prp-num { font-size: 28px; font-weight: 600; line-height: 1.1; margin: 4px 0 2px; }
+.prp-num.steady { color: var(--muted); font-size: 22px; font-weight: 500; }
+.prp.predict .prp-num { color: var(--predict); }
+.prp.reduce .prp-num { color: var(--reduce); }
+.prp.prove .prp-num { color: var(--prove); }
 .prp-sub { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
 .prp.predict .prp-label { color: var(--predict-dark); }
 .prp.reduce .prp-label { color: var(--reduce-dark); }
 .prp.prove .prp-label { color: var(--prove-dark); }
+.prp-drift { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 22px; }
+.prp-drift i { font-size: 16px; }
+.drift-num { font-size: 20px; font-weight: 600; line-height: 1; }
+.drift-label { font-weight: 500; }
+.drift-clear { background: #E8F5E9; color: #2E7D5B; }
+.drift-alert { background: #FDE8E4; color: #C75543; }
 
 .caught-line { background: var(--prove-bg); border: 0.5px solid #B8DCC9; border-radius: 8px; padding: 10px 14px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: var(--prove-dark); }
 .caught-line i { font-size: 16px; color: var(--prove); }
