@@ -425,6 +425,17 @@ verify_jwt = false
 [functions.generate-weekly-drift-report]
 verify_jwt = false
 
+# Policy Lens intake — public endpoints for prospects/agents.
+# No Supabase auth session; OTP + rate limits provide auth.
+[functions.pl-intake-start]
+verify_jwt = false
+
+[functions.pl-otp-verify]
+verify_jwt = false
+
+[functions.pl-intake-finalize]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

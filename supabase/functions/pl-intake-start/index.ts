@@ -1,0 +1,361 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { sendSms } from "../_shared/sms.ts";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
+import { logger } from "../_shared/logger.ts";
+
+// ── Free-email domain blocklist (agent door) ────────────────
+const FREE_EMAIL_DOMAINS = [
+  "gmail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "aol.com",
+  "icloud.com",
+  "proton.me",
+  "protonmail.com",
+  "gmx.com",
+  "mail.com",
+  "yandex.com",
+  "live.com",
+  "msn.com",
+];
+
+// ── Helpers ─────────────────────────────────────────────────
+
+async function hashCode(code: string): Promise<string> {
+  const encoded = new TextEncoder().encode(code);
+  const buf = await crypto.subtle.digest("SHA-256", encoded);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function generateOtp(): string {
+  const raw = crypto.getRandomValues(new Uint32Array(1))[0];
+  return String((raw % 900000) + 100000);
+}
+
+async function decrementRateLimit(
+  supabase: ReturnType<typeof createClient>,
+  key: string,
+): Promise<void> {
+  try {
+    const { data: bucket } = await supabase
+      .from("rate_limit_buckets")
+      .select("count")
+      .eq("key", key)
+      .single();
+    if (bucket && bucket.count > 0) {
+      await supabase
+        .from("rate_limit_buckets")
+        .update({ count: bucket.count - 1 })
+        .eq("key", key);
+    }
+  } catch {
+    // Best-effort — don't fail the request
+  }
+}
+
+async function sendOtp(
+  channel: "sms" | "email",
+  contact: string,
+  code: string,
+  recipientName: string,
+): Promise<unknown> {
+  if (channel === "sms") {
+    return await sendSms({
+      to: contact,
+      body: `Your EvidLY verification code is: ${code}`,
+    });
+  }
+  return await sendEmail({
+    to: contact,
+    subject: "Your EvidLY verification code",
+    html: buildEmailHtml({
+      recipientName,
+      bodyHtml: `
+        <p>Your verification code is:</p>
+        <p style="font-size:32px;font-weight:700;letter-spacing:4px;text-align:center;">${code}</p>
+        <p>This code expires in 10 minutes.</p>`,
+    }),
+  });
+}
+
+function json(data: unknown, status: number, headers: Record<string, string>) {
+  return new Response(JSON.stringify(data), { status, headers });
+}
+
+// ── Handler ─────────────────────────────────────────────────
+
+Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get("origin"));
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  const headers = { ...corsHeaders, "Content-Type": "application/json" };
+
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    const body = await req.json();
+    const clientIp =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    // ────────────────────────────────────────────────────────
+    // RESEND MODE — intake_id present, no new row
+    // ────────────────────────────────────────────────────────
+    if (body.intake_id) {
+      const { data: intake, error: fetchErr } = await supabase
+        .from("policy_lens_intakes")
+        .select("*")
+        .eq("id", body.intake_id)
+        .single();
+
+      if (fetchErr || !intake) {
+        return json({ error: "Intake not found" }, 400, headers);
+      }
+      if (intake.policy_pdf_path) {
+        return json({ error: "Intake already finalized" }, 400, headers);
+      }
+
+      const channel: "sms" | "email" =
+        intake.source === "prospect" ? "sms" : "email";
+      const contact =
+        intake.source === "prospect"
+          ? intake.contact_phone
+          : intake.agent_email;
+      const recipientName =
+        intake.source === "prospect"
+          ? intake.contact_name || "there"
+          : intake.agent_name || "Agent";
+
+      // Rate limit: pl_otp:{contact} 3/hr
+      const otpLimit = await checkRateLimit({
+        key: `pl_otp:${contact}`,
+        maxRequests: 3,
+        windowSeconds: 3600,
+        supabase,
+      });
+      if (!otpLimit.allowed) {
+        return json(
+          { error: "Too many code requests — try again later" },
+          429,
+          headers,
+        );
+      }
+
+      // Invalidate prior unconsumed codes for this intake
+      await supabase
+        .from("policy_lens_otp_codes")
+        .update({ consumed_at: new Date().toISOString() })
+        .eq("intake_id", body.intake_id)
+        .is("consumed_at", null);
+
+      // Generate + store OTP
+      const code = generateOtp();
+      const codeHash = await hashCode(code);
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+      await supabase.from("policy_lens_otp_codes").insert({
+        intake_id: body.intake_id,
+        channel,
+        code_hash: codeHash,
+        expires_at: expiresAt,
+      });
+
+      // BLOCKING SEND — 502 on failure, decrement rate bucket
+      const sendResult = await sendOtp(channel, contact, code, recipientName);
+      if (!sendResult) {
+        await decrementRateLimit(supabase, `pl_otp:${contact}`);
+        return json(
+          {
+            error:
+              "We couldn't send your code — check the number/email and try again.",
+          },
+          502,
+          headers,
+        );
+      }
+
+      return json({ intake_id: body.intake_id }, 200, headers);
+    }
+
+    // ────────────────────────────────────────────────────────
+    // NEW INTAKE MODE
+    // ────────────────────────────────────────────────────────
+    const { source } = body;
+    if (!source || !["prospect", "agent"].includes(source)) {
+      return json(
+        { error: 'source must be "prospect" or "agent"' },
+        400,
+        headers,
+      );
+    }
+
+    // ── Door validation ─────────────────────────────────────
+    if (source === "prospect") {
+      const required = [
+        "business_name",
+        "contact_name",
+        "contact_email",
+        "contact_phone",
+        "zip",
+      ];
+      const missing = required.filter(
+        (f) => !body[f] || !String(body[f]).trim(),
+      );
+      if (missing.length) {
+        return json(
+          { error: `Missing required fields: ${missing.join(", ")}` },
+          400,
+          headers,
+        );
+      }
+      if (body.agent_email && !body.agent_report_consent) {
+        return json(
+          { error: "agent_report_consent required when agent_email provided" },
+          400,
+          headers,
+        );
+      }
+    } else {
+      const required = [
+        "agent_name",
+        "agency_name",
+        "agent_license_number",
+        "agent_email",
+        "business_name",
+      ];
+      const missing = required.filter(
+        (f) => !body[f] || !String(body[f]).trim(),
+      );
+      if (missing.length) {
+        return json(
+          { error: `Missing required fields: ${missing.join(", ")}` },
+          400,
+          headers,
+        );
+      }
+      const domain = body.agent_email.split("@")[1]?.toLowerCase();
+      if (FREE_EMAIL_DOMAINS.includes(domain)) {
+        return json(
+          {
+            error:
+              "Please use your agency business email, not a personal address",
+          },
+          400,
+          headers,
+        );
+      }
+    }
+
+    // ── Rate limits (check BEFORE creating rows) ────────────
+    const ipLimit = await checkRateLimit({
+      key: `pl_intake:${clientIp}`,
+      maxRequests: 10,
+      windowSeconds: 86400,
+      supabase,
+    });
+    if (!ipLimit.allowed) {
+      return json(
+        { error: "Too many requests — try again later" },
+        429,
+        headers,
+      );
+    }
+
+    const contact =
+      source === "prospect" ? body.contact_phone : body.agent_email;
+    const otpLimit = await checkRateLimit({
+      key: `pl_otp:${contact}`,
+      maxRequests: 3,
+      windowSeconds: 3600,
+      supabase,
+    });
+    if (!otpLimit.allowed) {
+      return json(
+        { error: "Too many code requests — try again later" },
+        429,
+        headers,
+      );
+    }
+
+    // ── Insert intake row ───────────────────────────────────
+    const intakeRow: Record<string, unknown> = {
+      source,
+      status: "received",
+      business_name: body.business_name,
+      contact_name: body.contact_name || null,
+      contact_email: body.contact_email || null,
+      contact_phone: body.contact_phone || null,
+      zip: body.zip || null,
+      county: body.county || null,
+      agent_name: body.agent_name || null,
+      agent_email: body.agent_email || null,
+      agency_name: body.agency_name || null,
+      agent_license_number: body.agent_license_number || null,
+      attribution_source: body.attribution_source || null,
+      agent_report_consent: false,
+    };
+
+    if (source === "prospect" && body.agent_email) {
+      intakeRow.agent_report_consent = true;
+      intakeRow.agent_consent_at = new Date().toISOString();
+    }
+
+    const { data: intake, error: insertErr } = await supabase
+      .from("policy_lens_intakes")
+      .insert(intakeRow)
+      .select("id")
+      .single();
+
+    if (insertErr || !intake) {
+      logger.error("[pl-intake-start] Insert failed", insertErr);
+      return json({ error: "Failed to create intake" }, 500, headers);
+    }
+
+    // ── Generate + store OTP ────────────────────────────────
+    const channel: "sms" | "email" =
+      source === "prospect" ? "sms" : "email";
+    const code = generateOtp();
+    const codeHash = await hashCode(code);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const recipientName =
+      source === "prospect"
+        ? body.contact_name || "there"
+        : body.agent_name || "Agent";
+
+    await supabase.from("policy_lens_otp_codes").insert({
+      intake_id: intake.id,
+      channel,
+      code_hash: codeHash,
+      expires_at: expiresAt,
+    });
+
+    // ── BLOCKING SEND — 502 on failure, decrement rate bucket
+    const sendResult = await sendOtp(channel, contact, code, recipientName);
+    if (!sendResult) {
+      await decrementRateLimit(supabase, `pl_otp:${contact}`);
+      return json(
+        {
+          error:
+            "We couldn't send your code — check the number/email and try again.",
+        },
+        502,
+        headers,
+      );
+    }
+
+    return json({ intake_id: intake.id }, 200, headers);
+  } catch (err) {
+    logger.error("[pl-intake-start] Unhandled error", err);
+    return json({ error: "Internal server error" }, 500, headers);
+  }
+});
