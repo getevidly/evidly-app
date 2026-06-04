@@ -102,11 +102,12 @@ Deno.serve(async (req: Request) => {
         .eq("organization_id", orgId)
         .eq("source", sourceTag);
 
-      // Delete locations
+      // Delete locations — only demo-sourced rows
       await supabase
         .from("locations")
         .delete()
-        .eq("organization_id", orgId);
+        .eq("organization_id", orgId)
+        .eq("source", sourceTag);
 
       // Delete user profile + auth user
       if (userId) {

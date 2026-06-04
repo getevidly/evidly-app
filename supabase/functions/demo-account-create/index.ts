@@ -173,6 +173,7 @@ Deno.serve(async (req: Request) => {
         state: state,
         zip: zip_code,
         status: "active",
+        source: "demo_template",
       });
     }
 
