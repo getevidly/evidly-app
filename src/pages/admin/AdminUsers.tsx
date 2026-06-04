@@ -84,21 +84,11 @@ export default function AdminUsers() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('user_profiles')
-        .select('id, full_name, role, is_suspended, last_login_at, created_at, organization_id')
+        .select('id, full_name, role, is_suspended, suspended_at, suspended_by, suspend_reason, failed_login_count, locked_until, last_login_at, created_at, organization_id')
         .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;
-      // Columns suspended_at, suspend_reason, failed_login_count, locked_until,
-      // last_login_ip do NOT exist on user_profiles yet — safe defaults so UI
-      // degrades gracefully (no "Locked" badge, no IP, no failed-login count).
-      const profiles = (data || []).map(row => ({
-        ...row,
-        suspended_at: null,
-        suspend_reason: null,
-        failed_login_count: 0,
-        locked_until: null,
-        last_login_ip: null,
-      })) as UserRow[];
+      const profiles = (data || []) as UserRow[];
 
       // Email lives on auth.users, not user_profiles — fetch via SECURITY DEFINER RPC
       if (profiles.length > 0) {

@@ -1083,7 +1083,7 @@ export function TempLogs() {
       location_id: locationData?.id,
       vendor_name: vendorName,
       item_description: item.itemDescription,
-      food_category: item.category || null,
+      item_category: item.category || null,
       temperature_value: item.temperature,
       is_pass: item.isPass,
       received_by: receivedBy,
