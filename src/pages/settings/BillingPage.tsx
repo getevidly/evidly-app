@@ -84,10 +84,9 @@ export function BillingPage() {
     if (!organizationId) { setLoading(false); return; }
 
     (async () => {
-      const [orgRes, takenRes, maxRes, pricingRes] = await Promise.all([
+      const [orgRes, takenRes, pricingRes] = await Promise.all([
         supabase.from('organizations').select('plan_tier, founder_locked_at, founder_lock_expires_at, billing_cadence, created_at').eq('id', organizationId).maybeSingle(),
-        supabase.rpc('fn_founder_seats_taken'),
-        supabase.rpc('fn_founder_seats_max'),
+        supabase.rpc('get_founder_count'),
         supabase.from('pricing_config').select('*').eq('id', 1).maybeSingle(),
       ]);
 
@@ -102,7 +101,7 @@ export function BillingPage() {
 
       const tier = (org?.plan_tier || 'trial') as OrgPlanTier;
       const seatsTaken = (takenRes.data as number) || 0;
-      const seatsMax = (maxRes.data as number) || 250;
+      const seatsMax = Number((pricingRes.data as any)?.founder_seats_max) || DEFAULT_PRICING.founder_seats_max;
       const orgCadence = ((org as any)?.billing_cadence || 'monthly') as 'monthly' | 'annual';
 
       // Load pricing config if available
