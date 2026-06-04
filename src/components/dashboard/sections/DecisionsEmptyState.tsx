@@ -278,7 +278,7 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
 
         {/* Streak footer */}
         <div style={streakFooter}>
-          {daysSinceCreate} days monitored without an inspector-facing issue
+          {daysSinceCreate} days watched without an inspector-facing issue
         </div>
       </div>
     </>

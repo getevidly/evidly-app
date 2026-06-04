@@ -23,6 +23,7 @@ export interface TodayItem {
 interface UseTodayListOptions {
   pillarFilter?: 'food_safety' | 'fire_safety';
   userIdFilter?: string;
+  locationIdFilter?: string;
 }
 
 interface UseTodayListResult {
@@ -55,6 +56,7 @@ export function useTodayList(options?: UseTodayListOptions): UseTodayListResult 
 
   const pillarFilter = options?.pillarFilter;
   const userIdFilter = options?.userIdFilter;
+  const locationIdFilter = options?.locationIdFilter;
 
   useEffect(() => {
     if (!orgId) { setLoading(false); return; }
@@ -76,6 +78,9 @@ export function useTodayList(options?: UseTodayListOptions): UseTodayListResult 
         }
         if (userIdFilter) {
           q = q.eq('assigned_to', userIdFilter);
+        }
+        if (locationIdFilter) {
+          q = q.eq('location_id', locationIdFilter);
         }
 
         const { data, error: qErr } = await q;
@@ -185,7 +190,7 @@ export function useTodayList(options?: UseTodayListOptions): UseTodayListResult 
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, pillarFilter, userIdFilter]);
+  }, [orgId, pillarFilter, userIdFilter, locationIdFilter]);
 
   return { items, totalToday, doneToday, loading, error };
 }

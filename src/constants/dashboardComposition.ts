@@ -1,12 +1,13 @@
 import type { UserRole } from '../contexts/RoleContext';
 
 /**
- * Every unique section key in the v10 dashboard mockup.
- * Each key maps 1:1 to a stub component in src/components/dashboard/sections/.
+ * Every unique section key in the dashboard.
+ * Each key maps 1:1 to a component in src/components/dashboard/sections/.
  */
 export type SectionKey =
   | 'metric_cards'
   | 'prp_header'
+  | 'location_heat_map'
   | 'yesterday_caught_line'
   | 'inspection_package'
   | 'compliance_briefing'
@@ -35,15 +36,15 @@ export type SectionKey =
 export type DashboardRole = Exclude<UserRole, 'platform_admin'>;
 
 /**
- * Locked composition matrix — extracted from evidly-dashboard-mockup-v10.html.
- * Order within each array is render order (top → bottom).
- * Do NOT reorder without updating the mockup.
+ * Composition matrix — C18 Phase 3 reorder.
+ * Order: PRP spine → Tasks dominant → Location heat map →
+ * active sections → quiet tier (Decisions, On-record, Team).
  */
 export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   owner_operator: [
-    'today_list',
-    'metric_cards',
     'prp_header',
+    'today_list',
+    'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
     'compliance_briefing',
@@ -52,13 +53,14 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'drifts_caught',
     'county_readiness',
     'decisions_queue',
+    'metric_cards',
     'team_grid',
     'intelligence_slot',
   ],
   executive: [
-    'today_list',
-    'metric_cards',
     'prp_header',
+    'today_list',
+    'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
     'compliance_briefing',
@@ -68,13 +70,14 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'drifts_caught',
     'county_readiness',
     'decisions_queue',
+    'metric_cards',
     'team_grid',
     'intelligence_slot',
   ],
   compliance_manager: [
-    'today_list',
-    'metric_cards',
     'prp_header',
+    'today_list',
+    'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
     'compliance_briefing',
@@ -82,12 +85,13 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'checklists_block',
     'drifts_caught_audit',
     'county_readiness',
+    'metric_cards',
     'team_grid',
     'intelligence_slot',
   ],
   facilities_manager: [
-    'today_list',
     'prp_header',
+    'today_list',
     'yesterday_caught_line',
     'advisor_single_fire',
     'facility_services_bucket',
@@ -96,8 +100,8 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'intelligence_slot',
   ],
   chef: [
-    'today_list',
     'prp_header',
+    'today_list',
     'yesterday_caught_line',
     'advisor_single_food',
     'checklists_block',

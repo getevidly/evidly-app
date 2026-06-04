@@ -74,7 +74,7 @@ export function SetupMFA() {
         await supabase.from('user_mfa_config').upsert({
           user_id: user.id,
           mfa_enabled: true,
-          mfa_method: 'totp',
+          mfa_type: 'totp',
           enrolled_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
       }

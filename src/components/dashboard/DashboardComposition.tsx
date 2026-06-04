@@ -25,10 +25,12 @@ import { TodayList } from './sections/TodayList';
 import { RightNow } from './sections/RightNow';
 import { TeamHeadsUp } from './sections/TeamHeadsUp';
 import { EscalationCard } from './sections/EscalationCard';
+import { LocationHeatMap } from './sections/LocationHeatMap';
 
 const SECTION_COMPONENTS: Record<SectionKey, React.ComponentType> = {
   metric_cards: MetricCards,
   prp_header: PrpHeader,
+  location_heat_map: LocationHeatMap,
   yesterday_caught_line: YesterdayCaughtLine,
   inspection_package: InspectionPackage,
   compliance_briefing: ComplianceBriefing,

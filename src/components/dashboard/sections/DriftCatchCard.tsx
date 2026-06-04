@@ -63,7 +63,7 @@ function buildMeta(drift: DriftCatchWithAcks): { text: string; savings: string }
     parts.push(`Proven ${fmtDate(drift.resolved_at)}`);
   } else if (drift.status === 'open') {
     const days = daysBetween(drift.detected_at, new Date());
-    parts.push(`${days} day${days === 1 ? '' : 's'} monitored`);
+    parts.push(`${days} day${days === 1 ? '' : 's'} watched`);
   }
 
   const savings = drift.estimated_savings_cents > 0

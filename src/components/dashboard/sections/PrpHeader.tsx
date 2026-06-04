@@ -1,16 +1,17 @@
 /**
- * PrpHeader — C18 Phase 2
+ * PrpHeader — C18 Phase 3
  *
- * Live PRP spine: three stat tiles wired to canonical data hooks,
- * plus temperature drift numeral below.
+ * Live PRP spine: three stat tiles + temperature drift numeral.
+ * Multi-location aware via DashboardLocationContext.
  *
- * Predict: unread critical/high signal count (useSignalNotifications)
- * Reduce:  open tasks today (useTodayList)
- * Prove:   days since org creation (useOrgAge)
- * Drift:   sensors failing (useTemperatureState)
+ * All mode: aggregate numerals with "across N locations" scope labels.
+ *   Prove = earliest location's days since go-live.
+ * Single-location mode: filter hooks by selected locationId.
+ * Single-location org: identical to pre-Phase 3 behavior.
  */
 
 import { useAuth } from '../../../contexts/AuthContext';
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useSignalNotifications } from '../../../hooks/useSignalNotifications';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
@@ -21,18 +22,63 @@ export function PrpHeader() {
   const { profile } = useAuth();
   const orgId = profile?.organization_id || '';
   const { timezone } = useOrgSummary();
+  const { selectedLocationId, locations, isMultiLocation } = useDashboardLocation();
 
+  const isAllMode = isMultiLocation && selectedLocationId === null;
+
+  // Signals are org-wide (notifications table has no location_id)
   const { criticalNotifications } = useSignalNotifications();
-  const { totalToday, doneToday, loading: todayLoading } = useTodayList();
-  const { daysSinceCreate, loading: ageLoading } = useOrgAge();
+
+  // Tasks: filter by location in single-location mode
+  const { totalToday, doneToday, loading: todayLoading } = useTodayList(
+    selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined
+  );
+
+  // Org age or location age for Prove
+  const { daysSinceCreate: orgDays, loading: ageLoading } = useOrgAge();
+
+  // In All mode, Prove = earliest location's days since go-live
+  let proveDays = orgDays;
+  let proveLoading = ageLoading;
+  if (isAllMode && locations.length > 0) {
+    const earliest = locations.reduce((min, loc) => {
+      const t = new Date(loc.created_at).getTime();
+      return t < min ? t : min;
+    }, Infinity);
+    proveDays = Math.max(0, Math.floor((Date.now() - earliest) / 86_400_000));
+    proveLoading = false;
+  } else if (selectedLocationId && locations.length > 0) {
+    const loc = locations.find(l => l.id === selectedLocationId);
+    if (loc) {
+      proveDays = Math.max(0, Math.floor((Date.now() - new Date(loc.created_at).getTime()) / 86_400_000));
+      proveLoading = false;
+    }
+  }
+
+  // Temperature: filter by location
   const { data: tempData, isLoading: tempLoading } = useTemperatureState({
     orgId,
     tz: timezone,
+    locationFilter: selectedLocationId || undefined,
   });
 
   const predictCount = criticalNotifications.length;
   const openToday = Math.max(totalToday - doneToday, 0);
   const driftCount = tempData?.counts?.failing ?? 0;
+
+  // Scope labels for All mode
+  const locCount = locations.length;
+  const reduceSub = isAllMode
+    ? `open today · across ${locCount} locations`
+    : 'open today';
+  const predictSub = predictCount === 0
+    ? 'no unread signals'
+    : isAllMode
+      ? `unread signal${predictCount !== 1 ? 's' : ''} · across ${locCount} locations`
+      : `unread signal${predictCount !== 1 ? 's' : ''}`;
+  const proveSub = isAllMode
+    ? 'earliest location'
+    : 'days since go-live';
 
   return (
     <div>
@@ -45,11 +91,7 @@ export function PrpHeader() {
             <p className={`prp-num${predictCount === 0 ? ' steady' : ''}`}>
               {predictCount === 0 ? 'all steady' : predictCount}
             </p>
-            <p className="prp-sub">
-              {predictCount === 0
-                ? 'no unread signals'
-                : `unread signal${predictCount !== 1 ? 's' : ''}`}
-            </p>
+            <p className="prp-sub">{predictSub}</p>
           </div>
         </div>
         <div className="prp reduce">
@@ -57,15 +99,15 @@ export function PrpHeader() {
           <div>
             <p className="prp-label">Reduce</p>
             <p className="prp-num">{todayLoading ? '—' : openToday}</p>
-            <p className="prp-sub">open today</p>
+            <p className="prp-sub">{reduceSub}</p>
           </div>
         </div>
         <div className="prp prove">
           <div className="prp-icon"><i className="ti ti-file-check" /></div>
           <div>
             <p className="prp-label">Prove</p>
-            <p className="prp-num">{ageLoading ? '—' : daysSinceCreate}</p>
-            <p className="prp-sub">days since go-live</p>
+            <p className="prp-num">{proveLoading ? '—' : proveDays}</p>
+            <p className="prp-sub">{proveSub}</p>
           </div>
         </div>
       </div>

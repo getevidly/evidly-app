@@ -8,6 +8,8 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { DashboardSplash } from '../components/dashboard/DashboardSplash';
 import { DashboardComposition } from '../components/dashboard/DashboardComposition';
 import { DashboardWelcome } from '../components/dashboard/DashboardWelcome';
+import { DashboardLocationProvider } from '../contexts/DashboardLocationContext';
+import { LocationSwitcher } from '../components/dashboard/LocationSwitcher';
 
 export function Dashboard() {
   const { user, profile } = useAuth();
@@ -35,17 +37,20 @@ export function Dashboard() {
   if (showSplash) return <DashboardSplash />;
 
   return (
-    <div>
-      {showWelcome && (
-        <WelcomeModal
-          firstName={welcomeFirstName}
-          onDismiss={() => setShowWelcome(false)}
-        />
-      )}
-      <SignalAlertBanner />
-      {!showWelcome && <PushOptInBanner />}
-      <DashboardWelcome />
-      <DashboardComposition />
-    </div>
+    <DashboardLocationProvider>
+      <div>
+        {showWelcome && (
+          <WelcomeModal
+            firstName={welcomeFirstName}
+            onDismiss={() => setShowWelcome(false)}
+          />
+        )}
+        <SignalAlertBanner />
+        {!showWelcome && <PushOptInBanner />}
+        <DashboardWelcome />
+        <LocationSwitcher />
+        <DashboardComposition />
+      </div>
+    </DashboardLocationProvider>
   );
 }

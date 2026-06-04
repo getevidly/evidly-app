@@ -11,6 +11,7 @@
 
 import { useRole } from '../../../contexts/RoleContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { TodayListRow } from './TodayListRow';
@@ -41,16 +42,18 @@ export function TodayList() {
   if (!config) return null;
 
   const userId = config.useUserId ? profile?.id : undefined;
+  const { selectedLocationId } = useDashboardLocation();
 
-  return <TodayListInner heading={config.heading} pillarFilter={config.pillarFilter} userIdFilter={userId} />;
+  return <TodayListInner heading={config.heading} pillarFilter={config.pillarFilter} userIdFilter={userId} locationIdFilter={selectedLocationId || undefined} />;
 }
 
-function TodayListInner({ heading, pillarFilter, userIdFilter }: {
+function TodayListInner({ heading, pillarFilter, userIdFilter, locationIdFilter }: {
   heading: string;
   pillarFilter?: 'food_safety' | 'fire_safety';
   userIdFilter?: string;
+  locationIdFilter?: string;
 }) {
-  const { items, totalToday, doneToday, loading } = useTodayList({ pillarFilter, userIdFilter });
+  const { items, totalToday, doneToday, loading } = useTodayList({ pillarFilter, userIdFilter, locationIdFilter });
 
   if (loading) {
     return (
