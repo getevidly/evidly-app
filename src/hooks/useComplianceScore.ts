@@ -77,7 +77,7 @@ function buildFacilitySafetyScore(
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
   const fireConfig = jurisdiction.facilitySafety.fire_jurisdiction_config;
-  const ahjName = fireConfig?.fire_ahj_name ?? jurisdiction.facilitySafety.agency_name;
+  const ahjName = fireConfig?.fire_ahj_name ?? null;
   const codeEdition = fireConfig?.fire_code_edition ?? '2022 CFC';
 
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];

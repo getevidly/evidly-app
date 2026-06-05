@@ -14,7 +14,7 @@
  * @param {'food'|'fire'} [props.pillar='food'] — Pillar selector. Controls header label.
  * @param {string|null} [props.agencyName] — Agency display name for header.
  *   Food: jurisdiction.agency_name
- *   Fire: jurisdiction.fire_jurisdiction_config?.agency_name (B1: fire_ahj_name column does not exist)
+ *   Fire: jurisdiction.fire_ahj_name (top-level column on jurisdictions table)
  * @param {string|null} [props.pocName] — Point-of-contact name.
  * @param {string|null} [props.pocTitle] — Point-of-contact title.
  * @param {string|null} [props.email] — Agency email address.

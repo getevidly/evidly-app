@@ -53,30 +53,38 @@ async function fetchLiveJurisdiction(locationId: string): Promise<LocationJurisd
     return null;
   }
 
-  // Build the dual-authority LocationJurisdiction from DB row
+  // Build the dual-authority LocationJurisdiction from DB row.
+  // Real columns: agency_name, agency_type, scoring_type, grading_type, grading_config,
+  // pass_threshold, warning_threshold, inspection_frequency, fire_ahj_name, fire_ahj_type,
+  // fire_code_edition, nfpa96_edition, fire_jurisdiction_config, hood_cleaning_default.
+  // food_* and fire_agency_* prefixed columns do NOT exist — removed phantom reads.
+  const fjc = config.fire_jurisdiction_config as Record<string, unknown> | null;
+
   return {
     location_id: locationId,
     county: config.county,
     state: config.state || 'CA',
     foodSafety: {
       pillar: 'food_safety',
-      agency_id: config.food_agency_id || config.id,
-      agency_name: config.food_agency_name || config.agency_name,
-      authority_type: config.food_authority_type || 'county_health',
-      scoring_type: config.food_scoring_type || config.scoring_type,
-      grading_type: config.food_grading_type || config.grading_type,
-      grading_config: config.food_grading_config || config.grading_config || {},
-      pass_threshold: config.food_pass_threshold ?? config.pass_threshold ?? null,
-      warning_threshold: config.food_warning_threshold ?? config.warning_threshold ?? null,
-      grade_label: config.food_grade_label || null,
-      grade_explanation: config.food_grade_explanation || null,
-      inspection_frequency: config.food_inspection_frequency || null,
+      agency_id: config.id,
+      agency_name: config.agency_name,
+      authority_type: config.agency_type || 'county_health',
+      scoring_type: config.scoring_type,
+      grading_type: config.grading_type,
+      grading_config: config.grading_config || {},
+      pass_threshold: config.pass_threshold ?? null,
+      warning_threshold: config.warning_threshold ?? null,
+      grade_label: null,
+      grade_explanation: null,
+      inspection_frequency: config.inspection_frequency || null,
     },
     facilitySafety: {
       pillar: 'fire_safety',
-      agency_id: config.fire_agency_id || config.id,
-      agency_name: config.fire_agency_name || config.agency_name,
-      authority_type: config.fire_authority_type || 'fire_marshal',
+      agency_id: config.id,
+      agency_name: config.fire_ahj_name
+        || (fjc?.fire_ahj_name as string | undefined)
+        || 'Pending AHJ verification',
+      authority_type: config.fire_ahj_type || 'fire_marshal',
       scoring_type: 'pass_fail',
       grading_type: 'pass_fail',
       grading_config: {},
@@ -84,7 +92,7 @@ async function fetchLiveJurisdiction(locationId: string): Promise<LocationJurisd
       warning_threshold: null,
       grade_label: null,
       grade_explanation: null,
-      inspection_frequency: config.fire_inspection_frequency || null,
+      inspection_frequency: null,
       fire_jurisdiction_config: config.fire_jurisdiction_config || null,
     },
   };

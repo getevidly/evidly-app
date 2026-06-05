@@ -212,7 +212,7 @@ export function JurisdictionIntelligence() {
                 </div>
               </div>
               <p className="text-sm font-semibold text-[#1E2D4D] mb-2">
-                {j.fire_ahj_name || j.agency_name}
+                {j.fire_ahj_name || 'Pending AHJ verification'}
               </p>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/60">
