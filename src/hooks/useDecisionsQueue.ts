@@ -46,10 +46,11 @@ const PRIORITY_ORDER: Record<string, number> = { urgent: 0, soon: 1, review: 2 }
 
 const FIRE_DECISION_TYPES = ['service_schedule', 'contract_renewal'];
 
-export function useDecisionsQueue(): UseDecisionsQueueResult {
+export function useDecisionsQueue(options?: { locationIdFilter?: string }): UseDecisionsQueueResult {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
 
   const [decisions, setDecisions] = useState<OwnerDecision[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,6 +68,10 @@ export function useDecisionsQueue(): UseDecisionsQueueResult {
           .eq('org_id', orgId)
           .eq('status', 'open')
           .order('created_at', { ascending: true });
+
+        if (locationIdFilter) {
+          q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+        }
 
         // facilities_manager: fire-related decisions only
         if (userRole === 'facilities_manager') {
@@ -117,7 +122,7 @@ export function useDecisionsQueue(): UseDecisionsQueueResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, userRole]);
+  }, [orgId, userRole, locationIdFilter]);
 
   const openCount = decisions.length;
   const urgentCount = decisions.filter(d => d.priority === 'urgent').length;

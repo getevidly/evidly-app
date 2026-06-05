@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useInspectionPackageSummary } from '../../../hooks/useInspectionPackageSummary';
 import { InspectionDeliveryLog } from './InspectionDeliveryLog';
@@ -21,9 +22,10 @@ function plural(n: number, singular: string, pluralForm: string): string {
 
 export function InspectionPackage() {
   const navigate = useNavigate();
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { locationCount, countyCount, evidenceItemCount, lastRefreshedAt, loading } = useInspectionPackageSummary();
+  const { locationCount, countyCount, evidenceItemCount, lastRefreshedAt, loading } = useInspectionPackageSummary({ locationIdFilter: selectedLocationId || undefined });
 
   if (role === 'facilities_manager' || role === 'chef' || role === 'kitchen_manager' || role === 'kitchen_staff') {
     return null;

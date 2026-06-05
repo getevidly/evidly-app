@@ -11,9 +11,10 @@ interface InspectionPackageSummary {
   error: Error | null;
 }
 
-export function useInspectionPackageSummary(): InspectionPackageSummary {
+export function useInspectionPackageSummary(options?: { locationIdFilter?: string }): InspectionPackageSummary {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
   const [state, setState] = useState<Omit<InspectionPackageSummary, 'loading' | 'error'>>({
     locationCount: 0,
     countyCount: 0,
@@ -32,13 +33,16 @@ export function useInspectionPackageSummary(): InspectionPackageSummary {
         const today = new Date().toISOString().split('T')[0];
 
         const [locRes, countyRes, docRes] = await Promise.all([
-          supabase.from('locations').select('id').eq('organization_id', orgId).eq('status', 'active'),
+          locationIdFilter
+            ? supabase.from('locations').select('id').eq('id', locationIdFilter).eq('status', 'active')
+            : supabase.from('locations').select('id').eq('organization_id', orgId).eq('status', 'active'),
           supabase.from('location_jurisdiction_profiles').select('county').eq('organization_id', orgId),
-          supabase
-            .from('documents')
-            .select('id, updated_at, expiration_date')
-            .eq('organization_id', orgId)
-            .eq('status', 'active'),
+          (() => {
+            let q = supabase.from('documents').select('id, updated_at, expiration_date')
+              .eq('organization_id', orgId).eq('status', 'active');
+            if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+            return q;
+          })(),
         ]);
 
         if (cancelled) return;
@@ -74,7 +78,7 @@ export function useInspectionPackageSummary(): InspectionPackageSummary {
 
     fetch();
     return () => { cancelled = true; };
-  }, [orgId]);
+  }, [orgId, locationIdFilter]);
 
   return { ...state, loading, error };
 }

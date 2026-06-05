@@ -46,10 +46,11 @@ function iconForCA(pillar: string | null, severity: string | null): string {
   return 'ti-file-text';
 }
 
-export function useApprovalQueue(): UseApprovalQueueResult {
+export function useApprovalQueue(options?: { locationIdFilter?: string }): UseApprovalQueueResult {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
 
   const [items, setItems] = useState<ApprovalItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +64,7 @@ export function useApprovalQueue(): UseApprovalQueueResult {
 
     async function load() {
       try {
-        const { data, error: qErr } = await supabase
+        let q = supabase
           .from('corrective_actions')
           .select('id, title, description, severity, pillar, assignee_name, regulation_reference, completed_at')
           .eq('organization_id', orgId!)
@@ -72,6 +73,10 @@ export function useApprovalQueue(): UseApprovalQueueResult {
           .is('verified_at', null)
           .order('completed_at', { ascending: true })
           .limit(20);
+        if (locationIdFilter) {
+          q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+        }
+        const { data, error: qErr } = await q;
 
         if (cancelled) return;
         if (qErr) throw new Error(qErr.message);
@@ -115,7 +120,7 @@ export function useApprovalQueue(): UseApprovalQueueResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, isKM]);
+  }, [orgId, isKM, locationIdFilter]);
 
   return { items, loading, error };
 }

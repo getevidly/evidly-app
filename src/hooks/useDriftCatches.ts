@@ -42,6 +42,7 @@ export interface DriftCatchWithAcks extends DriftCatchRow {
 
 interface UseDriftCatchesOptions {
   pillarFilter?: 'food_safety' | 'fire_safety';
+  locationIdFilter?: string;
 }
 
 interface UseDriftCatchesResult {
@@ -82,6 +83,9 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
         if (options?.pillarFilter) {
           catchQ = catchQ.eq('pillar', options.pillarFilter);
+        }
+        if (options?.locationIdFilter) {
+          catchQ = catchQ.eq('location_id', options.locationIdFilter);
         }
 
         const { data: catchRows, error: catchErr } = await catchQ;
@@ -154,7 +158,7 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, userId, userRole, options?.pillarFilter]);
+  }, [orgId, userId, userRole, options?.pillarFilter, options?.locationIdFilter]);
 
   const totalSaved = catches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;
 

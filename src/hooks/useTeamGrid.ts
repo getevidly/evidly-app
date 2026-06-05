@@ -61,9 +61,10 @@ function weekStart(): string {
   return monday.toISOString().split('T')[0];
 }
 
-export function useTeamGrid(): UseTeamGridResult {
+export function useTeamGrid(options?: { locationIdFilter?: string }): UseTeamGridResult {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,12 +79,31 @@ export function useTeamGrid(): UseTeamGridResult {
     async function load() {
       try {
         // Fetch team members (exclude owner/exec/admin roles)
-        const { data: users, error: uErr } = await supabase
+        let userQuery = supabase
           .from('user_profiles')
           .select('id, full_name, role')
           .eq('organization_id', orgId)
           .in('role', TEAM_ROLES)
           .eq('is_suspended', false);
+
+        // When filtering by location, restrict to users with access to that location
+        if (locationIdFilter) {
+          const { data: accessRows } = await supabase
+            .from('user_location_access')
+            .select('user_id')
+            .eq('organization_id', orgId)
+            .eq('location_id', locationIdFilter);
+          if (cancelled) return;
+          const accessIds = (accessRows || []).map((r: { user_id: string }) => r.user_id);
+          if (accessIds.length > 0) {
+            userQuery = userQuery.in('id', accessIds);
+          } else {
+            setMembers([]);
+            return;
+          }
+        }
+
+        const { data: users, error: uErr } = await userQuery;
 
         if (cancelled) return;
         if (uErr) throw new Error(uErr.message);
@@ -97,11 +117,15 @@ export function useTeamGrid(): UseTeamGridResult {
 
         // Fetch task_instances for these users this week
         // Also fetch role-assigned tasks via task_definitions
-        const { data: tasks, error: tErr } = await supabase
+        let taskQ = supabase
           .from('task_instances')
           .select('id, assigned_to, status, due_at, definition_id, task_definitions!inner(assigned_to_role)')
           .eq('organization_id', orgId)
           .gte('date', ws);
+        if (locationIdFilter) {
+          taskQ = taskQ.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+        }
+        const { data: tasks, error: tErr } = await taskQ;
 
         if (cancelled) return;
         if (tErr) throw new Error(tErr.message);
@@ -200,7 +224,7 @@ export function useTeamGrid(): UseTeamGridResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, trigger]);
+  }, [orgId, trigger, locationIdFilter]);
 
   return { members, loading, error, refetch };
 }

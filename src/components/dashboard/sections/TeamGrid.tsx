@@ -7,6 +7,7 @@
  */
 
 import { useState } from 'react';
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
@@ -23,10 +24,11 @@ const HEADING: Record<string, string> = {
 };
 
 export function TeamGrid() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole, getAccessibleLocations } = useRole();
   const { profile } = useAuth();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { members, loading, refetch } = useTeamGrid();
+  const { members, loading, refetch } = useTeamGrid({ locationIdFilter: selectedLocationId || undefined });
   const [inviteOpen, setInviteOpen] = useState(false);
 
   const heading = HEADING[role];

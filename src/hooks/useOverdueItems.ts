@@ -38,10 +38,11 @@ function lateSuffix(days: number): string {
   return `${days} days late`;
 }
 
-export function useOverdueItems(): UseOverdueItemsResult {
+export function useOverdueItems(options?: { locationIdFilter?: string }): UseOverdueItemsResult {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
 
   const [items, setItems] = useState<OverdueItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,24 +60,24 @@ export function useOverdueItems(): UseOverdueItemsResult {
         const today = new Date().toISOString().split('T')[0];
 
         const [tasksRes, caRes, docsRes] = await Promise.all([
-          supabase
-            .from('task_instances')
-            .select('id, title, due_at')
-            .eq('organization_id', orgId!)
-            .eq('status', 'pending')
-            .lt('due_at', now),
-          supabase
-            .from('corrective_actions')
-            .select('id, title, due_date')
-            .eq('organization_id', orgId!)
-            .not('status', 'in', '("closed","archived","verified","dismissed")')
-            .lt('due_date', today),
-          supabase
-            .from('documents')
-            .select('id, title, expiration_date')
-            .eq('organization_id', orgId!)
-            .eq('status', 'active')
-            .lt('expiration_date', today),
+          (() => {
+            let q = supabase.from('task_instances').select('id, title, due_at')
+              .eq('organization_id', orgId!).eq('status', 'pending').lt('due_at', now);
+            if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+            return q;
+          })(),
+          (() => {
+            let q = supabase.from('corrective_actions').select('id, title, due_date')
+              .eq('organization_id', orgId!).not('status', 'in', '("closed","archived","verified","dismissed")').lt('due_date', today);
+            if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+            return q;
+          })(),
+          (() => {
+            let q = supabase.from('documents').select('id, title, expiration_date')
+              .eq('organization_id', orgId!).eq('status', 'active').lt('expiration_date', today);
+            if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+            return q;
+          })(),
         ]);
 
         if (cancelled) return;
@@ -132,7 +133,7 @@ export function useOverdueItems(): UseOverdueItemsResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, isKM]);
+  }, [orgId, isKM, locationIdFilter]);
 
   return { items, totalCount: items.length, loading, error };
 }

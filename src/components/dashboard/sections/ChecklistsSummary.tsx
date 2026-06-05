@@ -7,10 +7,12 @@
  */
 
 import { Link } from 'react-router-dom';
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useChecklistStatus } from '../../../hooks/useChecklistStatus';
 
 export function ChecklistsSummary() {
-  const { summary, loading } = useChecklistStatus();
+  const { selectedLocationId } = useDashboardLocation();
+  const { summary, loading } = useChecklistStatus({ locationIdFilter: selectedLocationId || undefined });
 
   if (loading) {
     return (

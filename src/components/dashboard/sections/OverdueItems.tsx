@@ -4,13 +4,15 @@
  * Kitchen_manager only — overdue tasks, corrective actions, and expired documents.
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useOverdueItems } from '../../../hooks/useOverdueItems';
 import { OverdueRow } from './OverdueRow';
 
 export function OverdueItems() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
-  const { items, totalCount, loading } = useOverdueItems();
+  const { items, totalCount, loading } = useOverdueItems({ locationIdFilter: selectedLocationId || undefined });
 
   if (userRole !== 'kitchen_manager') return null;
 

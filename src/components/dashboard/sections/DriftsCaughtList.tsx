@@ -5,6 +5,7 @@
  * Shows section header with count chip, catch list, and empty state.
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { DriftCatchCard } from './DriftCatchCard';
 import { WeeklyDriftReport } from './WeeklyDriftReport';
@@ -20,7 +21,8 @@ const PILLAR_EMPTY: Record<string, string> = {
 };
 
 export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProps) {
-  const { catches, totalSaved, loading, error, acknowledge } = useDriftCatches({ pillarFilter });
+  const { selectedLocationId } = useDashboardLocation();
+  const { catches, totalSaved, loading, error, acknowledge } = useDriftCatches({ pillarFilter, locationIdFilter: selectedLocationId || undefined });
 
   if (loading) {
     return (

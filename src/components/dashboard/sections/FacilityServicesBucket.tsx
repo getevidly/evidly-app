@@ -4,13 +4,15 @@
  * Facilities_manager only — facility service categories with schedule status.
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useFacilityServices } from '../../../hooks/useFacilityServices';
 import { FacilityServiceCard } from './FacilityServiceCard';
 
 export function FacilityServicesBucket() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
-  const { categories, loading } = useFacilityServices();
+  const { categories, loading } = useFacilityServices({ locationIdFilter: selectedLocationId || undefined });
 
   if (userRole !== 'facilities_manager') return null;
 

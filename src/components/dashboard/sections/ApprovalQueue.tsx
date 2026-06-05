@@ -4,13 +4,15 @@
  * Kitchen_manager only — items awaiting PIC verification/sign-off.
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useApprovalQueue } from '../../../hooks/useApprovalQueue';
 import { ApprovalRow } from './ApprovalRow';
 
 export function ApprovalQueue() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
-  const { items, loading } = useApprovalQueue();
+  const { items, loading } = useApprovalQueue({ locationIdFilter: selectedLocationId || undefined });
 
   if (userRole !== 'kitchen_manager') return null;
 

@@ -6,6 +6,7 @@
  * compliance_manager, chef, kitchen_manager, kitchen_staff → null
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useDecisionsQueue } from '../../../hooks/useDecisionsQueue';
@@ -19,9 +20,10 @@ const HEADING: Record<string, string> = {
 };
 
 export function DecisionsQueue() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { decisions, openCount, loading } = useDecisionsQueue();
+  const { decisions, openCount, loading } = useDecisionsQueue({ locationIdFilter: selectedLocationId || undefined });
 
   const heading = HEADING[role];
   if (!heading) return null;

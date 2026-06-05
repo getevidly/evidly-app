@@ -32,10 +32,11 @@ function getYesterdayRange(tz: string): { start: string; end: string } {
   return { start: toIso(yesterdayDate), end: toIso(todayDate) };
 }
 
-export function useYesterdayCatches(): YesterdayCatches {
+export function useYesterdayCatches(options?: { locationIdFilter?: string }): YesterdayCatches {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { timezone, loading: orgLoading } = useOrgSummary();
+  const locationIdFilter = options?.locationIdFilter;
   const [catches, setCatches] = useState<DriftCatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -48,12 +49,16 @@ export function useYesterdayCatches(): YesterdayCatches {
       try {
         const { start, end } = getYesterdayRange(timezone);
 
-        const { data, error: qErr } = await supabase
+        let q = supabase
           .from('drift_catches')
           .select('id, location_id, pillar, drift_type, estimated_savings_cents, severity, resolution_type, resolved_at')
           .eq('org_id', orgId)
           .gte('detected_at', start + 'T00:00:00')
           .lt('detected_at', end + 'T00:00:00');
+        if (locationIdFilter) {
+          q = q.eq('location_id', locationIdFilter);
+        }
+        const { data, error: qErr } = await q;
 
         if (cancelled) return;
         if (qErr) throw new Error(qErr.message);
@@ -95,7 +100,7 @@ export function useYesterdayCatches(): YesterdayCatches {
 
     fetch();
     return () => { cancelled = true; };
-  }, [orgId, timezone, orgLoading]);
+  }, [orgId, timezone, orgLoading, locationIdFilter]);
 
   const totalSavingsUsd = catches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;
 

@@ -73,10 +73,11 @@ function todayInTimezone(tz: string): string {
   }
 }
 
-export function useChecklistStatus(): UseChecklistStatusReturn {
+export function useChecklistStatus(options?: { locationIdFilter?: string }): UseChecklistStatusReturn {
   const { user, profile } = useAuth();
   const orgId = profile?.organization_id;
   const { timezone } = useOrgSummary();
+  const locationIdFilter = options?.locationIdFilter;
 
   const [dailyItems, setDailyItems] = useState<ChecklistItem[]>([]);
   const [weeklyItems, setWeeklyItems] = useState<ChecklistItem[]>([]);
@@ -91,7 +92,7 @@ export function useChecklistStatus(): UseChecklistStatusReturn {
 
     try {
       const today = todayInTimezone(timezone);
-      const { data, error: queryErr } = await supabase
+      let q = supabase
         .from('task_instances')
         .select(`
           id,
@@ -115,6 +116,10 @@ export function useChecklistStatus(): UseChecklistStatusReturn {
         .eq('task_definitions.is_active', true)
         .eq('date', today)
         .order('due_at', { ascending: true });
+      if (locationIdFilter) {
+        q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+      }
+      const { data, error: queryErr } = await q;
 
       if (queryErr) throw new Error(queryErr.message);
 
@@ -157,7 +162,7 @@ export function useChecklistStatus(): UseChecklistStatusReturn {
     } finally {
       setLoading(false);
     }
-  }, [orgId, timezone]);
+  }, [orgId, timezone, locationIdFilter]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 

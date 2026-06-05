@@ -16,9 +16,10 @@ interface DocumentsSummary {
   error: Error | null;
 }
 
-export function useDocumentsSummary(): DocumentsSummary {
+export function useDocumentsSummary(options?: { locationIdFilter?: string }): DocumentsSummary {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
   const [state, setState] = useState<Omit<DocumentsSummary, 'loading' | 'error'>>({
     current: 0,
     total: 0,
@@ -34,10 +35,14 @@ export function useDocumentsSummary(): DocumentsSummary {
 
     async function fetch() {
       try {
-        const { data, error: qErr } = await supabase
+        let q = supabase
           .from('documents')
           .select('id, title, expiration_date, status')
           .eq('organization_id', orgId);
+        if (locationIdFilter) {
+          q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+        }
+        const { data, error: qErr } = await q;
 
         if (cancelled) return;
         if (qErr) throw new Error(qErr.message);
@@ -85,7 +90,7 @@ export function useDocumentsSummary(): DocumentsSummary {
 
     fetch();
     return () => { cancelled = true; };
-  }, [orgId]);
+  }, [orgId, locationIdFilter]);
 
   return { ...state, loading, error };
 }

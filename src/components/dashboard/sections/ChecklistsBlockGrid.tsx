@@ -5,6 +5,7 @@
  * chef, kitchen_manager (readonly=false) and kitchen_staff (readonly=true).
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useChecklistStatus } from '../../../hooks/useChecklistStatus';
 import { ChecklistCard } from './ChecklistCard';
 
@@ -13,7 +14,8 @@ interface ChecklistsBlockGridProps {
 }
 
 export function ChecklistsBlockGrid({ readonly }: ChecklistsBlockGridProps) {
-  const { dailyItems, weeklyItems, monthlyItems, loading, completeInstance } = useChecklistStatus();
+  const { selectedLocationId } = useDashboardLocation();
+  const { dailyItems, weeklyItems, monthlyItems, loading, completeInstance } = useChecklistStatus({ locationIdFilter: selectedLocationId || undefined });
 
   if (loading) {
     return (

@@ -6,14 +6,16 @@
  * replaced by a single italic roadmap whisper line.
  */
 
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useDocumentsSummary } from '../../../hooks/useDocumentsSummary';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 
 export function MetricCards() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { current, total, expiringWithin30Days, nextRenewals, loading } = useDocumentsSummary();
+  const { current, total, expiringWithin30Days, nextRenewals, loading } = useDocumentsSummary({ locationIdFilter: selectedLocationId || undefined });
 
   if (role === 'facilities_manager' || role === 'chef' || role === 'kitchen_manager' || role === 'kitchen_staff') {
     return null;

@@ -43,10 +43,11 @@ function computeTone(nextDue: string | null): 'due' | 'overdue' | 'ok' {
   return 'ok';
 }
 
-export function useFacilityServices(): UseFacilityServicesResult {
+export function useFacilityServices(options?: { locationIdFilter?: string }): UseFacilityServicesResult {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
 
   const [categories, setCategories] = useState<FacilityServiceCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,11 +68,15 @@ export function useFacilityServices(): UseFacilityServicesResult {
             .eq('category', 'facility_services')
             .eq('is_active', true)
             .order('sort_order'),
-          supabase
-            .from('location_service_schedules')
-            .select('service_type_code, vendor_name, frequency, next_due_date, last_service_date, location_id, is_active, locations(name)')
-            .eq('organization_id', orgId!)
-            .eq('is_active', true),
+          (() => {
+            let sq = supabase
+              .from('location_service_schedules')
+              .select('service_type_code, vendor_name, frequency, next_due_date, last_service_date, location_id, is_active, locations(name)')
+              .eq('organization_id', orgId!)
+              .eq('is_active', true);
+            if (locationIdFilter) sq = sq.eq('location_id', locationIdFilter);
+            return sq;
+          })(),
         ]);
 
         if (cancelled) return;
@@ -119,7 +124,7 @@ export function useFacilityServices(): UseFacilityServicesResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, isFM]);
+  }, [orgId, isFM, locationIdFilter]);
 
   return { categories, loading, error };
 }

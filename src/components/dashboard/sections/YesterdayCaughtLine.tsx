@@ -1,3 +1,4 @@
+import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { useYesterdayCatches } from '../../../hooks/useYesterdayCatches';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
@@ -18,9 +19,10 @@ function buildSummary(catches: DriftCatch[]): string {
 }
 
 export function YesterdayCaughtLine() {
+  const { selectedLocationId } = useDashboardLocation();
   const { userRole } = useRole();
   const role: DashboardRole = userRole === 'platform_admin' ? 'owner_operator' : userRole as DashboardRole;
-  const { catches, loading } = useYesterdayCatches();
+  const { catches, loading } = useYesterdayCatches({ locationIdFilter: selectedLocationId || undefined });
 
   if (loading) return null;
   if (role === 'kitchen_manager' || role === 'kitchen_staff') return null;
