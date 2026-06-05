@@ -490,7 +490,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    return json({ intake_id: intake.id }, 200, headers);
+    return json({ intake_id: intake.id, referral_code: intakeRow.referral_code }, 200, headers);
   } catch (err) {
     logger.error("[pl-intake-start] Unhandled error", err);
     return json({ error: "Internal server error" }, 500, headers);

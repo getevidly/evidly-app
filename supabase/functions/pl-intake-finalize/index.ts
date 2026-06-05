@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
       referral_code: intake.referral_code || undefined,
     });
 
-    return json({ success: true }, 200, headers);
+    return json({ success: true, referral_code: intake.referral_code || null }, 200, headers);
   } catch (err) {
     logger.error("[pl-intake-finalize] Unhandled error", err);
     return json({ error: "Internal server error" }, 500, headers);
