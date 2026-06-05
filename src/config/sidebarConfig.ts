@@ -61,6 +61,10 @@ const I: Record<string, NavItem> = {
     id: 'documents', label: 'Documents', path: '/documents', icon: 'FileText', iconColor: '#D85A30',
     roles: [], description: 'Compliance certificates, inspection reports, permits, and signed documentation — organized and searchable.',
   },
+  policies: {
+    id: 'policies', label: 'Policies', path: '/policies', icon: 'BookOpen', iconColor: '#185FA5',
+    roles: [], description: 'Standardized food and fire safety policies — adopt, customize, and activate.',
+  },
   kitchenToCommunity: {
     id: 'kitchenToCommunity', label: 'Kitchen to Community', path: '/kitchen-to-community', icon: 'Heart', iconColor: '#b3261e',
     roles: [], description: 'Cross-org participation and referral program — Kitchen to Community.',
@@ -378,7 +382,7 @@ const SECTION_ORDER = [
 // ══════════════════════════════════════════════════════════
 
 const TOP_LEVEL_IDS = [
-  'documents', 'kitchenToCommunity',
+  'documents', 'policies', 'kitchenToCommunity',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -386,12 +390,12 @@ const TOP_LEVEL_IDS = [
 // ══════════════════════════════════════════════════════════
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  platform_admin:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  owner_operator:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  executive:          ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  compliance_manager: ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
+  platform_admin:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents', 'policies',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'policies', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
   chef:               ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
   kitchen_staff:      ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                                       'tools'],
 };

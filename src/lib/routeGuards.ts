@@ -36,6 +36,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Compliance — not kitchen_staff
   ['/tasks',                 ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff', 'facilities_manager']],
   ['/corrective-actions',    ['owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager', 'kitchen_staff']],
+  ['/policies',              ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'kitchen_manager']],
   ['/vendor-certifications', ['owner_operator', 'compliance_manager']],
   ['/export-center',         ['compliance_manager']],
 

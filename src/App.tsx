@@ -40,6 +40,8 @@ const TempLogs = lazy(() => import('./pages/TempLogs').then(m => ({ default: m.T
 const Checklists = lazy(() => import('./pages/Checklists').then(m => ({ default: m.Checklists })));
 const ChecklistCompletionDetail = lazy(() => import('./pages/ChecklistCompletionDetail'));
 const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m.Documents })));
+const Policies = lazy(() => import('./pages/Policies').then(m => ({ default: m.Policies })));
+const PolicyEditor = lazy(() => import('./pages/PolicyEditor').then(m => ({ default: m.PolicyEditor })));
 const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
 const VendorsPage = lazy(() => import('./pages/vendors/VendorsPage'));
@@ -642,6 +644,8 @@ function AppRoutes() {
           <Route path="/checklists" element={<Checklists />} />
           <Route path="/checklists/history/:completionId" element={<ChecklistCompletionDetail />} />
           <Route path="/documents" element={<Documents />} />
+          <Route path="/policies" element={<Policies />} />
+          <Route path="/policies/:id" element={<PolicyEditor />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<VendorsPage />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
