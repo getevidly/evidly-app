@@ -32,7 +32,9 @@ export function useInspectionPackageSummary(options?: { locationIdFilter?: strin
       try {
         const today = new Date().toISOString().split('T')[0];
 
-        const [locRes, countyRes, docRes] = await Promise.all([
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        const [locRes, countyRes, docRes, evidenceRes] = await Promise.all([
           locationIdFilter
             ? supabase.from('locations').select('id').eq('id', locationIdFilter).eq('status', 'active')
             : supabase.from('locations').select('id').eq('organization_id', orgId).eq('status', 'active'),
@@ -41,6 +43,14 @@ export function useInspectionPackageSummary(options?: { locationIdFilter?: strin
             let q = supabase.from('documents').select('id, updated_at, expiration_date')
               .eq('organization_id', orgId).eq('status', 'active');
             if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
+            return q;
+          })(),
+          // 3g: count HACCP evidence items from unified view (last 30 days)
+          (() => {
+            let q = supabase.from('vw_haccp_evidence').select('evidence_id', { count: 'exact', head: true })
+              .eq('organization_id', orgId)
+              .gte('occurred_at', thirtyDaysAgo);
+            if (locationIdFilter) q = q.eq('location_id', locationIdFilter);
             return q;
           })(),
         ]);
@@ -63,10 +73,12 @@ export function useInspectionPackageSummary(options?: { locationIdFilter?: strin
           }
         }
 
+        const evidenceCount = evidenceRes.count ?? 0;
+
         setState({
           locationCount: locRes.data?.length || 0,
           countyCount: uniqueCounties.size,
-          evidenceItemCount: currentDocs.length,
+          evidenceItemCount: currentDocs.length + evidenceCount,
           lastRefreshedAt: maxUpdated,
         });
       } catch (err) {

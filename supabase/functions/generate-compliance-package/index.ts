@@ -108,20 +108,20 @@ Deno.serve(async (req: Request) => {
       } : null,
     };
 
-    // Fetch temp log summary if requested
+    // Fetch temp log summary if requested — uses vw_haccp_evidence (3g)
     let tempSummary = null;
     if (payload.include_temp_summary) {
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      const { data: tempLogs } = await supabase
-        .from("temperature_logs")
-        .select("*")
-        .eq("facility_id", orgId)
-        .gte("reading_time", thirtyDaysAgo.toISOString())
-        .order("reading_time", { ascending: false });
+      const { data: tempEvidence } = await supabase
+        .from("vw_haccp_evidence")
+        .select("result_passed")
+        .eq("organization_id", orgId)
+        .eq("evidence_type", "temperature_log")
+        .gte("occurred_at", thirtyDaysAgo.toISOString());
 
-      if (tempLogs) {
-        const total = tempLogs.length;
-        const outOfRange = tempLogs.filter((l) => l.temp_pass === false).length;
+      if (tempEvidence) {
+        const total = tempEvidence.length;
+        const outOfRange = tempEvidence.filter((r: { result_passed: boolean }) => r.result_passed === false).length;
         tempSummary = {
           period: "Last 30 days",
           total_readings: total,

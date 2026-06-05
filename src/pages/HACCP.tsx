@@ -501,7 +501,7 @@ export function HACCP() {
 
   const canExportPackage = ['owner_operator', 'executive', 'kitchen_manager'].includes(userRole);
 
-  const handleExportInspectorPackage = () => {
+  const handleExportInspectorPackage = async () => {
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
@@ -635,6 +635,46 @@ export function HACCP() {
       y += 6;
     });
 
+    // ── 3g: Fetch checklist + temperature evidence from unified view ──
+    let liveChecklists: { name: string; score: string; completedBy: string; date: string }[] = [];
+    let liveTempLogs: { equipment: string; temp: string; range: string; status: string; time: string }[] = [];
+    if (!isDemoMode && profile?.organization_id) {
+      const rangeDays = exportRange === 'all' ? null : parseInt(exportRange, 10);
+      const rangeStart = rangeDays
+        ? new Date(Date.now() - rangeDays * 24 * 60 * 60 * 1000).toISOString()
+        : null;
+      let q = supabase
+        .from('vw_haccp_evidence')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .in('evidence_type', ['temperature_log', 'checklist_completion'])
+        .order('occurred_at', { ascending: false });
+      if (rangeStart) q = q.gte('occurred_at', rangeStart);
+      const { data: evidenceRows } = await q;
+      for (const row of evidenceRows || []) {
+        const when = new Date(row.occurred_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        if (row.evidence_type === 'checklist_completion') {
+          liveChecklists.push({
+            name: row.subject || 'Checklist',
+            score: row.detail || '—',
+            completedBy: row.actor_name || '—',
+            date: when,
+          });
+        } else {
+          // Parse detail: "38 °F (range 32–41 °F)" → temp="38 °F", range="32–41 °F"
+          const detailStr = row.detail || '';
+          const rangeMatch = detailStr.match(/\(range (.+?)\)/);
+          liveTempLogs.push({
+            equipment: row.subject || 'Equipment',
+            temp: rangeMatch ? detailStr.slice(0, detailStr.indexOf('(')).trim() : detailStr,
+            range: rangeMatch ? rangeMatch[1] : '—',
+            status: row.result || '—',
+            time: when,
+          });
+        }
+      }
+    }
+
     // ── Checklist Completion Summary ──
     doc.addPage();
     y = 25;
@@ -648,15 +688,18 @@ export function HACCP() {
     doc.text(`Reporting period: Last ${exportRange === 'all' ? 'all available' : exportRange + ' days'}`, m, y);
     y += 8;
 
-    // Checklist completion data — demo uses hardcoded samples, real uses completions array
-    if (isDemoMode) {
-      const demoChecklists = [
-        { name: 'Opening Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Today, 6:15 AM' },
-        { name: 'Mid-Shift Check', score: '83%', completedBy: 'Sarah Chen', date: 'Today, 11:30 AM' },
-        { name: 'Closing Checklist', score: '100%', completedBy: 'Emma Davis', date: 'Yesterday, 9:45 PM' },
-        { name: 'Receiving Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Yesterday, 7:00 AM' },
-        { name: 'Opening Checklist', score: '100%', completedBy: 'Sarah Chen', date: '2 days ago, 6:20 AM' },
-      ];
+    // Checklist completion data — demo uses hardcoded samples, live uses vw_haccp_evidence
+    const checklistRows = isDemoMode
+      ? [
+          { name: 'Opening Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Today, 6:15 AM' },
+          { name: 'Mid-Shift Check', score: '83%', completedBy: 'Sarah Chen', date: 'Today, 11:30 AM' },
+          { name: 'Closing Checklist', score: '100%', completedBy: 'Emma Davis', date: 'Yesterday, 9:45 PM' },
+          { name: 'Receiving Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Yesterday, 7:00 AM' },
+          { name: 'Opening Checklist', score: '100%', completedBy: 'Sarah Chen', date: '2 days ago, 6:20 AM' },
+        ]
+      : liveChecklists;
+
+    if (checklistRows.length > 0) {
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'bold');
       doc.text('Checklist', m, y);
@@ -668,7 +711,7 @@ export function HACCP() {
       doc.line(m, y, pageW - m, y);
       y += 5;
       doc.setFont('helvetica', 'normal');
-      demoChecklists.forEach(cl => {
+      checklistRows.forEach(cl => {
         checkPage(8);
         doc.text(cl.name, m, y);
         doc.text(cl.score, m + 70, y);
@@ -691,13 +734,16 @@ export function HACCP() {
     doc.text('Temperature Log Summary', m, y);
     y += 10;
 
-    if (isDemoMode) {
-      const demoTempLogs = [
-        { equipment: 'Walk-in Cooler', temp: '38°F', range: '32-41°F', status: 'PASS', time: 'Today, 6:10 AM' },
-        { equipment: 'Walk-in Freezer', temp: '-2°F', range: '0°F or below', status: 'PASS', time: 'Today, 6:12 AM' },
-        { equipment: 'Hot Hold Cabinet', temp: '142°F', range: '135°F or above', status: 'PASS', time: 'Today, 11:00 AM' },
-        { equipment: 'Prep Table', temp: '40°F', range: '32-41°F', status: 'PASS', time: 'Today, 10:30 AM' },
-      ];
+    const tempRows = isDemoMode
+      ? [
+          { equipment: 'Walk-in Cooler', temp: '38°F', range: '32-41°F', status: 'PASS', time: 'Today, 6:10 AM' },
+          { equipment: 'Walk-in Freezer', temp: '-2°F', range: '0°F or below', status: 'PASS', time: 'Today, 6:12 AM' },
+          { equipment: 'Hot Hold Cabinet', temp: '142°F', range: '135°F or above', status: 'PASS', time: 'Today, 11:00 AM' },
+          { equipment: 'Prep Table', temp: '40°F', range: '32-41°F', status: 'PASS', time: 'Today, 10:30 AM' },
+        ]
+      : liveTempLogs;
+
+    if (tempRows.length > 0) {
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'bold');
       doc.text('Equipment', m, y);
@@ -709,7 +755,7 @@ export function HACCP() {
       doc.line(m, y, pageW - m, y);
       y += 5;
       doc.setFont('helvetica', 'normal');
-      demoTempLogs.forEach(tl => {
+      tempRows.forEach(tl => {
         checkPage(8);
         doc.text(tl.equipment, m, y);
         doc.text(tl.temp, m + 50, y);
