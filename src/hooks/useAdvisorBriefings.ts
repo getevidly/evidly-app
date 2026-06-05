@@ -21,6 +21,8 @@ export interface AdvisorBriefing {
   generated_at: string;
   valid_until: string;
   template_version: number;
+  /** True when an org-level briefing was filtered for a single location */
+  _locationFiltered?: boolean;
 }
 
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
@@ -54,9 +56,20 @@ function rowToBriefing(row: Record<string, unknown>): AdvisorBriefing {
   };
 }
 
-export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
+function filterBriefingForLocation(briefing: AdvisorBriefing, locationId: string): AdvisorBriefing {
+  return {
+    ...briefing,
+    open_items: briefing.open_items.filter(
+      item => item.location_id === locationId || item.location_id === null,
+    ),
+    _locationFiltered: true,
+  };
+}
+
+export function useAdvisorBriefings(options?: { locationIdFilter?: string }): UseAdvisorBriefingsResult {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
+  const locationIdFilter = options?.locationIdFilter;
   const [briefings, setBriefings] = useState<Record<AdvisorType, AdvisorBriefing | null>>({
     compliance_officer: null,
     food_safety: null,
@@ -80,13 +93,18 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
     async function load() {
       try {
         // Phase 1: fresh rows (valid_until > now)
-        const { data: freshData, error: freshErr } = await supabase
+        let freshQuery = supabase
           .from('advisor_briefings')
           .select('*')
           .eq('org_id', orgId)
-          .is('location_id', null)
           .gt('valid_until', new Date().toISOString())
           .order('generated_at', { ascending: false });
+        if (locationIdFilter) {
+          freshQuery = freshQuery.eq('location_id', locationIdFilter);
+        } else {
+          freshQuery = freshQuery.is('location_id', null);
+        }
+        const { data: freshData, error: freshErr } = await freshQuery;
 
         if (cancelled) return;
         if (freshErr) throw new Error(freshErr.message);
@@ -113,7 +131,34 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
         const missing = ADVISOR_TYPES.filter(at => !grouped[at]);
         if (missing.length > 0) {
           for (const at of missing) {
-            const { data: staleData } = await supabase
+            let staleQuery = supabase
+              .from('advisor_briefings')
+              .select('*')
+              .eq('org_id', orgId)
+              .eq('advisor_type', at)
+              .order('generated_at', { ascending: false })
+              .limit(1);
+            if (locationIdFilter) {
+              staleQuery = staleQuery.eq('location_id', locationIdFilter);
+            } else {
+              staleQuery = staleQuery.is('location_id', null);
+            }
+            const { data: staleData } = await staleQuery;
+
+            if (cancelled) return;
+
+            if (staleData && staleData.length > 0) {
+              grouped[at] = rowToBriefing(staleData[0]);
+              stale[at] = true;
+            }
+          }
+        }
+
+        // Phase 2b: org-level fallback when location-specific not found
+        if (locationIdFilter) {
+          const stillMissing = ADVISOR_TYPES.filter(at => !grouped[at]);
+          for (const at of stillMissing) {
+            const { data: orgData } = await supabase
               .from('advisor_briefings')
               .select('*')
               .eq('org_id', orgId)
@@ -124,9 +169,10 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
 
             if (cancelled) return;
 
-            if (staleData && staleData.length > 0) {
-              grouped[at] = rowToBriefing(staleData[0]);
-              stale[at] = true;
+            if (orgData && orgData.length > 0) {
+              const briefing = rowToBriefing(orgData[0]);
+              grouped[at] = filterBriefingForLocation(briefing, locationIdFilter);
+              stale[at] = new Date(briefing.valid_until) < new Date();
             }
           }
         }
@@ -142,11 +188,11 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, fetchKey]);
+  }, [orgId, locationIdFilter, fetchKey]);
 
   // Phase 3: background regen for stale advisor_types
   useEffect(() => {
-    if (loading || error || !orgId) return;
+    if (loading || error || !orgId || locationIdFilter) return;
 
     const staleTypes = (Object.keys(staleness) as AdvisorType[]).filter(t => staleness[t]);
     if (staleTypes.length === 0) return;
@@ -173,7 +219,7 @@ export function useAdvisorBriefings(): UseAdvisorBriefingsResult {
     });
 
     return () => { cancelled = true; };
-  }, [loading, error, orgId, staleness]);
+  }, [loading, error, orgId, staleness, locationIdFilter]);
 
   return { ...briefings, loading, error, staleness };
 }

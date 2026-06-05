@@ -12,9 +12,11 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { BriefCard } from './BriefCard';
 
 export function AdvisorPair() {
-  const { food_safety, fire_safety, staleness } = useAdvisorBriefings();
-  const { timezone, countyCount } = useOrgSummary();
   const { selectedLocationId, isMultiLocation } = useDashboardLocation();
+  const { food_safety, fire_safety, staleness } = useAdvisorBriefings(
+    selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined,
+  );
+  const { timezone, countyCount } = useOrgSummary();
 
   const isAllMode = isMultiLocation && selectedLocationId === null;
   const scopeLine = isAllMode && countyCount > 1

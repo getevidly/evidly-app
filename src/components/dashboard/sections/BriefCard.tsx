@@ -173,7 +173,7 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
   const eyebrow = EYEBROW[variant];
   const { body, credentials } = parseBriefing(briefing.briefing_text);
   const { postureLine, bodyText } = extractPostureLine(body);
-  const summary = postureLine || defaultPostureLine(briefing.posture, briefing.open_items);
+  const summary = (briefing._locationFiltered ? '' : postureLine) || defaultPostureLine(briefing.posture, briefing.open_items);
   const dateLabel = eyebrow.showDate ? ` \u00B7 ${formatBriefingDate(briefing.generated_at, timezone)}` : '';
 
   return (

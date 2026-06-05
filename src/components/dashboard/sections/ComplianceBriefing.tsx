@@ -11,9 +11,11 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { BriefCard } from './BriefCard';
 
 export function ComplianceBriefing() {
-  const { compliance_officer, staleness } = useAdvisorBriefings();
-  const { timezone, countyCount } = useOrgSummary();
   const { selectedLocationId, isMultiLocation } = useDashboardLocation();
+  const { compliance_officer, staleness } = useAdvisorBriefings(
+    selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined,
+  );
+  const { timezone, countyCount } = useOrgSummary();
 
   const isAllMode = isMultiLocation && selectedLocationId === null;
   const scopeLine = isAllMode && countyCount > 1
