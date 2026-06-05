@@ -6,6 +6,7 @@ import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { logger } from "../_shared/logger.ts";
 import { DISCLOSURE_VERSION, generateSignToken } from "../_shared/disclosure.ts";
+import { logEvent } from "../_shared/events.ts";
 
 // ── Free-email domain blocklist (agent door) ────────────────
 const FREE_EMAIL_DOMAINS = [
@@ -37,6 +38,14 @@ async function hashCode(code: string): Promise<string> {
 function generateOtp(): string {
   const raw = crypto.getRandomValues(new Uint32Array(1))[0];
   return String((raw % 900000) + 100000);
+}
+
+function generateReferralCode(): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  return Array.from(bytes)
+    .map((b) => chars[b % chars.length])
+    .join("");
 }
 
 async function decrementRateLimit(
@@ -328,16 +337,35 @@ Deno.serve(async (req: Request) => {
       intakeRow.agent_consent_at = new Date().toISOString();
     }
 
-    const { data: intake, error: insertErr } = await supabase
-      .from("policy_lens_intakes")
-      .insert(intakeRow)
-      .select("id")
-      .single();
+    // ── Insert with referral_code collision retry (×5) ──────
+    let intake: { id: string } | null = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      intakeRow.referral_code = generateReferralCode();
+      const { data, error: insertErr } = await supabase
+        .from("policy_lens_intakes")
+        .insert(intakeRow)
+        .select("id")
+        .single();
 
-    if (insertErr || !intake) {
+      if (!insertErr && data) {
+        intake = data;
+        break;
+      }
+      // 23505 = unique_violation — retry with new code
+      if (insertErr?.code === "23505") continue;
       logger.error("[pl-intake-start] Insert failed", insertErr);
       return json({ error: "Failed to create intake" }, 500, headers);
     }
+    if (!intake) {
+      return json({ error: "Failed to generate referral code" }, 500, headers);
+    }
+
+    // ── Log intake_started event ──────────────────────────────
+    await logEvent(supabase, {
+      event_type: "intake_started",
+      intake_id: intake.id,
+      referral_code: intakeRow.referral_code as string,
+    });
 
     // ── Authorization row (agent esign/attest) ────────────────
     if (source === "agent") {

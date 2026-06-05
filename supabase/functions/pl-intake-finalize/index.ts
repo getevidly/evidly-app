@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { logger } from "../_shared/logger.ts";
+import { logEvent } from "../_shared/events.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -29,7 +30,7 @@ Deno.serve(async (req: Request) => {
     // Fetch intake
     const { data: intake, error: fetchErr } = await supabase
       .from("policy_lens_intakes")
-      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path")
+      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path, referral_code")
       .eq("id", intake_id)
       .single();
 
@@ -95,6 +96,13 @@ Deno.serve(async (req: Request) => {
       logger.error("[pl-intake-finalize] Update failed", updateErr);
       return json({ error: "Failed to finalize intake" }, 500, headers);
     }
+
+    // ── Log uploaded event ──────────────────────────────────
+    await logEvent(supabase, {
+      event_type: "uploaded",
+      intake_id,
+      referral_code: intake.referral_code || undefined,
+    });
 
     return json({ success: true }, 200, headers);
   } catch (err) {
