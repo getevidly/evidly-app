@@ -65,6 +65,10 @@ const I: Record<string, NavItem> = {
     id: 'policies', label: 'Policies', path: '/policies', icon: 'BookOpen', iconColor: '#185FA5',
     roles: [], description: 'Standardized food and fire safety policies — adopt, customize, and activate.',
   },
+  reports: {
+    id: 'reports', label: 'Reports', path: '/reports', icon: 'FileBarChart', iconColor: '#2f7a4d',
+    roles: [], description: 'Generate and share compliance, HACCP, insurance, and executive reports.',
+  },
   kitchenToCommunity: {
     id: 'kitchenToCommunity', label: 'Kitchen to Community', path: '/kitchen-to-community', icon: 'Heart', iconColor: '#b3261e',
     roles: [], description: 'Cross-org participation and referral program — Kitchen to Community.',
@@ -349,8 +353,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'insights', label: 'Insights', icon: '✨',
     tooltipTitle: 'Insights',
     tooltipDescription: 'Food Safety Advisor, Fire Safety Advisor, inspection forecast, trends, benchmarks, leaderboard, reporting, audit log, and IoT.',
-    // POST-LAUNCH: 'in-reports' removed — backend not built (report_runs absent, no generation engine). Restore when wired.
-    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-audit'],
+    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-reports', 'in-audit'],
     path: '/insights',
   },
   tools: {
@@ -382,7 +385,7 @@ const SECTION_ORDER = [
 // ══════════════════════════════════════════════════════════
 
 const TOP_LEVEL_IDS = [
-  'documents', 'policies', 'kitchenToCommunity',
+  'documents', 'policies', 'reports', 'kitchenToCommunity',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -390,12 +393,12 @@ const TOP_LEVEL_IDS = [
 // ══════════════════════════════════════════════════════════
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  platform_admin:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  owner_operator:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  executive:          ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  compliance_manager: ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents', 'policies',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'policies', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
+  platform_admin:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents', 'policies', 'reports',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
   chef:               ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
   kitchen_staff:      ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                                       'tools'],
 };

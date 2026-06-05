@@ -42,6 +42,8 @@ const ChecklistCompletionDetail = lazy(() => import('./pages/ChecklistCompletion
 const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m.Documents })));
 const Policies = lazy(() => import('./pages/Policies').then(m => ({ default: m.Policies })));
 const PolicyEditor = lazy(() => import('./pages/PolicyEditor').then(m => ({ default: m.PolicyEditor })));
+const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
+const ReportViewer = lazy(() => import('./pages/public/ReportViewer').then(m => ({ default: m.ReportViewer })));
 const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
 const VendorsPage = lazy(() => import('./pages/vendors/VendorsPage'));
@@ -72,7 +74,7 @@ const NotificationsPage = lazy(() => import('./pages/settings/NotificationsPage'
 const BillingPage = lazy(() => import('./pages/settings/BillingPage').then(m => ({ default: m.BillingPage })));
 const ReportCenter = lazy(() => import('./pages/ReportCenter').then(m => ({ default: m.ReportCenter })));
 const ReportDetail = lazy(() => import('./pages/ReportDetail').then(m => ({ default: m.ReportDetail })));
-// POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired.
+// Legacy report pages (replaced by /reports + generate-report edge function in wave 1)
 // const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
 // const ReportGeneratorPage = lazy(() => import('./pages/reports/ReportGeneratorPage').then(m => ({ default: m.ReportGeneratorPage })));
 const EquipmentPage = lazy(() => import('./pages/equipment/EquipmentPage').then(m => ({ default: m.EquipmentPage })));
@@ -557,6 +559,7 @@ function AppRoutes() {
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
         <Route path="/r/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralPage /></Suspense>} />
         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
+        <Route path="/reports/view/:shareToken" element={<Suspense fallback={<PageSkeleton />}><ReportViewer /></Suspense>} />
         <Route path="/portal/:token" element={<Suspense fallback={<PageSkeleton />}><PortalPage /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
@@ -646,6 +649,7 @@ function AppRoutes() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/policies" element={<Policies />} />
           <Route path="/policies/:id" element={<PolicyEditor />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<VendorsPage />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
@@ -669,8 +673,7 @@ function AppRoutes() {
           <Route path="/food-safety/analysis" element={<FoodSafetyAnalysis />} />
           <Route path="/food-safety/trajectory" element={<FoodSafetyTrajectory />} />
           <Route path="/team" element={<Team />} />
-          {/* POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired. */}
-          {/* <Route path="/reports" element={<ReportsPage />} /> */}
+          {/* Legacy report routes (replaced by /reports + generate-report edge function in wave 1) */}
           {/* <Route path="/reports/:slug" element={<ReportGeneratorPage />} /> */}
           <Route path="/settings" element={<SettingsPage />}>
             {/* POST-LAUNCH: Settings sub-pages hidden — backing tables absent or stubs unconnected. Restore when wired. */}

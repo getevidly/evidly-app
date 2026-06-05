@@ -60,8 +60,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Training Records
   ['/dashboard/training',    ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
 
-  // POST-LAUNCH: Reports hidden — backend not built (report_runs absent, no generation engine). Restore when wired.
-  // ['/reports',               ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'facilities_manager']],
+  ['/reports',               ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'kitchen_manager']],
 
   // Administration
   ['/billing',               ['owner_operator', 'executive']],
