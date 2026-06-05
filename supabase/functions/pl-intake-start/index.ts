@@ -5,6 +5,7 @@ import { sendSms } from "../_shared/sms.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { logger } from "../_shared/logger.ts";
+import { DISCLOSURE_VERSION, generateSignToken } from "../_shared/disclosure.ts";
 
 // ── Free-email domain blocklist (agent door) ────────────────
 const FREE_EMAIL_DOMAINS = [
@@ -226,6 +227,16 @@ Deno.serve(async (req: Request) => {
         );
       }
     } else {
+      // ── Agent door: validate lane + lane-specific fields ────
+      const lane = body.lane || "esign";
+      if (!["esign", "attest"].includes(lane)) {
+        return json(
+          { error: 'lane must be "esign" or "attest"' },
+          400,
+          headers,
+        );
+      }
+
       const required = [
         "agent_name",
         "agency_name",
@@ -233,6 +244,12 @@ Deno.serve(async (req: Request) => {
         "agent_email",
         "business_name",
       ];
+      if (lane === "esign") {
+        required.push("client_name", "client_email");
+      } else {
+        required.push("attestation_date");
+      }
+
       const missing = required.filter(
         (f) => !body[f] || !String(body[f]).trim(),
       );
@@ -302,6 +319,7 @@ Deno.serve(async (req: Request) => {
       agency_name: body.agency_name || null,
       agent_license_number: body.agent_license_number || null,
       attribution_source: body.attribution_source || null,
+      referred_by: body.referred_by || null,
       agent_report_consent: false,
     };
 
@@ -319,6 +337,97 @@ Deno.serve(async (req: Request) => {
     if (insertErr || !intake) {
       logger.error("[pl-intake-start] Insert failed", insertErr);
       return json({ error: "Failed to create intake" }, 500, headers);
+    }
+
+    // ── Authorization row (agent esign/attest) ────────────────
+    if (source === "agent") {
+      const lane = body.lane || "esign";
+      const now = new Date().toISOString();
+
+      if (lane === "esign") {
+        const { data: auth, error: authErr } = await supabase
+          .from("policy_lens_authorizations")
+          .insert({
+            intake_id: intake.id,
+            client_name: body.client_name,
+            client_email: body.client_email,
+            method: "esign",
+            status: "requested",
+            disclosure_version: DISCLOSURE_VERSION,
+          })
+          .select("id")
+          .single();
+
+        if (authErr || !auth) {
+          logger.error(
+            "[pl-intake-start] Authorization insert failed",
+            authErr,
+          );
+          return json(
+            { error: "Failed to create authorization" },
+            500,
+            headers,
+          );
+        }
+
+        // Generate sign token + email client
+        const token = await generateSignToken(auth.id);
+        const publicBase =
+          Deno.env.get("PL_PUBLIC_BASE") || "https://getevidly.com";
+        const signLink = `${publicBase}/policy-lens/authorize?token=${token}`;
+
+        const clientEmailResult = await sendEmail({
+          to: body.client_email,
+          subject: "Authorization required — EvidLY Policy Review",
+          html: buildEmailHtml({
+            recipientName: body.client_name,
+            bodyHtml: `
+              <p>Your insurance agent <strong>${body.agent_name}</strong> from
+              <strong>${body.agency_name}</strong> has requested authorization
+              to review your commercial property insurance policy through EvidLY.</p>
+              <p>Please review the authorization details and sign electronically
+              by clicking the button below.</p>`,
+            ctaText: "Review & Sign Authorization",
+            ctaUrl: signLink,
+            footerNote:
+              "This link expires in 72 hours. If you did not expect this request, you can safely ignore this email.",
+          }),
+        });
+
+        if (!clientEmailResult) {
+          return json(
+            {
+              error:
+                "We couldn't send the authorization email — please verify the client's email address and try again.",
+            },
+            502,
+            headers,
+          );
+        }
+      } else {
+        // attest lane
+        const { error: authErr } = await supabase
+          .from("policy_lens_authorizations")
+          .insert({
+            intake_id: intake.id,
+            method: "attest",
+            status: "attested",
+            attested_at: now,
+            attestation_date: body.attestation_date,
+          });
+
+        if (authErr) {
+          logger.error(
+            "[pl-intake-start] Authorization insert failed",
+            authErr,
+          );
+          return json(
+            { error: "Failed to create authorization" },
+            500,
+            headers,
+          );
+        }
+      }
     }
 
     // ── Generate + store OTP ────────────────────────────────

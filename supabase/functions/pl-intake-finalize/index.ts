@@ -47,6 +47,21 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Verification required" }, 403, headers);
     }
 
+    // ── Authorization gate (agent door) ───────────────────────
+    if (intake.source === "agent") {
+      const { data: auth } = await supabase
+        .from("policy_lens_authorizations")
+        .select("status")
+        .eq("intake_id", intake_id)
+        .in("status", ["signed", "attested"])
+        .limit(1)
+        .single();
+
+      if (!auth) {
+        return json({ error: "Client authorization required" }, 403, headers);
+      }
+    }
+
     // Check object exists in storage
     const { data: files, error: listErr } = await supabase.storage
       .from("policy-lens-uploads")
