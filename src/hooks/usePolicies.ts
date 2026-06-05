@@ -107,6 +107,27 @@ export function usePolicy(id: string | undefined) {
   return { policy, loading, error, refetch: fetch };
 }
 
+// ── Merge-field substitution ─────────────────────────────
+
+function substituteMergeFields(
+  sections: PolicySection[],
+  replacements: Record<string, string>,
+): PolicySection[] {
+  return sections.map(s => ({
+    heading: applyReplacements(s.heading, replacements),
+    content: applyReplacements(s.content, replacements),
+  }));
+}
+
+function applyReplacements(text: string, replacements: Record<string, string>): string {
+  if (!text) return text;
+  let result = text;
+  for (const [token, value] of Object.entries(replacements)) {
+    if (value) result = result.replaceAll(token, value);
+  }
+  return result;
+}
+
 // ── adoptTemplate ────────────────────────────────────────
 
 export async function adoptTemplate(
@@ -122,6 +143,60 @@ export async function adoptTemplate(
 
   if (tErr || !template) throw new Error(tErr?.message || 'Template not found');
 
+  // ── Resolve merge fields ──────────────────────────────
+  // Fetch org name, primary location name, and county (via jurisdiction).
+  // If any lookup fails, leave that token raw — never insert empty strings.
+
+  const replacements: Record<string, string> = {};
+
+  // 1. Org name
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name')
+    .eq('id', orgId)
+    .single();
+  if (org?.name) replacements['{{org_name}}'] = org.name;
+
+  // 2. Primary location + county via jurisdiction
+  const { data: locations } = await supabase
+    .from('locations')
+    .select('name, jurisdiction_id')
+    .eq('organization_id', orgId)
+    .eq('status', 'active')
+    .order('created_at', { ascending: true });
+
+  if (locations?.length === 1) {
+    // Single location — clear primary
+    replacements['{{location_name}}'] = locations[0].name;
+
+    // 3. County via jurisdiction agency_name
+    if (locations[0].jurisdiction_id) {
+      const { data: jurisdiction } = await supabase
+        .from('jurisdictions')
+        .select('agency_name')
+        .eq('id', locations[0].jurisdiction_id)
+        .single();
+      if (jurisdiction?.agency_name) replacements['{{county}}'] = jurisdiction.agency_name;
+    }
+  }
+  // Multiple locations: leave {{location_name}} raw; still try county from first
+  if (locations && locations.length > 1 && locations[0].jurisdiction_id) {
+    const { data: jurisdiction } = await supabase
+      .from('jurisdictions')
+      .select('agency_name')
+      .eq('id', locations[0].jurisdiction_id)
+      .single();
+    if (jurisdiction?.agency_name) replacements['{{county}}'] = jurisdiction.agency_name;
+  }
+
+  // ── Deep-replace merge fields in body_sections ────────
+  const rawSections: PolicySection[] = Array.isArray(template.body_sections)
+    ? template.body_sections
+    : [];
+  const resolvedSections = Object.keys(replacements).length > 0
+    ? substituteMergeFields(rawSections, replacements)
+    : rawSections;
+
   const { data: newPolicy, error: iErr } = await supabase
     .from('org_policies')
     .insert({
@@ -130,7 +205,7 @@ export async function adoptTemplate(
       pillar: template.pillar,
       category: template.category,
       title: template.title,
-      body_sections: template.body_sections,
+      body_sections: resolvedSections,
       status: 'draft',
       version: 1,
       effective_date: null,
