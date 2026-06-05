@@ -11,9 +11,16 @@ interface ReportSection {
   data?: Record<string, unknown>;
 }
 
+interface PillarBlock {
+  sections: ReportSection[];
+}
+
 interface ContentJson {
   executive_summary: string;
-  sections: ReportSection[];
+  sections?: ReportSection[];
+  food_safety?: PillarBlock;
+  fire_safety?: PillarBlock;
+  documents?: unknown[];
   generated_at: string;
   org_name?: string;
 }
@@ -172,34 +179,18 @@ export function ReportViewer() {
           </div>
         )}
 
-        {/* Three-act sections */}
-        {content?.sections?.map((section, idx) => {
-          const act = ACT_CONFIG[section.act] || ACT_CONFIG.predict;
-          return (
-            <div
-              key={idx}
-              className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden"
-              style={{ borderTop: `3px solid ${act.color}` }}
-            >
-              <div className="px-6 py-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                    style={{ backgroundColor: act.bg, color: act.color }}
-                  >
-                    {act.label}
-                  </span>
-                  <h3 className="text-[#1E2D4D] font-semibold text-sm">
-                    {section.heading}
-                  </h3>
-                </div>
-                <p className="text-[#1E2D4D]/70 text-sm leading-relaxed whitespace-pre-wrap">
-                  {section.body}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+        {/* Pillar blocks (client_executive) */}
+        {content?.food_safety && (
+          <PillarSection label="Food Safety" sections={content.food_safety.sections} />
+        )}
+        {content?.fire_safety && (
+          <PillarSection label="Fire Safety" sections={content.fire_safety.sections} />
+        )}
+
+        {/* Flat three-act sections (other report types) */}
+        {content?.sections?.map((section, idx) => (
+          <ActCard key={idx} section={section} />
+        ))}
 
         {/* Footer */}
         <div className="text-center pt-4 pb-8">
@@ -213,6 +204,51 @@ export function ReportViewer() {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Helpers ───────────────────────────────────────────────
+
+function ActCard({ section }: { section: ReportSection }) {
+  const act = ACT_CONFIG[section.act] || ACT_CONFIG.predict;
+  return (
+    <div
+      className="bg-white rounded-xl border border-[#E5E0D8] overflow-hidden"
+      style={{ borderTop: `3px solid ${act.color}` }}
+    >
+      <div className="px-6 py-5">
+        <div className="flex items-center gap-2 mb-3">
+          <span
+            className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: act.bg, color: act.color }}
+          >
+            {act.label}
+          </span>
+          <h3 className="text-[#1E2D4D] font-semibold text-sm">
+            {section.heading}
+          </h3>
+        </div>
+        <p className="text-[#1E2D4D]/70 text-sm leading-relaxed whitespace-pre-wrap">
+          {section.body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PillarSection({ label, sections }: { label: string; sections: ReportSection[] }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <h2 className="text-[#1E2D4D] font-bold text-sm uppercase tracking-wide">
+          {label}
+        </h2>
+        <div className="flex-1 h-px bg-[#E5E0D8]" />
+      </div>
+      {sections.map((section, idx) => (
+        <ActCard key={idx} section={section} />
+      ))}
     </div>
   );
 }

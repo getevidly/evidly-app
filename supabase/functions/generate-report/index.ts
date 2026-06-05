@@ -18,7 +18,10 @@ interface ReportSection {
 
 interface ContentJson {
   executive_summary: string;
-  sections: ReportSection[];
+  sections?: ReportSection[];
+  food_safety?: { sections: ReportSection[] };
+  fire_safety?: { sections: ReportSection[] };
+  documents?: unknown[];
   generated_at: string;
   org_name?: string;
 }
@@ -408,10 +411,11 @@ async function buildInsuranceReport(svc: any, orgId: string, orgName: string): P
 }
 
 // ── 4. Insurance Package (client_executive) ───────────────
+// Pillar-separated: food_safety and fire_safety each get their own three-act structure.
+// No section may mix data from both pillars. No combined totals anywhere.
 
 async function buildExecutiveReport(svc: any, orgId: string, orgName: string): Promise<ContentJson> {
-  // Compose from the other three data sets
-  // Inspections
+  // ── Food Safety data ────────────────────────────────────
   const { data: inspections } = await svc
     .from('inspection_reports')
     .select('id, score, violation_count')
@@ -421,64 +425,120 @@ async function buildExecutiveReport(svc: any, orgId: string, orgName: string): P
     ? Math.round(inspList.reduce((s: number, i: any) => s + (i.score || 0), 0) / inspList.length)
     : null;
 
-  // HACCP plans
   const { data: plans } = await svc
     .from('haccp_plans')
+    .select('id, name, status')
+    .eq('organization_id', orgId);
+  const planList = plans || [];
+  const activePlans = planList.filter((p: any) => p.status === 'active').length;
+
+  const { data: correctives } = await svc
+    .from('corrective_actions')
     .select('id, status')
     .eq('organization_id', orgId);
-  const activePlans = (plans || []).filter((p: any) => p.status === 'active').length;
+  const correctiveList = correctives || [];
+  const openCorrectives = correctiveList.filter((c: any) => c.status === 'open' || c.status === 'in_progress').length;
+  const closedCorrectives = correctiveList.filter((c: any) => c.status === 'closed' || c.status === 'completed').length;
 
-  // Vendor service records
+  // ── Fire Safety data ────────────────────────────────────
   const { data: serviceRecords } = await svc
     .from('vendor_service_records')
     .select('id, safeguard_type, next_due_date, certificate_url')
     .eq('organization_id', orgId);
   const svcRecords = serviceRecords || [];
-  const overdue = svcRecords.filter((r: any) => r.next_due_date && new Date(r.next_due_date) < new Date()).length;
+  const now = new Date();
+  const overdue = svcRecords.filter((r: any) => r.next_due_date && new Date(r.next_due_date) < now).length;
   const withCerts = svcRecords.filter((r: any) => r.certificate_url).length;
 
-  // Corrective actions
-  const { data: correctives } = await svc
-    .from('corrective_actions')
-    .select('id, status')
-    .eq('organization_id', orgId);
-  const openCorrectives = (correctives || []).filter((c: any) => c.status === 'open' || c.status === 'in_progress').length;
+  const bySafeguard: Record<string, number> = {};
+  for (const r of svcRecords) {
+    const key = r.safeguard_type || 'other';
+    bySafeguard[key] = (bySafeguard[key] || 0) + 1;
+  }
 
-  const sections: ReportSection[] = [
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('id, is_active')
+    .eq('organization_id', orgId)
+    .eq('is_active', true);
+  const scheduleCount = (schedules || []).length;
+
+  const safeguardLabels: Record<string, string> = {
+    hood_cleaning: 'Kitchen Exhaust Cleaning',
+    fire_suppression: 'Fire Suppression',
+    fire_alarm: 'Fire Alarm',
+    sprinklers: 'Sprinklers',
+  };
+
+  // ── Food Safety three-act ───────────────────────────────
+  const foodSections: ReportSection[] = [
     {
       act: 'predict',
-      heading: 'Risk Profile Overview',
-      body: `${orgName} insurance package composition: ${inspList.length} inspection${inspList.length !== 1 ? 's' : ''} on file${avgScore ? ` (avg result ${avgScore})` : ''}, ${activePlans} active HACCP plan${activePlans !== 1 ? 's' : ''}, ${svcRecords.length} protective safeguard service record${svcRecords.length !== 1 ? 's' : ''}. ${overdue > 0 ? `${overdue} service${overdue !== 1 ? 's' : ''} past due.` : 'All services current.'} ${openCorrectives > 0 ? `${openCorrectives} open corrective action${openCorrectives !== 1 ? 's' : ''}.` : 'No open corrective actions.'}`,
-      data: { inspections: inspList.length, avg_score: avgScore, active_plans: activePlans, service_records: svcRecords.length, overdue, open_correctives: openCorrectives },
+      heading: 'Inspection Readiness',
+      body: inspList.length > 0
+        ? `${orgName} has ${inspList.length} inspection${inspList.length !== 1 ? 's' : ''} on record${avgScore ? ` with an average result of ${avgScore}` : ''}. ${inspList.reduce((s: number, i: any) => s + (i.violation_count || 0), 0) > 0 ? `Violations identified across these inspections indicate areas where the next county evaluation is likely to focus.` : 'No violations were identified across these inspections.'}`
+        : `${orgName} has no inspection records on file yet. Adding inspection results helps identify where the next county evaluation is likely to focus.`,
+      data: { inspections: inspList.length, avg_score: avgScore },
     },
     {
       act: 'reduce',
-      heading: 'Gap Identification',
+      heading: 'Corrective Actions & HACCP',
       body: (() => {
-        const gaps: string[] = [];
-        if (inspList.length === 0) gaps.push('No inspection records — add past inspection results');
-        if (activePlans === 0) gaps.push('No active HACCP plans — establish and activate a plan');
-        if (overdue > 0) gaps.push(`${overdue} overdue safeguard service${overdue !== 1 ? 's' : ''} — schedule service to close the gap`);
-        if (openCorrectives > 0) gaps.push(`${openCorrectives} open corrective action${openCorrectives !== 1 ? 's' : ''} — resolve to strengthen the package`);
-        if (svcRecords.length > 0 && withCerts < svcRecords.length) gaps.push(`${svcRecords.length - withCerts} service record${svcRecords.length - withCerts !== 1 ? 's' : ''} missing certificates`);
-        return gaps.length > 0
-          ? `The following gaps were identified:\n${gaps.map(g => '- ' + g).join('\n')}`
-          : `No significant gaps identified. ${orgName}'s documentation package is well-positioned for carrier evaluation.`;
+        const parts: string[] = [];
+        if (correctiveList.length > 0) {
+          parts.push(`${closedCorrectives} corrective action${closedCorrectives !== 1 ? 's' : ''} resolved${openCorrectives > 0 ? `, ${openCorrectives} remain open` : ''}.`);
+        } else {
+          parts.push('No corrective actions logged.');
+        }
+        if (activePlans > 0) {
+          parts.push(`${activePlans} active HACCP plan${activePlans !== 1 ? 's' : ''} on file.`);
+        } else {
+          parts.push('No active HACCP plans — establishing a plan strengthens the food safety package.');
+        }
+        return parts.join(' ');
       })(),
-      data: { gap_count: 0 },
+      data: { open_correctives: openCorrectives, closed_correctives: closedCorrectives, active_plans: activePlans },
     },
     {
       act: 'prove',
-      heading: 'Package Completeness',
-      body: `This insurance package for ${orgName} contains ${inspList.length} inspection record${inspList.length !== 1 ? 's' : ''}, ${(plans || []).length} HACCP plan${(plans || []).length !== 1 ? 's' : ''}, ${svcRecords.length} safeguard service record${svcRecords.length !== 1 ? 's' : ''} (${withCerts} with certificates), and ${(correctives || []).length} corrective action record${(correctives || []).length !== 1 ? 's' : ''}. Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`,
-      data: { inspections: inspList.length, plans: (plans || []).length, services: svcRecords.length, certificates: withCerts, correctives: (correctives || []).length },
+      heading: 'Food Safety Documentation',
+      body: `${inspList.length} inspection record${inspList.length !== 1 ? 's' : ''}, ${planList.length} HACCP plan${planList.length !== 1 ? 's' : ''}, and ${correctiveList.length} corrective action record${correctiveList.length !== 1 ? 's' : ''} are on file for ${orgName}. Generated ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`,
+      data: { inspections: inspList.length, plans: planList.length, correctives: correctiveList.length },
+    },
+  ];
+
+  // ── Fire Safety three-act ───────────────────────────────
+  const fireSections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Protective Safeguard Evaluation',
+      body: svcRecords.length > 0
+        ? `${orgName} has ${svcRecords.length} safeguard service record${svcRecords.length !== 1 ? 's' : ''}: ${Object.entries(bySafeguard).map(([k, c]) => `${safeguardLabels[k] || k} (${c})`).join(', ')}. ${overdue > 0 ? `${overdue} service${overdue !== 1 ? 's are' : ' is'} past due — these gaps may be flagged during carrier evaluation.` : 'All services are current.'}`
+        : `${orgName} has no vendor service records on file. Documenting hood cleaning, fire suppression, alarm, and sprinkler services is essential for carrier evaluation.`,
+      data: { total_records: svcRecords.length, by_safeguard: bySafeguard, overdue },
+    },
+    {
+      act: 'reduce',
+      heading: 'Service Schedule Compliance',
+      body: scheduleCount > 0
+        ? `${scheduleCount} active service schedule${scheduleCount !== 1 ? 's' : ''} configured. ${overdue > 0 ? `Addressing the ${overdue} overdue service${overdue !== 1 ? 's' : ''} reduces the risk of a coverage gap.` : 'All scheduled services are on track.'}`
+        : 'No service schedules configured. Setting up recurring schedules ensures safeguard services stay current.',
+      data: { active_schedules: scheduleCount, overdue },
+    },
+    {
+      act: 'prove',
+      heading: 'Fire Safety Documentation',
+      body: `${svcRecords.length} safeguard service record${svcRecords.length !== 1 ? 's' : ''} on file (${withCerts} with certificates). ${withCerts === svcRecords.length && svcRecords.length > 0 ? 'Full certificate coverage — ready for carrier review.' : svcRecords.length > 0 ? 'Attaching certificates to all records strengthens the documentation package.' : 'Service records with attached certificates form the evidence package carriers evaluate.'} Generated ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`,
+      data: { total_records: svcRecords.length, with_certificates: withCerts },
     },
   ];
 
   return {
-    executive_summary: `Insurance package for ${orgName}. ${inspList.length} inspection${inspList.length !== 1 ? 's' : ''}, ${activePlans} active HACCP plan${activePlans !== 1 ? 's' : ''}, ${svcRecords.length} safeguard record${svcRecords.length !== 1 ? 's' : ''}${overdue > 0 ? ` (${overdue} overdue)` : ''}. ${openCorrectives > 0 ? `${openCorrectives} open corrective action${openCorrectives !== 1 ? 's' : ''}.` : 'All corrective actions resolved.'}`,
-    sections,
-    generated_at: new Date().toISOString(),
+    executive_summary: `Insurance package for ${orgName}. The food safety section covers inspection results, HACCP plans, and corrective actions. The fire safety section covers protective safeguard service records and scheduling compliance.`,
+    food_safety: { sections: foodSections },
+    fire_safety: { sections: fireSections },
+    documents: [],
+    generated_at: now.toISOString(),
     org_name: orgName,
   };
 }
