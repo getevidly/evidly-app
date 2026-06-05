@@ -306,17 +306,14 @@
 
 .prp-accent { width: 24px; height: 2px; background: var(--gold); margin: 0 auto 14px; border-radius: 1px; }
 .prp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 12px; }
-.prp { background: #FFFFFF; border: 0.5px solid var(--line); border-top: 3px solid #ccc; border-radius: 10px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
-.prp.predict { border-top-color: var(--predict); }
-.prp.reduce { border-top-color: var(--reduce); }
-.prp.prove { border-top-color: var(--prove); }
+.prp { background: #FFFFFF; border: 0.5px solid #e3e6ee; border-radius: 10px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 1px 2px rgba(30,45,77,0.04); }
 .prp-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; margin-top: 2px; }
 .prp.predict .prp-icon { background: var(--predict-bg); color: var(--predict); }
 .prp.reduce .prp-icon { background: var(--reduce-bg); color: var(--reduce); }
 .prp.prove .prp-icon { background: var(--prove-bg); color: var(--prove); }
 .prp-label { font-size: 11px; font-weight: 500; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .prp-num { font-size: 28px; font-weight: 600; line-height: 1.1; margin: 4px 0 2px; }
-.prp-num.steady { color: #2E7D5B; font-size: 22px; font-weight: 500; }
+.prp .prp-num.steady { color: #2E7D5B; font-size: 22px; font-weight: 500; }
 .prp.predict .prp-num { color: var(--predict); }
 .prp.reduce .prp-num { color: var(--reduce); }
 .prp.prove .prp-num { color: var(--prove); }
@@ -1125,7 +1122,7 @@ body {
 .hm-tile { background: #FFFFFF; border: 0.5px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
 .hm-tile:hover { border-color: var(--navy); }
 .hm-tile.expanded { border: 1.5px solid var(--navy); cursor: default; }
-.hm-tile-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.hm-tile-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; width: 100%; background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-family: inherit; }
 .hm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .hm-name { font-size: 13px; font-weight: 600; color: var(--navy); }
 .hm-health-word { font-size: 11px; font-weight: 500; margin-left: auto; }
@@ -1136,7 +1133,7 @@ body {
 .hm-detail { margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--line); }
 .hm-detail-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 12px; }
 .hm-detail-label { color: var(--muted); }
-.hm-detail-value { font-weight: 500; color: var(--navy); }
+.hm-detail-val { font-weight: 500; color: var(--navy); }
 .hm-open-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 14px; background: var(--navy); color: #FFFFFF; border: none; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
 .hm-open-btn:hover { background: var(--navy-2); }
 

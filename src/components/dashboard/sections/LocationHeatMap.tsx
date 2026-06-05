@@ -18,15 +18,15 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { useLocationHealthData, type LocationHealth, type HealthState } from '../../../hooks/useLocationHealthData';
 
 const HEALTH_LABELS: Record<HealthState, string> = {
-  coral: 'Drift detected',
-  teal: 'Work open',
-  green: 'Clean',
+  coral: 'needs attention',
+  teal: 'watching',
+  green: 'all steady',
 };
 
-const HEALTH_COLORS: Record<HealthState, { bg: string; text: string; border: string }> = {
-  coral: { bg: '#FDE8E4', text: '#C75543', border: '#C75543' },
-  teal: { bg: '#E0F4F5', text: '#2C8C99', border: '#2C8C99' },
-  green: { bg: '#E8F5E9', text: '#2E7D5B', border: '#2E7D5B' },
+const HEALTH_COLORS: Record<HealthState, { tileBg: string; text: string }> = {
+  coral: { tileBg: '#F9ECE8', text: '#C75543' },
+  teal: { tileBg: '#E9F3F4', text: '#2C8C99' },
+  green: { tileBg: '#EAF3EE', text: '#2E7D5B' },
 };
 
 function MiniNum({ value, label }: { value: number; label: string }) {
@@ -49,14 +49,14 @@ function HeatMapTile({ loc, isExpanded, onToggle, onSelect }: {
   return (
     <div
       className={`hm-tile${isExpanded ? ' expanded' : ''}`}
-      style={isExpanded ? { borderColor: 'var(--navy, #1E2D4D)', borderWidth: '1.5px' } : undefined}
+      style={{ background: colors.tileBg, ...(isExpanded ? { borderColor: 'var(--navy, #1E2D4D)', borderWidth: '1.5px' } : {}) }}
     >
       <button type="button" className="hm-tile-head" onClick={onToggle}>
         <div className="hm-tile-left">
           <span className="hm-dot" style={{ background: colors.text }} />
           <span className="hm-name">{loc.locationName}</span>
         </div>
-        <span className="hm-health-word" style={{ color: colors.text, background: colors.bg }}>
+        <span className="hm-health-word" style={{ color: colors.text }}>
           {HEALTH_LABELS[loc.health]}
         </span>
       </button>
@@ -69,7 +69,7 @@ function HeatMapTile({ loc, isExpanded, onToggle, onSelect }: {
         <div className="hm-detail">
           <div className="hm-detail-row">
             <span className="hm-detail-label">Predict</span>
-            <span className="hm-detail-val">{loc.signalCount === 0 ? 'all steady' : `${loc.signalCount} signal${loc.signalCount !== 1 ? 's' : ''}`}</span>
+            <span className="hm-detail-val" style={loc.signalCount === 0 ? { color: '#2E7D5B' } : undefined}>{loc.signalCount === 0 ? 'all steady' : `${loc.signalCount} signal${loc.signalCount !== 1 ? 's' : ''}`}</span>
           </div>
           <div className="hm-detail-row">
             <span className="hm-detail-label">Reduce</span>

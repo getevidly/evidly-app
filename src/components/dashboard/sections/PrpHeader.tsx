@@ -65,6 +65,7 @@ export function PrpHeader() {
   const predictCount = criticalNotifications.length;
   const openToday = Math.max(totalToday - doneToday, 0);
   const driftCount = tempData?.counts?.failing ?? 0;
+  const sensorTotal = tempData?.counts?.total ?? 0;
 
   // Scope labels for All mode
   const locCount = locations.length;
@@ -113,12 +114,14 @@ export function PrpHeader() {
       </div>
       <div className={`prp-drift${driftCount > 0 ? ' drift-alert' : ' drift-clear'}`}>
         <i className="ti ti-temperature" />
-        <span className="drift-num">{tempLoading ? '—' : driftCount}</span>
+        {(tempLoading || driftCount > 0) && (
+          <span className="drift-num">{tempLoading ? '—' : driftCount}</span>
+        )}
         <span className="drift-label">
           {tempLoading
             ? 'loading sensor data'
             : driftCount === 0
-              ? 'all sensors in range'
+              ? `all ${sensorTotal} sensor${sensorTotal !== 1 ? 's' : ''} in range`
               : `sensor${driftCount !== 1 ? 's' : ''} out of range`}
         </span>
       </div>
