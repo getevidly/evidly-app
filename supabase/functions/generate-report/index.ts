@@ -123,19 +123,12 @@ async function fetchOrgContext(svc: any, orgId: string) {
 async function fetchFireAhj(svc: any, orgId: string): Promise<string> {
   const { data: locs } = await svc
     .from('locations')
-    .select('id')
-    .eq('organization_id', orgId);
-  const locIds = (locs || []).map((l: any) => l.id);
-  if (locIds.length === 0) return 'Pending AHJ verification';
-
-  const { data: ljRows } = await svc
-    .from('location_jurisdictions')
-    .select('jurisdictions(fire_ahj_name)')
-    .in('location_id', locIds)
-    .in('jurisdiction_layer', ['fire_safety', 'facility_safety'])
+    .select('jurisdiction_id, jurisdictions(fire_ahj_name)')
+    .eq('organization_id', orgId)
+    .not('jurisdiction_id', 'is', null)
     .limit(1);
 
-  const ahj = (ljRows?.[0]?.jurisdictions as any)?.fire_ahj_name;
+  const ahj = (locs?.[0]?.jurisdictions as any)?.fire_ahj_name;
   return ahj || 'Pending AHJ verification';
 }
 
