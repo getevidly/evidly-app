@@ -113,6 +113,27 @@ const REPORT_CARDS: ReportCard[] = [
   },
   // Operations
   {
+    type: 'client_shift_intelligence',
+    title: 'Shift Intelligence Report',
+    description: 'Where the evidence is strong and where it thins out, by shift — food safety sources only.',
+    cornerstone: false,
+    section: 'operations',
+  },
+  {
+    type: 'client_location_mirror',
+    title: 'Multi-Location Mirror',
+    description: 'Every location side by side — food safety and fire safety shown separately, never combined.',
+    cornerstone: false,
+    section: 'operations',
+  },
+  {
+    type: 'client_document_vault',
+    title: 'Document Vault Status',
+    description: 'Everything on file, everything expiring, across both pillars — kept separate by category.',
+    cornerstone: false,
+    section: 'operations',
+  },
+  {
     type: 'ops_incident',
     title: 'Incident & Corrective Action Summary',
     description: 'Incident log trends, corrective action resolution rates, and open item aging.',
@@ -140,6 +161,7 @@ const WAVE1_TYPES = new Set([
   'client_compliance', 'client_regulatory', 'client_insurance', 'client_executive',
   'client_temp_log', 'client_corrective_action', 'client_checklist', 'client_inspection_history', 'client_training',
   'client_exhaust_history', 'client_suppression', 'client_fire_schedule', 'client_fire_documentation',
+  'client_shift_intelligence', 'client_location_mirror', 'client_document_vault',
 ]);
 
 // ── Main component ────────────────────────────────────────

@@ -257,6 +257,9 @@ async function handlePost(req: Request): Promise<Response> {
     client_suppression: buildSuppressionReport,
     client_fire_schedule: buildFireScheduleReport,
     client_fire_documentation: buildFireDocumentationReport,
+    client_shift_intelligence: buildShiftIntelligenceReport,
+    client_location_mirror: buildLocationMirrorReport,
+    client_document_vault: buildDocumentVaultReport,
   };
 
   const builder = BUILDERS[payload.report_type];
@@ -364,6 +367,9 @@ function titleFor(reportType: string): string {
     client_suppression: 'Suppression & Extinguisher Record',
     client_fire_schedule: 'Fire Safeguard Schedule',
     client_fire_documentation: 'Fire Documentation Status',
+    client_shift_intelligence: 'Shift Intelligence Report',
+    client_location_mirror: 'Multi-Location Mirror',
+    client_document_vault: 'Document Vault Status',
   };
   return MAP[reportType] || 'Report';
 }
@@ -1925,6 +1931,460 @@ async function buildFireDocumentationReport(svc: any, orgId: string): Promise<Co
     org_subtitle: orgSubtitle,
     pillar_label: `Fire Safety · ${fireAhj}`,
     report_subtitle: 'Certificates, tags, and reports the fire authority can ask for',
+  };
+}
+
+// ── 14. Shift Intelligence Report (client_shift_intelligence) ─
+
+function shiftBucket(ts: string, tz: string): 'open' | 'mid' | 'close' {
+  const hourStr = new Date(ts).toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hour12: false });
+  const hour = parseInt(hourStr) % 24;
+  if (hour >= 5 && hour < 11) return 'open';
+  if (hour >= 11 && hour < 16) return 'mid';
+  return 'close';
+}
+
+function dowLabel(ts: string, tz: string): string {
+  return new Date(ts).toLocaleDateString('en-US', { timeZone: tz, weekday: 'short' });
+}
+
+const SHIFT_LABELS: Record<string, string> = { open: 'Open (5a–11a)', mid: 'Mid (11a–4p)', close: 'Close (4p–close)' };
+
+async function buildShiftIntelligenceReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Timezone from first location, fallback to LA
+  const { data: locs } = await svc
+    .from('locations')
+    .select('id, business_hours_timezone')
+    .eq('organization_id', orgId);
+  const locList = locs || [];
+  const locIds = locList.map((l: any) => l.id);
+  const tz = locList.find((l: any) => l.business_hours_timezone)?.business_hours_timezone || 'America/Los_Angeles';
+
+  // Evidence sources (food safety only)
+  const { data: temps } = locIds.length > 0 ? await svc
+    .from('temperature_logs')
+    .select('reading_time, logged_by, temp_pass')
+    .in('facility_id', locIds)
+    .gte('reading_time', thirtyDaysAgo) : { data: [] };
+
+  const { data: checklists } = await svc
+    .from('checklist_template_completions')
+    .select('completed_at, completed_by, total_items, passed_items')
+    .eq('organization_id', orgId)
+    .gte('completed_at', thirtyDaysAgo);
+
+  const { data: haccp } = await svc
+    .from('haccp_monitoring_logs')
+    .select('monitored_at, monitored_by')
+    .eq('organization_id', orgId)
+    .gte('monitored_at', thirtyDaysAgo);
+
+  const tempList = temps || [];
+  const clList = checklists || [];
+  const haccpList = haccp || [];
+
+  // Bucket all evidence
+  type EvidenceItem = { shift: string; dow: string; actor: string | null; week: string; passed?: boolean; totalItems?: number; passedItems?: number };
+  const items: EvidenceItem[] = [];
+
+  for (const t of tempList) {
+    items.push({ shift: shiftBucket(t.reading_time, tz), dow: dowLabel(t.reading_time, tz), actor: t.logged_by, week: weekLabel(t.reading_time, tz), passed: t.temp_pass });
+  }
+  for (const c of clList) {
+    if (!c.completed_at) continue;
+    items.push({ shift: shiftBucket(c.completed_at, tz), dow: dowLabel(c.completed_at, tz), actor: c.completed_by, week: weekLabel(c.completed_at, tz), totalItems: c.total_items, passedItems: c.passed_items });
+  }
+  for (const h of haccpList) {
+    items.push({ shift: shiftBucket(h.monitored_at, tz), dow: dowLabel(h.monitored_at, tz), actor: h.monitored_by, week: weekLabel(h.monitored_at, tz) });
+  }
+
+  // Predict: per-shift counts + completion %
+  const shifts: Record<string, { count: number; clTotal: number; clPassed: number }> = {
+    open: { count: 0, clTotal: 0, clPassed: 0 },
+    mid: { count: 0, clTotal: 0, clPassed: 0 },
+    close: { count: 0, clTotal: 0, clPassed: 0 },
+  };
+  for (const item of items) {
+    if (!shifts[item.shift]) continue;
+    shifts[item.shift].count++;
+    if (item.totalItems != null) {
+      shifts[item.shift].clTotal += item.totalItems;
+      shifts[item.shift].clPassed += (item.passedItems || 0);
+    }
+  }
+
+  const shiftRows: Cell[][] = (['open', 'mid', 'close'] as const).map(s => {
+    const d = shifts[s];
+    const pct = d.clTotal > 0 ? ((d.clPassed / d.clTotal) * 100).toFixed(1) + '%' : (d.count > 0 ? '—' : '—');
+    const isWeakest = d.count > 0 && d.count === Math.min(...Object.values(shifts).filter(v => v.count > 0).map(v => v.count));
+    return [
+      SHIFT_LABELS[s],
+      `${d.count}`,
+      pct,
+      isWeakest ? resultCell('WATCH', 'warn') : resultCell('ON TIME', 'pass'),
+    ];
+  });
+
+  // Reduce: day-of-week × shift thin spot
+  const grid: Record<string, number> = {};
+  for (const item of items) {
+    const key = `${item.dow} ${item.shift}`;
+    grid[key] = (grid[key] || 0) + 1;
+  }
+
+  // Find thinnest non-zero cells
+  const gridEntries = Object.entries(grid).sort((a, b) => a[1] - b[1]);
+  const thinRows: Cell[][] = gridEntries.slice(0, 3).map(([key, count]) => {
+    const [dow, shift] = key.split(' ');
+    return [
+      `${dow} ${SHIFT_LABELS[shift] || shift} — ${count} item${count !== 1 ? 's' : ''}`,
+      '—',
+    ];
+  });
+
+  // Prove: weekly contribution
+  const weekMap: Record<string, { items: number; actors: Set<string> }> = {};
+  for (const item of items) {
+    if (!weekMap[item.week]) weekMap[item.week] = { items: 0, actors: new Set() };
+    weekMap[item.week].items++;
+    if (item.actor) weekMap[item.week].actors.add(item.actor);
+  }
+  const weekRows: Cell[][] = Object.entries(weekMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(-6)
+    .map(([week, data]) => [week, `${data.actors.size}`, `${data.items}`]);
+
+  const totalItems = items.length;
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Shift Pattern',
+      table: shiftRows.some(r => parseInt(cellText(r[1])) > 0)
+        ? { cols: ['Shift', 'Evidence Items', 'Completion', 'Trend'], rows: shiftRows }
+        : undefined,
+      body: totalItems === 0 ? 'No evidence items recorded this period.' : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Thin Spots',
+      table: thinRows.length > 0
+        ? { cols: ['Pattern', 'Note'], rows: thinRows }
+        : undefined,
+      body: thinRows.length === 0 ? 'No records this period.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Contribution Record',
+      table: weekRows.length > 0
+        ? { cols: ['Week', 'Staff Contributing', 'Items Logged'], rows: weekRows }
+        : undefined,
+      body: weekRows.length === 0 ? 'No records this period.' : undefined,
+    },
+  ];
+
+  const uniqueActors = new Set(items.filter(i => i.actor).map(i => i.actor)).size;
+
+  return {
+    executive_summary: totalItems > 0
+      ? `${totalItems} food safety evidence items logged across ${Object.values(shifts).filter(v => v.count > 0).length} shift window${Object.values(shifts).filter(v => v.count > 0).length !== 1 ? 's' : ''} for ${orgName} over the last thirty days, with ${uniqueActors} staff contributing. ${shifts.close.count > 0 && shifts.close.count === Math.min(...Object.values(shifts).filter(v => v.count > 0).map(v => v.count)) ? 'The close window carries the lightest record — the data shows where, and staff decisions fill it.' : 'Evidence distribution is relatively even across shifts.'} This report reads food safety evidence sources only.`
+      : `Shift intelligence report for ${orgName}. No food safety evidence items recorded in the last thirty days — this report will populate as temperature readings, checklists, and monitoring logs are added.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Operations',
+    report_subtitle: 'Where the evidence is strong and where it thins out, by shift (food safety sources)',
+  };
+}
+
+function weekLabel(ts: string, tz: string): string {
+  const d = new Date(ts);
+  const locStr = d.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' });
+  // Find Monday of this week
+  const dayOfWeek = parseInt(d.toLocaleDateString('en-US', { timeZone: tz, weekday: 'narrow' }).charAt(0)) || d.getDay();
+  const monday = new Date(d.getTime() - ((dayOfWeek === 0 ? 6 : dayOfWeek - 1) * 86400000));
+  const sunday = new Date(monday.getTime() + 6 * 86400000);
+  const mStr = monday.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' });
+  const sStr = sunday.toLocaleDateString('en-US', { timeZone: tz, day: 'numeric' });
+  return `${mStr}–${sStr}`;
+}
+
+// ── 15. Multi-Location Mirror (client_location_mirror) ────
+
+async function buildLocationMirrorReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Get all locations
+  const { data: locs } = await svc
+    .from('locations')
+    .select('id, name')
+    .eq('organization_id', orgId)
+    .order('name');
+  const locList = locs || [];
+
+  if (locList.length === 0) {
+    return {
+      executive_summary: `Multi-location mirror for ${orgName}. No locations on file yet — this report will populate as locations are added.`,
+      sections: [{ heading: 'Food Safety — by Location', body: 'No locations on file.' }, { heading: 'Fire Safety — by Location', body: 'No locations on file.' }],
+      generated_at: now.toISOString(),
+      org_name: orgName,
+      org_subtitle: orgSubtitle,
+      pillar_label: 'Operations',
+      report_subtitle: 'Every location side by side — each pillar shown separately',
+    };
+  }
+
+  const locIds = locList.map((l: any) => l.id);
+  const locNames = locList.map((l: any) => l.name || 'Unnamed');
+
+  // ── Food Safety data per location ──
+  const { data: inspections } = await svc
+    .from('inspection_reports')
+    .select('id, location_id, raw_result, raw_result_type, inspection_date')
+    .eq('organization_id', orgId)
+    .eq('pillar', 'food_safety')
+    .order('inspection_date', { ascending: false });
+  const inspList = inspections || [];
+
+  const { data: temps } = await svc
+    .from('temperature_logs')
+    .select('facility_id')
+    .in('facility_id', locIds)
+    .gte('reading_time', thirtyDaysAgo);
+  const tempList = temps || [];
+
+  const { data: clCompletions } = await svc
+    .from('checklist_template_completions')
+    .select('location_id, total_items, passed_items')
+    .eq('organization_id', orgId)
+    .gte('completed_at', thirtyDaysAgo);
+  const clList = clCompletions || [];
+
+  const { data: cas } = await svc
+    .from('corrective_actions')
+    .select('id, location_id, status')
+    .eq('organization_id', orgId)
+    .not('status', 'in', '(completed,verified,closed,archived)');
+  const openCAs = cas || [];
+
+  // Build food safety rows per location
+  const foodCols = ['', ...locNames];
+  const foodMetrics = ['County evaluation', 'Temp readings (period)', 'Checklist completion', 'Open corrective actions'];
+  const foodRows: Cell[][] = foodMetrics.map(metric => {
+    const row: Cell[] = [metric];
+    for (const loc of locList) {
+      if (metric === 'County evaluation') {
+        const latest = inspList.find((i: any) => i.location_id === loc.id);
+        if (latest?.raw_result) {
+          const upper = latest.raw_result.toUpperCase();
+          const result: 'pass' | 'fail' | 'warn' = /PASS|SATISFACTORY|A\b/.test(upper) ? 'pass' : /FAIL/.test(upper) ? 'fail' : 'warn';
+          row.push(resultCell(latest.raw_result, result));
+        } else {
+          row.push('—');
+        }
+      } else if (metric === 'Temp readings (period)') {
+        const count = tempList.filter((t: any) => t.facility_id === loc.id).length;
+        row.push(`${count}`);
+      } else if (metric === 'Checklist completion') {
+        const locCl = clList.filter((c: any) => c.location_id === loc.id);
+        const total = locCl.reduce((s: number, c: any) => s + (c.total_items || 0), 0);
+        const passed = locCl.reduce((s: number, c: any) => s + (c.passed_items || 0), 0);
+        row.push(total > 0 ? `${((passed / total) * 100).toFixed(1)}%` : '—');
+      } else {
+        const count = openCAs.filter((c: any) => c.location_id === loc.id).length;
+        row.push(`${count}`);
+      }
+    }
+    return row;
+  });
+
+  // ── Fire Safety data per location ──
+  const { data: svcRecords } = await svc
+    .from('vendor_service_records')
+    .select('safeguard_type, service_date, next_due_date, location_id')
+    .eq('organization_id', orgId)
+    .order('service_date', { ascending: false });
+  const svcList = svcRecords || [];
+
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, next_due_date, location_id')
+    .eq('organization_id', orgId)
+    .eq('is_active', true);
+  const schedList = schedules || [];
+
+  const fireSafeguards = [
+    { label: 'Exhaust cleaning', type: 'hood_cleaning', codes: ['KEC', 'FPM', 'GFX', 'RGC'] },
+    { label: 'Suppression', type: 'fire_suppression', codes: ['FS'] },
+    { label: 'Fire alarm', type: 'fire_alarm', codes: ['FA'] },
+    { label: 'Sprinklers', type: 'sprinklers', codes: ['SP'] },
+  ];
+
+  const fireCols = ['', ...locNames];
+  const fireRows: Cell[][] = [];
+  for (const sg of fireSafeguards) {
+    const row: Cell[] = [sg.label];
+    let hasAny = false;
+    for (const loc of locList) {
+      // Check schedule first, then latest service record
+      const sched = schedList.find((s: any) => s.location_id === loc.id && sg.codes.includes(s.service_type_code));
+      const latestRec = svcList.find((r: any) => r.location_id === loc.id && r.safeguard_type === sg.type);
+      const nextDue = sched?.next_due_date || latestRec?.next_due_date;
+      if (!nextDue && !latestRec) {
+        row.push('—');
+        continue;
+      }
+      hasAny = true;
+      const isOverdue = nextDue && new Date(nextDue) < now;
+      const isDueSoon = nextDue && !isOverdue && new Date(nextDue) < new Date(now.getTime() + 30 * 86400000);
+      const standing = isOverdue ? 'OVERDUE' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+      const result: 'pass' | 'fail' | 'warn' = isOverdue ? 'fail' : isDueSoon ? 'warn' : 'pass';
+      row.push(resultCell(standing, result));
+    }
+    if (hasAny || svcList.length > 0) fireRows.push(row);
+  }
+
+  // If no fire rows at all, add a placeholder
+  if (fireRows.length === 0) {
+    fireRows.push(['No fire safeguard records on file', ...locNames.map(() => '—')]);
+  }
+
+  const sections: ReportSection[] = [
+    {
+      heading: 'Food Safety — by Location',
+      table: { cols: foodCols, rows: foodRows },
+    },
+    {
+      heading: 'Fire Safety — by Location',
+      table: { cols: fireCols, rows: fireRows },
+      cross_refs: ['Per-location detail in each location\'s Food Safety Compliance Summary and PSE Compliance Summary'],
+    },
+  ];
+
+  const locCount = locList.length;
+  return {
+    executive_summary: `${locCount} location${locCount !== 1 ? 's' : ''} for ${orgName}, each shown against its own food safety and fire safety record. Food and fire are presented separately below because they answer to different authorities. ${openCAs.length > 0 ? `${openCAs.length} corrective action${openCAs.length !== 1 ? 's remain' : ' remains'} open across all locations.` : 'No open corrective actions across any location.'} This mirror identifies where any single location diverges from the rest.`,
+    sections,
+    generated_at: now.toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Operations',
+    report_subtitle: 'Every location side by side — each pillar shown separately',
+  };
+}
+
+// ── 16. Document Vault Status (client_document_vault) ─────
+
+function docPillarTag(category: string): string {
+  const lower = (category || '').toLowerCase();
+  if (/fire|suppression|exhaust|sprinkler|alarm|nfpa|hood|extinguisher/.test(lower)) return 'Fire Safety';
+  if (/food|haccp|health|temp|checklist|inspection|handler|sanit/.test(lower)) return 'Food Safety';
+  return 'General';
+}
+
+async function buildDocumentVaultReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const now = new Date();
+  const ninetyDaysOut = new Date(now.getTime() + 90 * 86400000);
+
+  // All org documents
+  const { data: docs } = await svc
+    .from('documents')
+    .select('id, title, category, expiration_date, location_id, status, locations(name)')
+    .eq('organization_id', orgId)
+    .eq('status', 'active')
+    .order('expiration_date', { ascending: true });
+  const docList = docs || [];
+
+  // Tag each document with pillar
+  const tagged = docList.map((d: any) => ({
+    ...d,
+    pillar: docPillarTag(d.category),
+    locName: (d as any).locations?.name || '—',
+  }));
+
+  // Predict: expiring within 90 days
+  const expiring = tagged.filter((d: any) => {
+    if (!d.expiration_date) return false;
+    const exp = new Date(d.expiration_date);
+    return exp >= now && exp <= ninetyDaysOut;
+  });
+  const expired = tagged.filter((d: any) => d.expiration_date && new Date(d.expiration_date) < now);
+
+  const expiringRows: Cell[][] = expiring.slice(0, 8).map((d: any) => [
+    d.title || d.category,
+    d.pillar,
+    fmtDate(d.expiration_date),
+    '—',
+  ]);
+  for (const d of expired.slice(0, 4)) {
+    expiringRows.push([
+      d.title || d.category,
+      d.pillar,
+      fmtDate(d.expiration_date),
+      resultCell('EXPIRED', 'fail'),
+    ]);
+  }
+
+  // Prove: inventory by category with counts
+  const byCat: Record<string, { total: number; current: number; pillar: string }> = {};
+  for (const d of tagged) {
+    const cat = d.category || 'Uncategorized';
+    if (!byCat[cat]) byCat[cat] = { total: 0, current: 0, pillar: d.pillar };
+    byCat[cat].total++;
+    if (!d.expiration_date || new Date(d.expiration_date) >= now) {
+      byCat[cat].current++;
+    }
+  }
+  const inventoryRows: Cell[][] = Object.entries(byCat).map(([cat, data]) => [
+    cat,
+    `${data.total}`,
+    `${data.current}`,
+  ]);
+
+  const currentCount = tagged.filter((d: any) => !d.expiration_date || new Date(d.expiration_date) >= now).length;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Expiring Within 90 Days',
+      table: expiringRows.length > 0
+        ? { cols: ['Document', 'Pillar', 'Expires', 'Renewal'], rows: expiringRows }
+        : undefined,
+      body: expiringRows.length === 0
+        ? (tagged.length > 0 ? 'No documents expiring within ninety days.' : 'No documents on file yet.')
+        : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Vault Gaps Closed',
+      body: 'No records this period.',
+    },
+    {
+      act: 'prove',
+      heading: 'Inventory by Category',
+      table: inventoryRows.length > 0
+        ? { cols: ['Category', 'Count', 'Current'], rows: inventoryRows }
+        : undefined,
+      body: inventoryRows.length === 0 ? 'No documents on file.' : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: tagged.length > 0
+      ? `${tagged.length} document${tagged.length !== 1 ? 's' : ''} on file for ${orgName}, and ${currentCount} ${currentCount !== 1 ? 'are' : 'is'} current. ${expiring.length > 0 ? `${expiring.length} expire${expiring.length !== 1 ? '' : 's'} within ninety days` : 'Nothing expires within ninety days'}${expired.length > 0 ? `, and ${expired.length} ${expired.length !== 1 ? 'have' : 'has'} already expired` : ''}. A document vault is only as good as its weakest expiration.`
+      : `Document vault status for ${orgName}. No documents on file yet — this report will populate as documents are uploaded.`,
+    sections,
+    generated_at: now.toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Operations',
+    report_subtitle: 'Everything on file, everything expiring, across both pillars — kept separate',
   };
 }
 
