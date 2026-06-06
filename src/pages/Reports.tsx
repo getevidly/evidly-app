@@ -162,6 +162,13 @@ const REPORT_CARDS: ReportCard[] = [
     cornerstone: false,
     section: 'business',
   },
+  {
+    type: 'client_business_impact',
+    title: 'Business Impact Report',
+    description: 'Outside signals read against your evidence — what they mean for revenue, cost, operations, workforce, and liability.',
+    cornerstone: false,
+    section: 'business',
+  },
 ];
 
 const SECTIONS: { key: string; label: string; note?: string }[] = [
@@ -177,6 +184,7 @@ const WAVE1_TYPES = new Set([
   'client_exhaust_history', 'client_suppression', 'client_fire_schedule', 'client_fire_documentation',
   'client_shift_intelligence', 'client_location_mirror', 'client_document_vault',
   'client_vendor', 'client_renewal_readiness', 'client_owners_quarterly',
+  'client_business_impact',
 ]);
 
 // ── Main component ────────────────────────────────────────

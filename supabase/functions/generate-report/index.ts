@@ -233,16 +233,26 @@ async function handlePost(req: Request): Promise<Response> {
 
   const { data: profile } = await service
     .from('user_profiles')
-    .select('id, full_name, organization_id, organizations(id, name)')
+    .select('id, full_name, organization_id, role, organizations(id, name)')
     .eq('id', user.id)
     .single();
   if (!profile) return jsonResponse({ error: 'Profile not found' }, 404, corsHeaders);
 
   const payload: GenerateRequest = await req.json();
+
+  // Admin detection: EvidLY staff email or platform_admin role
+  const isAdminCaller = user.email?.endsWith('@getevidly.com') || profile.role === 'platform_admin';
+
+  // partner_risk: admin-only generation gate
+  if (payload.report_type === 'partner_risk' && !isAdminCaller) {
+    return jsonResponse({ error: 'Partner risk reports require platform admin access' }, 403, corsHeaders);
+  }
+
   const orgId = payload.org_id || profile.organization_id;
   if (!orgId) return jsonResponse({ error: 'No organization' }, 400, corsHeaders);
 
-  if (orgId !== profile.organization_id) {
+  // Allow admin to generate partner_risk for any org; all others must match own org
+  if (orgId !== profile.organization_id && !(isAdminCaller && payload.report_type === 'partner_risk')) {
     return jsonResponse({ error: 'Organization mismatch' }, 403, corsHeaders);
   }
 
@@ -267,6 +277,8 @@ async function handlePost(req: Request): Promise<Response> {
     client_renewal_readiness: buildRenewalReadinessReport,
     client_owners_quarterly: buildOwnersQuarterlyReport,
     internal_prospect_marketing: (svc: any, oid: string) => buildProspectMarketingReport(svc, oid, payload),
+    client_business_impact: buildBusinessImpactReport,
+    partner_risk: buildPartnerRiskReport,
   };
 
   const builder = BUILDERS[payload.report_type];
@@ -383,6 +395,8 @@ function titleFor(reportType: string): string {
     client_renewal_readiness: 'Renewal Readiness Report',
     client_owners_quarterly: "Owner's Quarterly Letter",
     internal_prospect_marketing: 'Prospect Marketing Report',
+    client_business_impact: 'Business Impact Report',
+    partner_risk: 'Five-Pillar Risk Intelligence',
   };
   return MAP[reportType] || 'Report';
 }
@@ -2876,6 +2890,481 @@ async function buildProspectMarketingReport(_svc: any, _orgId: string, payload: 
     org_name: prospectName,
     org_subtitle: `${county} County, California · prepared from public county records`,
     report_subtitle: 'Prepared by EvidLY · Predict the failure, reduce the cost.',
+  };
+}
+
+// ── CIC Five-Pillar constants & helpers ───────────────────
+
+const CIC_PILLARS = ['revenue', 'cost', 'operations', 'workforce', 'liability'] as const;
+const CIC_PILLAR_LABELS: Record<string, string> = {
+  revenue: 'Revenue', cost: 'Cost', operations: 'Operations',
+  workforce: 'Workforce', liability: 'Liability',
+};
+
+// signal_type → fire / food regulatory attribution
+const FIRE_SIGNAL_TYPES = new Set([
+  'fire_safety_update', 'nfpa_update', 'fire_inspection_change', 'calfire_update', 'osfm_update',
+]);
+const FOOD_SIGNAL_TYPES = new Set([
+  'recall', 'regulatory_change', 'inspection_result', 'enforcement_action', 'outbreak', 'inspection_methodology',
+]);
+
+/*
+ * Pillar classification — three-tier priority:
+ *   1. cic_pillar column (admin-set, normalized) — maps directly
+ *   2. Populated client_impact_* text columns — each non-null column adds its pillar
+ *   3. signal_type fallback — crude mapping from regulatory domain to likely pillar(s)
+ * Returns empty array → signal omitted from report (no pillar fit).
+ */
+const TYPE_PILLAR_FALLBACK: Record<string, string[]> = {
+  recall: ['revenue', 'liability'],
+  regulatory_change: ['operations', 'cost'],
+  inspection_result: ['operations', 'revenue'],
+  enforcement_action: ['liability', 'revenue'],
+  weather_alert: ['operations'],
+  rfp_detected: ['revenue'],
+  legislative_update: ['cost', 'workforce'],
+  competitive_intel: ['revenue'],
+  fire_safety_update: ['liability', 'cost'],
+  outbreak: ['liability', 'revenue'],
+  inspection_methodology: ['operations'],
+  legislation: ['cost', 'workforce'],
+  nfpa_update: ['liability'],
+  fire_inspection_change: ['operations', 'liability'],
+  competitor_activity: ['revenue'],
+  industry_trend: ['cost'],
+  osfm_update: ['liability'],
+  calfire_update: ['liability'],
+  permit_change: ['cost'],
+};
+
+function classifySignalPillars(sig: any): string[] {
+  if (sig.cic_pillar) {
+    const p = sig.cic_pillar.toLowerCase().trim();
+    if ((CIC_PILLARS as readonly string[]).includes(p)) return [p];
+  }
+  const pillars: string[] = [];
+  if (sig.client_impact_revenue) pillars.push('revenue');
+  if (sig.client_impact_cost) pillars.push('cost');
+  if (sig.client_impact_operational) pillars.push('operations');
+  if (sig.client_impact_workforce) pillars.push('workforce');
+  if (sig.client_impact_liability) pillars.push('liability');
+  if (pillars.length > 0) return pillars;
+  return TYPE_PILLAR_FALLBACK[sig.signal_type] || [];
+}
+
+function signalRegTag(sig: any): string {
+  if (FIRE_SIGNAL_TYPES.has(sig.signal_type)) return ' [FIRE]';
+  if (FOOD_SIGNAL_TYPES.has(sig.signal_type)) return ' [FOOD]';
+  return '';
+}
+
+function signalSource(sig: any): string {
+  const parts: string[] = [];
+  if (sig.source_name) parts.push(sig.source_name);
+  if (sig.published_at) {
+    parts.push(new Date(sig.published_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+  }
+  return parts.join(', ') || 'Public signal';
+}
+
+// ── 21. Business Impact Report (client_business_impact) — CUSTOMER ─
+// Customer-facing: banned vocabulary (no risk/exposure/profile language).
+// Liability section uses only reads/identifies/flags verbs.
+
+async function buildBusinessImpactReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+
+  // Signals via county-matched RPC — never query intelligence_signals directly
+  const { data: rawSignals } = await svc.rpc('get_signals_for_org', { p_org_id: orgId });
+  const allSignals = rawSignals || [];
+
+  // Classify into CIC pillars
+  const pillarSignals: Record<string, any[]> = {
+    revenue: [], cost: [], operations: [], workforce: [], liability: [],
+  };
+  for (const sig of allSignals) {
+    for (const p of classifySignalPillars(sig)) {
+      if (pillarSignals[p]) pillarSignals[p].push(sig);
+    }
+  }
+
+  // Evidence context for auto-correlation text
+  const { data: locs } = await svc.from('locations').select('id').eq('organization_id', orgId);
+  const locIds = (locs || []).map((l: any) => l.id);
+  const locationCount = locIds.length;
+
+  const [{ data: inspections }, { data: serviceRecs }, { data: certs }] = await Promise.all([
+    svc.from('inspection_reports').select('id, result').eq('organization_id', orgId),
+    svc.from('vendor_service_records').select('id, next_service_date').eq('organization_id', orgId),
+    svc.from('employee_certifications').select('id, expiration_date').eq('organization_id', orgId),
+  ]);
+
+  const insp = inspections || [];
+  const inspCount = insp.length;
+  const failCount = insp.filter((i: any) => /fail/i.test(i.result || '')).length;
+  const svcRecs = serviceRecs || [];
+  const now = new Date();
+  const overdueCount = svcRecs.filter((s: any) => s.next_service_date && new Date(s.next_service_date) < now).length;
+  const allCerts = certs || [];
+  const certTotal = allCerts.length;
+  const certCurrent = allCerts.filter((c: any) => !c.expiration_date || new Date(c.expiration_date) > now).length;
+  const certExpiring = allCerts.filter((c: any) => {
+    if (!c.expiration_date) return false;
+    const exp = new Date(c.expiration_date);
+    return exp > now && exp < new Date(now.getTime() + 60 * 86400000);
+  }).length;
+
+  // client_impact_* column → pillar
+  const IMPACT_FIELDS: Record<string, string> = {
+    revenue: 'client_impact_revenue', cost: 'client_impact_cost',
+    operations: 'client_impact_operational', workforce: 'client_impact_workforce',
+    liability: 'client_impact_liability',
+  };
+
+  // Auto-generate correlation when admin hasn't written client_impact_* text
+  function autoImpact(pillar: string): string {
+    switch (pillar) {
+      case 'revenue':
+        if (inspCount === 0) return 'No county evaluations on file yet to reference.';
+        return failCount === 0
+          ? `Your ${inspCount} county evaluation${inspCount !== 1 ? 's' : ''} show a clean record across ${locationCount} location${locationCount !== 1 ? 's' : ''}.`
+          : `${failCount} of ${inspCount} evaluations carry findings — your record is what the public sees.`;
+      case 'cost':
+        return `Applies across ${locationCount} location${locationCount !== 1 ? 's' : ''}.`;
+      case 'operations':
+        if (inspCount === 0) return 'No inspection history on file to compare against.';
+        return failCount === 0
+          ? `Your last ${Math.min(inspCount, 4)} county evaluations carry no major findings.`
+          : `${failCount} finding${failCount !== 1 ? 's' : ''} in your last ${Math.min(inspCount, 8)} evaluations — that history is what the interval model reads.`;
+      case 'workforce':
+        if (certTotal === 0) return 'No credential records on file.';
+        return `${certCurrent} of ${certTotal} credentials current${certExpiring > 0 ? ` — ${certExpiring} expiring within 60 days` : ''}.`;
+      case 'liability':
+        // Liability: only reads / identifies / flags verbs
+        if (overdueCount > 0) return `Your record flags ${overdueCount} safeguard service${overdueCount !== 1 ? 's' : ''} overdue — worth reviewing before renewal.`;
+        if (svcRecs.length > 0) return 'Your service record reads as current — this report identifies no gaps.';
+        return 'No service records on file — this report identifies no safeguard trail.';
+      default: return '';
+    }
+  }
+
+  // Build pillar sections
+  const sections: ReportSection[] = [];
+  let totalClassified = 0;
+
+  for (const pillar of CIC_PILLARS) {
+    const sigs = pillarSignals[pillar];
+    totalClassified += sigs.length;
+    const countText = sigs.length === 0
+      ? 'No signals identified this period.'
+      : `${sigs.length} signal${sigs.length !== 1 ? 's' : ''} identified`;
+
+    const rows: Cell[][] = sigs.map((sig: any) => [
+      sig.title + signalRegTag(sig),
+      signalSource(sig),
+      sig[IMPACT_FIELDS[pillar]] || autoImpact(pillar),
+    ]);
+
+    const sec: ReportSection = { heading: CIC_PILLAR_LABELS[pillar], body: countText };
+    if (rows.length > 0) {
+      sec.table = { cols: ['Signal', 'Source', 'What It Means Here'], rows };
+    }
+    if (pillar === 'liability') {
+      sec.citations = ['EvidLY reads the signals. Your insurance professional evaluates the coverage — bring this report to that conversation.'];
+    }
+    sections.push(sec);
+  }
+
+  // Evidence referenced
+  sections.push({
+    heading: 'Evidence Referenced',
+    body: 'PSE Compliance Summary · County Inspection History · Training & Certification Record',
+  });
+
+  // Customer disclosures (verbatim from mockup)
+  sections.push({
+    heading: 'Disclosures',
+    body: 'Signals are reported with their sources as received; figures shown are estimates from your records and public information, not financial, legal, or insurance advice. Insurance items are observations and questions for your insurance professional — EvidLY reads; your agent evaluates the coverage. Decisions about your business remain yours.',
+  });
+
+  // Exec summary (3-5 sentences, no banned vocabulary)
+  const county = orgSubtitle || 'your area';
+  let execSummary: string;
+  if (totalClassified === 0) {
+    execSummary = `No outside signals reached ${county} kitchens this period. This report found nothing to read against ${orgName}'s records. When signals arrive, this report reads each one against your evidence base — inspections, service records, credentials — and names what matters.`;
+  } else {
+    execSummary = `${totalClassified} outside signal${totalClassified !== 1 ? 's' : ''} reached ${county} kitchens this period, and this report reads each one against ${orgName}'s own records to show where it lands. Your evidence base — ${inspCount} county evaluation${inspCount !== 1 ? 's' : ''}, ${svcRecs.length} service record${svcRecs.length !== 1 ? 's' : ''}, ${certTotal} credential${certTotal !== 1 ? 's' : ''} — is what each signal reads against. Each section below names the signal, its source, and what it means for your kitchen.`;
+  }
+
+  return {
+    executive_summary: execSummary,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    report_subtitle: 'What the signals around your kitchen mean for revenue, cost, operations, workforce, and liability',
+  };
+}
+
+// ── 22. Five-Pillar Risk Intelligence (partner_risk) — CARRIER ─
+// Carrier/partner audience. Admin-only generation gate enforced in handlePost.
+
+async function buildPartnerRiskReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+
+  // Signals (for count in exec summary)
+  const { data: rawSignals } = await svc.rpc('get_signals_for_org', { p_org_id: orgId });
+  const signalCount = (rawSignals || []).length;
+
+  // Evidence queries — locations first for facility_id lookups
+  const { data: locs } = await svc.from('locations').select('id').eq('organization_id', orgId);
+  const locIds = (locs || []).map((l: any) => l.id);
+  const locationCount = locIds.length;
+
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
+
+  const [
+    { data: inspections },
+    { data: serviceRecs },
+    { data: certs },
+    { data: tempLogs },
+    { data: haccpLogs },
+    { data: checklists },
+  ] = await Promise.all([
+    svc.from('inspection_reports').select('id, result').eq('organization_id', orgId).order('inspection_date', { ascending: false }),
+    svc.from('vendor_service_records').select('id, next_service_date, findings').eq('organization_id', orgId),
+    svc.from('employee_certifications').select('id, certification_type, expiration_date').eq('organization_id', orgId),
+    locIds.length > 0
+      ? svc.from('temperature_logs').select('id, reading_time, logged_by').in('facility_id', locIds).gte('reading_time', thirtyDaysAgo).limit(500)
+      : Promise.resolve({ data: [] }),
+    svc.from('haccp_monitoring_logs').select('monitored_by').eq('organization_id', orgId).gte('monitored_at', thirtyDaysAgo),
+    locIds.length > 0
+      ? svc.from('checklist_template_completions').select('id, total_items, passed_items').in('location_id', locIds).gte('completed_at', thirtyDaysAgo)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const insp = inspections || [];
+  const inspCount = insp.length;
+  const failCount = insp.filter((i: any) => /fail/i.test(i.result || '')).length;
+
+  const svcRecs = serviceRecs || [];
+  const overdueCount = svcRecs.filter((s: any) => s.next_service_date && new Date(s.next_service_date) < now).length;
+  const dueSoonCount = svcRecs.filter((s: any) => {
+    if (!s.next_service_date) return false;
+    const d = new Date(s.next_service_date);
+    return d >= now && d < new Date(now.getTime() + 30 * 86400000);
+  }).length;
+  const svcWithFindings = svcRecs.filter((s: any) => s.findings && s.findings.trim()).length;
+
+  const allCerts = certs || [];
+  const certTotal = allCerts.length;
+  const certCurrent = allCerts.filter((c: any) => !c.expiration_date || new Date(c.expiration_date) > now).length;
+  const certExpiring = allCerts.filter((c: any) => {
+    if (!c.expiration_date) return false;
+    const exp = new Date(c.expiration_date);
+    return exp > now && exp < new Date(now.getTime() + 60 * 86400000);
+  }).length;
+  const certExpired = allCerts.filter((c: any) => c.expiration_date && new Date(c.expiration_date) <= now).length;
+  const managerCerts = allCerts.filter((c: any) => /manager/i.test(c.certification_type || '')).length;
+
+  const logs = tempLogs || [];
+  const tempCount = logs.length;
+  // Distinct staff from temp logs + HACCP logs + checklists
+  const allAuthors = new Set([
+    ...logs.map((l: any) => l.logged_by).filter(Boolean),
+    ...(haccpLogs || []).map((h: any) => h.monitored_by).filter(Boolean),
+  ]);
+  const distinctStaff = allAuthors.size;
+  // Reading hour distribution for fabrication screening
+  const readingHours = new Set(logs.map((l: any) => new Date(l.reading_time).getUTCHours()));
+  const hourSpan = readingHours.size;
+
+  const checks = checklists || [];
+
+  /*
+   * ── Exposure thresholds (deterministic rules) ──
+   *
+   * REVENUE:
+   *   LOW:      0 fail results across all inspections
+   *   MODERATE: exactly 1 fail in inspection history
+   *   ELEVATED: 2+ fail results
+   *
+   * COST:
+   *   LOW:      0 overdue services AND 0 due within 30 days
+   *   MODERATE: 0 overdue but 1+ due within 30 days
+   *   ELEVATED: 1+ overdue services
+   *
+   * OPERATIONS:
+   *   LOW:      ≥200 temp readings/30d AND ≥1 checklist completion
+   *   MODERATE: 50–199 readings OR 0 checklists but some readings
+   *   ELEVATED: <50 readings AND 0 checklists in 30 days
+   *
+   * WORKFORCE:
+   *   LOW:      0 expired certs AND 0 expiring within 60 days
+   *   MODERATE: 0 expired but 1+ expiring within 60 days
+   *   ELEVATED: 1+ expired certifications
+   *
+   * LIABILITY:
+   *   LOW:      0 overdue safeguards AND 0 inspection failures
+   *   MODERATE: 0 overdue but 1+ safeguard due within 30 days
+   *   ELEVATED: 1+ overdue safeguard OR 2+ inspection failures
+   */
+  function exposure(pillar: string): 'low' | 'moderate' | 'elevated' {
+    switch (pillar) {
+      case 'revenue':
+        if (failCount === 0) return 'low';
+        return failCount === 1 ? 'moderate' : 'elevated';
+      case 'cost':
+        if (overdueCount > 0) return 'elevated';
+        return dueSoonCount > 0 ? 'moderate' : 'low';
+      case 'operations':
+        if (tempCount >= 200 && checks.length > 0) return 'low';
+        if (tempCount < 50 && checks.length === 0) return 'elevated';
+        return 'moderate';
+      case 'workforce':
+        if (certExpired > 0) return 'elevated';
+        return certExpiring > 0 ? 'moderate' : 'low';
+      case 'liability':
+        if (overdueCount > 0 || failCount >= 2) return 'elevated';
+        return dueSoonCount > 0 ? 'moderate' : 'low';
+      default: return 'low';
+    }
+  }
+
+  // Build pillar sections
+  const sections: ReportSection[] = [];
+
+  // Revenue
+  sections.push({
+    heading: 'Revenue Pillar',
+    body: `exposure: ${exposure('revenue')}`,
+    table: {
+      cols: ['Factor', 'Evidence Basis', 'Direction'],
+      rows: [
+        ['Closure risk from regulatory action',
+         `${failCount} closure-trigger finding${failCount !== 1 ? 's' : ''} in ${inspCount} evaluation${inspCount !== 1 ? 's' : ''}`,
+         failCount === 0 ? 'Favorable' : 'Watch'],
+        ['Public record visibility',
+         locationCount > 0
+           ? `${locationCount} location${locationCount !== 1 ? 's' : ''} — ${failCount === 0 ? 'clean record on public portal' : 'findings visible on public portal'}`
+           : 'No locations on file',
+         failCount === 0 ? 'Favorable' : 'Unfavorable'],
+      ],
+    },
+  });
+
+  // Cost
+  sections.push({
+    heading: 'Cost Pillar',
+    body: `exposure: ${exposure('cost')}`,
+    table: {
+      cols: ['Factor', 'Evidence Basis', 'Direction'],
+      rows: [
+        ['Deferred maintenance indicator',
+         svcWithFindings > 0
+           ? `${svcWithFindings} service deviation${svcWithFindings !== 1 ? 's' : ''} noted in records`
+           : 'No service deviations on record',
+         svcWithFindings === 0 ? 'Favorable' : 'Watch'],
+        ['Service contract stability',
+         svcRecs.length > 0
+           ? `${svcRecs.length} service record${svcRecs.length !== 1 ? 's' : ''} on file${overdueCount > 0 ? ` — ${overdueCount} overdue` : ''}`
+           : 'No service records on file',
+         overdueCount === 0 ? 'Neutral' : 'Watch'],
+      ],
+    },
+  });
+
+  // Operations — fabrication screening only if derivable (≥10 readings)
+  const opsRows: Cell[][] = [];
+  if (tempCount >= 10 && (distinctStaff > 0 || hourSpan >= 3)) {
+    opsRows.push([
+      'Record fabrication screening [FOOD]',
+      `${hourSpan >= 3 ? 'Readings span ' + hourSpan + ' distinct hours of day' : 'Limited hour distribution'}${distinctStaff >= 2 ? '; ' + distinctStaff + ' distinct staff contributing' : ''}`,
+      hourSpan >= 3 && distinctStaff >= 2 ? 'No flags' : 'Watch',
+    ]);
+  }
+  opsRows.push([
+    'Process control depth',
+    tempCount > 0
+      ? `${tempCount} readings in 30 days${distinctStaff > 0 ? `, ${distinctStaff} distinct staff contributing` : ''}`
+      : 'No temperature readings in 30 days',
+    tempCount >= 100 ? 'Favorable' : tempCount > 0 ? 'Watch' : 'Insufficient data',
+  ]);
+  const opsSec: ReportSection = {
+    heading: 'Operational Pillar',
+    body: `exposure: ${exposure('operations')}`,
+    table: { cols: ['Factor', 'Evidence Basis', 'Direction'], rows: opsRows },
+  };
+  if (tempCount >= 10) {
+    opsSec.citations = ['Fabrication screen: evaluated from reading-interval distribution and author variance.'];
+  }
+  sections.push(opsSec);
+
+  // Workforce
+  const wfRows: Cell[][] = [
+    ['Credential currency',
+     certTotal > 0
+       ? `${certCurrent}/${certTotal} credentials current${managerCerts > 0 ? `; ${managerCerts} certified manager${managerCerts !== 1 ? 's' : ''}` : ''}`
+       : 'No credential records on file',
+     certExpired > 0 ? 'Unfavorable' : certExpiring > 0 ? 'Watch' : 'Favorable'],
+  ];
+  if (certExpiring > 0) {
+    wfRows.push([
+      'Upcoming expirations',
+      `${certExpiring} credential${certExpiring !== 1 ? 's' : ''} expiring within 60 days`,
+      'Watch',
+    ]);
+  }
+  sections.push({
+    heading: 'Workforce Pillar',
+    body: `exposure: ${exposure('workforce')}`,
+    table: { cols: ['Factor', 'Evidence Basis', 'Direction'], rows: wfRows },
+  });
+
+  // Liability
+  sections.push({
+    heading: 'Liability Pillar',
+    body: `exposure: ${exposure('liability')}`,
+    table: {
+      cols: ['Factor', 'Evidence Basis', 'Direction'],
+      rows: [
+        ['PSE conformance [FIRE]',
+         overdueCount === 0 && svcRecs.length > 0
+           ? 'All named safeguards in interval'
+           : overdueCount > 0
+             ? `${overdueCount} safeguard${overdueCount !== 1 ? 's' : ''} overdue`
+             : 'No safeguard service records on file',
+         overdueCount === 0 && svcRecs.length > 0 ? 'Favorable' : overdueCount > 0 ? 'Unfavorable' : 'Insufficient data'],
+        ['Foodborne illness exposure [FOOD]',
+         inspCount > 0
+           ? `${inspCount} evaluation${inspCount !== 1 ? 's' : ''}; ${failCount === 0 ? 'no findings' : `${failCount} finding${failCount !== 1 ? 's' : ''}`}`
+           : 'No inspection history on file',
+         failCount === 0 && inspCount > 0 ? 'Favorable' : failCount > 0 ? 'Watch' : 'Insufficient data'],
+      ],
+    },
+    citations: ['Evidence verified against source records, not attestations.'],
+  });
+
+  // Carrier disclosures (verbatim from mockup)
+  sections.push({
+    heading: 'Disclosures',
+    body: 'Prepared for appointed partners under a written data-sharing authorization executed by the insured; the insured may revoke authorization at any time, ending future reports. Food safety and fire safety evidence is attributed to its separate authority (county environmental health department; fire authority) throughout and is never combined. External signals are reported with their sources and are not independently adjudicated. This report presents records and signals as kept and received; it is not a coverage recommendation, an underwriting decision, a guarantee of future compliance, or advice of any kind. EvidLY is not an insurance producer, adjuster, or analyst. Coverage decisions rest solely with the licensed professionals receiving this report.',
+  });
+
+  // Exec summary (3-5 sentences)
+  const execSummary = inspCount > 0
+    ? `This account presents a verified evidence base across both regulatory pillars: ${inspCount} county food safety evaluation${inspCount !== 1 ? 's' : ''}${failCount === 0 ? ' with no open findings' : ''}, and ${svcRecs.length > 0 ? `${svcRecs.length} fire safeguard service record${svcRecs.length !== 1 ? 's' : ''} on file` : 'no fire safeguard service records on file'}. Correlated against ${signalCount} external signal${signalCount !== 1 ? 's' : ''} active in the account's county this period. Record depth — ${tempCount} verified temperature readings in the last 30 days${distinctStaff > 1 ? `, ${distinctStaff} distinct staff contributing` : ''}.`
+    : `This account has ${inspCount} county evaluations and ${svcRecs.length} safeguard service record${svcRecs.length !== 1 ? 's' : ''} on file. ${signalCount} external signal${signalCount !== 1 ? 's' : ''} active in the account's county this period. Evidence base is building.`;
+
+  return {
+    executive_summary: execSummary,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    report_subtitle: 'Account risk profile: external signals correlated against verified compliance evidence',
   };
 }
 
