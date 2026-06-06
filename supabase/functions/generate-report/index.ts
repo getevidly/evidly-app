@@ -8,6 +8,9 @@ import { getCorsHeaders, PUBLIC_CORS_HEADERS } from '../_shared/cors.ts';
 interface GenerateRequest {
   report_type: string;
   org_id?: string;
+  prospect_name?: string;
+  prospect_county?: string;
+  prospect_facts?: { date: string; result: string; type?: string }[];
 }
 
 type Cell = string | { text: string; result?: 'pass' | 'fail' | 'warn' };
@@ -260,6 +263,10 @@ async function handlePost(req: Request): Promise<Response> {
     client_shift_intelligence: buildShiftIntelligenceReport,
     client_location_mirror: buildLocationMirrorReport,
     client_document_vault: buildDocumentVaultReport,
+    client_vendor: buildVendorServiceReport,
+    client_renewal_readiness: buildRenewalReadinessReport,
+    client_owners_quarterly: buildOwnersQuarterlyReport,
+    internal_prospect_marketing: (svc: any, oid: string) => buildProspectMarketingReport(svc, oid, payload),
   };
 
   const builder = BUILDERS[payload.report_type];
@@ -277,7 +284,9 @@ async function handlePost(req: Request): Promise<Response> {
     .from('internal_reports')
     .insert({
       report_type: payload.report_type,
-      title: `${titleFor(payload.report_type)} — ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
+      title: payload.report_type === 'internal_prospect_marketing' && payload.prospect_name
+        ? payload.prospect_name
+        : `${titleFor(payload.report_type)} — ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
       period_start: periodStart,
       period_end: periodEnd,
       org_id: orgId,
@@ -370,6 +379,10 @@ function titleFor(reportType: string): string {
     client_shift_intelligence: 'Shift Intelligence Report',
     client_location_mirror: 'Multi-Location Mirror',
     client_document_vault: 'Document Vault Status',
+    client_vendor: 'Vendor Service Summary',
+    client_renewal_readiness: 'Renewal Readiness Report',
+    client_owners_quarterly: "Owner's Quarterly Letter",
+    internal_prospect_marketing: 'Prospect Marketing Report',
   };
   return MAP[reportType] || 'Report';
 }
@@ -2385,6 +2398,484 @@ async function buildDocumentVaultReport(svc: any, orgId: string): Promise<Conten
     org_subtitle: orgSubtitle,
     pillar_label: 'Operations',
     report_subtitle: 'Everything on file, everything expiring, across both pillars — kept separate',
+  };
+}
+
+// ── 17. Vendor Service Summary (client_vendor) ────────────
+
+async function buildVendorServiceReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const now = new Date();
+  const sixMonthsAgo = new Date(now.getTime() - 180 * 86400000).toISOString().split('T')[0];
+
+  // Trailing 6 months of service records
+  const { data: records } = await svc
+    .from('vendor_service_records')
+    .select('id, safeguard_type, service_type_code, service_date, next_due_date, vendor_name, price_charged, cert_number, certificate_url, notes, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .gte('service_date', sixMonthsAgo)
+    .order('service_date', { ascending: false });
+  const recList = records || [];
+
+  // Upcoming services from schedules
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, frequency, next_due_date, vendor_name, negotiated_price, location_id, locations(name), service_type_definitions(short_name)')
+    .eq('organization_id', orgId)
+    .eq('is_active', true)
+    .order('next_due_date', { ascending: true });
+  const schedList = (schedules || []).filter((s: any) => s.next_due_date && new Date(s.next_due_date) >= now);
+
+  // Predict: upcoming spend
+  const upcomingRows: Cell[][] = schedList.slice(0, 8).map((s: any) => {
+    const svcName = (s as any).service_type_definitions?.short_name || s.service_type_code;
+    return [
+      svcName,
+      fmtDate(s.next_due_date),
+      s.vendor_name || '—',
+      s.negotiated_price ? `$${Number(s.negotiated_price).toLocaleString()}` : '—',
+    ];
+  });
+
+  // Reduce: open vendor items (service records with notes suggesting pending items)
+  const withNotes = recList.filter((r: any) => r.notes && r.notes.trim());
+  const openRows: Cell[][] = withNotes.slice(0, 4).map((r: any) => [
+    r.notes.trim(),
+    '—',
+  ]);
+
+  // Prove: chronological service record
+  const trailRows: Cell[][] = recList.slice(0, 12).map((r: any) => {
+    const safeguardLabels: Record<string, string> = {
+      hood_cleaning: 'Exhaust cleaning', fire_suppression: 'Suppression service',
+      fire_alarm: 'Fire alarm', sprinklers: 'Sprinklers',
+    };
+    return [
+      fmtDate(r.service_date),
+      r.vendor_name || '—',
+      safeguardLabels[r.safeguard_type] || r.safeguard_type?.replace(/_/g, ' ') || '—',
+      r.price_charged ? `$${Number(r.price_charged).toLocaleString()}` : '—',
+      r.cert_number || (r.certificate_url ? 'On file' : '—'),
+    ];
+  });
+
+  const uniqueVendors = new Set(recList.map((r: any) => r.vendor_name).filter(Boolean)).size;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Upcoming Spend',
+      table: upcomingRows.length > 0
+        ? { cols: ['Service', 'Due', 'Vendor', 'Negotiated'], rows: upcomingRows }
+        : undefined,
+      body: upcomingRows.length === 0 ? 'No upcoming services scheduled.' : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Open Vendor Items',
+      table: openRows.length > 0
+        ? { cols: ['Item', 'Status'], rows: openRows }
+        : undefined,
+      body: openRows.length === 0 ? 'No records this period.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Trailing Six-Month Service Record',
+      table: trailRows.length > 0
+        ? { cols: ['Date', 'Vendor', 'Service', 'Amount', 'Record'], rows: trailRows }
+        : undefined,
+      body: trailRows.length === 0 ? 'No vendor service records in the trailing six months.' : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: recList.length > 0
+      ? `${uniqueVendors} vendor${uniqueVendors !== 1 ? 's' : ''} performed ${recList.length} service${recList.length !== 1 ? 's' : ''} across the trailing six months for ${orgName}, all documented. ${upcomingRows.length > 0 ? `${upcomingRows.length} service${upcomingRows.length !== 1 ? 's are' : ' is'} scheduled ahead.` : 'No upcoming services scheduled.'}`
+      : `Vendor service summary for ${orgName}. No service records in the trailing six months — this report will populate as vendor service data is added.`,
+    sections,
+    generated_at: now.toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Business',
+    report_subtitle: 'Every service vendor: what they did, when, and what it cost',
+  };
+}
+
+// ── 18. Renewal Readiness Report (client_renewal_readiness) ─
+
+async function buildRenewalReadinessReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const now = new Date();
+  const thirtyDaysOut = new Date(now.getTime() + 30 * 86400000);
+
+  // County evaluations
+  const { data: inspections } = await svc
+    .from('inspection_reports')
+    .select('id, location_id')
+    .eq('organization_id', orgId)
+    .eq('pillar', 'food_safety');
+  const hasInspections = (inspections || []).length > 0;
+
+  // Exhaust certificates trailing 4 quarters
+  const oneYearAgo = new Date(now.getTime() - 365 * 86400000).toISOString().split('T')[0];
+  const { data: exhaustRecs } = await svc
+    .from('vendor_service_records')
+    .select('id, service_date, certificate_url')
+    .eq('organization_id', orgId)
+    .eq('safeguard_type', 'hood_cleaning')
+    .gte('service_date', oneYearAgo);
+  const exhaustCerts = (exhaustRecs || []).filter((r: any) => r.certificate_url).length;
+
+  // Suppression + extinguisher standing
+  const { data: suppSched } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, next_due_date')
+    .eq('organization_id', orgId)
+    .eq('service_type_code', 'FS');
+  const suppCurrent = (suppSched || []).length > 0 && (suppSched || []).every((s: any) => !s.next_due_date || new Date(s.next_due_date) >= now);
+  const suppDueSoon = (suppSched || []).some((s: any) => s.next_due_date && new Date(s.next_due_date) >= now && new Date(s.next_due_date) < thirtyDaysOut);
+
+  // Active written procedures (org_policies)
+  let activePolicies = 0;
+  try {
+    const { data: policies } = await svc
+      .from('org_policies')
+      .select('id')
+      .eq('organization_id', orgId)
+      .eq('status', 'active');
+    activePolicies = (policies || []).length;
+  } catch (_e) {
+    // Table may not exist yet
+  }
+
+  // Component package status (latest ready internal_reports)
+  const { data: pkgReports } = await svc
+    .from('internal_reports')
+    .select('report_type, status, updated_at')
+    .eq('org_id', orgId)
+    .in('report_type', ['client_insurance', 'client_executive'])
+    .eq('status', 'ready')
+    .order('updated_at', { ascending: false });
+  const pkgList = pkgReports || [];
+
+  // Build checklist rows
+  type CheckItem = { item: string; pillar: string; status: string; result: 'pass' | 'fail' | 'warn' };
+  const checklist: CheckItem[] = [];
+
+  checklist.push({
+    item: 'County evaluation history',
+    pillar: 'Food Safety',
+    status: hasInspections ? 'CURRENT' : 'MISSING',
+    result: hasInspections ? 'pass' : 'fail',
+  });
+  checklist.push({
+    item: 'Exhaust cleaning certificates (4 qtrs)',
+    pillar: 'Fire Safety',
+    status: exhaustCerts >= 4 ? 'CURRENT' : exhaustCerts > 0 ? `${exhaustCerts} on file` : 'MISSING',
+    result: exhaustCerts >= 4 ? 'pass' : exhaustCerts > 0 ? 'warn' : 'fail',
+  });
+  checklist.push({
+    item: 'Suppression certification',
+    pillar: 'Fire Safety',
+    status: suppCurrent ? (suppDueSoon ? 'DUE SOON' : 'CURRENT') : (suppSched || []).length > 0 ? 'OVERDUE' : 'MISSING',
+    result: suppCurrent ? (suppDueSoon ? 'warn' : 'pass') : 'fail',
+  });
+  checklist.push({
+    item: 'Written procedures (active)',
+    pillar: 'Food Safety',
+    status: activePolicies > 0 ? 'CURRENT' : 'MISSING',
+    result: activePolicies > 0 ? 'pass' : 'fail',
+  });
+
+  const checklistRows: Cell[][] = checklist.map(c => [
+    c.item, c.pillar, resultCell(c.status, c.result),
+  ]);
+
+  // Gaps
+  const gaps = checklist.filter(c => c.result !== 'pass');
+  const gapRows: Cell[][] = gaps.map(g => [g.item, '—']);
+
+  // Package status
+  const pkgRows: Cell[][] = [];
+  for (const rt of ['client_executive', 'client_insurance'] as const) {
+    const latest = pkgList.find((r: any) => r.report_type === rt);
+    const labels: Record<string, string> = { client_executive: 'Insurance Package', client_insurance: 'PSE Compliance Summary' };
+    pkgRows.push([
+      labels[rt] || rt,
+      latest ? fmtDate(latest.updated_at) : '—',
+      latest ? resultCell('CURRENT', 'pass') : resultCell('NOT GENERATED', 'warn'),
+    ]);
+  }
+
+  const readyCount = checklist.filter(c => c.result === 'pass').length;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Renewal Checklist',
+      table: { cols: ['Item', 'Pillar', 'Status'], rows: checklistRows },
+    },
+    {
+      act: 'reduce',
+      heading: 'Gaps & Close Dates',
+      table: gapRows.length > 0 ? { cols: ['Gap', 'Closes'], rows: gapRows } : undefined,
+      body: gapRows.length === 0 ? 'No gaps — all checklist items are current.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Package Status',
+      table: { cols: ['Component', 'Last Generated', 'Status'], rows: pkgRows },
+      cross_refs: ['Generates into the Insurance Package for the agent of record'],
+    },
+  ];
+
+  return {
+    executive_summary: `Of the ${checklist.length} items an underwriter typically requests at renewal, ${readyCount} ${readyCount !== 1 ? 'are' : 'is'} ready today for ${orgName}. ${gaps.length > 0 ? `${gaps.length} gap${gaps.length !== 1 ? 's remain' : ' remains'} — each is listed with its close date where known.` : 'Every item is current.'} Food and fire records are packaged separately, as the carrier reads them. Entering renewal with a complete, unbroken record is the difference between answering questions and negotiating from strength.`,
+    sections,
+    generated_at: now.toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Business',
+    report_subtitle: 'What the insurance professional will ask for, and whether it is ready',
+  };
+}
+
+// ── 19. Owner's Quarterly Letter (client_owners_quarterly) ─
+
+async function buildOwnersQuarterlyReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const now = new Date();
+
+  // Trailing 3 months
+  const months: { label: string; start: string; end: string }[] = [];
+  for (let i = 2; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+    months.push({
+      label: d.toLocaleDateString('en-US', { month: 'short' }),
+      start: d.toISOString().split('T')[0],
+      end: end.toISOString().split('T')[0],
+    });
+  }
+
+  const qStart = months[0].start;
+
+  // Location IDs for temp log queries
+  const { data: locs } = await svc
+    .from('locations')
+    .select('id')
+    .eq('organization_id', orgId);
+  const locIds = (locs || []).map((l: any) => l.id);
+
+  // Evidence counts per month
+  const monthData: { temps: number; checklists: number; haccp: number }[] = [];
+  for (const m of months) {
+    const { data: temps } = locIds.length > 0 ? await svc
+      .from('temperature_logs')
+      .select('id')
+      .in('facility_id', locIds)
+      .gte('reading_time', m.start)
+      .lte('reading_time', m.end + 'T23:59:59') : { data: [] };
+
+    const { data: cls } = await svc
+      .from('checklist_template_completions')
+      .select('id')
+      .eq('organization_id', orgId)
+      .gte('completed_at', m.start)
+      .lte('completed_at', m.end + 'T23:59:59');
+
+    const { data: hml } = await svc
+      .from('haccp_monitoring_logs')
+      .select('id')
+      .eq('organization_id', orgId)
+      .gte('monitored_at', m.start)
+      .lte('monitored_at', m.end + 'T23:59:59');
+
+    monthData.push({
+      temps: (temps || []).length,
+      checklists: (cls || []).length,
+      haccp: (hml || []).length,
+    });
+  }
+
+  // County findings this quarter
+  const { data: inspections } = await svc
+    .from('inspection_reports')
+    .select('id, critical_violations, non_critical_violations, inspection_date')
+    .eq('organization_id', orgId)
+    .gte('inspection_date', qStart);
+  const inspList = inspections || [];
+  const totalFindings = inspList.reduce((s: number, i: any) => s + (i.critical_violations || 0) + (i.non_critical_violations || 0), 0);
+
+  // Fire services on time this quarter
+  const { data: fireSvcs } = await svc
+    .from('vendor_service_records')
+    .select('id, service_date, next_due_date')
+    .eq('organization_id', orgId)
+    .gte('service_date', qStart);
+  const fireList = fireSvcs || [];
+  const fireOnTime = fireList.filter((r: any) => !r.next_due_date || new Date(r.service_date) <= new Date(r.next_due_date)).length;
+
+  // Predict: next quarter calendar (schedules due within 90 days)
+  const ninetyDaysOut = new Date(now.getTime() + 90 * 86400000);
+  const { data: upcoming } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, next_due_date, vendor_name, service_type_definitions(short_name)')
+    .eq('organization_id', orgId)
+    .eq('is_active', true)
+    .gte('next_due_date', now.toISOString().split('T')[0])
+    .lte('next_due_date', ninetyDaysOut.toISOString().split('T')[0])
+    .order('next_due_date');
+  const calendarRows: Cell[][] = (upcoming || []).map((s: any) => [
+    (s as any).service_type_definitions?.short_name || s.service_type_code,
+    fmtDate(s.next_due_date),
+  ]);
+
+  // Estimate county visit window from inspection history
+  if (inspList.length >= 2) {
+    const sorted = [...inspList].sort((a: any, b: any) => new Date(a.inspection_date).getTime() - new Date(b.inspection_date).getTime());
+    const last = new Date(sorted[sorted.length - 1].inspection_date);
+    const prev = new Date(sorted[sorted.length - 2].inspection_date);
+    const gap = Math.round((last.getTime() - prev.getTime()) / 86400000);
+    if (gap > 60) {
+      const est = new Date(last.getTime() + gap * 86400000);
+      calendarRows.unshift([
+        'County visit window (estimated)',
+        est.toLocaleDateString('en-US', { month: 'long' }),
+      ]);
+    }
+  }
+
+  // Reduce: open decisions
+  const { data: openCAs } = await svc
+    .from('corrective_actions')
+    .select('id, title')
+    .eq('organization_id', orgId)
+    .not('status', 'in', '(completed,verified,closed,archived)');
+  const decisionRows: Cell[][] = (openCAs || []).slice(0, 4).map((c: any) => [
+    c.title || 'Open item',
+    '—',
+    '—',
+  ]);
+
+  // Prove: month-by-month evidence + county findings + fire on-time
+  const evidenceTotal = monthData.map(m => m.temps + m.checklists + m.haccp);
+  const proveRows: Cell[][] = [
+    ['Evidence items', ...months.map((m, i) => `${evidenceTotal[i]}`)],
+    ['County findings', ...months.map((m, i) => {
+      const mInsp = inspList.filter((ins: any) => ins.inspection_date >= m.start && ins.inspection_date <= m.end);
+      const f = mInsp.reduce((s: number, ins: any) => s + (ins.critical_violations || 0) + (ins.non_critical_violations || 0), 0);
+      return `${f}`;
+    })],
+    ['Fire services on time', ...months.map((m) => {
+      const mFire = fireList.filter((r: any) => r.service_date >= m.start && r.service_date <= m.end);
+      const onTime = mFire.filter((r: any) => !r.next_due_date || new Date(r.service_date) <= new Date(r.next_due_date)).length;
+      return mFire.length > 0 ? `${onTime}/${mFire.length}` : '—';
+    })],
+  ];
+
+  const totalEvidence = evidenceTotal.reduce((a, b) => a + b, 0);
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: "Next Quarter's Calendar",
+      table: calendarRows.length > 0
+        ? { cols: ['Event', 'When'], rows: calendarRows }
+        : undefined,
+      body: calendarRows.length === 0 ? 'No scheduled events in the next ninety days.' : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: "Decisions on the Owner's Desk",
+      table: decisionRows.length > 0
+        ? { cols: ['Decision', 'Cost', 'What It Buys'], rows: decisionRows }
+        : undefined,
+      body: decisionRows.length === 0 ? 'No open decisions this quarter.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Quarter at a Glance',
+      table: { cols: ['', ...months.map(m => m.label)], rows: proveRows },
+    },
+  ];
+
+  return {
+    executive_summary: totalEvidence > 0
+      ? `The quarter closes with ${totalEvidence} evidence items across ${months.map(m => m.label).join(', ')} for ${orgName}. ${totalFindings === 0 ? 'No county findings on record this quarter.' : `${totalFindings} county finding${totalFindings !== 1 ? 's' : ''} recorded.`} ${fireList.length > 0 ? `${fireOnTime} of ${fireList.length} fire service${fireList.length !== 1 ? 's' : ''} landed on time.` : ''} Food safety and fire safety data are each attributed to their own authority — the county environmental health department and the fire authority, respectively.`
+      : `Quarterly letter for ${orgName}. No evidence items recorded this quarter — this report will populate as temperature readings, checklists, and monitoring logs are added.`,
+    sections,
+    generated_at: now.toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: 'Business',
+    report_subtitle: 'The quarter in one page — written for the owner, not the inspector',
+  };
+}
+
+// ── 20. Prospect Marketing Report (internal_prospect_marketing) ─
+
+async function buildProspectMarketingReport(_svc: any, _orgId: string, payload: GenerateRequest): Promise<ContentJson> {
+  const prospectName = payload.prospect_name || 'Prospect';
+  const county = payload.prospect_county || 'County';
+  const facts = payload.prospect_facts || [];
+
+  // Predict: What the county publishes — render operator-entered facts only
+  const factRows: Cell[][] = facts.map(f => [
+    f.type || 'Routine inspection',
+    f.date || '—',
+    f.result ? resultCell(f.result.toUpperCase(), /pass|satisf/i.test(f.result) ? 'pass' : /fail/i.test(f.result) ? 'fail' : 'warn') : '—',
+  ]);
+
+  // Reduce: gap-contrast table — static framework copy
+  const gapRows: Cell[][] = [
+    ['Temperature logs for the last 30 days?', 'Paper, if kept', 'Named, timestamped, in-range rates calculated'],
+    ['Exhaust cleaning certificates, 4 quarters?', 'Call the vendor', 'On file, one tap'],
+    ['Suppression certification current?', 'Check the tag', 'Service horizon table, certificate attached'],
+    ['Written food safety procedure?', 'Often missing', 'Active, referenced to CalCode'],
+    ['Insurance renewal package?', 'Days to assemble', 'Assembled and current before the agent asks'],
+  ];
+
+  // Prove: What Founder kitchens hold — static framework copy
+  const founderRows: Cell[][] = [
+    ['County evaluations on file', 'Every one, displayed as the county produced it'],
+    ['Fire safeguard record', 'Unbroken certification trail, NFPA 96 intervals'],
+    ['Renewal package', 'Assembled and current before the agent asks'],
+    ['Evidence base', 'Temperature readings, checklists, and monitoring — named and timestamped'],
+  ];
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: `What ${county} County Publishes About You`,
+      table: factRows.length > 0
+        ? { cols: ['Evaluation', 'Date', 'Result'], rows: factRows }
+        : undefined,
+      body: factRows.length === 0 ? 'No public inspection records entered.' : undefined,
+      citations: [`Source: ${county} County Department of Public Health — public record`],
+    },
+    {
+      act: 'reduce',
+      heading: "What the Record Doesn't Show — Yet",
+      table: { cols: ['Question an inspector or underwriter asks', 'Today', 'With a kept record'], rows: gapRows },
+    },
+    {
+      act: 'prove',
+      heading: 'What Founder Kitchens Hold',
+      table: { cols: ['', 'Kitchens like yours on EvidLY'], rows: founderRows },
+    },
+    {
+      heading: 'Founder Seats',
+      body: '250 Founder seats. When they are claimed, the window closes. Founder kitchens lock their rate for 36 months. No date deadline — seat 250 ends it.',
+    },
+  ];
+
+  return {
+    executive_summary: `${prospectName}'s public county record shows a kitchen that passes — and a record that says less than it could. ${facts.length > 0 ? `The county publishes ${facts.length} evaluation${facts.length !== 1 ? 's' : ''} for this location.` : 'No public evaluations were entered for this location.'} The kitchens on the next page assemble their full evidence base in one tap. This report shows what the county already publishes, and what the kitchens you compete with hold alongside it.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: prospectName,
+    org_subtitle: `${county} County, California · prepared from public county records`,
+    report_subtitle: 'Prepared by EvidLY · Predict the failure, reduce the cost.',
   };
 }
 

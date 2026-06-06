@@ -109,7 +109,7 @@ const REPORT_CARDS: ReportCard[] = [
     title: 'Vendor Performance Report',
     description: 'Vendor service history, response cadence, and service record completeness.',
     cornerstone: false,
-    section: 'fire_safety',
+    section: 'business',
   },
   // Operations
   {
@@ -148,6 +148,20 @@ const REPORT_CARDS: ReportCard[] = [
     cornerstone: true,
     section: 'business',
   },
+  {
+    type: 'client_renewal_readiness',
+    title: 'Renewal Readiness Checklist',
+    description: 'Insurance and permit renewal checklist — documentation status, policy gaps, and package readiness.',
+    cornerstone: false,
+    section: 'business',
+  },
+  {
+    type: 'client_owners_quarterly',
+    title: "Owner's Quarterly Report",
+    description: 'Trailing three-month evidence rollup — food safety, fire safety, and next-quarter calendar.',
+    cornerstone: false,
+    section: 'business',
+  },
 ];
 
 const SECTIONS: { key: string; label: string; note?: string }[] = [
@@ -162,6 +176,7 @@ const WAVE1_TYPES = new Set([
   'client_temp_log', 'client_corrective_action', 'client_checklist', 'client_inspection_history', 'client_training',
   'client_exhaust_history', 'client_suppression', 'client_fire_schedule', 'client_fire_documentation',
   'client_shift_intelligence', 'client_location_mirror', 'client_document_vault',
+  'client_vendor', 'client_renewal_readiness', 'client_owners_quarterly',
 ]);
 
 // ── Main component ────────────────────────────────────────

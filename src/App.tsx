@@ -43,6 +43,7 @@ const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m
 const Policies = lazy(() => import('./pages/Policies').then(m => ({ default: m.Policies })));
 const PolicyEditor = lazy(() => import('./pages/PolicyEditor').then(m => ({ default: m.PolicyEditor })));
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
+const ProspectMarketingReport = lazy(() => import('./pages/internal/ProspectMarketingReport'));
 const ReportViewer = lazy(() => import('./pages/public/ReportViewer').then(m => ({ default: m.ReportViewer })));
 const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
@@ -831,6 +832,7 @@ function AppRoutes() {
           <Route path="/admin/feature-baseline" element={<FeatureBaselineTracker />} />
           <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
+          <Route path="/internal/pmr" element={<ProspectMarketingReport />} />
           </Route>
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />
