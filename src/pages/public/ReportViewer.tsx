@@ -330,11 +330,9 @@ function SectionHeadEl({ children, act }: { children: React.ReactNode; act?: str
 
 function ResultEl({ value }: { value: string }) {
   const upper = value.toUpperCase();
-  const color = (upper === 'PASS' || upper === 'CURRENT' || upper === 'CLOSED')
-    ? C.pass
-    : upper === 'FAIL'
-      ? C.fail
-      : C.warn;
+  const GREEN = ['PASS', 'CURRENT', 'CLOSED', 'ACTIVE', 'ON TIME'];
+  const RED = ['FAIL', 'OVERDUE', 'MISSED', 'EXPIRED'];
+  const color = GREEN.includes(upper) ? C.pass : RED.includes(upper) ? C.fail : C.warn;
   return <span style={{ fontFamily: FONT.mono, fontSize: 11, fontWeight: 600, color }}>{upper}</span>;
 }
 

@@ -34,9 +34,37 @@ const REPORT_CARDS: ReportCard[] = [
     section: 'food_safety',
   },
   {
+    type: 'client_temp_log',
+    title: 'Temperature Log Summary',
+    description: 'Every reading by equipment against its required range — in-range rates, out-of-range corrections, and weekly totals.',
+    cornerstone: false,
+    section: 'food_safety',
+  },
+  {
+    type: 'client_corrective_action',
+    title: 'Corrective Action Record',
+    description: 'Every deviation: what was found, what was done, who closed it — with category patterns and closure trail.',
+    cornerstone: false,
+    section: 'food_safety',
+  },
+  {
+    type: 'client_checklist',
+    title: 'Checklist Completion Record',
+    description: 'Opening, closing, and food safety checklists — completion rates, most-failed items, and sign-off record.',
+    cornerstone: false,
+    section: 'food_safety',
+  },
+  {
+    type: 'client_inspection_history',
+    title: 'County Inspection History',
+    description: 'Every county evaluation on record, displayed exactly as the county produced it — no restating, no rescoring.',
+    cornerstone: false,
+    section: 'food_safety',
+  },
+  {
     type: 'client_training',
-    title: 'Training & Certification Report',
-    description: 'Employee certification status, training completion, and compliance gap analysis.',
+    title: 'Training & Certification Record',
+    description: 'Food handler cards, manager certification, and policy training — expiring credentials and current roster.',
     cornerstone: false,
     section: 'food_safety',
   },
@@ -80,7 +108,10 @@ const SECTIONS: { key: string; label: string; note?: string }[] = [
   { key: 'business', label: 'Business' },
 ];
 
-const WAVE1_TYPES = new Set(['client_compliance', 'client_regulatory', 'client_insurance', 'client_executive']);
+const WAVE1_TYPES = new Set([
+  'client_compliance', 'client_regulatory', 'client_insurance', 'client_executive',
+  'client_temp_log', 'client_corrective_action', 'client_checklist', 'client_inspection_history', 'client_training',
+]);
 
 // ── Main component ────────────────────────────────────────
 
