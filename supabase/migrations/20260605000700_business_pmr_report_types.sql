@@ -14,6 +14,7 @@ ALTER TABLE internal_reports
     'client_exhaust_history','client_suppression','client_fire_schedule','client_fire_documentation',
     'client_shift_intelligence','client_location_mirror','client_document_vault',
     'client_renewal_readiness','client_owners_quarterly',
+    'client_business_impact',
     'internal_prospect_marketing',
     'partner_portfolio','partner_risk','partner_performance',
     'investor_mrr','investor_growth','investor_product'
