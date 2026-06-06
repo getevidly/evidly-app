@@ -118,6 +118,27 @@ async function fetchOrgContext(svc: any, orgId: string) {
   return { orgName, orgSubtitle };
 }
 
+// ── Fire AHJ helper ──────────────────────────────────────
+
+async function fetchFireAhj(svc: any, orgId: string): Promise<string> {
+  const { data: locs } = await svc
+    .from('locations')
+    .select('id')
+    .eq('organization_id', orgId);
+  const locIds = (locs || []).map((l: any) => l.id);
+  if (locIds.length === 0) return 'Pending AHJ verification';
+
+  const { data: ljRows } = await svc
+    .from('location_jurisdictions')
+    .select('jurisdictions(fire_ahj_name)')
+    .in('location_id', locIds)
+    .in('jurisdiction_layer', ['fire_safety', 'facility_safety'])
+    .limit(1);
+
+  const ahj = (ljRows?.[0]?.jurisdictions as any)?.fire_ahj_name;
+  return ahj || 'Pending AHJ verification';
+}
+
 // ── GET: public share_token lookup ────────────────────────
 
 async function handleGet(req: Request): Promise<Response> {
@@ -239,6 +260,10 @@ async function handlePost(req: Request): Promise<Response> {
     client_checklist: buildChecklistReport,
     client_inspection_history: buildInspectionHistoryReport,
     client_training: buildTrainingReport,
+    client_exhaust_history: buildExhaustHistoryReport,
+    client_suppression: buildSuppressionReport,
+    client_fire_schedule: buildFireScheduleReport,
+    client_fire_documentation: buildFireDocumentationReport,
   };
 
   const builder = BUILDERS[payload.report_type];
@@ -342,6 +367,10 @@ function titleFor(reportType: string): string {
     client_checklist: 'Checklist Completion Record',
     client_inspection_history: 'County Inspection History',
     client_training: 'Training & Certification Record',
+    client_exhaust_history: 'Exhaust System Service History',
+    client_suppression: 'Suppression & Extinguisher Record',
+    client_fire_schedule: 'Fire Safeguard Schedule',
+    client_fire_documentation: 'Fire Documentation Status',
   };
   return MAP[reportType] || 'Report';
 }
@@ -1374,6 +1403,535 @@ async function buildTrainingReport(svc: any, orgId: string): Promise<ContentJson
     org_subtitle: orgSubtitle,
     pillar_label: 'Food Safety · EHD',
     report_subtitle: 'Food handler cards, manager certification, and policy training',
+  };
+}
+
+// ── 10. Exhaust System Service History (client_exhaust_history) ─
+
+async function buildExhaustHistoryReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const fireAhj = await fetchFireAhj(svc, orgId);
+  const now = new Date();
+  const thirtyDaysOut = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  // Service records for hood cleaning
+  const { data: records } = await svc
+    .from('vendor_service_records')
+    .select('id, safeguard_type, service_type_code, service_date, next_due_date, vendor_name, cert_number, certificate_url, notes, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .eq('safeguard_type', 'hood_cleaning')
+    .order('service_date', { ascending: false });
+  const recList = records || [];
+
+  // Schedules for exhaust-related service types
+  const exhaustCodes = ['KEC', 'FPM', 'GFX', 'RGC'];
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, frequency, last_service_date, next_due_date, vendor_name, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .in('service_type_code', exhaustCodes);
+  const schedList = schedules || [];
+
+  const codeLabel = (code: string) =>
+    code === 'KEC' ? 'Kitchen exhaust cleaning'
+    : code === 'FPM' ? 'Fan performance'
+    : code === 'GFX' ? 'Grease filter exchange'
+    : code === 'RGC' ? 'Rooftop grease containment' : code;
+
+  // Predict: Interval standing
+  const standingRows: Cell[][] = schedList.map((s: any) => {
+    const locName = (s as any).locations?.name || '—';
+    const isOverdue = s.next_due_date && new Date(s.next_due_date) < now;
+    const isDueSoon = s.next_due_date && !isOverdue && new Date(s.next_due_date) < thirtyDaysOut;
+    const standing = isOverdue ? 'OVERDUE' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+    const result: 'pass' | 'fail' | 'warn' = isOverdue ? 'fail' : isDueSoon ? 'warn' : 'pass';
+    return [
+      `${codeLabel(s.service_type_code)} — ${locName}`,
+      (s.frequency || 'quarterly').replace(/^\w/, (c: string) => c.toUpperCase()),
+      fmtDate(s.last_service_date),
+      fmtDate(s.next_due_date),
+      resultCell(standing, result),
+    ];
+  });
+
+  // Fallback: build from latest records per location if no schedules
+  if (standingRows.length === 0 && recList.length > 0) {
+    const byLoc: Record<string, any> = {};
+    for (const r of recList) {
+      const key = r.location_id || 'default';
+      if (!byLoc[key]) byLoc[key] = r;
+    }
+    for (const rec of Object.values(byLoc)) {
+      const locName = (rec as any).locations?.name || '—';
+      const isOverdue = rec.next_due_date && new Date(rec.next_due_date) < now;
+      const isDueSoon = rec.next_due_date && !isOverdue && new Date(rec.next_due_date) < thirtyDaysOut;
+      const standing = isOverdue ? 'OVERDUE' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+      const result: 'pass' | 'fail' | 'warn' = isOverdue ? 'fail' : isDueSoon ? 'warn' : 'pass';
+      standingRows.push([
+        `Exhaust cleaning — ${locName}`,
+        '—',
+        fmtDate(rec.service_date),
+        fmtDate(rec.next_due_date),
+        resultCell(standing, result),
+      ]);
+    }
+  }
+
+  // Reduce: Conditions noted by the service company
+  const withNotes = recList.filter((r: any) => r.notes && r.notes.trim());
+  const conditionRows: Cell[][] = withNotes.slice(0, 6).map((r: any) => [
+    fmtDate(r.service_date),
+    r.notes.trim(),
+    '—',
+  ]);
+
+  // Prove: Certification trail
+  const certRows: Cell[][] = recList.slice(0, 10).map((r: any) => [
+    fmtDate(r.service_date),
+    r.vendor_name || '—',
+    r.cert_number || (r.certificate_url ? 'On file' : '—'),
+    r.certificate_url ? 'Attached' : '—',
+  ]);
+
+  const overdueCount = standingRows.filter(r => typeof r[4] === 'object' && (r[4] as any).result === 'fail').length;
+  const currentCount = standingRows.filter(r => typeof r[4] === 'object' && (r[4] as any).result === 'pass').length;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Interval Standing',
+      table: standingRows.length > 0
+        ? { cols: ['System', 'Required Interval', 'Last Cleaned', 'Next Due', 'Standing'], rows: standingRows }
+        : undefined,
+      body: standingRows.length === 0 ? 'No exhaust cleaning schedules or service records on file yet.' : undefined,
+      citations: ['NFPA 96 (2021) Table 12.4, §12.4.2 — interval by cooking volume, as enforced by the fire authority'],
+    },
+    {
+      act: 'reduce',
+      heading: 'Conditions Noted by the Service Company',
+      table: conditionRows.length > 0
+        ? { cols: ['Date', 'Noted', 'Disposition'], rows: conditionRows }
+        : undefined,
+      body: conditionRows.length === 0 ? 'No service conditions noted this period.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Certification Trail',
+      table: certRows.length > 0
+        ? { cols: ['Service', 'Performed By', 'Certificate', 'Sticker'], rows: certRows }
+        : undefined,
+      body: certRows.length === 0 ? 'No exhaust cleaning service records on file.' : undefined,
+      cross_refs: certRows.length > 0
+        ? ['Certificates attached in the Insurance Package · interval drives the PSE Compliance Summary']
+        : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: recList.length > 0
+      ? `${recList.length} exhaust cleaning service${recList.length !== 1 ? 's' : ''} on file for ${orgName}. ${currentCount > 0 ? `${currentCount} system${currentCount !== 1 ? 's are' : ' is'} current against ${currentCount !== 1 ? 'their' : 'its'} required interval` : 'No systems confirmed current'}${overdueCount > 0 ? `, and ${overdueCount} ${overdueCount !== 1 ? 'are' : 'is'} overdue` : ''}. ${withNotes.length > 0 ? `The service company noted conditions on ${withNotes.length} visit${withNotes.length !== 1 ? 's' : ''} — each is documented below.` : 'No conditions were noted by the service company on recent visits.'}`
+      : `Exhaust system service history for ${orgName}. No hood cleaning records on file yet — this report will populate as service data is added.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: `Fire Safety · ${fireAhj}`,
+    report_subtitle: 'Hood, duct, and fan cleanings against the required interval',
+  };
+}
+
+// ── 11. Suppression & Extinguisher Record (client_suppression) ─
+
+async function buildSuppressionReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const fireAhj = await fetchFireAhj(svc, orgId);
+  const now = new Date();
+  const thirtyDaysOut = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  // Service records for fire suppression (covers suppression systems + extinguishers)
+  const { data: records } = await svc
+    .from('vendor_service_records')
+    .select('id, safeguard_type, service_type_code, service_date, next_due_date, vendor_name, cert_number, certificate_url, notes, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .eq('safeguard_type', 'fire_suppression')
+    .order('service_date', { ascending: false });
+  const recList = records || [];
+
+  // Schedules for suppression service type
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, frequency, last_service_date, next_due_date, vendor_name, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .eq('service_type_code', 'FS');
+  const schedList = schedules || [];
+
+  // Predict: Service horizon (from schedules, then fallback to records)
+  const horizonRows: Cell[][] = schedList.map((s: any) => {
+    const locName = (s as any).locations?.name || '—';
+    const isOverdue = s.next_due_date && new Date(s.next_due_date) < now;
+    const isDueSoon = s.next_due_date && !isOverdue && new Date(s.next_due_date) < thirtyDaysOut;
+    const standing = isOverdue ? 'OVERDUE' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+    const result: 'pass' | 'fail' | 'warn' = isOverdue ? 'fail' : isDueSoon ? 'warn' : 'pass';
+    return [
+      `Suppression — ${locName}`,
+      (s.frequency || 'semiannual').replace(/^\w/, (c: string) => c.toUpperCase()),
+      fmtDate(s.next_due_date),
+      resultCell(standing, result),
+    ];
+  });
+
+  // Fallback from latest records per location
+  if (horizonRows.length === 0 && recList.length > 0) {
+    const byLoc: Record<string, any> = {};
+    for (const r of recList) {
+      const key = r.location_id || 'default';
+      if (!byLoc[key]) byLoc[key] = r;
+    }
+    for (const rec of Object.values(byLoc)) {
+      const locName = (rec as any).locations?.name || '—';
+      const isOverdue = rec.next_due_date && new Date(rec.next_due_date) < now;
+      const isDueSoon = rec.next_due_date && !isOverdue && new Date(rec.next_due_date) < thirtyDaysOut;
+      const standing = isOverdue ? 'OVERDUE' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+      const result: 'pass' | 'fail' | 'warn' = isOverdue ? 'fail' : isDueSoon ? 'warn' : 'pass';
+      horizonRows.push([
+        `Suppression — ${locName}`,
+        '—',
+        fmtDate(rec.next_due_date),
+        resultCell(standing, result),
+      ]);
+    }
+  }
+
+  // Reduce: Findings at last service
+  const withNotes = recList.filter((r: any) => r.notes && r.notes.trim());
+  const findingRows: Cell[][] = withNotes.slice(0, 6).map((r: any) => [
+    fmtDate(r.service_date),
+    r.notes.trim(),
+    '—',
+  ]);
+
+  // Prove: Tag & certification record
+  const tagRows: Cell[][] = recList.slice(0, 10).map((r: any) => [
+    `Suppression service — ${(r as any).locations?.name || '—'}`,
+    fmtDate(r.service_date),
+    r.vendor_name || '—',
+    r.cert_number || (r.certificate_url ? 'Current' : '—'),
+  ]);
+
+  const overdueCount = horizonRows.filter(r => typeof r[3] === 'object' && (r[3] as any).result === 'fail').length;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Service Horizon',
+      table: horizonRows.length > 0
+        ? { cols: ['Item', 'Interval', 'Next Due', 'Standing'], rows: horizonRows }
+        : undefined,
+      body: horizonRows.length === 0 ? 'No suppression or extinguisher records on file yet.' : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Findings at Last Service',
+      table: findingRows.length > 0
+        ? { cols: ['Date', 'Finding', 'Resolution'], rows: findingRows }
+        : undefined,
+      body: findingRows.length === 0 ? 'No findings noted this period.' : undefined,
+      citations: ['NFPA 17A §7.3 (semiannual) · NFPA 10 §7.2–7.3 · CFC §904.13, §906'],
+    },
+    {
+      act: 'prove',
+      heading: 'Tag & Certification Record',
+      table: tagRows.length > 0
+        ? { cols: ['Item', 'Serviced', 'By', 'Tag'], rows: tagRows }
+        : undefined,
+      body: tagRows.length === 0 ? 'No suppression service records on file.' : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: recList.length > 0
+      ? `${recList.length} suppression service record${recList.length !== 1 ? 's' : ''} on file for ${orgName}. ${overdueCount > 0 ? `${overdueCount} item${overdueCount !== 1 ? 's are' : ' is'} past due — completing service on schedule is what keeps a protective safeguards clause from having anything to point at.` : 'All items are within their required service interval.'} ${withNotes.length > 0 ? `The service company noted findings on ${withNotes.length} visit${withNotes.length !== 1 ? 's' : ''}.` : ''}`
+      : `Suppression and extinguisher record for ${orgName}. No service records on file yet — this report will populate as service data is added.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: `Fire Safety · ${fireAhj}`,
+    report_subtitle: 'Semiannual suppression service and extinguisher maintenance, by location',
+  };
+}
+
+// ── 12. Fire Safeguard Schedule (client_fire_schedule) ─────
+
+async function buildFireScheduleReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const fireAhj = await fetchFireAhj(svc, orgId);
+  const now = new Date();
+  const thirtyDaysOut = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  // All fire schedules with service type names
+  const { data: schedules } = await svc
+    .from('location_service_schedules')
+    .select('service_type_code, frequency, next_due_date, vendor_name, location_id, locations(name), service_type_definitions(name, short_name)')
+    .eq('organization_id', orgId)
+    .eq('is_active', true);
+  const schedList = schedules || [];
+
+  // Predict: Twelve-month service calendar
+  const calendarRows: Cell[][] = schedList.map((s: any) => {
+    const svcName = (s as any).service_type_definitions?.short_name
+      || (s as any).service_type_definitions?.name
+      || s.service_type_code;
+    const locName = (s as any).locations?.name;
+    const label = locName ? `${svcName} — ${locName}` : svcName;
+    return [
+      label,
+      (s.frequency || 'quarterly').replace(/^\w/, (c: string) => c.toUpperCase()),
+      fmtDate(s.next_due_date),
+      s.vendor_name || '—',
+    ];
+  });
+
+  // Reduce: Schedule risks (due within 30 days)
+  const atRisk = schedList.filter((s: any) => {
+    if (!s.next_due_date) return false;
+    const due = new Date(s.next_due_date);
+    return due < thirtyDaysOut && due >= now;
+  });
+  const riskRows: Cell[][] = atRisk.map((s: any) => {
+    const svcName = (s as any).service_type_definitions?.short_name || s.service_type_code;
+    const locName = (s as any).locations?.name || '';
+    return [
+      `${svcName}${locName ? ` — ${locName}` : ''} due ${fmtDate(s.next_due_date)}`,
+      'Lapse breaks the safeguard record',
+      s.vendor_name ? `${s.vendor_name} scheduled` : 'Vendor not assigned',
+    ];
+  });
+
+  // Also flag overdue items as risks
+  const overdue = schedList.filter((s: any) => s.next_due_date && new Date(s.next_due_date) < now);
+  for (const s of overdue) {
+    const svcName = (s as any).service_type_definitions?.short_name || s.service_type_code;
+    const locName = (s as any).locations?.name || '';
+    riskRows.push([
+      `${svcName}${locName ? ` — ${locName}` : ''} overdue since ${fmtDate(s.next_due_date)}`,
+      'Past-due service creates a gap in the safeguard record',
+      s.vendor_name ? `Contact ${s.vendor_name}` : 'Vendor not assigned',
+    ]);
+  }
+
+  // Prove: On-time history from vendor_service_records (trailing 12 months)
+  const { data: svcRecords } = await svc
+    .from('vendor_service_records')
+    .select('safeguard_type, service_date, next_due_date')
+    .eq('organization_id', orgId)
+    .gte('service_date', oneYearAgo);
+  const svcList = svcRecords || [];
+
+  const safeguardLabels: Record<string, string> = {
+    hood_cleaning: 'Exhaust cleaning',
+    fire_suppression: 'Suppression',
+    fire_alarm: 'Fire alarm',
+    sprinklers: 'Sprinklers',
+  };
+
+  const byType: Record<string, { total: number; onTime: number }> = {};
+  for (const r of svcList) {
+    const label = safeguardLabels[r.safeguard_type] || r.safeguard_type;
+    if (!byType[label]) byType[label] = { total: 0, onTime: 0 };
+    byType[label].total++;
+    // On time = service happened before or on next_due_date (or no due date tracked)
+    if (!r.next_due_date || new Date(r.service_date) <= new Date(r.next_due_date)) {
+      byType[label].onTime++;
+    }
+  }
+  const historyRows: Cell[][] = Object.entries(byType).map(([label, data]) => [
+    label,
+    `${data.total}`,
+    `${data.onTime} / ${data.total}`,
+  ]);
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Twelve-Month Service Calendar',
+      table: calendarRows.length > 0
+        ? { cols: ['Safeguard', 'Interval', 'Next', 'Vendor'], rows: calendarRows }
+        : undefined,
+      body: calendarRows.length === 0 ? 'No fire safeguard schedules on file yet.' : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Schedule Risks',
+      table: riskRows.length > 0
+        ? { cols: ['Risk', 'Why It Matters', 'Mitigation'], rows: riskRows }
+        : undefined,
+      body: riskRows.length === 0 ? 'No schedule risks this period.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'On-Time History (trailing 12 months)',
+      table: historyRows.length > 0
+        ? { cols: ['Safeguard', 'Services', 'On Time'], rows: historyRows }
+        : undefined,
+      body: historyRows.length === 0 ? 'No service records in the trailing twelve months.' : undefined,
+      cross_refs: historyRows.length > 0 ? ['Feeds the PSE Compliance Summary standing table'] : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: schedList.length > 0
+      ? `${schedList.length} recurring fire safeguard${schedList.length !== 1 ? 's' : ''} scheduled for ${orgName}. ${overdue.length > 0 ? `${overdue.length} ${overdue.length !== 1 ? 'are' : 'is'} past due. ` : ''}${atRisk.length > 0 ? `${atRisk.length} come${atRisk.length !== 1 ? '' : 's'} due within thirty days. ` : ''}The schedule below is the same one the fire authority and the insurance professional read from, so a date moving here moves everywhere.`
+      : `Fire safeguard schedule for ${orgName}. No schedules on file yet — this report will populate as service schedules are configured.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: `Fire Safety · ${fireAhj}`,
+    report_subtitle: 'Every required fire service, its interval, and who performs it',
+  };
+}
+
+// ── 13. Fire Documentation Status (client_fire_documentation) ─
+
+async function buildFireDocumentationReport(svc: any, orgId: string): Promise<ContentJson> {
+  const { orgName, orgSubtitle } = await fetchOrgContext(svc, orgId);
+  const fireAhj = await fetchFireAhj(svc, orgId);
+  const now = new Date();
+  const ninetyDaysOut = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const safeguardLabels: Record<string, string> = {
+    hood_cleaning: 'Exhaust cleaning certificate',
+    fire_suppression: 'Suppression certification',
+    fire_alarm: 'Fire alarm certificate',
+    sprinklers: 'Sprinkler certificate',
+  };
+
+  // Vendor service records with certificate/document evidence
+  const { data: svcRecords } = await svc
+    .from('vendor_service_records')
+    .select('id, safeguard_type, service_date, next_due_date, vendor_name, cert_number, certificate_url, document_url, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .order('service_date', { ascending: false });
+  const svcList = svcRecords || [];
+
+  // Build document inventory from service records (primary source of fire docs)
+  const docItems: { label: string; location: string; issued: string; nextDue: string | null; hasCert: boolean }[] = [];
+  for (const r of svcList) {
+    if (!r.certificate_url && !r.document_url && !r.cert_number) continue;
+    docItems.push({
+      label: safeguardLabels[r.safeguard_type] || `${r.safeguard_type} document`,
+      location: (r as any).locations?.name || '—',
+      issued: r.service_date,
+      nextDue: r.next_due_date,
+      hasCert: !!(r.certificate_url || r.document_url),
+    });
+  }
+
+  // Also query documents table for fire-related categories
+  const { data: docs } = await svc
+    .from('documents')
+    .select('id, title, category, expiration_date, location_id, locations(name)')
+    .eq('organization_id', orgId)
+    .or('category.ilike.%fire%,category.ilike.%suppression%,category.ilike.%exhaust%,category.ilike.%sprinkler%,category.ilike.%alarm%,category.ilike.%nfpa%');
+  for (const d of docs || []) {
+    docItems.push({
+      label: d.title || d.category || 'Fire document',
+      location: (d as any).locations?.name || '—',
+      issued: '—',
+      nextDue: d.expiration_date,
+      hasCert: true,
+    });
+  }
+
+  // Predict: Expiring within 90 days
+  const expiringSoon = docItems.filter(d => {
+    if (!d.nextDue) return false;
+    const due = new Date(d.nextDue);
+    return due >= now && due <= ninetyDaysOut;
+  });
+  const expiringRows: Cell[][] = expiringSoon.slice(0, 8).map(d => [
+    d.label,
+    fmtDate(d.nextDue),
+    '—',
+  ]);
+
+  // Also show expired
+  const expired = docItems.filter(d => d.nextDue && new Date(d.nextDue) < now);
+  for (const d of expired.slice(0, 4)) {
+    expiringRows.push([
+      d.label,
+      fmtDate(d.nextDue),
+      resultCell('EXPIRED', 'fail'),
+    ]);
+  }
+
+  // Reduce: Gaps closed this period (service records added in last 30 days with certs)
+  const recentWithCerts = svcList.filter((r: any) =>
+    r.service_date >= thirtyDaysAgo && (r.certificate_url || r.document_url)
+  );
+  const gapRows: Cell[][] = recentWithCerts.slice(0, 6).map((r: any) => [
+    `${safeguardLabels[r.safeguard_type] || r.safeguard_type} — ${(r as any).locations?.name || '—'}`,
+    `Certificate added ${fmtDate(r.service_date)}`,
+  ]);
+
+  // Prove: Document inventory with CURRENT/DUE SOON/EXPIRED status
+  const inventoryRows: Cell[][] = docItems.slice(0, 12).map(d => {
+    const isExpired = d.nextDue && new Date(d.nextDue) < now;
+    const isDueSoon = d.nextDue && !isExpired && new Date(d.nextDue) <= ninetyDaysOut;
+    const standing = isExpired ? 'EXPIRED' : isDueSoon ? 'DUE SOON' : 'CURRENT';
+    const result: 'pass' | 'fail' | 'warn' = isExpired ? 'fail' : isDueSoon ? 'warn' : 'pass';
+    return [
+      d.label,
+      d.location,
+      fmtDate(d.issued),
+      resultCell(standing, result),
+    ];
+  });
+
+  const currentCount = docItems.filter(d => !d.nextDue || new Date(d.nextDue) >= now).length;
+
+  const sections: ReportSection[] = [
+    {
+      act: 'predict',
+      heading: 'Expiring Within 90 Days',
+      table: expiringRows.length > 0
+        ? { cols: ['Document', 'Expires', 'Renewal'], rows: expiringRows }
+        : undefined,
+      body: expiringRows.length === 0
+        ? (docItems.length > 0 ? 'No fire documents expiring within ninety days.' : 'No fire safety documents on file yet.')
+        : undefined,
+    },
+    {
+      act: 'reduce',
+      heading: 'Gaps Closed This Period',
+      table: gapRows.length > 0
+        ? { cols: ['Gap', 'Closed'], rows: gapRows }
+        : undefined,
+      body: gapRows.length === 0 ? 'No new fire documents added this period.' : undefined,
+    },
+    {
+      act: 'prove',
+      heading: 'Document Inventory',
+      table: inventoryRows.length > 0
+        ? { cols: ['Document', 'Location', 'Issued', 'Status'], rows: inventoryRows }
+        : undefined,
+      body: inventoryRows.length === 0 ? 'No fire safety documents on file.' : undefined,
+    },
+  ];
+
+  return {
+    executive_summary: docItems.length > 0
+      ? `${docItems.length} fire safety document${docItems.length !== 1 ? 's' : ''} on file for ${orgName}, and ${currentCount} ${currentCount !== 1 ? 'are' : 'is'} current. ${expiringSoon.length > 0 ? `${expiringSoon.length} expire${expiringSoon.length !== 1 ? '' : 's'} within ninety days` : 'Nothing expires within ninety days'}${expired.length > 0 ? `, and ${expired.length} ${expired.length !== 1 ? 'have' : 'has'} already expired` : ''}. When the fire inspector asks, everything on this list opens in two taps.`
+      : `Fire documentation status for ${orgName}. No fire safety documents on file yet — this report will populate as certificates and service reports are added.`,
+    sections,
+    generated_at: new Date().toISOString(),
+    org_name: orgName,
+    org_subtitle: orgSubtitle,
+    pillar_label: `Fire Safety · ${fireAhj}`,
+    report_subtitle: 'Certificates, tags, and reports the fire authority can ask for',
   };
 }
 

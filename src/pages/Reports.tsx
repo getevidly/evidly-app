@@ -77,6 +77,34 @@ const REPORT_CARDS: ReportCard[] = [
     section: 'fire_safety',
   },
   {
+    type: 'client_exhaust_history',
+    title: 'Exhaust System Service History',
+    description: 'Hood, duct, and fan cleanings against the required interval — certification trail and conditions noted.',
+    cornerstone: false,
+    section: 'fire_safety',
+  },
+  {
+    type: 'client_suppression',
+    title: 'Suppression & Extinguisher Record',
+    description: 'Semiannual suppression service and extinguisher maintenance — service horizon, findings, and tag record.',
+    cornerstone: false,
+    section: 'fire_safety',
+  },
+  {
+    type: 'client_fire_schedule',
+    title: 'Fire Safeguard Schedule',
+    description: 'Every required fire service, its interval, and who performs it — twelve-month calendar and on-time history.',
+    cornerstone: false,
+    section: 'fire_safety',
+  },
+  {
+    type: 'client_fire_documentation',
+    title: 'Fire Documentation Status',
+    description: 'Certificates, tags, and reports the fire authority can ask for — expiration tracking and document inventory.',
+    cornerstone: false,
+    section: 'fire_safety',
+  },
+  {
     type: 'client_vendor',
     title: 'Vendor Performance Report',
     description: 'Vendor service history, response cadence, and service record completeness.',
@@ -103,7 +131,7 @@ const REPORT_CARDS: ReportCard[] = [
 
 const SECTIONS: { key: string; label: string; note?: string }[] = [
   { key: 'food_safety', label: 'Food Safety', note: 'County health department inspection readiness and food safety documentation.' },
-  { key: 'fire_safety', label: 'Fire Safety', note: 'Fire marshal evaluation readiness and protective safeguard documentation.' },
+  { key: 'fire_safety', label: 'Fire Safety', note: 'Evidence as your fire authority requires it. Never combined with food safety.' },
   { key: 'operations', label: 'Operations' },
   { key: 'business', label: 'Business' },
 ];
@@ -111,6 +139,7 @@ const SECTIONS: { key: string; label: string; note?: string }[] = [
 const WAVE1_TYPES = new Set([
   'client_compliance', 'client_regulatory', 'client_insurance', 'client_executive',
   'client_temp_log', 'client_corrective_action', 'client_checklist', 'client_inspection_history', 'client_training',
+  'client_exhaust_history', 'client_suppression', 'client_fire_schedule', 'client_fire_documentation',
 ]);
 
 // ── Main component ────────────────────────────────────────
