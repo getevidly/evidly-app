@@ -2910,10 +2910,9 @@ const FOOD_SIGNAL_TYPES = new Set([
 ]);
 
 /*
- * Pillar classification — three-tier priority:
+ * Pillar classification — two-tier priority:
  *   1. cic_pillar column (admin-set, normalized) — maps directly
- *   2. Populated client_impact_* text columns — each non-null column adds its pillar
- *   3. signal_type fallback — crude mapping from regulatory domain to likely pillar(s)
+ *   2. signal_type fallback — mapping from regulatory domain to likely pillar(s)
  * Returns empty array → signal omitted from report (no pillar fit).
  */
 const TYPE_PILLAR_FALLBACK: Record<string, string[]> = {
@@ -2943,13 +2942,6 @@ function classifySignalPillars(sig: any): string[] {
     const p = sig.cic_pillar.toLowerCase().trim();
     if ((CIC_PILLARS as readonly string[]).includes(p)) return [p];
   }
-  const pillars: string[] = [];
-  if (sig.client_impact_revenue) pillars.push('revenue');
-  if (sig.client_impact_cost) pillars.push('cost');
-  if (sig.client_impact_operational) pillars.push('operations');
-  if (sig.client_impact_workforce) pillars.push('workforce');
-  if (sig.client_impact_liability) pillars.push('liability');
-  if (pillars.length > 0) return pillars;
   return TYPE_PILLAR_FALLBACK[sig.signal_type] || [];
 }
 
@@ -3015,14 +3007,7 @@ async function buildBusinessImpactReport(svc: any, orgId: string): Promise<Conte
     return exp > now && exp < new Date(now.getTime() + 60 * 86400000);
   }).length;
 
-  // client_impact_* column → pillar
-  const IMPACT_FIELDS: Record<string, string> = {
-    revenue: 'client_impact_revenue', cost: 'client_impact_cost',
-    operations: 'client_impact_operational', workforce: 'client_impact_workforce',
-    liability: 'client_impact_liability',
-  };
-
-  // Auto-generate correlation when admin hasn't written client_impact_* text
+  // Auto-generate correlation text from org evidence
   function autoImpact(pillar: string): string {
     switch (pillar) {
       case 'revenue':
@@ -3063,7 +3048,7 @@ async function buildBusinessImpactReport(svc: any, orgId: string): Promise<Conte
     const rows: Cell[][] = sigs.map((sig: any) => [
       sig.title + signalRegTag(sig),
       signalSource(sig),
-      sig[IMPACT_FIELDS[pillar]] || autoImpact(pillar),
+      autoImpact(pillar),
     ]);
 
     const sec: ReportSection = { heading: CIC_PILLAR_LABELS[pillar], body: countText };
