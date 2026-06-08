@@ -6,6 +6,7 @@
  * by useOrgAge.
  */
 
+import { useNavigate } from 'react-router-dom';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useTodayList } from '../../../hooks/useTodayList';
 
@@ -95,6 +96,7 @@ const checkIcon: React.CSSProperties = {
 /* ── Component ──────────────────────────────────────────────────── */
 
 export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
+  const navigate = useNavigate();
   const { isDay1Phase } = useOrgAge();
   const { totalToday, doneToday } = useTodayList();
   const resolved = variant ?? (isDay1Phase ? 'day1' : 'day90');
@@ -135,7 +137,7 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
                 <span style={{ fontSize: 16 }}>📋</span>
                 <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>
-                  Today's tasks are on track.
+                  Today's tasks are complete.
                 </p>
               </div>
               <p style={{ margin: 0, color: 'var(--muted, #6B6960)' }}>
@@ -143,8 +145,7 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
                   ? `${laterToday} control${laterToday === 1 ? '' : 's'} scheduled for later today. Nothing requires your attention.`
                   : 'All controls for today are complete. Nothing requires your attention.'}
               </p>
-              {/* TODO: wire to /calendar when schedule view lands */}
-              <button type="button" style={ctaStyle}>
+              <button type="button" style={ctaStyle} onClick={() => navigate('/checklists')}>
                 View schedule
               </button>
             </>
