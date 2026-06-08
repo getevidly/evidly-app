@@ -74,10 +74,7 @@ export function SetupFoodSafetyEntry() {
             location_food_safety_profile (
               id, wizard_completed_at, updated_at
             ),
-            location_jurisdictions (
-              jurisdiction_layer,
-              jurisdictions ( agency_name, county )
-            )
+            jurisdictions ( agency_name, county )
           `)
           .eq('organization_id', profile.organization_id)
           .eq('status', 'active')
@@ -90,10 +87,8 @@ export function SetupFoodSafetyEntry() {
           const profileRow = Array.isArray(loc.location_food_safety_profile)
             ? loc.location_food_safety_profile[0]
             : loc.location_food_safety_profile;
-          const jurisdictions = (loc.location_jurisdictions || [])
-            .filter((j: any) => j.jurisdiction_layer === 'food_safety')
-            .map((j: any) => j.jurisdictions?.county || j.jurisdictions?.agency_name)
-            .filter(Boolean);
+          const j = (loc as any).jurisdictions;
+          const jurisdictions = j ? [j.county || j.agency_name].filter(Boolean) : [];
           return {
             id: loc.id,
             name: loc.name,

@@ -73,27 +73,21 @@ export function JurisdictionIntelligence() {
     if (!profile?.organization_id) return;
 
     const load = async () => {
-      // 1. Get the user's org's locations → counties
+      // 1. Get the user's org's locations → counties + jurisdiction IDs
       const { data: locations } = await supabase
         .from('locations')
-        .select('id, county, city')
+        .select('id, county, city, jurisdiction_id')
         .eq('organization_id', profile.organization_id);
 
-      const locationIds = (locations || []).map(l => l.id);
       const counties = [...new Set((locations || []).map(l => l.county).filter(Boolean))];
 
-      if (locationIds.length === 0) {
+      if (!locations || locations.length === 0) {
         setLoading(false);
         return;
       }
 
       // 2. Get jurisdiction configs linked to these locations
-      const { data: links } = await supabase
-        .from('location_jurisdictions')
-        .select('jurisdiction_id')
-        .in('location_id', locationIds);
-
-      const jurisdictionIds = [...new Set((links || []).map(l => l.jurisdiction_id))];
+      const jurisdictionIds = [...new Set((locations || []).map(l => l.jurisdiction_id).filter(Boolean))];
 
       // 3. Fetch jurisdiction metadata
       let jurisdictionData: JurisdictionInfo[] = [];
@@ -105,7 +99,7 @@ export function JurisdictionIntelligence() {
         jurisdictionData = data || [];
       }
 
-      // Fallback: if no location_jurisdictions links exist, try matching by county
+      // Fallback: if no jurisdiction_id set on locations, try matching by county
       if (jurisdictionData.length === 0 && counties.length > 0) {
         const { data } = await supabase
           .from('jurisdictions')

@@ -353,35 +353,29 @@ export async function loadData(
   {
     let locQ = supabase
       .from('locations')
-      .select('id')
+      .select('id, jurisdiction_id, jurisdictions(id, agency_name, fire_ahj_name)')
       .eq('organization_id', org_id);
     if (location_id) locQ = locQ.eq('id', location_id);
     const { data: orgLocs } = await locQ;
-    const orgLocIds = (orgLocs || []).map((l: { id: string }) => l.id);
 
-    if (orgLocIds.length > 0) {
-      const { data: ljRows } = await supabase
-        .from('location_jurisdictions')
-        .select('jurisdiction_layer, jurisdiction_id, jurisdictions(agency_name)')
-        .in('location_id', orgLocIds);
+    for (const loc of orgLocs || []) {
+      const j = (loc as any).jurisdictions;
+      if (!j) continue;
+      const agencyName = j.agency_name as string | undefined;
+      const fireAhj = j.fire_ahj_name as string | undefined;
+      const jId = (loc as any).jurisdiction_id as string | undefined;
 
-      for (const r of ljRows || []) {
-        const agencyName = (r.jurisdictions as Record<string, unknown>)?.agency_name as string | undefined;
-        if (r.jurisdiction_layer === 'food_safety') {
-          if (agencyName && !food_safety_agencies.includes(agencyName)) {
-            food_safety_agencies.push(agencyName);
-          }
-          if (!food_safety_jurisdiction_id && r.jurisdiction_id) {
-            food_safety_jurisdiction_id = r.jurisdiction_id as string;
-          }
-        } else if (r.jurisdiction_layer === 'fire_safety') {
-          if (agencyName && !fire_safety_agencies.includes(agencyName)) {
-            fire_safety_agencies.push(agencyName);
-          }
-          if (!fire_safety_jurisdiction_id && r.jurisdiction_id) {
-            fire_safety_jurisdiction_id = r.jurisdiction_id as string;
-          }
-        }
+      if (agencyName && !food_safety_agencies.includes(agencyName)) {
+        food_safety_agencies.push(agencyName);
+      }
+      if (!food_safety_jurisdiction_id && jId) {
+        food_safety_jurisdiction_id = jId;
+      }
+      if (fireAhj && !fire_safety_agencies.includes(fireAhj)) {
+        fire_safety_agencies.push(fireAhj);
+      }
+      if (!fire_safety_jurisdiction_id && jId) {
+        fire_safety_jurisdiction_id = jId;
       }
     }
   }

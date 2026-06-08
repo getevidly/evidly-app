@@ -73,12 +73,11 @@ serve(async (req: Request) => {
       );
     }
 
-    // ── STEP 1: Get jurisdictions for this location ──
-    const { data: locationJurisdictions, error: ljError } = await supabase
-      .from('location_jurisdictions')
+    // ── STEP 1: Get jurisdiction for this location ──
+    const { data: locationRow, error: locError } = await supabase
+      .from('locations')
       .select(`
-        jurisdiction_layer,
-        is_most_restrictive,
+        jurisdiction_id,
         jurisdictions (
           id, county, city, agency_name, scoring_type, grading_type,
           grading_config, pass_threshold, warning_threshold, critical_threshold,
@@ -86,14 +85,22 @@ serve(async (req: Request) => {
           ops_weight, docs_weight
         )
       `)
-      .eq('location_id', location_id);
+      .eq('id', location_id)
+      .single();
 
-    if (ljError || !locationJurisdictions || locationJurisdictions.length === 0) {
+    if (locError || !locationRow?.jurisdictions) {
       return new Response(
-        JSON.stringify({ error: 'No jurisdictions found for this location. Run address detection first.' }),
+        JSON.stringify({ error: 'No jurisdiction found for this location. Run address detection first.' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
+
+    // Single jurisdiction binds both pillars — evaluate each separately
+    const jurisdiction = locationRow.jurisdictions as any;
+    const locationJurisdictions = [
+      { jurisdiction_layer: 'food_safety', is_most_restrictive: true, jurisdictions: jurisdiction },
+      { jurisdiction_layer: 'fire_safety', is_most_restrictive: false, jurisdictions: jurisdiction },
+    ];
 
     // ── STEP 2: Get CalCode violation map ──
     const { data: calcodeMap } = await supabase

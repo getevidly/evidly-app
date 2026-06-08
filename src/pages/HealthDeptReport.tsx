@@ -176,11 +176,9 @@ export function HealthDeptReport() {
 
           // Fetch jurisdiction data for the location
           const { data: jData } = await supabase
-            .from('location_jurisdictions')
+            .from('locations')
             .select('jurisdictions(county, agency_name, grading_type, grading_config, pass_threshold)')
-            .eq('location_id', locationId)
-            .eq('jurisdiction_layer', 'food_safety')
-            .limit(1)
+            .eq('id', locationId)
             .single();
 
           if (jData?.jurisdictions) {

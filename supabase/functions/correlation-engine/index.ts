@@ -245,7 +245,7 @@ Deno.serve(async (req: Request) => {
     // ── 1. Fetch active locations with their counties ──
     let locQuery = supabase
       .from("locations")
-      .select("id, organization_id, state")
+      .select("id, organization_id, state, jurisdictions(county)")
       .eq("status", "active");
 
     if (targetLocationId) {
@@ -258,23 +258,14 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ message: "No active locations", assessments_created: 0 });
     }
 
-    // Fetch jurisdiction mappings for all locations
     const locationIds = locations.map((l: any) => l.id);
-    const { data: ljRows } = await supabase
-      .from("location_jurisdictions")
-      .select("location_id, jurisdictions(county)")
-      .in("location_id", locationIds);
 
-    // Build county map: location_id → county[]
+    // Build county map: location_id → county[] (from locations.jurisdiction_id FK)
     const countyMap = new Map<string, string[]>();
-    for (const lj of ljRows || []) {
-      const county = (lj as any).jurisdictions?.county;
+    for (const loc of locations) {
+      const county = (loc as any).jurisdictions?.county;
       if (county) {
-        const existing = countyMap.get(lj.location_id) || [];
-        if (!existing.includes(county.toLowerCase())) {
-          existing.push(county.toLowerCase());
-        }
-        countyMap.set(lj.location_id, existing);
+        countyMap.set(loc.id, [county.toLowerCase()]);
       }
     }
 

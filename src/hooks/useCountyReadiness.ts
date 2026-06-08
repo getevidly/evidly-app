@@ -1,7 +1,7 @@
 /**
  * useCountyReadiness — C13a
  *
- * Fetches county-level readiness from location_jurisdictions + jurisdictions,
+ * Fetches county-level readiness from locations.jurisdiction_id → jurisdictions,
  * computes gap counts from drift_catches, owner_decisions, and expiring documents.
  */
 
@@ -59,12 +59,11 @@ export function useCountyReadiness(): UseCountyReadinessResult {
 
     async function load() {
       try {
-        // Fetch jurisdiction → location mapping
+        // Fetch locations with their jurisdiction via FK
         const { data: jRows, error: jErr } = await supabase
-          .from('location_jurisdictions')
-          .select('location_id, jurisdiction_layer, is_most_restrictive, jurisdictions!inner(county, state, agency_name, data_source_tier), locations!inner(id, name, organization_id)')
-          .eq('locations.organization_id', orgId)
-          .eq('is_most_restrictive', true);
+          .from('locations')
+          .select('id, name, organization_id, jurisdictions!inner(county, state, agency_name, fire_ahj_name, data_source_tier)')
+          .eq('organization_id', orgId);
 
         if (cancelled) return;
         if (jErr) throw new Error(jErr.message);
@@ -119,7 +118,7 @@ export function useCountyReadiness(): UseCountyReadinessResult {
           docsByLoc.set(lid, (docsByLoc.get(lid) || 0) + 1);
         }
 
-        // Group by county
+        // Group by county — produce food_safety + fire_safety rows per location
         const grouped = new Map<string, {
           county: string; state: string; agency_name: string;
           data_source_tier: number | null; jurisdiction_layer: string;
@@ -127,22 +126,36 @@ export function useCountyReadiness(): UseCountyReadinessResult {
         }>();
 
         for (const row of jRows) {
-          const r = row as Record<string, unknown>;
-          const j = r.jurisdictions as { county: string; state: string; agency_name: string; data_source_tier: number | null };
-          const loc = r.locations as { id: string; name: string };
-          const layer = r.jurisdiction_layer as string;
-          const key = groupKey(j.county, j.state, layer);
+          const loc = row as any;
+          const j = loc.jurisdictions as { county: string; state: string; agency_name: string; fire_ahj_name: string | null; data_source_tier: number | null };
+          if (!j) continue;
 
-          if (!grouped.has(key)) {
-            grouped.set(key, {
+          // Food safety row
+          const foodKey = groupKey(j.county, j.state, 'food_safety');
+          if (!grouped.has(foodKey)) {
+            grouped.set(foodKey, {
               county: j.county, state: j.state, agency_name: j.agency_name,
-              data_source_tier: j.data_source_tier, jurisdiction_layer: layer,
+              data_source_tier: j.data_source_tier, jurisdiction_layer: 'food_safety',
               locations: [],
             });
           }
-          const g = grouped.get(key)!;
-          if (!g.locations.some(l => l.id === loc.id)) {
-            g.locations.push({ id: loc.id, name: loc.name });
+          const foodG = grouped.get(foodKey)!;
+          if (!foodG.locations.some(l => l.id === loc.id)) {
+            foodG.locations.push({ id: loc.id, name: loc.name });
+          }
+
+          // Fire safety row
+          const fireKey = groupKey(j.county, j.state, 'fire_safety');
+          if (!grouped.has(fireKey)) {
+            grouped.set(fireKey, {
+              county: j.county, state: j.state, agency_name: j.fire_ahj_name || 'Pending AHJ verification',
+              data_source_tier: j.data_source_tier, jurisdiction_layer: 'fire_safety',
+              locations: [],
+            });
+          }
+          const fireG = grouped.get(fireKey)!;
+          if (!fireG.locations.some(l => l.id === loc.id)) {
+            fireG.locations.push({ id: loc.id, name: loc.name });
           }
         }
 
