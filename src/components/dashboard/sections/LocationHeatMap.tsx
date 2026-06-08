@@ -20,7 +20,7 @@ import { useLocationHealthData, type LocationHealth, type HealthState } from '..
 const HEALTH_LABELS: Record<HealthState, string> = {
   coral: 'needs attention',
   teal: 'watching',
-  green: 'all steady',
+  green: 'all clear',
 };
 
 const HEALTH_COLORS: Record<HealthState, { tileBg: string; text: string }> = {
@@ -63,16 +63,16 @@ function HeatMapTile({ loc, isExpanded, onToggle, onSelect }: {
       <div className="hm-mini-row">
         <MiniNum value={loc.signalCount} label="signals" />
         <MiniNum value={loc.openTasks} label="open" />
-        <MiniNum value={loc.driftCount} label="drift" />
+        <MiniNum value={loc.driftCount} label="temp" />
       </div>
       {isExpanded && (
         <div className="hm-detail">
           <div className="hm-detail-row">
-            <span className="hm-detail-label">Predict</span>
-            <span className="hm-detail-val" style={loc.signalCount === 0 ? { color: '#2E7D5B' } : undefined}>{loc.signalCount === 0 ? 'all steady' : `${loc.signalCount} signal${loc.signalCount !== 1 ? 's' : ''}`}</span>
+            <span className="hm-detail-label">What's coming</span>
+            <span className="hm-detail-val" style={loc.signalCount === 0 ? { color: '#2E7D5B' } : undefined}>{loc.signalCount === 0 ? 'nothing new' : `${loc.signalCount} unread`}</span>
           </div>
           <div className="hm-detail-row">
-            <span className="hm-detail-label">Reduce</span>
+            <span className="hm-detail-label">What's handled</span>
             <span className="hm-detail-val">{loc.openTasks === 0 ? 'none open' : `${loc.openTasks} open`}</span>
           </div>
           <div className="hm-detail-row">

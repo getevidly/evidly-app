@@ -38,7 +38,7 @@ export function WeeklyDriftReport() {
     <div className="report-footer">
       <div className="report-footer-left">
         <i className="ti ti-mail" />
-        <span>Weekly drift report · Mondays 7 AM PT</span>
+        <span>Weekly catch report · Mondays 7 AM PT</span>
       </div>
       {isFailed && lastReport && (
         <span className="report-footer-right failed">

@@ -9,7 +9,7 @@
  */
 
 const DRIFT_TYPE_LABELS: Record<string, { verb: string; noun: string }> = {
-  temperature_out_of_range:    { verb: 'Temperature drift prevented loss',      noun: 'Temperature drift' },
+  temperature_out_of_range:    { verb: 'Temperature reading prevented loss',    noun: 'Temperature reading' },
   temperature_trend_drift:     { verb: 'Temperature trend caught early',        noun: 'Temperature trend' },
   missed_checklist:            { verb: 'Missed checklist caught',               noun: 'Missed checklist' },
   document_expiration:         { verb: 'Document expiration intercepted',       noun: 'Document expiration' },

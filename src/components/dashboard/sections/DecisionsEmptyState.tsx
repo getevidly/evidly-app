@@ -186,20 +186,20 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
       <div style={day1Card}>
         {/* Purple strap */}
         <div style={purpleStrap}>
-          EvidLY is learning your kitchen &middot; day {dayX} of 30
+          Getting to know your kitchen &middot; day {dayX} of 30
         </div>
 
         <div style={{ padding: '18px 20px', fontSize: 13, lineHeight: 1.6, color: 'var(--navy, #1E2D4D)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
             <span style={{ fontSize: 16 }}>💡</span>
             <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>
-              EvidLY is still getting to know your kitchen.
+              Still getting to know your kitchen.
             </p>
           </div>
           <p style={{ margin: 0, color: 'var(--muted, #6B6960)' }}>
             For the next {baselineDaysRemaining > 0 ? baselineDaysRemaining : 'few'} days,
-            EvidLY is building a baseline from your daily readings. Predictions
-            and decisions will start appearing here once that's complete.
+            EvidLY is building a baseline from your daily readings.
+            Decisions will start appearing here once that's complete.
           </p>
 
           {/* Progress bar */}
@@ -240,14 +240,14 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 6px' }}>
             <span style={{ fontSize: 16 }}>💡</span>
             <p style={{ margin: 0, fontWeight: 500, fontSize: 14, color: 'var(--cream, #FAF7F0)' }}>
-              EvidLY handled the routine — nothing needs your call.
+              Nothing needs your call right now.
             </p>
           </div>
 
           {hasEvents ? (
             <>
               <p style={{ margin: '0 0 12px', color: 'rgba(250,247,240,0.65)' }}>
-                In the past week, EvidLY resolved{' '}
+                In the past week,{' '}
                 <span style={{ color: 'var(--gold-light, #C4AE7A)', fontWeight: 500 }}>
                   {resolvedWeekCount}
                 </span>{' '}
@@ -271,14 +271,14 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
             </>
           ) : (
             <p style={{ margin: 0, color: 'rgba(250,247,240,0.65)' }}>
-              EvidLY hasn't needed to escalate anything in the past 90 days.
+              Nothing has needed escalation in the past 90 days.
             </p>
           )}
         </div>
 
         {/* Streak footer */}
         <div style={streakFooter}>
-          {daysSinceCreate} days watched without an inspector-facing issue
+          {daysSinceCreate} days without an escalation
         </div>
       </div>
     </>

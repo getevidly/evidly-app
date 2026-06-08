@@ -16,8 +16,8 @@ interface DriftsCaughtListProps {
 }
 
 const PILLAR_EMPTY: Record<string, string> = {
-  food_safety: 'No food safety drifts caught in 90 days. EvidLY is watching.',
-  fire_safety: 'No fire safety drifts caught in 90 days. EvidLY is watching.',
+  food_safety: 'Nothing caught in the last 90 days.',
+  fire_safety: 'Nothing caught in the last 90 days.',
 };
 
 export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProps) {
@@ -41,7 +41,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
     console.error('[DriftsCaughtList] failed to load:', error);
     return (
       <div className="catches" style={{ padding: '14px 16px', color: 'var(--muted)', fontSize: 12 }}>
-        Unable to load drift catches. Try refreshing.
+        Unable to load catches. Try refreshing.
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
   return (
     <div style={{ marginBottom: 24 }}>
       <div className="section-h" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
-        <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Drifts EvidLY caught</span>
+        <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Caught before it cost you</span>
         {chipText && (
           <span style={{ fontSize: 11, color: 'var(--muted)' }}>
             {chipText}
@@ -65,7 +65,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
         {count === 0 ? (
           <div className="catch" style={{ justifyContent: 'center', textAlign: 'center' }}>
             <p style={{ color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-              {pillarFilter ? PILLAR_EMPTY[pillarFilter] : 'No drifts caught in the last 90 days. EvidLY is watching.'}
+              {pillarFilter ? PILLAR_EMPTY[pillarFilter] : 'Nothing caught in the last 90 days.'}
             </p>
           </div>
         ) : (

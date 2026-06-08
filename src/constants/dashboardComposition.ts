@@ -10,7 +10,6 @@ export type SectionKey =
   | 'location_heat_map'
   | 'yesterday_caught_line'
   | 'inspection_package'
-  | 'compliance_briefing'
   | 'advisor_pair'
   | 'advisor_single_fire'
   | 'advisor_single_food'
@@ -47,7 +46,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
-    'compliance_briefing',
     'advisor_pair',
     'checklists_block',
     'drifts_caught',
@@ -63,7 +61,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
-    'compliance_briefing',
     'advisor_pair',
     'portfolio_snapshot',
     'checklists_block',
@@ -80,7 +77,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
     'location_heat_map',
     'yesterday_caught_line',
     'inspection_package',
-    'compliance_briefing',
     'advisor_pair',
     'checklists_block',
     'drifts_caught_audit',

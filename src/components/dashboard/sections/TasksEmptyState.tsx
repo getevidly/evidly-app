@@ -108,7 +108,7 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
         {/* Teal pulse strap */}
         <div style={strapStyle}>
           <span style={pulseDot} />
-          EvidLY is watching
+          {resolved === 'day1' ? 'EvidLY is looking' : 'EvidLY is watching'}
         </div>
 
         <div style={bodyStyle}>

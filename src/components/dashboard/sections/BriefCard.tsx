@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { ShieldCheck, Flame } from 'lucide-react';
 import type { AdvisorBriefing, OpenItem } from '../../../hooks/useAdvisorBriefings';
 import { CitationChip } from '../CitationChip';
 
@@ -12,6 +13,7 @@ interface BriefCardProps {
   showItems?: boolean;
   showConsult?: boolean;
   isStale?: boolean;
+  countyDepartment?: string;
 }
 
 const CSS_CLASS: Record<AdvisorType, string> = {
@@ -20,10 +22,10 @@ const CSS_CLASS: Record<AdvisorType, string> = {
   fire_safety: 'fire',
 };
 
-const EYEBROW: Record<AdvisorType, { icon: string; label: string; showDate: boolean }> = {
-  compliance_officer: { icon: 'ti-shield-half', label: 'Compliance read', showDate: true },
-  food_safety: { icon: 'ti-chef-hat', label: 'Food Safety Advisor', showDate: false },
-  fire_safety: { icon: 'ti-flame', label: 'Fire Safety Advisor', showDate: false },
+const EYEBROW: Record<AdvisorType, { icon: ReactNode; label: string; showDate: boolean }> = {
+  compliance_officer: { icon: <ShieldCheck size={13} />, label: 'Compliance read', showDate: true },
+  food_safety: { icon: <ShieldCheck size={13} />, label: 'Food Safety Advisor', showDate: false },
+  fire_safety: { icon: <Flame size={13} />, label: 'Fire Safety Advisor', showDate: false },
 };
 
 const CONSULT_LABEL: Record<AdvisorType, string> = {
@@ -166,7 +168,7 @@ function BriefCardSkeleton({ variant }: { variant: AdvisorType }) {
 
 /* ── Main component ────────────────────────────────────────────── */
 
-export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false }: BriefCardProps) {
+export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false, countyDepartment }: BriefCardProps) {
   if (!briefing) return <BriefCardSkeleton variant={variant} />;
 
   const cls = CSS_CLASS[variant];
@@ -179,7 +181,7 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
   return (
     <div className={`brief ${cls}`}>
       <p className="brief-eyebrow">
-        <i className={`ti ${eyebrow.icon}`} />
+        {eyebrow.icon}
         {eyebrow.label}{dateLabel}
         {credentials && <span className="brief-credentials">{credentials}</span>}
         {isStale && <span style={{fontSize: '10px', color: 'rgba(250,247,240,0.45)', marginLeft: '8px'}}>&middot; refreshing soon</span>}
@@ -191,6 +193,17 @@ export function BriefCard({ variant, briefing, timezone, showItems = true, showC
         {summary}
       </p>
       {bodyText && <p className="brief-body">{renderBodyWithCitations(bodyText)}</p>}
+      {briefing.open_items.length > 0 && (() => {
+        const top = briefing.open_items.find(i => i.urgency === 'urgent')
+          || briefing.open_items.find(i => i.urgency === 'pulling')
+          || briefing.open_items[0];
+        return top ? (
+          <p style={{ fontSize: 12, fontStyle: 'italic', color: 'rgba(250,247,240,0.6)', margin: '10px 0 0' }}>
+            What I'd do next: {top.title}
+            {countyDepartment && <span style={{ display: 'block', marginTop: 2 }}>In {countyDepartment}, that's the record an inspector opens with.</span>}
+          </p>
+        ) : null;
+      })()}
       {showItems && briefing.open_items.length > 0 && (
         <div className="brief-items">
           <p className="brief-items-h">{ITEMS_LABEL[variant]}</p>

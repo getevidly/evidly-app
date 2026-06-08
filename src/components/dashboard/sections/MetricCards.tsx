@@ -90,7 +90,7 @@ export function MetricCards() {
         )}
       </div>
       <p style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', margin: '4px 0 18px', textAlign: 'center' }}>
-        Per-county risk calculation and inspection readiness scoring launch Q3 2026.
+        Per-county risk and inspection readiness launch Q3 2026.
       </p>
     </div>
   );

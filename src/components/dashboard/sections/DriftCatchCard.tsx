@@ -40,7 +40,7 @@ function statusIcon(status: string): { cls: string; icon: string } {
 function statusTag(status: string): { cls: string; text: string } {
   if (status === 'reduced' || status === 'resolved') return { cls: 'reduced', text: 'PREDICTED & REDUCED' };
   if (status === 'proven') return { cls: 'proven', text: 'PREDICTED & PROVEN' };
-  return { cls: 'open', text: 'WATCHING' };
+  return { cls: 'open', text: 'OPEN' };
 }
 
 function fmtDate(iso: string): string {

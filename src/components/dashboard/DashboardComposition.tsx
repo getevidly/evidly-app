@@ -4,7 +4,6 @@ import { MetricCards } from './sections/MetricCards';
 import { PrpHeader } from './sections/PrpHeader';
 import { YesterdayCaughtLine } from './sections/YesterdayCaughtLine';
 import { InspectionPackage } from './sections/InspectionPackage';
-import { ComplianceBriefing } from './sections/ComplianceBriefing';
 import { AdvisorPair } from './sections/AdvisorPair';
 import { AdvisorSingleFire } from './sections/AdvisorSingleFire';
 import { AdvisorSingleFood } from './sections/AdvisorSingleFood';
@@ -33,7 +32,6 @@ const SECTION_COMPONENTS: Record<SectionKey, React.ComponentType> = {
   location_heat_map: LocationHeatMap,
   yesterday_caught_line: YesterdayCaughtLine,
   inspection_package: InspectionPackage,
-  compliance_briefing: ComplianceBriefing,
   advisor_pair: AdvisorPair,
   advisor_single_fire: AdvisorSingleFire,
   advisor_single_food: AdvisorSingleFood,

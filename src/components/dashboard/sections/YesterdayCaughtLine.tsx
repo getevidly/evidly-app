@@ -12,10 +12,10 @@ function buildSummary(catches: DriftCatch[]): string {
   if (catches.length === 1) {
     const c = catches[0];
     const pillarLabel = c.pillar === 'food_safety' ? 'food safety' : 'fire safety';
-    return `1 ${pillarLabel} drift at ${c.location_name}`;
+    return `1 ${pillarLabel} catch at ${c.location_name}`;
   }
   const locationNames = new Set(catches.map(c => c.location_name));
-  return `${catches.length} drifts across ${locationNames.size} location${locationNames.size === 1 ? '' : 's'}`;
+  return `${catches.length} catches across ${locationNames.size} location${locationNames.size === 1 ? '' : 's'}`;
 }
 
 export function YesterdayCaughtLine() {
