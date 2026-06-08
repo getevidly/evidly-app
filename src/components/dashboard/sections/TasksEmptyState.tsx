@@ -146,7 +146,7 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
                   : 'All controls for today are complete. Nothing requires your attention.'}
               </p>
               <button type="button" style={ctaStyle} onClick={() => navigate('/checklists')}>
-                View schedule
+                View checklists
               </button>
             </>
           )}
