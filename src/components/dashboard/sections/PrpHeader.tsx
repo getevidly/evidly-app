@@ -63,8 +63,8 @@ export function PrpHeader() {
     locationFilter: selectedLocationId || undefined,
   });
 
-  // Documents count for Prove tile evidence gate
-  const { total: docTotal, loading: docsLoading } = useDocumentsSummary({
+  // Documents count for Prove tile evidence gate + secondary lines
+  const { current: docCurrent, total: docTotal, expiringWithin30Days, loading: docsLoading } = useDocumentsSummary({
     locationIdFilter: selectedLocationId || undefined,
   });
 
@@ -79,16 +79,16 @@ export function PrpHeader() {
   // Scope labels for All mode
   const locCount = locations.length;
   const reduceSub = isAllMode
-    ? `open today · across ${locCount} locations`
-    : 'open today';
+    ? `Open today · across ${locCount} locations`
+    : 'Open today';
   const predictSub = predictCount === 0
-    ? 'nothing new'
+    ? ''
     : isAllMode
-      ? `unread · across ${locCount} locations`
-      : 'unread';
+      ? `Unread · across ${locCount} locations`
+      : 'Unread';
   const proveSub = isAllMode
-    ? 'earliest location'
-    : 'days since go-live';
+    ? 'Earliest location'
+    : 'Days since go-live';
 
   return (
     <div>
@@ -97,17 +97,17 @@ export function PrpHeader() {
         <div className="prp predict">
           <div className="prp-icon"><i className="ti ti-trending-up" /></div>
           <div>
-            <p className="prp-label">What's coming</p>
+            <p className="prp-label">What's Coming</p>
             <p className={`prp-num${predictCount === 0 ? ' steady' : ''}`}>
-              {predictCount === 0 ? (orgDays <= 1 ? 'nothing yet' : 'nothing new') : predictCount}
+              {predictCount === 0 ? (orgDays <= 1 ? 'Nothing yet' : 'Nothing new') : predictCount}
             </p>
-            <p className="prp-sub">{predictSub}</p>
+            {predictSub && <p className="prp-sub">{predictSub}</p>}
           </div>
         </div>
         <div className="prp reduce">
           <div className="prp-icon"><i className="ti ti-shield-check" /></div>
           <div>
-            <p className="prp-label">What's handled</p>
+            <p className="prp-label">What's Handled</p>
             <p className="prp-num">{todayLoading ? '—' : openToday}</p>
             <p className="prp-sub">{reduceSub}</p>
           </div>
@@ -115,18 +115,24 @@ export function PrpHeader() {
         <div className="prp prove">
           <div className="prp-icon"><i className="ti ti-file-check" /></div>
           <div>
-            <p className="prp-label">What you can prove</p>
+            <p className="prp-label">What You Can Prove</p>
             {(proveLoading || docsLoading || tempLoading || todayLoading) ? (
               <p className="prp-num">—</p>
             ) : hasEvidence ? (
               <>
                 <p className="prp-num">{proveDays}</p>
                 <p className="prp-sub">{proveSub}</p>
+                {docTotal > 0 && (
+                  <p style={{ fontSize: 10, color: 'var(--muted)', margin: '2px 0 0' }}>
+                    {docCurrent} of {docTotal} docs current
+                    {expiringWithin30Days > 0 && ` · ${expiringWithin30Days} expire within 30 days`}
+                  </p>
+                )}
               </>
             ) : (
               <>
-                <p className="prp-num steady">start your record</p>
-                <p className="prp-sub">upload or log your first evidence</p>
+                <p className="prp-num steady">Start your record</p>
+                <p className="prp-sub">Upload or log your first evidence</p>
               </>
             )}
           </div>

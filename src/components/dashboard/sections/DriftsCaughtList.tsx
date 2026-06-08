@@ -8,7 +8,6 @@
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { DriftCatchCard } from './DriftCatchCard';
-import { WeeklyDriftReport } from './WeeklyDriftReport';
 
 interface DriftsCaughtListProps {
   variant: 'standard' | 'audit';
@@ -46,40 +45,31 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
     );
   }
 
-  const count = catches.length;
-  const chipText = count > 0
-    ? `${count} in last 90 days${totalSaved > 0 ? ` · $${totalSaved.toLocaleString()} saved` : ''}`
-    : '';
+  const openCatches = catches.filter(c => c.status === 'open');
+  if (openCatches.length === 0) return null;
+
+  const count = openCatches.length;
+  const openSaved = openCatches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;
+  const chipText = `${count} open${openSaved > 0 ? ` · $${openSaved.toLocaleString()} at risk` : ''}`;
 
   return (
     <div style={{ marginBottom: 24 }}>
       <div className="section-h" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Caught before it cost you</span>
-        {chipText && (
-          <span style={{ fontSize: 11, color: 'var(--muted)' }}>
-            {chipText}
-          </span>
-        )}
+        <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+          {chipText}
+        </span>
       </div>
       <div className="catches">
-        {count === 0 ? (
-          <div className="catch" style={{ justifyContent: 'center', textAlign: 'center' }}>
-            <p style={{ color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-              {pillarFilter ? PILLAR_EMPTY[pillarFilter] : 'Nothing caught in the last 90 days.'}
-            </p>
-          </div>
-        ) : (
-          catches.map(drift => (
-            <DriftCatchCard
-              key={drift.id}
-              drift={drift}
-              variant={variant}
-              onAcknowledge={acknowledge}
-            />
-          ))
-        )}
+        {openCatches.map(drift => (
+          <DriftCatchCard
+            key={drift.id}
+            drift={drift}
+            variant={variant}
+            onAcknowledge={acknowledge}
+          />
+        ))}
       </div>
-      <WeeklyDriftReport />
     </div>
   );
 }

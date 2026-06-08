@@ -1,6 +1,5 @@
 import { useRole } from '../../contexts/RoleContext';
 import { DASHBOARD_COMPOSITION, type DashboardRole, type SectionKey } from '../../constants/dashboardComposition';
-import { MetricCards } from './sections/MetricCards';
 import { PrpHeader } from './sections/PrpHeader';
 import { YesterdayCaughtLine } from './sections/YesterdayCaughtLine';
 import { InspectionPackage } from './sections/InspectionPackage';
@@ -27,7 +26,6 @@ import { EscalationCard } from './sections/EscalationCard';
 import { LocationHeatMap } from './sections/LocationHeatMap';
 
 const SECTION_COMPONENTS: Record<SectionKey, React.ComponentType> = {
-  metric_cards: MetricCards,
   prp_header: PrpHeader,
   location_heat_map: LocationHeatMap,
   yesterday_caught_line: YesterdayCaughtLine,

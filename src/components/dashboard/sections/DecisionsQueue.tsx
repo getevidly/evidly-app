@@ -11,7 +11,6 @@ import { useRole } from '../../../contexts/RoleContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useDecisionsQueue } from '../../../hooks/useDecisionsQueue';
 import { DecisionRow } from './DecisionRow';
-import { DecisionsEmptyState } from './DecisionsEmptyState';
 
 const HEADING: Record<string, string> = {
   owner_operator: 'Decisions awaiting your call',
@@ -64,7 +63,9 @@ export function DecisionsQueue() {
       </div>
       <div className="decisions">
         {openCount === 0 ? (
-          <DecisionsEmptyState />
+          <p style={{ fontSize: 13, color: 'var(--muted)', padding: '12px 0', margin: 0 }}>
+            No decisions awaiting your call.
+          </p>
         ) : (
           decisions.slice(0, 10).map(d => (
             <DecisionRow key={d.id} decision={d} />

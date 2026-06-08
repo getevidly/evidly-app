@@ -311,7 +311,7 @@
 .prp.predict .prp-icon { background: var(--predict-bg); color: var(--predict); }
 .prp.reduce .prp-icon { background: var(--reduce-bg); color: var(--reduce); }
 .prp.prove .prp-icon { background: var(--prove-bg); color: var(--prove); }
-.prp-label { font-size: 11px; font-weight: 500; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.prp-label { font-size: 11px; font-weight: 500; margin: 0; letter-spacing: 0.5px; }
 .prp-num { font-size: 28px; font-weight: 600; line-height: 1.1; margin: 4px 0 2px; }
 .prp .prp-num.steady { color: #2E7D5B; font-size: 22px; font-weight: 500; }
 .prp.predict .prp-num { color: var(--predict); }

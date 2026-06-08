@@ -121,7 +121,7 @@ export function TeamEmptyState({ onInviteClick }: TeamEmptyStateProps = {}) {
 
       <p style={bodyText}>
         EvidLY works fine that way. When you're ready to delegate logging,
-        drift acknowledgment, or document upload, your team will land here.
+        acknowledgment, or document upload, your team will land here.
       </p>
 
       {/* Ghost preview rows */}

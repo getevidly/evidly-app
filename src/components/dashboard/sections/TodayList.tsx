@@ -9,11 +9,13 @@
  * kitchen_staff → user-scoped tasks only
  */
 
+import { Link } from 'react-router-dom';
 import { useRole } from '../../../contexts/RoleContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import type { DashboardRole } from '../../../constants/dashboardComposition';
 import { useTodayList } from '../../../hooks/useTodayList';
+import { useChecklistStatus } from '../../../hooks/useChecklistStatus';
 import { TodayListRow } from './TodayListRow';
 import { TasksEmptyState } from './TasksEmptyState';
 
@@ -21,12 +23,13 @@ interface RoleConfig {
   heading: string;
   pillarFilter?: 'food_safety' | 'fire_safety';
   useUserId?: boolean;
+  showChecklistFooter?: boolean;
 }
 
 const ROLE_CONFIG: Record<string, RoleConfig> = {
-  owner_operator: { heading: 'Today across your kitchens' },
-  executive: { heading: 'Today across your kitchens' },
-  compliance_manager: { heading: 'Today across the portfolio' },
+  owner_operator: { heading: 'Today across your kitchens', showChecklistFooter: true },
+  executive: { heading: 'Today across your kitchens', showChecklistFooter: true },
+  compliance_manager: { heading: 'Today across the portfolio', showChecklistFooter: true },
   facilities_manager: { heading: 'Today — fire pillar', pillarFilter: 'fire_safety' },
   chef: { heading: 'Today — food pillar', pillarFilter: 'food_safety' },
   kitchen_manager: { heading: 'Today across your kitchens' },
@@ -44,16 +47,18 @@ export function TodayList() {
   const userId = config.useUserId ? profile?.id : undefined;
   const { selectedLocationId } = useDashboardLocation();
 
-  return <TodayListInner heading={config.heading} pillarFilter={config.pillarFilter} userIdFilter={userId} locationIdFilter={selectedLocationId || undefined} />;
+  return <TodayListInner heading={config.heading} pillarFilter={config.pillarFilter} userIdFilter={userId} locationIdFilter={selectedLocationId || undefined} showChecklistFooter={config.showChecklistFooter} />;
 }
 
-function TodayListInner({ heading, pillarFilter, userIdFilter, locationIdFilter }: {
+function TodayListInner({ heading, pillarFilter, userIdFilter, locationIdFilter, showChecklistFooter }: {
   heading: string;
   pillarFilter?: 'food_safety' | 'fire_safety';
   userIdFilter?: string;
   locationIdFilter?: string;
+  showChecklistFooter?: boolean;
 }) {
   const { items, totalToday, doneToday, loading } = useTodayList({ pillarFilter, userIdFilter, locationIdFilter });
+  const { summary, loading: clLoading } = useChecklistStatus({ locationIdFilter });
 
   if (loading) {
     return (
@@ -98,6 +103,29 @@ function TodayListInner({ heading, pillarFilter, userIdFilter, locationIdFilter 
           ))
         )}
       </div>
+      {showChecklistFooter && !clLoading && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 0',
+          marginTop: 4,
+          borderTop: '0.5px solid var(--line, #E5E2DA)',
+          fontSize: 12,
+        }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+            <span className="cl-chip">Daily {summary.dailyDone}/{summary.dailyTotal}</span>
+            <span className="cl-chip">Weekly {summary.weeklyDone}/{summary.weeklyTotal}</span>
+            {summary.monthlyTotal > 0 && <span className="cl-chip">Monthly {summary.monthlyDone}/{summary.monthlyTotal}</span>}
+            {summary.overdueCount > 0 && <span className="cl-badge overdue">{summary.overdueCount} overdue</span>}
+            {summary.dueCount > 0 && <span className="cl-badge due">{summary.dueCount} due soon</span>}
+          </div>
+          <Link to="/checklists" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--navy, #1E2D4D)', textDecoration: 'none', flexShrink: 0 }}>
+            <i className="ti ti-external-link" style={{ fontSize: 14 }} />
+            Open checklists
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

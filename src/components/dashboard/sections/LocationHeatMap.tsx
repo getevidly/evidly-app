@@ -18,9 +18,9 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { useLocationHealthData, type LocationHealth, type HealthState } from '../../../hooks/useLocationHealthData';
 
 const HEALTH_LABELS: Record<HealthState, string> = {
-  coral: 'needs attention',
-  teal: 'watching',
-  green: 'all clear',
+  coral: 'Needs attention',
+  teal: 'Watching',
+  green: 'All clear',
 };
 
 const HEALTH_COLORS: Record<HealthState, { tileBg: string; text: string }> = {
@@ -69,16 +69,16 @@ function HeatMapTile({ loc, isExpanded, onToggle, onSelect }: {
         <div className="hm-detail">
           <div className="hm-detail-row">
             <span className="hm-detail-label">What's coming</span>
-            <span className="hm-detail-val" style={loc.signalCount === 0 ? { color: '#2E7D5B' } : undefined}>{loc.signalCount === 0 ? 'nothing new' : `${loc.signalCount} unread`}</span>
+            <span className="hm-detail-val" style={loc.signalCount === 0 ? { color: '#2E7D5B' } : undefined}>{loc.signalCount === 0 ? 'Nothing new' : `${loc.signalCount} unread`}</span>
           </div>
           <div className="hm-detail-row">
             <span className="hm-detail-label">What's handled</span>
-            <span className="hm-detail-val">{loc.openTasks === 0 ? 'none open' : `${loc.openTasks} open`}</span>
+            <span className="hm-detail-val">{loc.openTasks === 0 ? 'None open' : `${loc.openTasks} open`}</span>
           </div>
           <div className="hm-detail-row">
             <span className="hm-detail-label">Temperature</span>
             <span className="hm-detail-val" style={{ color: loc.driftCount > 0 ? '#C75543' : '#2E7D5B' }}>
-              {loc.driftCount === 0 ? 'in range' : `${loc.driftCount} out of range`}
+              {loc.driftCount === 0 ? 'In range' : `${loc.driftCount} out of range`}
             </span>
           </div>
           <button type="button" className="hm-open-btn" onClick={onSelect}>
