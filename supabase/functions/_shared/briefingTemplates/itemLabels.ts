@@ -1,9 +1,9 @@
-// briefingTemplates/driftLabels.ts — drift_type → human-readable noun label
+// briefingTemplates/itemLabels.ts — drift_type → human-readable noun label
 // Mirrors src/constants/driftTypeLabels.ts (noun form only).
 // Shared across dataLoader and all template renderers.
 
-const DRIFT_TYPE_NOUNS: Record<string, string> = {
-  temperature_out_of_range: 'Temperature drift',
+const ITEM_TYPE_LABELS: Record<string, string> = {
+  temperature_out_of_range: 'Temperature reading out of range',
   temperature_trend_drift: 'Temperature trend',
   missed_checklist: 'Missed checklist',
   document_expiration: 'Document expiration',
@@ -18,6 +18,6 @@ const DRIFT_TYPE_NOUNS: Record<string, string> = {
   streak_break: 'Compliance streak break',
 };
 
-export function driftLabel(driftType: string): string {
-  return DRIFT_TYPE_NOUNS[driftType] || driftType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+export function itemLabel(driftType: string): string {
+  return ITEM_TYPE_LABELS[driftType] || driftType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }

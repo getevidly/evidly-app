@@ -81,7 +81,7 @@ export async function renderFoodSafety(
   if (posture === 'solid') {
     return [
       'Food safety operations are running clean.',
-      `Cold-hold and hot-hold temps current per ${coldHoldRef}, employee certifications in good standing, no recent drift activity.`,
+      `Cold-hold and hot-hold temps current per ${coldHoldRef}, employee certifications in good standing, nothing missing this period.`,
       `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
@@ -93,9 +93,9 @@ export async function renderFoodSafety(
     const tf = timeframe(snapshot);
 
     return [
-      `Food safety has ${pluralize(n, 'item')} pulling attention this week \u2014 ${items}.`,
+      `Food safety has ${pluralize(n, 'item')} running late this week \u2014 ${items}.`,
       `Recommend ${verb} within ${tf}.`,
-      `Posture: watch \u2014 ${pluralize(n, 'item')} pulling, no urgent food safety exposure.`,
+      `Posture: watch \u2014 ${pluralize(n, 'item')} running late, no urgent food safety exposure.`,
       '',
       credentialStrap(snapshot),
     ].join(' ').replace('  ', '\n');
@@ -110,7 +110,7 @@ export async function renderFoodSafety(
 
   // Sentence 1
   let headline = `Food safety has ${pluralize(uc, 'urgent item')}`;
-  if (proven > 0) headline += ` and ${pluralize(proven, 'proven drift event')}`;
+  if (proven > 0) headline += ` and ${pluralize(proven, 'confirmed gap')}`;
   headline += ' requiring immediate attention.';
   parts.push(headline);
 
@@ -119,10 +119,10 @@ export async function renderFoodSafety(
     parts.push(`Top driver: ${topItem.title}.`);
   }
 
-  // Sentence 3: proven drift
+  // Sentence 3: confirmed gaps
   if (proven > 0) {
     parts.push(
-      'Proven food safety drift events carry measurable exposure during jurisdiction interactions \u2014 confirm corrective actions are documented.',
+      'Confirmed food safety gaps carry measurable exposure during county interactions \u2014 confirm corrective actions are documented.',
     );
   }
 
@@ -142,7 +142,7 @@ export async function renderFoodSafety(
   // Sentence 6: posture
   const reasons: string[] = [];
   if (uc > 0) reasons.push(`${pluralize(uc, 'urgent item')}`);
-  if (proven > 0) reasons.push(`${pluralize(proven, 'proven drift')}`);
+  if (proven > 0) reasons.push(`${pluralize(proven, 'confirmed gap')}`);
   if (reasons.length === 0) reasons.push(`${snapshot.open_items.length}+ open items`);
   parts.push(`Posture: alarm \u2014 ${reasons.join(' + ')}.`);
 

@@ -8,7 +8,7 @@ import type {
   Pillar,
   Urgency,
 } from './types.ts';
-import { driftLabel } from './driftLabels.ts';
+import { itemLabel } from './itemLabels.ts';
 
 // ── Pillar filter from advisor type ────────────────────────────────
 function pillarFilterFor(advisor_type: string): Pillar | null {
@@ -85,7 +85,7 @@ export async function loadData(
         source_id: r.id,
         pillar: r.pillar as Pillar,
         urgency: severityToUrgency(r.severity),
-        title: `Drift: ${driftLabel(r.drift_type || 'operational drift')}`,
+        title: itemLabel(r.drift_type || 'unknown'),
         location_id: r.location_id,
         detected_at: r.detected_at || nowISO,
       });

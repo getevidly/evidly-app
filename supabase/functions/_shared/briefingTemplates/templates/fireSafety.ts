@@ -1,16 +1,15 @@
 // templates/fireSafety.ts — fire safety advisor briefing (fire_safety pillar only)
 //
 // TODO C17-NFPA: rewire to citations table when NFPA codes are seeded.
-// Currently no specific section numbers to avoid hardcoded references being wrong.
-// Hood cleaning frequency = "NFPA 96 hood cleaning frequency" (not Table 11.4).
-// Suppression maintenance = "NFPA 96 fire suppression system maintenance" (not §11.2).
+// Hood cleaning = NFPA 96 Table 12.4.
+// Suppression service = NFPA 17A / UL 300.
 
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
 
 // Fire safety citation strings — plain text until NFPA is seeded in citations table
-const HOOD_CLEANING_REF = 'NFPA 96 hood cleaning frequency';
-const SUPPRESSION_REF = 'NFPA 96 fire suppression system maintenance';
+const HOOD_CLEANING_REF = 'NFPA 96 Table 12.4 hood cleaning';
+const SUPPRESSION_REF = 'NFPA 17A / UL 300 suppression service';
 
 function credentialStrap(snapshot: DataSnapshot): string {
   const base = 'NFPA 96, NFPA 17A, NFPA 10, CA Fire Code';
@@ -62,7 +61,7 @@ export async function renderFireSafety(
   if (posture === 'solid') {
     return [
       'Fire safety operations are in good standing.',
-      `Hood cleaning, suppression service, and extinguisher inspections current per ${HOOD_CLEANING_REF} and ${SUPPRESSION_REF}, no recent drift activity.`,
+      `Hood cleaning, suppression service, and extinguisher inspections current per ${HOOD_CLEANING_REF} and ${SUPPRESSION_REF}, nothing missing this period.`,
       `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
@@ -74,9 +73,9 @@ export async function renderFireSafety(
     const tf = timeframe(snapshot);
 
     return [
-      `Fire safety has ${pluralize(n, 'item')} pulling attention this week \u2014 ${items}.`,
+      `Fire safety has ${pluralize(n, 'item')} running late this week \u2014 ${items}.`,
       `Recommend ${verb} within ${tf}.`,
-      `Posture: watch \u2014 ${pluralize(n, 'item')} pulling, no urgent fire safety exposure.`,
+      `Posture: watch \u2014 ${pluralize(n, 'item')} running late, no urgent fire safety exposure.`,
       '',
       credentialStrap(snapshot),
     ].join(' ').replace('  ', '\n');
@@ -91,7 +90,7 @@ export async function renderFireSafety(
 
   // Sentence 1
   let headline = `Fire safety has ${pluralize(uc, 'urgent item')}`;
-  if (proven > 0) headline += ` and ${pluralize(proven, 'proven drift event')}`;
+  if (proven > 0) headline += ` and ${pluralize(proven, 'confirmed gap')}`;
   headline += ' requiring immediate attention.';
   parts.push(headline);
 
@@ -100,10 +99,10 @@ export async function renderFireSafety(
     parts.push(`Top driver: ${topItem.title}.`);
   }
 
-  // Sentence 3: proven drift
+  // Sentence 3: confirmed gaps
   if (proven > 0) {
     parts.push(
-      'Proven fire safety drift events carry measurable exposure \u2014 confirm hood cleaning records, suppression certifications, and extinguisher tags are documented before next fire marshal visit.',
+      'Confirmed fire safety gaps carry measurable exposure \u2014 confirm hood cleaning records, suppression certifications, and extinguisher tags are documented before next fire marshal visit.',
     );
   }
 
@@ -113,7 +112,7 @@ export async function renderFireSafety(
   );
   if (hasService) {
     parts.push(
-      `Hood cleaning frequency per ${HOOD_CLEANING_REF} and suppression inspection per ${SUPPRESSION_REF} apply.`,
+      `Hood cleaning per ${HOOD_CLEANING_REF} and suppression service per ${SUPPRESSION_REF} apply.`,
     );
   }
 
@@ -123,7 +122,7 @@ export async function renderFireSafety(
   // Sentence 6: posture
   const reasons: string[] = [];
   if (uc > 0) reasons.push(`${pluralize(uc, 'urgent item')}`);
-  if (proven > 0) reasons.push(`${pluralize(proven, 'proven drift')}`);
+  if (proven > 0) reasons.push(`${pluralize(proven, 'confirmed gap')}`);
   if (reasons.length === 0) reasons.push(`${snapshot.open_items.length}+ open items`);
   parts.push(`Posture: alarm \u2014 ${reasons.join(' + ')}.`);
 

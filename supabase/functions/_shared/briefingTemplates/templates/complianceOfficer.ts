@@ -52,7 +52,7 @@ export async function renderComplianceOfficer(
   if (posture === 'solid') {
     return [
       'Portfolio is current across food safety and fire safety.',
-      'No drift activity in the last 30 days and no items pulling attention this week.',
+      'Nothing missing in the last 30 days and no items running late this week.',
       `Posture: solid \u2014 ${credentialStrap(snapshot)}`,
     ].join(' ');
   }
@@ -64,9 +64,9 @@ export async function renderComplianceOfficer(
     const tf = timeframe(snapshot);
 
     return [
-      `Portfolio is steady but ${pluralize(n, 'item')} pulling attention this week \u2014 ${items}.`,
+      `Portfolio is steady but ${pluralize(n, 'item')} running late this week \u2014 ${items}.`,
       `Recommend ${verb} within ${tf}.`,
-      `Posture: watch \u2014 ${pluralize(n, 'item')} pulling, no urgent exposure.`,
+      `Posture: watch \u2014 ${pluralize(n, 'item')} running late, no urgent exposure.`,
       '',
       credentialStrap(snapshot),
     ].join(' ').replace('  ', '\n');
@@ -81,7 +81,7 @@ export async function renderComplianceOfficer(
 
   // Sentence 1: headline
   let headline = `Portfolio has ${pluralize(uc, 'urgent item')}`;
-  if (proven > 0) headline += ` and ${pluralize(proven, 'proven drift event')}`;
+  if (proven > 0) headline += ` and ${pluralize(proven, 'confirmed gap')}`;
   headline += ' requiring decision-maker attention.';
   parts.push(headline);
 
@@ -95,10 +95,10 @@ export async function renderComplianceOfficer(
     parts.push(`Top driver: ${topItem.title} (${pillarLabel}).`);
   }
 
-  // Sentence 3: proven drift warning
+  // Sentence 3: confirmed gap warning
   if (proven > 0) {
     parts.push(
-      'Proven drift events carry measurable operational exposure \u2014 confirm corrective actions are documented before next jurisdiction interaction.',
+      'Confirmed gaps carry measurable operational exposure \u2014 confirm corrective actions are documented before next county interaction.',
     );
   }
 
@@ -108,7 +108,7 @@ export async function renderComplianceOfficer(
   // Sentence 5: posture reason
   const reasons: string[] = [];
   if (uc > 0) reasons.push(`${pluralize(uc, 'urgent item')}`);
-  if (proven > 0) reasons.push(`${pluralize(proven, 'proven drift')}`);
+  if (proven > 0) reasons.push(`${pluralize(proven, 'confirmed gap')}`);
   if (reasons.length === 0) reasons.push(`${snapshot.open_items.length}+ open items`);
   parts.push(`Posture: alarm \u2014 ${reasons.join(' + ')}.`);
 
