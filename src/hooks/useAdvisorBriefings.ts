@@ -41,6 +41,7 @@ interface UseAdvisorBriefingsResult {
   loading: boolean;
   error: Error | null;
   staleness: StalenessFlags;
+  regenFailed: boolean;
 }
 
 function rowToBriefing(row: Record<string, unknown>): AdvisorBriefing {
@@ -82,6 +83,8 @@ export function useAdvisorBriefings(options?: { locationIdFilter?: string }): Us
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [regenFailed, setRegenFailed] = useState(false);
+  const [missingTypes, setMissingTypes] = useState<AdvisorType[]>([]);
   const [fetchKey, setFetchKey] = useState(0);
   const regenInFlightRef = useRef<Set<string>>(new Set());
 
@@ -177,8 +180,11 @@ export function useAdvisorBriefings(options?: { locationIdFilter?: string }): Us
           }
         }
 
+        const stillMissing = ADVISOR_TYPES.filter(at => !grouped[at]);
         setBriefings(grouped);
         setStaleness(stale);
+        setMissingTypes(stillMissing);
+        setRegenFailed(false);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
@@ -190,14 +196,18 @@ export function useAdvisorBriefings(options?: { locationIdFilter?: string }): Us
     return () => { cancelled = true; };
   }, [orgId, locationIdFilter, fetchKey]);
 
-  // Phase 3: background regen for stale advisor_types
+  // Phase 3: background regen for stale OR missing advisor_types
   useEffect(() => {
-    if (loading || error || !orgId || locationIdFilter) return;
+    if (loading || error || !orgId) return;
 
-    const staleTypes = (Object.keys(staleness) as AdvisorType[]).filter(t => staleness[t]);
-    if (staleTypes.length === 0) return;
+    const needsRegen = [
+      ...(Object.keys(staleness) as AdvisorType[]).filter(t => staleness[t]),
+      ...missingTypes,
+    ];
+    const unique = [...new Set(needsRegen)];
+    if (unique.length === 0) return;
 
-    const toRegen = staleTypes.filter(t => !regenInFlightRef.current.has(t));
+    const toRegen = unique.filter(t => !regenInFlightRef.current.has(t));
     if (toRegen.length === 0) return;
 
     let cancelled = false;
@@ -215,11 +225,14 @@ export function useAdvisorBriefings(options?: { locationIdFilter?: string }): Us
       const anySuccess = results.some(r => r.status === 'fulfilled' && !(r.value as { error?: unknown }).error);
       if (anySuccess) {
         setFetchKey(k => k + 1);
+      } else if (missingTypes.length > 0) {
+        // All invokes failed and no data to show — surface so cards don't hang
+        setRegenFailed(true);
       }
     });
 
     return () => { cancelled = true; };
-  }, [loading, error, orgId, staleness, locationIdFilter]);
+  }, [loading, error, orgId, staleness, missingTypes]);
 
-  return { ...briefings, loading, error, staleness };
+  return { ...briefings, loading, error, staleness, regenFailed };
 }

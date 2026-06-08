@@ -7,7 +7,7 @@ import { BriefCard } from './BriefCard';
 
 export function AdvisorSingleFood() {
   const { selectedLocationId } = useDashboardLocation();
-  const { food_safety, staleness } = useAdvisorBriefings(
+  const { food_safety, staleness, regenFailed } = useAdvisorBriefings(
     selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined,
   );
   const { timezone } = useOrgSummary();
@@ -33,7 +33,7 @@ export function AdvisorSingleFood() {
 
   return (
     <div className="advisor-single">
-      <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems isStale={staleness.food_safety} countyDepartment={countyDept} />
+      <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems isStale={staleness.food_safety} countyDepartment={countyDept} regenFailed={regenFailed} />
     </div>
   );
 }

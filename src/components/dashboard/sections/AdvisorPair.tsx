@@ -20,7 +20,7 @@ interface JurisdictionDepts {
 
 export function AdvisorPair() {
   const { selectedLocationId, isMultiLocation } = useDashboardLocation();
-  const { food_safety, fire_safety, staleness } = useAdvisorBriefings(
+  const { food_safety, fire_safety, staleness, regenFailed } = useAdvisorBriefings(
     selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined,
   );
   const { timezone, countyCount } = useOrgSummary();
@@ -53,8 +53,8 @@ export function AdvisorPair() {
   return (
     <div>
       <div className="advisor-row">
-        <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems showConsult isStale={staleness.food_safety} countyDepartment={depts?.food} />
-        <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems showConsult isStale={staleness.fire_safety} countyDepartment={depts?.fire} />
+        <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems showConsult isStale={staleness.food_safety} countyDepartment={depts?.food} regenFailed={regenFailed} />
+        <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems showConsult isStale={staleness.fire_safety} countyDepartment={depts?.fire} regenFailed={regenFailed} />
       </div>
       {scopeLine && (
         <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: '-14px 0 18px', fontStyle: 'italic' }}>

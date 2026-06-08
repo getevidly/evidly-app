@@ -14,6 +14,7 @@ interface BriefCardProps {
   showConsult?: boolean;
   isStale?: boolean;
   countyDepartment?: string;
+  regenFailed?: boolean;
 }
 
 const CSS_CLASS: Record<AdvisorType, string> = {
@@ -166,9 +167,22 @@ function BriefCardSkeleton({ variant }: { variant: AdvisorType }) {
   );
 }
 
+function BriefCardError({ variant }: { variant: AdvisorType }) {
+  const eyebrow = EYEBROW[variant];
+  return (
+    <div className={`brief ${CSS_CLASS[variant]}`}>
+      <p className="brief-eyebrow">{eyebrow.icon}{eyebrow.label}</p>
+      <p style={{ fontSize: 13, color: 'rgba(250,247,240,0.55)', margin: '8px 0 0' }}>
+        Couldn't load — try refreshing the page.
+      </p>
+    </div>
+  );
+}
+
 /* ── Main component ────────────────────────────────────────────── */
 
-export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false, countyDepartment }: BriefCardProps) {
+export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false, countyDepartment, regenFailed }: BriefCardProps) {
+  if (!briefing && regenFailed) return <BriefCardError variant={variant} />;
   if (!briefing) return <BriefCardSkeleton variant={variant} />;
 
   const cls = CSS_CLASS[variant];
