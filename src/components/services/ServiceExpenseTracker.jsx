@@ -52,7 +52,7 @@ export function ServiceExpenseTracker() {
     query.then(({ data }) => {
       setSchedules((data || []).map(s => ({
         ...s,
-        price: s.last_price ?? SERVICE_TYPES[s.service_type_code]?.basePrice ?? 0,
+        price: s.negotiated_price ?? SERVICE_TYPES[s.service_type_code]?.basePrice ?? 0,
       })));
     });
   }, [isDemoMode, locationFilter]);

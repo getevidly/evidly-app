@@ -54,7 +54,7 @@ export function ServiceComplianceList({ onLogService }) {
     }
 
     query.then(({ data }) => {
-      setSchedules((data || []).map(s => ({ ...s, price: s.last_price })));
+      setSchedules((data || []).map(s => ({ ...s, price: s.negotiated_price })));
     });
   }, [isDemoMode, locationFilter]);
 

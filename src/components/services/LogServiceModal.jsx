@@ -117,7 +117,7 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
             service_type_code:  form.service_type_code,
             last_service_date:  form.date,
             next_due_date:      nextDue,
-            last_price:         form.price ? parseFloat(form.price) : null,
+            negotiated_price:   form.price ? parseFloat(form.price) : null,
             frequency:          form.frequency,
           }, { onConflict: 'location_id,service_type_code' });
       }
