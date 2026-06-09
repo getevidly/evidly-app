@@ -46,7 +46,20 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
   }
 
   const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
-  if (openCatches.length === 0) return null;
+
+  // Org-wide (all locations) with nothing: hide section entirely.
+  // Specific location with nothing: show header + clear message so it doesn't look broken.
+  if (openCatches.length === 0) {
+    if (!selectedLocationId) return null;
+    return (
+      <div style={{ marginBottom: 24 }}>
+        <div className="section-h" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+          <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Caught before it cost you</span>
+        </div>
+        <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0 }}>Nothing caught here — this location is clear.</p>
+      </div>
+    );
+  }
 
   const count = openCatches.length;
   const openSaved = openCatches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;

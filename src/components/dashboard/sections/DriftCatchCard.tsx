@@ -75,7 +75,7 @@ export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCard
           <span className="catch-open-label">Open</span>
           <span className="catch-pillar">{PILLAR_LABELS[drift.pillar] || drift.pillar} · {drift.location_name}</span>
         </div>
-        <p className="catch-label">{getDriftLabel(drift.drift_type)}</p>
+        <p className="catch-label">{getDriftLabel(drift.drift_type, { form: 'noun' })}</p>
         <p className="catch-meta">{days} day{days === 1 ? '' : 's'} running</p>
         <p className="catch-stakes">{stakesText}</p>
         {variant === 'audit' && <p className="catch-meta">{buildEvidence(drift)}</p>}
