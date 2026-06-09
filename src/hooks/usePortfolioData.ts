@@ -1,17 +1,25 @@
 /**
  * usePortfolioData — Portfolio Dashboard
  *
- * Queries locations + open drift_catches for the user's org.
- * Computes per-location posture per pillar (food_safety / fire_safety).
- * Posture: 0 open = Solid, any >14 days = Alarm, otherwise Watch.
+ * Queries locations + drift data for the user's org.
+ * Per-location posture (food_safety / fire_safety) is read from the
+ * advisor_briefings cache — the same canonical posture that the dashboard
+ * advisors display, computed by postureEngine.ts via dataLoader.ts.
+ *
+ * Fallback for locations without a cached briefing: local computation
+ * using the shared computePosture rule with the same data sources
+ * (drift catches incl. reduced/proven, corrective actions, proven drift
+ * count, recent 30-day drift count).
  */
 
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
+import { computePosture } from '../lib/computePosture';
+import type { Posture } from '../lib/computePosture';
 
-export type PostureStatus = 'solid' | 'watch' | 'alarm';
+export type PostureStatus = Posture;
 
 export interface PortfolioOpenItem {
   id: string;
@@ -58,17 +66,51 @@ interface UsePortfolioDataResult {
   acknowledge: (driftCatchId: string) => void;
 }
 
-const ALARM_THRESHOLD_DAYS = 14;
-
 function daysSince(dateStr: string): number {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  return Math.max(0, Math.floor(diff / 86_400_000));
+  return Math.max(0, Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000));
 }
 
-function computePosture(items: PortfolioOpenItem[]): PostureStatus {
-  if (items.length === 0) return 'solid';
-  if (items.some(i => i.days_open > ALARM_THRESHOLD_DAYS)) return 'alarm';
-  return 'watch';
+/**
+ * Fallback posture for a (location, pillar) when no advisor_briefings cache exists.
+ * Uses the shared computePosture rule with drift catches + corrective actions.
+ * Matches postureEngine.ts urgency mapping: severity critical/high = urgent,
+ * CA due within 7 days = urgent.
+ */
+function fallbackPosture(
+  pillar: 'food_safety' | 'fire_safety',
+  drifts: Array<{ pillar: string; severity: string }>,
+  cas: Array<{ pillar: string | null; due_date: string | null }>,
+  provenDrifts: Array<{ pillar: string }>,
+  recentDrifts: Array<{ pillar: string }>,
+): PostureStatus {
+  const pDrifts = drifts.filter(d => d.pillar === pillar);
+  const pCAs = cas.filter(c => c.pillar === pillar);
+
+  const hasUrgentDrift = pDrifts.some(d => d.severity === 'critical' || d.severity === 'high');
+  const hasUrgentCA = pCAs.some(c => {
+    if (!c.due_date) return false;
+    const target = new Date(c.due_date + 'T00:00:00Z');
+    return Math.ceil((target.getTime() - Date.now()) / 86_400_000) <= 7;
+  });
+
+  return computePosture({
+    openItemCount: pDrifts.length + pCAs.length,
+    hasUrgentItem: hasUrgentDrift || hasUrgentCA,
+    activeProvenDriftCount: provenDrifts.filter(d => d.pillar === pillar).length,
+    recentDriftCount30d: recentDrifts.filter(d => d.pillar === pillar).length,
+  });
+}
+
+// ── Helpers to group arrays by a key ────────────────────────────────
+function groupBy<T>(rows: T[], key: (r: T) => string | null): Map<string, T[]> {
+  const map = new Map<string, T[]>();
+  for (const r of rows) {
+    const k = key(r);
+    if (!k) continue;
+    if (!map.has(k)) map.set(k, []);
+    map.get(k)!.push(r);
+  }
+  return map;
 }
 
 export function usePortfolioData(): UsePortfolioDataResult {
@@ -93,68 +135,141 @@ export function usePortfolioData(): UsePortfolioDataResult {
 
     async function load() {
       try {
-        const { data: locRows, error: locErr } = await supabase
-          .from('locations')
-          .select('id, name')
-          .eq('organization_id', orgId)
-          .eq('status', 'active')
-          .order('name');
+        const now = new Date();
+        const nowISO = now.toISOString();
+        const ninetyDaysAgo = new Date(now);
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        // ── Parallel queries ─────────────────────────────────────
+        const [locRes, driftRes, briefRes, caRes, provenRes, recentRes, handledRes] = await Promise.all([
+          // 1. Org locations
+          supabase
+            .from('locations')
+            .select('id, name')
+            .eq('organization_id', orgId)
+            .eq('status', 'active')
+            .order('name'),
+
+          // 2. Open/reduced/proven drift catches (90 days) — drill-down items + fallback posture
+          supabase
+            .from('drift_catches')
+            .select('id, location_id, drift_type, pillar, severity, status, detected_at, source_table, expected_value, actual_value, estimated_savings_cents')
+            .eq('org_id', orgId)
+            .in('status', ['open', 'reduced', 'proven'])
+            .gte('detected_at', ninetyDaysAgo.toISOString())
+            .order('detected_at', { ascending: false }),
+
+          // 3. Advisor briefings — canonical posture from postureEngine.ts
+          supabase
+            .from('advisor_briefings')
+            .select('location_id, advisor_type, posture')
+            .eq('org_id', orgId)
+            .in('advisor_type', ['food_safety', 'fire_safety'])
+            .not('location_id', 'is', null)
+            .gt('valid_until', nowISO)
+            .order('generated_at', { ascending: false }),
+
+          // 4. Open corrective actions — fallback posture input
+          supabase
+            .from('corrective_actions')
+            .select('id, location_id, pillar, due_date')
+            .eq('organization_id', orgId)
+            .eq('status', 'open'),
+
+          // 5. Proven drifts (any date) — fallback active_proven_drift_count
+          supabase
+            .from('drift_catches')
+            .select('location_id, pillar')
+            .eq('org_id', orgId)
+            .eq('status', 'proven'),
+
+          // 6. Recent drifts (30 days, any status) — fallback recent_drift_count_30d
+          supabase
+            .from('drift_catches')
+            .select('location_id, pillar')
+            .eq('org_id', orgId)
+            .gte('detected_at', thirtyDaysAgo.toISOString()),
+
+          // 7. Resolved count (90 days) — "What's Handled" KPI
+          supabase
+            .from('drift_catches')
+            .select('id', { count: 'exact', head: true })
+            .eq('org_id', orgId)
+            .eq('status', 'resolved')
+            .gte('detected_at', ninetyDaysAgo.toISOString()),
+        ]);
 
         if (cancelled) return;
-        if (locErr) throw new Error(locErr.message);
-        if (!locRows || locRows.length === 0) {
+        if (locRes.error) throw new Error(locRes.error.message);
+        const locRows = locRes.data || [];
+        if (locRows.length === 0) {
           setLocations([]);
           setSummary(prev => ({ ...prev, totalLocations: 0 }));
           setLoading(false);
           return;
         }
 
-        const ninetyDaysAgo = new Date();
-        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
-        const { data: catchRows, error: catchErr } = await supabase
-          .from('drift_catches')
-          .select('id, location_id, drift_type, pillar, severity, detected_at, source_table, expected_value, actual_value, estimated_savings_cents')
-          .eq('org_id', orgId)
-          .eq('status', 'open')
-          .gte('detected_at', ninetyDaysAgo.toISOString())
-          .order('detected_at', { ascending: false });
-
-        if (cancelled) return;
-        if (catchErr) throw new Error(catchErr.message);
-
-        const catchesByLoc = new Map();
-        for (const row of catchRows || []) {
-          const r = row;
-          const locId = r.location_id;
-          if (!catchesByLoc.has(locId)) catchesByLoc.set(locId, []);
-          const daysOpen = daysSince(r.detected_at);
-          catchesByLoc.get(locId).push({
-            id: r.id,
-            drift_type: r.drift_type,
-            pillar: r.pillar,
-            severity: r.severity,
-            detected_at: r.detected_at,
-            source_table: r.source_table,
-            expected_value: r.expected_value || null,
-            actual_value: r.actual_value || null,
-            estimated_savings_cents: r.estimated_savings_cents || 0,
-            days_open: daysOpen,
-          });
+        // ── Build briefing posture map (most-recent per location+advisor) ──
+        const postureMap = new Map<string, PostureStatus>();
+        for (const b of briefRes.data || []) {
+          const key = `${b.location_id}:${b.advisor_type}`;
+          // ordered by generated_at desc — first seen = most recent
+          if (!postureMap.has(key)) postureMap.set(key, b.posture as PostureStatus);
         }
 
+        // ── Group data by location for drill-down + fallback ─────
+        const driftsByLoc = groupBy(driftRes.data || [], r => r.location_id);
+        const casByLoc = groupBy(caRes.data || [], r => r.location_id);
+        const provenByLoc = groupBy(provenRes.data || [], r => r.location_id);
+        const recentByLoc = groupBy(recentRes.data || [], r => r.location_id);
+
+        // ── Build per-location result ────────────────────────────
         let foodAlarm = 0, foodWatch = 0, foodSolid = 0;
         let fireAlarm = 0, fireWatch = 0, fireSolid = 0;
         let totalOpen = 0;
         let totalAtRisk = 0;
 
         const result: PortfolioLocation[] = locRows.map(loc => {
-          const items = catchesByLoc.get(loc.id) || [];
-          const foodItems = items.filter((i: PortfolioOpenItem) => i.pillar === 'food_safety');
-          const fireItems = items.filter((i: PortfolioOpenItem) => i.pillar === 'fire_safety');
-          const foodStatus = computePosture(foodItems);
-          const fireStatus = computePosture(fireItems);
+          const allDrifts = driftsByLoc.get(loc.id) || [];
 
+          // Drill-down items: only status='open' (UI unchanged)
+          const openDrifts = allDrifts.filter((d: { status: string }) => d.status === 'open');
+          const items: PortfolioOpenItem[] = openDrifts.map((r: Record<string, unknown>) => ({
+            id: r.id as string,
+            drift_type: r.drift_type as string,
+            pillar: r.pillar as 'food_safety' | 'fire_safety',
+            severity: r.severity as string,
+            detected_at: r.detected_at as string,
+            source_table: r.source_table as string,
+            expected_value: (r.expected_value as string) || null,
+            actual_value: (r.actual_value as string) || null,
+            estimated_savings_cents: (r.estimated_savings_cents as number) || 0,
+            days_open: daysSince(r.detected_at as string),
+          }));
+
+          // ── Posture: prefer advisor_briefings, fallback to local computation ──
+          const foodBriefing = postureMap.get(`${loc.id}:food_safety`);
+          const fireBriefing = postureMap.get(`${loc.id}:fire_safety`);
+
+          const foodStatus: PostureStatus = foodBriefing ?? fallbackPosture(
+            'food_safety',
+            allDrifts as Array<{ pillar: string; severity: string }>,
+            (casByLoc.get(loc.id) || []) as Array<{ pillar: string | null; due_date: string | null }>,
+            (provenByLoc.get(loc.id) || []) as Array<{ pillar: string }>,
+            (recentByLoc.get(loc.id) || []) as Array<{ pillar: string }>,
+          );
+
+          const fireStatus: PostureStatus = fireBriefing ?? fallbackPosture(
+            'fire_safety',
+            allDrifts as Array<{ pillar: string; severity: string }>,
+            (casByLoc.get(loc.id) || []) as Array<{ pillar: string | null; due_date: string | null }>,
+            (provenByLoc.get(loc.id) || []) as Array<{ pillar: string }>,
+            (recentByLoc.get(loc.id) || []) as Array<{ pillar: string }>,
+          );
+
+          // Tally summaries
           if (foodStatus === 'alarm') foodAlarm++;
           else if (foodStatus === 'watch') foodWatch++;
           else foodSolid++;
@@ -163,8 +278,10 @@ export function usePortfolioData(): UsePortfolioDataResult {
           else if (fireStatus === 'watch') fireWatch++;
           else fireSolid++;
 
+          const foodItems = items.filter(i => i.pillar === 'food_safety');
+          const fireItems = items.filter(i => i.pillar === 'fire_safety');
           totalOpen += items.length;
-          totalAtRisk += items.reduce((s: number, i: PortfolioOpenItem) => s + i.estimated_savings_cents, 0);
+          totalAtRisk += items.reduce((s, i) => s + i.estimated_savings_cents, 0);
 
           return {
             id: loc.id,
@@ -180,22 +297,13 @@ export function usePortfolioData(): UsePortfolioDataResult {
 
         if (cancelled) return;
 
-        const { count: handledCount } = await supabase
-          .from('drift_catches')
-          .select('id', { count: 'exact', head: true })
-          .eq('org_id', orgId)
-          .eq('status', 'resolved')
-          .gte('detected_at', ninetyDaysAgo.toISOString());
-
-        if (cancelled) return;
-
         setLocations(result);
         setSummary({
           totalLocations: locRows.length,
           foodAlarm, foodWatch, foodSolid,
           fireAlarm, fireWatch, fireSolid,
           totalOpenItems: totalOpen,
-          totalHandled: handledCount || 0,
+          totalHandled: handledRes.count || 0,
           totalAtRiskCents: totalAtRisk,
         });
       } catch (err) {
@@ -212,20 +320,18 @@ export function usePortfolioData(): UsePortfolioDataResult {
   const acknowledge = useCallback((driftCatchId: string) => {
     if (!orgId || !userId || !userRole) return;
 
+    // Optimistic: remove item from drill-down list.
+    // Posture stays unchanged — the drift is still open, only acknowledged.
     setLocations(prev => prev.map(loc => {
       const idx = loc.openItems.findIndex(i => i.id === driftCatchId);
       if (idx === -1) return loc;
       const newItems = loc.openItems.filter(i => i.id !== driftCatchId);
-      const foodItems = newItems.filter(i => i.pillar === 'food_safety');
-      const fireItems = newItems.filter(i => i.pillar === 'fire_safety');
       return {
         ...loc,
         openItems: newItems,
         openCount: newItems.length,
-        foodOpenCount: foodItems.length,
-        fireOpenCount: fireItems.length,
-        foodStatus: computePosture(foodItems),
-        fireStatus: computePosture(fireItems),
+        foodOpenCount: newItems.filter(i => i.pillar === 'food_safety').length,
+        fireOpenCount: newItems.filter(i => i.pillar === 'fire_safety').length,
       };
     }));
 
