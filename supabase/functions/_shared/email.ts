@@ -78,7 +78,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
 
   const ctaBlock = params.ctaText && params.ctaUrl
     ? `<div style="text-align: center; margin: 24px 0;">
-        <a href="${params.ctaUrl}" style="background: #1e4d6b; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
+        <a href="${params.ctaUrl}" style="background: #1E2D4D; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
           ${params.ctaText}
         </a>
       </div>`
@@ -90,9 +90,9 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
 
   return `
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-  <div style="background: #1e4d6b; padding: 24px; text-align: center;">
+  <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-      <span style="color: #ffffff;">Evid</span><span style="color: #d4af37;">LY</span>
+      <span style="color: #ffffff;">Evid</span><span style="color: #A08C5A;">LY</span>
     </h1>
   </div>
   ${urgencyBlock}
