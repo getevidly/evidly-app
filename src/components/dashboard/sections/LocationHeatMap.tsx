@@ -117,16 +117,6 @@ export function LocationHeatMap() {
     <div>
       <div className="section-h" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>Locations</span>
-        <span style={{
-          fontSize: 11,
-          color: 'var(--muted)',
-          background: 'var(--cream)',
-          border: '0.5px solid var(--line)',
-          borderRadius: 10,
-          padding: '2px 8px',
-        }}>
-          {healthData.length} location{healthData.length !== 1 ? 's' : ''}
-        </span>
       </div>
       <div className="hm-grid">
         {healthData.map(loc => (

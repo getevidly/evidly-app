@@ -10,7 +10,6 @@
  * Single-location org: identical to pre-Phase 3 behavior.
  */
 
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useSignalNotifications } from '../../../hooks/useSignalNotifications';
@@ -139,18 +138,12 @@ export function PrpHeader() {
           </div>
         </div>
       </div>
+      {/* Sensor strip: only show loading and failing states; suppress no-equipment and all-clear noise */}
       {tempLoading ? (
         <div className="prp-drift drift-clear">
           <i className="ti ti-temperature" />
           <span className="drift-num">—</span>
           <span className="drift-label">loading sensor data</span>
-        </div>
-      ) : sensorTotal === 0 ? (
-        <div className="prp-drift drift-clear" style={{ opacity: 0.7 }}>
-          <i className="ti ti-temperature" />
-          <span className="drift-label">
-            No equipment added yet · <Link to="/equipment" style={{ color: 'inherit', textDecoration: 'underline' }}>Add equipment</Link>
-          </span>
         </div>
       ) : driftCount > 0 ? (
         <div className="prp-drift drift-alert">
@@ -158,12 +151,7 @@ export function PrpHeader() {
           <span className="drift-num">{driftCount}</span>
           <span className="drift-label">sensor{driftCount !== 1 ? 's' : ''} out of range</span>
         </div>
-      ) : (
-        <div className="prp-drift drift-clear">
-          <i className="ti ti-temperature" />
-          <span className="drift-label">all {sensorTotal} sensor{sensorTotal !== 1 ? 's' : ''} in range</span>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

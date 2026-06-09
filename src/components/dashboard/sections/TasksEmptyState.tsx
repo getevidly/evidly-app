@@ -6,7 +6,6 @@
  * by useOrgAge.
  */
 
-import { useNavigate } from 'react-router-dom';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useTodayList } from '../../../hooks/useTodayList';
 
@@ -96,7 +95,6 @@ const checkIcon: React.CSSProperties = {
 /* ── Component ──────────────────────────────────────────────────── */
 
 export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
-  const navigate = useNavigate();
   const { isDay1Phase } = useOrgAge();
   const { totalToday, doneToday } = useTodayList();
   const resolved = variant ?? (isDay1Phase ? 'day1' : 'day90');
@@ -145,9 +143,6 @@ export function TasksEmptyState({ variant }: TasksEmptyStateProps) {
                   ? `${laterToday} control${laterToday === 1 ? '' : 's'} scheduled for later today. Nothing requires your attention.`
                   : 'All controls for today are complete. Nothing requires your attention.'}
               </p>
-              <button type="button" style={ctaStyle} onClick={() => navigate('/checklists')}>
-                View checklists
-              </button>
             </>
           )}
         </div>

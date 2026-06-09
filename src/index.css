@@ -992,7 +992,7 @@ body {
 .team-avatar.bad { background: rgba(163,45,45,0.1); color: var(--red); }
 .team-info { flex: 1; }
 .team-name { font-size: 13px; font-weight: 500; margin: 0; color: var(--navy); }
-.team-role { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.team-role { font-size: 11px; color: var(--primary); margin: 2px 0 0; }
 .team-stat { text-align: right; }
 .team-pct { font-size: 18px; font-weight: 500; line-height: 1; }
 .team-pct.ok { color: var(--prove); }
