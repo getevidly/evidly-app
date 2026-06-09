@@ -79,6 +79,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
 
   ['/admin/',                ['owner_operator', 'executive']],
 
+  // Portfolio — multi-location view
+  ['/portfolio',             ['owner_operator', 'executive', 'compliance_manager']],
+
   // Enterprise — owner/exec only
   ['/enterprise/',           ['owner_operator', 'executive']],
 

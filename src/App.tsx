@@ -148,6 +148,7 @@ const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default:
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
 const CurrentShift = lazy(() => import('./pages/CurrentShift').then(m => ({ default: m.CurrentShift })));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
 
 const JurisdictionIntelligenceUser = lazy(() => import('./pages/JurisdictionIntelligence').then(m => ({ default: m.JurisdictionIntelligence })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
@@ -720,6 +721,7 @@ function AppRoutes() {
           <Route path="/benchmarks" element={<Benchmarks />} />
           <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
+          <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
           <Route path="/migrate" element={<VendorMigration />} />
 
