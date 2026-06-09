@@ -42,35 +42,28 @@ export function DecisionsQueue() {
     );
   }
 
-  const chipText = openCount > 0 ? `${openCount} open` : '';
+  // Empty state: render nothing — reserve the prominent section for real decisions
+  if (openCount === 0) return null;
 
   return (
     <div>
       <div className="section-h" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--primary)' }}>{heading}</span>
-        {chipText && (
-          <span style={{
-            fontSize: 11,
-            color: 'var(--muted)',
-            background: 'var(--cream)',
-            border: '0.5px solid var(--line)',
-            borderRadius: 10,
-            padding: '2px 8px',
-          }}>
-            {chipText}
-          </span>
-        )}
+        <span style={{
+          fontSize: 11,
+          color: 'var(--muted)',
+          background: 'var(--cream)',
+          border: '0.5px solid var(--line)',
+          borderRadius: 10,
+          padding: '2px 8px',
+        }}>
+          {openCount} open
+        </span>
       </div>
       <div className="decisions">
-        {openCount === 0 ? (
-          <p style={{ fontSize: 13, color: 'var(--muted)', padding: '12px 0', margin: 0 }}>
-            No decisions awaiting your call.
-          </p>
-        ) : (
-          decisions.slice(0, 10).map(d => (
-            <DecisionRow key={d.id} decision={d} />
-          ))
-        )}
+        {decisions.slice(0, 10).map(d => (
+          <DecisionRow key={d.id} decision={d} />
+        ))}
       </div>
     </div>
   );

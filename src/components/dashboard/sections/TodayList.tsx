@@ -102,30 +102,29 @@ function TodayListInner({ heading, pillarFilter, userIdFilter, locationIdFilter,
             <TodayListRow key={item.id} item={item} />
           ))
         )}
-      </div>
-      {showChecklistFooter && !clLoading && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 0',
-          marginTop: 4,
-          borderTop: '0.5px solid var(--line, #E5E2DA)',
-          fontSize: 12,
-        }}>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <span className="cl-chip">Daily {summary.dailyDone}/{summary.dailyTotal}</span>
-            <span className="cl-chip">Weekly {summary.weeklyDone}/{summary.weeklyTotal}</span>
-            {summary.monthlyTotal > 0 && <span className="cl-chip">Monthly {summary.monthlyDone}/{summary.monthlyTotal}</span>}
-            {summary.overdueCount > 0 && <span className="cl-badge overdue">{summary.overdueCount} overdue</span>}
-            {summary.dueCount > 0 && <span className="cl-badge due">{summary.dueCount} due soon</span>}
+        {showChecklistFooter && !clLoading && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '10px 18px',
+            borderTop: '0.5px solid var(--line, #E5E2DA)',
+            fontSize: 12,
+          }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span className="cl-chip">Daily {summary.dailyDone}/{summary.dailyTotal}</span>
+              <span className="cl-chip">Weekly {summary.weeklyDone}/{summary.weeklyTotal}</span>
+              {summary.monthlyTotal > 0 && <span className="cl-chip">Monthly {summary.monthlyDone}/{summary.monthlyTotal}</span>}
+              {summary.overdueCount > 0 && <span className="cl-badge overdue">{summary.overdueCount} overdue</span>}
+              {summary.dueCount > 0 && <span className="cl-badge due">{summary.dueCount} due soon</span>}
+            </div>
+            <Link to="/checklists" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--navy, #1E2D4D)', textDecoration: 'none', flexShrink: 0 }}>
+              <i className="ti ti-external-link" style={{ fontSize: 14 }} />
+              Open checklists
+            </Link>
           </div>
-          <Link to="/checklists" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--navy, #1E2D4D)', textDecoration: 'none', flexShrink: 0 }}>
-            <i className="ti ti-external-link" style={{ fontSize: 14 }} />
-            Open checklists
-          </Link>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
