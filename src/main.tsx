@@ -7,20 +7,11 @@ import './index.css';
 
 initSentry();
 
-// Unregister all service workers — prevents stale cache serving
+// Register minimal service worker (push notifications only, no caching).
+// This replaces the old Workbox precaching SW — the new sw.js purges stale
+// caches and reloads open clients on activate, so returning users self-heal.
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(registrations => {
-    if (registrations.length > 0) {
-      registrations.forEach(registration => registration.unregister());
-      if ('caches' in window) {
-        caches.keys().then(cacheNames => {
-          cacheNames
-            .filter(name => name.startsWith('workbox-') || name.startsWith('sw-'))
-            .forEach(cacheName => caches.delete(cacheName));
-        });
-      }
-    }
-  });
+  navigator.serviceWorker.register('/sw.js');
 }
 
 // Handle chunk loading errors after deploys (stale JS bundles)
