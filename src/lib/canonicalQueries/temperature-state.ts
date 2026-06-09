@@ -396,7 +396,9 @@ export function useTemperatureState({
     }
     listeners.add(listener);
 
-    void load(false);
+    // Always force-fetch on mount — module-level cache can hold stale data
+    // from prior navigation or if realtime invalidation missed a DELETE event
+    void load(true);
 
     return () => {
       mountedRef.current = false;
