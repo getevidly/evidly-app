@@ -928,6 +928,11 @@ body {
 .catch-ack-btn:hover { background: var(--cream); }
 .catch-ack-btn i { font-size: 12px; }
 .catch-ack-btn.done { background: rgba(34,197,94,0.08); color: #16a34a; border-color: rgba(34,197,94,0.2); cursor: default; pointer-events: none; }
+.catch-dot { width: 8px; height: 8px; border-radius: 50%; background: #f87171; flex-shrink: 0; margin-top: 2px; }
+.catch-open-label { font-size: 11px; font-weight: 600; color: #f87171; }
+.catch-stakes { font-size: 12px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+.catch-ack-btn.navy { background: var(--primary); color: #fff; border-color: var(--primary); }
+.catch-ack-btn.navy:hover { opacity: 0.9; }
 
 /* ── C12: weekly drift report footer ────────────────────────────── */
 .report-footer { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px 0; margin-top: 4px; border-top: 0.5px dashed #E2DDD4; }

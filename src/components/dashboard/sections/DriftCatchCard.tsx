@@ -1,12 +1,11 @@
 /**
  * DriftCatchCard — C12
  *
- * Shared catch card row for standard and audit variants.
- * Status visual mapping: reduced/resolved → shield-check,
- * proven → alert-triangle, open → eye (WATCHING).
+ * Catch card row for standard and audit variants.
+ * Only renders for open, unacknowledged items (parent filters).
+ * Coral dot + "Open" label, duration, stakes line, inline ack button.
  */
 
-import { useAuth } from '../../../contexts/AuthContext';
 import { useRole } from '../../../contexts/RoleContext';
 import { getDriftLabel, getSourceTableLabel } from '../../../constants/driftTypeLabels';
 import type { DriftCatchWithAcks } from '../../../hooks/useDriftCatches';
@@ -31,46 +30,26 @@ const PILLAR_LABELS: Record<string, string> = {
   fire_safety: 'Fire Safety',
 };
 
-function statusIcon(status: string): { cls: string; icon: string } {
-  if (status === 'reduced' || status === 'resolved') return { cls: 'reduced', icon: 'ti-shield-check' };
-  if (status === 'proven') return { cls: 'proven', icon: 'ti-alert-triangle' };
-  return { cls: 'open', icon: 'ti-eye' };
-}
-
-function statusTag(status: string): { cls: string; text: string } {
-  if (status === 'reduced' || status === 'resolved') return { cls: 'reduced', text: 'PREDICTED & REDUCED' };
-  if (status === 'proven') return { cls: 'proven', text: 'PREDICTED & PROVEN' };
-  return { cls: 'open', text: 'OPEN' };
-}
-
-function fmtDate(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(iso));
-  } catch { return ''; }
-}
+/** Generic stakes text per drift type — no hardcoded county. */
+const STAKES: Record<string, string> = {
+  temperature_out_of_range:    'A temperature excursion is the record an inspector opens with.',
+  temperature_trend_drift:     'A trending excursion is what escalates a routine walk-through.',
+  missed_checklist:            'A missed checklist is documented proof of a lapse.',
+  document_expiration:         'An expired document is a citable deficiency on sight.',
+  receiving_log_missing:       'A receiving log gap is a citable deficiency on sight.',
+  allergen_training_overdue:   'An overdue allergen certification is a citable deficiency.',
+  hood_cleaning_approaching:   'A lapsed hood cleaning is a fire marshal citation on sight.',
+  suppression_semi_annual_due: 'A missed suppression service is a fire marshal citation on sight.',
+  extinguisher_monthly_missed: 'A missed extinguisher check is a fire marshal citation on sight.',
+  vendor_coi_expiring:         'An expired COI voids your vendor coverage on a claim.',
+  inspection_readiness_gap:    'A readiness gap becomes a finding the moment an inspector arrives.',
+  team_miss_clustering:        'A pattern of misses becomes a systemic finding.',
+  streak_break:                'A broken streak signals a compliance lapse to an inspector.',
+};
 
 function daysBetween(from: string, to: Date): number {
   const diff = to.getTime() - new Date(from).getTime();
   return Math.max(0, Math.floor(diff / 86_400_000));
-}
-
-function buildMeta(drift: DriftCatchWithAcks): { text: string; savings: string } {
-  const parts: string[] = [`Predicted ${fmtDate(drift.detected_at)}`];
-
-  if ((drift.status === 'reduced' || drift.status === 'resolved') && drift.resolved_at) {
-    parts.push(`Reduced ${fmtDate(drift.resolved_at)}`);
-  } else if (drift.status === 'proven' && drift.resolved_at) {
-    parts.push(`Proven ${fmtDate(drift.resolved_at)}`);
-  } else if (drift.status === 'open') {
-    const days = daysBetween(drift.detected_at, new Date());
-    parts.push(`${days} day${days === 1 ? '' : 's'} watched`);
-  }
-
-  const savings = drift.estimated_savings_cents > 0
-    ? `Est. $${(drift.estimated_savings_cents / 100).toLocaleString()} saved`
-    : '';
-
-  return { text: parts.join(' · '), savings };
 }
 
 function buildEvidence(drift: DriftCatchWithAcks): string {
@@ -81,63 +60,38 @@ function buildEvidence(drift: DriftCatchWithAcks): string {
   return ev;
 }
 
-function buildAckStat(drift: DriftCatchWithAcks, currentUserId: string): string {
-  if (drift.userHasAcked) {
-    const myAck = drift.acknowledgments.find(a => a.user_id === currentUserId);
-    const ackDate = myAck?.acknowledged_at;
-    return `Acknowledged by you${ackDate ? ` · ${fmtDate(ackDate)}` : ''}`;
-  }
-  if (drift.acknowledgments.length > 0) {
-    const names = drift.acknowledgments.map(a => a.user_full_name).join(', ');
-    return `Acknowledged by ${names}`;
-  }
-  return 'Awaiting acknowledgments';
-}
-
 export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCardProps) {
-  const { profile } = useAuth();
   const { userRole } = useRole();
-  const si = statusIcon(drift.status);
-  const st = statusTag(drift.status);
-  const meta = buildMeta(drift);
   const roleLabel = ROLE_LABELS[userRole] || userRole;
-  const currentUserId = profile?.id || '';
+  const days = daysBetween(drift.detected_at, new Date());
+  const stakesText = STAKES[drift.drift_type] || 'A gap here becomes a finding when an inspector arrives.';
+  const ackNames = drift.acknowledgments.map(a => a.user_full_name);
 
   return (
     <div className="catch">
-      <div className={`catch-icon ${si.cls}`}>
-        <i className={`ti ${si.icon}`} />
-      </div>
       <div className="catch-body">
         <div className="catch-head">
-          <span className={`catch-tag ${st.cls}`}>{st.text}</span>
+          <span className="catch-dot" />
+          <span className="catch-open-label">Open</span>
           <span className="catch-pillar">{PILLAR_LABELS[drift.pillar] || drift.pillar} · {drift.location_name}</span>
         </div>
         <p className="catch-label">{getDriftLabel(drift.drift_type)}</p>
-        <p className="catch-meta">
-          {meta.text}
-          {meta.savings && <> · <span className="savings">{meta.savings}</span></>}
-        </p>
-        {variant === 'audit' && (
-          <p className="catch-meta">{buildEvidence(drift)}</p>
-        )}
+        <p className="catch-meta">{days} day{days === 1 ? '' : 's'} running</p>
+        <p className="catch-stakes">{stakesText}</p>
+        {variant === 'audit' && <p className="catch-meta">{buildEvidence(drift)}</p>}
         <div className="catch-ack-row">
-          <span className="catch-ack-stat">{buildAckStat(drift, currentUserId)}</span>
-          {!drift.userHasAcked ? (
-            <button
-              type="button"
-              className="catch-ack-btn"
-              onClick={() => onAcknowledge(drift.id)}
-            >
-              <i className="ti ti-check" />
-              Acknowledge as {roleLabel}
-            </button>
-          ) : (
-            <span className="catch-ack-btn done">
-              <i className="ti ti-check" />
-              Acknowledged
-            </span>
-          )}
+          <span className="catch-ack-stat">
+            {ackNames.length > 0
+              ? `Acknowledged by ${ackNames.join(', ')}`
+              : 'Awaiting acknowledgment'}
+          </span>
+          <button
+            type="button"
+            className="catch-ack-btn navy"
+            onClick={() => onAcknowledge(drift.id)}
+          >
+            Acknowledge as {roleLabel}
+          </button>
         </div>
       </div>
     </div>

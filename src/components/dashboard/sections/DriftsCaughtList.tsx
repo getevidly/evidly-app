@@ -45,7 +45,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
     );
   }
 
-  const openCatches = catches.filter(c => c.status === 'open');
+  const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
   if (openCatches.length === 0) return null;
 
   const count = openCatches.length;
