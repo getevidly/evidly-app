@@ -42,7 +42,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   owner_operator: [
     'prp_header',
     'location_heat_map',
-    'yesterday_caught_line',
     'advisor_pair',
     'today_list',
     'decisions_queue',
@@ -55,7 +54,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   executive: [
     'prp_header',
     'location_heat_map',
-    'yesterday_caught_line',
     'advisor_pair',
     'today_list',
     'decisions_queue',
@@ -69,7 +67,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   compliance_manager: [
     'prp_header',
     'location_heat_map',
-    'yesterday_caught_line',
     'advisor_pair',
     'today_list',
     'drifts_caught_audit',
@@ -80,7 +77,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   ],
   facilities_manager: [
     'prp_header',
-    'yesterday_caught_line',
     'advisor_single_fire',
     'today_list',
     'decisions_queue',
@@ -90,7 +86,6 @@ export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   ],
   chef: [
     'prp_header',
-    'yesterday_caught_line',
     'advisor_single_food',
     'today_list',
     'drifts_caught',
