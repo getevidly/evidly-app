@@ -115,7 +115,7 @@ function substituteMergeFields(
 ): PolicySection[] {
   return sections.map(s => ({
     heading: applyReplacements(s.heading, replacements),
-    content: applyReplacements(s.content, replacements),
+    content: applyReplacements((s as any).body ?? s.content, replacements),
   }));
 }
 
