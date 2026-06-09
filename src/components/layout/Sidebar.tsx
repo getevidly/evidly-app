@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Activity, AlertCircle, AlertTriangle, BarChart3, Bell, BookOpen, Bot, Brain, Bug, Building,
+  Activity, AlertCircle, AlertTriangle, BarChart3, Bell, BookOpen, Bot, Brain, Bug, Building, Building2,
   Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock, CreditCard,
-  DollarSign, Download, Droplet, Fan, FileEdit, FileText, Filter, Flame, GraduationCap, Hammer,
+  DollarSign, Download, Droplet, Fan, FileBarChart, FileEdit, FileText, Filter, Flame, GraduationCap, Hammer,
   Handshake, HardHat, Heart, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
   Lock, LogOut, Mail, MapPin, Medal, MessageCircle, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
@@ -135,6 +135,9 @@ const SIDEBAR_ICONS: Record<string, any> = {
   'CreditCard': CreditCard,
   'Settings': Settings,
   'MessageCircle': MessageCircle,
+  'Building2': Building2,
+  'BookOpen': BookOpen,
+  'FileBarChart': FileBarChart,
 };
 
 // ── Item descriptions (EN) ───────────────────────────────
