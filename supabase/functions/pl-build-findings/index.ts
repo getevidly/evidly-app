@@ -24,6 +24,11 @@ function shortDesc(desc: unknown, words = 12): string {
   return parts.length <= words ? s : parts.slice(0, words).join(" ") + "…";
 }
 
+function truncate80(s: unknown): string {
+  const t = String(s ?? "").trim();
+  return t.length <= 80 ? t : t.slice(0, 77) + "…";
+}
+
 /** Replace all {slot} tokens in a string. Missing slots become "". */
 function fillSlots(text: string, slots: Record<string, string>): string {
   return text.replace(/\{([^}]+)\}/g, (_, key) => slots[key] ?? "");
@@ -64,6 +69,7 @@ interface TriggeredFinding {
   slots: Record<string, string>;
   flag: string;
   sourceRefs: unknown[];
+  consumedKeys: string[];
 }
 
 // ── Trigger evaluators ───────────────────────────────────
@@ -72,6 +78,36 @@ type Rec = Record<string, unknown>;
 
 function asArr(v: unknown): Rec[] {
   return Array.isArray(v) ? v : [];
+}
+
+// ── Item key builders (for coverage tracking) ────────────
+
+function sgItemKey(s: Rec): string { return `safeguard|${norm(s.code)}`; }
+function fireItemKey(f: Rec): string { return `fire|${norm(f.topic)}|${norm(f.named_standard)}`; }
+function foodItemKey(f: Rec): string { return `food|${norm(f.topic)}|${norm(f.form_or_section_ref)}`; }
+function pwItemKey(p: Rec): string { return `pw|${norm(p.topic)}`; }
+function intItemKey(o: Rec): string { return `integrity|${norm(o.type)}`; }
+
+interface ExtractedItem { section: string; key: string; summary: string; }
+
+function buildExtractedItems(reconciled: Rec): ExtractedItem[] {
+  const items: ExtractedItem[] = [];
+  for (const s of asArr(reconciled.protective_safeguards)) {
+    items.push({ section: "protective_safeguards", key: sgItemKey(s), summary: truncate80(s.description) });
+  }
+  for (const f of asArr(reconciled.fire_findings)) {
+    items.push({ section: "fire_findings", key: fireItemKey(f), summary: truncate80(f.requirement_text || f.named_standard) });
+  }
+  for (const f of asArr(reconciled.food_findings)) {
+    items.push({ section: "food_findings", key: foodItemKey(f), summary: truncate80(f.requirement_or_exclusion_text || f.topic) });
+  }
+  for (const p of asArr(reconciled.policy_wide)) {
+    items.push({ section: "policy_wide", key: pwItemKey(p), summary: truncate80(p.text || p.topic) });
+  }
+  for (const o of asArr(reconciled.integrity_observations)) {
+    items.push({ section: "integrity_observations", key: intItemKey(o), summary: truncate80(o.detail || o.type) });
+  }
+  return items;
 }
 
 function evaluateTriggers(
@@ -110,6 +146,7 @@ function evaluateTriggers(
           flag: tpl.default_flag,
           slots: buildPseSlots(match, tpl),
           sourceRefs: [match],
+          consumedKeys: [sgItemKey(match)],
         });
       }
       continue;
@@ -125,6 +162,9 @@ function evaluateTriggers(
         const editionStr =
           (fireMatch ? String(fireMatch.named_standard ?? "") : "") ||
           (intMatch ? String(intMatch.detail ?? "") : "");
+        const keys: string[] = [];
+        if (intMatch) keys.push(intItemKey(intMatch));
+        if (fireMatch) keys.push(fireItemKey(fireMatch));
         results.push({
           template: tpl,
           flag: tpl.default_flag,
@@ -133,6 +173,7 @@ function evaluateTriggers(
             policy_nfpa_edition: editionStr,
           },
           sourceRefs: [intMatch, fireMatch].filter(Boolean),
+          consumedKeys: keys,
         });
       }
       continue;
@@ -152,6 +193,7 @@ function evaluateTriggers(
           flag: tpl.default_flag,
           slots: buildPseSlots(null, tpl),
           sourceRefs: [match],
+          consumedKeys: [fireItemKey(match)],
         });
       }
       continue;
@@ -165,6 +207,10 @@ function evaluateTriggers(
       const match = sgMatch || fireMatch || sgMatch2;
       if (match) {
         const code = sgMatch ? String(sgMatch.code ?? "P-1") : "P-1";
+        const keys: string[] = [];
+        if (sgMatch) keys.push(sgItemKey(sgMatch));
+        if (fireMatch) keys.push(fireItemKey(fireMatch));
+        if (sgMatch2 && sgMatch2 !== sgMatch) keys.push(sgItemKey(sgMatch2));
         results.push({
           template: tpl,
           flag: tpl.default_flag,
@@ -173,6 +219,7 @@ function evaluateTriggers(
             sprinkler_symbol: code,
           },
           sourceRefs: [match],
+          consumedKeys: keys,
         });
       }
       continue;
@@ -190,6 +237,7 @@ function evaluateTriggers(
             cd_form: String(match.form_or_section_ref ?? ""),
           },
           sourceRefs: [match],
+          consumedKeys: [foodItemKey(match)],
         });
       }
       continue;
@@ -203,6 +251,8 @@ function evaluateTriggers(
       if (match) {
         const hasNoTempLog = integrityObs.some((o) => norm(o.type) === "no_temperature_log_requirement");
         const totalLocs = Number(declVal("total_locations") ?? 1);
+        const keys: string[] = [foodItemKey(match)];
+        if (hasNoTempLog) keys.push("integrity|no_temperature_log_requirement");
         results.push({
           template: tpl,
           flag: hasNoTempLog ? "elevated" : tpl.default_flag,
@@ -215,6 +265,7 @@ function evaluateTriggers(
             spoilage_scope: totalLocs > 1 ? `, across ${totalLocs} locations combined` : "",
           },
           sourceRefs: [match],
+          consumedKeys: keys,
         });
       }
       continue;
@@ -231,6 +282,9 @@ function evaluateTriggers(
         const hasContamEndorsement = foodFindings.some(
           (f) => mentions(f.requirement_or_exclusion_text, "contamination") && mentions(f.requirement_or_exclusion_text, "income"),
         );
+        const keys: string[] = [];
+        if (foodMatch) keys.push(foodItemKey(foodMatch));
+        if (pwMatch) keys.push(pwItemKey(pwMatch));
         results.push({
           template: tpl,
           flag: tpl.default_flag,
@@ -241,6 +295,7 @@ function evaluateTriggers(
               : "No food-contamination income endorsement is attached.",
           },
           sourceRefs: [foodMatch, pwMatch].filter(Boolean),
+          consumedKeys: keys,
         });
       }
       continue;
@@ -258,6 +313,7 @@ function evaluateTriggers(
             coins_pct: String(match.percentage_or_value ?? ""),
           },
           sourceRefs: [match],
+          consumedKeys: [pwItemKey(match)],
         });
       }
       continue;
@@ -277,6 +333,7 @@ function evaluateTriggers(
             app_para: String(match.section_ref ?? ""),
           },
           sourceRefs: [match],
+          consumedKeys: [pwItemKey(match)],
         });
       }
       continue;
@@ -295,6 +352,7 @@ function evaluateTriggers(
           flag: tpl.default_flag,
           slots: buildPseSlots(null, tpl),
           sourceRefs: [match],
+          consumedKeys: [foodItemKey(match)],
         });
       }
       continue;
@@ -448,8 +506,43 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // ── Coverage pass ──────────────────────────────────────
+    const extracted = buildExtractedItems(reconciled);
+    const mappedKeys = new Set<string>();
+    for (const t of triggered) {
+      for (const k of t.consumedKeys) mappedKeys.add(k);
+    }
+
+    const unmapped = extracted.filter((e) => !mappedKeys.has(e.key));
+    const extracted_count = extracted.length;
+    const mapped_count = extracted_count - unmapped.length;
+    const unmapped_count = unmapped.length;
+    const coverage_ratio = extracted_count > 0
+      ? Math.round((mapped_count / extracted_count) * 1000) / 1000
+      : 0;
+    const report_complete = unmapped_count === 0;
+
+    const coverageObj = {
+      extracted_count,
+      mapped_count,
+      unmapped_count,
+      coverage_ratio,
+      unmapped,
+    };
+
+    await supabase
+      .from("pl_extraction_runs")
+      .update({ coverage: coverageObj, report_complete })
+      .eq("id", run_id);
+
     return json(
-      { run_id, findings_written: rows.length, by_key: byKey },
+      {
+        run_id,
+        findings_written: rows.length,
+        by_key: byKey,
+        coverage: { extracted_count, mapped_count, unmapped_count, coverage_ratio },
+        report_complete,
+      },
       200,
       headers,
     );
