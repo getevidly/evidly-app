@@ -12,10 +12,18 @@ const EXTRACTION_PROMPT = `You are reading a commercial kitchen insurance policy
 
 Read the attached policy PDF and extract a structured JSON object with these top-level keys:
 
-  "declarations": { carrier, policy_number, named_insured, policy_period, forms_list[], total_locations },
+  "declarations": { carrier, policy_number, named_insured, policy_period, forms_list[], total_locations,
+       locations: [ { loc_no, address, scheduled_building, scheduled_bpp, coinsurance, occupancy,
+       cooking_type, solid_fuel (bool), liquor (bool),
+       sprinkler_present ("present"|"absent"|"unstated"), fire_alarm_present ("present"|"absent"|"unstated"),
+       suppression_present ("present"|"absent"|"unstated"),
+       spoilage_sublimit (per-loc amount, or "shared:<amount>" if a single aggregate) } ] },
   "protective_safeguards": [ { code (P-1/P-2/P-5/etc), description, form_reference (e.g. CP 04 11),
        paragraph_ref, suspension_wording_present (bool), impairment_notice_required (bool),
-       impairment_window (text if stated) } ],
+       impairment_window (text if stated), applies_to_locations (array of loc_no where REQUIRED),
+       satisfied_at_locations (array of loc_no where status == "present"),
+       gap_locations (array of loc_no where status == "absent"),
+       unconfirmed_locations (array of loc_no where status == "unstated") } ],
   "fire_findings": [ { topic (hood_cleaning|suppression|sprinkler|extinguisher|fan|other),
        requirement_text, form_or_section_ref, named_standard (verbatim as the POLICY states it —
        do NOT correct or normalize editions; capture exactly what the document says) } ],
@@ -27,7 +35,9 @@ Read the attached policy PDF and extract a structured JSON object with these top
   "integrity_observations": [ { type (choose the MOST SPECIFIC — use 'other' only if none fit:
        nfpa_edition_mismatch | no_temperature_log_requirement | impairment_procedure_gap |
        no_food_contamination_coverage | endorsement_named_not_attached | sublimit_no_scheduled_value |
-       safeguard_premises_mismatch | coinsurance_no_valuation | address_or_period_mismatch | other),
+       safeguard_premises_mismatch | safeguard_required_not_confirmed | safeguard_presence_not_scheduled |
+       coinsurance_no_valuation | address_or_period_mismatch | location_count_mismatch |
+       form_listed_not_extracted | other),
        detail } ]
 
 RULES:
@@ -36,6 +46,41 @@ RULES:
 - Capture standards/citations EXACTLY as the policy states them. You are reading, not correcting.
 - Every extracted item must trace to text actually in the document. If something is absent, do NOT
   invent it — omit it. Absence is itself a finding the reconciler will handle.
+- LOCATION SCHEDULE: If the declarations page lists multiple premises/locations, enumerate EVERY one
+  into declarations.locations[]. For each location, read the premises description / location schedule
+  and classify each protection field as a TRISTATE:
+    "present"  — the document AFFIRMATIVELY states the protection is installed at this premises.
+    "absent"   — the document AFFIRMATIVELY states it is NOT installed, OR the location is excluded
+                 from a list that names which premises have it (e.g. sprinkler schedule lists locs
+                 1-4,6-10 but omits loc 5 → loc 5 sprinkler_present = "absent").
+    "unstated" — the policy does not address this protection for this location.
+  For single-location policies, set locations to a single-element array.
+- SAFEGUARD RESOLUTION: "at each described premises" / "all premises" language defines what the
+  safeguard REQUIRES, NOT where it is satisfied. For each protective safeguard:
+  • applies_to_locations[] = loc_no values where the safeguard is REQUIRED (per the warranty scope).
+    If the warranty says "at each described premises", list every loc_no.
+  • satisfied_at_locations[] = loc_no values where the corresponding protection status == "present".
+  • gap_locations[] = loc_no values where the corresponding protection status == "absent". These are
+    locations where the warranty REQUIRES the protection but the schedule shows it is NOT installed.
+    This is the highest-value finding — a warranted safeguard affirmatively absent at a premises.
+  • unconfirmed_locations[] = loc_no values where the corresponding protection status == "unstated".
+    These are informational only — the policy warrants the protection but does not confirm or deny it.
+  • For EACH location in gap_locations, emit an integrity_observation with type
+    "safeguard_required_not_confirmed" and detail naming the safeguard code + loc_no. One flag per
+    absent location.
+  • Do NOT emit safeguard_required_not_confirmed for "unstated" locations. Instead, if ANY safeguard
+    has a non-empty unconfirmed_locations[], emit ONE SINGLE integrity_observation with type
+    "safeguard_presence_not_scheduled" summarizing that the policy warrants these safeguards but the
+    schedule does not confirm per-location installation (list the affected safeguard codes). One flag
+    total across all safeguards, not per-location.
+  For single-location policies, use applies_to_locations=["all"] and evaluate gap normally.
+- SHARED vs PER-LOCATION SUBLIMITS: If a spoilage sublimit applies as a single aggregate across all
+  locations, record it in policy_wide AND set each location's spoilage_sublimit to "shared:<amount>".
+  If per-location, record the per-location amount in each location object.
+- FORMS COMPLETENESS: Every form in declarations.forms_list[] MUST produce substantive requirements in
+  the appropriate section (fire_findings, food_findings, or protective_safeguards). If you cannot
+  extract a listed form's substance, add an integrity_observation with type "form_listed_not_extracted"
+  and the form identifier in detail.
 - Output ONLY the JSON object. No preamble, no markdown, no commentary.`;
 
 // ── Anthropic call helper ────────────────────────────────
@@ -54,7 +99,7 @@ async function callAnthropic(
     },
     body: JSON.stringify({
       model,
-      max_tokens: 8000,
+      max_tokens: 16000,
       temperature,
       system: EXTRACTION_PROMPT,
       messages: [
@@ -92,6 +137,24 @@ async function callAnthropic(
   } catch {
     // Parse failed — wrap with marker so Phase 3 reconciler can flag it
     return { parsed: { _parse_error: true, raw_text: raw }, raw };
+  }
+}
+
+// ── Post-parse sanity: flag location count mismatch ──────
+function patchLocationMismatch(parsed: unknown): void {
+  if (!parsed || typeof parsed !== "object" || (parsed as Record<string, unknown>)._parse_error) return;
+  const obj = parsed as Record<string, unknown>;
+  const decl = obj.declarations as Record<string, unknown> | undefined;
+  if (!decl) return;
+  const total = Number(decl.total_locations ?? 0);
+  const locs = Array.isArray(decl.locations) ? decl.locations : [];
+  if (total > 1 && locs.length !== total) {
+    const obs = Array.isArray(obj.integrity_observations) ? [...obj.integrity_observations] : [];
+    obs.push({
+      type: "location_count_mismatch",
+      detail: `declarations.total_locations=${total} but locations[] has ${locs.length} entries`,
+    });
+    obj.integrity_observations = obs;
   }
 }
 
@@ -245,6 +308,10 @@ Deno.serve(async (req: Request) => {
       callAnthropic(anthropicKey, MODEL_A, 0, pdfBase64),
       callAnthropic(anthropicKey, MODEL_B, 0.4, pdfBase64),
     ]);
+
+    // ── Step 4.5: sanity-check location counts ───────────
+    patchLocationMismatch(passA.parsed);
+    patchLocationMismatch(passB.parsed);
 
     // ── Step 5: update run with both passes ──────────────
     const { error: updateErr } = await supabase
