@@ -116,6 +116,17 @@ Deno.serve(async (req: Request) => {
     const isServiceRole = token !== null && token.trim() === serviceKey.trim();
 
     if (!isTestAuth && !isServiceRole) {
+      // DEBUG: log first 6 chars of token vs serviceKey to diagnose auth mismatch
+      console.error("[pl-extract auth debug]", JSON.stringify({
+        tokenPrefix: token ? token.slice(0, 6) : null,
+        serviceKeyPrefix: serviceKey ? serviceKey.slice(0, 6) : null,
+        tokenLen: token?.length ?? 0,
+        serviceKeyLen: serviceKey?.length ?? 0,
+        isTestAuth,
+        testSecretSet: Boolean(testSecret && testSecret.length > 0),
+        testHeaderPresent: Boolean(testHeader),
+        authHeaderPrefix: authHeader ? authHeader.slice(0, 13) : null,
+      }));
       if (!token) {
         return json({ error: "Unauthorized" }, 401, headers);
       }
