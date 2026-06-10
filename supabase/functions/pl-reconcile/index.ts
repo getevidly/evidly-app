@@ -323,28 +323,28 @@ Deno.serve(async (req: Request) => {
       (passA.protective_safeguards ?? []) as Record<string, unknown>[],
       (passB.protective_safeguards ?? []) as Record<string, unknown>[],
       safeguardKey,
-      ["description", "form_reference", "suspension_wording_present", "impairment_notice_required", "impairment_window"],
+      ["suspension_wording_present", "impairment_notice_required"],
     );
 
     const fire = reconcileArray(
       (passA.fire_findings ?? []) as Record<string, unknown>[],
       (passB.fire_findings ?? []) as Record<string, unknown>[],
       fireKey,
-      ["requirement_text"],
+      [],
     );
 
     const food = reconcileArray(
       (passA.food_findings ?? []) as Record<string, unknown>[],
       (passB.food_findings ?? []) as Record<string, unknown>[],
       foodKey,
-      ["requirement_or_exclusion_text", "sublimit_amount", "trigger_basis"],
+      ["sublimit_amount"],
     );
 
     const pw = reconcileArray(
       (passA.policy_wide ?? []) as Record<string, unknown>[],
       (passB.policy_wide ?? []) as Record<string, unknown>[],
       policyWideKey,
-      ["text", "percentage_or_value"],
+      ["percentage_or_value"],
     );
 
     const integrity = reconcileIntegrity(
@@ -357,7 +357,13 @@ Deno.serve(async (req: Request) => {
     const conflict_count = declResult.conflict + safeguards.conflict + fire.conflict + food.conflict + pw.conflict + integrity.conflict;
     const single_pass_count = safeguards.single_pass + fire.single_pass + food.single_pass + pw.single_pass + integrity.single_pass;
 
-    const summary = { agreed_count, conflict_count, single_pass_count };
+    // Review-gating: declarations conflicts + safeguards conflicts/single_pass + fire/food/pw conflicts
+    const review_trigger_count =
+      declResult.conflict
+      + safeguards.conflict + safeguards.single_pass
+      + fire.conflict + food.conflict + pw.conflict;
+
+    const summary = { agreed_count, conflict_count, single_pass_count, review_trigger_count };
 
     // ── Build reconciled object ──────────────────────────
     const reconciled = {
@@ -370,7 +376,7 @@ Deno.serve(async (req: Request) => {
       integrity_observations: integrity.items,
     };
 
-    const review_required = conflict_count > 0 || single_pass_count > 0;
+    const review_required = review_trigger_count > 0;
 
     // ── Collect integrity flags ──────────────────────────
     const integrityFlags: string[] = [];
