@@ -24,8 +24,11 @@ Read the attached policy PDF and extract a structured JSON object with these top
        (if any), trigger_basis (e.g. physical_damage) } ],
   "policy_wide": [ { topic (coinsurance|application_warranty|valuation|other), text, section_ref,
        percentage_or_value (if any) } ],
-  "integrity_observations": [ { type (endorsement_named_not_attached | sublimit_no_scheduled_value |
-       address_mismatch | period_mismatch | safeguard_no_description | other), detail } ]
+  "integrity_observations": [ { type (choose the MOST SPECIFIC — use 'other' only if none fit:
+       nfpa_edition_mismatch | no_temperature_log_requirement | impairment_procedure_gap |
+       no_food_contamination_coverage | endorsement_named_not_attached | sublimit_no_scheduled_value |
+       safeguard_premises_mismatch | coinsurance_no_valuation | address_or_period_mismatch | other),
+       detail } ]
 
 RULES:
 - Two regulatory pillars stay SEPARATE: fire_findings and food_findings never merge. Never invent a

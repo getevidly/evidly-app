@@ -49,7 +49,59 @@ function policyWideKey(item: Record<string, unknown>): string {
 }
 
 function integrityKey(item: Record<string, unknown>): string {
-  return norm(item.detail).slice(0, 60);
+  const t = norm(item.type);
+  if (t === "other") return `other|${norm(item.detail).slice(0, 40)}`;
+  return t;
+}
+
+/**
+ * Integrity-specific reconciler: match by type, do NOT compare detail strings
+ * for conflict. Same type in both passes = 'agreed' (take pass_a detail).
+ * 'other' items dedupe by first 40 chars of detail.
+ */
+function reconcileIntegrity(
+  arrA: Record<string, unknown>[],
+  arrB: Record<string, unknown>[],
+): { items: ReconciledItem[]; agreed: number; conflict: number; single_pass: number } {
+  const mapA = new Map<string, Record<string, unknown>>();
+  const mapB = new Map<string, Record<string, unknown>>();
+  const allKeys: string[] = [];
+  const seenKeys = new Set<string>();
+
+  for (const item of (arrA ?? [])) {
+    const k = integrityKey(item);
+    mapA.set(k, item);
+    if (!seenKeys.has(k)) { allKeys.push(k); seenKeys.add(k); }
+  }
+  for (const item of (arrB ?? [])) {
+    const k = integrityKey(item);
+    mapB.set(k, item);
+    if (!seenKeys.has(k)) { allKeys.push(k); seenKeys.add(k); }
+  }
+
+  let agreed = 0;
+  let single_pass = 0;
+  const items: ReconciledItem[] = [];
+
+  for (const k of allKeys) {
+    const a = mapA.get(k);
+    const b = mapB.get(k);
+
+    if (a && b) {
+      // Same type in both passes = agreed; take pass_a's detail as canonical
+      agreed++;
+      items.push({ ...a, _status: "agreed" });
+    } else if (a) {
+      single_pass++;
+      items.push({ ...a, _status: "single_pass", _from: "a" });
+    } else if (b) {
+      single_pass++;
+      items.push({ ...b, _status: "single_pass", _from: "b" });
+    }
+  }
+
+  // conflict is always 0 for integrity_observations
+  return { items, agreed, conflict: 0, single_pass };
 }
 
 // ── Generic array reconciler ─────────────────────────────
@@ -295,11 +347,9 @@ Deno.serve(async (req: Request) => {
       ["text", "percentage_or_value"],
     );
 
-    const integrity = reconcileArray(
+    const integrity = reconcileIntegrity(
       (passA.integrity_observations ?? []) as Record<string, unknown>[],
       (passB.integrity_observations ?? []) as Record<string, unknown>[],
-      integrityKey,
-      ["type", "detail"],
     );
 
     // ── Build summary ────────────────────────────────────
