@@ -357,6 +357,206 @@ function evaluateTriggers(
       }
       continue;
     }
+
+    // ── T1: UB-01-FR-02: safeguard presence not scheduled ──
+    if (sid === "UB-01-FR-02") {
+      const match = integrityObs.find((o) => norm(o.type) === "safeguard_presence_not_scheduled");
+      if (match) {
+        const unconfirmedSGs = safeguards.filter((s) => asArr(s.unconfirmed_locations).length > 0);
+        const pseForm = unconfirmedSGs.length > 0 ? String(unconfirmedSGs[0].form_reference ?? "") : "";
+        const pseCodes = unconfirmedSGs.map((s) => String(s.code ?? "")).filter(Boolean).join(", ");
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            pse_form: pseForm,
+            pse_codes: pseCodes,
+          },
+          sourceRefs: [match],
+          consumedKeys: [intItemKey(match)],
+        });
+      }
+      continue;
+    }
+
+    // ── T2: UB-03-FS-01: equipment breakdown ───────────────
+    if (sid === "UB-03-FS-01") {
+      const matches = foodFindings.filter((f) => norm(f.topic) === "equipment_breakdown");
+      if (matches.length > 0) {
+        const sublimit = matches.find((m) => m.sublimit_amount)?.sublimit_amount;
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            eb_sublimit: sublimit ? String(sublimit) : "",
+          },
+          sourceRefs: [matches[0]],
+          consumedKeys: matches.map(foodItemKey),
+        });
+      }
+      continue;
+    }
+
+    // ── T3: UB-03-FS-02: shared spoilage sublimit ─────────
+    if (sid === "UB-03-FS-02") {
+      const intMatch = integrityObs.find((o) => norm(o.type) === "sublimit_no_scheduled_value");
+      if (intMatch) {
+        const pwMatch = policyWide.find(
+          (p) => norm(p.topic) === "other" && mentions(p.text, "spoilage") && mentions(p.text, "shared"),
+        );
+        const dollarSource = String(pwMatch?.text ?? intMatch.detail ?? "");
+        const dollarMatch = dollarSource.match(/\$[\d,]+/);
+        const keys: string[] = [intItemKey(intMatch)];
+        if (pwMatch) keys.push(pwItemKey(pwMatch));
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            spoilage_amount: dollarMatch ? dollarMatch[0] : "",
+            loc_count: String(declVal("total_locations") ?? ""),
+          },
+          sourceRefs: [intMatch, pwMatch].filter(Boolean),
+          consumedKeys: keys,
+        });
+      }
+      continue;
+    }
+
+    // ── T4: UB-04-FS-01: FC-VALUES endorsement gap ────────
+    if (sid === "UB-04-FS-01") {
+      const intMatch = integrityObs.find(
+        (o) => norm(o.type) === "endorsement_named_not_attached" &&
+          (mentions(o.detail, "fc-values") || mentions(o.detail, "contamination")),
+      );
+      if (intMatch) {
+        const fcFoods = foodFindings.filter(
+          (f) => (norm(f.topic) === "foodborne_illness" || norm(f.topic) === "other") &&
+            mentions(f.requirement_or_exclusion_text, "fc-values"),
+        );
+        const fcAmount = fcFoods.find((f) => f.sublimit_amount)?.sublimit_amount;
+        const keys: string[] = [intItemKey(intMatch)];
+        for (const f of fcFoods) keys.push(foodItemKey(f));
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            fc_amount: fcAmount ? String(fcAmount) : "",
+            fc_schedule: "FC-VALUES",
+          },
+          sourceRefs: [intMatch, ...fcFoods],
+          consumedKeys: keys,
+        });
+      }
+      continue;
+    }
+
+    // ── T5: UB-04-FS-02: CalCode warranty ──────────────────
+    if (sid === "UB-04-FS-02") {
+      const matches = foodFindings.filter(
+        (f) => (norm(f.topic) === "foodborne_illness" || norm(f.topic) === "other") &&
+          mentions(f.requirement_or_exclusion_text, "california retail food code"),
+      );
+      if (matches.length > 0) {
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: buildPseSlots(null, tpl),
+          sourceRefs: [matches[0]],
+          consumedKeys: matches.map(foodItemKey),
+        });
+      }
+      continue;
+    }
+
+    // ── T6: FR-06-FR-07: solid-fuel frequency headline ────
+    if (sid === "FR-06-FR-07") {
+      const locs = asArr(declVal("locations"));
+      const solidFuelLocs = locs.filter((l) => l.solid_fuel === true || norm(l.solid_fuel) === "true");
+      if (solidFuelLocs.length === 0) { continue; }
+
+      const intMatch = integrityObs.find((o) => norm(o.type) === "nfpa_edition_mismatch");
+      const fireMatch = fireFindings.find(
+        (f) => norm(f.topic) === "hood_cleaning" && mentions(f.named_standard, "semi-annual"),
+      );
+      if (intMatch || fireMatch) {
+        const locNos = solidFuelLocs.map((l) => String(l.loc_no ?? "")).filter(Boolean);
+        const solidFuelLocsStr = locNos.length === 1
+          ? `Location ${locNos[0]}`
+          : locNos.length === 2
+            ? `Locations ${locNos[0]} and ${locNos[1]}`
+            : `Locations ${locNos.slice(0, -1).join(", ")} and ${locNos[locNos.length - 1]}`;
+        const keys: string[] = [];
+        if (intMatch) keys.push(intItemKey(intMatch));
+        if (fireMatch) keys.push(fireItemKey(fireMatch));
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            solid_fuel_locs: solidFuelLocsStr,
+          },
+          sourceRefs: [intMatch, fireMatch].filter(Boolean),
+          consumedKeys: keys,
+        });
+      }
+      continue;
+    }
+
+    // ── T7: FR-08: hood cleaning NFPA 96 Table 12.4 ───────
+    if (sid === "FR-08") {
+      const match = fireFindings.find(
+        (f) => norm(f.topic) === "hood_cleaning" &&
+          mentions(f.named_standard, "nfpa 96") && mentions(f.named_standard, "table 12.4"),
+      );
+      if (match) {
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: buildPseSlots(null, tpl),
+          sourceRefs: [match],
+          consumedKeys: [fireItemKey(match)],
+        });
+      }
+      continue;
+    }
+
+    // ── T8: FR-09: extinguisher NFPA 10 ────────────────────
+    if (sid === "FR-09") {
+      const match = fireFindings.find(
+        (f) => norm(f.topic) === "extinguisher" && mentions(f.named_standard, "nfpa 10"),
+      );
+      if (match) {
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: buildPseSlots(null, tpl),
+          sourceRefs: [match],
+          consumedKeys: [fireItemKey(match)],
+        });
+      }
+      continue;
+    }
+
+    // ── T9: FR-10: filter / suppression interlock ──────────
+    if (sid === "FR-10") {
+      const matches = fireFindings.filter(
+        (f) => norm(f.topic) === "other" && mentions(f.requirement_text, "filter"),
+      );
+      if (matches.length > 0) {
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: buildPseSlots(null, tpl),
+          sourceRefs: [matches[0]],
+          consumedKeys: matches.map(fireItemKey),
+        });
+      }
+      continue;
+    }
   }
 
   return results;
