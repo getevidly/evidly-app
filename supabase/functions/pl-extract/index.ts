@@ -33,7 +33,7 @@ Read the attached policy PDF and extract a structured JSON object with these top
   "policy_wide": [ { topic (coinsurance|application_warranty|valuation|other), text, section_ref,
        percentage_or_value (if any) } ],
   "integrity_observations": [ { type (choose the MOST SPECIFIC — use 'other' only if none fit:
-       nfpa_edition_mismatch | no_temperature_log_requirement | impairment_procedure_gap |
+       nfpa_edition_mismatch | nfpa_frequency_mismatch | no_temperature_log_requirement | impairment_procedure_gap |
        no_food_contamination_coverage | endorsement_named_not_attached | sublimit_no_scheduled_value |
        safeguard_premises_mismatch | safeguard_required_not_confirmed | safeguard_presence_not_scheduled |
        coinsurance_no_valuation | address_or_period_mismatch | location_count_mismatch |
@@ -81,6 +81,27 @@ RULES:
   the appropriate section (fire_findings, food_findings, or protective_safeguards). If you cannot
   extract a listed form's substance, add an integrity_observation with type "form_listed_not_extracted"
   and the form identifier in detail.
+- NFPA EDITION vs FREQUENCY: These are two DISTINCT integrity types — never conflate them.
+  • Emit "nfpa_edition_mismatch" ONLY when the policy cites a WRONG or OUTDATED NFPA edition/year or
+    section number — e.g. NFPA 96 (2017) or §11.4 when California adopts NFPA 96 (2021) / Table 12.4.
+    The CITATION itself is incorrect.
+  • Emit "nfpa_frequency_mismatch" ONLY for the GREASE-BUILDUP INSPECTION / CLEANING of the kitchen
+    EXHAUST SYSTEM (hoods, grease removal devices, ducts, fans) when the policy cites the correct
+    standard/edition but warrants an inspection/cleaning interval LESS FREQUENT than NFPA 96 (2021)
+    Table 12.4 requires for the cooking type. Table 12.4 (§12.4) governs grease-buildup inspection
+    ONLY. Tiers: solid-fuel = monthly; high-volume (24-hr, charbroiling, wok) = quarterly;
+    moderate-volume = semi-annual; low-volume = annual.
+  • DO NOT apply Table 12.4 to FIRE-SUPPRESSION / FIRE-EXTINGUISHING system SERVICE. Suppression-system
+    maintenance is governed by NFPA 96 (2021) §12.2.1 = at least every 6 months (SEMI-ANNUAL) and is
+    NOT volume-dependent. A policy warranting semi-annual suppression service is COMPLIANT — never flag
+    it as nfpa_frequency_mismatch. (Fusible-link replacement, §12.2.4, is likewise at least semi-annual.)
+    If a policy warrants suppression service LESS often than every 6 months (e.g. annual), record it as
+    an "other" observation describing the §12.2.1 shortfall — do NOT label it nfpa_frequency_mismatch.
+  • DECISION RULE: wrong edition or section → nfpa_edition_mismatch. Correct edition but EXHAUST grease
+    inspection/cleaning interval below the Table 12.4 tier → nfpa_frequency_mismatch. Suppression service
+    interval → §12.2.1 (semi-annual baseline), NOT Table 12.4. If an edition error AND a genuine
+    Table 12.4 cleaning-interval error are both present → emit BOTH. NEVER use either type as a
+    catch-all for any NFPA discrepancy.
 - Output ONLY the JSON object. No preamble, no markdown, no commentary.`;
 
 // ── Anthropic call helper ────────────────────────────────
