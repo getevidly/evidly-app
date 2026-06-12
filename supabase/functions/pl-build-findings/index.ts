@@ -34,16 +34,41 @@ function fillSlots(text: string, slots: Record<string, string>): string {
   return text.replace(/\{([^}]+)\}/g, (_, key) => slots[key] ?? "");
 }
 
-/** Deep slot-fill a jsonb value (stringify → replace → parse). */
+// ── Authoritative standards registry: types + lookup ─────────────────────
+// The engine cites standards from pl_standards_registry (the authority), never from
+// the uploaded policy document. resolveStandard returns the registry citation and
+// requirement fields to fill slots.
+interface StandardRow {
+  topic: string;
+  standard: string;
+  edition: string;
+  citation: string;
+  citation_detail: string | null;
+  requirement: { who?: string; frequency?: string; scope?: string; proof?: string } | null;
+  pending_fields: string[] | null;
+}
+function resolveStandard(
+  registry: Map<string, StandardRow>,
+  topic: string,
+): { citation: string; citation_detail: string; req: NonNullable<StandardRow["requirement"]> } {
+  const row = registry.get(topic);
+  if (!row) return { citation: "", citation_detail: "", req: {} };
+  return { citation: row.citation, citation_detail: row.citation_detail ?? "", req: row.requirement ?? {} };
+}
+
+/** Deep slot-fill a jsonb value (walk leaves, fill only strings). */
 function fillSlotsJsonb(obj: unknown, slots: Record<string, string>): unknown {
   if (obj == null) return obj;
-  const raw = JSON.stringify(obj);
-  const filled = fillSlots(raw, slots);
-  try {
-    return JSON.parse(filled);
-  } catch {
-    return filled;
+  if (typeof obj === "string") return fillSlots(obj, slots);
+  if (Array.isArray(obj)) return obj.map((v) => fillSlotsJsonb(v, slots));
+  if (typeof obj === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      out[k] = fillSlotsJsonb(v, slots);
+    }
+    return out;
   }
+  return obj;
 }
 
 // ── Types ────────────────────────────────────────────────
@@ -113,6 +138,7 @@ function buildExtractedItems(reconciled: Rec): ExtractedItem[] {
 function evaluateTriggers(
   reconciled: Rec,
   templates: FindingTemplate[],
+  registry: Map<string, StandardRow>,
 ): TriggeredFinding[] {
   const results: TriggeredFinding[] = [];
 
@@ -152,33 +178,6 @@ function evaluateTriggers(
       continue;
     }
 
-    // ── UB-02-EDITION: NFPA edition mismatch ──────────────
-    if (sid === "UB-02-EDITION") {
-      const intMatch = integrityObs.find((o) => norm(o.type) === "nfpa_edition_mismatch");
-      const fireMatch = fireFindings.find(
-        (f) => /nfpa\s*96/i.test(norm(f.named_standard)) && !/2021/.test(norm(f.named_standard)),
-      );
-      if (intMatch || fireMatch) {
-        const editionStr =
-          (fireMatch ? String(fireMatch.named_standard ?? "") : "") ||
-          (intMatch ? String(intMatch.detail ?? "") : "");
-        const keys: string[] = [];
-        if (intMatch) keys.push(intItemKey(intMatch));
-        if (fireMatch) keys.push(fireItemKey(fireMatch));
-        results.push({
-          template: tpl,
-          flag: tpl.default_flag,
-          slots: {
-            ...buildPseSlots(null, tpl),
-            policy_nfpa_edition: editionStr,
-          },
-          sourceRefs: [intMatch, fireMatch].filter(Boolean),
-          consumedKeys: keys,
-        });
-      }
-      continue;
-    }
-
     // ── FR-04-FR-05: suppression system finding ───────────
     if (sid === "FR-04-FR-05") {
       const match = fireFindings.find(
@@ -188,10 +187,18 @@ function evaluateTriggers(
             mentions(f.requirement_text, "ul 300", "ul300", "nfpa 17a", "nfpa17a")),
       );
       if (match) {
+        const std = resolveStandard(registry, "suppression");
         results.push({
           template: tpl,
           flag: tpl.default_flag,
-          slots: buildPseSlots(null, tpl),
+          slots: {
+            ...buildPseSlots(null, tpl),
+            std_citation: std.citation,
+            std_who: std.req.who ?? "",
+            std_frequency: std.req.frequency ?? "",
+            std_scope: std.req.scope ?? "",
+            std_proof: std.req.proof ?? "",
+          },
           sourceRefs: [match],
           consumedKeys: [fireItemKey(match)],
         });
@@ -266,6 +273,88 @@ function evaluateTriggers(
           },
           sourceRefs: [match],
           consumedKeys: keys,
+        });
+      }
+      continue;
+    }
+
+    // ── FS-07: spoilage with sublimit (single-location) + temp-log fold-in ──
+    if (sid === "FS-07") {
+      const match = foodFindings.find(
+        (f) => norm(f.topic) === "spoilage" && f.sublimit_amount,
+      );
+      if (match) {
+        const hasNoTempLog = integrityObs.some(
+          (o) => norm(o.type) === "no_temperature_log_requirement",
+        );
+        const keys: string[] = [foodItemKey(match)];
+        if (hasNoTempLog) keys.push("integrity|no_temperature_log_requirement");
+        results.push({
+          template: tpl,
+          flag: hasNoTempLog ? "elevated" : tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            spoilage_form: String(match.form_or_section_ref ?? ""),
+            spoilage_limit: String(match.sublimit_amount ?? ""),
+            cd_form: "CG 21 32",
+          },
+          sourceRefs: [match],
+          consumedKeys: keys,
+        });
+      }
+      continue;
+    }
+
+    // ── FS-08: health-permit / sanitation representation (warranty) ──
+    if (sid === "FS-08") {
+      const match = foodFindings.find(
+        (f) =>
+          norm(f.topic) === "other" &&
+          (mentions(f.requirement_or_exclusion_text, "health permit") ||
+            mentions(f.requirement_or_exclusion_text, "environmental-health") ||
+            mentions(f.requirement_or_exclusion_text, "environmental health") ||
+            mentions(f.form_or_section_ref, "sanitation")),
+      );
+      if (match) {
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+          },
+          sourceRefs: [match],
+          consumedKeys: [foodItemKey(match)],
+        });
+      }
+      continue;
+    }
+
+    // ── FS-09: no first-party food-contamination / recall buy-back endorsement ──
+    if (sid === "FS-09") {
+      const hasContamGap = integrityObs.some(
+        (o) => norm(o.type) === "no_food_contamination_coverage",
+      );
+      const hasBuyBack = foodFindings.some(
+        (f) =>
+          norm(f.topic) === "contamination_buyback" ||
+          mentions(f.form_or_section_ref, "recall") ||
+          mentions(f.requirement_or_exclusion_text, "recall expense"),
+      );
+      if (hasContamGap && !hasBuyBack) {
+        const cdMatch = foodFindings.find(
+          (f) => norm(f.topic) === "communicable_disease",
+        );
+        const spoilMatch = foodFindings.find((f) => norm(f.topic) === "spoilage");
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            cd_form: String(cdMatch?.form_or_section_ref ?? "CG 21 32"),
+            spoilage_form: String(spoilMatch?.form_or_section_ref ?? "BP 04 17"),
+          },
+          sourceRefs: [{ integrity: "no_food_contamination_coverage" }],
+          consumedKeys: ["integrity|no_food_contamination_coverage"],
         });
       }
       continue;
@@ -524,6 +613,36 @@ function evaluateTriggers(
       continue;
     }
 
+    // ── FR-CLEAN-WARRANTY: hood-cleaning warranty + Certificate of Performance retention ──
+    // Fires on ANY hood_cleaning topic regardless of cited edition. Distinct from the
+    // edition-correction finding (UB-02-EDITION) and the solid-fuel frequency finding (FR-06-FR-07).
+    if (sid === "FR-CLEAN-WARRANTY") {
+      const match = fireFindings.find((f) => norm(f.topic) === "hood_cleaning");
+      if (match) {
+        const std = resolveStandard(registry, "hood_cleaning");
+        const editionObs = integrityObs.find((o) => norm(o.type) === "nfpa_edition_mismatch");
+        results.push({
+          template: tpl,
+          flag: tpl.default_flag,
+          slots: {
+            ...buildPseSlots(null, tpl),
+            clean_form: String(match.form_or_section_ref ?? "the fire warranty"),
+            std_citation: std.citation,
+            std_who: std.req.who ?? "",
+            std_frequency: std.req.frequency ?? "",
+            std_scope: std.req.scope ?? "",
+            std_proof: std.req.proof ?? "",
+            std_citation_detail: std.citation_detail,
+          },
+          sourceRefs: [match],
+          consumedKeys: editionObs
+            ? [fireItemKey(match), intItemKey(editionObs)]
+            : [fireItemKey(match)],
+        });
+      }
+      continue;
+    }
+
     // ── T8: FR-09: extinguisher NFPA 10 ────────────────────
     if (sid === "FR-09") {
       const match = fireFindings.find(
@@ -662,11 +781,22 @@ Deno.serve(async (req: Request) => {
 
     const templates = tplRows as FindingTemplate[];
 
+    // ── Load authoritative standards registry ────────────
+    const { data: regRows, error: regErr } = await supabase
+      .from("pl_standards_registry")
+      .select("topic, standard, edition, citation, requirement, pending_fields");
+    if (regErr) {
+      return json({ error: "Failed to load standards registry: " + regErr.message }, 500, headers);
+    }
+    const registry = new Map<string, StandardRow>(
+      (regRows ?? []).map((r: StandardRow) => [String(r.topic), r]),
+    );
+
     // ── Delete existing findings for idempotent re-run ───
     await supabase.from("pl_findings").delete().eq("run_id", run_id);
 
     // ── Evaluate triggers ────────────────────────────────
-    const triggered = evaluateTriggers(reconciled, templates);
+    const triggered = evaluateTriggers(reconciled, templates, registry);
 
     // ── Insert findings ──────────────────────────────────
     const byKey: Record<string, number> = {};
