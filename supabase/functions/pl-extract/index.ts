@@ -188,6 +188,7 @@ Deno.serve(async (req: Request) => {
 
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
+  let runId: string | null = null;
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -265,6 +266,24 @@ Deno.serve(async (req: Request) => {
       return json({ error: "no_document" }, 400, headers);
     }
 
+    // ── Duplicate guard: skip if active run exists ──────────
+    const { data: existingRun } = await supabase
+      .from("pl_extraction_runs")
+      .select("id, status")
+      .eq("intake_id", intake_id)
+      .neq("status", "failed")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingRun) {
+      return json(
+        { run_id: existingRun.id, status: existingRun.status, skipped: "active_run_exists" },
+        200,
+        headers,
+      );
+    }
+
     // ── Step 2: create extraction run ────────────────────
     const { data: run, error: runErr } = await supabase
       .from("pl_extraction_runs")
@@ -272,6 +291,7 @@ Deno.serve(async (req: Request) => {
         intake_id,
         document_id: documentId,
         status: "pending",
+        started_at: new Date().toISOString(),
       })
       .select("id")
       .single();
@@ -279,6 +299,7 @@ Deno.serve(async (req: Request) => {
     if (runErr || !run) {
       return json({ error: "Failed to create extraction run" }, 500, headers);
     }
+    runId = run.id;
 
     // ── Step 3: download PDF bytes from storage ──────────
     const { data: fileData, error: dlErr } = await supabase.storage
@@ -340,8 +361,40 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Failed to save extraction passes" }, 500, headers);
     }
 
+    // ── Chain -> pl-reconcile (best-effort) ────────────────
+    try {
+      const reconcileResp = await fetch(
+        `${supabaseUrl}/functions/v1/pl-reconcile`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ run_id: run.id }),
+        },
+      );
+      if (!reconcileResp.ok) {
+        console.error("[pl-extract] pl-reconcile chain failed:", reconcileResp.status);
+      }
+    } catch (chainErr) {
+      console.error("[pl-extract] pl-reconcile chain error:", chainErr);
+    }
+
     return json({ run_id: run.id, status: "passes_complete" }, 200, headers);
   } catch (err) {
+    if (runId) {
+      try {
+        const sb = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        );
+        await sb
+          .from("pl_extraction_runs")
+          .update({ status: "failed", error: err instanceof Error ? err.message : String(err) })
+          .eq("id", runId);
+      } catch { /* best-effort */ }
+    }
     const message = err instanceof Error ? err.message : String(err);
     return json({ error: message }, 500, headers);
   }
