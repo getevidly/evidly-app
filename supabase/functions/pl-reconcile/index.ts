@@ -232,6 +232,7 @@ Deno.serve(async (req: Request) => {
 
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
+  let runId: string | null = null;
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -273,6 +274,7 @@ Deno.serve(async (req: Request) => {
     if (!run_id) {
       return json({ error: "run_id required" }, 400, headers);
     }
+    runId = run_id;
 
     // ── Load the extraction run ──────────────────────────
     const { data: run, error: runErr } = await supabase
@@ -404,8 +406,40 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Failed to save reconciliation" }, 500, headers);
     }
 
+    // ── Chain -> pl-build-findings (best-effort) ───────────
+    try {
+      const buildResp = await fetch(
+        `${supabaseUrl}/functions/v1/pl-build-findings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ run_id }),
+        },
+      );
+      if (!buildResp.ok) {
+        console.error("[pl-reconcile] pl-build-findings chain failed:", buildResp.status);
+      }
+    } catch (chainErr) {
+      console.error("[pl-reconcile] pl-build-findings chain error:", chainErr);
+    }
+
     return json({ run_id, summary, review_required }, 200, headers);
   } catch (err) {
+    if (runId) {
+      try {
+        const sb = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        );
+        await sb
+          .from("pl_extraction_runs")
+          .update({ status: "failed", error: err instanceof Error ? err.message : String(err) })
+          .eq("id", runId);
+      } catch { /* best-effort */ }
+    }
     const message = err instanceof Error ? err.message : String(err);
     return json({ error: message }, 500, headers);
   }
