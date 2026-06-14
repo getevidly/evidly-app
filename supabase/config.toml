@@ -448,6 +448,17 @@ verify_jwt = false
 [functions.pl-event]
 verify_jwt = false
 
+# Policy Lens extraction + reconciliation — server-to-server calls
+# from pl-intake-finalize chain. Auth: service_role bearer validated internally.
+[functions.pl-extract]
+verify_jwt = false
+
+[functions.pl-reconcile]
+verify_jwt = false
+
+[functions.pl-build-findings]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
