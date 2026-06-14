@@ -38,22 +38,132 @@ function fillSlots(text: string, slots: Record<string, string>): string {
 // The engine cites standards from pl_standards_registry (the authority), never from
 // the uploaded policy document. resolveStandard returns the registry citation and
 // requirement fields to fill slots.
+// requirement is the three-tier grounding structure:
+//   { national: {<dim>: {cite,value}}, state: {US-XX: {<dim>: {cite,value}}}, local: {...},
+//     binds: {<dim>: {tier: "national"|"US-XX"|"equal"|"union"|"pending", across: [...]}} }
+// A "dimension" is who / frequency / scope / records (and others per topic).
+// resolveStandard collapses this into the flat {who,frequency,scope,proof} the slot
+// fillers expect, choosing each dimension's value per its binds.tier. Legacy flat rows
+// (top-level who/frequency/...) still resolve via the fallback path.
+type ReqLeaf = { cite?: string; value?: string | null; _status?: string };
+type ReqTier = Record<string, ReqLeaf | string | undefined> & { standard?: string; edition?: string };
+type ReqBind = { tier?: string; across?: string[] };
+interface ThreeTierRequirement {
+  national?: ReqTier;
+  state?: Record<string, ReqTier>;
+  local?: Record<string, ReqTier>;
+  binds?: Record<string, ReqBind>;
+}
 interface StandardRow {
   topic: string;
   standard: string;
   edition: string;
   citation: string;
   citation_detail: string | null;
-  requirement: { who?: string; frequency?: string; scope?: string; proof?: string } | null;
+  requirement:
+    | ThreeTierRequirement
+    | { who?: string; frequency?: string; scope?: string; proof?: string }
+    | null;
   pending_fields: string[] | null;
 }
+
+const PENDING_TEXT = "pending verification";
+
+/** Pull a dimension's value-string from one tier object (national / state["US-CA"] / ...). */
+function tierDimValue(tier: ReqTier | undefined, dim: string): string | null {
+  if (!tier) return null;
+  const leaf = tier[dim] as ReqLeaf | string | undefined;
+  if (leaf == null) return null;
+  if (typeof leaf === "string") return leaf; // legacy flat string
+  const v = leaf.value;
+  return v == null ? null : String(v);
+}
+
+/** First non-null tier value, scanning local entries then state entries then national. */
+function firstAvailable(req: ThreeTierRequirement, dim: string): string | null {
+  for (const t of Object.values(req.local ?? {})) {
+    const v = tierDimValue(t, dim);
+    if (v != null && v !== "") return v;
+  }
+  for (const t of Object.values(req.state ?? {})) {
+    const v = tierDimValue(t, dim);
+    if (v != null && v !== "") return v;
+  }
+  return tierDimValue(req.national, dim);
+}
+
+/** Resolve one dimension to its bound display value, honoring binds.tier semantics. */
+function resolveDim(req: ThreeTierRequirement, dim: string): string {
+  const bind = req.binds?.[dim];
+  const tier = bind?.tier;
+  if (tier === "pending") return PENDING_TEXT;
+  if (tier === "union") {
+    const parts: string[] = [];
+    const nat = tierDimValue(req.national, dim);
+    if (nat) parts.push(nat);
+    for (const t of Object.values(req.state ?? {})) {
+      const v = tierDimValue(t, dim);
+      if (v && !parts.includes(v)) parts.push(v);
+    }
+    for (const t of Object.values(req.local ?? {})) {
+      const v = tierDimValue(t, dim);
+      if (v && !parts.includes(v)) parts.push(v);
+    }
+    const joined = parts.join("; ");
+    return joined || firstAvailable(req, dim) || "";
+  }
+  if (tier === "national") return tierDimValue(req.national, dim) ?? firstAvailable(req, dim) ?? "";
+  if (tier && tier !== "equal") {
+    // a specific state/local key, e.g. "US-CA"
+    const fromState = tierDimValue(req.state?.[tier], dim);
+    if (fromState != null && fromState !== "") return fromState;
+    const fromLocal = tierDimValue(req.local?.[tier], dim);
+    if (fromLocal != null && fromLocal !== "") return fromLocal;
+    return firstAvailable(req, dim) ?? "";
+  }
+  // "equal", missing bind, or anything else → first available value
+  return firstAvailable(req, dim) ?? "";
+}
+
+function isThreeTier(r: unknown): r is ThreeTierRequirement {
+  return !!r && typeof r === "object" &&
+    ("national" in (r as object) || "state" in (r as object) || "binds" in (r as object));
+}
+
 function resolveStandard(
   registry: Map<string, StandardRow>,
   topic: string,
-): { citation: string; citation_detail: string; req: NonNullable<StandardRow["requirement"]> } {
+): { citation: string; citation_detail: string; req: { who: string; frequency: string; scope: string; proof: string } } {
   const row = registry.get(topic);
-  if (!row) return { citation: "", citation_detail: "", req: {} };
-  return { citation: row.citation, citation_detail: row.citation_detail ?? "", req: row.requirement ?? {} };
+  if (!row) return { citation: "", citation_detail: "", req: { who: "", frequency: "", scope: "", proof: "" } };
+  const citation = row.citation ?? "";
+  const citation_detail = row.citation_detail ?? "";
+  const r = row.requirement;
+  if (isThreeTier(r)) {
+    // map legacy slot names → new dimension names (proof → records)
+    return {
+      citation,
+      citation_detail,
+      req: {
+        who: resolveDim(r, "who"),
+        frequency: resolveDim(r, "frequency"),
+        scope: resolveDim(r, "scope"),
+        proof: resolveDim(r, "records"),
+      },
+    };
+  }
+  // legacy flat requirement
+  const flat = (r ?? {}) as { who?: string; frequency?: string; scope?: string; proof?: string };
+  return {
+    citation,
+    citation_detail,
+    req: {
+      who: flat.who ?? "",
+      frequency: flat.frequency ?? "",
+      scope: flat.scope ?? "",
+      proof: flat.proof ?? "",
+    },
+  };
 }
 
 /** Deep slot-fill a jsonb value (walk leaves, fill only strings). */
@@ -711,6 +821,7 @@ Deno.serve(async (req: Request) => {
 
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
+  let runId: string | null = null;
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -752,6 +863,7 @@ Deno.serve(async (req: Request) => {
     if (!run_id) {
       return json({ error: "run_id required" }, 400, headers);
     }
+    runId = run_id;
 
     // ── Load run ─────────────────────────────────────────
     const { data: run, error: runErr } = await supabase
@@ -784,7 +896,7 @@ Deno.serve(async (req: Request) => {
     // ── Load authoritative standards registry ────────────
     const { data: regRows, error: regErr } = await supabase
       .from("pl_standards_registry")
-      .select("topic, standard, edition, citation, requirement, pending_fields");
+      .select("topic, standard, edition, citation, citation_detail, requirement, pending_fields");
     if (regErr) {
       return json({ error: "Failed to load standards registry: " + regErr.message }, 500, headers);
     }
@@ -877,6 +989,18 @@ Deno.serve(async (req: Request) => {
       headers,
     );
   } catch (err) {
+    if (runId) {
+      try {
+        const sb = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        );
+        await sb
+          .from("pl_extraction_runs")
+          .update({ error: `build_findings_failed: ${err instanceof Error ? err.message : String(err)}` })
+          .eq("id", runId);
+      } catch { /* best-effort */ }
+    }
     const message = err instanceof Error ? err.message : String(err);
     return json({ error: message }, 500, headers);
   }
