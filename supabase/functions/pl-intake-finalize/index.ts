@@ -3,7 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { logger } from "../_shared/logger.ts";
 import { logEvent } from "../_shared/events.ts";
-import { sendEmail } from "../_shared/email.ts";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -31,7 +31,7 @@ Deno.serve(async (req: Request) => {
     // Fetch intake
     const { data: intake, error: fetchErr } = await supabase
       .from("policy_lens_intakes")
-      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path, referral_code, business_name, contact_name, contact_email, contact_phone, zip, created_at")
+      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path, referral_code, business_name, contact_name, contact_email, contact_phone, zip, created_at, agent_email, agent_name")
       .eq("id", intake_id)
       .single();
 
@@ -99,6 +99,16 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Failed to finalize intake" }, 500, headers);
     }
 
+    // ── Fire pl-extract chain (async, non-blocking) ──────────
+    fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/pl-extract`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
+      body: JSON.stringify({ intake_id }),
+    }).catch((e) => logger.error("[pl-intake-finalize] pl-extract fire failed", e));
+
     // ── Log uploaded event ────────────��─────────────────────
     await logEvent(supabase, {
       event_type: "uploaded",
@@ -106,6 +116,27 @@ Deno.serve(async (req: Request) => {
       referral_code: intake.referral_code || undefined,
       metadata: { status_advanced: "review", pdf_path: pdfPath },
     });
+
+    // ── After-finalize confirmation email (non-blocking) ────
+    const userEmail = intake.contact_email || intake.agent_email;
+    const userName = intake.contact_name || intake.agent_name || "there";
+    if (userEmail) {
+      try {
+        await sendEmail({
+          to: userEmail,
+          subject: "Your documents are in — Policy Lens review underway",
+          html: buildEmailHtml({
+            recipientName: userName,
+            bodyHtml: `
+              <p>Your documents are uploaded and your Policy Lens review is underway. Our team is reading your policy now — identifying the provisions that govern your kitchen, and flagging anything missing or overdue.</p>
+              <p>We'll send your results when the review is complete. Need to add anything in the meantime? Just reply.</p>
+              <p>— Arthur Haggerty, Founder &amp; CEO<br>EvidLY</p>`,
+          }),
+        });
+      } catch (confirmErr) {
+        logger.error("[pl-intake-finalize] Confirmation email failed", confirmErr);
+      }
+    }
 
     // ── Fetch authorization status for notification ────────
     let authStatus = "none";
