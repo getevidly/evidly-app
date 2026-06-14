@@ -400,8 +400,11 @@ Deno.serve(async (req: Request) => {
 
         // Generate sign token + email client
         const token = await generateSignToken(auth.id);
-        const publicBase =
-          Deno.env.get("PL_PUBLIC_BASE") || "https://getevidly.com";
+        const publicBase = Deno.env.get("PL_PUBLIC_BASE");
+        if (!publicBase) {
+          logger.error("[pl-intake-start] PL_PUBLIC_BASE env var is not set");
+          return json({ error: "Server configuration error" }, 500, headers);
+        }
         const signLink = `${publicBase}/policy-lens/authorize?token=${token}`;
 
         const clientEmailResult = await sendEmail({
@@ -488,6 +491,28 @@ Deno.serve(async (req: Request) => {
         502,
         headers,
       );
+    }
+
+    // ── After-intake confirmation email (non-blocking) ──────
+    const submitterEmail = source === "prospect" ? body.contact_email : body.agent_email;
+    if (submitterEmail) {
+      try {
+        await sendEmail({
+          to: submitterEmail,
+          subject: "We've received your Policy Lens request",
+          html: buildEmailHtml({
+            recipientName,
+            bodyHtml: `
+              <p>We've received your Policy Lens request for ${body.business_name || "your kitchen"} — thank you.</p>
+              <p>Here's what happens next: once your policy is in, Policy Lens reads it and identifies the provisions that govern your kitchen — what's required, and what's missing or overdue. A person on our team reviews every submission before anything goes out. We'll be in touch with your results.</p>
+              <p>Policy Lens reads the policy. Your agent evaluates the coverage.</p>
+              <p>Questions in the meantime? Just reply.</p>
+              <p>— Arthur Haggerty, Founder &amp; CEO<br>EvidLY</p>`,
+          }),
+        });
+      } catch (confirmErr) {
+        logger.error("[pl-intake-start] Confirmation email failed", confirmErr);
+      }
     }
 
     return json({ intake_id: intake.id, referral_code: intakeRow.referral_code }, 200, headers);
