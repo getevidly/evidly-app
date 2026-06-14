@@ -10,6 +10,7 @@ export interface LocationRow {
   business_hours_start: string; // HH:MM time
   business_hours_end: string;   // HH:MM time
   name: string;
+  cooking_type: string | null;
 }
 
 export interface OrgRow {
@@ -23,13 +24,40 @@ export interface DmUserRow {
   role: string;
 }
 
+/** Row from pl_standards_registry with the three-tier requirement jsonb. */
+export interface StandardsRegistryRow {
+  id: string;
+  topic: string;
+  requirement: {
+    state?: {
+      'US-CA'?: {
+        frequency?: {
+          cite?: string;
+          value?: string;
+          intervals_days?: Record<string, number>;
+        };
+      };
+    };
+  };
+  pending_fields: string[];
+}
+
 export interface TriggerContext {
   supabase: SupabaseClient;
   orgId: string;
   orgTimezone: string;
   locations: LocationRow[];
   now: Date;
+  /** Grounded fire-safety standards from pl_standards_registry. */
+  standardsRegistry: StandardsRegistryRow[];
 }
+
+/**
+ * Proportional lead-time: warn when elapsed >= interval * WARN_FRACTION.
+ * The warning fires in the final (1 - WARN_FRACTION) of the cycle.
+ * WARN_FRACTION = 2/3 → warning window is the last third of every cycle.
+ */
+export const WARN_FRACTION = 2 / 3;
 
 export interface DriftCatchInsert {
   org_id: string;

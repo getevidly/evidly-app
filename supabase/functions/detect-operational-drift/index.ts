@@ -8,7 +8,7 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import type { TriggerContext, DriftCatchInsert, LocationRow, DmUserRow, OrgRow } from './shared/types.ts';
+import type { TriggerContext, DriftCatchInsert, LocationRow, DmUserRow, OrgRow, StandardsRegistryRow } from './shared/types.ts';
 import { insertDriftCatches, createNotifications } from './shared/insert.ts';
 import { autoResolveDriftCatches } from './shared/auto-resolve.ts';
 
@@ -71,10 +71,43 @@ serve(async (req) => {
     catches_inserted: 0,
     catches_auto_resolved: 0,
     notifications_created: 0,
+    pl_orphans_swept: 0,
     errors: [] as Array<{ org_id?: string; trigger?: string; message: string }>,
   };
 
   try {
+    // ── PL orphan sweep: mark hard-crashed extraction runs as failed ──
+    try {
+      const { data: orphans, error: sweepErr } = await supabase
+        .from('pl_extraction_runs')
+        .update({ status: 'failed', error: 'timeout_orphan' })
+        .eq('status', 'pending')
+        .not('started_at', 'is', null)
+        .lt('started_at', new Date(now.getTime() - 15 * 60 * 1000).toISOString())
+        .select('id');
+
+      if (sweepErr) {
+        summary.errors.push({ message: `PL orphan sweep: ${sweepErr.message}` });
+      } else if (orphans && orphans.length > 0) {
+        summary.pl_orphans_swept = orphans.length;
+        console.log(`[drift] PL orphan sweep: marked ${orphans.length} run(s) as failed/timeout_orphan`);
+      }
+    } catch (sweepErr) {
+      summary.errors.push({ message: `PL orphan sweep: ${(sweepErr as Error).message}` });
+    }
+
+    // Fetch grounded fire-safety standards (one query for all orgs)
+    const { data: registryRows, error: regErr } = await supabase
+      .from('pl_standards_registry')
+      .select('id, topic, requirement, pending_fields')
+      .in('topic', ['hood_cleaning', 'suppression', 'sprinkler']);
+
+    if (regErr) {
+      summary.errors.push({ message: `Standards registry fetch: ${regErr.message}` });
+    }
+
+    const standardsRegistry: StandardsRegistryRow[] = (registryRows || []) as StandardsRegistryRow[];
+
     // Fetch all organizations
     const { data: orgs, error: orgErr } = await supabase
       .from('organizations')
@@ -92,7 +125,7 @@ serve(async (req) => {
         // Fetch active locations for this org
         const { data: locations, error: locErr } = await supabase
           .from('locations')
-          .select('id, organization_id, name, business_hours_timezone, business_hours_start, business_hours_end')
+          .select('id, organization_id, name, business_hours_timezone, business_hours_start, business_hours_end, cooking_type')
           .eq('organization_id', org.id)
           .eq('status', 'active');
 
@@ -138,6 +171,7 @@ serve(async (req) => {
           orgTimezone,
           locations: locations as LocationRow[],
           now,
+          standardsRegistry,
         };
 
         // Run all 13 triggers with per-trigger isolation
@@ -190,7 +224,8 @@ serve(async (req) => {
   console.log(
     `[drift] Complete: ${summary.orgs_processed} orgs, ` +
     `${summary.catches_inserted} catches, ${summary.notifications_created} notifications, ` +
-    `${summary.catches_auto_resolved} auto-resolved, ${summary.errors.length} errors, ${elapsed}ms`,
+    `${summary.catches_auto_resolved} auto-resolved, ${summary.pl_orphans_swept} pl-orphans, ` +
+    `${summary.errors.length} errors, ${elapsed}ms`,
   );
 
   return jsonResponse({ ...summary, elapsed_ms: elapsed });

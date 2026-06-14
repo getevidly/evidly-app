@@ -1,21 +1,48 @@
 // Trigger 7 — hood_cleaning_approaching
-// vendor_service_records with safeguard_type = 'hood_cleaning',
-// last service_date > 75 days ago, and no scheduled next_due_date
-// within the next 14 days.
+// Reads the grounded interval from pl_standards_registry (CFC Table 606.3.3.1)
+// via ctx.standardsRegistry. Selects the interval by the location's cooking_type.
+// Proportional lead-time: warns when elapsed >= interval * WARN_FRACTION (2/3).
 
-import { TriggerContext, DriftCatchInsert } from '../shared/types.ts';
+import { TriggerContext, DriftCatchInsert, WARN_FRACTION } from '../shared/types.ts';
+
+/** Map locations.cooking_type to the intervals_days key in the registry. */
+function resolveIntervalKey(cookingType: string | null): string {
+  if (cookingType === 'solid_fuel') return 'solid_fuel';
+  if (cookingType === 'high_volume') return 'high_volume';
+  if (cookingType === 'low_volume') return 'low_volume';
+  // NULL or any unrecognized value → "all other cooking operations" (CFC residual category)
+  return 'all_other';
+}
+
+function cookingTypeLabel(cookingType: string | null): string {
+  if (cookingType === 'solid_fuel') return 'solid-fuel cooking';
+  if (cookingType === 'high_volume') return 'high-volume cooking';
+  if (cookingType === 'low_volume') return 'low-volume cooking';
+  return 'all other cooking operations (unclassified)';
+}
 
 export async function detectHoodCleaningApproaching(ctx: TriggerContext): Promise<DriftCatchInsert[]> {
   const catches: DriftCatchInsert[] = [];
-  const today = ctx.now.toISOString().substring(0, 10);
-  const seventyFiveDaysAgo = new Date(ctx.now.getTime() - 75 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .substring(0, 10);
-  const fourteenDaysOut = new Date(ctx.now.getTime() + 14 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .substring(0, 10);
+
+  // Find the hood_cleaning standard from the registry
+  const hoodStd = ctx.standardsRegistry.find((r) => r.topic === 'hood_cleaning');
+  if (!hoodStd) return catches; // Registry row missing — cannot evaluate
+
+  const intervalsDays = hoodStd.requirement?.state?.['US-CA']?.frequency?.intervals_days;
+  if (!intervalsDays) return catches; // No grounded intervals — cannot evaluate
 
   for (const loc of ctx.locations) {
+    const intervalKey = resolveIntervalKey(loc.cooking_type);
+    const intervalDays = intervalsDays[intervalKey];
+    if (!intervalDays || intervalDays <= 0) continue;
+
+    // Proportional threshold: warn when elapsed >= interval * 2/3
+    const thresholdDays = Math.floor(intervalDays * WARN_FRACTION);
+
+    const thresholdDate = new Date(ctx.now.getTime() - thresholdDays * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .substring(0, 10);
+
     // Find latest hood cleaning for this location
     const { data: latest, error } = await ctx.supabase
       .from('vendor_service_records')
@@ -28,10 +55,14 @@ export async function detectHoodCleaningApproaching(ctx: TriggerContext): Promis
       .maybeSingle();
 
     if (error || !latest) continue;
-    if (!latest.service_date || latest.service_date > seventyFiveDaysAgo) continue;
+    if (!latest.service_date || latest.service_date > thresholdDate) continue;
 
-    // Check if next_due_date is scheduled within 14 days
-    if (latest.next_due_date && latest.next_due_date <= fourteenDaysOut) continue;
+    // Check if next_due_date is scheduled within the remaining window
+    const remainingDays = intervalDays - thresholdDays;
+    const windowEnd = new Date(ctx.now.getTime() + remainingDays * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .substring(0, 10);
+    if (latest.next_due_date && latest.next_due_date <= windowEnd) continue;
 
     const daysSince = Math.floor(
       (ctx.now.getTime() - new Date(latest.service_date).getTime()) / (24 * 60 * 60 * 1000),
@@ -44,7 +75,7 @@ export async function detectHoodCleaningApproaching(ctx: TriggerContext): Promis
       pillar: 'fire_safety',
       source_table: 'vendor_service_records',
       source_record_id: latest.id,
-      expected_value: 'quarterly (90-day cycle)',
+      expected_value: `${intervalDays} days per CFC Table 606.3.3.1 (${cookingTypeLabel(loc.cooking_type)})`,
       actual_value: `${daysSince} days since last cleaning`,
       severity: 'medium',
       estimated_savings_cents: 0,
