@@ -12,7 +12,7 @@ import { useCrispHide } from '../hooks/useCrisp';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
 const TRUST_ITEMS = [
-  { value: '169', label: 'Counties · 5 States' },
+  { value: '62', label: 'Counties · California' },
   { value: 'Food Safety', label: 'Inspection' },
   { value: 'Fire Safety', label: 'Inspection' },
 ];
@@ -199,7 +199,7 @@ export function Login() {
               lineHeight: 1.5,
               fontWeight: typography.weight.regular,
             }}>
-              Operational Intelligence for Commercial Kitchens.
+              Compliance & Operational Intelligence for Commercial Kitchens.
             </p>
 
             {/* Trust bar with gold dividers */}
@@ -249,7 +249,17 @@ export function Login() {
                 color: 'rgba(255,255,255,0.3)',
                 lineHeight: 1.6,
               }}>
-                Built by a team that services 300+ commercial kitchens annually across California, Oregon, Washington, Nevada, and Arizona.
+                Built by a team that provides 350+ services a year in California commercial kitchens.
+              </p>
+              <p style={{
+                fontFamily: typography.family.body,
+                fontSize: 12,
+                fontWeight: typography.weight.regular,
+                color: 'rgba(255,255,255,0.25)',
+                lineHeight: 1.6,
+                marginTop: 8,
+              }}>
+                Encrypted connection · MFA available · sessions expire on inactivity.
               </p>
             </div>
 
