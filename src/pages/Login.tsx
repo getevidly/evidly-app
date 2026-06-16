@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, MapPin } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
@@ -10,12 +10,6 @@ import { useBranding } from '../contexts/BrandingContext';
 import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
-
-const TRUST_ITEMS = [
-  { value: '62', label: 'Counties · California' },
-  { value: 'Food Safety', label: 'Inspection' },
-  { value: 'Fire Safety', label: 'Inspection' },
-];
 
 type LoginMode = 'app' | 'portal';
 
@@ -28,7 +22,6 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [detectedJurisdiction, setDetectedJurisdiction] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<LoginMode>(() =>
     typeof window !== 'undefined' && window.location.hostname === 'portal.getevidly.com' ? 'portal' : 'app'
@@ -53,30 +46,6 @@ export function Login() {
       }
     }
   }, [user, navigate]);
-
-  // Jurisdiction detection via geolocation + Nominatim reverse geocode
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-            { headers: { 'User-Agent': 'EvidLY/1.0 (https://getevidly.com)' } }
-          );
-          if (!res.ok) return;
-          const data = await res.json();
-          const county = data.address?.county;
-          if (county && data.address?.state === 'California') {
-            setDetectedJurisdiction(county.replace(' County', ''));
-          }
-        } catch { /* silent fail */ }
-      },
-      () => { /* permission denied — silent */ },
-      { timeout: 5000, maximumAge: 300000 }
-    );
-  }, []);
 
   const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const captchaEnabled = false;
@@ -148,209 +117,52 @@ export function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex' }}>
-      {/* ── Left Panel — Navy brand panel (desktop only) ── */}
-      <div
-        className="hidden lg:flex lg:w-1/2"
-        style={{
-          background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`,
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 10,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: '100%',
-            padding: '48px',
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
-            transition: `opacity 600ms ease, transform 600ms ease`,
-          }}
-        >
-          {/* Top: Logo + messaging */}
-          <div>
-            <div style={{ marginBottom: 64 }}>
-              <span style={{
-                fontFamily: typography.family.logo,
-                fontSize: 24,
-                fontWeight: typography.weight.extrabold,
-                letterSpacing: '-0.02em',
-              }}>
-                <span style={{ color: colors.gold }}>E</span>
-                <span style={{ color: colors.white }}>vid</span>
-                <span style={{ color: colors.gold }}>LY</span>
-              </span>
-            </div>
-
-            <h1 style={{
-              fontSize: '2.75rem',
+    <div style={{
+      minHeight: '100vh',
+      background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+    }}>
+      <div style={{
+        maxWidth: 420,
+        width: '100%',
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? 'translateY(0)' : 'translateY(12px)',
+        transition: 'opacity 500ms ease, transform 500ms ease',
+      }}>
+        {/* Wordmark above card */}
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          {branding.brandName === 'EvidLY' ? (
+            <span style={{
+              fontFamily: typography.family.logo,
+              fontSize: 28,
+              fontWeight: typography.weight.extrabold,
+              letterSpacing: '-0.02em',
+            }}>
+              <span style={{ color: colors.gold }}>E</span>
+              <span style={{ color: colors.cream }}>vid</span>
+              <span style={{ color: colors.gold }}>LY</span>
+            </span>
+          ) : (
+            <span style={{
+              fontSize: 22,
               fontWeight: typography.weight.bold,
-              color: colors.white,
-              lineHeight: 1.15,
-              marginBottom: 16,
-              fontFamily: typography.family.body,
+              color: colors.cream,
             }}>
-              Answers before<br />you ask.
-            </h1>
-            <p style={{
-              fontSize: typography.size.h3,
-              color: 'rgba(255,255,255,0.55)',
-              marginBottom: 48,
-              maxWidth: 400,
-              lineHeight: 1.5,
-              fontWeight: typography.weight.regular,
-            }}>
-              Compliance & Operational Intelligence for Commercial Kitchens.
-            </p>
-
-            {/* Trust bar with gold dividers */}
-            <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
-              {TRUST_ITEMS.map((item, i) => (
-                <div key={item.value} style={{ display: 'flex', alignItems: 'stretch' }}>
-                  {i > 0 && (
-                    <div style={{
-                      width: 1,
-                      background: `linear-gradient(180deg, transparent, ${colors.gold}40, transparent)`,
-                      margin: '0 24px',
-                      alignSelf: 'stretch',
-                    }} />
-                  )}
-                  <div>
-                    <p style={{
-                      fontSize: 22,
-                      fontWeight: typography.weight.bold,
-                      letterSpacing: '-0.02em',
-                      color: colors.white,
-                      lineHeight: 1.2,
-                    }}>{item.value}</p>
-                    <p style={{
-                      fontSize: typography.size.xs,
-                      color: 'rgba(255,255,255,0.45)',
-                      fontWeight: typography.weight.medium,
-                      marginTop: 4,
-                    }}>{item.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom: Social proof + jurisdiction */}
-          <div>
-            {/* Social proof text to fill dead space */}
-            <div style={{
-              borderTop: '1px solid rgba(255,255,255,0.06)',
-              paddingTop: 24,
-              marginBottom: 24,
-            }}>
-              <p style={{
-                fontFamily: typography.family.body,
-                fontSize: 14,
-                fontWeight: typography.weight.regular,
-                color: 'rgba(255,255,255,0.3)',
-                lineHeight: 1.6,
-              }}>
-                Built by a team that provides 350+ services a year in California commercial kitchens.
-              </p>
-              <p style={{
-                fontFamily: typography.family.body,
-                fontSize: 12,
-                fontWeight: typography.weight.regular,
-                color: 'rgba(255,255,255,0.25)',
-                lineHeight: 1.6,
-                marginTop: 8,
-              }}>
-                Encrypted connection · MFA available · sessions expire on inactivity.
-              </p>
-            </div>
-
-            {/* Animated brand dots */}
-            <div style={{ opacity: 0.15, marginBottom: 16 }}>
-              <svg width="120" height="120" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="6" fill="white" opacity="0.8">
-                  <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="35" cy="30" r="5" fill={colors.gold} opacity="0.6">
-                  <animate attributeName="opacity" values="0.6;0.3;0.6" dur="3s" begin="0.3s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="85" cy="25" r="4" fill={colors.gold} opacity="0.5">
-                  <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" begin="0.6s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="90" cy="70" r="5" fill={colors.gold} opacity="0.6">
-                  <animate attributeName="opacity" values="0.6;0.3;0.6" dur="3s" begin="0.9s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="30" cy="80" r="4" fill={colors.gold} opacity="0.5">
-                  <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" begin="1.2s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="65" cy="95" r="4.5" fill={colors.gold} opacity="0.55">
-                  <animate attributeName="opacity" values="0.55;0.25;0.55" dur="3s" begin="1.5s" repeatCount="indefinite" />
-                </circle>
-              </svg>
-            </div>
-
-            {detectedJurisdiction && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                color: 'rgba(255,255,255,0.35)',
-                fontSize: typography.size.sm,
-              }}>
-                <MapPin size={14} />
-                <span>Detected: {detectedJurisdiction} County, CA</span>
-              </div>
-            )}
-          </div>
+              {branding.brandName}
+            </span>
+          )}
         </div>
 
-        {/* Decorative elements */}
+        {/* ── Login card ── */}
         <div style={{
-          position: 'absolute', bottom: -96, right: -96,
-          width: 256, height: 256, borderRadius: '50%',
-          background: `${colors.gold}08`,
-        }} />
-        <div style={{
-          position: 'absolute', top: -64, right: -64,
-          width: 192, height: 192, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.02)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '30%', left: -40,
-          width: 80, height: 80, borderRadius: '50%',
-          border: `1px solid ${colors.gold}15`,
-        }} />
-      </div>
-
-      {/* ── Right Panel — Login form ── */}
-      <div
-        className="w-full lg:w-1/2"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px',
-          background: colors.cream,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 440,
-            width: '100%',
-            background: colors.white,
-            borderRadius: '16px',
-            padding: '40px 36px',
-            boxShadow: '0 12px 36px rgba(30,45,77,0.12), 0 4px 12px rgba(30,45,77,0.06)',
-            border: '1px solid rgba(240, 237, 230, 0.5)',
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
-            transition: `opacity 500ms ease 100ms, transform 500ms ease 100ms`,
-          }}
-        >
+          background: colors.white,
+          borderRadius: 16,
+          padding: '40px 36px',
+          boxShadow: '0 12px 36px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.1)',
+        }}>
           {/* Mode toggle — EvidLY app / Partner portal */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
             <div style={{
@@ -382,34 +194,9 @@ export function Login() {
             </div>
           </div>
 
-          {/* Mobile logo (hidden on desktop where left panel shows it) */}
-          <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: 20 }}>
-            {branding.brandName === 'EvidLY' ? (
-              <span style={{
-                fontFamily: typography.family.logo,
-                fontSize: 28,
-                fontWeight: typography.weight.extrabold,
-                letterSpacing: '-0.02em',
-              }}>
-                <span style={{ color: colors.gold }}>E</span>
-                <span style={{ color: colors.navy }}>vid</span>
-                <span style={{ color: colors.gold }}>LY</span>
-              </span>
-            ) : (
-              <span style={{
-                fontSize: 22,
-                fontWeight: typography.weight.bold,
-                color: branding.colors.primary,
-              }}>
-                {branding.brandName}
-              </span>
-            )}
-          </div>
-
           {/* Heading */}
-          <div style={{ marginBottom: 28 }}>
-            <h2 className="lg:text-left" style={{
-              textAlign: 'center',
+          <div style={{ marginBottom: 28, textAlign: 'center' }}>
+            <h2 style={{
               fontSize: typography.size.h2,
               fontWeight: typography.weight.bold,
               letterSpacing: '-0.02em',
@@ -419,8 +206,7 @@ export function Login() {
               {isPortal ? 'Partner portal' : 'Sign in to your account'}
             </h2>
             {isPortal && (
-              <p className="lg:text-left" style={{
-                textAlign: 'center',
+              <p style={{
                 fontSize: typography.size.sm,
                 color: colors.textMuted,
                 marginTop: 6,
@@ -727,23 +513,20 @@ export function Login() {
               </a>
             </div>
           )}
-
-          {/* Mobile jurisdiction detection */}
-          {detectedJurisdiction && (
-            <div className="lg:hidden" style={{
-              marginTop: 24,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              color: colors.textMuted,
-              fontSize: typography.size.xs,
-            }}>
-              <MapPin size={12} />
-              <span>{detectedJurisdiction} County, CA</span>
-            </div>
-          )}
         </div>
+
+        {/* Security line under card */}
+        <p style={{
+          textAlign: 'center',
+          fontFamily: typography.family.body,
+          fontSize: 12,
+          fontWeight: typography.weight.regular,
+          color: 'rgba(255,255,255,0.3)',
+          marginTop: 20,
+          lineHeight: 1.6,
+        }}>
+          Encrypted connection · MFA available · sessions expire on inactivity.
+        </p>
       </div>
     </div>
   );
