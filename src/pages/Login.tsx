@@ -11,8 +11,6 @@ import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
-type LoginMode = 'app' | 'portal';
-
 export function Login() {
   useCrispHide();
   const [email, setEmail] = useState('');
@@ -23,10 +21,6 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [mode, setMode] = useState<LoginMode>(() =>
-    typeof window !== 'undefined' && window.location.hostname === 'portal.getevidly.com' ? 'portal' : 'app'
-  );
-  const isPortal = mode === 'portal';
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -163,37 +157,6 @@ export function Login() {
           padding: '40px 36px',
           boxShadow: '0 12px 36px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.1)',
         }}>
-          {/* Mode toggle — EvidLY app / Partner portal */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-            <div style={{
-              display: 'inline-flex',
-              borderRadius: 20,
-              border: `1.5px solid ${colors.border}`,
-              overflow: 'hidden',
-            }}>
-              {(['app', 'portal'] as LoginMode[]).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => { setMode(m); setError(''); }}
-                  style={{
-                    padding: '6px 14px',
-                    fontSize: typography.size.xs,
-                    fontWeight: mode === m ? typography.weight.semibold : typography.weight.regular,
-                    fontFamily: typography.family.body,
-                    color: mode === m ? colors.white : colors.textSecondary,
-                    background: mode === m ? colors.navy : 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: `background ${transitions.fast}, color ${transitions.fast}`,
-                  }}
-                >
-                  {m === 'app' ? 'EvidLY app' : 'Partner portal'}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Heading */}
           <div style={{ marginBottom: 28, textAlign: 'center' }}>
             <h2 style={{
@@ -203,17 +166,8 @@ export function Login() {
               color: colors.navy,
               margin: 0,
             }}>
-              {isPortal ? 'Partner portal' : 'Sign in to your account'}
+              Sign in to your account
             </h2>
-            {isPortal && (
-              <p style={{
-                fontSize: typography.size.sm,
-                color: colors.textMuted,
-                marginTop: 6,
-              }}>
-                Carriers, brokers, and property management
-              </p>
-            )}
           </div>
 
           {error && (
@@ -230,42 +184,7 @@ export function Login() {
             </div>
           )}
 
-          {isPortal ? (
-            !branding.sso.enabled ? (
-              <div style={{ marginBottom: 24 }}>
-                <button
-                  type="button"
-                  disabled
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    padding: '10px 16px',
-                    border: `1.5px solid ${colors.border}`,
-                    borderRadius: radius.md,
-                    fontSize: typography.size.sm,
-                    fontWeight: typography.weight.medium,
-                    fontFamily: typography.family.body,
-                    color: colors.textMuted,
-                    background: colors.cream,
-                    cursor: 'not-allowed',
-                    opacity: 0.6,
-                  }}
-                >
-                  Single sign-on — coming soon
-                </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0' }}>
-                  <div style={{ flex: 1, height: 1, background: colors.border }} />
-                  <span style={{ fontSize: typography.size.sm, color: colors.textMuted }}>or sign in with email</span>
-                  <div style={{ flex: 1, height: 1, background: colors.border }} />
-                </div>
-              </div>
-            ) : null
-          ) : (
-            <SocialLoginButtons mode="login" />
-          )}
+          <SocialLoginButtons mode="login" />
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
@@ -476,21 +395,19 @@ export function Login() {
             </div>
           )}
 
-          {!isPortal && (
-            <div style={{ marginTop: 24, textAlign: 'center' }}>
-              <p style={{ fontSize: typography.size.sm, color: colors.textSecondary }}>
-                Don't have an account?{' '}
-                <Link to="/signup" style={{
-                  fontWeight: typography.weight.semibold,
-                  color: colors.navy,
-                  textDecoration: 'none',
-                  transition: `color ${transitions.fast}`,
-                }}>
-                  Sign up
-                </Link>
-              </p>
-            </div>
-          )}
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary }}>
+              Don't have an account?{' '}
+              <Link to="/signup" style={{
+                fontWeight: typography.weight.semibold,
+                color: colors.navy,
+                textDecoration: 'none',
+                transition: `color ${transitions.fast}`,
+              }}>
+                Sign up
+              </Link>
+            </p>
+          </div>
 
           {/* Powered by EvidLY badge for white-label */}
           {branding.poweredByVisible && (
@@ -515,14 +432,29 @@ export function Login() {
           )}
         </div>
 
-        {/* Security line under card */}
+        {/* Partner portal link + security line under card */}
+        <p style={{
+          textAlign: 'center',
+          fontSize: typography.size.xs,
+          color: 'rgba(255,255,255,0.4)',
+          marginTop: 20,
+          lineHeight: 1.6,
+        }}>
+          Insurance partner?{' '}
+          <a
+            href="https://portal.getevidly.com"
+            style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}
+          >
+            Go to the partner portal
+          </a>
+        </p>
         <p style={{
           textAlign: 'center',
           fontFamily: typography.family.body,
           fontSize: 12,
           fontWeight: typography.weight.regular,
           color: 'rgba(255,255,255,0.3)',
-          marginTop: 20,
+          marginTop: 8,
           lineHeight: 1.6,
         }}>
           Encrypted connection · MFA available · sessions expire on inactivity.

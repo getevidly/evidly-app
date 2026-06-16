@@ -882,6 +882,20 @@ export function Sidebar() {
         {/* Demo upgrade badge */}
         <SidebarUpgradeBadge />
 
+        {/* Platform Admin link — platform_admin only */}
+        {userRole === 'platform_admin' && (
+          <div className="flex-shrink-0 border-t border-white/10">
+            <button
+              onClick={() => navigate('/admin')}
+              className="flex items-center gap-3 w-full px-4 py-3 text-white/70 hover:text-white transition-colors"
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              <Shield size={16} />
+              <span className="text-sm font-medium">Platform Admin</span>
+            </button>
+          </div>
+        )}
+
         {/* Logout button — pinned to bottom */}
         <div className="flex-shrink-0 border-t border-white/10" data-tour="tour-logout">
           <div className="flex items-center px-4 py-3">
