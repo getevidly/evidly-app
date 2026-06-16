@@ -281,44 +281,6 @@ async function seedVendors(
   }
 }
 
-async function seedInsuranceRiskScore(
-  ctx: GeneratorContext,
-  locationId: string,
-  overrides?: Partial<{
-    overall_score: number;
-    risk_tier: string;
-    fire_risk_score: number;
-    food_safety_score: number;
-    documentation_score: number;
-    operational_score: number;
-  }>,
-): Promise<void> {
-  const scores = {
-    overall_score: overrides?.overall_score ?? 71,
-    risk_tier: overrides?.risk_tier ?? "moderate",
-    fire_risk_score: overrides?.fire_risk_score ?? 82,
-    food_safety_score: overrides?.food_safety_score ?? 74,
-    documentation_score: overrides?.documentation_score ?? 68,
-    operational_score: overrides?.operational_score ?? 65,
-  };
-
-  await ctx.supabase.from("insurance_risk_scores").insert({
-    organization_id: ctx.org_id,
-    location_id: locationId,
-    ...scores,
-    factor_scores: {
-      fire_risk: scores.fire_risk_score,
-      food_safety: scores.food_safety_score,
-      documentation: scores.documentation_score,
-      operational: scores.operational_score,
-    },
-    data_points: 240,
-    computed_at: ctx.now.toISOString(),
-    valid_until: ctx.daysFrom(30),
-    source: SRC,
-  });
-}
-
 async function seedDocuments(
   ctx: GeneratorContext,
   locationId: string,
@@ -396,7 +358,6 @@ async function generateVendorDemo(
   for (const loc of locations) {
     await generateLocationOpsData(ctx, loc.id, demoUserId, 60);
     await seedDocuments(ctx, loc.id, loc.county, demoUserId);
-    await seedInsuranceRiskScore(ctx, loc.id);
   }
 
   // Vendor service records — 12 months × 10 service visits across clients
@@ -485,10 +446,6 @@ async function generateAssociationDemo(
   for (const loc of locations) {
     await generateLocationOpsData(ctx, loc.id, demoUserId, 30);
     await seedDocuments(ctx, loc.id, loc.county, demoUserId);
-    await seedInsuranceRiskScore(ctx, loc.id, {
-      overall_score: 60 + Math.floor(Math.random() * 35),
-      risk_tier: Math.random() > 0.3 ? "moderate" : "low",
-    });
   }
 
   await seedVendors(ctx, "restaurant");
@@ -557,7 +514,6 @@ async function generateIntegrationDemo(
   for (const loc of locations) {
     await generateLocationOpsData(ctx, loc.id, demoUserId, 30);
     await seedDocuments(ctx, loc.id, loc.county, demoUserId);
-    await seedInsuranceRiskScore(ctx, loc.id);
   }
 
   await seedVendors(ctx, "restaurant");
@@ -670,21 +626,6 @@ async function generateCarrierDemo(
   for (const loc of locations) {
     await generateLocationOpsData(ctx, loc.id, demoUserId, 60);
     await seedDocuments(ctx, loc.id, loc.county, demoUserId);
-
-    const profile = cicProfiles.find((p) => p.location_id === loc.id);
-    await seedInsuranceRiskScore(ctx, loc.id, {
-      overall_score: profile?.overall ?? 71,
-      risk_tier:
-        (profile?.overall ?? 71) >= 80
-          ? "low"
-          : (profile?.overall ?? 71) >= 60
-            ? "moderate"
-            : "high",
-      fire_risk_score: profile?.p2_liability ?? 75,
-      food_safety_score: profile?.p4_operational ?? 70,
-      documentation_score: profile?.p3_cost ?? 68,
-      operational_score: profile?.p4_operational ?? 65,
-    });
   }
 
   await seedVendors(ctx, "restaurant");
@@ -717,10 +658,10 @@ async function generateCarrierDemo(
           frequency: "daily",
           fields: [
             "location_id",
-            "overall_score",
-            "risk_tier",
-            "pse_verified",
-            "last_inspection_date",
+            "jurisdiction_grade",
+            "pse_safeguards",
+            "operational_facts",
+            "flagged_items",
           ],
         },
       },
@@ -779,16 +720,6 @@ async function generateTribalCasinoDemo(
   for (const loc of locations) {
     await generateLocationOpsData(ctx, loc.id, demoUserId, 60);
     await seedDocuments(ctx, loc.id, "Fresno", demoUserId);
-
-    // Fire-focused insurance risk score
-    await seedInsuranceRiskScore(ctx, loc.id, {
-      overall_score: 78,
-      risk_tier: "moderate",
-      fire_risk_score: 88,
-      food_safety_score: 0, // Advisory mode — no score
-      documentation_score: 72,
-      operational_score: 80,
-    });
   }
 
   // Monthly hood cleaning records for each outlet

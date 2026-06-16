@@ -169,26 +169,65 @@ async function getComplianceScore(
   orgId: string,
   facilityId: string,
 ): Promise<Record<string, unknown>> {
-  // Get latest compliance scores for facility
+  // Food Safety: jurisdiction-native grade (from compliance_scores — determineGrade output)
   const { data: scores } = await supabase
     .from('compliance_scores')
-    .select('food_safety_score, facility_safety_score, overall_score, scored_at, scoring_method')
+    .select('jurisdiction_grade, jurisdiction_score, grade_display, scored_at, scoring_method')
     .eq('org_id', orgId)
     .eq('location_id', facilityId)
     .order('scored_at', { ascending: false })
     .limit(1)
     .single();
 
-  if (!scores) {
-    return { status: 'no_data', message: 'No compliance scores found for this facility' };
-  }
+  // Facility Safety: per-system equipment status (PSE — no grade)
+  const { data: equipmentItems } = await supabase
+    .from('equipment')
+    .select('id, name, category, status, next_service_date')
+    .eq('org_id', orgId)
+    .eq('location_id', facilityId);
+
+  const now = new Date().toISOString();
+  const overdueItems = (equipmentItems || []).filter(
+    (e: any) => e.next_service_date && e.next_service_date < now
+  );
+
+  // Operational facts
+  const { count: openCAs } = await supabase
+    .from('corrective_actions')
+    .select('*', { count: 'exact', head: true })
+    .eq('org_id', orgId)
+    .eq('location_id', facilityId)
+    .in('status', ['created', 'in_progress', 'assigned']);
+
+  const { count: openViolations } = await supabase
+    .from('violations')
+    .select('*', { count: 'exact', head: true })
+    .eq('org_id', orgId)
+    .eq('location_id', facilityId)
+    .eq('status', 'open');
 
   return {
-    overall_score: scores.overall_score,
-    food_safety_score: scores.food_safety_score,
-    facility_safety_score: scores.facility_safety_score,
-    scoring_method: scores.scoring_method,
-    as_of: scores.scored_at,
+    food_safety: scores ? {
+      jurisdiction_grade: scores.jurisdiction_grade,
+      jurisdiction_score: scores.jurisdiction_score,
+      grade_display: scores.grade_display,
+      scoring_method: scores.scoring_method,
+      as_of: scores.scored_at,
+    } : { status: 'no_data', message: 'No jurisdiction grade on file for this facility' },
+    facility_safety: {
+      total_equipment_items: equipmentItems?.length || 0,
+      overdue_service_items: overdueItems.length,
+      overdue_details: overdueItems.map((e: any) => ({
+        name: e.name,
+        category: e.category,
+        next_service_date: e.next_service_date,
+      })),
+    },
+    operational: {
+      open_corrective_actions: openCAs || 0,
+      open_violations: openViolations || 0,
+    },
+    api_version: '2.0',
   };
 }
 

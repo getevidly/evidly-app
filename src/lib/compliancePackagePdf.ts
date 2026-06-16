@@ -30,17 +30,14 @@ export function exportCompliancePackage(locationSlug = 'all') {
   const exec = getExecutiveSummaryData(locationSlug);
   y = drawSectionHeading(doc, '1. Location Overview', y);
 
-  const boxW = CONTENT_W / 3 - 4;
-  drawStatBox(doc, MARGIN, y, boxW, String(locations.length), 'Locations');
-  drawStatBox(doc, MARGIN + boxW + 6, y, boxW, String(exec.orgScores.foodSafety), 'Food Safety');
-  drawStatBox(doc, MARGIN + (boxW + 6) * 2, y, boxW, String(exec.orgScores.facilitySafety), 'Fire Safety');
+  drawStatBox(doc, MARGIN, y, CONTENT_W / 2 - 3, String(locations.length), 'Locations');
   y += 26;
 
   y = drawTable(doc,
-    ['Location', 'Food Safety', 'Fire Safety', 'Status'],
-    exec.locationScores.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), l.foodStatus]),
+    ['Location'],
+    exec.locationScores.map(l => [l.location]),
     y,
-    { colWidths: [60, 34, 38, 42] },
+    { colWidths: [174] },
   );
 
   // ── 2. Service History ────────────────────────────────────

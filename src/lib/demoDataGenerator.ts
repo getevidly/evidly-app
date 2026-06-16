@@ -53,7 +53,6 @@ export interface GeneratedChecklist {
 
 export interface GeneratedComplianceSnapshot {
   date: string;
-  overall_score: number;
   food_safety_ops: number;
   food_safety_docs: number;
   facility_safety_ops: number;
@@ -252,30 +251,20 @@ function generateChecklists(config: DemoGenerationConfig): GeneratedChecklist[] 
   return checklists;
 }
 
-// ── Compliance Score Generation ──
+// ── Compliance Snapshot Generation (operational metrics only) ──
 
 function generateComplianceSnapshots(config: DemoGenerationConfig): GeneratedComplianceSnapshot[] {
   const snapshots: GeneratedComplianceSnapshot[] = [];
-  // Start at ~72%, improve to ~85% over 30 days
-  const startScore = 72;
-  const endScore = 85;
 
   for (let day = 0; day < config.durationDays; day++) {
     const date = daysAgo(config.durationDays - day);
-    const progress = day / config.durationDays;
-    const baseScore = startScore + (endScore - startScore) * progress;
-
-    // Add some daily variance
-    const variance = randomBetween(-2, 2);
-    const overall = Math.min(100, Math.max(50, Math.round(baseScore + variance)));
 
     snapshots.push({
       date: date.toISOString().split('T')[0],
-      overall_score: overall,
-      food_safety_ops: Math.min(100, Math.round(overall + randomBetween(-5, 5))),
-      food_safety_docs: Math.min(100, Math.round(overall + randomBetween(-8, 3))),
-      facility_safety_ops: Math.min(100, Math.round(overall + randomBetween(-3, 7))),
-      facility_safety_docs: Math.min(100, Math.round(overall + randomBetween(-10, 2))),
+      food_safety_ops: Math.min(100, Math.round(randomBetween(70, 100))),
+      food_safety_docs: Math.min(100, Math.round(randomBetween(65, 100))),
+      facility_safety_ops: Math.min(100, Math.round(randomBetween(70, 100))),
+      facility_safety_docs: Math.min(100, Math.round(randomBetween(60, 100))),
     });
   }
 
@@ -461,13 +450,6 @@ function generateInsights(config: DemoGenerationConfig): GeneratedInsight[] {
     },
     {
       id: uuid(),
-      text: `Your compliance score improved 13% this month. Key driver: consistent temperature logging.`,
-      category: 'compliance',
-      severity: 'success',
-      created_at: daysAgo(5).toISOString(),
-    },
-    {
-      id: uuid(),
       text: `Fire suppression (Ansul) inspection is overdue by 17 days. Contact your vendor immediately.`,
       category: 'vendor',
       severity: 'warning',
@@ -554,7 +536,7 @@ const GENERATION_STEPS: { step: string; label: string }[] = [
   { step: 'compliance', label: 'Compliance requirements loaded' },
   { step: 'temperature', label: 'Generating temperature readings' },
   { step: 'checklists', label: 'Generating checklists' },
-  { step: 'scores', label: 'Calculating compliance scores' },
+  { step: 'scores', label: 'Building compliance snapshots' },
   { step: 'vendors', label: 'Setting up vendor services' },
   { step: 'documents', label: 'Creating sample documents' },
   { step: 'insights', label: 'Creating insights and alerts' },

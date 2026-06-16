@@ -63,7 +63,7 @@ const PATH_ICON: Record<string, any> = {
   '/fire-safety/analysis': BarChart3,
   '/fire-safety/trajectory': TrendingUp,
   '/audit-trail': ClipboardList,
-  '/benchmarks': Target,
+
   '/iot-monitoring': Thermometer,
   '/jurisdiction': Network,
   '/scoring-breakdown': Target,

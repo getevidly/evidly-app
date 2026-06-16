@@ -100,7 +100,7 @@ const RegulatoryAlerts = lazy(() => import('./pages/RegulatoryAlerts').then(m =>
 const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').then(m => ({ default: m.JurisdictionSettings })));
 const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
 const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m => ({ default: m.ScoringBreakdown })));
-const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
+
 const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
 const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
@@ -718,7 +718,7 @@ function AppRoutes() {
           <Route path="/jurisdiction-intelligence" element={<JurisdictionIntelligenceUser />} />
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/scoring-breakdown" element={<ScoringBreakdown />} />
-          <Route path="/benchmarks" element={<Benchmarks />} />
+
           <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/portfolio" element={<Portfolio />} />

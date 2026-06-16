@@ -134,18 +134,6 @@ export const helpDocs: Record<string, HelpDoc> = {
     ],
     tips: 'Run a self-inspection monthly or before a scheduled inspection. Fix issues found to improve your compliance score before the real inspection.',
   },
-  benchmarks: {
-    id: 'benchmarks',
-    title: 'Industry Benchmarks',
-    steps: [
-      'Navigate to Benchmarks from the Reports section',
-      'View how your scores compare to industry averages',
-      'Filter by region, operation type, and time period',
-      'Identify areas where you lead and where you can improve',
-      'Track your ranking trends over time',
-    ],
-    tips: 'Benchmarks help you understand where you stand relative to peers. Use insights to prioritize improvement efforts.',
-  },
 };
 
 export const featureExplanations: Record<string, string> = {
@@ -159,7 +147,6 @@ export const featureExplanations: Record<string, string> = {
   '/vendors': 'Track your service providers — hood cleaning, pest control, fire suppression. See when services are due and manage certifications.',
   '/haccp': 'Hazard Analysis Critical Control Points documentation. Required for certain food processing operations. EvidLY provides templates and tracking.',
   '/self-inspection': 'Run a mock inspection before the real one. See exactly what an inspector would see and fix issues proactively.',
-  '/benchmarks': 'See how your kitchen compares to others in your region and industry. Identify areas where you are leading and where you can improve.',
   '/dashboard': 'Your compliance command center. At a glance, see your overall score, urgent items, and today\'s progress across all locations.',
   '/calendar': 'View upcoming deadlines, scheduled services, document expirations, and checklist schedules in a calendar format.',
   '/vendors': 'Find and connect with vetted service providers in your area. Compare ratings, pricing, and availability.',

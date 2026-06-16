@@ -9,13 +9,10 @@ const DEMO_DIGEST: DigestData = {
   orgName: 'Your Organization',
   weekStart: 'Feb 3, 2026',
   weekEnd: 'Feb 9, 2026',
-  foodSafetyScore: 81,
-  facilitySafetyScore: 70,
-  scoreTrend: 2,
   locations: [
-    { name: 'Location 1', trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' }, // demo
-    { name: 'Location 2', trend: -2, operational: 78, equipment: 70, documentation: 72, status: 'Needs Attention' }, // demo
-    { name: 'Location 3', trend: 4, operational: 62, equipment: 55, documentation: 52, status: 'Critical' }, // demo
+    { name: 'Location 1', status: 'Inspection Ready' }, // demo
+    { name: 'Location 2', status: 'Needs Attention' }, // demo
+    { name: 'Location 3', status: 'Critical' }, // demo
   ],
   highlights: [
     'Location 1 maintained Inspection Ready status for 8 consecutive weeks', // demo
@@ -75,7 +72,6 @@ function getNextDigestDate(scheduleValue: string): string {
 }
 
 const CONTENT_TOGGLES_INIT = [
-  { key: 'complianceScores', label: 'Compliance scores & trends', locked: true },
   { key: 'highlightsConcerns', label: 'Highlights & concerns', locked: true },
   { key: 'tempCheckDetails', label: 'Temperature check details', locked: false },
   { key: 'checklistDetails', label: 'Checklist completion details', locked: false },

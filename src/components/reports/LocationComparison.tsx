@@ -1,31 +1,19 @@
 // ── Report #12: Location Comparison ─────────────────────────────────────
-import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
-import { getLocationComparisonData, getScoreColor } from '../../data/reportsDemoData';
+import { getLocationComparisonData } from '../../data/reportsDemoData';
 import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
 const NAVY = '#1E2D4D';
 
-function StatusBadge({ status }: { status: string }) {
-  const isGood = status === 'Excellent' || status === 'Good';
-  const isWarn = status === 'Needs Attention';
-  return (
-    <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold" style={{
-      backgroundColor: isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2',
-      color: isGood ? '#166534' : isWarn ? '#92400e' : '#991b1b',
-    }}>{status}</span>
-  );
-}
-
 export default function LocationComparison({ config }: { config: ReportTypeConfig }) {
   const { isDemoMode } = useDemo();
 
-  if (!isDemoMode) return <ReportEmptyState reportTitle={config.title} guidance="Add multiple locations to compare scores and metrics side by side." />;
+  if (!isDemoMode) return <ReportEmptyState reportTitle={config.title} guidance="Add multiple locations to compare operational metrics side by side." />;
 
   const data = getLocationComparisonData();
 
@@ -33,18 +21,18 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
     return <ReportEmptyState message="Location comparison requires 2 or more locations" guidance="Add another location to start comparing." />;
   }
 
-  // Find best / needs most attention
-  const sorted = [...data].sort((a, b) => b.foodSafety - a.foodSafety);
+  // Find best / needs most attention by checklist completion
+  const sorted = [...data].sort((a, b) => b.checklistCompletion - a.checklistCompletion);
   const best = sorted[0];
   const worst = sorted[sorted.length - 1];
 
   const handleExportPdf = () => {
     const doc = createReportPdf();
-    let y = drawReportHeader(doc, 'Location Comparison', 'Side-by-side scores and metrics', 'All Locations', 'Current');
+    let y = drawReportHeader(doc, 'Location Comparison', 'Side-by-side operational metrics', 'All Locations', 'Current');
     y = drawSectionHeading(doc, 'Comparison Table', y);
     drawTable(doc,
-      ['Location', 'Food Safety', 'Fire Safety', 'Checklists', 'Temperature Readings', 'Open Items'],
-      data.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
+      ['Location', 'Checklists', 'Temperature Readings', 'Open Items'],
+      data.map(l => [l.location, `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
       y,
     );
     saveReportPdf(doc, 'evidly-location-comparison.pdf');
@@ -59,14 +47,14 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
       {/* Best / Worst callouts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-          <span className="text-2xl font-bold tracking-tight" style={{ color: '#16a34a' }}>{best.foodSafety}</span>
+          <span className="text-2xl font-bold tracking-tight" style={{ color: '#16a34a' }}>{best.checklistCompletion}%</span>
           <div>
-            <p className="text-xs font-semibold" style={{ color: '#166534' }}>Best Performing</p>
+            <p className="text-xs font-semibold" style={{ color: '#166534' }}>Best Checklist Completion</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{best.location}</p>
           </div>
         </div>
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#fffbeb', border: '1px solid #fef3c7' }}>
-          <span className="text-2xl font-bold tracking-tight" style={{ color: '#d97706' }}>{worst.foodSafety}</span>
+          <span className="text-2xl font-bold tracking-tight" style={{ color: '#d97706' }}>{worst.checklistCompletion}%</span>
           <div>
             <p className="text-xs font-semibold" style={{ color: '#92400e' }}>Needs Most Attention</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{worst.location}</p>
@@ -74,9 +62,9 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
         </div>
       </div>
 
-      {/* Bar chart */}
+      {/* Bar chart — operational metrics */}
       <div className="rounded-xl p-5" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-        <h3 className="text-sm font-semibold mb-4" style={{ color: BODY_TEXT }}>Score Comparison</h3>
+        <h3 className="text-sm font-semibold mb-4" style={{ color: BODY_TEXT }}>Operational Metrics Comparison</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} layout="vertical">
@@ -85,8 +73,8 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
               <YAxis dataKey="location" type="category" tick={{ fontSize: 11, fill: '#6B7F96' }} width={120} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="foodSafety" name="Food Safety" fill={NAVY} radius={[0, 4, 4, 0]} />
-              <Bar dataKey="facilitySafety" name="Fire Safety" fill="#d97706" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="checklistCompletion" name="Checklist %" fill={NAVY} radius={[0, 4, 4, 0]} />
+              <Bar dataKey="tempCompliance" name="Temperature Reading %" fill="#d97706" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -99,7 +87,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `2px solid ${CARD_BORDER}` }}>
-                {['Location', 'Food Safety', 'Fire Safety', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
+                {['Location', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-xs font-semibold" style={{ color: MUTED }}>{h}</th>
                 ))}
               </tr>
@@ -108,15 +96,9 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
               {data.map(l => (
                 <tr key={l.urlId} style={{ borderBottom: '1px solid #f0f0f0' }}>
                   <td className="py-2 px-3 font-medium" style={{ color: BODY_TEXT }}>{l.location}</td>
-                  <td className="py-2 px-3">
-                    <span className="font-bold" style={{ color: getScoreColor(l.foodSafety) }}>{l.foodSafety}</span>
-                  </td>
-                  <td className="py-2 px-3">
-                    <span className="font-bold" style={{ color: getScoreColor(l.facilitySafety) }}>{l.facilitySafety}</span>
-                  </td>
-                  <td className="py-2 px-3" style={{ color: l.checklistCompletion >= 90 ? '#16a34a' : '#d97706' }}>{l.checklistCompletion}%</td>
-                  <td className="py-2 px-3" style={{ color: l.tempCompliance >= 90 ? '#16a34a' : '#d97706' }}>{l.tempCompliance}%</td>
-                  <td className="py-2 px-3" style={{ color: l.openItems > 3 ? '#dc2626' : BODY_TEXT }}>{l.openItems}</td>
+                  <td className="py-2 px-3" style={{ color: BODY_TEXT }}>{l.checklistCompletion}%</td>
+                  <td className="py-2 px-3" style={{ color: BODY_TEXT }}>{l.tempCompliance}%</td>
+                  <td className="py-2 px-3" style={{ color: BODY_TEXT }}>{l.openItems}</td>
                 </tr>
               ))}
             </tbody>

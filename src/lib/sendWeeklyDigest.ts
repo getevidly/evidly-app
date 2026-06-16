@@ -7,9 +7,6 @@
 
 export interface DigestLocationScore {
   name: string;
-  trend: number; // +/- vs last week
-  foodSafety: number;
-  facilitySafety: number;
   status: 'Inspection Ready' | 'Needs Attention' | 'Critical';
 }
 
@@ -52,9 +49,6 @@ export interface DigestData {
   orgName: string;
   weekStart: string;
   weekEnd: string;
-  foodSafetyScore: number;
-  facilitySafetyScore: number;
-  scoreTrend: number;
   locations: DigestLocationScore[];
   highlights: string[];
   concerns: string[];
@@ -89,12 +83,6 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
       (loc) => `
       <tr>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1E2D4D;">${loc.name}</td>
-        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-          <span style="display:inline-block;background:${statusColor(loc.status)};color:#fff;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;">${loc.foodSafety}</span>
-        </td>
-        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">${trendArrow(loc.trend)}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.foodSafety}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.facilitySafety}</td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
           <span style="display:inline-block;background:${statusColor(loc.status)}22;color:${statusColor(loc.status)};border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600;">${loc.status}</span>
         </td>
@@ -176,40 +164,12 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <div style="font-size:14px;color:#6b7280;margin-top:4px;">${data.orgName} &mdash; ${data.weekStart} to ${data.weekEnd}</div>
 </td></tr>
 
-<!-- PILLAR SCORES -->
+<!-- LOCATION STATUS -->
 <tr><td style="padding:16px 32px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
-  <tr>
-    <td style="padding:20px 24px;text-align:center;width:120px;">
-      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.foodSafetyScore >= 90 ? '#22c55e' : data.foodSafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1E2D4D;">${data.foodSafetyScore}</span>
-      </div>
-      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Food Safety</div>
-    </td>
-    <td style="padding:20px 24px;text-align:center;width:120px;">
-      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.facilitySafetyScore >= 90 ? '#22c55e' : data.facilitySafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1E2D4D;">${data.facilitySafetyScore}</span>
-      </div>
-      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Fire Safety</div>
-    </td>
-    <td style="padding:20px 24px;">
-      <div style="font-size:16px;font-weight:600;color:#1E2D4D;">Compliance Scores</div>
-      <div style="font-size:14px;color:#6b7280;margin-top:4px;">vs last week: ${trendArrow(data.scoreTrend)}</div>
-    </td>
-  </tr>
-  </table>
-</td></tr>
-
-<!-- LOCATION SCORES -->
-<tr><td style="padding:16px 32px;">
-  <div style="font-size:16px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">Location Scores</div>
+  <div style="font-size:16px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">Location Status</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
   <tr style="background:#f8fafc;">
     <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;">Location</th>
-    <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Score</th>
-    <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Trend</th>
-    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Food</th>
-    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Fire</th>
     <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Status</th>
   </tr>
   ${locationRows}

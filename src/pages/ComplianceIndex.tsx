@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
-  BarChart3, TrendingUp, TrendingDown, Download, Share2, ArrowRight,
+  BarChart3, TrendingUp, TrendingDown, Download, Share2,
   AlertTriangle, CheckCircle2, Brain, Info, Users, MapPin, Building2,
   FileText, Calendar, BookOpen, Sparkles, ExternalLink,
   ChevronDown, ChevronRight, Scale, Flame, ThermometerSun,
@@ -228,7 +228,7 @@ export function ComplianceIndex() {
   if (!isDemoMode) {
     return (
       <>
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Benchmarks', href: '/benchmarks' }, { label: 'Compliance Index' }]} />
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Compliance Index' }]} />
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center mt-6">
           <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
           <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Compliance Index Data</h2>
@@ -245,7 +245,7 @@ export function ComplianceIndex() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Benchmarks', href: '/benchmarks' }, { label: 'Compliance Index' }]} />
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Compliance Index' }]} />
 
       <div className="space-y-6">
         {/* Report Header */}
@@ -803,12 +803,6 @@ export function ComplianceIndex() {
               style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
             >
               <Share2 className="h-4 w-4" /> Share This Report
-            </button>
-            <button
-              onClick={() => navigate('/benchmarks')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-white/30 text-white hover:bg-white/10"
-            >
-              See Your Benchmarks <ArrowRight className="h-4 w-4" />
             </button>
           </div>
 

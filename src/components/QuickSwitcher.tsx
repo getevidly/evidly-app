@@ -13,7 +13,7 @@ import {
   Settings,
   X,
 } from 'lucide-react';
-import { locations as demoLocations, locationScores, getGrade } from '../data/demoData';
+import { locations as demoLocations } from '../data/demoData';
 import { useDemo } from '../contexts/DemoContext';
 
 interface QuickItem {
@@ -22,7 +22,6 @@ interface QuickItem {
   sublabel?: string;
   href: string;
   type: 'location' | 'page';
-  score?: number;
   icon: typeof Search;
 }
 
@@ -55,7 +54,6 @@ export function QuickSwitcher() {
       sublabel: loc.address,
       href: `/scoring-breakdown?location=${loc.urlId}`,
       type: 'location' as const,
-      score: locationScores[loc.urlId]?.foodSafety ?? 0,
       icon: MapPin,
     })),
   [locations]);
@@ -180,7 +178,6 @@ export function QuickSwitcher() {
               <div className="px-4 py-1.5 text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider">Locations</div>
               {locationResults.map((item, i) => {
                 const globalIndex = filtered.indexOf(item);
-                const scoreGrade = item.score ? getGrade(item.score) : null;
                 return (
                   <div
                     key={item.id}
@@ -194,18 +191,6 @@ export function QuickSwitcher() {
                       <div className="text-sm font-medium text-[#1E2D4D] truncate">{item.label}</div>
                       {item.sublabel && <div className="text-xs text-[#1E2D4D]/30 truncate">{item.sublabel}</div>}
                     </div>
-                    {scoreGrade && (
-                      <span
-                        className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full"
-                        style={{
-                          color: scoreGrade.hex,
-                          backgroundColor: scoreGrade.hex + '18',
-                          border: `1px solid ${scoreGrade.hex}40`,
-                        }}
-                      >
-                        {item.score}
-                      </span>
-                    )}
                   </div>
                 );
               })}

@@ -393,34 +393,40 @@ async function generateTrajectoryInsights(orgId: string, supabase: ReturnType<ty
   const insights: Insight[] = [];
   const { data: snapshots } = await supabase
     .from('readiness_snapshots')
-    .select('overall_score, snapshot_date')
+    .select('open_violations, pending_corrective_actions, overdue_temp_checks, expired_documents, snapshot_date')
     .eq('org_id', orgId)
     .order('snapshot_date', { ascending: false })
     .limit(8);
 
   if (!snapshots || snapshots.length < 3) return insights;
 
-  const recent3 = snapshots.slice(0, 3).map((s: { overall_score: number }) => Number(s.overall_score));
+  // Sum operational deficiency counts for each snapshot
+  const deficiencyCount = (s: { open_violations: number; pending_corrective_actions: number; overdue_temp_checks: number; expired_documents: number }) =>
+    Number(s.open_violations || 0) + Number(s.pending_corrective_actions || 0) +
+    Number(s.overdue_temp_checks || 0) + Number(s.expired_documents || 0);
+
+  const recent3 = snapshots.slice(0, 3).map(deficiencyCount);
   const avgRecent = recent3.reduce((s: number, v: number) => s + v, 0) / recent3.length;
 
   if (snapshots.length >= 6) {
-    const older3 = snapshots.slice(3, 6).map((s: { overall_score: number }) => Number(s.overall_score));
+    const older3 = snapshots.slice(3, 6).map(deficiencyCount);
     const avgOlder = older3.reduce((s: number, v: number) => s + v, 0) / older3.length;
     const diff = avgRecent - avgOlder;
 
-    if (diff < -5) {
+    // Positive diff means more deficiencies (worsening); negative means fewer (improving)
+    if (diff > 2) {
       insights.push({
         priority: 1, category: 'trajectory',
-        title: `Readiness score declining (${diff.toFixed(1)} pts)`,
-        body: `Average score dropped from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)}.`,
+        title: `Operational deficiencies increasing (+${diff.toFixed(1)} avg issues)`,
+        body: `Average open issues rose from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)} per snapshot.`,
         source: 'readiness_snapshots', action_text: 'View Trajectory', action_url: '/insights/trajectory',
         metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
       });
-    } else if (diff > 5) {
+    } else if (diff < -2) {
       insights.push({
         priority: 3, category: 'trajectory',
-        title: `Readiness score improving (+${diff.toFixed(1)} pts)`,
-        body: `Average score rose from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)}.`,
+        title: `Operational deficiencies decreasing (${diff.toFixed(1)} avg issues)`,
+        body: `Average open issues dropped from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)} per snapshot.`,
         source: 'readiness_snapshots', action_text: 'View Trajectory', action_url: '/insights/trajectory',
         metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
       });

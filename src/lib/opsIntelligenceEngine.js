@@ -619,43 +619,47 @@ export async function generateTrajectoryInsights(orgId, supabase) {
 
   const { data: snapshots } = await supabase
     .from('readiness_snapshots')
-    .select('overall_score, snapshot_date')
+    .select('pending_corrective_actions, overdue_temp_checks, expired_documents, snapshot_date')
     .eq('org_id', orgId)
     .order('snapshot_date', { ascending: false })
     .limit(8);
 
   if (!snapshots || snapshots.length < 3) return insights;
 
-  // Compare last 3 snapshots for trend
-  const recent3 = snapshots.slice(0, 3).map(s => Number(s.overall_score));
-  const avgRecent = recent3.reduce((s, v) => s + v, 0) / recent3.length;
+  // Sum deficiency counts per snapshot
+  const deficiencySum = (s) =>
+    Number(s.pending_corrective_actions || 0) +
+    Number(s.overdue_temp_checks || 0) +
+    Number(s.expired_documents || 0);
+
+  const recent3 = snapshots.slice(0, 3).map(deficiencySum);
+  const sumRecent = recent3.reduce((s, v) => s + v, 0);
 
   if (snapshots.length >= 6) {
-    const older3 = snapshots.slice(3, 6).map(s => Number(s.overall_score));
-    const avgOlder = older3.reduce((s, v) => s + v, 0) / older3.length;
-    const diff = avgRecent - avgOlder;
+    const older3 = snapshots.slice(3, 6).map(deficiencySum);
+    const sumOlder = older3.reduce((s, v) => s + v, 0);
 
-    if (diff < -5) {
+    if (sumRecent > sumOlder) {
       insights.push({
         priority: 1,
         category: 'trajectory',
-        title: `Readiness score declining (${diff > 0 ? '+' : ''}${diff.toFixed(1)} pts)`,
-        body: `Average score dropped from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)} over recent snapshots. Investigate root causes.`,
+        title: 'Operational deficiencies increasing',
+        body: `Total deficiency count rose from ${sumOlder} to ${sumRecent} across recent snapshots. Investigate root causes.`,
         source: 'readiness_snapshots',
         action_text: 'View Trajectory',
         action_url: '/food-safety/trajectory',
-        metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
+        metadata: { sum_recent: sumRecent, sum_older: sumOlder },
       });
-    } else if (diff > 5) {
+    } else if (sumRecent < sumOlder) {
       insights.push({
-        priority: 3,
+        priority: 2,
         category: 'trajectory',
-        title: `Readiness score improving (+${diff.toFixed(1)} pts)`,
-        body: `Average score rose from ${avgOlder.toFixed(1)} to ${avgRecent.toFixed(1)}. Great work maintaining compliance.`,
+        title: 'Operational deficiencies declining',
+        body: `Total deficiency count dropped from ${sumOlder} to ${sumRecent}. Great work reducing operational issues.`,
         source: 'readiness_snapshots',
         action_text: 'View Trajectory',
         action_url: '/food-safety/trajectory',
-        metadata: { avg_recent: avgRecent, avg_older: avgOlder, diff },
+        metadata: { sum_recent: sumRecent, sum_older: sumOlder },
       });
     }
   }

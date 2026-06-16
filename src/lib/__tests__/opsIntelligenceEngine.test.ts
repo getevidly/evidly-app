@@ -368,44 +368,48 @@ describe('SP8 Ops Intelligence Engine', () => {
   });
 
   describe('generateTrajectoryInsights', () => {
-    it('detects declining score as P1', async () => {
+    it('detects increasing deficiencies as P1', async () => {
       const sb = createMockSupabase({
         readiness_snapshots: [
-          { org_id: ORG, overall_score: 70, snapshot_date: daysFromNow(-1) },
-          { org_id: ORG, overall_score: 72, snapshot_date: daysFromNow(-8) },
-          { org_id: ORG, overall_score: 68, snapshot_date: daysFromNow(-15) },
-          { org_id: ORG, overall_score: 85, snapshot_date: daysFromNow(-22) },
-          { org_id: ORG, overall_score: 88, snapshot_date: daysFromNow(-29) },
-          { org_id: ORG, overall_score: 82, snapshot_date: daysFromNow(-36) },
+          // Recent 3: higher deficiency counts (sum = 5+3+4 = 12)
+          { org_id: ORG, pending_corrective_actions: 3, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-1) },
+          { org_id: ORG, pending_corrective_actions: 1, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-8) },
+          { org_id: ORG, pending_corrective_actions: 2, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-15) },
+          // Older 3: lower deficiency counts (sum = 1+1+1 = 3)
+          { org_id: ORG, pending_corrective_actions: 0, overdue_temp_checks: 1, expired_documents: 0, snapshot_date: daysFromNow(-22) },
+          { org_id: ORG, pending_corrective_actions: 0, overdue_temp_checks: 0, expired_documents: 0, snapshot_date: daysFromNow(-29) },
+          { org_id: ORG, pending_corrective_actions: 1, overdue_temp_checks: 0, expired_documents: 1, snapshot_date: daysFromNow(-36) },
+        ],
+      });
+      const result = await generateTrajectoryInsights(ORG, sb);
+      const increasing = result.find(i => i.title.includes('increasing'));
+      expect(increasing).toBeDefined();
+      expect(increasing.priority).toBe(1);
+    });
+
+    it('detects declining deficiencies as P2', async () => {
+      const sb = createMockSupabase({
+        readiness_snapshots: [
+          // Recent 3: lower deficiency counts (sum = 0+1+0 = 1)
+          { org_id: ORG, pending_corrective_actions: 0, overdue_temp_checks: 0, expired_documents: 0, snapshot_date: daysFromNow(-1) },
+          { org_id: ORG, pending_corrective_actions: 0, overdue_temp_checks: 1, expired_documents: 0, snapshot_date: daysFromNow(-8) },
+          { org_id: ORG, pending_corrective_actions: 0, overdue_temp_checks: 0, expired_documents: 0, snapshot_date: daysFromNow(-15) },
+          // Older 3: higher deficiency counts (sum = 4+3+5 = 12)
+          { org_id: ORG, pending_corrective_actions: 2, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-22) },
+          { org_id: ORG, pending_corrective_actions: 1, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-29) },
+          { org_id: ORG, pending_corrective_actions: 3, overdue_temp_checks: 1, expired_documents: 1, snapshot_date: daysFromNow(-36) },
         ],
       });
       const result = await generateTrajectoryInsights(ORG, sb);
       const declining = result.find(i => i.title.includes('declining'));
       expect(declining).toBeDefined();
-      expect(declining.priority).toBe(1);
-    });
-
-    it('detects improving score as P3', async () => {
-      const sb = createMockSupabase({
-        readiness_snapshots: [
-          { org_id: ORG, overall_score: 90, snapshot_date: daysFromNow(-1) },
-          { org_id: ORG, overall_score: 88, snapshot_date: daysFromNow(-8) },
-          { org_id: ORG, overall_score: 92, snapshot_date: daysFromNow(-15) },
-          { org_id: ORG, overall_score: 75, snapshot_date: daysFromNow(-22) },
-          { org_id: ORG, overall_score: 72, snapshot_date: daysFromNow(-29) },
-          { org_id: ORG, overall_score: 78, snapshot_date: daysFromNow(-36) },
-        ],
-      });
-      const result = await generateTrajectoryInsights(ORG, sb);
-      const improving = result.find(i => i.title.includes('improving'));
-      expect(improving).toBeDefined();
-      expect(improving.priority).toBe(3);
+      expect(declining.priority).toBe(2);
     });
 
     it('returns empty with fewer than 3 snapshots', async () => {
       const sb = createMockSupabase({
         readiness_snapshots: [
-          { org_id: ORG, overall_score: 80, snapshot_date: daysFromNow(-1) },
+          { org_id: ORG, pending_corrective_actions: 1, overdue_temp_checks: 0, expired_documents: 0, snapshot_date: daysFromNow(-1) },
         ],
       });
       const result = await generateTrajectoryInsights(ORG, sb);

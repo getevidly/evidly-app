@@ -4,7 +4,6 @@
 // Authenticated via service role key (Bearer token).
 // POST: Runs every 15 min, calculates temperature compliance
 //       rates and data completeness scores for each location.
-//       Sensor-equipped locations get bonus to data completeness.
 // ============================================================
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -59,9 +58,6 @@ Deno.serve(async (req: Request) => {
 
     const now = new Date();
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-
-    // Sensor-equipped location bonus for data completeness (percentage points)
-    const SENSOR_COMPLETENESS_BONUS = 10;
 
     // ── Fetch locations ──
     let locationQuery = supabase
@@ -194,12 +190,7 @@ Deno.serve(async (req: Request) => {
         : 0;
 
       // ── Calculate data completeness score ──
-      let dataCompletenessScore = Math.round((hoursWithReadings / 24) * 10000) / 100; // 2 decimal places
-
-      // Sensor-equipped locations get a bonus
-      if (hasSensors) {
-        dataCompletenessScore = Math.min(100, dataCompletenessScore + SENSOR_COMPLETENESS_BONUS);
-      }
+      const dataCompletenessScore = Math.round((hoursWithReadings / 24) * 10000) / 100; // 2 decimal places
 
       // ── Upsert compliance data for this location ──
       const { error: upsertError } = await supabase
@@ -244,7 +235,6 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({
       locations_updated: locationsUpdated,
       avg_compliance: avgCompliance,
-      sensor_completeness_bonus: SENSOR_COMPLETENESS_BONUS,
       analysis_window: {
         from: twentyFourHoursAgo,
         to: now.toISOString(),

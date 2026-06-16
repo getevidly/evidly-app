@@ -14,7 +14,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, R
 import { Breadcrumb } from '../components/Breadcrumb';
 import { Modal } from '../components/ui/Modal';
 import { RequestServiceModal } from '../components/services/RequestServiceModal';
-import { getScoreColor } from '../lib/complianceScoring';
+
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';

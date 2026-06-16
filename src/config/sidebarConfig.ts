@@ -226,10 +226,6 @@ const I: Record<string, NavItem> = {
     id: 'in-trends', label: 'Compliance Trends', path: '/compliance-trends', icon: '📈',
     roles: [], description: '30/60/90-day compliance score trajectories with per-category breakdown across locations.',
   },
-  'in-bench': {
-    id: 'in-bench', label: 'Benchmarks', path: '/benchmarks', icon: '🏆',
-    roles: [], description: 'Compare your compliance performance against industry benchmarks and your own historical baseline.',
-  },
   'in-leader': {
     id: 'in-leader', label: 'Team Leaderboard', path: '/insights/leaderboard', icon: '🏅',
     roles: [], description: 'Staff ranked by compliance task performance — checklists, temp logs, and corrective actions.',

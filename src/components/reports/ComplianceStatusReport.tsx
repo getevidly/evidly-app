@@ -1,8 +1,8 @@
 /**
- * Compliance Status Report — location compliance summary with scores.
+ * Compliance Status Report — location compliance summary.
  * Shows empty state when no data from API.
  */
-import { FileText, Shield, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { FileText, Shield } from 'lucide-react';
 import { NAVY, TEXT_TERTIARY, CARD_BORDER, CARD_BG } from '../dashboard/shared/constants';
 
 interface ComplianceStatusProps {
@@ -20,10 +20,14 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
     <div className="space-y-5">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <ScoreCard label="Total Locations" value={String(locations.length)} icon={Shield} iconColor="#1E2D4D" />
-        <ScoreCard label="Compliant" value={String(locations.filter(l => (Number(l.score) || 0) >= 90).length)} icon={CheckCircle} iconColor="#059669" />
-        <ScoreCard label="At Risk" value={String(locations.filter(l => { const s = Number(l.score) || 0; return s >= 70 && s < 90; }).length)} icon={AlertTriangle} iconColor="#D97706" />
-        <ScoreCard label="Non-Compliant" value={String(locations.filter(l => (Number(l.score) || 0) < 70).length)} icon={XCircle} iconColor="#DC2626" />
+        <SummaryCard label="Total Locations" value={String(locations.length)} icon={Shield} iconColor="#1E2D4D" />
+      </div>
+
+      {/* Jurisdiction grading notice */}
+      <div className="rounded-lg p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+        <p className="text-sm" style={{ color: TEXT_TERTIARY }}>
+          Compliance status is transitioning to jurisdiction-native grading. Per-requirement status will appear here once connected to live inspection data.
+        </p>
       </div>
 
       {/* Table */}
@@ -31,33 +35,18 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
         <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-              {['Location', 'Score', 'Food Safety', 'Fire Safety', 'Last Inspection', 'Status'].map(h => (
+              {['Location', 'Last Inspection'].map(h => (
                 <th key={h} className="text-left px-3 py-2 text-xs font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {locations.map((loc, i) => {
-              const score = Number(loc.score) || 0;
-              const sc = scoreColor(score);
-              return (
-                <tr key={i} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-                  <td className="px-3 py-2 font-medium" style={{ color: NAVY }}>{String(loc.name || '')}</td>
-                  <td className="px-3 py-2 font-bold" style={{ color: sc }}>{score}</td>
-                  <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>{String(loc.foodSafety || '—')}</td>
-                  <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>{String(loc.facilitySafety || '—')}</td>
-                  <td className="px-3 py-2 text-xs" style={{ color: TEXT_TERTIARY }}>{String(loc.lastInspection || '—')}</td>
-                  <td className="px-3 py-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
-                      background: score >= 90 ? '#F0FFF4' : score >= 70 ? '#FFFBEB' : '#FEF2F2',
-                      color: sc,
-                    }}>
-                      {score >= 90 ? 'Compliant' : score >= 70 ? 'At Risk' : 'Non-Compliant'}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
+            {locations.map((loc, i) => (
+              <tr key={i} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
+                <td className="px-3 py-2 font-medium" style={{ color: NAVY }}>{String(loc.name || '')}</td>
+                <td className="px-3 py-2 text-xs" style={{ color: TEXT_TERTIARY }}>{String(loc.lastInspection || '—')}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -65,13 +54,7 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
   );
 }
 
-function scoreColor(score: number): string {
-  if (score >= 90) return '#059669';
-  if (score >= 70) return '#D97706';
-  return '#DC2626';
-}
-
-function ScoreCard({ label, value, icon: Icon, iconColor }: { label: string; value: string; icon: typeof Shield; iconColor: string }) {
+function SummaryCard({ label, value, icon: Icon, iconColor }: { label: string; value: string; icon: typeof Shield; iconColor: string }) {
   return (
     <div className="rounded-lg p-3 flex items-center gap-3" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
       <Icon className="w-5 h-5 flex-shrink-0" style={{ color: iconColor }} />

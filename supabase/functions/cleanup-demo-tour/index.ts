@@ -71,7 +71,7 @@ Deno.serve(async (req: Request) => {
         "corrective_actions",
         "documents",
         "equipment_service_records",
-        "insurance_risk_scores",
+
         "sb1383_compliance",
         "notifications",
       ];

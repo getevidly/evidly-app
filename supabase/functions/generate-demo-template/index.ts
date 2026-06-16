@@ -417,28 +417,7 @@ async function generateLocationData(
     });
   }
 
-  // ── 6. INSURANCE RISK SCORE ───────────────────────────────────
-
-  await supabase.from("insurance_risk_scores").insert({
-    organization_id: ctx.org_id,
-    location_id: ctx.location_id,
-    overall_score: 71,
-    risk_tier: "moderate",
-    fire_risk_score: 82,
-    food_safety_score: 74,
-    documentation_score: 68,
-    operational_score: 65,
-    factor_scores: {
-      fire_risk: 82,
-      food_safety: 74,
-      documentation: 68,
-      operational: 65,
-    },
-    data_points: 240,
-    computed_at: new Date().toISOString(),
-    valid_until: ctx.daysFrom(30),
-    source: SRC,
-  });
+  // ── 6. (removed — insurance_risk_scores was a manufactured-score table) ──
 
   // ── 7. SB 1383 COMPLIANCE (if applicable) ─────────────────────
 

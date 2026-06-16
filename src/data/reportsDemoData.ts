@@ -2,50 +2,18 @@
 // Imports from existing demo sources; new inline data where needed.
 
 import {
-  locations, locationScores, locationScoresThirtyDaysAgo, vendors,
-  demoReferral, DEMO_ORG_SCORES,
+  locations, vendors,
+  demoReferral,
 } from './demoData';
 import { DEMO_SERVICE_RECORDS } from './demoServiceRecords';
 import { TRAINING_EMPLOYEES, getTrainingStatus, getNextExpiration } from './trainingRecordsDemoData';
-import { getScoreStatus, getScoreColor } from '../lib/complianceScoring';
 
 // ── Shared types ───────────────────────────────────────────────────────
 export interface LocationScore {
   location: string;
   urlId: string;
-  foodSafety: number;
-  facilitySafety: number;
-  foodStatus: string;
-  facilityStatus: string;
 }
 
-// ── Score trend data (from old Reports.tsx) ─────────────────────────────
-export const SCORE_TRENDS: Record<string, { week: string; foodSafety: number; facilitySafety: number }[]> = {
-  downtown: [
-    { week: 'Wk 1', foodSafety: 86, facilitySafety: 82 }, { week: 'Wk 2', foodSafety: 87, facilitySafety: 83 },
-    { week: 'Wk 3', foodSafety: 87, facilitySafety: 83 }, { week: 'Wk 4', foodSafety: 88, facilitySafety: 85 },
-    { week: 'Wk 5', foodSafety: 89, facilitySafety: 86 }, { week: 'Wk 6', foodSafety: 90, facilitySafety: 87 },
-    { week: 'Wk 7', foodSafety: 89, facilitySafety: 86 }, { week: 'Wk 8', foodSafety: 91, facilitySafety: 88 },
-    { week: 'Wk 9', foodSafety: 90, facilitySafety: 87 }, { week: 'Wk 10', foodSafety: 92, facilitySafety: 89 },
-    { week: 'Wk 11', foodSafety: 91, facilitySafety: 88 }, { week: 'Wk 12', foodSafety: 92, facilitySafety: 89 },
-  ],
-  airport: [
-    { week: 'Wk 1', foodSafety: 66, facilitySafety: 58 }, { week: 'Wk 2', foodSafety: 67, facilitySafety: 59 },
-    { week: 'Wk 3', foodSafety: 67, facilitySafety: 60 }, { week: 'Wk 4', foodSafety: 68, facilitySafety: 61 },
-    { week: 'Wk 5', foodSafety: 68, facilitySafety: 60 }, { week: 'Wk 6', foodSafety: 69, facilitySafety: 62 },
-    { week: 'Wk 7', foodSafety: 70, facilitySafety: 63 }, { week: 'Wk 8', foodSafety: 69, facilitySafety: 62 },
-    { week: 'Wk 9', foodSafety: 70, facilitySafety: 64 }, { week: 'Wk 10', foodSafety: 72, facilitySafety: 65 },
-    { week: 'Wk 11', foodSafety: 71, facilitySafety: 64 }, { week: 'Wk 12', foodSafety: 72, facilitySafety: 65 },
-  ],
-  university: [
-    { week: 'Wk 1', foodSafety: 44, facilitySafety: 38 }, { week: 'Wk 2', foodSafety: 46, facilitySafety: 40 },
-    { week: 'Wk 3', foodSafety: 47, facilitySafety: 42 }, { week: 'Wk 4', foodSafety: 49, facilitySafety: 44 },
-    { week: 'Wk 5', foodSafety: 48, facilitySafety: 43 }, { week: 'Wk 6', foodSafety: 50, facilitySafety: 45 },
-    { week: 'Wk 7', foodSafety: 52, facilitySafety: 47 }, { week: 'Wk 8', foodSafety: 51, facilitySafety: 46 },
-    { week: 'Wk 9', foodSafety: 53, facilitySafety: 48 }, { week: 'Wk 10', foodSafety: 55, facilitySafety: 50 },
-    { week: 'Wk 11', foodSafety: 55, facilitySafety: 49 }, { week: 'Wk 12', foodSafety: 58, facilitySafety: 52 },
-  ],
-};
 
 const TOP_ISSUES = [
   { issue: 'Food handler certifications expiring', priority: 'HIGH', affected: '3 locations' },
@@ -65,26 +33,12 @@ const TOP_POSITIVES = [
 
 // ── 1. Executive Summary ───────────────────────────────────────────────
 export function getExecutiveSummaryData(location: string) {
-  const locScores: LocationScore[] = locations.map(loc => {
-    const scores = locationScores[loc.urlId];
-    return {
-      location: loc.name, urlId: loc.urlId,
-      foodSafety: scores?.foodSafety || 0, facilitySafety: scores?.facilitySafety || 0,
-      foodStatus: getScoreStatus(scores?.foodSafety || 0),
-      facilityStatus: getScoreStatus(scores?.facilitySafety || 0),
-    };
-  });
-  const trendByLoc = { ...SCORE_TRENDS } as Record<string, typeof SCORE_TRENDS['downtown']>;
-  trendByLoc['all'] = SCORE_TRENDS.downtown.map((item, i) => ({
-    week: item.week,
-    foodSafety: Math.round((item.foodSafety + SCORE_TRENDS.airport[i].foodSafety + SCORE_TRENDS.university[i].foodSafety) / 3),
-    facilitySafety: Math.round((item.facilitySafety + SCORE_TRENDS.airport[i].facilitySafety + SCORE_TRENDS.university[i].facilitySafety) / 3),
+  const locScores: LocationScore[] = locations.map(loc => ({
+    location: loc.name,
+    urlId: loc.urlId,
   }));
   return {
-    orgScores: DEMO_ORG_SCORES,
     locationScores: locScores,
-    prevScores: locationScoresThirtyDaysAgo,
-    trendData: trendByLoc[location] || trendByLoc['all'],
     topIssues: TOP_ISSUES,
     topPositives: TOP_POSITIVES,
   };
@@ -412,20 +366,16 @@ export function getK2CImpactData() {
 // ── 12. Location Comparison ────────────────────────────────────────────
 export function getLocationComparisonData() {
   return locations.map(loc => {
-    const scores = locationScores[loc.urlId];
-    const food = scores?.foodSafety || 0;
-    const facility = scores?.facilitySafety || 0;
     const checklists = CHECKLIST_COMPLETION[loc.urlId];
     const checklistAvg = checklists ? Math.round(checklists.reduce((s, c) => s + c.rate, 0) / checklists.length) : 0;
     const temp = TEMP_COMPLIANCE[loc.urlId];
     const tempAvg = temp ? Math.round(temp.reduce((s, t) => s + t.compliance, 0) / temp.length) : 0;
     return {
-      location: loc.name, urlId: loc.urlId, foodSafety: food, facilitySafety: facility,
-      foodStatus: getScoreStatus(food), facilityStatus: getScoreStatus(facility),
+      location: loc.name, urlId: loc.urlId,
       checklistCompletion: checklistAvg, tempCompliance: tempAvg, openItems: loc.actionItems,
     };
   });
 }
 
 // Re-export for convenience
-export { locations, locationScores, vendors, DEMO_SERVICE_RECORDS, TRAINING_EMPLOYEES, getScoreColor, getScoreStatus };
+export { locations, vendors, DEMO_SERVICE_RECORDS, TRAINING_EMPLOYEES };

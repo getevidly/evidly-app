@@ -9,7 +9,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { getScoreColor } from '../lib/complianceScoring';
+
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -397,23 +397,15 @@ export function AuditReport() {
     const eqGood = reportData.equipment.filter((e: any) => e.condition === 'Good').length;
     const eqFair = reportData.equipment.filter((e: any) => e.condition === 'Fair').length;
     const eqAttention = reportData.equipment.filter((e: any) => e.condition === 'Needs Attention').length;
-    const complianceScore = Math.round(
-      (passTemps / Math.max(totalTemps, 1)) * 55 +
-      (avgScore / 100) * 45
-    );
-    // Per-location scores
+    // Per-location status (jurisdiction pass/fail + operational deficiency counts)
     const locationStats = (loc ? [loc] : LOCATIONS).map(locName => {
       const lt = reportData.tempLogs.filter((t: any) => t.location === locName);
       const tpr = lt.length > 0 ? Math.round(lt.filter((t: any) => t.pass).length / lt.length * 100) : 100;
-      const lc = reportData.checklists.filter((c: any) => c.location === locName);
-      const cas = lc.length > 0 ? Math.round(lc.reduce((s: number, c: any) => s + c.score, 0) / lc.length) : 100;
       const ld = reportData.documents.filter((d: any) => d.location === locName);
-      const cdr = ld.length > 0 ? Math.round(ld.filter((d: any) => d.status === 'Current').length / ld.length * 100) : 100;
-      const score = Math.round(tpr * 0.55 + cas * 0.45);
-      return { name: locName, score };
+      const expired = ld.filter((d: any) => d.status === 'Expired').length;
+      return { name: locName, tempPassRate: tpr, expiredDocs: expired, status: expired === 0 && tpr >= 80 ? 'Pass' : 'Needs attention' };
     });
     return {
-      complianceScore,
       totalTemps, passTemps, tempPassRate: totalTemps > 0 ? Math.round((passTemps / totalTemps) * 100) : 0,
       totalChecklists, avgScore, checklistsWithFailures,
       openIncidents, resolvedIncidents, totalIncidents: reportData.incidents.length,
@@ -768,21 +760,17 @@ export function AuditReport() {
                     <div className="mt-4">
                       {/* Compliance Score */}
                       <div className="flex items-center gap-6 mb-6 p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                        <div className="relative w-24 h-24 flex-shrink-0">
-                          <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                            <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                            <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(summary.complianceScore)} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
-                          </svg>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{summary.complianceScore}</span>
-                          </div>
-                        </div>
                         <div>
-                          <h4 className="font-bold text-lg text-[#1E2D4D]">Overall Compliance Score</h4>
-                          <p className="text-sm text-[#1E2D4D]/70">Food Safety Score + Fire Safety Score</p>
-                          <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
-                            {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
-                          </p>
+                          <h4 className="font-bold text-lg text-[#1E2D4D]">Compliance Status</h4>
+                          <p className="text-sm text-[#1E2D4D]/70">Per-requirement status by pillar</p>
+                          <div className="flex gap-3 mt-2">
+                            <span className="px-2 py-1 rounded text-xs font-bold bg-[#FAF7F0] text-[#1E2D4D]">
+                              Temps: {summary.tempPassRate}% pass
+                            </span>
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${summary.expiredDocs > 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                              Docs: {summary.expiredDocs > 0 ? `${summary.expiredDocs} expired` : 'Current'}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -821,19 +809,13 @@ export function AuditReport() {
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {summary.locationStats.map((ls: any) => (
                               <div key={ls.name} className="p-3 rounded-xl border border-[#1E2D4D]/10 flex items-center gap-3">
-                                <div className="relative w-14 h-14 flex-shrink-0">
-                                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                                    <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="10" />
-                                    <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(ls.score)} strokeWidth="10" strokeDasharray={`${ls.score * 2.64} 264`} strokeLinecap="round" />
-                                  </svg>
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-sm font-bold text-[#1E2D4D]">{ls.score}</span>
-                                  </div>
-                                </div>
                                 <div>
                                   <div className="text-sm font-medium text-[#1E2D4D]">{ls.name}</div>
-                                  <div className="text-xs font-semibold" style={{ color: getScoreColor(ls.score) }}>
-                                    {ls.score >= 90 ? 'Inspection Ready' : ls.score >= 70 ? 'Needs Attention' : 'Critical'}
+                                  <div className="flex gap-2 mt-1">
+                                    <span className="text-xs font-medium text-[#1E2D4D]/70">Temps: {ls.tempPassRate}%</span>
+                                    <span className={`text-xs font-semibold ${ls.status === 'Pass' ? 'text-green-700' : 'text-amber-700'}`}>
+                                      {ls.status}
+                                    </span>
                                   </div>
                                 </div>
                               </div>

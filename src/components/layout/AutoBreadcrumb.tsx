@@ -52,7 +52,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/food-safety/trajectory': { label: 'Trajectory', parent: '/food-safety' },
   '/fire-safety/analysis': { label: 'Analysis', parent: '/facility-safety' },
   '/fire-safety/trajectory': { label: 'Trajectory', parent: '/facility-safety' },
-  '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
+
   '/intelligence': { label: 'Intelligence Hub', parent: '/insights' },
   '/audit-trail': { label: 'Audit Trail', parent: '/insights' },
   '/weekly-digest': { label: 'Weekly Digest', parent: '/insights' },

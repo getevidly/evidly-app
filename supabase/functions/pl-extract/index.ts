@@ -108,7 +108,6 @@ RULES:
 async function callAnthropic(
   apiKey: string,
   model: string,
-  temperature: number,
   pdfBase64: string,
 ): Promise<{ parsed: unknown; raw: string }> {
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
@@ -121,7 +120,6 @@ async function callAnthropic(
     body: JSON.stringify({
       model,
       max_tokens: 16000,
-      temperature,
       system: EXTRACTION_PROMPT,
       messages: [
         {
@@ -333,12 +331,12 @@ Deno.serve(async (req: Request) => {
       return json({ error: "AI service not configured" }, 503, headers);
     }
 
-    const MODEL_A = "claude-sonnet-4-20250514";
-    const MODEL_B = "claude-sonnet-4-20250514";
+    const MODEL_A = "claude-sonnet-4-6";
+    const MODEL_B = "claude-opus-4-8";
 
     const [passA, passB] = await Promise.all([
-      callAnthropic(anthropicKey, MODEL_A, 0, pdfBase64),
-      callAnthropic(anthropicKey, MODEL_B, 0.4, pdfBase64),
+      callAnthropic(anthropicKey, MODEL_A, pdfBase64),
+      callAnthropic(anthropicKey, MODEL_B, pdfBase64),
     ]);
 
     // ── Step 4.5: sanity-check location counts ───────────

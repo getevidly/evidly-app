@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { locations as demoLocations, locationScores } from '../data/demoData';
+import { locations as demoLocations } from '../data/demoData';
 import {
   generateHealthDeptReport,
   COUNTY_TEMPLATES,
@@ -20,7 +20,6 @@ import {
   type CountyTemplate,
   type CountyTemplateConfig,
   type HealthDeptReport as ReportType,
-  type LiveScoreData,
   type JurisdictionTemplateData,
   type SelfInspectionItem,
   type MissingDocAlert,
@@ -127,7 +126,6 @@ export function HealthDeptReport() {
   };
 
   const template = COUNTY_TEMPLATES[countyTemplate];
-  const scores = locationScores[selectedLocation] || locationScores['downtown'];
   const reportHistory = useMemo(() => getDemoReportHistory(), []);
 
   // Missing docs pre-check
@@ -147,34 +145,14 @@ export function HealthDeptReport() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      let liveScores: LiveScoreData | null = null;
       let jurisdictionTemplate: CountyTemplateConfig | null = null;
 
-      // Phase 4: Fetch live data from Supabase when not in demo mode
+      // Phase 4: Fetch live jurisdiction data from Supabase when not in demo mode
       if (!isDemoMode) {
         const loc = locations.find(l => l.urlId === selectedLocation);
         const locationId = loc?.id;
         if (locationId) {
-          // Fetch latest compliance score snapshot
-          const { data: snapshot } = await supabase
-            .from('compliance_score_snapshots')
-            .select('id, overall_score, food_safety_score, facility_safety_score, vendor_score, score_date')
-            .eq('location_id', locationId)
-            .order('score_date', { ascending: false })
-            .limit(1)
-            .single();
-
-          if (snapshot) {
-            liveScores = {
-              foodSafety: snapshot.food_safety_score ?? 0,
-              facilitySafety: snapshot.facility_safety_score ?? 0,
-              vendorScore: snapshot.vendor_score ?? undefined,
-              snapshotId: snapshot.id,
-              snapshotDate: snapshot.score_date,
-            };
-          }
-
-          // Fetch jurisdiction data for the location
+          // Fetch jurisdiction data for the location (grade comes from jurisdiction, not manufactured scores)
           const { data: jData } = await supabase
             .from('locations')
             .select('jurisdictions(county, agency_name, grading_type, grading_config, pass_threshold)')
@@ -196,7 +174,7 @@ export function HealthDeptReport() {
 
       const report = generateHealthDeptReport(
         { locationId: selectedLocation, countyTemplate, dateRange, sections, isPaidTier },
-        liveScores,
+        null,
         jurisdictionTemplate,
       );
       setGeneratedReport(report);
@@ -399,7 +377,7 @@ export function HealthDeptReport() {
                   <SectionToggle label="Fire Safety & Equipment" enabled={sections.facilitySafety} onChange={() => toggleSection('facilitySafety')} locked={!isPaidTier} />
                   <SectionToggle label="Vendor Documentation" enabled={sections.vendorDocs} onChange={() => toggleSection('vendorDocs')} locked={!isPaidTier} />
                   <SectionToggle label="Corrective Actions" enabled={sections.correctiveActions} onChange={() => toggleSection('correctiveActions')} locked={!isPaidTier} />
-                  <SectionToggle label="Compliance Score & Trends" enabled={sections.complianceScore} onChange={() => toggleSection('complianceScore')} />
+                  <SectionToggle label="Jurisdiction Grade & Trends" enabled={sections.complianceScore} onChange={() => toggleSection('complianceScore')} />
                 </div>
 
                 {!isPaidTier && (
@@ -458,33 +436,20 @@ export function HealthDeptReport() {
 
             {/* Right: Preview Card + Actions */}
             <div className="space-y-6">
-              {/* Score Preview — per-pillar with correct frameworks */}
+              {/* Jurisdiction Grading Preview */}
               <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 space-y-4">
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', textAlign: 'center' }}>Compliance Score</div>
-                {[
-                  { label: 'Food Safety', framework: template.name, score: scores.foodSafety },
-                  { label: 'Fire Safety', framework: 'NFPA 96 / CA Fire Code', score: scores.facilitySafety },
-                ].map(p => {
-                  const statusLabel = p.score >= 90 ? 'Compliant' : p.score >= 70 ? 'Needs Attention' : 'Critical';
-                  const statusColor = p.score >= 90 ? '#22c55e' : p.score >= 70 ? '#eab308' : '#ef4444';
-                  return (
-                    <div key={p.label} style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{p.label}</div>
-                        <div style={{ fontSize: 24, fontWeight: 800, color: statusColor }}>{p.score}</div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ fontSize: 10, color: '#9ca3af' }}>{p.framework}</div>
-                        <div style={{
-                          display: 'inline-block', padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 700,
-                          color: statusColor, border: `1.5px solid ${statusColor}`,
-                        }}>
-                          {statusLabel}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', textAlign: 'center' }}>Jurisdiction Grading</div>
+                <div style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Grading System</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D' }}>{template.gradingSystem}</div>
+                  <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>{template.gradingDescription}</div>
+                </div>
+                <div style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Framework</div>
+                  <div style={{ fontSize: 12, color: '#6b7280' }}>Food Safety: {template.name}</div>
+                  <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>Fire Safety: NFPA 96 / CA Fire Code</div>
+                </div>
+                <div style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center' }}>Per jurisdiction grading — see generated report for violation detail</div>
               </div>
 
               {/* Generate Button */}
@@ -588,29 +553,29 @@ export function HealthDeptReport() {
                 {/* Phase 4: Wrap report content for PDF capture */}
                 <div ref={reportRef}>
                 {/* Report Header */}
-                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.foodSafety)}` }}>
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: '4px solid #1E2D4D' }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
                   <div style={{ fontSize: 14, color: '#6b7280' }}>{template.name} — {template.gradingSystem}</div>
                   <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 16, padding: '12px 24px', borderRadius: 12, backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
                     <div>
-                      <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.foodSafety), lineHeight: 1 }}>
-                        {generatedReport.complianceScore.foodSafety}
+                      <div style={{ fontSize: 32, fontWeight: 800, color: '#1E2D4D', lineHeight: 1 }}>
+                        {generatedReport.complianceScore.countyGrade}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>Jurisdiction Grade</div>
+                    </div>
+                    <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 600, color: '#374151', lineHeight: 1.3 }}>
+                        {generatedReport.foodSafety.filter(i => i.status === 'non-compliant').length} violations
                       </div>
                       <div style={{ fontSize: 12, color: '#6b7280' }}>Food Safety</div>
                     </div>
                     <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
                     <div>
-                      <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.facilitySafety), lineHeight: 1 }}>
-                        {generatedReport.complianceScore.facilitySafety}
+                      <div style={{ fontSize: 16, fontWeight: 600, color: '#374151', lineHeight: 1.3 }}>
+                        {generatedReport.facilitySafety.filter(f => f.status === 'overdue').length} overdue
                       </div>
                       <div style={{ fontSize: 12, color: '#6b7280' }}>Fire Safety</div>
-                    </div>
-                    <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
-                    <div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: template.getGradeColor(generatedReport.complianceScore.foodSafety) }}>
-                        {generatedReport.complianceScore.countyGrade}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>Grade</div>
                     </div>
                   </div>
                 </div>
@@ -866,21 +831,28 @@ export function HealthDeptReport() {
 
                 {/* Section 7: Compliance Score & Trends */}
                 {generatedReport.config.sections.complianceScore && (
-                  <CollapsibleSection title="Compliance Score & Trend Analytics" icon={<TrendingUp className="h-5 w-5 text-[#1E2D4D]" />} defaultOpen>
+                  <CollapsibleSection title="Jurisdiction Grade & Trend Analytics" icon={<TrendingUp className="h-5 w-5 text-[#1E2D4D]" />} defaultOpen>
                     <div className="mt-4 space-y-6">
-                      {/* Score Summary */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {[
-                          { label: 'Food Safety', value: generatedReport.complianceScore.foodSafety },
-                          { label: 'Fire Safety', value: generatedReport.complianceScore.facilitySafety },
-                        ].map(p => (
-                          <div key={p.label} style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
-                            <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 75 ? '#eab308' : p.value >= 60 ? '#f59e0b' : '#ef4444' }}>
-                              {p.value}
-                            </div>
-                            <div style={{ fontSize: 12, color: '#6b7280' }}>{p.label}</div>
+                      {/* Jurisdiction Grade + Violation Summary */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                          <div style={{ fontSize: 24, fontWeight: 700, color: '#1E2D4D' }}>
+                            {generatedReport.complianceScore.countyGrade}
                           </div>
-                        ))}
+                          <div style={{ fontSize: 12, color: '#6b7280' }}>Jurisdiction Grade</div>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                          <div style={{ fontSize: 24, fontWeight: 700, color: generatedReport.foodSafety.filter(i => i.status === 'non-compliant').length > 0 ? '#ef4444' : '#22c55e' }}>
+                            {generatedReport.foodSafety.filter(i => i.status === 'non-compliant').length}
+                          </div>
+                          <div style={{ fontSize: 12, color: '#6b7280' }}>Food Safety Violations</div>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                          <div style={{ fontSize: 24, fontWeight: 700, color: generatedReport.facilitySafety.filter(f => f.status === 'overdue').length > 0 ? '#ef4444' : '#22c55e' }}>
+                            {generatedReport.facilitySafety.filter(f => f.status === 'overdue').length}
+                          </div>
+                          <div style={{ fontSize: 12, color: '#6b7280' }}>Fire Safety Overdue</div>
+                        </div>
                       </div>
 
                       {/* Trend Chart */}

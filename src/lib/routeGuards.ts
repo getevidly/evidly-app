@@ -17,7 +17,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/fire-safety/trajectory', ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/compliance-overview',   ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'facilities_manager']],
   ['/audit-trail',           ['owner_operator', 'executive', 'compliance_manager']],
-  ['/benchmarks',            ['owner_operator', 'executive']],
+
   ['/compliance-trends',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/intelligence',          ['owner_operator', 'executive', 'compliance_manager']],
   ['/insights/intelligence', ['owner_operator', 'executive', 'compliance_manager']],

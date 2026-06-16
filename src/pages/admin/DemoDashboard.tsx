@@ -8,7 +8,6 @@
 import {
   DEMO_ORG,
   DEMO_LOCATIONS,
-  LOCATIONS_WITH_SCORES,
   DEMO_ORG_SCORES,
   DEMO_ATTENTION_ITEMS,
   DEMO_WEEKLY_ACTIVITY,
@@ -130,7 +129,6 @@ export default function DemoDashboard() {
         <Card title="DEMO_LOCATIONS + Jurisdiction Status">
           {DEMO_LOCATIONS.map(loc => {
             const jStatus = LOCATION_JURISDICTION_STATUS[loc.id];
-            const scores = LOCATIONS_WITH_SCORES.find(l => l.id === loc.id);
             return (
               <div key={loc.id} className="py-3 border-b border-gray-200 flex items-center gap-4">
                 <div className="flex-1">
@@ -153,15 +151,11 @@ export default function DemoDashboard() {
                     )}
                   </div>
                 </div>
-                {scores && (
-                  <div className="text-right text-xs text-gray-500">
-                    <div>Food: {scores.foodScore}</div>
-                    <div>Facility: {scores.fireScore}</div>
+                <div className="text-right text-xs text-gray-500">
                     <div className={loc.trend > 0 ? 'text-green-600' : loc.trend < 0 ? 'text-red-600' : 'text-gray-500'}>
                       Trend: {loc.trend > 0 ? '+' : ''}{loc.trend}
                     </div>
                   </div>
-                )}
               </div>
             );
           })}

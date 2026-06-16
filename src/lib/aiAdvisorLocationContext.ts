@@ -6,14 +6,15 @@
 
 import {
   locations,
-  locationScores,
+  DEMO_LOCATIONS,
+  calcPillar,
   locationScoresThirtyDaysAgo,
   LOCATION_JURISDICTION_STATUS,
 } from '../data/demoData';
 
 import { generateTempDemoHistory } from '../data/tempDemoHistory';
 import { DEMO_SCENARIOS } from '../data/inspectorViewDemoData';
-import { SCORE_TRENDS, CHECKLIST_COMPLETION, TEMP_COMPLIANCE } from '../data/reportsDemoData';
+import { CHECKLIST_COMPLETION, TEMP_COMPLIANCE } from '../data/reportsDemoData';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 
 // ── Interfaces ───────────────────────────────────────────────
@@ -100,7 +101,10 @@ export function buildLocationContextPayload(locationId: string): LocationContext
   const loc = locations.find(l => l.urlId === locationId);
   if (!loc) return null;
 
-  const current = locationScores[locationId];
+  const demoLoc = DEMO_LOCATIONS.find(dl => dl.id === locationId);
+  const current = demoLoc
+    ? { foodSafety: calcPillar(demoLoc.foodSafety), facilitySafety: calcPillar(demoLoc.facilitySafety) }
+    : undefined;
   const prior = locationScoresThirtyDaysAgo[locationId];
   const jStatus = LOCATION_JURISDICTION_STATUS[locationId];
 
@@ -160,14 +164,6 @@ export function buildLocationContextPayload(locationId: string): LocationContext
     templates: checklists,
   };
 
-  // Score trend from reportsDemoData
-  const trends = SCORE_TRENDS[locationId] || [];
-  const last4 = trends.slice(-4);
-  const firstFood = last4.length > 0 ? last4[0].foodSafety : 0;
-  const lastFood = last4.length > 0 ? last4[last4.length - 1].foodSafety : 0;
-  const trendDir: 'improving' | 'declining' | 'stable' =
-    lastFood > firstFood ? 'improving' : lastFood < firstFood ? 'declining' : 'stable';
-
   // Jurisdiction enforcement emphasis (demo-only — this module only processes demo location IDs)
   const jEnf = getJurisdictionForLocation(locationId);
   const jurisdictionEnforcement = jEnf
@@ -205,8 +201,8 @@ export function buildLocationContextPayload(locationId: string): LocationContext
     temperatureCompliance,
     checklistCompletion,
     scoreTrend: {
-      direction: trendDir,
-      recentWeeks: last4,
+      direction: 'stable',
+      recentWeeks: [],
     },
     jurisdictionEnforcement,
     dataDateRange: getDataDateRange(),

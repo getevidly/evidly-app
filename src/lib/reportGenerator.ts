@@ -9,7 +9,7 @@
 // - Trend analytics
 // ============================================================
 
-import { locations, locationScores, vendors, scoreImpactData, needsAttentionItems } from '../data/demoData';
+import { locations, vendors } from '../data/demoData';
 import { calculateJurisdictionScore, extractCountySlug } from './jurisdictionScoring';
 
 // ── Types ──────────────────────────────────────────────────
@@ -18,8 +18,6 @@ export type CountyTemplate = 'la' | 'san-diego' | 'kern' | 'orange' | 'sacrament
 
 // Phase 4: Live data interfaces for Supabase-sourced scores
 export interface LiveScoreData {
-  foodSafety: number;
-  facilitySafety: number;
   vendorScore?: number;
   snapshotId?: string;   // FK for audit chain
   snapshotDate?: string;
@@ -497,9 +495,9 @@ function generateMissingDocs(locationUrlId: string): MissingDocAlert[] {
 }
 
 function generateSelfInspection(locationUrlId: string): SelfInspectionItem[] {
-  const scores = locationScores[locationUrlId];
-  const isGood = scores?.foodSafety >= 90;
-  const isMedium = scores?.foodSafety >= 70;
+  // Status determined per-location by demo scenario (downtown=good, airport=medium, university=poor)
+  const isGood = locationUrlId === 'downtown';
+  const isMedium = locationUrlId === 'downtown' || locationUrlId === 'airport';
 
   return [
     // Temperature & Food Safety
@@ -561,11 +559,6 @@ export function generateHealthDeptReport(
   liveScores?: LiveScoreData | null,
   jurisdictionTemplate?: CountyTemplateConfig | null,
 ): HealthDeptReport {
-  const loc = locations.find(l => l.urlId === config.locationId) || locations[0];
-  // Phase 4: Use live scores from compliance_score_snapshots when available, fall back to demo
-  const scores = liveScores
-    ? { foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
-    : (locationScores[config.locationId] || locationScores['downtown']);
   // Phase 4: Use DB jurisdiction template when available, fall back to hardcoded COUNTY_TEMPLATES
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[config.countyTemplate];
 
@@ -581,13 +574,11 @@ export function generateHealthDeptReport(
     correctiveActions: generateCorrectiveActions(config.locationId),
     complianceScore: (() => {
       const countySlug = extractCountySlug(FACILITY_INFO[config.locationId]?.county || 'generic');
-      const locObj = locations.find(l => l.urlId === config.locationId);
-      const locationItems = scoreImpactData.filter(item => item.locationId === locObj?.id);
-      const jResult = calculateJurisdictionScore(locationItems, countySlug);
+      const jResult = calculateJurisdictionScore([], countySlug);
       return {
-        foodSafety: scores.foodSafety,
-        facilitySafety: scores.facilitySafety,
-        countyGrade: template.getGrade(scores.foodSafety),
+        foodSafety: 0,
+        facilitySafety: 0,
+        countyGrade: template.getGrade(jResult.numericScore),
         countyScoreLabel: template.gradingSystem,
         jurisdictionScore: jResult.numericScore,
         jurisdictionGrade: jResult.grade.label,
@@ -629,9 +620,6 @@ export function startInspectorVisit(
   jurisdictionTemplate?: CountyTemplateConfig | null,
 ): InspectorVisit {
   const loc = locations.find(l => l.urlId === locationUrlId) || locations[0];
-  const scores = liveScores
-    ? { foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
-    : (locationScores[locationUrlId] || locationScores['downtown']);
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[countyTemplate];
 
   const report = generateHealthDeptReport({
@@ -650,14 +638,15 @@ export function startInspectorVisit(
     isPaidTier: true,
   }, liveScores, jurisdictionTemplate);
 
+  const jScore = report.complianceScore.jurisdictionScore ?? 0;
   return {
     id: `VISIT-${Date.now()}`,
     locationId: locationUrlId,
     locationName: loc.name,
     startedAt: new Date().toISOString(),
-    score: scores.foodSafety,
-    grade: template.getGrade(scores.foodSafety),
-    gradeColor: template.getGradeColor(scores.foodSafety),
+    score: jScore,
+    grade: template.getGrade(jScore),
+    gradeColor: template.getGradeColor(jScore),
     reportId: report.id,
     notificationSent: true,
     qrPassportUrl: `https://app.getevidly.com/passport/${locationUrlId}`,

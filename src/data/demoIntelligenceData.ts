@@ -150,9 +150,9 @@ export interface ExecutiveSnapshot {
   one_liner: string;
   overall_status: 'good' | 'warning' | 'critical';
   key_metrics: {
-    food_safety_score: number;
+    food_safety_grade: string;
     food_safety_trend: number;
-    facility_safety_score: number;
+    open_fire_deficiencies: number;
     facility_safety_trend: number;
     open_risk_items: number;
     intelligence_alerts_7d: number;
@@ -837,9 +837,9 @@ export const DEMO_EXECUTIVE_SNAPSHOT: ExecutiveSnapshot = {
   one_liner: 'Pacific Coast Dining is operationally compliant with 2 critical external alerts requiring immediate action and 1 regulatory change requiring Q2 preparation.',
   overall_status: 'warning',
   key_metrics: {
-    food_safety_score: 84,
+    food_safety_grade: 'A',
     food_safety_trend: +2.1,
-    facility_safety_score: 77,
+    open_fire_deficiencies: 3,
     facility_safety_trend: -1.3,
     open_risk_items: 7,
     intelligence_alerts_7d: 9,

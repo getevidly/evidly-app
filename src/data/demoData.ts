@@ -1,19 +1,4 @@
-// Re-export scoring engine as single source of truth
-import {
-  getScoreColor,
-  getScoreStatus,
-  getScoreInfo,
-  getGraduatedPenalty,
-  type IndustryVertical,
-} from '../lib/complianceScoring';
-
-export { getScoreColor, getScoreStatus, getScoreInfo, getGraduatedPenalty };
-export type { IndustryVertical };
-
-// Pillar weights REMOVED — Food Safety and Fire Safety are independent scores
-
-// Backwards-compatible wrapper — delegates to scoring engine
-export const getGrade = (score: number) => getScoreInfo(score);
+// Manufactured scoring re-exports removed — Stage 1 score removal
 
 // --------------- Per-Role Demo User Names ---------------
 import type { UserRole } from '../contexts/RoleContext';
@@ -177,26 +162,14 @@ export const DEMO_LOCATIONS = [
   },
 ];
 
-// Enrich with calculated pillar scores (no composite overall)
-export const LOCATIONS_WITH_SCORES = DEMO_LOCATIONS.map(loc => ({
-  ...loc,
-  foodScore: calcPillar(loc.foodSafety),
-  fireScore: calcPillar(loc.facilitySafety),
-  score: null as number | null, // DEPRECATED — no composite score
-}));
-
-const _locs = LOCATIONS_WITH_SCORES;
+// ── Org-level pillar averages (derived from DEMO_LOCATIONS ops+docs) ──
 export const DEMO_ORG_SCORES = {
-  foodSafety: Math.round(_locs.reduce((s, l) => s + l.foodScore, 0) / _locs.length),
-  facilitySafety: Math.round(_locs.reduce((s, l) => s + l.fireScore, 0) / _locs.length),
+  foodSafety: Math.round(DEMO_LOCATIONS.reduce((s, l) => s + calcPillar(l.foodSafety), 0) / DEMO_LOCATIONS.length),
+  facilitySafety: Math.round(DEMO_LOCATIONS.reduce((s, l) => s + calcPillar(l.facilitySafety), 0) / DEMO_LOCATIONS.length),
 };
 
-// ── Backwards-compatible 2-pillar score lookups ──────────────
-// Derived from the exec 2-pillar model above. NO vendorCompliance.
-// Consumers that previously imported the old 3-pillar locationScores
-// should migrate to LOCATION_JURISDICTION_STATUS for display.
-export const locationScores: Record<string, { foodSafety: number; facilitySafety: number }> =
-  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { foodSafety: loc.foodScore, facilitySafety: loc.fireScore }]));
+// locationScores, complianceScores, LOCATIONS_WITH_SCORES removed — manufactured score exports.
+// Consumers should migrate to LOCATION_JURISDICTION_STATUS for display.
 
 export const locationScoresThirtyDaysAgo: Record<string, { foodSafety: number; facilitySafety: number }> = {
   downtown: { foodSafety: 93, facilitySafety: 89 },
@@ -204,7 +177,6 @@ export const locationScoresThirtyDaysAgo: Record<string, { foodSafety: number; f
   university: { foodSafety: 67, facilitySafety: 59 },
 };
 
-export const complianceScores = DEMO_ORG_SCORES;
 export const complianceScoresThirtyDaysAgo = {
   foodSafety: Math.round((93 + 82 + 67) / 3),
   facilitySafety: Math.round((89 + 76 + 59) / 3),
@@ -589,71 +561,8 @@ export interface ScoreImpactItem {
   locationId: string;
 }
 
-// Line-item status tracking per pillar per location
-// Food Safety: Temp checks, Checklists, Incidents, HACCP + Documentation items
-// Fire Safety: Hood cleaning, Fire suppression, Fire extinguisher, Equip maintenance, Equip condition
-
-export const scoreImpactData: ScoreImpactItem[] = [
-  // ─── Location 1 ─── Operational (94/100)
-  { status: 'current', label: 'Temperature Logs On Schedule', impact: '+34 of 35', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'Checklists Complete', impact: '+28 of 30', action: '1 Late Submission', actionLink: '/checklists', pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'Incident Resolution (<2 hrs)', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
-
-  // ─── Location 1 ─── Equipment (88/100)
-  { status: 'current', label: 'Hood Cleaning', impact: '+30 of 30', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
-  { status: 'due_soon', label: 'Fire Suppression (due in 15 days, −3.75 graduated)', impact: '+21 of 25', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '1' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
-  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
-  { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
-
-  // ─── Location 1 ─── Documentation (folds into Food Safety)
-  { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
-  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '1' },
-  { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
-
-  // ─── Location 2 ─── Operational (72/100)
-  { status: 'overdue', label: 'Temperature Logs (3 missed this week)', impact: '+23 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '2' },
-  { status: 'current', label: 'Checklists', impact: '+21 of 30', action: 'Late 2 Days This Week', actionLink: '/checklists', pillar: 'Food Safety', locationId: '2' },
-  { status: 'current', label: 'Incident Resolution (2-12 hrs avg)', impact: '+16 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
-  { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
-
-  // ─── Location 2 ─── Equipment (62/100)
-  { status: 'overdue', label: 'Hood Cleaning 5 DAYS OVERDUE (−30 full penalty)', impact: '0 of 30', action: 'Contact ABC Fire', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '2' },
-  { status: 'current', label: 'Fire Suppression Inspection', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
-  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
-  { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
-
-  // ─── Location 2 ─── Documentation (folds into Food Safety)
-  { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
-  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
-  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '2' },
-  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Send Request', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
-
-  // ─── Location 3 ─── Operational (62/100)
-  { status: 'overdue', label: '5 Temperature Checks Missed This Week', impact: '+10 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },
-  { status: 'overdue', label: 'Opening Checklists Missed 3 Days', impact: '+10 of 30', action: 'Complete Now', actionLink: '/checklists', pillar: 'Food Safety', locationId: '3' },
-  { status: 'current', label: 'Incident Resolution (24-48 hrs avg)', impact: '+8 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
-  { status: 'overdue', label: 'HACCP Monitoring Not Done This Month', impact: '0 of 15', action: 'Start HACCP Review', actionLink: '/haccp', pillar: 'Food Safety', locationId: '3' },
-
-  // ─── Location 3 ─── Equipment (55/100)
-  { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days (−15 graduated)', impact: '+15 of 30', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
-  { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
-  { status: 'current', label: 'Fire Extinguisher', impact: '+15 of 20', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '3' },
-  { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
-  { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '3' },
-
-  // ─── Location 3 ─── Documentation (folds into Food Safety)
-  { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Food Safety', locationId: '3' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
-  { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Food Safety', locationId: '3' },
-  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/training', pillar: 'Food Safety', locationId: '3' },
-  { status: 'current', label: 'Insurance Certificate', impact: '+8 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
-];
+// scoreImpactData removed — manufactured score-impact data.
+// ScoreImpactItem type retained for use by jurisdictionScoring.ts.
 
 // ============================================================
 // Vendor Marketplace — Demo Data

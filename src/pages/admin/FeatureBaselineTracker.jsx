@@ -71,7 +71,7 @@ const FEATURES = [
   { id: 24, name: 'Workforce Risk Assessment', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/workforce-risk', files: 'WorkforceRisk.tsx, workforceRiskScanner.ts', notes: 'CIC Pillar 5, cert expiration tracking, idempotent scanner' },
   { id: 25, name: 'Improve Score Recommendations', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/improve-score', files: 'ImproveScore.tsx', notes: 'Score improvement recommendations' },
   { id: 26, name: 'Compliance Trends', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/compliance-trends', files: 'ComplianceTrends.tsx + 6 trend components', notes: 'Category, location, and overall trend analysis' },
-  { id: 27, name: 'Benchmark System', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/benchmarks', files: 'Benchmarks.tsx, benchmarkEngine.ts, benchmarkNormalization.ts', notes: '4 edge functions, 4 badge tiers, weekly/monthly/quarterly crons' },
+  { id: 27, name: 'Benchmark System', category: 'Compliance & Scoring', verdict: 'REMOVED', route: '', files: '(deleted — manufactured-score removal)', notes: 'Removed in Stage 1: all benchmark files, edge functions, and routes deleted' },
   { id: 28, name: 'Regulatory Change Monitoring', category: 'Compliance & Scoring', verdict: 'CONFIRMED', route: '/regulatory-alerts', files: 'RegulatoryAlerts.tsx, AdminRegulatoryChanges.tsx', notes: 'monitor-regulations edge function, admin-assisted workflow' },
 
   // Seven Superpowers (29-35)

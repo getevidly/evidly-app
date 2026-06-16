@@ -169,7 +169,6 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
   const [liveTenants, setLiveTenants] = useState<any[]>([]);
   const [liveAuditLog, setLiveAuditLog] = useState<any[]>([]);
   const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
-  const [liveRollupScores, setLiveRollupScores] = useState<any[]>([]);
 
   // ── Live mode: fetch enterprise data ────────────────────────
   useEffect(() => {
@@ -178,15 +177,13 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
     (async () => {
       setLoading(true);
       try {
-        const [tenantsRes, auditRes, rollupRes] = await Promise.all([
+        const [tenantsRes, auditRes] = await Promise.all([
           supabase.from('enterprise_tenants').select('*').limit(20),
           supabase.from('enterprise_audit_log').select('*').order('created_at', { ascending: false }).limit(10),
-          supabase.from('enterprise_rollup_scores').select('*').order('period_date', { ascending: false }).limit(50),
         ]);
         if (!cancelled) {
           if (tenantsRes.data) setLiveTenants(tenantsRes.data);
           if (auditRes.data) setLiveAuditLog(auditRes.data);
-          if (rollupRes.data) setLiveRollupScores(rollupRes.data);
         }
       } catch (err) {
         console.error('Failed to fetch enterprise overview:', err);

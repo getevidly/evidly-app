@@ -1,4 +1,9 @@
-import { locationScores, locationScoresThirtyDaysAgo } from './demoData';
+import { DEMO_LOCATIONS, calcPillar, locationScoresThirtyDaysAgo } from './demoData';
+
+// Derive locationScores from DEMO_LOCATIONS (ops+docs average)
+const locationScores: Record<string, { foodSafety: number; facilitySafety: number }> = Object.fromEntries(
+  DEMO_LOCATIONS.map(loc => [loc.id, { foodSafety: calcPillar(loc.foodSafety), facilitySafety: calcPillar(loc.facilitySafety) }])
+);
 
 // ── Types ──────────────────────────────────────────────────────
 

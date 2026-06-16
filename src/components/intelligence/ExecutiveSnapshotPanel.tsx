@@ -87,13 +87,11 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       </div>
 
       {/* ── 2. KEY METRICS ROW ────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5" style={stagger(1)}>
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5" style={stagger(1)}>
         {(() => {
           const km = snapshot.key_metrics || {} as any;
           const fe = km.financial_exposure || { low: 0, high: 0 };
           return [
-            { label: 'Food Safety', value: String(km.food_safety_score ?? '--'), trend: km.food_safety_trend ?? 0, color: '#16a34a' },
-            { label: 'Fire Safety', value: String(km.facility_safety_score ?? '--'), trend: km.facility_safety_trend ?? 0, color: (km.facility_safety_trend ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
             { label: 'Open Risk Items', value: String(km.open_risk_items ?? 0), trend: 0, color: '#d97706' },
             { label: 'Intel Alerts (7d)', value: String(km.intelligence_alerts_7d ?? 0), trend: 0, color: '#1E2D4D' },
             { label: 'Reg. Pipeline', value: String(km.regulatory_pipeline ?? 0), trend: 0, color: '#7c3aed' },

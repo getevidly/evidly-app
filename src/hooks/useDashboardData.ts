@@ -2,21 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTaskState } from '../lib/canonicalQueries/task-state';
-import { pushComplianceUpdate } from '../lib/intelligenceBridge';
 import {
   loadDashboardData,
   type ActivityItem,
 } from '../lib/dashboardQueries';
-import {
-  LOCATIONS_WITH_SCORES,
-  DEMO_ORG_SCORES,
-  DEMO_TREND_DATA,
-  locationScoresThirtyDaysAgo,
-} from '../data/demoData';
 import { DEMO_INTELLIGENCE_INSIGHTS } from '../data/demoIntelligenceData';
-import { collectAllDemoData } from '../lib/complianceDataCollector';
-import { computeAllSnapshots, computeOrgScores } from '../lib/complianceEngine';
-import { ENGINE_TREND_DATA, getScoresThirtyDaysAgo } from '../data/complianceEngineDemoData';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -67,41 +57,19 @@ export interface ModuleStatus {
   route: string;
 }
 
-export interface LocationWithScores {
+export interface LocationBasic {
   id: string;
   name: string;
-  foodSafety: { ops: number; docs: number };
-  facilitySafety: { ops: number; docs: number };
-  trend: number;
-  status: 'good' | 'attention' | 'critical';
-  foodScore: number;
-  fireScore: number;
-  score: number | null;
-}
-
-export interface TrendDataPoint {
-  date: string;
-  foodSafety: number;
-  facilitySafety: number;
-}
-
-export interface DashboardWeights {
-  ops: number;
-  docs: number;
 }
 
 export interface DashboardPayload {
-  orgScores: { foodSafety: number; facilitySafety: number };
-  locations: LocationWithScores[];
-  locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }>;
+  locations: LocationBasic[];
   tasks: TaskItem[];
   deadlines: DeadlineItem[];
   alerts: AlertItem[];
   impact: ImpactItem[];
   activity: ActivityItem[];
   moduleStatuses: ModuleStatus[];
-  trendData: TrendDataPoint[];
-  weights: DashboardWeights;
   timezone: string | null;
 }
 
@@ -255,50 +223,18 @@ const DEMO_MODULE_STATUSES: ModuleStatus[] = [
 ];
 
 function buildDemoPayload(): DashboardPayload {
-  // ── Use compliance engine for scores ──
-  const snapshots = collectAllDemoData();
-  const engineResults = computeAllSnapshots(snapshots);
-  const engineOrgScores = computeOrgScores(engineResults);
-  const engineThirtyDaysAgo = getScoresThirtyDaysAgo();
-
-  // Build per-location scores from engine (preserving LocationWithScores shape)
-  const engineLocations: LocationWithScores[] = LOCATIONS_WITH_SCORES.map(loc => {
-    const r = engineResults[loc.id];
-    if (!r) return loc; // fallback to static if engine doesn't have this location
-    return {
-      ...loc,
-      foodSafety: { ops: r.foodSafetyOps, docs: r.foodSafetyDocs },
-      facilitySafety: { ops: r.facilitySafetyOps, docs: r.facilitySafetyDocs },
-      foodScore: r.foodSafetyScore,
-      fireScore: r.facilitySafetyScore,
-      score: null,
-    };
-  });
-
-  // Build 30-day-ago per-location scores from engine
-  const locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }> = {};
-  for (const [locId, prev] of Object.entries(engineThirtyDaysAgo)) {
-    locationScoresPrev[locId] = { foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety };
-  }
-
   return {
-    orgScores: {
-      foodSafety: engineOrgScores.foodSafety,
-      facilitySafety: engineOrgScores.facilitySafety,
-    },
-    locations: engineLocations,
-    locationScoresPrev,
+    locations: [
+      { id: 'downtown', name: 'Location 1' },
+      { id: 'airport', name: 'Location 2' },
+      { id: 'university', name: 'Location 3' },
+    ],
     tasks: DEMO_TASKS,
     deadlines: DEMO_DEADLINES,
     alerts: DEMO_ALERTS,
     impact: buildDemoImpact(),
     activity: DEMO_ACTIVITY,
     moduleStatuses: DEMO_MODULE_STATUSES,
-    trendData: ENGINE_TREND_DATA,
-    weights: {
-      ops: 50,
-      docs: 50,
-    },
     timezone: 'America/Los_Angeles',
   };
 }
@@ -306,52 +242,15 @@ function buildDemoPayload(): DashboardPayload {
 /** Empty payload for live mode — no hardcoded demo data */
 function buildEmptyPayload(): DashboardPayload {
   return {
-    orgScores: { foodSafety: 0, facilitySafety: 0 },
     locations: [],
-    locationScoresPrev: {},
     tasks: [],
     deadlines: [],
     alerts: [],
     impact: [],
     activity: [],
     moduleStatuses: [],
-    trendData: [],
-    weights: { ops: 50, docs: 50 },
     timezone: null,
   };
-}
-
-// ── Intelligence bridge: compliance push throttle ──────
-
-const BRIDGE_THROTTLE_KEY = 'evidly_intelligence_last_push';
-const BRIDGE_THROTTLE_MS = 60 * 60 * 1000; // 1 hour
-const BRIDGE_DELTA_THRESHOLD = 5; // only push when score delta > 5 points
-
-function shouldPushToIntelligence(
-  current: { foodSafety: number; facilitySafety: number },
-  lastPushed: { foodSafety: number; facilitySafety: number } | null,
-): boolean {
-  if (!lastPushed) return true;
-  return (
-    Math.abs(current.foodSafety - lastPushed.foodSafety) > BRIDGE_DELTA_THRESHOLD ||
-    Math.abs(current.facilitySafety - lastPushed.facilitySafety) > BRIDGE_DELTA_THRESHOLD
-  );
-}
-
-function isThrottled(): boolean {
-  try {
-    const last = localStorage.getItem(BRIDGE_THROTTLE_KEY);
-    if (!last) return false;
-    return Date.now() - Number(last) < BRIDGE_THROTTLE_MS;
-  } catch {
-    return false;
-  }
-}
-
-function markPushTimestamp(): void {
-  try {
-    localStorage.setItem(BRIDGE_THROTTLE_KEY, String(Date.now()));
-  } catch { /* ignore */ }
 }
 
 // ── Hook ───────────────────────────────────────────────
@@ -403,40 +302,19 @@ export function useDashboardData(): {
       if (!mountedRef.current) return;
 
       // Map Supabase results into DashboardPayload
-      const locations: LocationWithScores[] = result.locations.map(loc => ({
+      const locations: LocationBasic[] = result.locations.map(loc => ({
         id: loc.id || loc.urlId,
         name: loc.name,
-        foodSafety: { ops: 0, docs: 0 },
-        facilitySafety: { ops: 0, docs: 0 },
-        trend: 0,
-        status: 'good' as const,
-        foodScore: 0,
-        fireScore: 0,
-        score: null,
       }));
 
       setData({
-        orgScores: {
-          foodSafety: result.complianceData.scores.foodSafety,
-          facilitySafety: result.complianceData.scores.facilitySafety,
-        },
         locations,
-        locationScoresPrev: Object.fromEntries(
-          Object.entries(result.complianceData.locationScoresThirtyDaysAgo).map(
-            ([id, s]) => [id, { foodSafety: s.foodSafety, facilitySafety: s.facilitySafety }],
-          ),
-        ),
         tasks: [],
         deadlines: [],
         alerts: [],
         impact: [],
         activity: result.activity,
         moduleStatuses: [],
-        trendData: [],
-        weights: {
-          ops: 50,
-          docs: 50,
-        },
         timezone: result.timezone,
       });
     } catch (err) {
@@ -454,30 +332,6 @@ export function useDashboardData(): {
     fetchData();
     return () => { mountedRef.current = false; };
   }, [fetchData]);
-
-  // ── Intelligence bridge: push compliance when scores change significantly ──
-  const lastPushedScoresRef = useRef<{ foodSafety: number; facilitySafety: number } | null>(null);
-
-  useEffect(() => {
-    if (isDemoMode || !orgId || loading) return;
-
-    const current = {
-      foodSafety: data.orgScores.foodSafety,
-      facilitySafety: data.orgScores.facilitySafety,
-    };
-
-    if (!shouldPushToIntelligence(current, lastPushedScoresRef.current)) return;
-    if (isThrottled()) return;
-
-    lastPushedScoresRef.current = current;
-    markPushTimestamp();
-
-    pushComplianceUpdate(orgId, {
-      foodSafety: current.foodSafety,
-      facilitySafety: current.facilitySafety,
-      openItems: data.impact.length,
-    }).catch(() => {}); // fire and forget
-  }, [isDemoMode, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
 
   return {
     data,

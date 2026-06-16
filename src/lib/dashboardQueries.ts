@@ -1,32 +1,16 @@
 import { supabase } from './supabase';
 import {
-  complianceScores,
-  complianceScoresThirtyDaysAgo,
-  locationScores,
-  locationScoresThirtyDaysAgo,
   locations,
   vendors as demoVendors,
   needsAttentionItems,
-  scoreImpactData,
   type Location,
   type Vendor,
   type NeedsAttentionItem,
-  type ScoreImpactItem,
 } from '../data/demoData';
-import { collectAllDemoData } from './complianceDataCollector';
-import { computeAllSnapshots, computeOrgScores } from './complianceEngine';
-import { getScoresThirtyDaysAgo } from '../data/complianceEngineDemoData';
 
 // ────────────────────────────────────────────────────────
 // Types
 // ────────────────────────────────────────────────────────
-
-export interface ComplianceScoresResult {
-  scores: { foodSafety: number; facilitySafety: number };
-  locationScores: Record<string, { foodSafety: number; facilitySafety: number }>;
-  scoresThirtyDaysAgo: { foodSafety: number; facilitySafety: number };
-  locationScoresThirtyDaysAgo: Record<string, { foodSafety: number; facilitySafety: number }>;
-}
 
 export interface ProgressData {
   [locationId: string]: { tempDone: number; tempTotal: number; checkDone: number; checkTotal: number };
@@ -42,97 +26,12 @@ export interface ActivityItem {
 }
 
 export interface DashboardData {
-  complianceData: ComplianceScoresResult;
   locations: Location[];
   progress: ProgressData;
   activity: ActivityItem[];
   vendors: Vendor[];
   needsAttention: NeedsAttentionItem[];
-  scoreImpact: ScoreImpactItem[];
   timezone: string | null;
-}
-
-// ── Empty results for live mode (no data yet) ───────────
-
-const EMPTY_SCORES: ComplianceScoresResult = {
-  scores: { foodSafety: 0, facilitySafety: 0 },
-  locationScores: {},
-  scoresThirtyDaysAgo: { foodSafety: 0, facilitySafety: 0 },
-  locationScoresThirtyDaysAgo: {},
-};
-
-// ────────────────────────────────────────────────────────
-// Fetch compliance scores — real DB or demo fallback
-// ────────────────────────────────────────────────────────
-
-export async function fetchComplianceScores(organizationId?: string): Promise<ComplianceScoresResult> {
-  if (!organizationId) {
-    // Demo mode: use compliance engine
-    return fetchComplianceScoresFromEngine();
-  }
-
-  try {
-    // Check if there is any real temp_log data for this org
-    const { count: tempCount } = await supabase
-      .from('temperature_logs')
-      .select('id, temperature_equipment!inner(organization_id)', { count: 'exact', head: true })
-      .eq('temperature_equipment.organization_id', organizationId);
-
-    // If no real data exists, return empty scores
-    if (!tempCount || tempCount === 0) {
-      return EMPTY_SCORES;
-    }
-
-    // TODO: In live mode, collect real data and run through engine
-    return EMPTY_SCORES;
-  } catch {
-    return EMPTY_SCORES;
-  }
-}
-
-/** Compute compliance scores using the engine (demo mode). */
-function fetchComplianceScoresFromEngine(): ComplianceScoresResult {
-  const snapshots = collectAllDemoData();
-  const results = computeAllSnapshots(snapshots);
-  const orgScores = computeOrgScores(results);
-  const thirtyDaysAgo = getScoresThirtyDaysAgo();
-
-  // Build per-location scores
-  const locScores: Record<string, { foodSafety: number; facilitySafety: number }> = {};
-  for (const [locId, r] of Object.entries(results)) {
-    locScores[locId] = {
-      foodSafety: r.foodSafetyScore,
-      facilitySafety: r.facilitySafetyScore,
-    };
-  }
-
-  // Build 30-day-ago scores
-  const locScoresAgo: Record<string, { foodSafety: number; facilitySafety: number }> = {};
-  for (const [locId, ago] of Object.entries(thirtyDaysAgo)) {
-    locScoresAgo[locId] = {
-      foodSafety: ago.foodSafety,
-      facilitySafety: ago.facilitySafety,
-    };
-  }
-
-  // Compute org-level 30-day-ago scores
-  const agoEntries = Object.values(thirtyDaysAgo);
-  const orgAgo = agoEntries.length > 0
-    ? {
-        foodSafety: Math.round(agoEntries.reduce((s, a) => s + a.foodSafety, 0) / agoEntries.length),
-        facilitySafety: Math.round(agoEntries.reduce((s, a) => s + a.facilitySafety, 0) / agoEntries.length),
-      }
-    : { foodSafety: 0, facilitySafety: 0 };
-
-  return {
-    scores: {
-      foodSafety: orgScores.foodSafety,
-      facilitySafety: orgScores.facilitySafety,
-    },
-    locationScores: locScores,
-    scoresThirtyDaysAgo: orgAgo,
-    locationScoresThirtyDaysAgo: locScoresAgo,
-  };
 }
 
 // ────────────────────────────────────────────────────────
@@ -311,21 +210,6 @@ export async function fetchNeedsAttention(organizationId?: string): Promise<Need
 }
 
 // ────────────────────────────────────────────────────────
-// Fetch score impact data
-// ────────────────────────────────────────────────────────
-
-export async function fetchScoreImpact(organizationId?: string): Promise<ScoreImpactItem[]> {
-  if (!organizationId) {
-    // Demo mode: use engine-generated ScoreImpactItems
-    const snapshots = collectAllDemoData();
-    const results = computeAllSnapshots(snapshots);
-    return Object.values(results).flatMap(r => r.scoreImpactItems);
-  }
-  // Live mode: return empty — in production, derive from real compliance data
-  return [];
-}
-
-// ────────────────────────────────────────────────────────
 // Fetch organization metadata — timezone for canonical hook consumers
 // ────────────────────────────────────────────────────────
 export async function fetchOrganizationMeta(
@@ -346,25 +230,21 @@ export async function fetchOrganizationMeta(
 // ────────────────────────────────────────────────────────
 
 export async function loadDashboardData(organizationId?: string): Promise<DashboardData> {
-  const [complianceData, locs, progress, activity, vendorData, needsAttention, scoreImpact, orgMeta] = await Promise.all([
-    fetchComplianceScores(organizationId),
+  const [locs, progress, activity, vendorData, needsAttention, orgMeta] = await Promise.all([
     fetchLocations(organizationId),
     fetchTodaysProgress(organizationId),
     fetchRecentActivity(organizationId),
     fetchVendorServices(organizationId),
     fetchNeedsAttention(organizationId),
-    fetchScoreImpact(organizationId),
     fetchOrganizationMeta(organizationId),
   ]);
 
   return {
-    complianceData,
     locations: locs,
     progress,
     activity,
     vendors: vendorData,
     needsAttention,
-    scoreImpact,
     timezone: orgMeta.timezone,
   };
 }

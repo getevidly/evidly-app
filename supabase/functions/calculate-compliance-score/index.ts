@@ -11,13 +11,10 @@ interface ScoringResult {
   gradingType: string;
   pillar: string;
   subComponent: string;
-  rawScore: number;
-  normalizedScore: number;
   jurisdictionGrade: string;
   gradeDisplay: string;
   passFail: string;
   violations: ViolationDetail[];
-  weights: { foodSafety: number; facilitySafety: number; ops: number; docs: number };
   calculatedAt: string;
   majorViolations: number;
   minorViolations: number;
@@ -34,22 +31,6 @@ interface ViolationDetail {
   cdcRiskFactor: boolean;
   status: string;
   correctedOnSite: boolean;
-}
-
-interface OverallScore {
-  locationId: string;
-  overallScore: number;
-  foodSafety: PillarScore;
-  facilitySafety: PillarScore;
-  jurisdictions: ScoringResult[];
-  weightsUsed: { foodSafety: number; facilitySafety: number; ops: number; docs: number };
-}
-
-interface PillarScore {
-  score: number;
-  ops: number;
-  docs: number;
-  weight: number;
 }
 
 serve(async (req: Request) => {
@@ -147,18 +128,12 @@ serve(async (req: Request) => {
       const layer = (lj as any).jurisdiction_layer;
       const pillar = layer.includes('fire') ? 'fire_safety' : 'food_safety';
 
-      const opsWeight = jurisdiction.ops_weight / 100;
-      const docsWeight = jurisdiction.docs_weight / 100;
-
       const jurisdictionOverrides = (overrides || []).filter(
         (o: any) => o.jurisdiction_id === jurisdiction.id
       );
 
       const opsResult = calculateScore(jurisdiction, calcodeMap || [], jurisdictionOverrides, complianceData, pillar, 'operations');
       const docsResult = calculateScore(jurisdiction, calcodeMap || [], jurisdictionOverrides, complianceData, pillar, 'documentation');
-
-      const pillarRawScore = (opsResult.rawScore * opsWeight) + (docsResult.rawScore * docsWeight);
-      const normalizedScore = Math.round(pillarRawScore);
 
       const allViolations = [...opsResult.violations, ...docsResult.violations];
       const majorViolations = allViolations.filter(
@@ -172,17 +147,13 @@ serve(async (req: Request) => {
       ).length;
       const imminentHazard = checkImminentHazard(allViolations, complianceData);
 
-      const gradeResult = determineGrade(jurisdiction, normalizedScore, {
+      // Jurisdiction raw score: combined deductions from ops + docs, no blend
+      const jurisdictionRawScore = Math.max(0, 100 - (opsResult.totalPoints + docsResult.totalPoints));
+
+      const gradeResult = determineGrade(jurisdiction, jurisdictionRawScore, {
         majorViolations, uncorrectedMajors, imminentHazard,
         totalPoints: opsResult.totalPoints + docsResult.totalPoints,
       });
-
-      const weights = {
-        foodSafety: jurisdiction.food_safety_weight,
-        facilitySafety: jurisdiction.facility_safety_weight,
-        ops: jurisdiction.ops_weight,
-        docs: jurisdiction.docs_weight,
-      };
 
       const result: ScoringResult = {
         locationId: location_id,
@@ -194,13 +165,10 @@ serve(async (req: Request) => {
         gradingType: jurisdiction.grading_type,
         pillar,
         subComponent: 'combined',
-        rawScore: pillarRawScore,
-        normalizedScore,
         jurisdictionGrade: gradeResult.grade,
         gradeDisplay: gradeResult.display,
         passFail: gradeResult.passFail,
         violations: allViolations,
-        weights,
         calculatedAt: new Date().toISOString(),
         majorViolations,
         minorViolations,
@@ -209,43 +177,13 @@ serve(async (req: Request) => {
       };
 
       results.push(result);
-      results.push({ ...result, subComponent: 'operations', rawScore: opsResult.rawScore, normalizedScore: Math.round(opsResult.rawScore), violations: opsResult.violations });
-      results.push({ ...result, subComponent: 'documentation', rawScore: docsResult.rawScore, normalizedScore: Math.round(docsResult.rawScore), violations: docsResult.violations });
     }
-
-    // ── STEP 7: Calculate overall score ──
-    const mostRestrictive = locationJurisdictions.find((lj: any) => lj.is_most_restrictive) || locationJurisdictions[0];
-    const mrJurisdiction = (mostRestrictive as any).jurisdictions;
-
-    const foodWeight = mrJurisdiction.food_safety_weight / 100;
-    const fireWeight = mrJurisdiction.facility_safety_weight / 100;
-
-    const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
-    const fireResults = results.filter(r => r.pillar === 'fire_safety' && r.subComponent === 'combined');
-
-    const foodScore = foodResults.length > 0 ? Math.min(...foodResults.map(r => r.normalizedScore)) : 100;
-    const fireScore = fireResults.length > 0 ? Math.min(...fireResults.map(r => r.normalizedScore)) : 100;
-
-    const foodOps = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'operations');
-    const foodDocs = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'documentation');
-    const fireOps = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'operations');
-    const fireDocs = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'documentation');
-
-    const overallScore: OverallScore = {
-      locationId: location_id,
-      overallScore: Math.round((foodScore * foodWeight) + (fireScore * fireWeight)),
-      foodSafety: { score: foodScore, ops: foodOps?.normalizedScore ?? 100, docs: foodDocs?.normalizedScore ?? 100, weight: mrJurisdiction.food_safety_weight },
-      facilitySafety: { score: fireScore, ops: fireOps?.normalizedScore ?? 100, docs: fireDocs?.normalizedScore ?? 100, weight: mrJurisdiction.facility_safety_weight },
-      jurisdictions: results.filter(r => r.subComponent === 'combined'),
-      weightsUsed: { foodSafety: mrJurisdiction.food_safety_weight, facilitySafety: mrJurisdiction.facility_safety_weight, ops: mrJurisdiction.ops_weight, docs: mrJurisdiction.docs_weight },
-    };
 
     // ── STEP 8: Save to audit trail ──
     if (save_to_audit !== false) {
       const auditRecords = results.map(r => ({
         location_id: r.locationId, jurisdiction_id: r.jurisdictionId,
         calculation_type: r.pillar, pillar: r.pillar, sub_component: r.subComponent,
-        raw_score: r.rawScore, normalized_score: r.normalizedScore,
         jurisdiction_grade: r.jurisdictionGrade, grade_display: r.gradeDisplay, pass_fail: r.passFail,
         inputs: { violations: r.violations, compliance_data: complianceData.summary, major_violations: r.majorViolations, minor_violations: r.minorViolations, uncorrected_majors: r.uncorrectedMajors, imminent_hazard: r.imminentHazard },
         methodology: r.scoringType,
@@ -272,7 +210,6 @@ serve(async (req: Request) => {
         const hashPayload = JSON.stringify({
           summary: complianceData.summary,
           jurisdictionIds,
-          weights: overallScore.weightsUsed,
         });
         const encoder = new TextEncoder();
         const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(hashPayload));
@@ -288,6 +225,9 @@ serve(async (req: Request) => {
         const docTotal = complianceData.documents.length;
         const docExpired = complianceData.summary.expiredDocs;
 
+        // Get jurisdiction grade/score from the food_safety combined result (most-restrictive)
+        const foodSafetyResult = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
+
         // UPSERT to compliance_score_snapshots on (location_id, score_date)
         const { data: snapshotRow } = await supabase
           .from('compliance_score_snapshots')
@@ -295,10 +235,8 @@ serve(async (req: Request) => {
             organization_id: locData.organization_id,
             location_id,
             score_date: today,
-            overall_score: overallScore.overallScore,
-            food_safety_score: overallScore.foodSafety.score,
-            facility_safety_score: overallScore.facilitySafety.score,
-            vendor_score: null,
+            jurisdiction_grade: foodSafetyResult?.jurisdictionGrade ?? null,
+            jurisdiction_score: foodSafetyResult?.gradeDisplay ?? null,
             temp_readings_count: tempTotal,
             temp_in_range_pct: tempTotal > 0 ? Math.round((tempInRange / tempTotal) * 100) : null,
             checklists_completed_pct: checkTotal > 0 ? Math.round((checkPassed / checkTotal) * 100) : null,
@@ -324,10 +262,10 @@ serve(async (req: Request) => {
       }
     } catch (snapshotErr) {
       // V14 fix is additive — snapshot failure must never break scoring response
-      console.error('[STEP 7b] Snapshot write failed:', (snapshotErr as Error).message);
+      console.error('[STEP 8b] Snapshot write failed:', (snapshotErr as Error).message);
     }
 
-    return new Response(JSON.stringify(overallScore), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ locationId: location_id, jurisdictions: results, timestamp: new Date().toISOString() }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
     return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

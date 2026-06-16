@@ -61,17 +61,10 @@ serve(async (req) => {
         .lt('expiration_date', today)
         .is('archived_at', null);
 
-      // Simple readiness score: start at 100, deduct for issues
-      const caDeduction = Math.min((openCA || 0) * 5, 30);
-      const tempDeduction = Math.min((overdueTempChecks || 0) * 3, 20);
-      const docDeduction = Math.min((expiredDocs || 0) * 5, 25);
-      const overall = Math.max(0, 100 - caDeduction - tempDeduction - docDeduction);
-
       snapshots.push({
         org_id: loc.organization_id,
         location_id: loc.id,
         snapshot_date: today,
-        overall_score: overall,
         open_violations: 0,
         pending_corrective_actions: openCA || 0,
         overdue_temp_checks: overdueTempChecks || 0,

@@ -14,7 +14,7 @@ import { useTooltip } from '../../../hooks/useTooltip';
 import { SectionTooltip } from '../../ui/SectionTooltip';
 import { FireStatusBars } from '../../shared/FireStatusBars';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../../data/demoJurisdictions';
-import { LOCATIONS_WITH_SCORES } from '../../../data/demoData';
+import { DEMO_LOCATIONS } from '../../../data/demoData';
 import { JIE_LOC_MAP } from './constants';
 import type { LocationScore, LocationJurisdiction } from '../../../types/jurisdiction';
 import type { UserRole } from '../../../contexts/RoleContext';
@@ -33,7 +33,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
   // In demo mode, use hardcoded demo locations + grade overrides.
   // In live mode, derive locations from the jurisdictions record (real Supabase data).
   const locations = isDemoMode
-    ? LOCATIONS_WITH_SCORES.map(loc => ({ id: JIE_LOC_MAP[loc.id] || loc.id, name: loc.name }))
+    ? DEMO_LOCATIONS.map(loc => ({ id: JIE_LOC_MAP[loc.id] || loc.id, name: loc.name }))
     : Object.keys(jurisdictions).map(locId => ({ id: locId, name: jurisdictions[locId]?.county ? `${jurisdictions[locId].county} Location` : locId }));
 
   const gradeOverrides = isDemoMode ? DEMO_LOCATION_GRADE_OVERRIDES : {};

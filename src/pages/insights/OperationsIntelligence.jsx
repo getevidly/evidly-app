@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { supabase } from '../../lib/supabase';
-import { Sparkles, AlertTriangle, Clock, CheckCircle2, TrendingUp, X, ExternalLink, RefreshCw } from 'lucide-react';
+import { Sparkles, AlertTriangle, Clock, CheckCircle2, X, ExternalLink, RefreshCw } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -21,7 +21,7 @@ const DEMO_INSIGHTS = [
   { id: 'd2', priority: 1, category: 'ca_aging', title: '3 corrective actions open >14 days', body: 'Long-open CAs: Walk-in cooler temp (18d), Handwash station (16d), Floor drain (15d).', source: 'corrective_actions', action_text: 'Review CAs', action_url: '/corrective-actions', status: 'active' },
   { id: 'd3', priority: 2, category: 'document_currency', title: '2 documents expiring within 30 days', body: 'Expiring soon: Business License (12d), Health Permit (28d).', source: 'documents', action_text: 'Renew Documents', action_url: '/documents', status: 'active' },
   { id: 'd4', priority: 2, category: 'temp_trend', title: 'Walk-in Cooler: +2.3°F drift detected', body: 'Average temperature shifted from 36.2°F to 38.5°F over 14 days. Check calibration.', source: 'temp_logs', action_text: 'Check Equipment', action_url: '/temperature', status: 'active' },
-  { id: 'd5', priority: 3, category: 'trajectory', title: 'Readiness score improving (+6.2 pts)', body: 'Average score rose from 78.4 to 84.6. Great work maintaining compliance.', source: 'readiness_snapshots', action_text: 'View Trajectory', action_url: '/food-safety/trajectory', status: 'active' },
+  { id: 'd5', priority: 3, category: 'trajectory', title: 'Operational deficiencies declining', body: 'Open corrective actions decreased from 6 to 3 over the past 30 days.', source: 'corrective_actions', action_text: 'View Details', action_url: '/corrective-actions', status: 'active' },
 ];
 
 const DEMO_COACH = 'Focus on scheduling fire alarm and sprinkler inspections this week — two critical safeguards are missing service records.';
@@ -38,14 +38,14 @@ export function OperationsIntelligence() {
   const [activeTab, setActiveTab] = useState('insights');
   const [refreshing, setRefreshing] = useState(false);
 
-  // Score strip data
-  const [scoreData, setScoreData] = useState({ readiness: null, overdue: 0, expiring: 0, trend: null });
+  // Operational metrics strip data (no manufactured readiness score)
+  const [scoreData, setScoreData] = useState({ openViolations: null, overdue: 0, expiring: 0, pendingCAs: null });
 
   const loadInsights = useCallback(async () => {
     if (isDemoMode) {
       setInsights(DEMO_INSIGHTS);
       setCoachText(DEMO_COACH);
-      setScoreData({ readiness: 84.6, overdue: 3, expiring: 2, trend: '+6.2' });
+      setScoreData({ openViolations: 2, overdue: 3, expiring: 2, pendingCAs: 3 });
       setLoading(false);
       return;
     }
@@ -70,29 +70,21 @@ export function OperationsIntelligence() {
       const withCoach = active.find(i => i.metadata?.coach_recommendation);
       setCoachText(withCoach?.metadata?.coach_recommendation || '');
 
-      // Score strip
-      const { data: snapshot } = await supabase
-        .from('readiness_snapshots')
-        .select('overall_score')
-        .eq('org_id', orgId)
-        .order('snapshot_date', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
+      // Operational metrics strip (no manufactured readiness score)
       const overdueCount = active.filter(i => i.priority === 1).length;
       const expiringCount = active.filter(i =>
         ['document_currency', 'service_currency', 'certification_gap'].includes(i.category)
       ).length;
-      const trendInsight = active.find(i => i.category === 'trajectory');
-      const trendVal = trendInsight?.metadata?.diff
-        ? `${trendInsight.metadata.diff > 0 ? '+' : ''}${Number(trendInsight.metadata.diff).toFixed(1)}`
-        : null;
+      const violationInsights = active.filter(i =>
+        ['pse_exposure', 'violation'].includes(i.category)
+      ).length;
+      const pendingCACount = active.filter(i => i.category === 'ca_aging').length;
 
       setScoreData({
-        readiness: snapshot?.overall_score ? Number(snapshot.overall_score) : null,
+        openViolations: violationInsights,
         overdue: overdueCount,
         expiring: expiringCount,
-        trend: trendVal,
+        pendingCAs: pendingCACount,
       });
     } catch {
       // Silent fail
@@ -171,31 +163,31 @@ export function OperationsIntelligence() {
         </div>
       ) : (
         <>
-          {/* Score Strip */}
+          {/* Operational Metrics Strip */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             <ScoreCard
-              label="Readiness"
-              value={scoreData.readiness !== null ? `${scoreData.readiness}` : '—'}
-              icon={<CheckCircle2 className="h-4 w-4" />}
-              color="#166534"
+              label="Open Violations"
+              value={scoreData.openViolations !== null ? `${scoreData.openViolations}` : '—'}
+              icon={<AlertTriangle className="h-4 w-4" />}
+              color={scoreData.openViolations > 0 ? '#991B1B' : '#166534'}
             />
             <ScoreCard
-              label="Critical"
+              label="Critical Items"
               value={`${scoreData.overdue}`}
               icon={<AlertTriangle className="h-4 w-4" />}
               color={scoreData.overdue > 0 ? '#991B1B' : '#166534'}
             />
             <ScoreCard
-              label="Expiring"
+              label="Expiring Docs"
               value={`${scoreData.expiring}`}
               icon={<Clock className="h-4 w-4" />}
               color={scoreData.expiring > 0 ? '#92400E' : '#166534'}
             />
             <ScoreCard
-              label="Trend"
-              value={scoreData.trend || '—'}
-              icon={<TrendingUp className="h-4 w-4" />}
-              color={scoreData.trend && scoreData.trend.startsWith('+') ? '#166534' : scoreData.trend ? '#991B1B' : '#6B7F96'}
+              label="Pending CAs"
+              value={scoreData.pendingCAs !== null ? `${scoreData.pendingCAs}` : '—'}
+              icon={<CheckCircle2 className="h-4 w-4" />}
+              color={scoreData.pendingCAs > 0 ? '#92400E' : '#166534'}
             />
           </div>
 

@@ -1,50 +1,39 @@
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ReferenceLine,
-} from 'recharts';
-import type { CategoryTrendDataPoint } from '../../data/trendDemoData';
+// OverallTrendChart — placeholder (manufactured score trends removed)
+
+/** Generic data point accepted by this chart. */
+export interface OperationalTrendDataPoint {
+  date: string;
+  dateDisplay: string;
+  [key: string]: string | number;
+}
 
 interface Props {
-  data: CategoryTrendDataPoint[];
+  data: OperationalTrendDataPoint[];
 }
 
 export function OverallTrendChart({ data }: Props) {
+  if (!data || data.length === 0) {
+    return (
+      <div
+        className="flex items-center justify-center rounded-lg border border-[#1E2D4D]/10 bg-[#F8FAFC]"
+        style={{ height: 300 }}
+      >
+        <p className="text-sm text-[#1E2D4D]/50">
+          Trend chart is being updated to show operational metrics.
+        </p>
+      </div>
+    );
+  }
+
+  // Future: render operational metric chart here
   return (
-    <div style={{ height: 300 }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E8EDF5" />
-          <XAxis
-            dataKey="dateDisplay"
-            fontSize={11}
-            tick={{ fill: '#6B7F96' }}
-            interval={Math.max(0, Math.floor(data.length / 8) - 1)}
-          />
-          <YAxis domain={[0, 100]} fontSize={11} tick={{ fill: '#6B7F96' }} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#0B1628',
-              border: 'none',
-              borderRadius: 8,
-              color: '#fff',
-              fontSize: 12,
-            }}
-          />
-          <Legend />
-          <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 10 }} />
-          <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 10 }} />
-          <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 10 }} />
-          <Line type="monotone" dataKey="foodSafety" stroke="#22c55e" strokeWidth={2} dot={false} name="Food Safety" />
-          <Line type="monotone" dataKey="facilitySafety" stroke="#A08C5A" strokeWidth={2} dot={false} name="Fire Safety" />
-        </LineChart>
-      </ResponsiveContainer>
+    <div
+      className="flex items-center justify-center rounded-lg border border-[#1E2D4D]/10 bg-[#F8FAFC]"
+      style={{ height: 300 }}
+    >
+      <p className="text-sm text-[#1E2D4D]/50">
+        Trend chart is being updated to show operational metrics.
+      </p>
     </div>
   );
 }

@@ -25,7 +25,6 @@ interface OrgDigestConfig {
   scheduleDay: string; // e.g. 'monday'
   scheduleTime: string; // e.g. '08:00'
   contentToggles: {
-    complianceScores: boolean;
     highlightsConcerns: boolean;
     tempCheckDetails: boolean;
     checklistDetails: boolean;
@@ -72,9 +71,6 @@ async function gatherDigestData(org: OrgDigestConfig): Promise<DigestData> {
     orgName: org.orgName,
     weekStart: fmt(weekStart),
     weekEnd: fmt(weekEnd),
-    foodSafetyScore: 0,
-    facilitySafetyScore: 0,
-    scoreTrend: 0,
     locations: [],
     highlights: [],
     concerns: [],

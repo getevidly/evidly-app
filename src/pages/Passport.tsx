@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
-import { locations, locationScores, LOCATION_JURISDICTION_STATUS } from '../data/demoData';
+import { locations, LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 import { FACILITY_INFO } from '../lib/reportGenerator';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -77,7 +77,6 @@ export default function Passport() {
   // Resolve location data from demo data using URL param
   const urlId = id || 'downtown';
   const loc = locations.find(l => l.urlId === urlId) || locations[0];
-  const scores = locationScores[urlId] || locationScores['downtown'];
   const facility = FACILITY_INFO[urlId] || FACILITY_INFO['downtown'];
   const jurisdictionStatus = LOCATION_JURISDICTION_STATUS[urlId] || LOCATION_JURISDICTION_STATUS['downtown'];
   const jurisdictionMeta = JURISDICTION_META[facility.county] || JURISDICTION_META['Fresno'];
@@ -87,8 +86,6 @@ export default function Passport() {
   const locationData = {
     name: loc.name,
     address: loc.address,
-    foodSafety: scores.foodSafety,
-    facilitySafety: scores.facilitySafety,
   };
 
   // Build activity items from real jurisdiction status
@@ -127,8 +124,8 @@ export default function Passport() {
     );
   }
 
-  const getScoreColor = (s: number) =>
-    s >= 90 ? '#22c55e' : s >= 75 ? '#eab308' : s >= 60 ? '#f59e0b' : '#ef4444';
+  const getStatusColor = (status: string) =>
+    status === 'passing' ? '#22c55e' : '#ef4444';
 
   const doDownloadPDF = async () => {
     if (!passportRef.current) return;
@@ -239,75 +236,51 @@ export default function Passport() {
             <p className="text-sm text-[#1E2D4D]/50">Last updated: {today}</p>
           </div>
 
-          {/* Pillar Score Rings */}
+          {/* Jurisdiction Grade Display */}
           <div className="mb-16">
             <div className="flex items-center justify-center gap-8 mb-8">
-              {/* Food Safety Ring */}
+              {/* Food Safety Grade */}
               <div className="flex flex-col items-center">
-                <div className="relative w-40 h-40">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
-                    <circle
-                      cx="80" cy="80" r="68"
-                      stroke={getScoreColor(locationData.foodSafety)}
-                      strokeWidth="12" fill="none"
-                      strokeDasharray={`${2 * Math.PI * 68}`}
-                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.foodSafety / 100)}`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.foodSafety) }}>{locationData.foodSafety}</div>
-                  </div>
+                <div className="relative w-40 h-40 flex items-center justify-center rounded-full border-[12px]" style={{ borderColor: getStatusColor(jurisdictionStatus.foodSafety.status) }}>
+                  <div className="text-3xl font-bold" style={{ color: getStatusColor(jurisdictionStatus.foodSafety.status) }}>{jurisdictionStatus.foodSafety.gradeDisplay}</div>
                 </div>
                 <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Food Safety</div>
+                <div className="text-xs text-[#1E2D4D]/40">{jurisdictionStatus.foodSafety.authority}</div>
               </div>
-              {/* Fire Safety Ring */}
+              {/* Fire Safety Status */}
               <div className="flex flex-col items-center">
-                <div className="relative w-40 h-40">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
-                    <circle
-                      cx="80" cy="80" r="68"
-                      stroke={getScoreColor(locationData.facilitySafety)}
-                      strokeWidth="12" fill="none"
-                      strokeDasharray={`${2 * Math.PI * 68}`}
-                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.facilitySafety / 100)}`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</div>
-                  </div>
+                <div className="relative w-40 h-40 flex items-center justify-center rounded-full border-[12px]" style={{ borderColor: getStatusColor(jurisdictionStatus.facilitySafety.status) }}>
+                  <div className="text-3xl font-bold text-center px-2" style={{ color: getStatusColor(jurisdictionStatus.facilitySafety.status) }}>{jurisdictionStatus.facilitySafety.gradeDisplay}</div>
                 </div>
                 <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Fire Safety</div>
+                <div className="text-xs text-[#1E2D4D]/40">{jurisdictionStatus.facilitySafety.authority}</div>
               </div>
             </div>
           </div>
 
-          {/* Compliance Breakdown */}
+          {/* Compliance Status */}
           <div className="mb-12">
             <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
-              Compliance Breakdown
+              Compliance Status
             </h3>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-semibold text-[#1E2D4D]/80">Food Safety</span>
-                  <span className="font-bold" style={{ color: getScoreColor(locationData.foodSafety) }}>{locationData.foodSafety}</span>
+                  <span className="font-bold" style={{ color: getStatusColor(jurisdictionStatus.foodSafety.status) }}>{jurisdictionStatus.foodSafety.gradeDisplay}</span>
                 </div>
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
-                  <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.foodSafety}%`, backgroundColor: getScoreColor(locationData.foodSafety) }} />
+                  <div className="h-3 rounded-full transition-all" style={{ width: jurisdictionStatus.foodSafety.status === 'passing' ? '100%' : '40%', backgroundColor: getStatusColor(jurisdictionStatus.foodSafety.status) }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-semibold text-[#1E2D4D]/80">Fire Safety</span>
-                  <span className="font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</span>
+                  <span className="font-bold" style={{ color: getStatusColor(jurisdictionStatus.facilitySafety.status) }}>{jurisdictionStatus.facilitySafety.gradeDisplay}</span>
                 </div>
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
-                  <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.facilitySafety}%`, backgroundColor: getScoreColor(locationData.facilitySafety) }} />
+                  <div className="h-3 rounded-full transition-all" style={{ width: jurisdictionStatus.facilitySafety.status === 'passing' ? '100%' : '40%', backgroundColor: getStatusColor(jurisdictionStatus.facilitySafety.status) }} />
                 </div>
               </div>
             </div>

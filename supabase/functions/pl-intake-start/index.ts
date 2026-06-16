@@ -48,6 +48,14 @@ function generateReferralCode(): string {
     .join("");
 }
 
+/** Normalize a US phone number to E.164 (+1XXXXXXXXXX). Returns null if unparseable. */
+function toE164US(raw: string): string | null {
+  const d = (raw || "").replace(/\D/g, "");
+  if (d.length === 10) return "+1" + d;
+  if (d.length === 11 && d[0] === "1") return "+" + d;
+  return null;
+}
+
 async function decrementRateLimit(
   supabase: ReturnType<typeof createClient>,
   key: string,
@@ -228,6 +236,17 @@ Deno.serve(async (req: Request) => {
           headers,
         );
       }
+      // ── Normalize prospect phone to E.164 ──────────────────
+      const e164Phone = toE164US(body.contact_phone);
+      if (!e164Phone) {
+        return json(
+          { error: "Enter a valid US mobile number" },
+          400,
+          headers,
+        );
+      }
+      body.contact_phone = e164Phone;
+
       if (body.agent_email && !body.agent_report_consent) {
         return json(
           { error: "agent_report_consent required when agent_email provided" },

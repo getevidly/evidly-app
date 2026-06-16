@@ -11,7 +11,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { getScoreColor } from '../lib/complianceScoring';
+
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -278,9 +278,8 @@ function generateComplianceScores(location: string | null) {
   const locs = location ? [location] : LOCATIONS;
   return locs.map(loc => ({
     location: loc,
-    foodSafety: rnd(75, 98),
-    facilitySafety: rnd(68, 95),
-    trend: pick(['up', 'stable', 'down'] as const),
+    foodStatus: pick(['Pass', 'Reinspection Required'] as const),
+    fireStatus: pick(['On schedule', 'Approaching', 'Overdue'] as const),
     lastUpdated: format(new Date(now - rnd(0, 3) * 86400000), 'MMM d, yyyy'),
   }));
 }
@@ -1005,18 +1004,18 @@ export function AuditTrail() {
                     {reportData.complianceScores.map((cs: any) => (
                       <div key={cs.location} className="flex items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/5">
                         <div className="flex gap-2">
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: getScoreColor(cs.foodSafety) }}>
-                            {cs.foodSafety}
-                          </div>
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: getScoreColor(cs.facilitySafety) }}>
-                            {cs.facilitySafety}
-                          </div>
+                          <span className={`px-2 py-1 rounded text-xs font-bold ${cs.foodStatus === 'Pass' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                            {cs.foodStatus}
+                          </span>
+                          <span className={`px-2 py-1 rounded text-xs font-bold ${cs.fireStatus === 'On schedule' ? 'bg-green-50 text-green-700' : cs.fireStatus === 'Approaching' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}`}>
+                            {cs.fireStatus}
+                          </span>
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#1E2D4D]">{cs.location}</p>
                           <div className="flex gap-2 text-xs text-[#1E2D4D]/50">
-                            <span>Food: {cs.foodSafety}</span>
-                            <span>Facility: {cs.facilitySafety}</span>
+                            <span>Food: {cs.foodStatus}</span>
+                            <span>Fire: {cs.fireStatus}</span>
                           </div>
                         </div>
                       </div>
@@ -1268,7 +1267,7 @@ export function AuditTrail() {
               {/* Compliance Scores */}
               {moduleEnabled('compliance') && reportData.complianceScores.length > 0 && (
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
-                  <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} expanded={!!expandedSections['compliance']} onToggle={toggleExpand} />
+                  <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Status" count={reportData.complianceScores.length} expanded={!!expandedSections['compliance']} onToggle={toggleExpand} />
                   {expandedSections['compliance'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1285,8 +1284,8 @@ export function AuditTrail() {
                           {reportData.complianceScores.map((cs: any) => (
                             <tr key={cs.location}>
                               <td style={tdStyle} className="font-semibold">{cs.location}</td>
-                              <td style={tdStyle}><span className="font-bold" style={{ color: getScoreColor(cs.foodSafety) }}>{cs.foodSafety}</span></td>
-                              <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.facilitySafety) }}>{cs.facilitySafety}</span></td>
+                              <td style={tdStyle}><span className={`font-bold ${cs.foodStatus === 'Pass' ? 'text-green-700' : 'text-red-700'}`}>{cs.foodStatus}</span></td>
+                              <td style={tdStyle}><span className={`font-medium ${cs.fireStatus === 'On schedule' ? 'text-green-700' : cs.fireStatus === 'Approaching' ? 'text-amber-700' : 'text-red-700'}`}>{cs.fireStatus}</span></td>
                               <td style={tdStyle}>
                                 <span style={badge(
                                   cs.trend === 'up' ? '↑ Up' : cs.trend === 'down' ? '↓ Down' : '→ Stable',

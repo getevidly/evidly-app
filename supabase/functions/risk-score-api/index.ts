@@ -1,8 +1,10 @@
 // ============================================================
-// Risk Score API — Carrier-facing endpoint for insurance data
+// Risk Score API — Carrier-facing endpoint
 // ============================================================
 // Authenticated via X-API-Key header. Returns structured JSON
-// with overall risk score, category breakdown, and factor details.
+// with jurisdiction-native grade, PSE safeguard status, and
+// operational facts. Reads and identifies compliance state;
+// flags items requiring attention. §1731 compliant.
 // Rate limited: 60 requests/minute, 1000 requests/day per key.
 // ============================================================
 
@@ -112,45 +114,109 @@ Deno.serve(async (req: Request) => {
     const locationId = url.searchParams.get("location_id");
     const orgId = keyRecord.organization_id;
 
-    // ── Fetch latest scores ──
-    let query = supabase
-      .from("insurance_risk_scores")
-      .select("*")
+    // ── Fetch locations ──
+    let locQuery = supabase
+      .from("locations")
+      .select("id, name, city, state")
       .eq("organization_id", orgId)
-      .order("calculated_at", { ascending: false });
+      .eq("active", true);
 
     if (locationId) {
-      query = query.eq("location_id", locationId);
+      locQuery = locQuery.eq("id", locationId);
     }
 
-    const { data: scores, error: scoresError } = await query.limit(locationId ? 1 : 50);
+    const { data: locations, error: locError } = await locQuery.limit(locationId ? 1 : 50);
 
-    if (scoresError) {
-      console.error("Error fetching scores:", scoresError);
-      return jsonResponse({ error: "Failed to retrieve scores" }, 500);
+    if (locError) {
+      console.error("Error fetching locations:", locError);
+      return jsonResponse({ error: "Failed to retrieve locations" }, 500);
+    }
+
+    // ── For each location, read jurisdiction grade, PSE status, and operational facts ──
+    const locationResults = [];
+
+    for (const loc of locations || []) {
+      // Read jurisdiction grade from compliance_score_snapshots
+      const { data: gradeSnapshot } = await supabase
+        .from("compliance_score_snapshots")
+        .select("jurisdiction_grade, score_date, model_version")
+        .eq("location_id", loc.id)
+        .eq("organization_id", orgId)
+        .order("score_date", { ascending: false })
+        .limit(1)
+        .single();
+
+      // Read PSE safeguard status from vendor_service_records
+      const { data: serviceRecords } = await supabase
+        .from("vendor_service_records")
+        .select("safeguard_type, next_due_date")
+        .eq("organization_id", orgId);
+
+      const pseSafeguards: Record<string, { status: string; next_due_date: string | null }> = {};
+      const safeguardTypes = ["hood_cleaning", "fire_suppression", "fire_alarm", "sprinklers"];
+      for (const sType of safeguardTypes) {
+        const records = (serviceRecords || []).filter((r: any) => r.safeguard_type === sType);
+        if (records.length === 0) {
+          pseSafeguards[sType] = { status: "missing", next_due_date: null };
+        } else {
+          const latest = records.sort((a: any, b: any) => b.next_due_date?.localeCompare(a.next_due_date || "") || 0)[0];
+          const isOverdue = latest.next_due_date && new Date(latest.next_due_date) < new Date();
+          pseSafeguards[sType] = {
+            status: isOverdue ? "overdue" : "current",
+            next_due_date: latest.next_due_date,
+          };
+        }
+      }
+
+      // Read operational facts from readiness_snapshots
+      const { data: readinessSnapshot } = await supabase
+        .from("readiness_snapshots")
+        .select("open_violations, pending_corrective_actions, overdue_temp_checks, expired_documents, snapshot_date")
+        .eq("org_id", orgId)
+        .eq("location_id", loc.id)
+        .order("snapshot_date", { ascending: false })
+        .limit(1)
+        .single();
+
+      // Identify flagged items
+      const flaggedItems: string[] = [];
+      if (readinessSnapshot) {
+        if (readinessSnapshot.open_violations > 0) flaggedItems.push(`${readinessSnapshot.open_violations} open violation(s)`);
+        if (readinessSnapshot.pending_corrective_actions > 0) flaggedItems.push(`${readinessSnapshot.pending_corrective_actions} pending corrective action(s)`);
+        if (readinessSnapshot.overdue_temp_checks > 0) flaggedItems.push(`${readinessSnapshot.overdue_temp_checks} overdue temp check(s)`);
+        if (readinessSnapshot.expired_documents > 0) flaggedItems.push(`${readinessSnapshot.expired_documents} expired document(s)`);
+      }
+
+      const missingPSE = safeguardTypes.filter(s => pseSafeguards[s].status === "missing");
+      const overduePSE = safeguardTypes.filter(s => pseSafeguards[s].status === "overdue");
+      if (missingPSE.length > 0) flaggedItems.push(`${missingPSE.length} PSE safeguard(s) missing records`);
+      if (overduePSE.length > 0) flaggedItems.push(`${overduePSE.length} PSE safeguard(s) overdue`);
+
+      locationResults.push({
+        location_id: loc.id,
+        location_name: loc.name,
+        jurisdiction_grade: gradeSnapshot?.jurisdiction_grade ?? null,
+        grade_date: gradeSnapshot?.score_date ?? null,
+        pse_safeguards: pseSafeguards,
+        operational_facts: readinessSnapshot ? {
+          open_violations: readinessSnapshot.open_violations,
+          pending_corrective_actions: readinessSnapshot.pending_corrective_actions,
+          overdue_temp_checks: readinessSnapshot.overdue_temp_checks,
+          expired_documents: readinessSnapshot.expired_documents,
+          snapshot_date: readinessSnapshot.snapshot_date,
+        } : null,
+        flagged_items: flaggedItems,
+      });
     }
 
     // ── Build response ──
     return jsonResponse({
       organization_id: orgId,
       carrier_name: keyRecord.carrier_name,
-      scores: (scores || []).map((s: Record<string, unknown>) => ({
-        location_id: s.location_id,
-        overall_score: s.overall_score,
-        tier: s.tier,
-        categories: {
-          fire_risk: s.fire_risk_score,
-          food_safety: s.food_safety_score,
-          documentation: s.documentation_score,
-          operational: s.operational_score,
-        },
-        factor_details: s.category_breakdown,
-        factors_evaluated: s.factors_count,
-        data_freshness: s.calculated_at,
-      })),
-      total_locations: (scores || []).length,
+      locations: locationResults,
+      total_locations: locationResults.length,
       generated_at: new Date().toISOString(),
-      api_version: "1.0",
+      api_version: "2.0",
       _links: {
         self: `/risk-score${locationId ? `?location_id=${locationId}` : ""}`,
         documentation: "https://docs.getevidly.com/api/risk-score",
