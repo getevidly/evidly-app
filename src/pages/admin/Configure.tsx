@@ -14,6 +14,7 @@ import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox'
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
+import { toast } from 'sonner';
 
 type Tab = 'organizations' | 'locations' | 'users' | 'vendors';
 
@@ -22,6 +23,7 @@ interface Org { id: string; name: string; plan_tier: string | null; subscription
   alternate_contact_name?: string | null; alternate_contact_email?: string | null; alternate_contact_phone?: string | null;
   main_phone?: string | null; billing_email?: string | null; }
 interface Location { id: string; name: string; county: string | null; address: string | null; city: string | null; status: string; created_at: string; organization_id?: string | null; organizations?: { name: string } | null;
+  cooking_type?: string | null;
   site_contact_name?: string | null; site_contact_email?: string | null; site_contact_phone?: string | null;
   site_phone?: string | null; manager_name?: string | null; manager_phone?: string | null; }
 interface UserProfile { user_id: string; full_name: string | null; email: string | null; role: string; organization_id: string | null; last_sign_in_at: string | null; created_at: string; phone?: string | null; }
@@ -401,6 +403,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   const [mgrName, setMgrName] = useState('');
   const [mgrPhone, setMgrPhone] = useState('');
   const [sitePhone, setSitePhone] = useState('');
+  const [cookingType, setCookingType] = useState('');
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -423,6 +426,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
         state: locState,
         zip: zip || undefined,
         status,
+        cooking_type: cookingType || undefined,
         site_contact_name: scName || undefined,
         site_contact_email: scEmail || undefined,
         site_contact_phone: scPhone || undefined,
@@ -457,6 +461,18 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
               <option value="pending">Pending</option><option value="active">Active</option>
             </select>
           </div>
+        </div>
+        {/* Cooking Type */}
+        <div>
+          <label className={labelCls}>Cooking Type</label>
+          <select className={`${inputCls} cursor-pointer`} value={cookingType} onChange={e => setCookingType(e.target.value)}>
+            <option value="">Select cooking type…</option>
+            <option value="solid_fuel">Solid fuel — wood, charcoal, mesquite (Monthly)</option>
+            <option value="high_volume">High volume — 24-hr, charbroiling, wok (Quarterly)</option>
+            <option value="all_other">Moderate / standard restaurant (Semi-annually)</option>
+            <option value="low_volume">Low volume — seasonal, church, day camp (Annually)</option>
+          </select>
+          <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021) Table 12.4.</p>
         </div>
         {/* Governing Jurisdiction */}
         <div><label className={labelCls}>Governing Jurisdiction *</label>
@@ -860,6 +876,19 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
   const [tickets, setTickets] = useState<any[]>([]);
   const [jurisdiction, setJurisdiction] = useState<any>(null);
   const [relLoading, setRelLoading] = useState(false);
+  const [cookingType, setCookingType] = useState(loc.cooking_type || '');
+  const [savingCT, setSavingCT] = useState(false);
+
+  const handleSaveCookingType = async () => {
+    setSavingCT(true);
+    const { error } = await supabase
+      .from('locations')
+      .update({ cooking_type: cookingType || null })
+      .eq('id', loc.id);
+    if (error) { toast.error('Failed to save cooking type'); }
+    else { toast.success('Cooking type saved'); onRefresh(); }
+    setSavingCT(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -963,6 +992,31 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
               </div>
               <DetailRow label="Site Phone" value={loc.site_phone} />
               <DetailRow label="Created" value={new Date(loc.created_at).toLocaleDateString()} />
+              {/* Cooking Type — editable */}
+              <div className="border-t border-gray-200 pt-3 mt-2">
+                <h4 className="text-xs font-bold text-navy mb-2">Cooking Type</h4>
+                <select
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-[13px] text-navy outline-none cursor-pointer"
+                  value={cookingType}
+                  onChange={e => setCookingType(e.target.value)}
+                >
+                  <option value="">Select cooking type…</option>
+                  <option value="solid_fuel">Solid fuel — wood, charcoal, mesquite (Monthly)</option>
+                  <option value="high_volume">High volume — 24-hr, charbroiling, wok (Quarterly)</option>
+                  <option value="all_other">Moderate / standard restaurant (Semi-annually)</option>
+                  <option value="low_volume">Low volume — seasonal, church, day camp (Annually)</option>
+                </select>
+                <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021) Table 12.4.</p>
+                {cookingType !== (loc.cooking_type || '') && (
+                  <button
+                    onClick={handleSaveCookingType}
+                    disabled={savingCT}
+                    className="mt-2 px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#1E2D4D] border-none cursor-pointer disabled:opacity-50"
+                  >
+                    {savingCT ? 'Saving…' : 'Save Cooking Type'}
+                  </button>
+                )}
+              </div>
             </div>
           )}
           {tab === 'Compliance' && (

@@ -19,6 +19,7 @@ export interface CreateLocationInput {
   phone?: string;
   status?: string;
   kitchen_type?: string;
+  cooking_type?: string;
   sb1383_tier?: string;
   k12_program?: boolean;
   k12_program_type?: string;
@@ -66,6 +67,7 @@ export function buildLocationPayload(input: CreateLocationInput): Record<string,
   if (input.phone !== undefined) payload.phone = input.phone;
   if (input.status !== undefined) payload.status = input.status;
   if (input.kitchen_type !== undefined) payload.kitchen_type = input.kitchen_type;
+  if (input.cooking_type) payload.cooking_type = input.cooking_type;
   if (input.sb1383_tier !== undefined) payload.sb1383_tier = input.sb1383_tier;
   if (input.k12_program !== undefined) payload.k12_program = input.k12_program;
   if (input.k12_program_type !== undefined) payload.k12_program_type = input.k12_program_type;
