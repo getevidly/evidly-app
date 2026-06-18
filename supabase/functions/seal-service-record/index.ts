@@ -107,6 +107,9 @@ Deno.serve(async (req: Request) => {
       captured_lat,
       captured_lng,
       captured_address,
+      // Optional metadata (non-canonical — not part of content_hash)
+      price_charged,
+      notes,
     } = body as Record<string, any>;
 
     const requiredFields: Record<string, unknown> = {
@@ -265,6 +268,8 @@ Deno.serve(async (req: Request) => {
         captured_lat: captured_lat ?? null,
         captured_lng: captured_lng ?? null,
         captured_address: captured_address ?? null,
+        price_charged: price_charged ?? null,
+        notes: notes ?? null,
         lifecycle_state: "live",
         retention_until: retentionUntil.toISOString(),
       })
