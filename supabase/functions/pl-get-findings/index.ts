@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
   // 3. Gate: run must be released
   const { data: run, error: runErr } = await admin
     .from("pl_extraction_runs")
-    .select("id, release_status, coverage")
+    .select("id, release_status, coverage, reconciled")
     .eq("id", grant.run_id)
     .single();
   if (runErr || !run) return json({ error: "report not available" }, 404);
@@ -127,6 +127,68 @@ Deno.serve(async (req) => {
     })
     .eq("id", grant.id);
 
+  // ── Build coverage_detail from reconciled (verbatim, §1731 read-only) ──
+  const reconciled = run.reconciled as Record<string, unknown> | null;
+  let coverage_detail: Record<string, unknown>;
+
+  if (!reconciled) {
+    coverage_detail = {
+      framing: "Coverage figures as stated in your policy",
+      locations: [],
+      policy_wide: [],
+      food_sublimits: [],
+    };
+  } else {
+    const decl = reconciled.declarations as Record<string, unknown> | undefined;
+    const locsWrapper = decl?.locations as { value?: unknown[]; _status?: string } | undefined;
+
+    // ── Locations: array-level conflict → omit all figures ──
+    let locations: unknown[];
+    let locations_note: string | undefined;
+
+    if (locsWrapper?._status === "conflict") {
+      locations = [];
+      locations_note = "Location coverage figures could not be confirmed — refer to policy.";
+    } else {
+      const rawLocs = Array.isArray(locsWrapper?.value) ? locsWrapper.value : [];
+      locations = rawLocs.map((loc: any) => ({
+        loc_no: loc.loc_no ?? null,
+        address: loc.address ?? null,
+        scheduled_building: loc.scheduled_building ?? null,
+        scheduled_bpp: loc.scheduled_bpp ?? null,
+        coinsurance: loc.coinsurance ?? null,
+        spoilage_sublimit: loc.spoilage_sublimit ?? null,
+      }));
+    }
+
+    // ── Policy-wide: per-item conflict → "Refer to policy" ──
+    const rawPw = Array.isArray(reconciled.policy_wide) ? reconciled.policy_wide : [];
+    const policy_wide = rawPw
+      .filter((item: any) => item.percentage_or_value != null)
+      .map((item: any) => ({
+        label: item.topic ?? null,
+        value: (item._status === "agreed" || item._status === "single_pass") ? item.percentage_or_value : "Refer to policy",
+        section_ref: item.section_ref ?? null,
+      }));
+
+    // ── Food sublimits: per-item conflict → "Refer to policy" ──
+    const rawFood = Array.isArray(reconciled.food_findings) ? reconciled.food_findings : [];
+    const food_sublimits = rawFood
+      .filter((item: any) => item.sublimit_amount != null)
+      .map((item: any) => ({
+        label: item.topic ?? null,
+        value: (item._status === "agreed" || item._status === "single_pass") ? item.sublimit_amount : "Refer to policy",
+      }));
+
+    coverage_detail = {
+      framing: "Coverage figures as stated in your policy",
+      locations,
+      ...(locations_note ? { locations_note } : {}),
+      policy_wide,
+      food_sublimits,
+    };
+  }
+
   return json({
     ok: true,
     edition,                    // which brief to render by default
@@ -136,5 +198,6 @@ Deno.serve(async (req) => {
       // declared scope from coverage — turns incompleteness into honest disclosure
       coverage: run.coverage ?? null,
     },
+    coverage_detail,
   });
 });
