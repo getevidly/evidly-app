@@ -61,54 +61,66 @@ export default function UploadServiceRecordModal({ category, defaultLocationId, 
 
     setSaving(true);
     try {
-      // 1. Insert service record
-      const { data: record, error } = await supabase
-        .from('vendor_service_records')
-        .insert({
-          organization_id: orgId,
-          location_id: defaultLocationId || null,
-          service_type_code: form.serviceTypeCode,
-          safeguard_type: selectedType.safeguardType,
-          service_date: form.serviceDate,
-          vendor_name: form.vendorName || null,
-          price_charged: form.price ? parseFloat(form.price) : null,
-          cert_number: form.certNumber || null,
-          notes: form.notes || null,
-          source: 'manual',
-          entered_by: user.id,
-          is_sample: false,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        toast.error('Failed to save record. Please try again.');
+      if (!form.document) {
+        toast.error('A document is required to seal this record.');
         setSaving(false);
         return;
       }
 
-      // 2. Upload document if provided
-      if (form.document && record) {
-        const filename = `${orgId}/${defaultLocationId || 'org'}/${record.id}/${form.document.name}`;
-        const { data: upload } = await supabase.storage
-          .from('service-certificates')
-          .upload(filename, form.document, { upsert: true });
-
-        if (upload) {
-          const { data: urlData } = supabase.storage
-            .from('service-certificates')
-            .getPublicUrl(filename);
-
-          if (urlData?.publicUrl) {
-            await supabase
-              .from('vendor_service_records')
-              .update({ document_url: urlData.publicUrl })
-              .eq('id', record.id);
-          }
-        }
+      if (!form.certNumber?.trim()) {
+        toast.error('Certificate / Report Number is required.');
+        setSaving(false);
+        return;
       }
 
-      toast.success('Service record saved.');
+      if (!form.vendorName?.trim()) {
+        toast.error('Vendor name is required.');
+        setSaving(false);
+        return;
+      }
+
+      // 1. Generate path and upload file
+      const fileId = crypto.randomUUID();
+      const filePath = `${orgId}/${defaultLocationId || 'org'}/${fileId}/${form.document.name}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('service-certificates')
+        .upload(filePath, form.document, { upsert: false });
+
+      if (uploadErr) {
+        toast.error('File upload failed: ' + uploadErr.message);
+        setSaving(false);
+        return;
+      }
+
+      // 2. Seal via edge function (creates the VSR row)
+      const { data: sealData, error: sealErr } = await supabase.functions.invoke(
+        'seal-service-record',
+        {
+          body: {
+            organization_id: orgId,
+            location_id: defaultLocationId || null,
+            safeguard_type: selectedType.safeguardType,
+            service_type_code: form.serviceTypeCode,
+            vendor_name: form.vendorName.trim(),
+            service_date: form.serviceDate,
+            cert_number: form.certNumber.trim(),
+            technician_name: null,
+            price_charged: form.price ? parseFloat(form.price) : null,
+            notes: form.notes || null,
+            source_file_bucket: 'service-certificates',
+            source_file_path: filePath,
+          },
+        },
+      );
+
+      if (sealErr || sealData?.error) {
+        await supabase.storage.from('service-certificates').remove([filePath]);
+        toast.error('Seal failed: ' + (sealData?.error || sealErr?.message || 'Unknown error'));
+        setSaving(false);
+        return;
+      }
+
+      toast.success('Service record sealed.');
       onSuccess?.();
     } catch {
       toast.error('Unexpected error. Please try again.');

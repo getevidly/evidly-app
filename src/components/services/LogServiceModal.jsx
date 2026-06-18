@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { SERVICE_TYPES, SERVICE_TYPE_CODES, KEC_CHILDREN, formatFrequency } from '../../constants/serviceTypes';
+import { SERVICE_TYPES, SERVICE_TYPE_CODES, KEC_CHILDREN, formatFrequency, SERVICE_CODE_TO_SAFEGUARD } from '../../constants/serviceTypes';
 
 const FREQUENCY_OPTIONS = [
   { value: 'monthly', label: 'Monthly' },
@@ -42,6 +42,7 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
     price: '',
     frequency: 'quarterly',
     notes: '',
+    cert_number: '',
     certificate: null,
   });
 
@@ -59,52 +60,78 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
     setSaving(true);
     try {
       const orgId = profile?.organization_id;
-      const userId = user?.id;
 
-      // 1. Insert service record
-      const { data: record, error } = await supabase
-        .from('vendor_service_records')
-        .insert({
-          organization_id:   orgId,
-          location_id:       locationId || null,
-          service_type_code: form.service_type_code,
-          service_date:      form.date,
-          provider_name:     form.provider || null,
-          technician_name:   form.technician || null,
-          price_charged:     form.price ? parseFloat(form.price) : null,
-          notes:             form.notes || null,
-          source:            'manual',
-          entered_by:        userId,
-          status:            'completed',
-        })
-        .select()
-        .single();
+      // Derive safeguard_type from service code
+      const code = form.service_type_code;
+      const safeguard_type =
+        SERVICE_CODE_TO_SAFEGUARD[code] ||
+        (SERVICE_TYPES[code]?.parentCode
+          ? SERVICE_CODE_TO_SAFEGUARD[SERVICE_TYPES[code].parentCode]
+          : null);
 
-      if (error) {
-        toast.error('Error saving service record. Please try again.');
+      if (!safeguard_type) {
+        toast.error('Cannot determine safeguard type for this service code.');
         setSaving(false);
         return;
       }
 
-      // 2. Upload certificate if provided (fire-and-forget)
-      if (form.certificate && record) {
-        const filename = `${orgId}/${locationId || 'org'}/${record.id}/${form.certificate.name}`;
-        const { data: upload } = await supabase.storage
-          .from('service-certificates')
-          .upload(filename, form.certificate, { upsert: true });
+      if (!form.certificate) {
+        toast.error('A certificate or report document is required to seal this record.');
+        setSaving(false);
+        return;
+      }
 
-        if (upload) {
-          const { data: urlData } = supabase.storage
-            .from('service-certificates')
-            .getPublicUrl(filename);
+      if (!form.cert_number?.trim()) {
+        toast.error('Certificate / Report Number is required.');
+        setSaving(false);
+        return;
+      }
 
-          if (urlData?.publicUrl) {
-            await supabase
-              .from('vendor_service_records')
-              .update({ certificate_url: urlData.publicUrl })
-              .eq('id', record.id);
-          }
-        }
+      if (!form.provider?.trim()) {
+        toast.error('Provider (vendor name) is required.');
+        setSaving(false);
+        return;
+      }
+
+      // 1. Generate path and upload file
+      const fileId = crypto.randomUUID();
+      const filePath = `${orgId}/${locationId || 'org'}/${fileId}/${form.certificate.name}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('service-certificates')
+        .upload(filePath, form.certificate, { upsert: false });
+
+      if (uploadErr) {
+        toast.error('File upload failed: ' + uploadErr.message);
+        setSaving(false);
+        return;
+      }
+
+      // 2. Seal via edge function (creates the VSR row)
+      const { data: sealData, error: sealErr } = await supabase.functions.invoke(
+        'seal-service-record',
+        {
+          body: {
+            organization_id: orgId,
+            location_id: locationId || null,
+            safeguard_type,
+            service_type_code: code,
+            vendor_name: form.provider.trim(),
+            service_date: form.date,
+            cert_number: form.cert_number.trim(),
+            technician_name: form.technician || null,
+            price_charged: form.price ? parseFloat(form.price) : null,
+            notes: form.notes || null,
+            source_file_bucket: 'service-certificates',
+            source_file_path: filePath,
+          },
+        },
+      );
+
+      if (sealErr || sealData?.error) {
+        await supabase.storage.from('service-certificates').remove([filePath]);
+        toast.error('Seal failed: ' + (sealData?.error || sealErr?.message || 'Unknown error'));
+        setSaving(false);
+        return;
       }
 
       // 3. Update location_service_schedules
@@ -123,7 +150,7 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
       }
 
       // 4. Success
-      toast.success('Service record saved.');
+      toast.success('Service record sealed.');
       onClose();
       onSuccess?.();
     } catch {
@@ -223,6 +250,19 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
                 <label style={labelStyle}>Price</label>
                 <input type="number" value={form.price} onChange={e => set('price', e.target.value)} placeholder={String(SERVICE_TYPES[form.service_type_code]?.basePrice || 0)} style={inputStyle} />
               </div>
+            </div>
+
+            {/* Certificate / Report Number */}
+            <div>
+              <label style={labelStyle}>Certificate / Report Number</label>
+              <input
+                type="text"
+                value={form.cert_number}
+                onChange={e => set('cert_number', e.target.value)}
+                placeholder="e.g. KEC-2026-0042"
+                style={inputStyle}
+                required
+              />
             </div>
 
             {/* Frequency */}
