@@ -46,3 +46,9 @@ supabase/.temp/
 # Sanity Studio
 studio/node_modules
 studio/dist
+
+# Session scratch — introspection SQL, step dumps, previews (never commit)
+_introspect_*.sql
+_step*.json
+*_run_migration.json
+email-preview-sample.html
