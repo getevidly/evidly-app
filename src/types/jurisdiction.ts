@@ -26,7 +26,7 @@
 export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'state_fire_marshal' | 'mixed' | 'tribal_fire';
 
 // Fire AHJ jurisdiction configuration (fire_jurisdiction_config JSONB column)
-// Populated for CA, NV, OR, WA, AZ jurisdictions. NFPA 96-2024 Table 12.4
+// Populated for CA, NV, OR, WA, AZ jurisdictions. NFPA 96 (2021) Table 12.4
 // cleaning frequencies are universal; per-jurisdiction differences are
 // fire_ahj_name, fire_ahj_type, enabling_statute, and ahj_split_notes.
 export interface FireJurisdictionConfig {
@@ -46,12 +46,11 @@ export interface FireJurisdictionConfig {
   has_local_fire_code_adoption?: boolean; // AZ: cities adopt IFC independently
   local_fire_code_notes?: string;         // AZ: patchwork adoption details
   nfpa_96_table_12_4: {
-    type_i_heavy_volume: string;    // "monthly"
-    type_i_moderate_volume: string; // "quarterly"
-    type_i_low_volume: string;      // "semi_annual"
-    type_ii: string;                // "annual"
+    type_i_heavy_volume: string;    // "quarterly"
+    type_i_moderate_volume: string; // "semiannually"
+    type_i_low_volume: string;      // "annually"
     solid_fuel_cooking: string;     // "monthly"
-    source: string;                 // "NFPA 96-2024 Table 12.4"
+    source: string;                 // "NFPA 96 (2021) Table 12.4"
   };
   hood_suppression: {
     system_type: string;         // "UL-300 wet chemical"

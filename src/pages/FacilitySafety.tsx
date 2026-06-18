@@ -657,7 +657,7 @@ export function FacilitySafety() {
                   ? getFrequencyLabel(getCleaningFrequency(locCookingType))
                   : 'Semi-Annually (set cooking type for exact frequency)';
                 return [
-                  { service: 'Kitchen Exhaust Cleaning', freq: kecFreq, authority: 'NFPA 96-2024 Table 12.4', vendor: 'IKECA-certified vendor' },
+                  { service: 'Kitchen Exhaust Cleaning', freq: kecFreq, authority: 'NFPA 96 (2021) Table 12.4', vendor: 'IKECA-certified vendor' },
                   { service: 'Ansul System Service', freq: fireConfig?.ansul_system?.inspection_interval ?? 'Semi-annual', authority: `${fireConfig?.ansul_system?.standard ?? 'NFPA 17A'} / UL 300`, vendor: 'Licensed fire protection vendor' },
                   { service: 'Fire Extinguisher Annual', freq: fireConfig?.fire_extinguisher?.inspection_interval ?? 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
                   { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },

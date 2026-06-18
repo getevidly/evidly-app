@@ -603,7 +603,7 @@ function HowItWorksSection({ onTour }) {
 function CoverageSection() {
   const pillars = [
     { label: "Food Safety", icon: "🌡️", color: C.navy, items: ["Temperature monitoring — receiving, holding, cooling, all tracked", "HACCP documentation built automatically from daily logs", "Food handler cards and ServSafe certs — always current", "Morning and closing checklists mapped to CalCode conditions", "Receiving logs with vendor history and rejection tracking"] },
-    { label: "Fire Safety", icon: "🔥", color: C.gold, items: ["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies", "Fire suppression inspection records and due-date alerts", "Extinguisher documentation and service history", "Vendor compliance — certs, insurance, service records", "Equipment calibration logs and maintenance tracking"] },
+    { label: "Fire Safety", icon: "🔥", color: C.gold, items: ["Hood cleaning schedules per NFPA 96 (2021) Table 12.4 frequencies", "Fire suppression inspection records and due-date alerts", "Extinguisher documentation and service history", "Vendor compliance — certs, insurance, service records", "Equipment calibration logs and maintenance tracking"] },
   ];
   return (
     <section id="coverage" style={{ padding: "96px 24px", background: C.cream }}>

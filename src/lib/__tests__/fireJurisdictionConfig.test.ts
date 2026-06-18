@@ -26,24 +26,22 @@ describe('Fire Jurisdiction Config', () => {
     });
   });
 
-  describe('NFPA 96-2024 Table 12.4 structure', () => {
+  describe('NFPA 96 (2021) Table 12.4 structure', () => {
     it('has correct cleaning frequency keys', () => {
       const config = demoFireJurisdictionConfigs['demo-loc-downtown'];
       const table = config.nfpa_96_table_12_4;
-      expect(table.type_i_heavy_volume).toBe('monthly');
-      expect(table.type_i_moderate_volume).toBe('quarterly');
-      expect(table.type_i_low_volume).toBe('semi_annual');
-      expect(table.type_ii).toBe('annual');
+      expect(table.type_i_heavy_volume).toBe('quarterly');
+      expect(table.type_i_moderate_volume).toBe('semiannually');
+      expect(table.type_i_low_volume).toBe('annually');
       expect(table.solid_fuel_cooking).toBe('monthly');
-      expect(table.source).toBe('NFPA 96-2024 Table 12.4');
+      expect(table.source).toBe('NFPA 96 (2021) Table 12.4');
     });
 
     it('frequencies are consistent across all demo configs', () => {
       const configs = Object.values(demoFireJurisdictionConfigs);
       for (const config of configs) {
-        expect(config.nfpa_96_table_12_4.type_i_heavy_volume).toBe('monthly');
-        expect(config.nfpa_96_table_12_4.type_i_moderate_volume).toBe('quarterly');
-        expect(config.nfpa_96_table_12_4.type_ii).toBe('annual');
+        expect(config.nfpa_96_table_12_4.type_i_heavy_volume).toBe('quarterly');
+        expect(config.nfpa_96_table_12_4.type_i_moderate_volume).toBe('semiannually');
       }
     });
   });

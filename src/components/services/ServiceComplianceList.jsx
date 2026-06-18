@@ -233,7 +233,7 @@ export function ServiceComplianceList({ onLogService }) {
             Kitchen Exhaust Cleaning (KEC)
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-tertiary, #6B7F96)' }}>
-            NFPA 96-2024 Table 12.4 · Parent service with 3 sub-services
+            NFPA 96 (2021) Table 12.4 · Parent service with 3 sub-services
           </div>
         </div>
         {(() => {

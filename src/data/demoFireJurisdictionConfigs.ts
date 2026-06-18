@@ -4,19 +4,18 @@
 // Separate file — does NOT modify demoJurisdictions.ts.
 // Merged at runtime in useJurisdiction hook.
 // Updated FIRE-JIE-CA-01: normalized fire_ahj_type, 2025 CFC,
-// NFPA 96-2024 Table 12.4 structured frequencies.
+// NFPA 96 (2021) Table 12.4 structured frequencies.
 // ═══════════════════════════════════════════════════════════════════
 
 import type { FireJurisdictionConfig } from '../types/jurisdiction';
 
-// Shared NFPA 96-2024 Table 12.4 cleaning frequencies (same for all CA jurisdictions)
+// Shared NFPA 96 (2021) Table 12.4 cleaning frequencies (same for all jurisdictions)
 const NFPA_96_TABLE_12_4 = {
-  type_i_heavy_volume: 'monthly',
-  type_i_moderate_volume: 'quarterly',
-  type_i_low_volume: 'semi_annual',
-  type_ii: 'annual',
+  type_i_heavy_volume: 'quarterly',
+  type_i_moderate_volume: 'semiannually',
+  type_i_low_volume: 'annually',
   solid_fuel_cooking: 'monthly',
-  source: 'NFPA 96-2024 Table 12.4',
+  source: 'NFPA 96 (2021) Table 12.4',
 } as const;
 
 // Shared equipment configs (same for all CA jurisdictions)

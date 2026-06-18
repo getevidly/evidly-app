@@ -145,7 +145,9 @@ export var FREQ_LABELS = {
   monthly: "Monthly",
   quarterly: "Quarterly",
   semi_annual: "Semi-Annual",
+  semiannually: "Semi-Annual",
   annual: "Annual",
+  annually: "Annual",
 };
 
 // ═══ SMALL HELPERS ═══

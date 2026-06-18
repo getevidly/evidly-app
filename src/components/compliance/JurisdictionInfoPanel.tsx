@@ -106,12 +106,6 @@ function FireAuthoritySection({ fireAhjName, fireConfig }: { fireAhjName: string
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#BF360C' }}>Type I Hood</div>
               </div>
-              <div style={{ flex: 1, backgroundColor: '#FFF8E1', borderRadius: '6px', padding: '6px 10px' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#F57F17' }}>
-                  {fireConfig.nfpa_96_table_12_4.type_ii}
-                </div>
-                <div style={{ fontSize: '0.7rem', color: '#F57F17' }}>Type II Hood</div>
-              </div>
             </div>
           </div>
 
