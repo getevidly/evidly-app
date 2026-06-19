@@ -98,11 +98,6 @@ const SIDEBAR_ICONS: Record<string, any> = {
   '💬': MessageSquare,
   '❓': HelpCircle,
   '⭐': Star,
-  '👥': Users,
-  '🏠': Home,
-  '🏢': Building,
-  '👨‍🍳': ChefHat,
-  '📥': Download,
   '💡': Lightbulb,
   // PascalCase keys for all sections with semantic-color icons
   'BarChart3': BarChart3,
