@@ -62,7 +62,54 @@ export default function PolicyLens() {
   if (loading) return <div className="p-8 text-gray-500">Reading your policy…</div>;
   if (error) return <div className="p-8 text-gray-600">{error}</div>;
 
+  const inReview = data?.status === 'in_review';
+  const failed = data?.status === 'failed';
   const noPolicy = data?.status === 'no_policy' || data?.status === 'no_released_run';
+
+  const STAGE_LABELS: Record<string, { label: string; step: number }> = {
+    received: { label: 'Uploaded — queued for reading', step: 1 },
+    extracting: { label: 'Being read', step: 2 },
+    review: { label: 'In review', step: 3 },
+    verified: { label: 'Verified — preparing your results', step: 4 },
+    report_sent: { label: 'Released', step: 5 },
+  };
+
+  if (failed) {
+    return (
+      <div className="max-w-3xl mx-auto p-6 md:p-8">
+        <h1 className="text-2xl font-medium mb-2">Policy Lens</h1>
+        <p className="text-sm text-gray-600 leading-relaxed">We hit a problem reading your policy. Please re-upload, or reach out and we'll help.</p>
+        <a href="/policy-lens/upload" className="inline-block mt-4 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md px-4 py-2 no-underline">Re-upload your policy</a>
+      </div>
+    );
+  }
+
+  if (inReview) {
+    const stage = STAGE_LABELS[(data as any)?.intake_status ?? 'received'] ?? STAGE_LABELS.received;
+    const submitted = (data as any)?.submitted_at ? new Date((data as any).submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+    return (
+      <div className="max-w-3xl mx-auto p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-1">
+          <h1 className="text-2xl font-medium">Policy Lens</h1>
+          <span className="text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded">In review</span>
+        </div>
+        <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          Your policy is uploaded and your Policy Lens review is underway. Your coverage figures and safety-system findings will appear here once the review is complete.{submitted ? ` Submitted ${submitted}.` : ''}
+        </p>
+        <div className="border border-gray-200 rounded-lg p-5">
+          <div className="text-sm font-medium text-gray-800 mb-4">Current status: {stage.label}</div>
+          <div className="flex items-center gap-1">
+            {[1,2,3,4,5].map(n => (
+              <div key={n} className={`h-1.5 flex-1 rounded-full ${n <= stage.step ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-xs text-gray-400">
+            <span>Uploaded</span><span>Being read</span><span>In review</span><span>Verified</span><span>Released</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (noPolicy || !data) {
     return (
       <div className="max-w-3xl mx-auto p-6 md:p-8">
@@ -156,6 +203,13 @@ export default function PolicyLens() {
             Policy Lens reads and identifies what your policy says — it does not assess whether your coverage is adequate or recommend changes. Bring these findings to your agent to evaluate fit and options.
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-3 mt-4">
+        <button disabled title="Broker release is coming soon" className="text-sm font-medium text-gray-400 bg-gray-100 rounded-md px-4 py-2 cursor-not-allowed">
+          Release to broker
+        </button>
+        <span className="text-xs text-gray-400">You choose what to share. Broker release coming soon.</span>
       </div>
     </div>
   );
