@@ -80,8 +80,31 @@ Deno.serve(async (req) => {
     .limit(1)
     .maybeSingle();
   if (runErr) return json({ error: "failed to resolve run" }, 500);
+
   if (!run) {
-    return json({ ok: true, status: "no_released_run", findings: [], coverage_detail: null }, 200);
+    // No released run — but a policy may be uploaded and in flight. Surface the stage.
+    const { data: latestIntake } = await admin
+      .from("policy_lens_intakes")
+      .select("status, created_at")
+      .in("id", intakeIds)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (latestIntake && latestIntake.status !== "failed") {
+      return json({
+        ok: true,
+        status: "in_review",
+        intake_status: latestIntake.status,
+        submitted_at: latestIntake.created_at,
+        findings: [],
+        coverage_detail: null,
+      }, 200);
+    }
+    if (latestIntake && latestIntake.status === "failed") {
+      return json({ ok: true, status: "failed", findings: [], coverage_detail: null }, 200);
+    }
+    return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
   }
 
   const { data: rows, error: fErr } = await admin
