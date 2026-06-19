@@ -41,7 +41,9 @@ Deno.serve(async (req: Request) => {
 
     // Reject if verification timestamp is null
     const verified =
-      intake.source === "prospect"
+      intake.source === "in_app"
+        ? true
+        : intake.source === "prospect"
         ? intake.phone_verified_at
         : intake.agent_email_verified_at;
 
