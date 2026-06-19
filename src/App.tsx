@@ -43,6 +43,7 @@ const Documents = lazy(() => import('./pages/Documents').then(m => ({ default: m
 const Policies = lazy(() => import('./pages/Policies').then(m => ({ default: m.Policies })));
 const PolicyEditor = lazy(() => import('./pages/PolicyEditor').then(m => ({ default: m.PolicyEditor })));
 const PolicyLens = lazy(() => import('./pages/PolicyLens'));
+const PolicyLensUpload = lazy(() => import('./pages/PolicyLensUpload'));
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const ProspectMarketingReport = lazy(() => import('./pages/internal/ProspectMarketingReport'));
 const ReportViewer = lazy(() => import('./pages/public/ReportViewer').then(m => ({ default: m.ReportViewer })));
@@ -653,6 +654,7 @@ function AppRoutes() {
           <Route path="/policies" element={<Policies />} />
           <Route path="/policies/:id" element={<PolicyEditor />} />
           <Route path="/policy-lens" element={<PolicyLens />} />
+          <Route path="/policy-lens/upload" element={<PolicyLensUpload />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<VendorsPage />} />
