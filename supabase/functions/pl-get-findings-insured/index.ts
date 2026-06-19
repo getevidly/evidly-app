@@ -1,0 +1,173 @@
+// supabase/functions/pl-get-findings-insured/index.ts
+// Session-authed, org-scoped read for the IN-APP insured Policy Lens view.
+// Sibling to pl-get-findings (token-gated, external shares). Auth model:
+// auth header -> user -> user_profiles.organization_id -> that org's intakes
+// -> documents -> latest RELEASED extraction run. Shaping lifted verbatim
+// from pl-get-findings; only the front gate differs.
+// Deploy: supabase functions deploy pl-get-findings-insured --project-ref irxgmhxhmxtzfwuieblc
+
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, "Content-Type": "application/json" },
+  });
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  if (req.method !== "POST") return json({ error: "POST only" }, 405);
+
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) return json({ error: "not authenticated" }, 401);
+
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await userClient.auth.getUser();
+  if (userErr || !userData?.user) return json({ error: "not authenticated" }, 401);
+  const userId = userData.user.id;
+
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+
+  const { data: profile, error: profErr } = await admin
+    .from("user_profiles")
+    .select("organization_id")
+    .eq("id", userId)
+    .single();
+  if (profErr || !profile?.organization_id) {
+    return json({ error: "no organization for user", status: "no_org" }, 404);
+  }
+  const orgId = profile.organization_id;
+
+  const { data: intakes, error: inErr } = await admin
+    .from("policy_lens_intakes")
+    .select("id")
+    .eq("organization_id", orgId);
+  if (inErr) return json({ error: "failed to resolve intakes" }, 500);
+  const intakeIds = (intakes ?? []).map((i: any) => i.id);
+  if (intakeIds.length === 0) {
+    return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
+  }
+
+  const { data: docs, error: docErr } = await admin
+    .from("pl_documents")
+    .select("id")
+    .in("intake_id", intakeIds);
+  if (docErr) return json({ error: "failed to resolve documents" }, 500);
+  const docIds = (docs ?? []).map((d: any) => d.id);
+  if (docIds.length === 0) {
+    return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
+  }
+
+  const { data: run, error: runErr } = await admin
+    .from("pl_extraction_runs")
+    .select("id, release_status, coverage, reconciled, released_at")
+    .in("document_id", docIds)
+    .eq("release_status", "released")
+    .order("released_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (runErr) return json({ error: "failed to resolve run" }, 500);
+  if (!run) {
+    return json({ ok: true, status: "no_released_run", findings: [], coverage_detail: null }, 200);
+  }
+
+  const { data: rows, error: fErr } = await admin
+    .from("pl_findings")
+    .select("finding_key, part, flag, agent_payload, kitchen_payload, correlation")
+    .eq("run_id", run.id)
+    .order("part", { ascending: true })
+    .order("finding_key", { ascending: true });
+  if (fErr) return json({ error: "failed to load findings" }, 500);
+
+  const findings = (rows ?? []).map((r: any) => {
+    const a = r.agent_payload ?? {};
+    const k = r.kitchen_payload ?? {};
+    return {
+      id: r.finding_key,
+      part: r.part,
+      flag: r.flag,
+      correlation: r.correlation ?? null,
+      agent: { title: a.title ?? "", body: a.body ?? "", refs: a.refs ?? null },
+      kitchen: { title: k.title ?? "", body: k.body ?? "" },
+    };
+  });
+
+  const reconciled = run.reconciled as Record<string, unknown> | null;
+  let coverage_detail: Record<string, unknown>;
+
+  if (!reconciled) {
+    coverage_detail = {
+      framing: "Coverage figures as stated in your policy",
+      locations: [],
+      policy_wide: [],
+      food_sublimits: [],
+    };
+  } else {
+    const decl = reconciled.declarations as Record<string, unknown> | undefined;
+    const locsWrapper = decl?.locations as { value?: unknown[]; _status?: string } | undefined;
+
+    let locations: unknown[];
+    let locations_note: string | undefined;
+
+    if (locsWrapper?._status === "conflict") {
+      locations = [];
+      locations_note = "Location coverage figures could not be confirmed — refer to policy.";
+    } else {
+      const rawLocs = Array.isArray(locsWrapper?.value) ? locsWrapper.value : [];
+      locations = rawLocs.map((loc: any) => ({
+        loc_no: loc.loc_no ?? null,
+        address: loc.address ?? null,
+        scheduled_building: loc.scheduled_building ?? null,
+        scheduled_bpp: loc.scheduled_bpp ?? null,
+        coinsurance: loc.coinsurance ?? null,
+        spoilage_sublimit: loc.spoilage_sublimit ?? null,
+      }));
+    }
+
+    const rawPw = Array.isArray(reconciled.policy_wide) ? reconciled.policy_wide : [];
+    const policy_wide = rawPw
+      .filter((item: any) => item.percentage_or_value != null)
+      .map((item: any) => ({
+        label: item.topic ?? null,
+        value: (item._status === "agreed" || item._status === "single_pass") ? item.percentage_or_value : "Refer to policy",
+        section_ref: item.section_ref ?? null,
+      }));
+
+    const rawFood = Array.isArray(reconciled.food_findings) ? reconciled.food_findings : [];
+    const food_sublimits = rawFood
+      .filter((item: any) => item.sublimit_amount != null)
+      .map((item: any) => ({
+        label: item.topic ?? null,
+        value: (item._status === "agreed" || item._status === "single_pass") ? item.sublimit_amount : "Refer to policy",
+      }));
+
+    coverage_detail = {
+      framing: "Coverage figures as stated in your policy",
+      locations,
+      ...(locations_note ? { locations_note } : {}),
+      policy_wide,
+      food_sublimits,
+    };
+  }
+
+  return json({
+    ok: true,
+    edition: "kitchen",
+    findings,
+    scope: { coverage: run.coverage ?? null },
+    coverage_detail,
+  });
+});
