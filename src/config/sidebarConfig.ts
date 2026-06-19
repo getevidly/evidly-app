@@ -65,6 +65,10 @@ const I: Record<string, NavItem> = {
     id: 'policies', label: 'Policies', path: '/policies', icon: 'BookOpen', iconColor: '#185FA5',
     roles: [], description: 'Standardized food and fire safety policies — adopt, customize, and activate.',
   },
+  policyLens: {
+    id: 'policyLens', label: 'Policy Lens', path: '/policy-lens', icon: 'ShieldHalf', iconColor: '#185FA5',
+    roles: [], description: 'What your policy states — coverage figures and safety-system findings, read from your policy. Your agent evaluates the coverage.',
+  },
   reports: {
     id: 'reports', label: 'Reports', path: '/reports', icon: 'FileBarChart', iconColor: '#2f7a4d',
     roles: [], description: 'Generate and share compliance, HACCP, insurance, and executive reports.',
@@ -386,7 +390,7 @@ const SECTION_ORDER = [
 // ══════════════════════════════════════════════════════════
 
 const TOP_LEVEL_IDS = [
-  'portfolio', 'documents', 'policies', 'reports', 'kitchenToCommunity',
+  'portfolio', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -395,10 +399,10 @@ const TOP_LEVEL_IDS = [
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
   platform_admin:     ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  owner_operator:     ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  executive:          ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  compliance_manager: ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
-  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents', 'policies', 'reports',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  owner_operator:     ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  executive:          ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  compliance_manager: ['dashboard', 'portfolio', 'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity', 'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
+  facilities_manager: ['dashboard', 'shiftIntelligence', 'operations',               'fireSafety',             'documents', 'policies', 'policyLens', 'reports',                        'jurisdiction', 'vendors', 'insights', 'tools', 'admin'],
   kitchen_manager:    ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',               'programs', 'documents', 'policies', 'reports', 'kitchenToCommunity',                              'insights', 'tools', 'admin'],
   chef:               ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                            'insights', 'tools'],
   kitchen_staff:      ['dashboard', 'shiftIntelligence', 'operations', 'foodSafety',                                                                                                       'tools'],
