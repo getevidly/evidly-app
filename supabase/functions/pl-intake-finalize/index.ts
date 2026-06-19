@@ -156,7 +156,7 @@ Deno.serve(async (req: Request) => {
     // ── Notification email to founders (non-blocking) ─────
     try {
       const contactLabel = intake.contact_name || intake.business_name || "Unknown";
-      const door = intake.source === "prospect" ? "Prospect" : "Agent";
+      const door = intake.source === "prospect" ? "Prospect" : intake.source === "in_app" ? "In-App Upload" : "Agent";
       const createdDate = intake.created_at
         ? new Date(intake.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
         : "—";
