@@ -66,7 +66,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Standardized food and fire safety policies — adopt, customize, and activate.',
   },
   policyLens: {
-    id: 'policyLens', label: 'Policy Lens', path: '/policy-lens', icon: 'ShieldHalf', iconColor: '#185FA5',
+    id: 'policyLens', label: 'Policy Lens', path: '/policy-lens', icon: 'ShieldCheck', iconColor: '#185FA5',
     roles: [], description: 'What your policy states — coverage figures and safety-system findings, read from your policy. Your agent evaluates the coverage.',
   },
   reports: {
