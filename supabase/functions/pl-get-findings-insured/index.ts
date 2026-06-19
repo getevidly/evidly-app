@@ -133,6 +133,25 @@ Deno.serve(async (req) => {
     };
   } else {
     const decl = reconciled.declarations as Record<string, unknown> | undefined;
+
+    // Unwrap a {value,_status} declaration field → its value, or null
+    const declVal = (key: string): string | null => {
+      const node = decl?.[key] as { value?: unknown } | undefined;
+      return (node && node.value != null) ? String(node.value) : null;
+    };
+    const firstLoc = (() => {
+      const lw = decl?.locations as { value?: any[] } | undefined;
+      const arr = Array.isArray(lw?.value) ? lw!.value : [];
+      return arr[0] ?? null;
+    })();
+    const policy = {
+      insured: declVal("named_insured"),
+      carrier: declVal("carrier"),
+      policyNo: declVal("policy_number"),
+      period: declVal("policy_period"),
+      address: firstLoc?.address ?? null,
+    };
+
     const locsWrapper = decl?.locations as { value?: unknown[]; _status?: string } | undefined;
 
     let locations: unknown[];
@@ -185,5 +204,6 @@ Deno.serve(async (req) => {
     findings,
     scope: { coverage: run.coverage ?? null },
     coverage_detail,
+    policy: reconciled ? policy : null,
   });
 });
