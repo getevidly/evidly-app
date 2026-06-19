@@ -35,28 +35,36 @@ export default function PolicyLens() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<Resp | null>(null);
 
+  const load = async () => {
+    try {
+      setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setError('Please sign in to view your Policy Lens.'); setLoading(false); return; }
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pl-get-findings-insured`;
+      console.log('[PolicyLens] fetching', url);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      const json = await res.json();
+      console.log('[PolicyLens] response', res.status, json);
+      if (!res.ok) { setError(json.error || 'Could not load your Policy Lens.'); setLoading(false); return; }
+      setError(null);
+      setData(json);
+    } catch (e) {
+      console.error('[PolicyLens] fetch failed', e);
+      setError('Could not load your Policy Lens.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) { setError('Please sign in to view your Policy Lens.'); setLoading(false); return; }
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pl-get-findings-insured`,
-          {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
-            body: '{}',
-          }
-        );
-        const json = await res.json();
-        if (!res.ok) { setError(json.error || 'Could not load your Policy Lens.'); setLoading(false); return; }
-        setData(json);
-      } catch (e) {
-        setError('Could not load your Policy Lens.');
-      } finally {
-        setLoading(false);
-      }
-    })();
+    load();
+    const onFocus = () => load();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, []);
 
   if (loading) return <div className="p-8 text-gray-500">Reading your policy…</div>;
