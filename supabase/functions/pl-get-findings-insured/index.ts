@@ -61,30 +61,18 @@ Deno.serve(async (req) => {
     return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
   }
 
-  // Documents are optional — extract runs off intake.policy_pdf_path when no document row exists.
-  // So resolve released runs via BOTH document_id and intake_id paths.
-  const { data: docs } = await admin
-    .from("pl_documents")
-    .select("id")
-    .in("intake_id", intakeIds);
-  const docIds = (docs ?? []).map((d: any) => d.id);
-
-  // Find a released run: by document_id if docs exist, otherwise the released-run lookup must
-  // also cover runs tied to these intakes' documents. Runs link via document_id, so if there are
-  // no documents, there can be no released run yet — fall through to intake-status.
-  let run: any = null;
-  if (docIds.length > 0) {
-    const { data: r, error: runErr } = await admin
-      .from("pl_extraction_runs")
-      .select("id, release_status, coverage, reconciled, released_at")
-      .in("document_id", docIds)
-      .eq("release_status", "released")
-      .order("released_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (runErr) return json({ error: "failed to resolve run" }, 500);
-    run = r;
-  }
+  // Runs link to intakes directly via intake_id. Documents are optional (extract runs off
+  // intake.policy_pdf_path when no pl_documents row exists), so resolve released runs by
+  // intake_id — works whether or not a document row was ever created.
+  const { data: run, error: runErr } = await admin
+    .from("pl_extraction_runs")
+    .select("id, release_status, coverage, reconciled, released_at")
+    .in("intake_id", intakeIds)
+    .eq("release_status", "released")
+    .order("released_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (runErr) return json({ error: "failed to resolve run" }, 500);
 
   if (!run) {
     // No released run. Check intake status to distinguish in-flight from never-submitted.
