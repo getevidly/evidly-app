@@ -124,6 +124,7 @@ Deno.serve(async (req) => {
   const reconciled = run.reconciled as Record<string, unknown> | null;
   let coverage_detail: Record<string, unknown>;
 
+  let policy: any = null;
   if (!reconciled) {
     coverage_detail = {
       framing: "Coverage figures as stated in your policy",
@@ -144,7 +145,7 @@ Deno.serve(async (req) => {
       const arr = Array.isArray(lw?.value) ? lw!.value : [];
       return arr[0] ?? null;
     })();
-    const policy = {
+    policy = {
       insured: declVal("named_insured"),
       carrier: declVal("carrier"),
       policyNo: declVal("policy_number"),
