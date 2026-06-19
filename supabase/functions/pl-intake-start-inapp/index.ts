@@ -40,10 +40,22 @@ Deno.serve(async (req) => {
 
   const { data: org, error: orgErr } = await admin
     .from("organizations")
-    .select("name")
+    .select("name, primary_contact_name, primary_contact_email, primary_contact_phone, main_phone")
     .eq("id", orgId)
     .single();
   if (orgErr || !org) return json({ error: "organization not found" }, 404);
+
+  // Pull the uploading user's profile for contact identity
+  const { data: profileDetail } = await admin
+    .from("user_profiles")
+    .select("full_name, email, phone")
+    .eq("id", userId)
+    .single();
+
+  // Prefer the logged-in user's contact info; fall back to the org's primary contact
+  const contactName = profileDetail?.full_name ?? org.primary_contact_name ?? null;
+  const contactEmail = profileDetail?.email ?? org.primary_contact_email ?? null;
+  const contactPhone = profileDetail?.phone ?? org.primary_contact_phone ?? org.main_phone ?? null;
 
   const { data: intake, error: inErr } = await admin
     .from("policy_lens_intakes")
@@ -53,6 +65,9 @@ Deno.serve(async (req) => {
       business_name: org.name,
       organization_id: orgId,
       carrier: body.carrier ?? null,
+      contact_name: contactName,
+      contact_email: contactEmail,
+      contact_phone: contactPhone,
     })
     .select("id")
     .single();
