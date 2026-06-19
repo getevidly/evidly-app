@@ -65,11 +65,36 @@ export default function PolicyLens() {
   const noPolicy = data?.status === 'no_policy' || data?.status === 'no_released_run';
   if (noPolicy || !data) {
     return (
-      <div className="max-w-3xl mx-auto p-8">
-        <div className="flex items-center gap-3 mb-2">
+      <div className="max-w-3xl mx-auto p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-1">
           <h1 className="text-2xl font-medium">Policy Lens</h1>
+          <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Coverage insight</span>
         </div>
-        <p className="text-gray-600">Your policy read isn't ready yet. Once your policy has been processed, your coverage figures and safety-system findings will appear here.</p>
+        <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          Policy Lens reads your commercial insurance policy and shows you, in plain terms, what it actually covers — your building and contents limits, coinsurance, spoilage, and how your policy treats your fire and food safety systems. Your agent evaluates whether the coverage fits; Policy Lens just shows you what's there.
+        </p>
+
+        <div className="border border-gray-200 rounded-lg p-5 mb-5">
+          <div className="text-sm font-medium text-gray-800 mb-3">What you'll see once your policy is read</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <div className="bg-gray-50 rounded-md px-3 py-2"><div className="text-xs text-gray-500">Building</div><div className="text-base font-medium text-gray-300">—</div></div>
+            <div className="bg-gray-50 rounded-md px-3 py-2"><div className="text-xs text-gray-500">Contents</div><div className="text-base font-medium text-gray-300">—</div></div>
+            <div className="bg-gray-50 rounded-md px-3 py-2"><div className="text-xs text-gray-500">Coinsurance</div><div className="text-base font-medium text-gray-300">—</div></div>
+            <div className="bg-gray-50 rounded-md px-3 py-2"><div className="text-xs text-gray-500">Spoilage</div><div className="text-base font-medium text-gray-300">—</div></div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex-1 text-sm text-gray-500 bg-gray-50 rounded-md px-3 py-2.5">Fire — your policy's safety-system findings</div>
+            <div className="flex-1 text-sm text-gray-500 bg-gray-50 rounded-md px-3 py-2.5">Food — your policy's safety-system findings</div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 rounded-lg p-5">
+          <div className="text-sm font-medium text-blue-800 mb-1">Get your policy read</div>
+          <div className="text-xs text-blue-800/80 leading-relaxed mb-3">
+            Share your current commercial insurance policy and Policy Lens will read it. You'll see your coverage in plain terms here, and you can bring the findings to your agent.
+          </div>
+          <a href="/policy-lens/upload" className="inline-block text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md px-4 py-2 no-underline">Upload your policy</a>
+        </div>
       </div>
     );
   }
