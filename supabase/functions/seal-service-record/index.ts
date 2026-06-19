@@ -246,6 +246,25 @@ Deno.serve(async (req: Request) => {
     retentionUntil.setFullYear(retentionUntil.getFullYear() + retentionYears);
 
     // ── STEP 10: INSERT ─────────────────────────────────────────────────
+    // ── Configured cadence lookup (drives next_due_date) ──
+    let nextDueDate: string | null = null;
+    const { data: lssRow } = await supabase
+      .from("location_service_schedules")
+      .select("frequency_interval_days")
+      .eq("organization_id", organization_id)
+      .eq("location_id", location_id)
+      .eq("service_type_code", service_type_code)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (lssRow?.frequency_interval_days != null) {
+      const due = new Date(`${service_date}T00:00:00Z`);
+      due.setUTCDate(due.getUTCDate() + lssRow.frequency_interval_days);
+      nextDueDate = due.toISOString().slice(0, 10);
+    }
+
     const certificateUrl = `${source_file_bucket}:${source_file_path}`;
 
     const { data: inserted, error: insertErr } = await supabase
@@ -261,6 +280,7 @@ Deno.serve(async (req: Request) => {
         vendor_id: vendor_id ?? null,
         technician_name: technician_name ?? null,
         certificate_url: certificateUrl,
+        next_due_date: nextDueDate,
         source: "evidentiary_seal",
         sealed_by: sealedBy,
         sealed_at: sealedAtCanonical,
