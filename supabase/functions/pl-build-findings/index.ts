@@ -868,7 +868,7 @@ Deno.serve(async (req: Request) => {
     // ── Load run ─────────────────────────────────────────
     const { data: run, error: runErr } = await supabase
       .from("pl_extraction_runs")
-      .select("id, intake_id, reconciled, review_required, status")
+      .select("id, intake_id, document_id, reconciled, review_required, status, release_status")
       .eq("id", run_id)
       .single();
 
@@ -938,6 +938,9 @@ Deno.serve(async (req: Request) => {
         source_refs: t.sourceRefs,
         citation_status: t.template.citation_verified ? "verified" : "pending",
         review_required: run.review_required ?? false,
+        source_run_id: run.id,
+        source_document_id: run.document_id,
+        release_status_at_build: run.release_status,
       };
     });
 
