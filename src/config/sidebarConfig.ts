@@ -332,7 +332,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     id: 'fire-safety', label: 'Fire Safety', icon: '🔥',
     tooltipTitle: 'Fire Safety',
     tooltipDescription: 'Kitchen exhaust cleaning and fire protection systems.',
-    itemIds: ['fr-kec', 'fr-protection'],
+    itemIds: ['fr-protection'],
     path: '/fire-safety',
   },
   programs: {
