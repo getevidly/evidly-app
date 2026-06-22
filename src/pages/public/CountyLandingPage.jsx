@@ -377,9 +377,9 @@ export default function CountyLandingPage({county: countyProp, cityName: _cn, ci
       <div>
         <SL t="Book a Demo" c={E.goldL}/>
         <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.w,margin:"0 0 12px",lineHeight:1.2}}>45 minutes. Your county, your kitchen, your numbers.</h2>
-        <p style={{fontSize:"0.86rem",color:"rgba(255,255,255,0.55)",lineHeight:1.7,marginBottom:20}}>We walk through exactly how EvidLY scores your {c.name} County location — live, using {c.agencyShort}'s real methodology. No slides. No sales pitch.</p>
+        <p style={{fontSize:"0.86rem",color:"rgba(255,255,255,0.55)",lineHeight:1.7,marginBottom:20}}>We walk through exactly how EvidLY reads what {c.agencyShort} requires for your {c.name} County location — live, against their real methodology. No slides. No sales pitch.</p>
         <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:24}}>
-          {["How "+c.name+" County scores your kitchen specifically","What your live dashboard would look like","Your gaps identified before your next inspection","Every question answered — no pressure"].map(function(item){return <div key={item} style={{display:"flex",gap:8,fontSize:"0.82rem",color:"rgba(255,255,255,0.6)"}}><span style={{color:E.gold,flexShrink:0}}>✓</span>{item}</div>;})}
+          {["What "+c.name+" County requires of your kitchen specifically","What your live dashboard would look like","Your gaps identified before your next inspection","Every question answered — no pressure"].map(function(item){return <div key={item} style={{display:"flex",gap:8,fontSize:"0.82rem",color:"rgba(255,255,255,0.6)"}}><span style={{color:E.gold,flexShrink:0}}>✓</span>{item}</div>;})}
         </div>
         <button onClick={openCalendly} style={Object.assign({},bG,{padding:"13px 28px",fontSize:"0.9rem"})}>Pick a Time on Calendly →</button>
         <p style={{marginTop:10,fontSize:"0.74rem",color:"rgba(255,255,255,0.28)"}}>Or: founders@getevidly.com</p>
