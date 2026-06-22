@@ -289,7 +289,7 @@ Deno.serve(async (req: Request) => {
         .from("drift_catches")
         .delete()
         .eq("location_id", location_id)
-        .eq("pillar", "fire")
+        .eq("pillar", "fire_safety")
         .eq("dimension", "frequency")
         .eq("drift_type", "compliance")
         .eq("source_record_id", ev.recordId);
@@ -300,13 +300,13 @@ Deno.serve(async (req: Request) => {
         .insert({
           org_id: orgId,
           location_id,
-          pillar: "fire",
+          pillar: "fire_safety",
           drift_type: "compliance",
           dimension: "frequency",
           detected_at: new Date().toISOString(),
           source_table: "vendor_service_records",
           source_record_id: ev.recordId,
-          requirement_source: "pl_standards_registry",
+          requirement_source: "jurisdiction",
           requirement_version: ev.edition,
           expected_value: `${ev.intervalDays} days (${ev.cite})`,
           actual_value: `${ev.alignment} | next_due_date: ${ev.nextDueDate ?? "null"}`,
