@@ -198,6 +198,7 @@ const EmailSequenceManager = lazy(() => import('./pages/admin/EmailSequenceManag
 const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const FeatureBaselineTracker = lazy(() => import('./pages/admin/FeatureBaselineTracker'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
+const PolicyLensQueue = lazy(() => import('./pages/admin/PolicyLensQueue'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
 const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
@@ -837,6 +838,7 @@ function AppRoutes() {
           <Route path="/admin/feature-flags" element={<FeatureFlags />} />
           <Route path="/admin/feature-baseline" element={<FeatureBaselineTracker />} />
           <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
+          <Route path="/admin/policy-lens" element={<PolicyLensQueue />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           <Route path="/internal/pmr" element={<ProspectMarketingReport />} />
           </Route>
