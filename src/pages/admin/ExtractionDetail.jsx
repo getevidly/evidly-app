@@ -1,11 +1,13 @@
 /**
  * ExtractionDetail — Admin detail view for a single Policy Lens intake.
  * Route: /admin/policy-lens/:intakeId
- * READ-ONLY render. Accept / Correct / Flag buttons rendered but INERT.
+ * Verdict write-backs via pl-review-finding edge function.
+ * Release via pl-release-report edge function.
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, Pencil, Flag, FileText } from 'lucide-react';
+import { ArrowLeft, Check, Pencil, Flag, FileText, Send, Loader2, X } from 'lucide-react';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { supabase } from '../../lib/supabase';
 import { usePageTitle } from '../../hooks/usePageTitle';
@@ -108,6 +110,13 @@ export default function ExtractionDetail() {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ── Verdict / release state ────────────────────────────────────────
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [correctMode, setCorrectMode] = useState(false);
+  const [correctValue, setCorrectValue] = useState('');
+  const [releasing, setReleasing] = useState(false);
+  const [releaseToken, setReleaseToken] = useState(null);
+
   // ── Load ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (!intakeId) return;
@@ -161,6 +170,68 @@ export default function ExtractionDetail() {
       s.topic === selected.part + '_' + selected.finding_key,
     ) || null;
   }, [selected, standards]);
+
+  // ── Release gate ────────────────────────────────────────────────────
+  const allReviewed = useMemo(
+    () => findings.length > 0 && findings.every(f => f.review_state !== 'pending'),
+    [findings],
+  );
+
+  // ── Submit verdict via edge function ───────────────────────────────
+  const submitVerdict = useCallback(async (action, corrected) => {
+    if (!selected || reviewBusy) return;
+    setReviewBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('pl-review-finding', {
+        body: {
+          finding_id: selected.id,
+          action,
+          ...(corrected ? { corrected } : {}),
+        },
+      });
+      if (error) throw error;
+      if (!data?.ok || !data?.finding) {
+        throw new Error(data?.error || 'Write not confirmed');
+      }
+      // Update local state with confirmed row
+      const updated = data.finding;
+      setFindings(prev => prev.map(f =>
+        f.id === updated.id
+          ? { ...f, review_state: updated.review_state, reviewed_by: updated.reviewed_by,
+              reviewed_at: updated.reviewed_at, reviewer_corrected: updated.reviewer_corrected }
+          : f,
+      ));
+      setCorrectMode(false);
+      setCorrectValue('');
+      toast.success(`Finding ${action === 'accept' ? 'accepted' : action === 'correct' ? 'corrected' : 'flagged'}`);
+    } catch (err) {
+      toast.error(`Verdict failed: ${err.message || 'unknown error'}`);
+    } finally {
+      setReviewBusy(false);
+    }
+  }, [selected, reviewBusy]);
+
+  // ── Release to agent via edge function ─────────────────────────────
+  const handleRelease = useCallback(async () => {
+    if (!run || releasing || !allReviewed) return;
+    setReleasing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('pl-release-report', {
+        body: { run_id: run.id, intake_id: intakeId },
+      });
+      if (error) throw error;
+      if (!data?.ok || !data?.grant || !data?.run) {
+        throw new Error(data?.error || 'Release not confirmed');
+      }
+      setRun(prev => ({ ...prev, release_status: 'released', released_at: data.run.released_at }));
+      setReleaseToken(data.raw_token);
+      toast.success('Report released to agent');
+    } catch (err) {
+      toast.error(`Release failed: ${err.message || 'unknown error'}`);
+    } finally {
+      setReleasing(false);
+    }
+  }, [run, releasing, allReviewed, intakeId]);
 
   // ── Loading ────────────────────────────────────────────────────────
   if (loading) {
@@ -224,17 +295,32 @@ export default function ExtractionDetail() {
           <span style={{ fontSize: 13, color: MUTE }}>
             {reviewedCount} of {findings.length} reviewed
           </span>
-          <button
-            disabled
-            style={{
+          {run?.release_status === 'released' ? (
+            <span style={{
               padding: '8px 16px', fontSize: 13, fontWeight: 600,
-              borderRadius: 10, border: `1px solid ${NAVY}20`,
-              background: '#F3F4F6', color: `${NAVY}40`,
-              cursor: 'not-allowed',
-            }}
-          >
-            Release to agent
-          </button>
+              borderRadius: 10, background: '#E8F2F1', color: TEAL,
+            }}>
+              Released
+            </span>
+          ) : (
+            <button
+              disabled={!allReviewed || releasing}
+              onClick={handleRelease}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 16px', fontSize: 13, fontWeight: 600,
+                borderRadius: 10,
+                border: allReviewed ? `1px solid ${TEAL}40` : `1px solid ${NAVY}20`,
+                background: allReviewed ? '#FFFFFF' : '#F3F4F6',
+                color: allReviewed ? TEAL : `${NAVY}40`,
+                cursor: allReviewed && !releasing ? 'pointer' : 'not-allowed',
+                opacity: releasing ? 0.6 : 1,
+              }}
+            >
+              {releasing ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              Release to agent
+            </button>
+          )}
         </div>
       </div>
 
@@ -467,40 +553,108 @@ export default function ExtractionDetail() {
                   </div>
                 )}
 
-                {/* Action buttons — RENDERED BUT INERT */}
+                {/* Correct mode — inline editor */}
+                {correctMode && (
+                  <div style={{ marginBottom: 12, padding: 12, background: '#FBF3E0', borderRadius: 8, border: `1px solid ${AMBER}30` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: AMBER, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        Corrected value
+                      </span>
+                      <button onClick={() => { setCorrectMode(false); setCorrectValue(''); }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: MUTE, padding: 2 }}>
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <textarea
+                      value={correctValue}
+                      onChange={e => setCorrectValue(e.target.value)}
+                      rows={5}
+                      style={{
+                        width: '100%', fontSize: 13, color: NAVY, lineHeight: 1.6,
+                        padding: 10, borderRadius: 6, border: `1px solid ${AMBER}40`,
+                        resize: 'vertical', fontFamily: 'inherit',
+                      }}
+                    />
+                    <button
+                      disabled={!correctValue.trim() || reviewBusy}
+                      onClick={() => submitVerdict('correct', { body: correctValue.trim() })}
+                      style={{
+                        marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        gap: 6, width: '100%', padding: '8px 12px', fontSize: 13, fontWeight: 600,
+                        borderRadius: 8, border: `1px solid ${AMBER}40`,
+                        background: correctValue.trim() ? AMBER : '#E5E7EB',
+                        color: correctValue.trim() ? '#FFFFFF' : MUTE,
+                        cursor: correctValue.trim() && !reviewBusy ? 'pointer' : 'not-allowed',
+                        opacity: reviewBusy ? 0.6 : 1,
+                      }}
+                    >
+                      {reviewBusy ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                      Save correction
+                    </button>
+                  </div>
+                )}
+
+                {/* Release token display */}
+                {releaseToken && (
+                  <div style={{ marginBottom: 12, padding: 12, background: '#E8F2F1', borderRadius: 8, border: `1px solid ${TEAL}30` }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: TEAL, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                      Agent report link
+                    </div>
+                    <div style={{
+                      fontSize: 12, color: NAVY, wordBreak: 'break-all', fontFamily: 'monospace',
+                      background: '#FFFFFF', padding: 8, borderRadius: 4,
+                    }}>
+                      {`${window.location.origin}/report/${releaseToken}`}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action buttons */}
                 <div style={{ display: 'flex', gap: 8, paddingTop: 12, borderTop: `1px solid ${NAVY}08` }}>
                   <button
-                    disabled
+                    disabled={reviewBusy || run?.release_status === 'released'}
+                    onClick={() => submitVerdict('accept')}
                     style={{
                       flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       gap: 6, padding: '10px 12px', fontSize: 13, fontWeight: 600,
                       borderRadius: 10, border: `1px solid ${TEAL}30`,
-                      background: '#FFFFFF', color: TEAL,
-                      cursor: 'not-allowed', opacity: 0.5,
+                      background: selected?.review_state === 'accepted' ? '#E8F2F1' : '#FFFFFF',
+                      color: TEAL,
+                      cursor: reviewBusy || run?.release_status === 'released' ? 'not-allowed' : 'pointer',
+                      opacity: reviewBusy ? 0.6 : 1,
                     }}
                   >
-                    <Check size={14} /> Accept
+                    {reviewBusy ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />} Accept
                   </button>
                   <button
-                    disabled
+                    disabled={reviewBusy || run?.release_status === 'released'}
+                    onClick={() => {
+                      setCorrectMode(true);
+                      setCorrectValue(extractBody(selected));
+                    }}
                     style={{
                       flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       gap: 6, padding: '10px 12px', fontSize: 13, fontWeight: 600,
                       borderRadius: 10, border: `1px solid ${AMBER}30`,
-                      background: '#FFFFFF', color: AMBER,
-                      cursor: 'not-allowed', opacity: 0.5,
+                      background: selected?.review_state === 'corrected' ? '#FBF3E0' : '#FFFFFF',
+                      color: AMBER,
+                      cursor: reviewBusy || run?.release_status === 'released' ? 'not-allowed' : 'pointer',
+                      opacity: reviewBusy ? 0.6 : 1,
                     }}
                   >
                     <Pencil size={14} /> Correct
                   </button>
                   <button
-                    disabled
+                    disabled={reviewBusy || run?.release_status === 'released'}
+                    onClick={() => submitVerdict('flag')}
                     style={{
                       flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       gap: 6, padding: '10px 12px', fontSize: 13, fontWeight: 600,
                       borderRadius: 10, border: `1px solid ${CORAL}30`,
-                      background: '#FFFFFF', color: CORAL,
-                      cursor: 'not-allowed', opacity: 0.5,
+                      background: selected?.review_state === 'flagged' ? '#FBEAE5' : '#FFFFFF',
+                      color: CORAL,
+                      cursor: reviewBusy || run?.release_status === 'released' ? 'not-allowed' : 'pointer',
+                      opacity: reviewBusy ? 0.6 : 1,
                     }}
                   >
                     <Flag size={14} /> Flag
