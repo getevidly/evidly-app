@@ -980,6 +980,15 @@ Deno.serve(async (req: Request) => {
       .update({ coverage: coverageObj, report_complete })
       .eq("id", run_id);
 
+    // ── Advance intake status to 'verified' ───────────────
+    const { error: intakeVerifiedErr } = await supabase
+      .from("policy_lens_intakes")
+      .update({ status: "verified" })
+      .eq("id", run.intake_id);
+    if (intakeVerifiedErr) {
+      console.error("[pl-build-findings] Failed to set intake status=verified:", intakeVerifiedErr.message);
+    }
+
     return json(
       {
         run_id,

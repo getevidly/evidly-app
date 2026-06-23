@@ -299,6 +299,15 @@ Deno.serve(async (req: Request) => {
     }
     runId = run.id;
 
+    // ── Advance intake status to 'extracting' ─────────────
+    const { error: intakeExtractingErr } = await supabase
+      .from("policy_lens_intakes")
+      .update({ status: "extracting" })
+      .eq("id", intake_id);
+    if (intakeExtractingErr) {
+      console.error("[pl-extract] Failed to set intake status=extracting:", intakeExtractingErr.message);
+    }
+
     // ── Step 3: download PDF bytes from storage ──────────
     const { data: fileData, error: dlErr } = await supabase.storage
       .from("policy-lens-uploads")
