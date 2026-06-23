@@ -99,6 +99,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Security',            path: '/admin/security',           perm: 'canSecurity' },
       { label: 'Security Settings',   path: '/admin/security-settings',  perm: 'canSecurity' },
+      { label: 'Carrier API Keys',    path: '/admin/api-keys',           perm: 'canSecurity' },
     ],
   },
 ];
