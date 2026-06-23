@@ -187,6 +187,7 @@ Deno.serve(async (req: Request) => {
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
   let runId: string | null = null;
+  let intakeId: string | null = null;
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -229,6 +230,7 @@ Deno.serve(async (req: Request) => {
     if (!intake_id) {
       return json({ error: "intake_id required" }, 400, headers);
     }
+    intakeId = intake_id;
 
     // ── Step 1: load intake + document ───────────────────
     const { data: intake, error: intakeErr } = await supabase
@@ -261,6 +263,13 @@ Deno.serve(async (req: Request) => {
         status: "failed",
         error: "no_document",
       });
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intake_id)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "no_document" }, 400, headers);
     }
 
@@ -318,6 +327,13 @@ Deno.serve(async (req: Request) => {
         .from("pl_extraction_runs")
         .update({ status: "failed", error: "pdf_download_failed" })
         .eq("id", run.id);
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intake_id)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "Failed to download PDF" }, 500, headers);
     }
 
@@ -337,6 +353,13 @@ Deno.serve(async (req: Request) => {
         .from("pl_extraction_runs")
         .update({ status: "failed", error: "anthropic_key_missing" })
         .eq("id", run.id);
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intake_id)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "AI service not configured" }, 503, headers);
     }
 
@@ -390,19 +413,29 @@ Deno.serve(async (req: Request) => {
 
     return json({ run_id: run.id, status: "passes_complete" }, 200, headers);
   } catch (err) {
-    if (runId) {
-      try {
-        const sb = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-        );
-        await sb
-          .from("pl_extraction_runs")
-          .update({ status: "failed", error: err instanceof Error ? err.message : String(err) })
-          .eq("id", runId);
-      } catch { /* best-effort */ }
-    }
     const message = err instanceof Error ? err.message : String(err);
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    if (runId) {
+      const { error: runFailErr } = await sb
+        .from("pl_extraction_runs")
+        .update({ status: "failed", error: message })
+        .eq("id", runId)
+        .select("id")
+        .single();
+      if (runFailErr) console.error("[pl-extract] run status=failed write failed:", runFailErr.message);
+    }
+    if (intakeId) {
+      const { error: intakeFailErr } = await sb
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intakeId)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
+    }
     return json({ error: message }, 500, headers);
   }
 });

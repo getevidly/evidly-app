@@ -233,6 +233,7 @@ Deno.serve(async (req: Request) => {
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
   let runId: string | null = null;
+  let intakeId: string | null = null;
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -279,19 +280,27 @@ Deno.serve(async (req: Request) => {
     // ── Load the extraction run ──────────────────────────
     const { data: run, error: runErr } = await supabase
       .from("pl_extraction_runs")
-      .select("id, pass_a, pass_b, status")
+      .select("id, intake_id, pass_a, pass_b, status")
       .eq("id", run_id)
       .single();
 
     if (runErr || !run) {
       return json({ error: "Run not found" }, 404, headers);
     }
+    intakeId = run.intake_id;
 
     if (!run.pass_a || !run.pass_b) {
       await supabase
         .from("pl_extraction_runs")
         .update({ status: "failed", error: "passes_missing" })
         .eq("id", run_id);
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intakeId)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-reconcile] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "passes_missing" }, 400, headers);
     }
 
@@ -311,6 +320,13 @@ Deno.serve(async (req: Request) => {
           integrity_flags: flags,
         })
         .eq("id", run_id);
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intakeId)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-reconcile] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "parse_error", flags }, 400, headers);
     }
 
@@ -428,19 +444,29 @@ Deno.serve(async (req: Request) => {
 
     return json({ run_id, summary, review_required }, 200, headers);
   } catch (err) {
-    if (runId) {
-      try {
-        const sb = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-        );
-        await sb
-          .from("pl_extraction_runs")
-          .update({ status: "failed", error: err instanceof Error ? err.message : String(err) })
-          .eq("id", runId);
-      } catch { /* best-effort */ }
-    }
     const message = err instanceof Error ? err.message : String(err);
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    if (runId) {
+      const { error: runFailErr } = await sb
+        .from("pl_extraction_runs")
+        .update({ status: "failed", error: message })
+        .eq("id", runId)
+        .select("id")
+        .single();
+      if (runFailErr) console.error("[pl-reconcile] run status=failed write failed:", runFailErr.message);
+    }
+    if (intakeId) {
+      const { error: intakeFailErr } = await sb
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intakeId)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-reconcile] intake status=failed write failed:", intakeFailErr.message);
+    }
     return json({ error: message }, 500, headers);
   }
 });

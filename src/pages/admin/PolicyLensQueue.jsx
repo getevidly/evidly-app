@@ -28,11 +28,12 @@ const STAGES = [
   { key: 'findings_ready', label: 'Findings ready' },
   { key: 'your_review',    label: 'Your review' },
   { key: 'released',       label: 'Released to agent' },
+  { key: 'failed',         label: 'Failed' },
 ];
 
 function deriveStage(run) {
   if (!run) return 'reading';
-  if (run.status === 'failed') return 'reading';
+  if (run.status === 'failed') return 'failed';
   if (run.release_status === 'released' || run.release_status === 'revoked') return 'released';
   if (run.release_status === 'in_review') return 'your_review';
   if (run.status === 'reconciled') return 'findings_ready';
@@ -302,19 +303,16 @@ export default function PolicyLensQueue() {
                       <span
                         className="px-2 py-0.5 rounded-full text-xs font-semibold"
                         style={{
-                          background: row.stage === 'released' ? '#E8F2F1'
+                          background: row.stage === 'failed' ? '#FBEAE5'
+                            : row.stage === 'released' ? '#E8F2F1'
                             : row.stage === 'your_review' ? '#FBF3E0' : '#EEF1F6',
-                          color: row.stage === 'released' ? '#0F766E'
+                          color: row.stage === 'failed' ? '#C2553A'
+                            : row.stage === 'released' ? '#0F766E'
                             : row.stage === 'your_review' ? '#9A7B2D' : '#1E2D4D',
                         }}
                       >
                         {stageObj?.label || row.stage}
                       </span>
-                      {row.run?.status === 'failed' && (
-                        <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-600">
-                          Failed
-                        </span>
-                      )}
                     </td>
                     {/* Severity */}
                     <td className="px-4 py-3 text-center">
