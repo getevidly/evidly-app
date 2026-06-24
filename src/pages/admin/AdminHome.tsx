@@ -11,12 +11,13 @@
  *  D. Three-column grid: Quick Access, Platform Health, Open Tickets
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { supabase } from '../../lib/supabase';
+import { Zap, TrendingUp, Settings, Bell, CreditCard, Mail, PlayCircle } from 'lucide-react';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import Button from '../../components/ui/Button';
 
@@ -28,21 +29,18 @@ const LAUNCH_DATE = new Date('2026-07-04T00:00:00-07:00');
 interface QuickCard {
   label: string;
   path: string;
-  icon: string;
-  color: string;
+  icon: ComponentType<{ size?: number; className?: string }>;
   bg: string;
 }
 
 const QUICK_ACCESS: QuickCard[] = [
-  { label: 'EvidLY Intelligence', path: '/admin/intelligence', icon: '⚡', color: '#7C3AED', bg: '#F5F3FF' },
-  { label: 'Sales Pipeline', path: '/admin/sales', icon: '📊', color: '#DC2626', bg: '#FEF2F2' },
-  { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
-  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '🔔', color: '#D97706', bg: '#FFFBEB' },
-  { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
-  { label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧', color: '#7C3AED', bg: '#F5F3FF' },
-  // POST-LAUNCH: TrialHealth hidden — dead legacy page with phantom columns
-  // { label: 'Trial Health', path: '/admin/trial-health', icon: '💊', color: '#059669', bg: '#ECFDF5' },
-  { label: 'Demo Tours', path: '/admin/demo-tours', icon: '🎯', color: '#059669', bg: '#ECFDF5' },
+  { label: 'EvidLY Intelligence', path: '/admin/intelligence', icon: Zap,         bg: '#F5F3FF' },
+  { label: 'Sales Pipeline',      path: '/admin/sales',        icon: TrendingUp,  bg: '#FEF2F2' },
+  { label: 'Configure',           path: '/admin/configure',    icon: Settings,    bg: '#F3F4F6' },
+  { label: 'Signal Queue',        path: '/admin/intelligence-admin', icon: Bell,  bg: '#FFFBEB' },
+  { label: 'Billing',             path: '/admin/billing',      icon: CreditCard,  bg: '#FDF8EE' },
+  { label: 'Email Sequences',     path: '/admin/email-sequences', icon: Mail,     bg: '#F5F3FF' },
+  { label: 'Demo Tours',          path: '/admin/demo-tours',   icon: PlayCircle,  bg: '#ECFDF5' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -337,10 +335,10 @@ export default function AdminHome() {
                 className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-border_ui-warm bg-white cursor-pointer transition-all text-left hover:border-gold"
               >
                 <div
-                  className="w-8 h-8 rounded-[7px] flex items-center justify-center text-[15px] shrink-0"
+                  className="w-8 h-8 rounded-[7px] flex items-center justify-center shrink-0"
                   style={{ background: card.bg }}
                 >
-                  {card.icon}
+                  <card.icon size={16} className="text-navy" />
                 </div>
                 <span className="text-xs font-semibold text-navy">
                   {card.label}
