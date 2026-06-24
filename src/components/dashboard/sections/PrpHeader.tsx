@@ -12,7 +12,7 @@
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
-import { useSignalNotifications } from '../../../hooks/useSignalNotifications';
+import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useOrgSummary } from '../../../hooks/useOrgSummary';
@@ -27,8 +27,8 @@ export function PrpHeader() {
 
   const isAllMode = isMultiLocation && selectedLocationId === null;
 
-  // Signals are org-wide (notifications table has no location_id)
-  const { criticalNotifications } = useSignalNotifications();
+  // Drift counts — pillar-split, NEVER summed
+  const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
 
   // Tasks: filter by location in single-location mode
   const { totalToday, doneToday, loading: todayLoading } = useTodayList(
@@ -68,7 +68,6 @@ export function PrpHeader() {
     locationIdFilter: selectedLocationId || undefined,
   });
 
-  const predictCount = criticalNotifications.length;
   const openToday = Math.max(totalToday - doneToday, 0);
   const driftCount = tempData?.counts?.failing ?? 0;
   const sensorTotal = tempData?.counts?.total ?? 0;
@@ -81,11 +80,9 @@ export function PrpHeader() {
   const reduceSub = isAllMode
     ? `Open today · across ${locCount} locations`
     : 'Open today';
-  const predictSub = predictCount === 0
-    ? ''
-    : isAllMode
-      ? `Unread · across ${locCount} locations`
-      : 'Unread';
+  const driftSub = (foodDrift > 0 || fireDrift > 0)
+    ? (isAllMode ? `Open drift · across ${locCount} locations` : 'Open drift')
+    : '';
   const proveSub = isAllMode
     ? 'Earliest location'
     : 'Days since go-live';
@@ -98,10 +95,19 @@ export function PrpHeader() {
           <div className="prp-icon"><i className="ti ti-trending-up" /></div>
           <div>
             <p className="prp-label">What's Coming</p>
-            <p className={`prp-num${predictCount === 0 ? ' steady' : ''}`}>
-              {predictCount === 0 ? (orgDays <= 1 ? 'Nothing yet' : 'Nothing new') : predictCount}
-            </p>
-            {predictSub && <p className="prp-sub">{predictSub}</p>}
+            {driftLoading ? (
+              <p className="prp-num">—</p>
+            ) : (
+              <>
+                <p className={`prp-num${foodDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18 }}>
+                  Food: {foodDrift === 0 ? 'clear' : foodDrift}
+                </p>
+                <p className={`prp-num${fireDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18, marginTop: 2 }}>
+                  Fire: {fireDrift === 0 ? 'clear' : fireDrift}
+                </p>
+              </>
+            )}
+            {driftSub && <p className="prp-sub">{driftSub}</p>}
           </div>
         </div>
         <div className="prp reduce">
