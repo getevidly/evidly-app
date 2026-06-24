@@ -20,12 +20,11 @@ import Button from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
 const ROLES = [
-  'platform_admin', 'owner_operator', 'executive', 'compliance_officer',
+  'owner_operator', 'executive', 'compliance_officer',
   'facilities', 'chef', 'kitchen_manager', 'kitchen_staff',
 ];
 
 const ROLE_LABELS: Record<string, string> = {
-  platform_admin: 'Platform Admin',
   owner_operator: 'Owner/Operator',
   executive: 'Executive',
   compliance_officer: 'Compliance Officer',
@@ -85,6 +84,7 @@ export default function AdminUsers() {
       const { data, error: fetchErr } = await supabase
         .from('user_profiles')
         .select('id, full_name, role, is_suspended, suspended_at, suspended_by, suspend_reason, failed_login_count, locked_until, last_login_at, created_at, organization_id')
+        .is('evidly_staff_role', null)
         .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;

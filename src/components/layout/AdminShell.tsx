@@ -58,9 +58,8 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Tenants',
     items: [
       { label: 'Organizations',       path: '/admin/orgs' },
-      { label: 'Users',               path: '/admin/users' },
-      { label: 'Staff & Roles',       path: '/admin/staff',              perm: 'canStaffManage' },
       { label: 'Client Onboarding',   path: '/admin/onboarding' },
+      { label: 'Users',               path: '/admin/users' },
     ],
   },
   {
@@ -93,6 +92,12 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Audit Log',           path: '/admin/audit-log',          perm: 'canSecurity' },
       { label: 'Edge Functions',      path: '/admin/system/edge-functions' },
       { label: 'Feature Flags',       path: '/admin/feature-flags' },
+    ],
+  },
+  {
+    title: 'Platform',
+    items: [
+      { label: 'Staff & Roles',       path: '/admin/staff',              perm: 'canStaffManage' },
     ],
   },
   {
