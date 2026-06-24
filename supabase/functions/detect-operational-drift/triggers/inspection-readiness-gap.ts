@@ -30,13 +30,13 @@ export async function detectInspectionReadinessGap(ctx: TriggerContext): Promise
       gapDetail = `${openCaCount} open corrective action(s) > 7 days`;
     }
 
-    // Check for expired documents
+    // Check for expired documents (compliance_documents — canonical table)
     const { count: expiredCount, error: docErr } = await ctx.supabase
-      .from('documents')
+      .from('compliance_documents')
       .select('*', { count: 'exact', head: true })
       .eq('organization_id', ctx.orgId)
-      .eq('status', 'active')
-      .lt('expiration_date', today)
+      .in('status', ['expired'])
+      .in('category', ['kitchen', 'employee', 'service'])
       .or(`location_id.eq.${loc.id},location_id.is.null`);
 
     if (!docErr && expiredCount && expiredCount > 0) {
