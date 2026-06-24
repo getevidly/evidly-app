@@ -24,9 +24,11 @@ const NOTIFY_TRANSITIONS = new Set([
 // Only touches documents where status IN ('current','expiring','expired')
 // and expiry_date IS NOT NULL. Idempotent — no writes when status is correct.
 //
-// After status transitions, fires in-app notifications for forward transitions
-// (current→expiring, current→expired, expiring→expired) via createOrgNotification.
-// Recovery transitions do not fire notifications.
+// After status transitions, fires in-app notifications AND emails for forward
+// transitions (current→expiring, current→expired, expiring→expired) via
+// createOrgNotification. Recovery transitions do not fire notifications.
+// Email deduplication is handled by composite sourceId (docId:tier) in notify.ts.
+// Email opt-out is handled via notification_preferences.email_enabled per category.
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -175,7 +177,7 @@ Deno.serve(async (req: Request) => {
         body,
         actionUrl: `/documents?doc=${u.id}`,
         actionLabel: "View Document",
-        priority: isExpired ? "high" : "medium",
+        priority: "high",
         severity: "info",
         sourceType: "compliance_document",
         sourceId: compositeSourceId,
