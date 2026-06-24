@@ -32,6 +32,7 @@ export function getDriftLabel(driftType: string, opts?: { form?: 'verb' | 'noun'
 const SOURCE_TABLE_LABELS: Record<string, string> = {
   temperature_logs: 'temperature log series',
   receiving_temp_logs: 'receiving log record',
+  compliance_documents: 'compliance document',
   documents: 'document on file',
   task_instances: 'checklist instance',
   equipment: 'equipment record',

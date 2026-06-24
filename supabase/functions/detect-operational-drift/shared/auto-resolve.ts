@@ -3,7 +3,7 @@
 // Auto-resolve is implemented for triggers where the resolution condition
 // is clean and deterministic:
 //   - temperature_out_of_range: last 4 readings for same equipment all pass
-//   - document_expiration: newer document with same category exists
+//   - document_expiration: newer compliance_document with same type+category exists
 //   - missed_checklist: completion now exists for the missed period
 //   - receiving_log_missing: receiving log now exists for that day
 //
@@ -66,21 +66,22 @@ export async function autoResolveDriftCatches(
           }
         }
       } else if (catch_.drift_type === 'document_expiration' && catch_.source_record_id) {
-        // Check if a newer document with same category now exists
+        // Check if a newer document with same type+category now exists
         const { data: srcDoc } = await supabase
-          .from('documents')
-          .select('category, expiration_date')
+          .from('compliance_documents')
+          .select('category, type, expiry_date')
           .eq('id', catch_.source_record_id)
           .maybeSingle();
 
         if (srcDoc) {
           const { count } = await supabase
-            .from('documents')
+            .from('compliance_documents')
             .select('*', { count: 'exact', head: true })
             .eq('organization_id', orgId)
             .eq('category', srcDoc.category)
-            .eq('status', 'active')
-            .gt('expiration_date', srcDoc.expiration_date);
+            .eq('type', srcDoc.type)
+            .in('status', ['current', 'expiring'])
+            .gt('expiry_date', srcDoc.expiry_date);
 
           if (count && count > 0) shouldResolve = true;
         }
