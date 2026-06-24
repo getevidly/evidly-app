@@ -185,6 +185,46 @@ export function buildCanonicalServiceJson(
 }
 
 // ---------------------------------------------------------------------------
+// 3c. CANONICAL DRIFT RESOLUTION JSON
+//
+// FIXED KEY ORDER — this is the contract. The eight resolution fields
+// are serialized in THIS exact sequence. Do NOT sort.
+//
+// Key order (immutable):
+//   1. drift_catch_id      (uuid string)
+//   2. drift_type           (string)
+//   3. pillar               (string: food_safety | fire_safety)
+//   4. requirement_source   (string or null)
+//   5. source_table         (string)
+//   6. source_record_id     (uuid string or null)
+//   7. resolved_at          (string, canonical timestamp "YYYY-MM-DDTHH:MM:SSZ")
+//   8. resolved_by          (uuid string)
+//
+// All fields are simple types. Plain JSON.stringify for all values.
+// ---------------------------------------------------------------------------
+export function buildCanonicalResolutionJson(
+  fields: Record<string, unknown>,
+): string {
+  const CANONICAL_KEYS: string[] = [
+    "drift_catch_id",
+    "drift_type",
+    "pillar",
+    "requirement_source",
+    "source_table",
+    "source_record_id",
+    "resolved_at",
+    "resolved_by",
+  ];
+
+  const parts: string[] = [];
+  for (const key of CANONICAL_KEYS) {
+    const val = fields[key] ?? null;
+    parts.push(JSON.stringify(key) + ":" + JSON.stringify(val));
+  }
+  return "{" + parts.join(",") + "}";
+}
+
+// ---------------------------------------------------------------------------
 // 4. HASH INPUT ASSEMBLY
 //
 // Concatenates the five hash-input components with an unambiguous separator.
