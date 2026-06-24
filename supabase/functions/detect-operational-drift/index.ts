@@ -1,7 +1,7 @@
 // detect-operational-drift — Edge function
 // C2 of Dashboard v10 build sequence
 // Scheduled via pg_cron every 15 minutes.
-// Runs 13 confirmed drift detection triggers per org.
+// Runs 12 confirmed drift detection triggers per org.
 // Idempotent INSERTs into drift_catches (partial unique index handles dedup).
 // Creates notifications for DM roles per visibility matrix.
 // Service role connection bypasses RLS by design.
@@ -22,7 +22,6 @@ import { detectAllergenTrainingOverdue } from './triggers/allergen-training-over
 import { detectHoodCleaningApproaching } from './triggers/hood-cleaning-approaching.ts';
 import { detectSuppressionSemiAnnual } from './triggers/suppression-semi-annual.ts';
 import { detectExtinguisherMonthly } from './triggers/extinguisher-monthly.ts';
-import { detectVendorCoiExpiring } from './triggers/vendor-coi-expiring.ts';
 import { detectInspectionReadinessGap } from './triggers/inspection-readiness-gap.ts';
 import { detectTeamMissClustering } from './triggers/team-miss-clustering.ts';
 import { detectStreakBreak } from './triggers/streak-break.ts';
@@ -32,7 +31,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// All 13 triggers with their detection functions
+// All 12 triggers with their detection functions
 const TRIGGERS: Array<{
   name: string;
   detect: (ctx: TriggerContext) => Promise<DriftCatchInsert[]>;
@@ -46,7 +45,6 @@ const TRIGGERS: Array<{
   { name: 'hood_cleaning_approaching', detect: detectHoodCleaningApproaching },
   { name: 'suppression_semi_annual_due', detect: detectSuppressionSemiAnnual },
   { name: 'extinguisher_monthly_missed', detect: detectExtinguisherMonthly },
-  { name: 'vendor_coi_expiring', detect: detectVendorCoiExpiring },
   { name: 'inspection_readiness_gap', detect: detectInspectionReadinessGap },
   { name: 'team_miss_clustering', detect: detectTeamMissClustering },
   { name: 'streak_break', detect: detectStreakBreak },
@@ -174,7 +172,7 @@ serve(async (req) => {
           standardsRegistry,
         };
 
-        // Run all 13 triggers with per-trigger isolation
+        // Run all 12 triggers with per-trigger isolation
         const allCatches: DriftCatchInsert[] = [];
 
         for (const trigger of TRIGGERS) {

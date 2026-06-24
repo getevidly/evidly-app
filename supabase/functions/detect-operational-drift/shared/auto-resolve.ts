@@ -14,7 +14,6 @@
 //   - hood_cleaning_approaching (scheduling confirmation needed)
 //   - suppression_semi_annual_due (service confirmation needed)
 //   - extinguisher_monthly_missed (inspection confirmation needed)
-//   - vendor_coi_expiring (renewal verification needed)
 //   - inspection_readiness_gap (multi-factor resolution)
 //   - team_miss_clustering (management review needed)
 //   - streak_break (pattern re-establishment is gradual)

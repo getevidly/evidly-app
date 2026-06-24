@@ -18,7 +18,6 @@ const DRIFT_TYPE_LABELS: Record<string, { verb: string; noun: string }> = {
   hood_cleaning_approaching:   { verb: 'Hood cleaning scheduled before lapse',  noun: 'Hood cleaning due' },
   suppression_semi_annual_due: { verb: 'Suppression service caught before due', noun: 'Suppression service due' },
   extinguisher_monthly_missed: { verb: 'Extinguisher check gap closed',         noun: 'Extinguisher check gap' },
-  vendor_coi_expiring:         { verb: 'Vendor COI renewal caught',             noun: 'Vendor COI expiring' },
   inspection_readiness_gap:    { verb: 'Inspection readiness gap closed',       noun: 'Inspection readiness gap' },
   team_miss_clustering:        { verb: 'Team checklist pattern caught',         noun: 'Team checklist pattern' },
   streak_break:                { verb: 'Compliance streak break caught',        noun: 'Compliance streak break' },
