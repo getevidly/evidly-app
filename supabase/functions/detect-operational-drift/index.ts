@@ -1,7 +1,7 @@
 // detect-operational-drift — Edge function
 // C2 of Dashboard v10 build sequence
 // Scheduled via pg_cron every 15 minutes.
-// Runs 12 confirmed drift detection triggers per org.
+// Runs 14 confirmed drift detection triggers per org.
 // Idempotent INSERTs into drift_catches (partial unique index handles dedup).
 // Creates notifications for DM roles per visibility matrix.
 // Service role connection bypasses RLS by design.
@@ -25,13 +25,14 @@ import { detectExtinguisherMonthly } from './triggers/extinguisher-monthly.ts';
 import { detectInspectionReadinessGap } from './triggers/inspection-readiness-gap.ts';
 import { detectTeamMissClustering } from './triggers/team-miss-clustering.ts';
 import { detectStreakBreak } from './triggers/streak-break.ts';
+import { detectTaskDrift } from './triggers/task-drift.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// All 12 triggers with their detection functions
+// All 14 triggers with their detection functions
 const TRIGGERS: Array<{
   name: string;
   detect: (ctx: TriggerContext) => Promise<DriftCatchInsert[]>;
@@ -48,6 +49,7 @@ const TRIGGERS: Array<{
   { name: 'inspection_readiness_gap', detect: detectInspectionReadinessGap },
   { name: 'team_miss_clustering', detect: detectTeamMissClustering },
   { name: 'streak_break', detect: detectStreakBreak },
+  { name: 'task_drift', detect: detectTaskDrift },
 ];
 
 serve(async (req) => {

@@ -21,6 +21,8 @@ const DRIFT_TYPE_LABELS: Record<string, { verb: string; noun: string }> = {
   inspection_readiness_gap:    { verb: 'Inspection readiness gap closed',       noun: 'Inspection readiness gap' },
   team_miss_clustering:        { verb: 'Team checklist pattern caught',         noun: 'Team checklist pattern' },
   streak_break:                { verb: 'Compliance streak break caught',        noun: 'Compliance streak break' },
+  task_overdue:                { verb: 'Overdue task caught',                   noun: 'Task overdue' },
+  task_skipped:                { verb: 'Skipped task flagged',                  noun: 'Task skipped' },
 };
 
 export function getDriftLabel(driftType: string, opts?: { form?: 'verb' | 'noun' }): string {

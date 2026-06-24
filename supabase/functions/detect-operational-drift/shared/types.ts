@@ -82,10 +82,11 @@ export type DriftType =
   | 'hood_cleaning_approaching'
   | 'suppression_semi_annual_due'
   | 'extinguisher_monthly_missed'
-  | 'vendor_coi_expiring'
   | 'inspection_readiness_gap'
   | 'team_miss_clustering'
-  | 'streak_break';
+  | 'streak_break'
+  | 'task_overdue'
+  | 'task_skipped';
 
 export interface InsertedCatch extends DriftCatchInsert {
   id: string;
@@ -102,10 +103,11 @@ export const DRIFT_TYPE_LABELS: Record<DriftType, string> = {
   hood_cleaning_approaching: 'Hood cleaning cycle approaching',
   suppression_semi_annual_due: 'Suppression service coming due',
   extinguisher_monthly_missed: 'Extinguisher monthly check missed',
-  vendor_coi_expiring: 'Vendor insurance expiring',
   inspection_readiness_gap: 'Readiness gap detected',
   team_miss_clustering: 'Repeated team misses detected',
   streak_break: 'Evidence streak ended',
+  task_overdue: 'Task overdue',
+  task_skipped: 'Task skipped',
 };
 
 // Pillar-based notification role targets
