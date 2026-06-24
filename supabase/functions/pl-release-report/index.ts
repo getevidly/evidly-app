@@ -70,13 +70,40 @@ Deno.serve(async (req: Request) => {
 
     // ── Parse body ─────────────────────────────────────────
     const body = await req.json();
-    const { run_id, intake_id } = body as {
+    const { run_id, intake_id, recipient_party_id } = body as {
       run_id?: string;
       intake_id?: string;
+      recipient_party_id?: string;
     };
 
     if (!run_id || !intake_id) {
       return json({ error: "run_id and intake_id required" }, 400, headers);
+    }
+    if (!recipient_party_id) {
+      return json({ error: "recipient_party_id required — no grant minted without identifying the receiving broker" }, 400, headers);
+    }
+
+    // ── Resolve the authorizing org (insured) from the intake ───────
+    const { data: intakeCheck, error: intakeErr } = await supabase
+      .from("policy_lens_intakes")
+      .select("organization_id")
+      .eq("id", intake_id)
+      .single();
+
+    if (intakeErr || !intakeCheck) {
+      return json({ error: "Intake not found" }, 404, headers);
+    }
+    const grantedByOrgId = intakeCheck.organization_id; // may be null for prospect intakes
+
+    // ── Verify recipient broker exists ───────────────────────────
+    const { data: recipientCheck, error: recipientErr } = await supabase
+      .from("external_parties")
+      .select("id, party_type")
+      .eq("id", recipient_party_id)
+      .single();
+
+    if (recipientErr || !recipientCheck) {
+      return json({ error: "Recipient party not found" }, 404, headers);
     }
 
     // ── Guard: verify the run exists and is not already released ────
@@ -124,7 +151,7 @@ Deno.serve(async (req: Request) => {
       now.getTime() + GRANT_TTL_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    // ── Insert grant ───────────────────────────────────────
+    // ── Insert grant (consent bound to both ends) ──────────
     const { data: grant, error: grantErr } = await supabase
       .from("pl_report_grants")
       .insert({
@@ -133,8 +160,11 @@ Deno.serve(async (req: Request) => {
         token_hash: tokenHash,
         door: "agent",
         expires_at: expiresAt.toISOString(),
+        granted_by_org_id: grantedByOrgId,
+        recipient_party_id,
+        consent_type: "per_report",
       })
-      .select("id, intake_id, run_id, door, expires_at, created_at")
+      .select("id, intake_id, run_id, door, expires_at, granted_by_org_id, recipient_party_id, consent_type, created_at")
       .single();
 
     if (grantErr || !grant) {
@@ -180,6 +210,9 @@ Deno.serve(async (req: Request) => {
         released_by: user.email,
         grant_id: grant.id,
         expires_at: expiresAt.toISOString(),
+        granted_by_org_id: grantedByOrgId,
+        recipient_party_id,
+        consent_type: "per_report",
       },
     });
 

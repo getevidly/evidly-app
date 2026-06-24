@@ -36,13 +36,13 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
 
-  let body: { token?: string };
+  let body: { token?: string; accessor_party_id?: string };
   try {
     body = await req.json();
   } catch {
     return json({ error: "invalid JSON body" }, 400);
   }
-  const { token } = body;
+  const { token, accessor_party_id } = body;
   if (!token) return json({ error: "token required" }, 400);
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
   const tokenHash = await sha256Hex(token);
   const { data: grant, error: grantErr } = await admin
     .from("pl_report_grants")
-    .select("id, run_id, intake_id, door, expires_at, revoked_at")
+    .select("id, run_id, intake_id, door, expires_at, revoked_at, recipient_party_id, granted_by_org_id, consent_type")
     .eq("token_hash", tokenHash)
     .single();
 
@@ -64,10 +64,25 @@ Deno.serve(async (req) => {
     return json({ error: "report link expired", status: "expired" }, 410);
   }
 
-  // 3. Gate: run must be released
+  // 3. Gate: consent check — verify requesting broker matches the grant's recipient.
+  //    If recipient_party_id is set on the grant, accessor_party_id must match.
+  //    This prevents cross-broker leakage: a token addressed to Broker A
+  //    cannot be used by Broker B, even if Broker B possesses the raw token.
+  let resolvedAccessorPartyId: string | null = accessor_party_id ?? null;
+  if (grant.recipient_party_id) {
+    if (!accessor_party_id) {
+      return json({ error: "accessor_party_id required for this report" }, 400);
+    }
+    if (accessor_party_id !== grant.recipient_party_id) {
+      // Do not leak the intended recipient — generic denial
+      return json({ error: "report not available" }, 404);
+    }
+  }
+
+  // 4. Gate: run must be released
   const { data: run, error: runErr } = await admin
     .from("pl_extraction_runs")
-    .select("id, release_status, coverage, reconciled")
+    .select("id, release_status, coverage, reconciled, released_at")
     .eq("id", grant.run_id)
     .single();
   if (runErr || !run) return json({ error: "report not available" }, 404);
@@ -127,6 +142,21 @@ Deno.serve(async (req) => {
     })
     .eq("id", grant.id);
 
+  // 8. Write disclosure event — defensibility record (best-effort; don't fail the read).
+  //    One row per access, append-only. This replaces the scalar access_count
+  //    as the authoritative audit trail.
+  await admin
+    .from("pl_disclosure_events")
+    .insert({
+      grant_id: grant.id,
+      grant_type: grant.consent_type ?? "per_report",
+      accessor_user_id: null, // token-gated reads are unauthenticated
+      accessor_party_id: resolvedAccessorPartyId,
+      accessed_at: new Date().toISOString(),
+      ip: req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? null,
+      user_agent: req.headers.get("user-agent") ?? null,
+    });
+
   // ── Build coverage_detail from reconciled (verbatim, §1731 read-only) ──
   const reconciled = run.reconciled as Record<string, unknown> | null;
   let coverage_detail: Record<string, unknown>;
@@ -156,6 +186,7 @@ Deno.serve(async (req) => {
         address: loc.address ?? null,
         scheduled_building: loc.scheduled_building ?? null,
         scheduled_bpp: loc.scheduled_bpp ?? null,
+        bi_limit: loc.bi_limit ?? null,
         coinsurance: loc.coinsurance ?? null,
         spoilage_sublimit: loc.spoilage_sublimit ?? null,
       }));
@@ -189,6 +220,10 @@ Deno.serve(async (req) => {
     };
   }
 
+  // Freshness label: condition status is point-in-time (baked at pl-build-findings time).
+  // Do NOT represent baked status as live/continuous.
+  const statusAsOf = run.released_at ?? run.id; // released_at is the authoritative build timestamp
+
   return json({
     ok: true,
     edition,                    // which brief to render by default
@@ -199,5 +234,10 @@ Deno.serve(async (req) => {
       coverage: run.coverage ?? null,
     },
     coverage_detail,
+    freshness: {
+      status_as_of: statusAsOf,
+      label: `Condition status as of ${typeof statusAsOf === "string" ? new Date(statusAsOf).toLocaleDateString("en-US") : "report release"}`,
+      note: "Condition status is a point-in-time snapshot from the evaluation date, not a live feed.",
+    },
   });
 });
