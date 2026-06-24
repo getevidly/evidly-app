@@ -1,7 +1,7 @@
 // detect-operational-drift — Edge function
 // C2 of Dashboard v10 build sequence
 // Scheduled via pg_cron every 15 minutes.
-// Runs 14 confirmed drift detection triggers per org.
+// Runs 13 registered triggers (one emits two drift_types) per org.
 // Idempotent INSERTs into drift_catches (partial unique index handles dedup).
 // Creates notifications for DM roles per visibility matrix.
 // Service role connection bypasses RLS by design.
@@ -32,7 +32,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// All 14 triggers with their detection functions
+// All 13 triggers with their detection functions
 const TRIGGERS: Array<{
   name: string;
   detect: (ctx: TriggerContext) => Promise<DriftCatchInsert[]>;
@@ -174,7 +174,7 @@ serve(async (req) => {
           standardsRegistry,
         };
 
-        // Run all 12 triggers with per-trigger isolation
+        // Run all 13 triggers with per-trigger isolation
         const allCatches: DriftCatchInsert[] = [];
 
         for (const trigger of TRIGGERS) {

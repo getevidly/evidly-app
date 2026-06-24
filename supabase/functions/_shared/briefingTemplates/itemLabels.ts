@@ -12,10 +12,11 @@ const ITEM_TYPE_LABELS: Record<string, string> = {
   hood_cleaning_approaching: 'Hood cleaning due',
   suppression_semi_annual_due: 'Suppression service due',
   extinguisher_monthly_missed: 'Extinguisher check gap',
-  vendor_coi_expiring: 'Vendor COI expiring',
   inspection_readiness_gap: 'Inspection readiness gap',
   team_miss_clustering: 'Team checklist pattern',
   streak_break: 'Compliance streak break',
+  task_overdue: 'Task overdue',
+  task_skipped: 'Task skipped',
 };
 
 export function itemLabel(driftType: string): string {

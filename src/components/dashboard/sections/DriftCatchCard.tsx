@@ -41,10 +41,11 @@ const STAKES: Record<string, string> = {
   hood_cleaning_approaching:   'A lapsed hood cleaning is a fire marshal citation on sight.',
   suppression_semi_annual_due: 'A missed suppression service is a fire marshal citation on sight.',
   extinguisher_monthly_missed: 'A missed extinguisher check is a fire marshal citation on sight.',
-  vendor_coi_expiring:         'An expired COI voids your vendor coverage on a claim.',
   inspection_readiness_gap:    'A readiness gap becomes a finding the moment an inspector arrives.',
   team_miss_clustering:        'A pattern of misses becomes a systemic finding.',
   streak_break:                'A broken streak signals a compliance lapse to an inspector.',
+  task_overdue:                'An overdue task is documented proof of a lapse.',
+  task_skipped:                'A skipped task is documented proof of a lapse.',
 };
 
 function daysBetween(from: string, to: Date): number {

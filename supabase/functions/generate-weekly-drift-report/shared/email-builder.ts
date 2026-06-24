@@ -15,10 +15,11 @@ const DRIFT_LABELS: Record<string, string> = {
   hood_cleaning_approaching: 'Hood Cleaning Approaching',
   suppression_semi_annual_due: 'Suppression Semi-Annual Due',
   extinguisher_monthly_missed: 'Extinguisher Monthly Missed',
-  vendor_coi_expiring: 'Vendor COI Expiring',
   inspection_readiness_gap: 'Inspection Readiness Gap',
   team_miss_clustering: 'Team Miss Clustering',
   streak_break: 'Evidence Streak Break',
+  task_overdue: 'Task Overdue',
+  task_skipped: 'Task Skipped',
 };
 
 // Role → which pillars they see
