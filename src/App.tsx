@@ -276,7 +276,6 @@ const ViolationRadarPage = lazy(() => import('./pages/insights/ViolationRadar').
 const VendorPerformancePage = lazy(() => import('./pages/insights/VendorPerformance').then(m => ({ default: m.VendorPerformance })));
 const JurisdictionSignalsPage = lazy(() => import('./pages/insights/JurisdictionSignals').then(m => ({ default: m.JurisdictionSignals })));
 const TeamLeaderboardPage = lazy(() => import('./pages/insights/TeamLeaderboard').then(m => ({ default: m.TeamLeaderboard })));
-const OperationsIntelligencePage = lazy(() => import('./pages/insights/OperationsIntelligence').then(m => ({ default: m.OperationsIntelligence })));
 const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.ToolsHub })));
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
@@ -854,7 +853,6 @@ function AppRoutes() {
           <Route path="/insights/vendor-performance" element={<VendorPerformancePage />} />
           <Route path="/insights/signals" element={<JurisdictionSignalsPage />} />
           <Route path="/insights/leaderboard" element={<TeamLeaderboardPage />} />
-          <Route path="/insights/operations-intelligence" element={<OperationsIntelligencePage />} />
           {/* Stub routes for upcoming features */}
           <Route path="/vendors/review" element={<Navigate to="/documents?tab=vendor-business&status=pending" replace />} />
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
