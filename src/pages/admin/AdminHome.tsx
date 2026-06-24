@@ -20,7 +20,7 @@ import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import Button from '../../components/ui/Button';
 
-const LAUNCH_DATE = new Date('2026-05-05T00:00:00-07:00');
+const LAUNCH_DATE = new Date('2026-07-04T00:00:00-07:00');
 
 /* ------------------------------------------------------------------ */
 /*  Quick Access cards                                                 */
@@ -38,7 +38,6 @@ const QUICK_ACCESS: QuickCard[] = [
   { label: 'Sales Pipeline', path: '/admin/sales', icon: '📊', color: '#DC2626', bg: '#FEF2F2' },
   { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
   { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '🔔', color: '#D97706', bg: '#FFFBEB' },
-  { label: 'User Provisioning', path: '/admin/provisioning', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
   { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
   { label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧', color: '#7C3AED', bg: '#F5F3FF' },
   // POST-LAUNCH: TrialHealth hidden — dead legacy page with phantom columns
@@ -253,12 +252,14 @@ export default function AdminHome() {
             value: mrr === null ? '—' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
             color: 'text-gold',
             sub: 'Pre-launch',
+            path: '/admin/billing',
           },
           {
             label: 'Organizations',
             value: orgCount ?? '—',
             color: 'text-navy',
             sub: 'Active',
+            path: '/admin/orgs',
           },
           {
             label: 'Locations',
@@ -271,35 +272,53 @@ export default function AdminHome() {
             value: crawlLive === null || crawlTotal === null ? '—' : `${crawlLive}/${crawlTotal}`,
             color: crawlLive !== null && crawlLive > 0 ? 'text-green-800' : 'text-orange-700',
             sub: 'Live feeds',
+            path: '/admin/intelligence',
           },
           {
             label: 'Signals Pending',
             value: pendingSignals ?? '—',
             color: 'text-orange-700',
             sub: 'Awaiting review',
+            path: '/admin/intelligence-admin',
           },
           {
             label: 'Launch Countdown',
             value: countdown || '—',
             color: 'text-gold',
-            sub: 'May 5, 2026',
+            sub: 'July 4, 2026',
           },
-        ] as const).map((card, i) => (
-          <div
-            key={i}
-            className="bg-white border border-border_ui-warm rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center"
-          >
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">
-              {card.label}
+        ] as { label: string; value: string | number; color: string; sub: string; path?: string }[]).map((card, i) => {
+          const inner = (
+            <>
+              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.08em] mb-2">
+                {card.label}
+              </div>
+              <div className={`text-[28px] font-extrabold leading-none font-[DM_Sans,sans-serif] ${card.color}`}>
+                {card.value}
+              </div>
+              <div className="text-[11px] text-gray-400 mt-1.5">
+                {card.sub}
+              </div>
+            </>
+          );
+
+          return card.path ? (
+            <button
+              key={i}
+              onClick={() => navigate(card.path!)}
+              className="bg-white border border-border_ui-warm rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:border-gold hover:shadow-sm"
+            >
+              {inner}
+            </button>
+          ) : (
+            <div
+              key={i}
+              className="bg-white border border-border_ui-warm rounded-[10px] px-5 py-4 flex flex-col items-center justify-center text-center"
+            >
+              {inner}
             </div>
-            <div className={`text-[28px] font-extrabold leading-none font-[DM_Sans,sans-serif] ${card.color}`}>
-              {card.value}
-            </div>
-            <div className="text-[11px] text-gray-400 mt-1.5">
-              {card.sub}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── D. Three-column grid ─────────────────────────────── */}
