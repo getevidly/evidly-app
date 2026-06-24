@@ -396,6 +396,81 @@ Deno.serve(async (req: Request) => {
 
     const review_required = review_trigger_count > 0;
 
+    // ── Build conditioned_coverages per safeguard ──────────
+    // Join protective_safeguards[].applies_to_locations → declarations.locations[]
+    // to bind coverage dollar figures (building, BPP, BI) to each safeguard.
+    const locsWrapper = declResult.merged.locations;
+    const locsArr: Record<string, unknown>[] = Array.isArray(locsWrapper?.value)
+      ? locsWrapper.value as Record<string, unknown>[]
+      : [];
+
+    // Build loc_no → location map for O(1) lookup
+    const locByNo = new Map<string, Record<string, unknown>>();
+    for (const loc of locsArr) {
+      const locNo = loc.loc_no != null ? String(loc.loc_no) : null;
+      if (locNo) locByNo.set(locNo.toLowerCase(), loc);
+    }
+
+    // For each reconciled safeguard, attach conditioned_coverages
+    for (const sg of safeguards.items) {
+      const appliesTo = Array.isArray(sg.applies_to_locations)
+        ? sg.applies_to_locations as unknown[]
+        : [];
+      const coverages: { loc_no: string; line: string; amount: string | null; confidence: number | null }[] = [];
+
+      // Resolve target locations: "all" means all locations
+      const targetLocs: Record<string, unknown>[] = [];
+      for (const locRef of appliesTo) {
+        const ref = String(locRef).toLowerCase();
+        if (ref === "all") {
+          targetLocs.push(...locsArr);
+          break;
+        }
+        const loc = locByNo.get(ref);
+        if (loc) targetLocs.push(loc);
+      }
+
+      for (const loc of targetLocs) {
+        const locNo = String(loc.loc_no ?? "");
+        const conf = (loc.coverage_confidence ?? {}) as Record<string, unknown>;
+
+        // Building
+        const bldg = loc.scheduled_building;
+        if (bldg != null) {
+          coverages.push({
+            loc_no: locNo,
+            line: "building",
+            amount: String(bldg),
+            confidence: typeof conf.building === "number" ? conf.building : null,
+          });
+        }
+
+        // BPP
+        const bpp = loc.scheduled_bpp;
+        if (bpp != null) {
+          coverages.push({
+            loc_no: locNo,
+            line: "bpp",
+            amount: String(bpp),
+            confidence: typeof conf.bpp === "number" ? conf.bpp : null,
+          });
+        }
+
+        // BI
+        const bi = loc.bi_limit;
+        if (bi != null) {
+          coverages.push({
+            loc_no: locNo,
+            line: "bi",
+            amount: String(bi),
+            confidence: typeof conf.bi === "number" ? conf.bi : null,
+          });
+        }
+      }
+
+      sg.conditioned_coverages = coverages;
+    }
+
     // ── Collect integrity flags ──────────────────────────
     const integrityFlags: string[] = [];
     if (conflict_count > 0) integrityFlags.push(`${conflict_count}_conflicts`);

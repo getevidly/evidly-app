@@ -13,11 +13,12 @@ const EXTRACTION_PROMPT = `You are reading a commercial kitchen insurance policy
 Read the attached policy PDF and extract a structured JSON object with these top-level keys:
 
   "declarations": { carrier, policy_number, named_insured, policy_period, forms_list[], total_locations,
-       locations: [ { loc_no, address, scheduled_building, scheduled_bpp, coinsurance, occupancy,
+       locations: [ { loc_no, address, scheduled_building, scheduled_bpp, bi_limit, coinsurance, occupancy,
        cooking_type, solid_fuel (bool), liquor (bool),
        sprinkler_present ("present"|"absent"|"unstated"), fire_alarm_present ("present"|"absent"|"unstated"),
        suppression_present ("present"|"absent"|"unstated"),
-       spoilage_sublimit (per-loc amount, or "shared:<amount>" if a single aggregate) } ] },
+       spoilage_sublimit (per-loc amount, or "shared:<amount>" if a single aggregate),
+       coverage_confidence: { building: <0.0-1.0>, bpp: <0.0-1.0>, bi: <0.0-1.0> } } ] },
   "protective_safeguards": [ { code (P-1/P-2/P-5/etc), description, form_reference (e.g. CP 04 11),
        paragraph_ref, suspension_wording_present (bool), impairment_notice_required (bool),
        impairment_window (text if stated), applies_to_locations (array of loc_no where REQUIRED),
@@ -77,6 +78,14 @@ RULES:
 - SHARED vs PER-LOCATION SUBLIMITS: If a spoilage sublimit applies as a single aggregate across all
   locations, record it in policy_wide AND set each location's spoilage_sublimit to "shared:<amount>".
   If per-location, record the per-location amount in each location object.
+- BUSINESS INTERRUPTION (BI) LIMIT: Extract the Business Income / Business Interruption limit
+  per location as bi_limit. This may appear on the declarations page, a BPP schedule, or a
+  Business Income coverage form. If no BI limit is stated for a location, set bi_limit to null.
+- COVERAGE CONFIDENCE: For each location, emit a coverage_confidence object with three keys:
+  building (float 0.0-1.0), bpp (float 0.0-1.0), bi (float 0.0-1.0). Each value represents
+  your confidence that the extracted dollar figure is correct. Score 1.0 if the figure is
+  clearly printed and unambiguous; reduce toward 0.0 for blurred, partially obscured, or
+  ambiguous values. If the field is null (not present in the document), set confidence to null.
 - FORMS COMPLETENESS: Every form in declarations.forms_list[] MUST produce substantive requirements in
   the appropriate section (fire_findings, food_findings, or protective_safeguards). If you cannot
   extract a listed form's substance, add an integrity_observation with type "form_listed_not_extracted"

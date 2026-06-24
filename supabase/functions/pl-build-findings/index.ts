@@ -249,6 +249,7 @@ function evaluateTriggers(
   reconciled: Rec,
   templates: FindingTemplate[],
   registry: Map<string, StandardRow>,
+  conditionStatusMap?: Map<string, string>,
 ): TriggeredFinding[] {
   const results: TriggeredFinding[] = [];
 
@@ -277,10 +278,17 @@ function evaluateTriggers(
           (s.suspension_wording_present === true || norm(s.suspension_wording_present) === "true"),
       );
       if (match) {
+        // Resolve condition status from EVE evaluation (drift_catches / pl_pse_conditions).
+        // No entry = no drift_catches rows for this condition — the default case for
+        // broker outreach (non-client, initial scan). This is a neutral factual statement,
+        // distinct from "proof absent" (which implies monitored-and-missing).
+        const symbolCode = norm(match.code);
+        const NO_EVIDENCE_STATUS = "No tamper-evident proof of maintenance is currently on file.";
+        const condStatus = conditionStatusMap?.get(symbolCode) ?? NO_EVIDENCE_STATUS;
         results.push({
           template: tpl,
           flag: tpl.default_flag,
-          slots: buildPseSlots(match, tpl),
+          slots: buildPseSlots(match, tpl, condStatus),
           sourceRefs: [match],
           consumedKeys: [sgItemKey(match)],
         });
@@ -793,7 +801,31 @@ function evaluateTriggers(
 
 // ── PSE slot builder ─────────────────────────────────────
 
-function buildPseSlots(safeguard: Rec | null, tpl: FindingTemplate): Record<string, string> {
+// Confidence threshold: below this, dollar figures render as "flagged for review"
+const COVERAGE_CONFIDENCE_THRESHOLD = 0.7;
+
+/** Render a dollar amount with confidence gating. Below threshold → "flagged for review". */
+function gatedAmount(amount: string | null, confidence: number | null): string {
+  if (amount == null || amount === "") return "";
+  // No confidence data → flag conservatively
+  if (confidence == null || confidence < COVERAGE_CONFIDENCE_THRESHOLD) {
+    return "flagged for review";
+  }
+  return amount;
+}
+
+interface ConditionedCoverage {
+  loc_no: string;
+  line: string;
+  amount: string | null;
+  confidence: number | null;
+}
+
+function buildPseSlots(
+  safeguard: Rec | null,
+  tpl: FindingTemplate,
+  conditionStatusSummary?: string,
+): Record<string, string> {
   const slots: Record<string, string> = {
     citation_verified: tpl.citation_verified ?? "",
     pse_form: "",
@@ -801,6 +833,13 @@ function buildPseSlots(safeguard: Rec | null, tpl: FindingTemplate): Record<stri
     pse_para: "",
     pse_desc_short: "",
     pse_desc_plain: "",
+    building_limit: "",
+    bpp_limit: "",
+    bi_limit: "",
+    condition_status_summary: conditionStatusSummary ?? "",
+    pse_notice_48h: "Written notice required within the time the policy requires (commonly 48 hours) if a listed system goes offline. Verbal notice to a broker does not satisfy this requirement.",
+    pse_control_flag: "",
+    pse_scope_flag: "",
   };
   if (safeguard) {
     slots.pse_form = String(safeguard.form_reference ?? "");
@@ -808,6 +847,50 @@ function buildPseSlots(safeguard: Rec | null, tpl: FindingTemplate): Record<stri
     slots.pse_para = String(safeguard.paragraph_ref ?? "");
     slots.pse_desc_short = shortDesc(safeguard.description);
     slots.pse_desc_plain = String(safeguard.description ?? "");
+
+    // ── Coverage binding with confidence gating ──────────
+    const coverages = Array.isArray(safeguard.conditioned_coverages)
+      ? safeguard.conditioned_coverages as ConditionedCoverage[]
+      : [];
+
+    // Aggregate per line across locations (take first non-null for single-loc;
+    // for multi-loc, list all)
+    const byLine: Record<string, { amounts: string[]; raw: string[] }> = {
+      building: { amounts: [], raw: [] },
+      bpp: { amounts: [], raw: [] },
+      bi: { amounts: [], raw: [] },
+    };
+
+    for (const cov of coverages) {
+      const line = cov.line;
+      if (!byLine[line]) continue;
+      const gated = gatedAmount(cov.amount, cov.confidence);
+      if (gated) {
+        byLine[line].amounts.push(
+          coverages.filter((c) => c.line === line).length > 1
+            ? `Loc ${cov.loc_no}: ${gated}`
+            : gated,
+        );
+        byLine[line].raw.push(cov.amount ?? "");
+      }
+    }
+
+    slots.building_limit = byLine.building.amounts.join("; ") || "";
+    slots.bpp_limit = byLine.bpp.amounts.join("; ") || "";
+    slots.bi_limit = byLine.bi.amounts.join("; ") || "";
+
+    // ── Scope flag: non-ISO form or extends beyond fire ──
+    const formRef = norm(safeguard.form_reference);
+    if (formRef && formRef !== "cp 04 11") {
+      slots.pse_scope_flag = "Non-ISO protective-safeguards form — terms differ from the ISO standard, may extend beyond fire.";
+    }
+
+    // ── Control flag: tenant/landlord question ──────────
+    // Identify the "over which you have control" question — present in CP 04 11
+    const descLower = norm(safeguard.description);
+    if (descLower.includes("control") || descLower.includes("tenant") || descLower.includes("landlord")) {
+      slots.pse_control_flag = "This safeguard references systems 'over which you have control' — the tenant/landlord question should be identified for this location.";
+    }
   }
   return slots;
 }
@@ -906,11 +989,63 @@ Deno.serve(async (req: Request) => {
       (regRows ?? []).map((r: StandardRow) => [String(r.topic), r]),
     );
 
+    // ── Load PSE condition status from drift_catches (EVE evaluation) ──
+    // This status originates from pl-pse-eval, NOT from PL's own reading.
+    // PL's voice stays on what the POLICY conditions — never on whether the kitchen complied.
+    const conditionStatusMap = new Map<string, string>();
+    {
+      // Resolve intake → org → locations to find relevant drift_catches
+      const { data: intakeRow } = await supabase
+        .from("policy_lens_intakes")
+        .select("organization_id")
+        .eq("id", run.intake_id)
+        .single();
+
+      if (intakeRow?.organization_id) {
+        const { data: driftRows } = await supabase
+          .from("drift_catches")
+          .select("source_record_id, actual_value, severity, status")
+          .eq("org_id", intakeRow.organization_id)
+          .eq("dimension", "pse_condition")
+          .eq("drift_type", "compliance")
+          .in("status", ["open", "reduced", "proven"]);
+
+        if (driftRows && driftRows.length > 0) {
+          // Resolve symbol_code from pl_pse_conditions for each drift catch
+          const condIds = driftRows.map((d: Rec) => d.source_record_id).filter(Boolean) as string[];
+          if (condIds.length > 0) {
+            const { data: condRows } = await supabase
+              .from("pl_pse_conditions")
+              .select("id, symbol_code")
+              .in("id", condIds);
+
+            const condIdToSymbol = new Map<string, string>();
+            for (const c of (condRows ?? []) as Rec[]) {
+              condIdToSymbol.set(String(c.id), norm(c.symbol_code));
+            }
+
+            for (const d of driftRows as Rec[]) {
+              const symbol = condIdToSymbol.get(String(d.source_record_id));
+              if (symbol) {
+                // Map severity → display status
+                const sev = norm(d.severity);
+                let status = "evaluated — status documented";
+                if (sev === "low") status = "in force — proof on file";
+                else if (sev === "medium") status = "approaching drift — proof due";
+                else if (sev === "high") status = "proof absent — gap documented";
+                conditionStatusMap.set(symbol, status);
+              }
+            }
+          }
+        }
+      }
+    }
+
     // ── Delete existing findings for idempotent re-run ───
     await supabase.from("pl_findings").delete().eq("run_id", run_id);
 
     // ── Evaluate triggers ────────────────────────────────
-    const triggered = evaluateTriggers(reconciled, templates, registry);
+    const triggered = evaluateTriggers(reconciled, templates, registry, conditionStatusMap);
 
     // ── Insert findings ──────────────────────────────────
     const byKey: Record<string, number> = {};

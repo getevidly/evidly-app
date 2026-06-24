@@ -168,6 +168,7 @@ Deno.serve(async (req) => {
         address: loc.address ?? null,
         scheduled_building: loc.scheduled_building ?? null,
         scheduled_bpp: loc.scheduled_bpp ?? null,
+        bi_limit: loc.bi_limit ?? null,
         coinsurance: loc.coinsurance ?? null,
         spoilage_sublimit: loc.spoilage_sublimit ?? null,
       }));
