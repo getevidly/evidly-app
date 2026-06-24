@@ -1,15 +1,23 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { sendEmail } from '../_shared/email.ts';
+import { generateDigestHtml, type DigestData, type DigestLocationScore } from '../_shared/digest-template.ts';
+
 let corsHeaders = getCorsHeaders(null);
 
 /**
- * ai-weekly-digest — Scheduled Monday 6am
+ * ai-weekly-digest — Scheduled Monday 3pm UTC (repointed from weekly-digest)
  *
  * Generates personalized digest per user based on role.
  * Compiles metrics, insights, upcoming deadlines.
  * Calls Claude API to create narrative summary.
- * Delivers via Resend email + in-app notification.
+ * Delivers via polished branded email (_shared/email.ts + _shared/digest-template.ts)
+ * and in-app record (ai_weekly_digests + intelligence_insights).
+ *
+ * Opt-out: skips users with digest_opt_out=true in notification_preferences.
+ * Email: uses _shared/email.ts (Resend, from noreply@getevidly.com).
+ * Template: uses _shared/digest-template.ts (polished table-based HTML).
  */
 Deno.serve(async (req: Request) => {
   corsHeaders = getCorsHeaders(req.headers.get('origin'));
@@ -19,7 +27,6 @@ Deno.serve(async (req: Request) => {
 
   try {
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
-    const resendKey = Deno.env.get("RESEND_API_KEY");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -37,6 +44,9 @@ Deno.serve(async (req: Request) => {
     periodEnd.setHours(0, 0, 0, 0); // Monday 00:00
     const periodStart = new Date(periodEnd.getTime() - 7 * 86400000);
 
+    const weekStartStr = periodStart.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const weekEndStr = periodEnd.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
     // Get all organizations with active subscriptions
     const { data: orgs } = await supabase
       .from("organizations")
@@ -47,6 +57,8 @@ Deno.serve(async (req: Request) => {
     }
 
     let digestsCreated = 0;
+    let emailsSent = 0;
+    let optedOut = 0;
 
     for (const org of orgs) {
       // Get organization's locations
@@ -65,6 +77,17 @@ Deno.serve(async (req: Request) => {
         .eq("organization_id", org.id);
 
       if (!users?.length) continue;
+
+      // ── Digest opt-out check (batch query) ────────────────────
+      const userIds = users.map((u: any) => u.id);
+      const { data: optOutRows } = await supabase
+        .from("notification_preferences")
+        .select("user_id")
+        .in("user_id", userIds)
+        .eq("organization_id", org.id)
+        .eq("digest_opt_out", true);
+
+      const optedOutUserIds = new Set((optOutRows || []).map((r: any) => r.user_id));
 
       // Gather org-wide metrics for the week
       const locationIds = locations.map((l: any) => l.id);
@@ -88,15 +111,12 @@ Deno.serve(async (req: Request) => {
             .select("location_id, severity, status", { count: "exact" })
             .in("location_id", locationIds)
             .gte("created_at", periodStart.toISOString()),
+          // Fixed: use compliance_documents (live) instead of documents (legacy)
           supabase
-            .from("documents")
-            .select("location_id, name, expiration_date")
-            .in("location_id", locationIds)
-            .not("expiration_date", "is", null)
-            .lte(
-              "expiration_date",
-              new Date(now.getTime() + 30 * 86400000).toISOString(),
-            ),
+            .from("compliance_documents")
+            .select("organization_id, name, expiry_date, status")
+            .eq("organization_id", org.id)
+            .in("status", ["expiring", "expired"]),
           supabase
             .from("ai_insights")
             .select("title, severity, status")
@@ -119,6 +139,29 @@ Deno.serve(async (req: Request) => {
         (i: any) => i.status === "new",
       ).length;
 
+      // Build per-location status for digest template
+      const locationScores: DigestLocationScore[] = locations.map((loc: any) => {
+        const locIncidents = (incidents.data || []).filter(
+          (i: any) => i.location_id === loc.id,
+        );
+        const locOutOfRange = (tempLogs.data || []).filter(
+          (t: any) => t.location_id === loc.id &&
+            (t.status === "out_of_range" || t.status === "critical"),
+        ).length;
+        const hasCritical = locIncidents.some((i: any) => i.severity === "critical");
+
+        if (hasCritical) return { name: loc.name, status: "Critical" as const };
+        if (locOutOfRange > 0 || locIncidents.length > 0) return { name: loc.name, status: "Needs Attention" as const };
+        return { name: loc.name, status: "Inspection Ready" as const };
+      });
+
+      const onTimePercent = totalTemps > 0
+        ? Math.round(((totalTemps - outOfRangeTemps) / totalTemps) * 100)
+        : 100;
+      const checklistPercent = totalChecklists > 0
+        ? Math.round((completedChecklists / totalChecklists) * 100)
+        : 100;
+
       const metricsContext = `
 Organization: ${org.name}
 Period: ${periodStart.toLocaleDateString()} — ${periodEnd.toLocaleDateString()}
@@ -126,9 +169,9 @@ Locations: ${locations.map((l: any) => l.name).join(", ")}
 
 Metrics:
 - Temperature logs recorded: ${totalTemps} (${outOfRangeTemps} out of range)
-- Checklists: ${completedChecklists}/${totalChecklists} completed (${totalChecklists > 0 ? Math.round((completedChecklists / totalChecklists) * 100) : 0}%)
+- Checklists: ${completedChecklists}/${totalChecklists} completed (${checklistPercent}%)
 - New incidents this week: ${newIncidents}
-- Documents expiring within 30 days: ${expiringDocs}
+- Documents expiring or expired: ${expiringDocs}
 - Active AI insights: ${activeInsights}
 
 Top AI Insights:
@@ -137,6 +180,12 @@ ${(insights.data || []).slice(0, 5).map((i: any) => `  - [${i.severity}] ${i.tit
 
       // For each user, generate a role-appropriate digest
       for (const user of users) {
+        // ── Opt-out check ──
+        if (optedOutUserIds.has(user.id)) {
+          optedOut++;
+          continue;
+        }
+
         let digestContent: any;
 
         if (anthropicKey) {
@@ -219,7 +268,7 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
                 : [],
             upcoming:
               expiringDocs > 0
-                ? [`${expiringDocs} documents expiring within 30 days`]
+                ? [`${expiringDocs} documents expiring or expired`]
                 : [],
             score_trend: "Review dashboard for current scores",
             recommendation:
@@ -252,7 +301,7 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
 
         digestsCreated++;
 
-        // Phase 3 (V8 fix): write notification to intelligence_insights
+        // Write notification to intelligence_insights
         await supabase.from("intelligence_insights").insert({
           organization_id: org.id,
           source_type: "ai_digest",
@@ -268,40 +317,49 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
           raw_source_data: { type: "digest", user_id: user.id },
         });
 
-        // Send email via Resend if configured
-        if (resendKey) {
-          try {
-            // Get user email
-            const { data: authUser } = await supabase.auth.admin.getUserById(
-              user.id,
-            );
-            const email = authUser?.user?.email;
+        // ── Send polished email via _shared/email.ts ──────────────
+        try {
+          const { data: authUser } = await supabase.auth.admin.getUserById(
+            user.id,
+          );
+          const email = authUser?.user?.email;
 
-            if (email) {
-              await fetch("https://api.resend.com/emails", {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${resendKey}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  from: "EvidLY <digest@getevidly.com>",
-                  to: email,
-                  subject: `Weekly Compliance Digest — ${org.name}`,
-                  html: `
-                    <h2>Weekly Compliance Digest</h2>
-                    <p><strong>${org.name}</strong> — ${periodStart.toLocaleDateString()} to ${periodEnd.toLocaleDateString()}</p>
-                    <p>${digestContent.summary}</p>
-                    <h3>Highlights</h3>
-                    <ul>${(digestContent.highlights || []).map((h: string) => `<li>${h}</li>`).join("")}</ul>
-                    ${digestContent.concerns?.length ? `<h3>Needs Attention</h3><ul>${digestContent.concerns.map((c: string) => `<li>${c}</li>`).join("")}</ul>` : ""}
-                    <p><strong>Recommendation:</strong> ${digestContent.recommendation}</p>
-                    <p><a href="https://app.getevidly.com/dashboard">View Dashboard →</a></p>
-                  `,
-                }),
-              });
+          if (email) {
+            // Build DigestData for polished template
+            const digestData: DigestData = {
+              orgName: org.name,
+              weekStart: weekStartStr,
+              weekEnd: weekEndStr,
+              locations: locationScores,
+              highlights: digestContent.highlights || [],
+              concerns: digestContent.concerns || [],
+              tempStats: {
+                total: totalTemps,
+                onTimePercent,
+                outOfRange: outOfRangeTemps,
+                weekOverWeek: 0, // no prior-week comparison yet
+              },
+              checklistStats: {
+                completed: completedChecklists,
+                required: totalChecklists,
+                percent: checklistPercent,
+                weekOverWeek: 0,
+              },
+              aiSummary: digestContent.summary,
+              aiRecommendation: digestContent.recommendation,
+              upcoming: digestContent.upcoming,
+            };
 
-              // Update delivery method
+            const html = generateDigestHtml(digestData);
+
+            const result = await sendEmail({
+              to: email,
+              subject: `Weekly Compliance Digest — ${org.name}`,
+              html,
+            });
+
+            if (result) {
+              emailsSent++;
               await supabase
                 .from("ai_weekly_digests")
                 .update({ delivered_via: "email" })
@@ -311,12 +369,12 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
                   periodStart.toISOString().split("T")[0],
                 );
             }
-          } catch (emailErr) {
-            console.error(
-              `[ai-weekly-digest] Email error for ${user.full_name}:`,
-              emailErr,
-            );
           }
+        } catch (emailErr) {
+          console.error(
+            `[ai-weekly-digest] Email error for ${user.full_name}:`,
+            emailErr,
+          );
         }
       }
     }
@@ -325,6 +383,8 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
       success: true,
       organizations_processed: orgs.length,
       digests_created: digestsCreated,
+      emails_sent: emailsSent,
+      opted_out: optedOut,
       period: {
         start: periodStart.toISOString(),
         end: periodEnd.toISOString(),
