@@ -55,10 +55,10 @@ interface NavSection {
 // ═══════════════════════════════════════════════════════════
 const NAV_SECTIONS: NavSection[] = [
   {
-    title: 'Tenants',
+    title: 'Customers',
     items: [
-      { label: 'Organizations',       path: '/admin/orgs' },
       { label: 'Client Onboarding',   path: '/admin/onboarding' },
+      { label: 'Organizations',       path: '/admin/orgs' },
       { label: 'Users',               path: '/admin/users' },
     ],
   },
