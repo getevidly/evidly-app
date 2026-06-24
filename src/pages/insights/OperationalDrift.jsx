@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useOpenDrift } from '../../hooks/useOpenDrift';
 import { useDashboardLocation } from '../../contexts/DashboardLocationContext';
 import { getDriftLabel, getSourceTableLabel } from '../../constants/driftTypeLabels';
+import { supabase } from '../../lib/supabase';
 
 /* ── Constants ─────────────────────────────────────────── */
 
@@ -113,12 +114,65 @@ function AdvisorBlock({ items, pillarLabel }) {
   );
 }
 
-function DriftItem({ item }) {
+function DriftItem({ item, onResolved }) {
   const [showWhy, setShowWhy] = useState(false);
+  const [resolving, setResolving] = useState(false);
+  const [sealResult, setSealResult] = useState(null);
+  const [error, setError] = useState(null);
   const label = getDriftLabel(item.drift_type, { form: 'noun' });
   const days = daysSince(item.detected_at);
   const dayLabel = days === 0 ? 'today' : days === 1 ? '1 day ago' : `${days} days ago`;
   const sourceLabel = getSourceTableLabel(item.source_table);
+
+  async function handleResolve() {
+    setResolving(true);
+    setError(null);
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('seal-drift-resolution', {
+        body: { drift_catch_id: item.id },
+      });
+      if (fnErr) {
+        setError(fnErr.message || 'Failed to seal resolution');
+        setResolving(false);
+        return;
+      }
+      if (data?.error) {
+        setError(data.error);
+        setResolving(false);
+        return;
+      }
+      setSealResult(data);
+      setResolving(false);
+      // Remove from parent list after brief confirmation
+      setTimeout(() => onResolved(item.id), 2000);
+    } catch (e) {
+      setError(e.message || 'Unexpected error');
+      setResolving(false);
+    }
+  }
+
+  // ── Sealed confirmation state ──
+  if (sealResult) {
+    return (
+      <div style={{
+        border: '1px solid #bbf7d0', borderRadius: 8,
+        padding: '16px', marginBottom: 12, background: '#f0fdf4',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{
+            display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '2px 8px',
+            borderRadius: 4, background: '#dcfce7', color: '#16a34a', border: '1px solid #bbf7d0',
+          }}>
+            Proven
+          </span>
+          <span style={{ fontWeight: 700, fontSize: 15 }}>{label}</span>
+        </div>
+        <div style={{ fontSize: 12, color: '#15803d', marginTop: 6 }}>
+          Sealed · {sealResult.content_hash?.substring(0, 16)}…
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -140,18 +194,30 @@ function DriftItem({ item }) {
           </div>
         </div>
 
-        {/* Action button — disabled pending Commit 3 Prove mechanism */}
+        {/* Prove button — calls seal-drift-resolution */}
         <button
-          disabled
+          onClick={handleResolve}
+          disabled={resolving}
           style={{
             padding: '6px 16px', fontSize: 13, fontWeight: 600,
-            border: '1px solid #cbd5e1', borderRadius: 6, background: '#f8fafc',
-            color: '#94a3b8', cursor: 'not-allowed', whiteSpace: 'nowrap',
+            border: resolving ? '1px solid #cbd5e1' : '1px solid #16a34a',
+            borderRadius: 6,
+            background: resolving ? '#f8fafc' : '#f0fdf4',
+            color: resolving ? '#94a3b8' : '#16a34a',
+            cursor: resolving ? 'not-allowed' : 'pointer',
+            whiteSpace: 'nowrap',
           }}
         >
-          Mark handled
+          {resolving ? 'Sealing…' : 'Mark handled'}
         </button>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div style={{ fontSize: 12, color: '#dc2626', marginTop: 8 }}>
+          {error}
+        </div>
+      )}
 
       {/* Trend line */}
       {(item.expected_value || item.actual_value) && (
@@ -188,7 +254,7 @@ function DriftItem({ item }) {
   );
 }
 
-function PillarSection({ title, items, pillarLabel, accentColor }) {
+function PillarSection({ title, items, pillarLabel, accentColor, onResolved }) {
   return (
     <section style={{ marginBottom: 32 }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 12 }}>
@@ -210,7 +276,7 @@ function PillarSection({ title, items, pillarLabel, accentColor }) {
         <>
           <AdvisorBlock items={items} pillarLabel={pillarLabel} />
           {prioritize(items).map(item => (
-            <DriftItem key={item.id} item={item} />
+            <DriftItem key={item.id} item={item} onResolved={onResolved} />
           ))}
         </>
       )}
@@ -222,7 +288,15 @@ function PillarSection({ title, items, pillarLabel, accentColor }) {
 
 export function OperationalDrift() {
   const { selectedLocationId } = useDashboardLocation();
-  const { foodItems, fireItems, loading } = useOpenDrift(selectedLocationId);
+  const { foodItems: rawFood, fireItems: rawFire, loading } = useOpenDrift(selectedLocationId);
+  const [resolvedIds, setResolvedIds] = useState(new Set());
+
+  const foodItems = rawFood.filter(i => !resolvedIds.has(i.id));
+  const fireItems = rawFire.filter(i => !resolvedIds.has(i.id));
+
+  function handleResolved(id) {
+    setResolvedIds(prev => new Set(prev).add(id));
+  }
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px', fontFamily: "'Montserrat', sans-serif" }}>
@@ -267,6 +341,7 @@ export function OperationalDrift() {
             items={foodItems}
             pillarLabel="Food Safety"
             accentColor="#16a34a"
+            onResolved={handleResolved}
           />
 
           {/* ── Fire Safety section — fully self-contained ── */}
@@ -275,6 +350,7 @@ export function OperationalDrift() {
             items={fireItems}
             pillarLabel="Fire Safety"
             accentColor="#dc2626"
+            onResolved={handleResolved}
           />
         </>
       )}
