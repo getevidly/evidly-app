@@ -242,6 +242,10 @@ const I: Record<string, NavItem> = {
     id: 'in-audit', label: 'Audit Log', path: '/audit-trail', icon: '🔒',
     roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
   },
+  'in-drift': {
+    id: 'in-drift', label: 'Operational Drift', path: '/insights/operational-drift', icon: '📡',
+    roles: [], description: 'Open operational drift across Food Safety and Fire Safety — tracked separately, never blended.',
+  },
 
   // ── Tools section items ─────────────────────────────────
 
@@ -358,7 +362,7 @@ const SECTION_DEFS: Record<string, SectionDef> = {
     tooltipTitle: 'Insights',
     tooltipDescription: 'Food Safety Advisor, Fire Safety Advisor, inspection forecast, trends, benchmarks, leaderboard, reporting, audit log, and IoT.',
     // 'in-reports' removed — top-level Reports nav item is the canonical entry.
-    itemIds: ['in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-audit'],
+    itemIds: ['in-drift', 'in-ai', 'in-forecast', 'in-trends', 'in-bench', 'in-leader', 'in-audit'],
     path: '/insights',
   },
   tools: {

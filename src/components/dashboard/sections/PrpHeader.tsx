@@ -10,6 +10,7 @@
  * Single-location org: identical to pre-Phase 3 behavior.
  */
 
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
@@ -91,7 +92,7 @@ export function PrpHeader() {
     <div>
       <div className="prp-accent" />
       <div className="prp-row">
-        <div className="prp predict">
+        <Link to="/insights/operational-drift" className="prp predict" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
           <div className="prp-icon"><i className="ti ti-trending-up" /></div>
           <div>
             <p className="prp-label">What's Coming</p>
@@ -109,7 +110,7 @@ export function PrpHeader() {
             )}
             {driftSub && <p className="prp-sub">{driftSub}</p>}
           </div>
-        </div>
+        </Link>
         <div className="prp reduce">
           <div className="prp-icon"><i className="ti ti-shield-check" /></div>
           <div>
