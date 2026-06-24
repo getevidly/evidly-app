@@ -82,6 +82,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Content & Intelligence',
     items: [
       { label: 'EvidLY Intelligence',       path: '/admin/intelligence',              perm: 'canIntelligence' },
+      { label: 'Advisor Briefings',        path: '/admin/advisor-briefings' },
       { label: 'ScoreTable Admin',          path: '/admin/scoretable' },
     ],
   },

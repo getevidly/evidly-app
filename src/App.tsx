@@ -199,6 +199,7 @@ const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const FeatureBaselineTracker = lazy(() => import('./pages/admin/FeatureBaselineTracker'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const PolicyLensQueue = lazy(() => import('./pages/admin/PolicyLensQueue'));
+const AdvisorBriefings = lazy(() => import('./pages/admin/AdvisorBriefings'));
 const ExtractionDetail = lazy(() => import('./pages/admin/ExtractionDetail'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
@@ -829,6 +830,7 @@ function AppRoutes() {
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />
           <Route path="/admin/staff" element={<StaffRoles />} />
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
+          <Route path="/admin/advisor-briefings" element={<AdvisorBriefings />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/violation-outreach" element={<SalesGuard><ViolationOutreach /></SalesGuard>} />
           <Route path="/admin/email-sequences" element={<SalesGuard><EmailSequenceManager /></SalesGuard>} />
