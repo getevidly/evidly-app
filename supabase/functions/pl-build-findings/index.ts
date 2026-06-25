@@ -830,6 +830,7 @@ function buildPseSlots(
     citation_verified: tpl.citation_verified ?? "",
     pse_form: "",
     pse_symbol: "",
+    pse_form_edition: "",
     pse_para: "",
     pse_desc_short: "",
     pse_desc_plain: "",
@@ -840,10 +841,12 @@ function buildPseSlots(
     pse_notice_48h: "Written notice required within the time the policy requires (commonly 48 hours) if a listed system goes offline. Verbal notice to a broker does not satisfy this requirement.",
     pse_control_flag: "",
     pse_scope_flag: "",
+    no_causation: "Under a Protective Safeguard Endorsement, the insurer may deny the entire fire claim even if the safeguard lapse did not cause the loss. Courts have consistently upheld this \u2014 the endorsement is a condition of coverage, not a causation requirement (Vineland, Burmac, Razuki v. AmGUARD).",
   };
   if (safeguard) {
     slots.pse_form = String(safeguard.form_reference ?? "");
     slots.pse_symbol = String(safeguard.code ?? "");
+    slots.pse_form_edition = String(safeguard.form_edition ?? "");
     slots.pse_para = String(safeguard.paragraph_ref ?? "");
     slots.pse_desc_short = shortDesc(safeguard.description);
     slots.pse_desc_plain = String(safeguard.description ?? "");
@@ -881,8 +884,10 @@ function buildPseSlots(
 
     // ── Scope flag: non-ISO form or extends beyond fire ──
     const formRef = norm(safeguard.form_reference);
-    if (formRef && formRef !== "cp 04 11") {
-      slots.pse_scope_flag = "Non-ISO protective-safeguards form — terms differ from the ISO standard, may extend beyond fire.";
+    if (formRef && formRef !== "cp 04 11" && formRef !== "bp 04 30" && formRef !== "unknown") {
+      slots.pse_scope_flag = "Non-ISO protective-safeguards form \u2014 terms may differ from the ISO standard and may extend beyond fire.";
+    } else if (formRef === "unknown") {
+      slots.pse_scope_flag = "PSE form could not be determined from the document \u2014 flagged for resolution.";
     }
 
     // ── Control flag: tenant/landlord question ──────────
@@ -893,6 +898,43 @@ function buildPseSlots(
     }
   }
   return slots;
+}
+
+// ── Applicability state (Correctness Spec §C1) ───────────
+// Derives from the PSE schedule (what the policy conditions)
+// and EVE evaluation (whether sealed proof exists).
+// Three gradable states + unknown:
+//   applicable_evidenced   — scheduled AND proof on file
+//   applicable_unevidenced — scheduled, no proof (gap)
+//   not_applicable         — not scheduled (excluded from denominator)
+//   unknown                — in scope but undetermined
+function determineApplicabilityState(
+  finding: TriggeredFinding,
+  conditionStatusMap: Map<string, string>,
+): string {
+  const sid = finding.template.signal_id;
+
+  // PSE-specific findings: derive evidence state from EVE condition evaluation
+  if (sid === "UB-01-FR-01") {
+    const srcRec = finding.sourceRefs[0] as Rec | undefined;
+    const symbolCode = srcRec ? norm(srcRec.code) : "p-5";
+    const status = conditionStatusMap.get(symbolCode) ?? "";
+    if (status.includes("in force") || status.includes("approaching drift")) {
+      return "applicable_evidenced";
+    }
+    return "applicable_unevidenced";
+  }
+  if (sid === "FR-18-SAT") {
+    const status = conditionStatusMap.get("p-1") ?? "";
+    if (status.includes("in force") || status.includes("approaching drift")) {
+      return "applicable_evidenced";
+    }
+    return "applicable_unevidenced";
+  }
+
+  // Non-PSE findings: flag-based heuristic
+  if (finding.flag === "satisfied") return "applicable_evidenced";
+  return "applicable_unevidenced";
 }
 
 // ── Main handler ─────────────────────────────────────────
@@ -1069,6 +1111,7 @@ Deno.serve(async (req: Request) => {
         finding_key: t.template.finding_key,
         part: t.template.part,
         flag: t.flag,
+        applicability_state: determineApplicabilityState(t, conditionStatusMap),
         agent_payload: agentPayload,
         kitchen_payload: kitchenPayload,
         correlation,
@@ -1104,12 +1147,48 @@ Deno.serve(async (req: Request) => {
       : 0;
     const report_complete = unmapped_count === 0;
 
+    // ── Scoped alignment (Correctness Spec §C2) ──────────────
+    // alignment = applicable_evidenced / (applicable_evidenced + applicable_unevidenced)
+    // not_applicable and unknown are in NEITHER term.
+    const applicable_evidenced_count = rows.filter(
+      (r) => r.applicability_state === "applicable_evidenced",
+    ).length;
+    const applicable_unevidenced_count = rows.filter(
+      (r) => r.applicability_state === "applicable_unevidenced",
+    ).length;
+    const unknown_count = rows.filter(
+      (r) => r.applicability_state === "unknown",
+    ).length;
+    const scoped_denominator =
+      applicable_evidenced_count + applicable_unevidenced_count;
+    const alignment =
+      scoped_denominator > 0
+        ? Math.round(
+            (applicable_evidenced_count / scoped_denominator) * 1000,
+          ) / 1000
+        : null;
+
+    // Scheduled symbols from the reconciled protective_safeguards
+    const scheduledSymbols = asArr(reconciled.protective_safeguards)
+      .map((s: Rec) => String(s.code ?? ""))
+      .filter(Boolean);
+
+    const alignmentObj = {
+      applicable_evidenced: applicable_evidenced_count,
+      applicable_unevidenced: applicable_unevidenced_count,
+      unknown: unknown_count,
+      scoped_denominator,
+      alignment,
+      scheduled_symbols: scheduledSymbols,
+    };
+
     const coverageObj = {
       extracted_count,
       mapped_count,
       unmapped_count,
       coverage_ratio,
       unmapped,
+      alignment: alignmentObj,
     };
 
     await supabase
@@ -1132,6 +1211,7 @@ Deno.serve(async (req: Request) => {
         findings_written: rows.length,
         by_key: byKey,
         coverage: { extracted_count, mapped_count, unmapped_count, coverage_ratio },
+        alignment: alignmentObj,
         report_complete,
       },
       200,

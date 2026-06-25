@@ -19,7 +19,9 @@ Read the attached policy PDF and extract a structured JSON object with these top
        suppression_present ("present"|"absent"|"unstated"),
        spoilage_sublimit (per-loc amount, or "shared:<amount>" if a single aggregate),
        coverage_confidence: { building: <0.0-1.0>, bpp: <0.0-1.0>, bi: <0.0-1.0> } } ] },
-  "protective_safeguards": [ { code (P-1/P-2/P-5/etc), description, form_reference (e.g. CP 04 11),
+  "protective_safeguards": [ { code (P-1/P-2/P-5/P-9/etc), description, form_reference (e.g. CP 04 11),
+       form_edition (edition string as printed on the form, e.g. "09 17" from "CP 04 11 09 17";
+       set to "unknown" if not determinable — never default to an assumed edition),
        paragraph_ref, suspension_wording_present (bool), impairment_notice_required (bool),
        impairment_window (text if stated), applies_to_locations (array of loc_no where REQUIRED),
        satisfied_at_locations (array of loc_no where status == "present"),
@@ -111,6 +113,24 @@ RULES:
     interval → §12.2.1 (semi-annual baseline), NOT Table 12.4. If an edition error AND a genuine
     Table 12.4 cleaning-interval error are both present → emit BOTH. NEVER use either type as a
     catch-all for any NFPA discrepancy.
+- PSE FORM IDENTITY: Capture the PSE form number AND its edition as separate fields (form_reference
+  and form_edition). ISO-standard PSE forms are CP 04 11 (commercial property) and BP 04 30 (BOP) —
+  treat both as ISO-standard. If the form is neither CP 04 11 nor BP 04 30 (e.g. a carrier's
+  proprietary or manuscript endorsement), note the actual form identifier in form_reference.
+  Proprietary/manuscript forms often carry broader exclusions (extending beyond fire) and different
+  notification windows — downstream processing will flag them. If the form number or edition cannot
+  be determined from the document, set form_reference or form_edition to "unknown" — NEVER default
+  to "CP 04 11" or assume ISO.
+- P-5 vs P-9 SYMBOL ASSIGNMENT: P-5 ("Automatic Commercial Cooking Exhaust and Extinguishing System")
+  covers BOTH the exhaust/hood leg AND the wet-chemical extinguishing/suppression leg as ONE symbol.
+  P-9 ("Any Other Specifically Described Protective System") is the catch-all for carrier-customized
+  systems. If the policy schedules a dry-chemical cooking suppression system (e.g. Ansul R-102 dry
+  chem) or any other specifically described system that is NOT the standard wet-chemical exhaust-and-
+  extinguishing combination, it may be scheduled under P-9, not P-5. Read the schedule text; use the
+  symbol code printed in the policy. If the schedule says P-9 and describes an Ansul system or dry-chem
+  system, code it as P-9. Do NOT reclassify it as P-5. Where a policy schedules BOTH P-1 AND P-9 (or
+  any two distinct symbols), each is an independent requirement — satisfying one does NOT satisfy the
+  other.
 - Output ONLY the JSON object. No preamble, no markdown, no commentary.`;
 
 // ── Anthropic call helper ────────────────────────────────
