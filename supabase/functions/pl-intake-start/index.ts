@@ -349,6 +349,8 @@ Deno.serve(async (req: Request) => {
       attribution_source: body.attribution_source || null,
       referred_by: body.referred_by || null,
       agent_report_consent: false,
+      broker_party_id: body.broker_party_id || null,
+      first_name: body.first_name || null,
     };
 
     if (source === "prospect" && body.agent_email) {

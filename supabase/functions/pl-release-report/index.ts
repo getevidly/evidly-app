@@ -79,14 +79,12 @@ Deno.serve(async (req: Request) => {
     if (!run_id || !intake_id) {
       return json({ error: "run_id and intake_id required" }, 400, headers);
     }
-    if (!recipient_party_id) {
-      return json({ error: "recipient_party_id required — no grant minted without identifying the receiving broker" }, 400, headers);
-    }
+    // recipient_party_id is optional — resolved from intake.broker_party_id when absent
 
     // ── Resolve the authorizing org (insured) from the intake ───────
     const { data: intakeCheck, error: intakeErr } = await supabase
       .from("policy_lens_intakes")
-      .select("organization_id")
+      .select("organization_id, broker_party_id, source")
       .eq("id", intake_id)
       .single();
 
@@ -94,16 +92,19 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Intake not found" }, 404, headers);
     }
     const grantedByOrgId = intakeCheck.organization_id; // may be null for prospect intakes
+    const effectiveRecipient = recipient_party_id || intakeCheck.broker_party_id || null;
 
-    // ── Verify recipient broker exists ───────────────────────────
-    const { data: recipientCheck, error: recipientErr } = await supabase
-      .from("external_parties")
-      .select("id, party_type")
-      .eq("id", recipient_party_id)
-      .single();
+    // ── Verify recipient broker exists (broker path only) ────────
+    if (effectiveRecipient) {
+      const { data: recipientCheck, error: recipientErr } = await supabase
+        .from("external_parties")
+        .select("id, party_type")
+        .eq("id", effectiveRecipient)
+        .single();
 
-    if (recipientErr || !recipientCheck) {
-      return json({ error: "Recipient party not found" }, 404, headers);
+      if (recipientErr || !recipientCheck) {
+        return json({ error: "Recipient party not found" }, 404, headers);
+      }
     }
 
     // ── Guard: verify the run exists and is not already released ────
@@ -143,37 +144,42 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // ── Mint token + hash ──────────────────────────────────
-    const rawToken = crypto.randomUUID();
-    const tokenHash = await sha256Hex(rawToken);
+    // ── Conditionally mint token + grant (broker path only) ──
     const now = new Date();
-    const expiresAt = new Date(
-      now.getTime() + GRANT_TTL_DAYS * 24 * 60 * 60 * 1000,
-    );
+    let grant: Record<string, unknown> | null = null;
+    let rawToken: string | null = null;
 
-    // ── Insert grant (consent bound to both ends) ──────────
-    const { data: grant, error: grantErr } = await supabase
-      .from("pl_report_grants")
-      .insert({
-        intake_id,
-        run_id,
-        token_hash: tokenHash,
-        door: "agent",
-        expires_at: expiresAt.toISOString(),
-        granted_by_org_id: grantedByOrgId,
-        recipient_party_id,
-        consent_type: "per_report",
-      })
-      .select("id, intake_id, run_id, door, expires_at, granted_by_org_id, recipient_party_id, consent_type, created_at")
-      .single();
-
-    if (grantErr || !grant) {
-      logger.error("[pl-release-report] Grant insert failed", grantErr);
-      return json(
-        { error: "Failed to create report grant", detail: grantErr?.message },
-        500,
-        headers,
+    if (effectiveRecipient) {
+      rawToken = crypto.randomUUID();
+      const tokenHash = await sha256Hex(rawToken);
+      const expiresAt = new Date(
+        now.getTime() + GRANT_TTL_DAYS * 24 * 60 * 60 * 1000,
       );
+
+      const { data: grantData, error: grantErr } = await supabase
+        .from("pl_report_grants")
+        .insert({
+          intake_id,
+          run_id,
+          token_hash: tokenHash,
+          door: "agent",
+          expires_at: expiresAt.toISOString(),
+          granted_by_org_id: grantedByOrgId,
+          recipient_party_id: effectiveRecipient,
+          consent_type: "per_report",
+        })
+        .select("id, intake_id, run_id, door, expires_at, granted_by_org_id, recipient_party_id, consent_type, created_at")
+        .single();
+
+      if (grantErr || !grantData) {
+        logger.error("[pl-release-report] Grant insert failed", grantErr);
+        return json(
+          { error: "Failed to create report grant", detail: grantErr?.message },
+          500,
+          headers,
+        );
+      }
+      grant = grantData;
     }
 
     // ── Update run release_status ──────────────────────────
@@ -189,43 +195,44 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (runUpErr || !runUpdate) {
-      // Grant was inserted but run update failed — log critically.
-      // The grant is orphaned but harmless (run isn't released so
-      // pl-get-findings will reject it). Don't report success.
-      logger.error("[pl-release-report] Run update failed after grant insert", runUpErr);
+      logger.error("[pl-release-report] Run update failed", runUpErr);
       return json(
-        { error: "Grant created but run update failed — contact support", detail: runUpErr?.message },
+        { error: "Release failed — run update error", detail: runUpErr?.message },
         500,
         headers,
       );
     }
 
-    // ── Both confirmed — log event and return ──────────────
+    // ── Log event and return ─────────────────────────────────
+    const eventMeta: Record<string, unknown> = {
+      run_id,
+      released_by: user.email,
+      source: intakeCheck.source,
+    };
+    if (grant) {
+      eventMeta.door = "agent";
+      eventMeta.grant_id = grant.id;
+      eventMeta.recipient_party_id = effectiveRecipient;
+      eventMeta.consent_type = "per_report";
+    }
+
     await logEvent(supabase, {
-      event_type: "report_sent",
+      event_type: "report_released",
       intake_id,
-      metadata: {
-        run_id,
-        door: "agent",
-        released_by: user.email,
-        grant_id: grant.id,
-        expires_at: expiresAt.toISOString(),
-        granted_by_org_id: grantedByOrgId,
-        recipient_party_id,
-        consent_type: "per_report",
-      },
+      metadata: eventMeta,
     });
 
     logger.info("[pl-release-report] Released", {
       run_id,
       intake_id,
-      grant_id: grant.id,
+      grant_id: grant?.id ?? null,
+      path: grant ? "broker" : "insured",
     });
 
     return json(
       {
         ok: true,
-        grant,
+        grant: grant ?? null,
         run: runUpdate,
         raw_token: rawToken,
       },

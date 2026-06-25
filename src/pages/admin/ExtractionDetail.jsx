@@ -124,7 +124,7 @@ export default function ExtractionDetail() {
       setLoading(true);
       const [iRes, rRes] = await Promise.all([
         supabase.from('policy_lens_intakes')
-          .select('id, carrier, policy_type, business_name, agent_name, agency_name, source, created_at')
+          .select('id, carrier, policy_type, business_name, agent_name, agency_name, source, created_at, broker_party_id')
           .eq('id', intakeId)
           .single(),
         supabase.from('pl_extraction_runs')
@@ -216,11 +216,13 @@ export default function ExtractionDetail() {
     if (!run || releasing || !allReviewed) return;
     setReleasing(true);
     try {
+      const releaseBody = { run_id: run.id, intake_id: intakeId };
+      if (intake?.broker_party_id) releaseBody.recipient_party_id = intake.broker_party_id;
       const { data, error } = await supabase.functions.invoke('pl-release-report', {
-        body: { run_id: run.id, intake_id: intakeId },
+        body: releaseBody,
       });
       if (error) throw error;
-      if (!data?.ok || !data?.grant || !data?.run) {
+      if (!data?.ok || !data?.run) {
         throw new Error(data?.error || 'Release not confirmed');
       }
       setRun(prev => ({ ...prev, release_status: 'released', released_at: data.run.released_at }));

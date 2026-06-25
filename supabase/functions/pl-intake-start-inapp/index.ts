@@ -68,6 +68,7 @@ Deno.serve(async (req) => {
       contact_name: contactName,
       contact_email: contactEmail,
       contact_phone: contactPhone,
+      first_name: contactName ? contactName.split(" ")[0] : null,
     })
     .select("id")
     .single();
