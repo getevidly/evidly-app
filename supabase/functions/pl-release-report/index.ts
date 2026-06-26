@@ -11,6 +11,13 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { logger } from "../_shared/logger.ts";
 import { logEvent } from "../_shared/events.ts";
+import {
+  buildCanonicalReportJson,
+  buildSealHashInput,
+  canonicalTimestamp,
+  sha256,
+} from "../_shared/seal-canonicalization.ts";
+import { shapeFindings, buildCoverageDetail } from "../_shared/pl-report-shaping.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -122,30 +129,165 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Run already released" }, 409, headers);
     }
 
-    // ── Guard: re-check ALL findings reviewed (server-side) ────────
-    const { data: pendingFindings, error: pendErr } = await supabase
+    // ── Guard: re-check ALL findings GENUINELY reviewed (server-side) ──
+    //    Provenance-tightened (B4c): a finding counts as reviewed ONLY if
+    //    review_state != 'pending' AND reviewed_by IS NOT NULL AND
+    //    reviewed_at IS NOT NULL. This closes the forgeable-status hole —
+    //    raw SQL setting review_state='accepted' leaves reviewed_by null and
+    //    must now fail. A released report is always a genuinely-reviewed one.
+    const { data: allFindings, error: pendErr } = await supabase
       .from("pl_findings")
-      .select("id")
-      .eq("run_id", run_id)
-      .eq("review_state", "pending");
+      .select("id, review_state, reviewed_by, reviewed_at")
+      .eq("run_id", run_id);
 
     if (pendErr) {
-      logger.error("[pl-release-report] Pending check failed", pendErr);
+      logger.error("[pl-release-report] Review check failed", pendErr);
       return json({ error: "Failed to verify findings" }, 500, headers);
     }
-    if (pendingFindings && pendingFindings.length > 0) {
+    if (!allFindings || allFindings.length === 0) {
+      return json({ error: "No findings to release" }, 422, headers);
+    }
+    const unreviewed = allFindings.filter(
+      (f: any) =>
+        f.review_state === "pending" ||
+        f.reviewed_by === null ||
+        f.reviewed_at === null,
+    );
+    if (unreviewed.length > 0) {
       return json(
         {
-          error: `${pendingFindings.length} finding(s) still pending review`,
-          pending_count: pendingFindings.length,
+          error: `${unreviewed.length} finding(s) not genuinely reviewed (missing reviewer or timestamp)`,
+          unreviewed_count: unreviewed.length,
         },
         422,
         headers,
       );
     }
 
-    // ── Conditionally mint token + grant (broker path only) ──
+    // Single release timestamp — shared by seal (sealed_at) and grant/release.
     const now = new Date();
+
+    // ════════════════════════════════════════════════════════════════
+    // B4c: COMPOSE + SEAL  (atomic with release — abort-on-failure below)
+    //   A released report is ALWAYS a sealed report. If compose or the
+    //   seal-insert throws, we return an error and DO NOT mint the grant
+    //   or flip release_status. One seal per run (run_id UNIQUE).
+    // ════════════════════════════════════════════════════════════════
+    try {
+      // 1. Load findings with ALL shaping columns, ordered (part, finding_key)
+      //    — SAME order the live reads use, so sealed render == read render.
+      const { data: sealRows, error: sealRowsErr } = await supabase
+        .from("pl_findings")
+        .select(
+          "finding_key, part, flag, agent_payload, kitchen_payload, correlation, reviewer_corrected",
+        )
+        .eq("run_id", run_id)
+        .order("part", { ascending: true })
+        .order("finding_key", { ascending: true });
+      if (sealRowsErr || !sealRows) {
+        throw new Error(`finding load failed: ${sealRowsErr?.message ?? "no rows"}`);
+      }
+
+      // 2. render  = shaped findings, BOTH voices per element (shared helper —
+      //    identical to what pl-get-findings returns to the reader).
+      const render = shapeFindings(sealRows);
+
+      // 3. findings = raw corrected source records (the underlying truth),
+      //    same stable order. Sealed alongside render for full reconstruction.
+      const findingsSource = sealRows.map((r: any) => ({
+        finding_key: r.finding_key,
+        part: r.part,
+        flag: r.flag,
+        agent_payload: r.agent_payload ?? null,
+        kitchen_payload: r.kitchen_payload ?? null,
+        correlation: r.correlation ?? null,
+        reviewer_corrected: r.reviewer_corrected ?? null,
+      }));
+
+      // 4. Load run.reconciled for coverage (shared helper, §1731 read-only).
+      const { data: sealRun, error: sealRunErr } = await supabase
+        .from("pl_extraction_runs")
+        .select("reconciled")
+        .eq("id", run_id)
+        .single();
+      if (sealRunErr || !sealRun) {
+        throw new Error(`run load failed: ${sealRunErr?.message ?? "not found"}`);
+      }
+      const coverage = buildCoverageDetail(
+        sealRun.reconciled as Record<string, unknown> | null,
+      );
+
+      // 5. Resolve broker display_name (seal key 4) — null on insured path.
+      let brokerDisplayName: string | null = null;
+      if (effectiveRecipient) {
+        const { data: party } = await supabase
+          .from("external_parties")
+          .select("display_name")
+          .eq("id", effectiveRecipient)
+          .single();
+        brokerDisplayName = party?.display_name ?? null;
+      }
+
+      // 6. Build the 7-key canonical payload (fixed key order in builder).
+      const reportPayload = {
+        run_id,
+        intake_id,
+        recipient_party_id: effectiveRecipient,
+        broker_display_name: brokerDisplayName,
+        coverage,
+        findings: findingsSource,
+        render,
+      };
+
+      // 7. Canonicalize → hash. Reports have NO doc bytes (empty ArrayBuffer);
+      //    predecessor = "" (one seal per run, no chain). sealed_by = user.id
+      //    (UUID — NOT user.email, which is what released_by uses).
+      const canonicalJson = buildCanonicalReportJson(reportPayload);
+      const sealedAtCanonical = canonicalTimestamp(now);
+      const hashInput = buildSealHashInput(
+        new ArrayBuffer(0),
+        canonicalJson,
+        sealedAtCanonical,
+        user.id,
+        "",
+      );
+      const contentHash = await sha256(hashInput.buffer);
+
+      // 8. INSERT the sealed row. run_id UNIQUE enforces one seal per run;
+      //    a duplicate (re-release attempt) surfaces as an insert error and
+      //    aborts — correct, since release already guarded not-already-released.
+      const { error: sealErr } = await supabase.from("pl_sealed_reports").insert({
+        run_id,
+        intake_id,
+        report_jsonb: reportPayload,
+        content_hash: contentHash,
+        sealed_at: now.toISOString(),
+        sealed_by: user.id,
+      });
+      if (sealErr) {
+        throw new Error(`seal insert failed: ${sealErr.message}`);
+      }
+
+      logger.info("[pl-release-report] Sealed", {
+        run_id,
+        content_hash: contentHash,
+        finding_count: render.length,
+      });
+    } catch (sealCatch) {
+      // ABORT: no grant, no release flip. Release is atomic with sealing.
+      logger.error("[pl-release-report] Compose/seal FAILED — aborting release", sealCatch);
+      return json(
+        {
+          error: "Failed to seal report — release aborted",
+          detail: sealCatch instanceof Error ? sealCatch.message : String(sealCatch),
+        },
+        500,
+        headers,
+      );
+    }
+    // ════════════ end COMPOSE + SEAL ════════════
+
+    // ── Conditionally mint token + grant (broker path only) ──
     let grant: Record<string, unknown> | null = null;
     let rawToken: string | null = null;
 
