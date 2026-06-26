@@ -102,20 +102,45 @@ Deno.serve(async (req) => {
 
   const { data: rows, error: fErr } = await admin
     .from("pl_findings")
-    .select("finding_key, part, flag, agent_payload, kitchen_payload, correlation")
+    .select("finding_key, part, flag, agent_payload, kitchen_payload, correlation, reviewer_corrected")
     .eq("run_id", run.id)
     .order("part", { ascending: true })
     .order("finding_key", { ascending: true });
   if (fErr) return json({ error: "failed to load findings" }, 500);
 
+  // When reviewer_corrected is present, override KITCHEN-voice correlation
+  // paths only. Agent-voice paths are never touched — corrections are
+  // authored against kitchen text and were not reviewed for agent voice.
   const findings = (rows ?? []).map((r: any) => {
     const a = r.agent_payload ?? {};
     const k = r.kitchen_payload ?? {};
+    const rc = r.reviewer_corrected as { body?: string; risk?: string } | null;
+    const raw = r.correlation ?? null;
+
+    let corr = raw;
+    if (raw && rc) {
+      const overrideExpects = typeof rc.body === "string" && rc.body !== "";
+      const overrideGap = typeof rc.risk === "string" && rc.risk !== "";
+      if (overrideExpects || overrideGap) {
+        corr = {
+          ...raw,
+          ...(overrideExpects
+            ? { expects: { ...raw.expects, kitchen: rc.body } }
+            : {}),
+          ...(overrideGap
+            ? { gap: { ...raw.gap, prospect: { ...raw.gap?.prospect, kitchen: rc.risk } } }
+            : {}),
+        };
+      }
+    }
+    // If correlation is null but reviewer_corrected exists, skip override —
+    // cannot construct a meaningful correlation from corrections alone.
+
     return {
       id: r.finding_key,
       part: r.part,
       flag: r.flag,
-      correlation: r.correlation ?? null,
+      correlation: corr,
       agent: { title: a.title ?? "", body: a.body ?? "", refs: a.refs ?? null },
       kitchen: { title: k.title ?? "", body: k.body ?? "" },
     };
