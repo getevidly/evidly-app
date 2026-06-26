@@ -5,6 +5,7 @@
 // Used by:  seal-inspection-report  (Food Step 2 — creates food seals)
 //           verify-inspection-report(Food Step 5 — tamper-checks food seals)
 //           seal-service-record     (Fire Step 2 — creates fire seals)
+//           pl-release-report       (Policy Lens B4 — seals report at release)
 //           G4 test scripts         (proves hash reproducibility)
 //
 // If you change ANY logic here, every existing content_hash becomes
@@ -220,6 +221,77 @@ export function buildCanonicalResolutionJson(
   for (const key of CANONICAL_KEYS) {
     const val = fields[key] ?? null;
     parts.push(JSON.stringify(key) + ":" + JSON.stringify(val));
+  }
+  return "{" + parts.join(",") + "}";
+}
+
+// ---------------------------------------------------------------------------
+// 3d. CANONICAL POLICY-LENS REPORT JSON
+//
+// FIXED KEY ORDER — this is the contract. The seven report fields are
+// serialized in THIS exact sequence. Do NOT sort the top-level keys. Do NOT
+// use JSON.stringify on an object literal (JS key order is not guaranteed).
+//
+// Key order (immutable):
+//   1. run_id               (uuid string)
+//   2. intake_id            (uuid string)
+//   3. recipient_party_id   (uuid string or null)
+//   4. broker_display_name  (string or null)
+//   5. coverage             (jsonb — run.reconciled coverage; sortedJsonStringify)
+//   6. findings             (jsonb array — corrected source records; sortedJsonStringify)
+//   7. render               (jsonb array — shaped findings, BOTH voices per element,
+//                            verbatim as the read functions return them; sortedJsonStringify)
+//
+// Scalars (1–4): JSON.stringify — quoted strings or null, the SAME path verify uses.
+// Complex (5–7): sortedJsonStringify — recursive alphabetical key sort, so
+//   insertion order inside these blobs cannot change the hash.
+//
+//   ⚠ ARRAY ORDER IS PRESERVED. sortedJsonStringify sorts object KEYS, not
+//   array elements. The compose step (B4c) MUST order `findings` (and any
+//   nested arrays inside `render`) by a stable key — e.g. finding id ASC —
+//   before sealing, or the hash will not reproduce.
+//
+//   ⚠ report_jsonb MUST contain ONLY these seven keys. The builder ignores any
+//   extra key, so an un-listed field would be stored-but-not-hashed — a silent
+//   tamper surface. Compose builds exactly this shape, nothing more.
+//
+// Reports have NO document bytes: callers pass an empty ArrayBuffer to
+// buildSealHashInput, and predecessorHash = "" (one seal per run, no chain).
+//
+// Null handling: null/undefined/absent → JSON null literal. Missing vs.
+//   explicit null → identical output.
+// ---------------------------------------------------------------------------
+export function buildCanonicalReportJson(
+  fields: Record<string, unknown>,
+): string {
+  const CANONICAL_KEYS: string[] = [
+    "run_id",
+    "intake_id",
+    "recipient_party_id",
+    "broker_display_name",
+    "coverage",
+    "findings",
+    "render",
+  ];
+
+  const COMPLEX_KEYS = new Set<string>([
+    "coverage",
+    "findings",
+    "render",
+  ]);
+
+  const parts: string[] = [];
+  for (const key of CANONICAL_KEYS) {
+    const val = fields[key] ?? null;
+    let serialized: string;
+    if (COMPLEX_KEYS.has(key)) {
+      // jsonb-like — recursive key sort so insertion order is irrelevant.
+      serialized = sortedJsonStringify(val);
+    } else {
+      // scalar — JSON.stringify (bare numbers, quoted strings, null).
+      serialized = JSON.stringify(val);
+    }
+    parts.push(JSON.stringify(key) + ":" + serialized);
   }
   return "{" + parts.join(",") + "}";
 }
