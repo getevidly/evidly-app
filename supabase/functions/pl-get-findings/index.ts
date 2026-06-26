@@ -91,6 +91,64 @@ Deno.serve(async (req) => {
     return json({ error: "report not yet finalized", status: "pending" }, 409);
   }
 
+  // ── SEALED-FIRST (B4d): if a seal exists, serve the FROZEN report. ──
+  //    The sealed render/coverage are returned VERBATIM (corrections already
+  //    baked in at seal time) — NOT recomputed. Presentation wrappers
+  //    (edition, door, scope, freshness) are read-time, attached fresh.
+  //    Falls through to live shaping for pre-seal releases (backward-compat).
+  const { data: sealed } = await admin
+    .from("pl_sealed_reports")
+    .select("report_jsonb")
+    .eq("run_id", grant.run_id)
+    .maybeSingle();
+
+  if (sealed?.report_jsonb) {
+    const sealedPayload = sealed.report_jsonb as Record<string, any>;
+    const edition = grant.door === "agent" ? "agent" : "kitchen";
+    const statusAsOf = run.released_at ?? run.id;
+
+    // Telemetry + disclosure still fire — they track ACCESS, not source.
+    await admin
+      .from("pl_report_grants")
+      .update({
+        last_accessed_at: new Date().toISOString(),
+        access_count: (await (async () => {
+          const { data } = await admin
+            .from("pl_report_grants")
+            .select("access_count")
+            .eq("id", grant.id)
+            .single();
+          return (data?.access_count ?? 0) + 1;
+        })()),
+      })
+      .eq("id", grant.id);
+    await admin.from("pl_disclosure_events").insert({
+      grant_id: grant.id,
+      grant_type: grant.consent_type ?? "per_report",
+      accessor_user_id: null,
+      accessor_party_id: resolvedAccessorPartyId,
+      accessed_at: new Date().toISOString(),
+      ip: req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? null,
+      user_agent: req.headers.get("user-agent") ?? null,
+    });
+
+    return json({
+      ok: true,
+      edition,
+      door: grant.door,
+      findings: sealedPayload.render ?? [],          // SEALED render, verbatim
+      scope: { coverage: run.coverage ?? null },
+      coverage_detail: sealedPayload.coverage ?? null, // SEALED coverage, verbatim
+      sealed: true,                                    // signal: served from seal
+      freshness: {
+        status_as_of: statusAsOf,
+        label: `Condition status as of ${typeof statusAsOf === "string" ? new Date(statusAsOf).toLocaleDateString("en-US") : "report release"}`,
+        note: "Condition status is a point-in-time snapshot from the evaluation date, not a live feed.",
+      },
+    });
+  }
+  // ── end sealed-first; below is the live path (pre-seal backward-compat) ──
+
   // 4. Load findings for the run
   const { data: rows, error: fErr } = await admin
     .from("pl_findings")

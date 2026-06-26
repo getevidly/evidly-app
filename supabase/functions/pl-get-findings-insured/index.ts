@@ -101,6 +101,52 @@ Deno.serve(async (req) => {
     return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
   }
 
+  // ── SEALED-FIRST (B4d): serve the FROZEN report if a seal exists. ──
+  //    Sealed render/coverage returned verbatim (corrections baked in).
+  //    policy header is presentation — recomputed live from reconciled.
+  //    Falls through to live shaping for pre-seal releases.
+  const { data: sealedIns } = await admin
+    .from("pl_sealed_reports")
+    .select("report_jsonb")
+    .eq("run_id", run.id)
+    .maybeSingle();
+
+  if (sealedIns?.report_jsonb) {
+    const sp = sealedIns.report_jsonb as Record<string, any>;
+    // policy header (presentation only) from reconciled — not the frozen record
+    const rec = run.reconciled as Record<string, unknown> | null;
+    let policyHeader: any = null;
+    if (rec) {
+      const decl = rec.declarations as Record<string, unknown> | undefined;
+      const declVal = (key: string): string | null => {
+        const node = decl?.[key] as { value?: unknown } | undefined;
+        return (node && node.value != null) ? String(node.value) : null;
+      };
+      const firstLoc = (() => {
+        const lw = decl?.locations as { value?: any[] } | undefined;
+        const arr = Array.isArray(lw?.value) ? lw!.value : [];
+        return arr[0] ?? null;
+      })();
+      policyHeader = {
+        insured: declVal("named_insured"),
+        carrier: declVal("carrier"),
+        policyNo: declVal("policy_number"),
+        period: declVal("policy_period"),
+        address: firstLoc?.address ?? null,
+      };
+    }
+    return json({
+      ok: true,
+      edition: "kitchen",
+      findings: sp.render ?? [],            // SEALED render, verbatim
+      scope: { coverage: run.coverage ?? null },
+      coverage_detail: sp.coverage ?? null, // SEALED coverage, verbatim
+      policy: policyHeader,
+      sealed: true,                          // signal: served from seal
+    });
+  }
+  // ── end sealed-first; live path below (pre-seal backward-compat) ──
+
   const { data: rows, error: fErr } = await admin
     .from("pl_findings")
     .select("finding_key, part, flag, agent_payload, kitchen_payload, correlation, reviewer_corrected")
