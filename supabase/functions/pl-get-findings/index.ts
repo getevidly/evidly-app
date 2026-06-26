@@ -6,6 +6,7 @@
 // Deploy: supabase functions deploy pl-get-findings --project-ref irxgmhxhmxtzfwuieblc
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { shapeFindings, buildCoverageDetail } from "../_shared/pl-report-shaping.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -99,51 +100,9 @@ Deno.serve(async (req) => {
     .order("finding_key", { ascending: true });
   if (fErr) return json({ error: "failed to load findings" }, 500);
 
-  // 5. Shape to the v3 report contract.
-  //    When reviewer_corrected is present, override KITCHEN-voice correlation
-  //    paths only. Agent-voice paths are never touched — corrections are
-  //    authored against kitchen text and were not reviewed for agent voice.
-  const findings = (rows ?? []).map((r: any) => {
-    const a = r.agent_payload ?? {};
-    const k = r.kitchen_payload ?? {};
-    const rc = r.reviewer_corrected as { body?: string; risk?: string } | null;
-    const raw = r.correlation ?? null;
-
-    let corr = raw;
-    if (raw && rc) {
-      const overrideExpects = typeof rc.body === "string" && rc.body !== "";
-      const overrideGap = typeof rc.risk === "string" && rc.risk !== "";
-      if (overrideExpects || overrideGap) {
-        corr = {
-          ...raw,
-          ...(overrideExpects
-            ? { expects: { ...raw.expects, kitchen: rc.body } }
-            : {}),
-          ...(overrideGap
-            ? { gap: { ...raw.gap, prospect: { ...raw.gap?.prospect, kitchen: rc.risk } } }
-            : {}),
-        };
-      }
-    }
-    // If correlation is null but reviewer_corrected exists, skip override —
-    // cannot construct a meaningful correlation from corrections alone.
-
-    return {
-      id: r.finding_key,
-      part: r.part,         // 'fire' | 'food' | 'general'
-      flag: r.flag,         // 'high' | 'elevated' | 'satisfied' | 'low'
-      correlation: corr,
-      agent: {
-        title: a.title ?? "",
-        body: a.body ?? "",
-        refs: a.refs ?? null,
-      },
-      kitchen: {
-        title: k.title ?? "",
-        body: k.body ?? "",
-      },
-    };
-  });
+  // 5. Shape to the v3 report contract via the shared helper (single source
+  //    of truth — same code the seal runs, so sealed == read by construction).
+  const findings = shapeFindings(rows);
 
   // 6. Map grant door -> report edition. company => kitchen brief, agent => agent brief.
   const edition = grant.door === "agent" ? "agent" : "kitchen";
@@ -179,68 +138,10 @@ Deno.serve(async (req) => {
       user_agent: req.headers.get("user-agent") ?? null,
     });
 
-  // ── Build coverage_detail from reconciled (verbatim, §1731 read-only) ──
-  const reconciled = run.reconciled as Record<string, unknown> | null;
-  let coverage_detail: Record<string, unknown>;
-
-  if (!reconciled) {
-    coverage_detail = {
-      framing: "Coverage figures as stated in your policy",
-      locations: [],
-      policy_wide: [],
-      food_sublimits: [],
-    };
-  } else {
-    const decl = reconciled.declarations as Record<string, unknown> | undefined;
-    const locsWrapper = decl?.locations as { value?: unknown[]; _status?: string } | undefined;
-
-    // ── Locations: array-level conflict → omit all figures ──
-    let locations: unknown[];
-    let locations_note: string | undefined;
-
-    if (locsWrapper?._status === "conflict") {
-      locations = [];
-      locations_note = "Location coverage figures could not be confirmed — refer to policy.";
-    } else {
-      const rawLocs = Array.isArray(locsWrapper?.value) ? locsWrapper.value : [];
-      locations = rawLocs.map((loc: any) => ({
-        loc_no: loc.loc_no ?? null,
-        address: loc.address ?? null,
-        scheduled_building: loc.scheduled_building ?? null,
-        scheduled_bpp: loc.scheduled_bpp ?? null,
-        bi_limit: loc.bi_limit ?? null,
-        coinsurance: loc.coinsurance ?? null,
-        spoilage_sublimit: loc.spoilage_sublimit ?? null,
-      }));
-    }
-
-    // ── Policy-wide: per-item conflict → "Refer to policy" ──
-    const rawPw = Array.isArray(reconciled.policy_wide) ? reconciled.policy_wide : [];
-    const policy_wide = rawPw
-      .filter((item: any) => item.percentage_or_value != null)
-      .map((item: any) => ({
-        label: item.topic ?? null,
-        value: (item._status === "agreed" || item._status === "single_pass") ? item.percentage_or_value : "Refer to policy",
-        section_ref: item.section_ref ?? null,
-      }));
-
-    // ── Food sublimits: per-item conflict → "Refer to policy" ──
-    const rawFood = Array.isArray(reconciled.food_findings) ? reconciled.food_findings : [];
-    const food_sublimits = rawFood
-      .filter((item: any) => item.sublimit_amount != null)
-      .map((item: any) => ({
-        label: item.topic ?? null,
-        value: (item._status === "agreed" || item._status === "single_pass") ? item.sublimit_amount : "Refer to policy",
-      }));
-
-    coverage_detail = {
-      framing: "Coverage figures as stated in your policy",
-      locations,
-      ...(locations_note ? { locations_note } : {}),
-      policy_wide,
-      food_sublimits,
-    };
-  }
+  // ── Build coverage_detail via the shared helper (§1731 read-only) ──
+  const coverage_detail = buildCoverageDetail(
+    run.reconciled as Record<string, unknown> | null,
+  );
 
   // Freshness label: condition status is point-in-time (baked at pl-build-findings time).
   // Do NOT represent baked status as live/continuous.
