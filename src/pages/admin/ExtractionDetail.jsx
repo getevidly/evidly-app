@@ -404,12 +404,16 @@ export default function ExtractionDetail() {
   }, [newBrokerName]);
 
   /* ── Open edit mode ────────────────────────────────────────── */
-  const openEdit = useCallback(() => {
-    setEditMode(true);
-    setEditExpects(hasCorrection && selected?.reviewer_corrected?.body ? selected.reviewer_corrected.body : stripPrefix(corExpects));
-    setEditGap(hasCorrection && selected?.reviewer_corrected?.risk ? selected.reviewer_corrected.risk : stripPrefix(corGap));
+  const openEdit = () => {
+    const corr = selected?.correlation || {};
+    const expectsRaw = corr?.expects?.kitchen || '';
+    const gapRaw = corr?.gap?.prospect?.kitchen || '';
+    const rc = selected?.reviewer_corrected || null;
+    setEditExpects(rc?.body ? rc.body : stripPrefix(expectsRaw));
+    setEditGap(rc?.risk ? rc.risk : stripPrefix(gapRaw));
     setEditReason('');
-  }, [selected, hasCorrection, corExpects, corGap]);
+    setEditMode(true);
+  };
 
   const closeEdit = useCallback(() => {
     setEditMode(false);
