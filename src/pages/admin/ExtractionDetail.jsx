@@ -1,24 +1,18 @@
 /**
- * ExtractionDetail — Admin review & release screen for a single Policy Lens intake.
+ * ExtractionDetail — Admin 3-column review & release screen for Policy Lens.
  * Route: /admin/policy-lens/:intakeId
- * Design of record: docs/policy-lens/review-release-design.html (4ebc82e2)
  *
- * Three zones:
- *   LEFT   — Policy source (read-only, source_refs[].requirement_text)
- *   MIDDLE — Findings picker (compact list with state badges)
- *   RIGHT  — Selected reading card + release dock
+ * Three columns:
+ *   LEFT   (~205 px) — Review progress, filter chips, release card
+ *   MIDDLE (~215 px) — Findings list with part badge + flag badge + state pill
+ *   RIGHT  (flex)    — Selected finding detail card + action bar
  *
- * Field mapping (locked — admin reviews prospect branch, kitchen voice):
- *   "What your policy expects"   ← correlation.expects.kitchen
- *   "What you can show"          ← correlation.shows.prospect.kitchen
- *   "What happens if you can't"  ← correlation.gap.prospect.kitchen
- *   Citation chip                ← source_refs[].form_or_section_ref + named_standard
- *   Citation status              ← citation_status (verified → Verified, else → Citation pending)
- *   State badge                  ← applicability_state → Met | Gap | Not required | Unknown
- *   Insured-facing block         ← kitchen_payload.title + body
+ * Actions wired to pl-review-finding v2 contract:
+ *   Accept:  { finding_id, action:'accept' }
+ *   Correct: { finding_id, action:'correct', corrected:{body,risk}, reason, notes }
+ *   Flag:    { finding_id, action:'flag', reason, notes }
  *
- * Edits are wording-only, reason-required, append-only (reviewer_corrected).
- * Release posts to two destinations: client EvidLY account + selected broker.
+ * Release gate: all findings reviewed (no pending, no flagged) + broker selected.
  */
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -51,25 +45,16 @@ const FLAG_ORDER = { high: 0, elevated: 1, low: 2, satisfied: 3 };
 
 /* ── Part metadata ─────────────────────────────────────────────── */
 const PART_META = {
-  fire:    { color: CORAL, label: 'Fire Safety — AHJ' },
-  food:    { color: TEAL,  label: 'Food Safety — EHD' },
-  general: { color: NAVY,  label: 'Policy-Wide Conditions' },
+  fire:    { color: CORAL, label: 'Fire' },
+  food:    { color: TEAL,  label: 'Food' },
+  general: { color: NAVY,  label: 'General' },
 };
 
-/* ── Review state → badge ──────────────────────────────────────── */
+/* ── Review state → pill ─────────────────────────────────────── */
 const REVIEW_META = {
-  pending:   { label: 'Not reviewed', bg: '#EFece3', fg: MUTE },
-  accepted:  { label: 'Reviewed',     bg: '#E6F2F0', fg: TEAL },
-  corrected: { label: 'Edited',       bg: '#E9EDF5', fg: NAVY },
-  flagged:   { label: 'Flagged',      bg: '#FBEAE5', fg: CORAL },
-};
-
-/* ── Applicability state → design badge ────────────────────────── */
-const APPLICABILITY_META = {
-  applicable_evidenced:   { label: 'Met',          bg: '#E8F2F1', fg: TEAL },
-  applicable_unevidenced: { label: 'Gap',          bg: '#FBEAE5', fg: CORAL },
-  not_applicable:         { label: 'Not required', bg: '#F3F4F6', fg: MUTE },
-  unknown:                { label: 'Unknown',      bg: '#FBF3E0', fg: AMBER },
+  pending:  { label: 'Pending',  bg: '#EFece3', fg: MUTE },
+  accepted: { label: 'Reviewed', bg: '#E6F2F0', fg: TEAL, check: true },
+  flagged:  { label: 'Flagged',  bg: '#FBF3E0', fg: AMBER },
 };
 
 /* ── Stage pipeline ────────────────────────────────────────────── */
@@ -90,31 +75,40 @@ function deriveStage(run) {
   return 'reading';
 }
 
+/* ── Reason codes ──────────────────────────────────────────────── */
+const CORRECT_REASONS = [
+  { code: 'wrong_standard_cited',     label: 'Wrong standard cited' },
+  { code: 'wrong_section',            label: 'Wrong section' },
+  { code: 'inaccurate_requirement',   label: 'Inaccurate requirement' },
+  { code: 'outdated_edition',         label: 'Outdated edition' },
+  { code: 'imprecise_plain_language', label: 'Imprecise plain language' },
+  { code: 'scope_correction',         label: 'Scope correction' },
+  { code: 'other',                    label: 'Other' },
+];
+
+const FLAG_REASONS = [
+  { code: 'citation_unclear',            label: 'Citation unclear' },
+  { code: 'policy_language_ambiguous',   label: 'Policy language ambiguous' },
+  { code: 'conflicting_provisions',      label: 'Conflicting provisions' },
+  { code: 'needs_carrier_confirmation',  label: 'Needs carrier confirmation' },
+  { code: 'coverage_scope_uncertain',    label: 'Coverage scope uncertain' },
+  { code: 'extraction_may_be_incorrect', label: 'Extraction may be incorrect' },
+  { code: 'other',                       label: 'Other' },
+];
+
 /* ── Helpers ────────────────────────────────────────────────────── */
 
-/** Strip the "What …policy expects — " prefix from correlation values. */
-function stripPrefix(text) {
-  if (!text) return '';
-  for (const sep of [' \u2014 ', ' \u2013 ', ' - ']) {
-    const idx = text.indexOf(sep);
-    if (idx >= 0 && idx < 60) return text.slice(idx + sep.length);
-  }
-  return text;
+function extractTitle(f) {
+  if (f.agent_payload?.title) return f.agent_payload.title;
+  if (f.agent_payload?.heading) return f.agent_payload.heading;
+  return (f.finding_key || '').replace(/_/g, ' ').replace(/^./, s => s.toUpperCase());
 }
 
-/** Format a source_ref for display: form/section ref + named standard. */
 function fmtRef(ref) {
   const parts = [];
   if (ref.form_or_section_ref) parts.push(ref.form_or_section_ref);
   if (ref.named_standard) parts.push(ref.named_standard);
   return parts.join(' \u00b7 ') || 'Source reference';
-}
-
-/** Extract the best title from a finding. */
-function extractTitle(f) {
-  if (f.agent_payload?.title) return f.agent_payload.title;
-  if (f.agent_payload?.heading) return f.agent_payload.heading;
-  return (f.finding_key || '').replace(/_/g, ' ').replace(/^./, s => s.toUpperCase());
 }
 
 /* ── Mini-components ───────────────────────────────────────────── */
@@ -126,7 +120,7 @@ function PartTag({ part }) {
       display: 'inline-block', fontSize: 10, fontWeight: 700,
       letterSpacing: '0.12em', textTransform: 'uppercase',
       color: m.color, border: `1px solid ${m.color}`,
-      borderRadius: 3, padding: '2px 8px',
+      borderRadius: 3, padding: '2px 6px',
     }}>
       {m.label}
     </span>
@@ -134,34 +128,20 @@ function PartTag({ part }) {
 }
 
 function FlagBadge({ flag }) {
+  if (flag !== 'high' && flag !== 'elevated') return null;
   const c = FLAG_COLORS[flag];
-  if (!c) return null;
   return (
     <span style={{
-      fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+      fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
       letterSpacing: '0.1em', background: c.bg, color: c.fg,
-      borderRadius: 3, padding: '3px 8px', whiteSpace: 'nowrap',
+      borderRadius: 3, padding: '2px 6px', whiteSpace: 'nowrap',
     }}>
       {flag}
     </span>
   );
 }
 
-function ApplicabilityBadge({ state }) {
-  const m = APPLICABILITY_META[state];
-  if (!m) return null;
-  return (
-    <span style={{
-      fontSize: 10, fontWeight: 700,
-      letterSpacing: '0.1em', background: m.bg, color: m.fg,
-      borderRadius: 20, padding: '3px 10px', whiteSpace: 'nowrap',
-    }}>
-      {m.label}
-    </span>
-  );
-}
-
-function CitationChip({ sourceRefs, citationStatus }) {
+function CitationChip({ sourceRefs }) {
   const parts = (sourceRefs || []).map(r => {
     const segs = [];
     if (r.form_or_section_ref) segs.push(r.form_or_section_ref);
@@ -169,7 +149,6 @@ function CitationChip({ sourceRefs, citationStatus }) {
     return segs.join(' \u00b7 ');
   }).filter(Boolean);
   const text = parts.join(' ; ') || 'No citation';
-  const verified = citationStatus === 'verified';
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: 7,
@@ -178,9 +157,6 @@ function CitationChip({ sourceRefs, citationStatus }) {
     }}>
       <Lock size={12} style={{ color: SLATE, flexShrink: 0 }} />
       <span>{text}</span>
-      <span style={{ fontWeight: 700, color: verified ? TEAL : AMBER }}>
-        {verified ? 'Verified' : 'Citation pending'}
-      </span>
     </div>
   );
 }
@@ -229,12 +205,18 @@ export default function ExtractionDetail() {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Verdict / edit
+  // Verdict panels
   const [reviewBusy, setReviewBusy] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editExpects, setEditExpects] = useState('');
-  const [editGap, setEditGap] = useState('');
-  const [editReason, setEditReason] = useState('');
+  const [showCorrectPanel, setShowCorrectPanel] = useState(false);
+  const [showFlagPanel, setShowFlagPanel] = useState(false);
+  const [editBody, setEditBody] = useState('');
+  const [editRisk, setEditRisk] = useState('');
+  const [correctReason, setCorrectReason] = useState('');
+  const [correctNotes, setCorrectNotes] = useState('');
+  const [flagReason, setFlagReason] = useState('');
+  const [flagNotes, setFlagNotes] = useState('');
+
+  // Release
   const [releasing, setReleasing] = useState(false);
   const [releaseToken, setReleaseToken] = useState(null);
 
@@ -243,6 +225,9 @@ export default function ExtractionDetail() {
   const [selectedBrokerId, setSelectedBrokerId] = useState('');
   const [showAddBroker, setShowAddBroker] = useState(false);
   const [newBrokerName, setNewBrokerName] = useState('');
+
+  // Filter
+  const [filter, setFilter] = useState('all');
 
   /* ── Load ──────────────────────────────────────────────────── */
   useEffect(() => {
@@ -269,7 +254,7 @@ export default function ExtractionDetail() {
       if (runData) {
         const [fRes, sRes] = await Promise.all([
           supabase.from('pl_findings')
-            .select('id, run_id, intake_id, finding_key, part, flag, agent_payload, kitchen_payload, correlation, source_refs, citation_status, applicability_state, review_required, review_state, reviewed_by, reviewed_at, reviewer_corrected')
+            .select('id, run_id, intake_id, finding_key, part, flag, agent_payload, kitchen_payload, correlation, source_refs, citation_status, applicability_state, review_required, review_state, reviewed_by, reviewed_at, reviewer_corrected, flag_detail')
             .eq('run_id', runData.id)
             .order('created_at', { ascending: true }),
           supabase.from('pl_standards_registry')
@@ -282,7 +267,7 @@ export default function ExtractionDetail() {
         if (list.length > 0) setSelectedId(list[0].id);
       }
 
-      // Broker / agent parties for the selector
+      // Broker / agent parties
       const { data: partyData } = await supabase
         .from('external_parties')
         .select('id, legal_name, display_name, party_type')
@@ -298,47 +283,67 @@ export default function ExtractionDetail() {
   /* ── Derived ───────────────────────────────────────────────── */
   const selected = useMemo(() => findings.find(f => f.id === selectedId) || null, [findings, selectedId]);
   const reviewedCount = useMemo(() => findings.filter(f => f.review_state !== 'pending').length, [findings]);
+  const flaggedCount = useMemo(() => findings.filter(f => f.review_state === 'flagged').length, [findings]);
   const stage = useMemo(() => deriveStage(run), [run]);
-  const allReviewed = useMemo(
-    () => findings.length > 0 && findings.every(f => f.review_state !== 'pending'),
-    [findings],
-  );
-  const canRelease = allReviewed && !!selectedBrokerId;
+  const canRelease = findings.length > 0
+    && findings.every(f => f.review_state !== 'pending' && f.review_state !== 'flagged')
+    && !!selectedBrokerId;
   const selectedBroker = brokers.find(b => b.id === selectedBrokerId);
   const brokerLabel = (b) => b.display_name || b.legal_name;
 
-  // Correlation paths (prospect branch, kitchen voice)
-  const corExpects = selected?.correlation?.expects?.kitchen || '';
-  const corShows   = selected?.correlation?.shows?.prospect?.kitchen || '';
-  const corGap     = selected?.correlation?.gap?.prospect?.kitchen || '';
+  // Filter counts
+  const fireCt = useMemo(() => findings.filter(f => f.part === 'fire').length, [findings]);
+  const foodCt = useMemo(() => findings.filter(f => f.part === 'food').length, [findings]);
+  const genCt  = useMemo(() => findings.filter(f => f.part === 'general').length, [findings]);
 
-  // Prefer reviewer_corrected when present
-  const hasCorrection = !!selected?.reviewer_corrected;
-  const dispExpects = hasCorrection && selected.reviewer_corrected.body ? selected.reviewer_corrected.body : stripPrefix(corExpects);
-  const dispGap     = hasCorrection && selected.reviewer_corrected.risk ? selected.reviewer_corrected.risk : stripPrefix(corGap);
+  // Filtered list
+  const filteredFindings = useMemo(() => {
+    if (filter === 'flagged') return findings.filter(f => f.review_state === 'flagged');
+    if (filter && filter !== 'all') return findings.filter(f => f.part === filter);
+    return findings;
+  }, [findings, filter]);
+
+  // Matched standards for the selected finding
+  const matchedStandards = useMemo(() => {
+    if (!selected || !standards.length) return [];
+    const refs = (selected.source_refs || []).map(r => r.named_standard).filter(Boolean);
+    if (!refs.length) return [];
+    return standards.filter(s =>
+      refs.some(r => (s.standard && r.includes(s.standard)) || (s.citation && r.includes(s.citation)))
+    );
+  }, [selected, standards]);
 
   /* ── Submit verdict ────────────────────────────────────────── */
-  const submitVerdict = useCallback(async (action, corrected) => {
+  const submitVerdict = useCallback(async (action, payload) => {
     if (!selected || reviewBusy) return;
     setReviewBusy(true);
     try {
-      const { data, error } = await supabase.functions.invoke('pl-review-finding', {
-        body: { finding_id: selected.id, action, ...(corrected ? { corrected } : {}) },
-      });
+      const reqBody = { finding_id: selected.id, action };
+      if (action === 'correct') {
+        reqBody.corrected = { body: payload.body, risk: payload.risk };
+        reqBody.reason = payload.reason;
+        if (payload.notes) reqBody.notes = payload.notes;
+      }
+      if (action === 'flag') {
+        reqBody.reason = payload.reason;
+        if (payload.notes) reqBody.notes = payload.notes;
+      }
+      const { data, error } = await supabase.functions.invoke('pl-review-finding', { body: reqBody });
       if (error) throw error;
       if (!data?.ok || !data?.finding) throw new Error(data?.error || 'Write not confirmed');
       const updated = data.finding;
       setFindings(prev => prev.map(f =>
         f.id === updated.id
           ? { ...f, review_state: updated.review_state, reviewed_by: updated.reviewed_by,
-              reviewed_at: updated.reviewed_at, reviewer_corrected: updated.reviewer_corrected }
+              reviewed_at: updated.reviewed_at, reviewer_corrected: updated.reviewer_corrected,
+              flag_detail: updated.flag_detail }
           : f,
       ));
-      setEditMode(false);
-      setEditExpects('');
-      setEditGap('');
-      setEditReason('');
-      toast.success(`Finding ${action === 'accept' ? 'accepted' : action === 'correct' ? 'edited' : 'flagged'}`);
+      setShowCorrectPanel(false);
+      setShowFlagPanel(false);
+      setEditBody(''); setEditRisk(''); setCorrectReason(''); setCorrectNotes('');
+      setFlagReason(''); setFlagNotes('');
+      toast.success(`Finding ${action === 'accept' ? 'accepted' : action === 'correct' ? 'corrected' : 'flagged'}`);
     } catch (err) {
       toast.error(`Verdict failed: ${err.message || 'unknown error'}`);
     } finally {
@@ -403,23 +408,29 @@ export default function ExtractionDetail() {
     }
   }, [newBrokerName]);
 
-  /* ── Open edit mode ────────────────────────────────────────── */
-  const openEdit = () => {
-    const corr = selected?.correlation || {};
-    const expectsRaw = corr?.expects?.kitchen || '';
-    const gapRaw = corr?.gap?.prospect?.kitchen || '';
+  /* ── Panel helpers ──────────────────────────────────────────── */
+  const openCorrect = () => {
     const rc = selected?.reviewer_corrected || null;
-    setEditExpects(rc?.body ? rc.body : stripPrefix(expectsRaw));
-    setEditGap(rc?.risk ? rc.risk : stripPrefix(gapRaw));
-    setEditReason('');
-    setEditMode(true);
+    setEditBody(rc?.body || selected?.agent_payload?.body || '');
+    setEditRisk(rc?.risk || '');
+    setCorrectReason('');
+    setCorrectNotes('');
+    setShowCorrectPanel(true);
+    setShowFlagPanel(false);
   };
 
-  const closeEdit = useCallback(() => {
-    setEditMode(false);
-    setEditExpects('');
-    setEditGap('');
-    setEditReason('');
+  const openFlag = () => {
+    setFlagReason('');
+    setFlagNotes('');
+    setShowFlagPanel(true);
+    setShowCorrectPanel(false);
+  };
+
+  const closePanels = useCallback(() => {
+    setShowCorrectPanel(false);
+    setShowFlagPanel(false);
+    setEditBody(''); setEditRisk(''); setCorrectReason(''); setCorrectNotes('');
+    setFlagReason(''); setFlagNotes('');
   }, []);
 
   /* ── Loading / empty ───────────────────────────────────────── */
@@ -442,6 +453,8 @@ export default function ExtractionDetail() {
   }
 
   /* ── Render ────────────────────────────────────────────────── */
+  const pct = findings.length > 0 ? Math.round((reviewedCount / findings.length) * 100) : 0;
+
   return (
     <div style={{ fontFamily: "Inter, 'Helvetica Neue', Arial, system-ui, sans-serif", fontSize: 14, color: '#1F2430' }}>
       <AdminBreadcrumb crumbs={[
@@ -474,77 +487,237 @@ export default function ExtractionDetail() {
       ) : (
         <div style={{
           maxWidth: 1320, margin: '18px auto', padding: '0 22px',
-          display: 'grid', gridTemplateColumns: '240px 260px 1fr',
+          display: 'grid', gridTemplateColumns: '205px 215px 1fr',
           gap: 16, alignItems: 'start',
         }}>
 
-          {/* ─── LEFT: Policy source ─────────────────────────── */}
-          <div style={{ position: 'sticky', top: 18 }}>
+          {/* ─── LEFT RAIL ──────────────────────────────────── */}
+          <div style={{ position: 'sticky', top: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+            {/* Review progress */}
+            <div style={{ background: '#fff', border: `1px solid ${LINE}`, borderRadius: 10, padding: '14px 15px' }}>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: NAVY, marginBottom: 8 }}>
+                {reviewedCount} / {findings.length} reviewed
+              </div>
+              <div style={{ height: 6, background: '#EFece3', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%', width: `${pct}%`, borderRadius: 3,
+                  background: pct === 100 ? TEAL : GOLD,
+                  transition: 'width 0.3s ease',
+                }} />
+              </div>
+            </div>
+
+            {/* Filter chips */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {[
+                { key: 'all',     label: 'All',     count: findings.length },
+                { key: 'fire',    label: 'Fire',    count: fireCt },
+                { key: 'food',    label: 'Food',    count: foodCt },
+                { key: 'general', label: 'General', count: genCt },
+                { key: 'flagged', label: 'Flagged', count: flaggedCount },
+              ].map(ch => (
+                <button
+                  key={ch.key}
+                  onClick={() => setFilter(ch.key)}
+                  style={{
+                    fontSize: 11, fontWeight: 600, borderRadius: 20,
+                    padding: '4px 10px', border: `1px solid ${LINE}`,
+                    background: filter === ch.key
+                      ? (ch.key === 'flagged' && ch.count > 0 ? '#FBF3E0' : `${GOLD}15`)
+                      : '#fff',
+                    color: filter === ch.key
+                      ? (ch.key === 'flagged' && ch.count > 0 ? AMBER : NAVY)
+                      : MUTE,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {ch.label} ({ch.count})
+                </button>
+              ))}
+            </div>
+
+            {/* Release card */}
             <div style={{ background: '#fff', border: `1px solid ${LINE}`, borderRadius: 10, overflow: 'hidden' }}>
               <div style={{
                 padding: '12px 15px', borderBottom: `1px solid ${LINE}`,
-                fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5, color: NAVY,
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12, color: NAVY,
               }}>
-                Policy source
-                <span style={{
-                  fontSize: 10, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase',
-                  color: SLATE, background: LOCK_BG, border: `1px solid ${LINE}`,
-                  borderRadius: 5, padding: '2px 7px', display: 'inline-flex', alignItems: 'center', gap: 4,
-                }}>
-                  <Lock size={10} /> Read-only
-                </span>
+                Release
               </div>
-              <div style={{ padding: '14px 15px', fontSize: 12, color: '#3a4254', maxHeight: 560, overflow: 'auto', lineHeight: 1.65 }}>
-                {selected && (selected.source_refs || []).length > 0 ? (
-                  (selected.source_refs || []).map((ref, i) => (
-                    <div key={i} style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: 'Montserrat', fontSize: 11.5, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
-                        {fmtRef(ref)}
+              <div style={{ padding: 14 }}>
+
+                {(stage === 'reading' || stage === 'reconciling') && (
+                  <p style={{ margin: 0, color: MUTE, fontSize: 12 }}>
+                    {stage === 'reading' ? 'Policy is being read.' : 'Readings are being reconciled.'}
+                  </p>
+                )}
+
+                {stage === 'findings_ready' && (
+                  <>
+                    <p style={{ margin: '0 0 12px', color: MUTE, fontSize: 12 }}>
+                      Findings built. Begin review to start.
+                    </p>
+                    <button
+                      onClick={handleBeginReview}
+                      style={{
+                        width: '100%', padding: '9px 12px', borderRadius: 8,
+                        fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5,
+                        border: `1px solid ${NAVY}`, background: NAVY, color: '#fff', cursor: 'pointer',
+                      }}
+                    >
+                      Begin review
+                    </button>
+                  </>
+                )}
+
+                {(stage === 'in_review' || stage === 'released') && (
+                  <>
+                    {flaggedCount > 0 && stage !== 'released' && (
+                      <div style={{
+                        padding: '10px 12px', background: '#FBF3E0', border: `1px solid ${AMBER}30`,
+                        borderRadius: 8, marginBottom: 12, fontSize: 12, color: AMBER, fontWeight: 600,
+                      }}>
+                        BLOCKED {'\u2014'} {flaggedCount} flagged finding{flaggedCount !== 1 ? 's' : ''} must be resolved.
                       </div>
-                      {ref.requirement_text && (
-                        <p style={{
-                          fontSize: 12.5, color: NAVY, lineHeight: 1.65,
-                          margin: '0 0 6px', fontStyle: 'italic',
-                          background: '#FFF9E6', padding: '6px 8px', borderRadius: 4,
+                    )}
+
+                    <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase', color: SLATE, marginBottom: 5, display: 'block' }}>
+                      Share with broker
+                    </label>
+                    <select
+                      value={selectedBrokerId}
+                      onChange={e => setSelectedBrokerId(e.target.value)}
+                      disabled={stage === 'released'}
+                      style={{
+                        width: '100%', padding: '8px 9px', border: `1px solid ${LINE}`,
+                        borderRadius: 7, fontFamily: 'inherit', fontSize: 12.5, color: '#1F2430', background: '#fff',
+                      }}
+                    >
+                      <option value="">Choose broker{'\u2026'}</option>
+                      {brokers.map(b => (
+                        <option key={b.id} value={b.id}>{brokerLabel(b)}</option>
+                      ))}
+                    </select>
+
+                    {stage !== 'released' && (
+                      <>
+                        <button
+                          onClick={() => setShowAddBroker(!showAddBroker)}
+                          style={{
+                            marginTop: 6, fontSize: 11.5, fontWeight: 600, color: NAVY,
+                            cursor: 'pointer', background: 'none', border: 'none', padding: 0,
+                          }}
+                        >
+                          + Add broker
+                        </button>
+                        {showAddBroker && (
+                          <div style={{
+                            marginTop: 8, padding: 10, border: `1px dashed ${LINE}`,
+                            borderRadius: 7, background: '#FBFAF6',
+                            display: 'flex', flexDirection: 'column', gap: 6,
+                          }}>
+                            <input
+                              value={newBrokerName}
+                              onChange={e => setNewBrokerName(e.target.value)}
+                              placeholder="Broker name"
+                              style={{
+                                width: '100%', border: `1px solid ${LINE}`, borderRadius: 7,
+                                fontFamily: 'inherit', fontSize: 12, padding: '7px 8px',
+                              }}
+                            />
+                            <button
+                              onClick={handleAddBroker}
+                              style={{
+                                width: '100%', padding: '8px 10px', borderRadius: 7,
+                                fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12,
+                                border: `1px solid ${NAVY}`, background: '#fff', color: NAVY, cursor: 'pointer',
+                              }}
+                            >
+                              Add &amp; select
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {stage === 'released' ? (
+                      <button
+                        disabled
+                        style={{
+                          width: '100%', padding: '9px 12px', borderRadius: 8, marginTop: 12,
+                          fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5,
+                          border: `1px solid ${TEAL}`, background: '#E8F2F1', color: TEAL, cursor: 'default',
+                        }}
+                      >
+                        Released {'\u2713'}
+                      </button>
+                    ) : (
+                      <button
+                        disabled={!canRelease || releasing}
+                        onClick={handleRelease}
+                        style={{
+                          width: '100%', padding: '9px 12px', borderRadius: 8, marginTop: 12,
+                          fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5,
+                          border: `1px solid ${canRelease ? NAVY : LINE}`,
+                          background: canRelease ? NAVY : '#E7E3D8',
+                          color: canRelease ? '#fff' : '#9AA1AC',
+                          cursor: canRelease && !releasing ? 'pointer' : 'not-allowed',
+                          opacity: releasing ? 0.6 : 1,
+                        }}
+                      >
+                        {releasing ? 'Releasing\u2026' : 'Release report'}
+                      </button>
+                    )}
+
+                    {!canRelease && stage !== 'released' && (
+                      <div style={{ marginTop: 6, fontSize: 10.5, color: MUTE, textAlign: 'center' }}>
+                        {findings.some(f => f.review_state === 'pending')
+                          ? `${findings.filter(f => f.review_state === 'pending').length} reading${findings.filter(f => f.review_state === 'pending').length !== 1 ? 's' : ''} need review.`
+                          : flaggedCount > 0
+                            ? 'Resolve flagged findings first.'
+                            : 'Choose a broker to release.'}
+                      </div>
+                    )}
+
+                    {releaseToken && (
+                      <div style={{ marginTop: 10, padding: 10, background: '#E8F2F1', borderRadius: 7, border: `1px solid ${TEAL}30` }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: TEAL, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                          Agent report link
+                        </div>
+                        <div style={{
+                          fontSize: 11, color: NAVY, wordBreak: 'break-all', fontFamily: 'monospace',
+                          background: '#fff', padding: 6, borderRadius: 4,
                         }}>
-                          {'\u201c'}{ref.requirement_text}{'\u201d'}
-                        </p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ color: `${NAVY}30`, fontSize: 13, textAlign: 'center', paddingTop: 40 }}>
-                    {selected ? 'No source references for this finding.' : 'Select a finding to view source.'}
-                  </div>
+                          {`${window.location.origin}/report/${releaseToken}`}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
           </div>
 
-          {/* ─── MIDDLE: Findings picker ─────────────────────── */}
+          {/* ─── MIDDLE: Findings list ─────────────────────── */}
           <div style={{ background: '#fff', border: `1px solid ${LINE}`, borderRadius: 10, overflow: 'hidden' }}>
             <div style={{
               padding: '12px 15px', borderBottom: `1px solid ${LINE}`,
               fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5, color: NAVY,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
-              <span>Readings</span>
-              <span style={{ color: MUTE, fontWeight: 400, fontSize: 12 }}>
-                {findings.length} {'\u00b7'} {reviewedCount} reviewed
-              </span>
+              Readings {'\u00b7'} {filteredFindings.length}
             </div>
-            <div style={{ maxHeight: 600, overflowY: 'auto' }}>
-              {findings.map(f => {
+            <div style={{ maxHeight: 640, overflowY: 'auto' }}>
+              {filteredFindings.map(f => {
                 const isSel = f.id === selectedId;
                 const rm = REVIEW_META[f.review_state] || REVIEW_META.pending;
                 return (
                   <button
                     key={f.id}
-                    onClick={() => { setSelectedId(f.id); setEditMode(false); }}
+                    onClick={() => { setSelectedId(f.id); closePanels(); }}
                     style={{
                       display: 'block', width: '100%', textAlign: 'left',
-                      padding: '10px 15px',
+                      padding: '10px 14px',
                       background: isSel ? `${GOLD}10` : 'transparent',
                       borderLeft: isSel ? `3px solid ${GOLD}` : '3px solid transparent',
                       borderBottom: `1px solid ${NAVY}06`,
@@ -552,131 +725,114 @@ export default function ExtractionDetail() {
                       cursor: 'pointer',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                       <PartTag part={f.part} />
                       <FlagBadge flag={f.flag} />
-                      <ApplicabilityBadge state={f.applicability_state} />
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>
                       {extractTitle(f)}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, flexWrap: 'wrap' }}>
-                      {(f.source_refs || []).length > 0 && (
-                        <span style={{ color: MUTE }}>{fmtRef(f.source_refs[0])}</span>
-                      )}
-                      <span style={{
-                        fontSize: 10, fontWeight: 600, background: rm.bg, color: rm.fg,
-                        borderRadius: 20, padding: '2px 8px',
-                      }}>
-                        {rm.label}
-                      </span>
-                    </div>
+                    <span style={{
+                      fontSize: 10, fontWeight: 600, background: rm.bg, color: rm.fg,
+                      borderRadius: 20, padding: '2px 8px',
+                    }}>
+                      {rm.label}{rm.check ? ' \u2713' : ''}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* ─── RIGHT: Reading card + Release dock ──────────── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-            {/* Reading card */}
+          {/* ─── RIGHT: Detail card ────────────────────────── */}
+          <div>
             {selected ? (
               <div style={{ background: '#fff', border: `1px solid ${LINE}`, borderRadius: 10, overflow: 'hidden' }}>
                 {/* Header */}
                 <div style={{
-                  padding: '11px 13px', background: '#FBFAF6', borderBottom: `1px solid ${LINE}`,
+                  padding: '12px 14px', background: '#FBFAF6', borderBottom: `1px solid ${LINE}`,
                   display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap',
                 }}>
-                  <span style={{ fontWeight: 700, color: NAVY, fontSize: 13.5, flex: 1 }}>
+                  <span style={{ fontWeight: 700, color: NAVY, fontSize: 14, flex: 1 }}>
                     {extractTitle(selected)}
                   </span>
-                  <ApplicabilityBadge state={selected.applicability_state} />
                   {(() => {
                     const rm = REVIEW_META[selected.review_state] || REVIEW_META.pending;
                     return (
                       <span style={{
-                        fontSize: 10.5, fontWeight: 700, padding: '3px 8px',
+                        fontSize: 10.5, fontWeight: 700, padding: '3px 9px',
                         borderRadius: 20, color: rm.fg, background: rm.bg,
                       }}>
-                        {rm.label}
+                        {rm.label}{rm.check ? ' \u2713' : ''}
                       </span>
                     );
                   })()}
                 </div>
 
-                <div style={{ padding: 13 }}>
-                  {/* ── Three whats ───────────────────────────── */}
-                  {corExpects && (
+                <div style={{ padding: 14 }}>
+                  {/* ── WHAT EVIDLY READ ──────────────────────── */}
+                  {(selected.reviewer_corrected?.body || selected.agent_payload?.body) && (
                     <>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What your policy expects
-                      </div>
-                      <div style={{ fontSize: 13.5, color: '#1F2430', marginBottom: 12, lineHeight: 1.6 }}>
-                        {dispExpects}
-                        {hasCorrection && selected.reviewer_corrected?.body && (
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 4 }}>
+                        WHAT EVIDLY READ
+                        {selected.reviewer_corrected?.body && (
                           <span style={{
-                            display: 'inline-block', fontSize: 10, fontWeight: 700,
-                            color: NAVY, background: '#E9EDF5',
-                            borderRadius: 20, padding: '2px 8px', marginLeft: 8, verticalAlign: 'middle',
+                            fontSize: 9, fontWeight: 700, color: NAVY, background: '#E9EDF5',
+                            borderRadius: 20, padding: '2px 7px', marginLeft: 8, verticalAlign: 'middle',
                           }}>
-                            Edited
+                            Corrected
                           </span>
                         )}
                       </div>
-                    </>
-                  )}
-
-                  {corShows && (
-                    <>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What you can show
-                      </div>
-                      <div style={{ fontSize: 13.5, color: '#1F2430', marginBottom: 12, lineHeight: 1.6 }}>
-                        {stripPrefix(corShows)}
+                      <div style={{
+                        fontSize: 13.5, color: '#1F2430', marginBottom: 16, lineHeight: 1.65,
+                        whiteSpace: 'pre-wrap',
+                      }}>
+                        {selected.reviewer_corrected?.body || selected.agent_payload.body}
                       </div>
                     </>
                   )}
 
-                  {corGap && (
+                  {/* ── Coverage at stake ─────────────────────── */}
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 4 }}>
+                    Coverage at stake
+                  </div>
+                  <table style={{ width: '100%', fontSize: 12.5, marginBottom: 16, borderCollapse: 'collapse' }}>
+                    <tbody>
+                      {['Building', 'BPP', 'Business Income'].map(row => (
+                        <tr key={row} style={{ borderBottom: `1px solid ${LINE}` }}>
+                          <td style={{ padding: '6px 0', color: NAVY, fontWeight: 600 }}>{row}</td>
+                          <td style={{ padding: '6px 0', color: MUTE, textAlign: 'right' }}>Limits pending</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {/* ── Safeguards ─────────────────────────────── */}
+                  {matchedStandards.length > 0 && (
                     <>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What happens if you can{'\u2019'}t
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 4 }}>
+                        Safeguards relevant to the kitchen
                       </div>
-                      <div style={{ fontSize: 13.5, color: '#7a2e1d', marginBottom: 12, lineHeight: 1.6 }}>
-                        {dispGap}
-                        {hasCorrection && selected.reviewer_corrected?.risk && (
-                          <span style={{
-                            display: 'inline-block', fontSize: 10, fontWeight: 700,
-                            color: NAVY, background: '#E9EDF5',
-                            borderRadius: 20, padding: '2px 8px', marginLeft: 8, verticalAlign: 'middle',
+                      <div style={{ marginBottom: 16 }}>
+                        {matchedStandards.map((s, i) => (
+                          <div key={i} style={{
+                            fontSize: 12.5, color: '#3a4254', lineHeight: 1.6,
+                            padding: '4px 0',
+                            borderBottom: i < matchedStandards.length - 1 ? `1px solid ${LINE}` : 'none',
                           }}>
-                            Edited
-                          </span>
-                        )}
+                            <span style={{ fontWeight: 600, color: NAVY }}>{s.topic || s.standard}</span>
+                            {s.requirement && <span> {'\u2014'} {s.requirement}</span>}
+                          </div>
+                        ))}
                       </div>
                     </>
                   )}
 
-                  {/* Fallback when no correlation exists */}
-                  {!corExpects && !corShows && !corGap && selected.agent_payload?.body && (
-                    <>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What EvidLY read
-                      </div>
-                      <div style={{ fontSize: 13.5, color: '#1F2430', marginBottom: 12, lineHeight: 1.6 }}>
-                        {selected.agent_payload.body}
-                      </div>
-                    </>
-                  )}
-
-                  {/* ── Citation chip ────────────────────────── */}
-                  <CitationChip sourceRefs={selected.source_refs} citationStatus={selected.citation_status} />
-
-                  {/* ── Insured-facing block ──────────────────── */}
-                  {selected.kitchen_payload && (selected.kitchen_payload.title || selected.kitchen_payload.body) && (
+                  {/* ── What the insured sees ─────────────────── */}
+                  {selected.kitchen_payload?.body && (
                     <div style={{
-                      marginTop: 16, padding: 12, background: CREAM,
+                      marginBottom: 16, padding: 12, background: CREAM,
                       borderRadius: 8, border: `1px solid ${LINE}`,
                     }}>
                       <div style={{
@@ -690,72 +846,77 @@ export default function ExtractionDetail() {
                           {selected.kitchen_payload.title}
                         </div>
                       )}
-                      {selected.kitchen_payload.body && (
-                        <div style={{ fontSize: 12.5, color: '#3a4254', lineHeight: 1.6 }}>
-                          {selected.kitchen_payload.body}
-                        </div>
-                      )}
+                      <div style={{ fontSize: 12.5, color: '#3a4254', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                        {selected.kitchen_payload.body}
+                      </div>
                     </div>
                   )}
 
-                  {/* ── Action buttons ────────────────────────── */}
-                  <div style={{ display: 'flex', gap: 8, marginTop: 13 }}>
-                    <button
-                      onClick={openEdit}
-                      disabled={run?.release_status === 'released'}
-                      style={{
-                        fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 7,
-                        border: `1px solid ${NAVY}`, background: '#fff', color: NAVY,
-                        cursor: run?.release_status === 'released' ? 'not-allowed' : 'pointer',
-                        opacity: run?.release_status === 'released' ? 0.5 : 1,
-                      }}
-                    >
-                      Edit reading
-                    </button>
-                    <button
-                      onClick={() => submitVerdict('accept')}
-                      disabled={reviewBusy || run?.release_status === 'released'}
-                      style={{
-                        fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 7,
-                        border: `1px solid ${LINE}`,
-                        background: selected?.review_state === 'accepted' ? '#E6F2F0' : '#fff',
-                        color: TEAL,
-                        cursor: reviewBusy || run?.release_status === 'released' ? 'not-allowed' : 'pointer',
-                        opacity: reviewBusy ? 0.6 : 1,
-                      }}
-                    >
-                      {reviewBusy ? 'Saving\u2026' : 'Mark reviewed'}
-                    </button>
-                    <button
-                      onClick={() => submitVerdict('flag')}
-                      disabled={reviewBusy || run?.release_status === 'released'}
-                      style={{
-                        fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 7,
-                        border: `1px solid ${LINE}`,
-                        background: selected?.review_state === 'flagged' ? '#FBEAE5' : '#fff',
-                        color: CORAL,
-                        cursor: reviewBusy || run?.release_status === 'released' ? 'not-allowed' : 'pointer',
-                        opacity: reviewBusy ? 0.6 : 1,
-                      }}
-                    >
-                      Flag
-                    </button>
+                  {/* ── Citation chip ─────────────────────────── */}
+                  <div style={{ marginBottom: 16 }}>
+                    <CitationChip sourceRefs={selected.source_refs} />
                   </div>
 
-                  {/* ── Edit panel ────────────────────────────── */}
-                  {editMode && (
-                    <div style={{ borderTop: `1px dashed ${LINE}`, marginTop: 13, paddingTop: 13 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase', color: NAVY, marginBottom: 8 }}>
-                        Edit the reading {'\u2014'} wording only
+                  {/* ── ACTION BAR ─────────────────────────────── */}
+                  {run?.release_status !== 'released' && (
+                    <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
+                      <button
+                        onClick={() => submitVerdict('accept')}
+                        disabled={reviewBusy}
+                        style={{
+                          fontSize: 12, fontWeight: 700, padding: '8px 16px', borderRadius: 8,
+                          border: 'none',
+                          background: selected.review_state === 'accepted' ? '#E6F2F0' : TEAL,
+                          color: selected.review_state === 'accepted' ? TEAL : '#fff',
+                          cursor: reviewBusy ? 'not-allowed' : 'pointer',
+                          opacity: reviewBusy ? 0.6 : 1,
+                        }}
+                      >
+                        {reviewBusy ? 'Saving\u2026' : selected.review_state === 'accepted' ? 'Accepted \u2713' : 'Accept'}
+                      </button>
+                      <button
+                        onClick={openCorrect}
+                        disabled={reviewBusy}
+                        style={{
+                          fontSize: 12, fontWeight: 700, padding: '8px 16px', borderRadius: 8,
+                          border: `1px solid ${NAVY}`,
+                          background: showCorrectPanel ? `${NAVY}10` : '#fff',
+                          color: NAVY,
+                          cursor: reviewBusy ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        Correct
+                      </button>
+                      <button
+                        onClick={openFlag}
+                        disabled={reviewBusy}
+                        style={{
+                          fontSize: 12, fontWeight: 700, padding: '8px 16px', borderRadius: 8,
+                          border: `1px solid ${AMBER}`,
+                          background: selected.review_state === 'flagged' ? '#FBF3E0' : '#fff',
+                          color: AMBER,
+                          cursor: reviewBusy ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        {selected.review_state === 'flagged' ? 'Flagged' : 'Flag'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* ── Correct panel ──────────────────────────── */}
+                  {showCorrectPanel && (
+                    <div style={{ borderTop: `1px dashed ${LINE}`, marginTop: 14, paddingTop: 14 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase', color: NAVY, marginBottom: 10 }}>
+                        Correct the reading
                       </div>
 
                       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What your policy expects
+                        Body
                       </div>
                       <textarea
-                        value={editExpects}
-                        onChange={e => setEditExpects(e.target.value)}
-                        rows={2}
+                        value={editBody}
+                        onChange={e => setEditBody(e.target.value)}
+                        rows={3}
                         style={{
                           width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
                           fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
@@ -764,59 +925,73 @@ export default function ExtractionDetail() {
                       />
 
                       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
-                        What happens if you can{'\u2019'}t
+                        Risk
+                      </div>
+                      <input
+                        value={editRisk}
+                        onChange={e => setEditRisk(e.target.value)}
+                        style={{
+                          width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
+                          fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
+                          padding: '9px 10px', marginBottom: 10,
+                        }}
+                      />
+
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
+                        Reason (required)
+                      </div>
+                      <select
+                        value={correctReason}
+                        onChange={e => setCorrectReason(e.target.value)}
+                        style={{
+                          width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
+                          fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
+                          padding: '9px 10px', background: '#fff', marginBottom: 10,
+                        }}
+                      >
+                        <option value="">Select reason{'\u2026'}</option>
+                        {CORRECT_REASONS.map(r => (
+                          <option key={r.code} value={r.code}>{r.label}</option>
+                        ))}
+                      </select>
+
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
+                        Notes (optional)
                       </div>
                       <textarea
-                        value={editGap}
-                        onChange={e => setEditGap(e.target.value)}
+                        value={correctNotes}
+                        onChange={e => setCorrectNotes(e.target.value)}
                         rows={2}
+                        placeholder="Additional context\u2026"
                         style={{
                           width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
                           fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
-                          padding: '9px 10px', resize: 'vertical',
+                          padding: '9px 10px', resize: 'vertical', marginBottom: 10,
                         }}
                       />
 
-                      <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: CORAL, margin: '12px 0 5px' }}>
-                        Reason for this edit (required)
-                      </label>
-                      <input
-                        value={editReason}
-                        onChange={e => setEditReason(e.target.value)}
-                        placeholder="Why are you changing the wording?"
-                        style={{
-                          width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
-                          fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
-                          padding: '9px 10px',
-                        }}
-                      />
-
-                      <div style={{ fontSize: 11.5, color: MUTE, marginTop: 10, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-                        <Lock size={12} style={{ flexShrink: 0, marginTop: 2 }} />
-                        <span>Original is preserved (append-only). Wording only {'\u2014'} citation/verified status, coverage line, and policy source can{'\u2019'}t be changed.</span>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                      <div style={{ display: 'flex', gap: 8 }}>
                         <button
-                          disabled={!editReason.trim() || reviewBusy}
+                          disabled={!correctReason || reviewBusy}
                           onClick={() => submitVerdict('correct', {
-                            body: editExpects.trim(),
-                            risk: editGap.trim(),
-                            reason: editReason.trim(),
+                            body: editBody.trim(),
+                            risk: editRisk.trim(),
+                            reason: correctReason,
+                            notes: correctNotes.trim(),
                           })}
                           style={{
-                            padding: '9px 16px', borderRadius: 9,
+                            padding: '9px 16px', borderRadius: 8,
                             fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13,
-                            border: `1px solid ${editReason.trim() ? NAVY : LINE}`,
-                            background: editReason.trim() ? NAVY : '#E7E3D8',
-                            color: editReason.trim() ? '#fff' : '#9AA1AC',
-                            cursor: editReason.trim() && !reviewBusy ? 'pointer' : 'not-allowed',
+                            border: 'none',
+                            background: correctReason ? NAVY : '#E7E3D8',
+                            color: correctReason ? '#fff' : '#9AA1AC',
+                            cursor: correctReason && !reviewBusy ? 'pointer' : 'not-allowed',
                           }}
                         >
-                          {reviewBusy ? 'Saving\u2026' : 'Save edit'}
+                          {reviewBusy ? 'Saving\u2026' : 'Save correction'}
                         </button>
                         <button
-                          onClick={closeEdit}
+                          onClick={closePanels}
                           style={{
                             fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 7,
                             border: `1px solid ${LINE}`, background: '#fff', color: SLATE, cursor: 'pointer',
@@ -828,15 +1003,105 @@ export default function ExtractionDetail() {
                     </div>
                   )}
 
-                  {/* ── Edit history ─────────────────────────── */}
-                  {hasCorrection && selected.reviewer_corrected?.reason && !editMode && (
+                  {/* ── Flag panel ─────────────────────────────── */}
+                  {showFlagPanel && (
+                    <div style={{ borderTop: `1px dashed ${LINE}`, marginTop: 14, paddingTop: 14 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase', color: AMBER, marginBottom: 10 }}>
+                        Flag this finding
+                      </div>
+
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
+                        Reason (required)
+                      </div>
+                      <select
+                        value={flagReason}
+                        onChange={e => setFlagReason(e.target.value)}
+                        style={{
+                          width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
+                          fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
+                          padding: '9px 10px', background: '#fff', marginBottom: 10,
+                        }}
+                      >
+                        <option value="">Select reason{'\u2026'}</option>
+                        {FLAG_REASONS.map(r => (
+                          <option key={r.code} value={r.code}>{r.label}</option>
+                        ))}
+                      </select>
+
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', color: SLATE, marginBottom: 3 }}>
+                        Notes (optional)
+                      </div>
+                      <textarea
+                        value={flagNotes}
+                        onChange={e => setFlagNotes(e.target.value)}
+                        rows={2}
+                        placeholder="Additional context\u2026"
+                        style={{
+                          width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
+                          fontFamily: 'inherit', fontSize: 13, color: '#1F2430',
+                          padding: '9px 10px', resize: 'vertical', marginBottom: 10,
+                        }}
+                      />
+
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          disabled={!flagReason || reviewBusy}
+                          onClick={() => submitVerdict('flag', {
+                            reason: flagReason,
+                            notes: flagNotes.trim(),
+                          })}
+                          style={{
+                            padding: '9px 16px', borderRadius: 8,
+                            fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13,
+                            border: 'none',
+                            background: flagReason ? AMBER : '#E7E3D8',
+                            color: flagReason ? '#fff' : '#9AA1AC',
+                            cursor: flagReason && !reviewBusy ? 'pointer' : 'not-allowed',
+                          }}
+                        >
+                          {reviewBusy ? 'Saving\u2026' : 'Flag finding'}
+                        </button>
+                        <button
+                          onClick={closePanels}
+                          style={{
+                            fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 7,
+                            border: `1px solid ${LINE}`, background: '#fff', color: SLATE, cursor: 'pointer',
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Edit history ──────────────────────────── */}
+                  {selected.reviewer_corrected?.reason_code && !showCorrectPanel && !showFlagPanel && (
                     <div style={{
-                      marginTop: 13, padding: '8px 10px', background: '#F7F5EE',
+                      marginTop: 14, padding: '8px 10px', background: '#F7F5EE',
                       borderRadius: 7, fontSize: 11.5, color: SLATE, lineHeight: 1.5,
                     }}>
-                      <b>Edit reason:</b> {selected.reviewer_corrected.reason}
-                      {selected.reviewed_by && (
-                        <span style={{ color: MUTE }}> {'\u2014'} {selected.reviewed_by}</span>
+                      <b>Correction reason:</b> {
+                        CORRECT_REASONS.find(r => r.code === selected.reviewer_corrected.reason_code)?.label
+                        || selected.reviewer_corrected.reason_code
+                      }
+                      {selected.reviewer_corrected.notes && (
+                        <span> {'\u2014'} {selected.reviewer_corrected.notes}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ── Flag detail ───────────────────────────── */}
+                  {selected.flag_detail?.reason_code && !showCorrectPanel && !showFlagPanel && (
+                    <div style={{
+                      marginTop: 10, padding: '8px 10px', background: '#FBF3E0',
+                      borderRadius: 7, fontSize: 11.5, color: AMBER, lineHeight: 1.5,
+                    }}>
+                      <b>Flag reason:</b> {
+                        FLAG_REASONS.find(r => r.code === selected.flag_detail.reason_code)?.label
+                        || selected.flag_detail.reason_code
+                      }
+                      {selected.flag_detail.notes && (
+                        <span style={{ color: SLATE }}> {'\u2014'} {selected.flag_detail.notes}</span>
                       )}
                     </div>
                   )}
@@ -850,238 +1115,6 @@ export default function ExtractionDetail() {
                 Select a finding to review.
               </div>
             )}
-
-            {/* Coverage routing locked line */}
-            <div style={{
-              padding: '11px 13px', background: LOCK_BG, border: `1px solid ${LINE}`,
-              borderRadius: 9, fontSize: 12.5, color: SLATE,
-              display: 'flex', gap: 9, alignItems: 'flex-start',
-            }}>
-              <Lock size={14} style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>
-                <b style={{ color: NAVY }}>Coverage routing (locked):</b>{' '}
-                Policy Lens reads the policy and identifies these requirements.
-                Your agent evaluates the coverage.{' '}
-                <span style={{ color: MUTE }}>Non-editable boilerplate {'\u2014'} {'\u00a7'}1731.</span>
-              </span>
-            </div>
-
-            {/* ── Release dock ────────────────────────────────── */}
-            <div style={{ background: '#fff', border: `1px solid ${LINE}`, borderRadius: 10, overflow: 'hidden' }}>
-              <div style={{
-                padding: '12px 15px', borderBottom: `1px solid ${LINE}`,
-                fontFamily: 'Montserrat', fontWeight: 700, fontSize: 12.5, color: NAVY,
-              }}>
-                Release report
-              </div>
-              <div style={{ padding: 15 }}>
-
-                {/* Pre-review: reading / reconciling */}
-                {(stage === 'reading' || stage === 'reconciling') && (
-                  <p style={{ margin: 0, color: MUTE, fontSize: 13 }}>
-                    {stage === 'reading'
-                      ? 'Policy is being read. Findings will appear when the dual-pass extraction completes.'
-                      : 'Dual-pass readings are being reconciled. Findings will be built next.'}
-                  </p>
-                )}
-
-                {/* Begin review gate */}
-                {stage === 'findings_ready' && (
-                  <>
-                    <p style={{ margin: '0 0 14px', color: MUTE, fontSize: 13 }}>
-                      Findings are built and waiting. Begin review to work each reading, choose the broker, and release.
-                    </p>
-                    <button
-                      onClick={handleBeginReview}
-                      style={{
-                        width: '100%', padding: '11px 14px', borderRadius: 9,
-                        fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13.5,
-                        border: `1px solid ${NAVY}`, background: NAVY, color: '#fff', cursor: 'pointer',
-                      }}
-                    >
-                      Begin review
-                    </button>
-                    <div style={{ marginTop: 8, fontSize: 11.5, color: MUTE, textAlign: 'center' }}>
-                      Writes <code style={{ fontSize: 11 }}>in_review</code> and opens the review gate.
-                    </div>
-                  </>
-                )}
-
-                {/* Active review / released */}
-                {(stage === 'in_review' || stage === 'released') && (
-                  <>
-                    {/* Progress bar */}
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      fontSize: 12.5, padding: '9px 11px', background: '#F7F5EE',
-                      border: `1px solid ${LINE}`, borderRadius: 8, marginBottom: 14,
-                    }}>
-                      <span><b style={{ color: NAVY }}>{reviewedCount}</b> of {findings.length} reviewed</span>
-                      <span style={{ color: selectedBrokerId ? NAVY : MUTE, fontWeight: selectedBrokerId ? 600 : 400 }}>
-                        {selectedBrokerId ? `Broker: ${brokerLabel(selectedBroker || {})}` : 'Broker not selected'}
-                      </span>
-                    </div>
-
-                    {/* Broker selector */}
-                    <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase', color: SLATE, marginBottom: 6, display: 'block' }}>
-                      Share with broker
-                    </label>
-                    <select
-                      value={selectedBrokerId}
-                      onChange={e => setSelectedBrokerId(e.target.value)}
-                      disabled={stage === 'released'}
-                      style={{
-                        width: '100%', padding: '9px 10px', border: `1px solid ${LINE}`,
-                        borderRadius: 8, fontFamily: 'inherit', fontSize: 13.5, color: '#1F2430', background: '#fff',
-                      }}
-                    >
-                      <option value="">Choose a broker / agent{'\u2026'}</option>
-                      {brokers.map(b => (
-                        <option key={b.id} value={b.id}>{brokerLabel(b)}</option>
-                      ))}
-                    </select>
-
-                    {stage !== 'released' && (
-                      <>
-                        <button
-                          onClick={() => setShowAddBroker(!showAddBroker)}
-                          style={{
-                            marginTop: 8, fontSize: 12.5, fontWeight: 600, color: NAVY,
-                            cursor: 'pointer', background: 'none', border: 'none', padding: 0,
-                          }}
-                        >
-                          + Add broker
-                        </button>
-                        {showAddBroker && (
-                          <div style={{
-                            marginTop: 10, padding: 11, border: `1px dashed ${LINE}`,
-                            borderRadius: 8, background: '#FBFAF6',
-                            display: 'flex', flexDirection: 'column', gap: 8,
-                          }}>
-                            <input
-                              value={newBrokerName}
-                              onChange={e => setNewBrokerName(e.target.value)}
-                              placeholder="Broker name"
-                              style={{
-                                width: '100%', border: `1px solid ${LINE}`, borderRadius: 8,
-                                fontFamily: 'inherit', fontSize: 13, padding: '9px 10px',
-                              }}
-                            />
-                            <button
-                              onClick={handleAddBroker}
-                              style={{
-                                width: '100%', padding: '11px 14px', borderRadius: 9,
-                                fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13.5,
-                                border: `1px solid ${NAVY}`, background: '#fff', color: NAVY,
-                                cursor: 'pointer', marginTop: 2,
-                              }}
-                            >
-                              Add &amp; select
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-
-                    {/* Dual destination */}
-                    <div style={{ marginTop: 15, border: `1px solid ${LINE}`, borderRadius: 9, overflow: 'hidden' }}>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        gap: 10, padding: '10px 12px', fontSize: 12.5, background: '#FBFAF6',
-                      }}>
-                        <span style={{ color: SLATE, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-                          Client account
-                          <span style={{
-                            fontSize: 10, fontWeight: 700, letterSpacing: '.4px', textTransform: 'uppercase',
-                            color: SLATE, background: LOCK_BG, border: `1px solid ${LINE}`,
-                            borderRadius: 5, padding: '2px 7px',
-                          }}>
-                            always
-                          </span>
-                        </span>
-                        <span style={{ color: NAVY, fontWeight: 600, textAlign: 'right', fontSize: 12 }}>
-                          {intake.business_name || 'Client'}
-                        </span>
-                      </div>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        gap: 10, padding: '10px 12px', fontSize: 12.5, borderTop: `1px solid ${LINE}`,
-                      }}>
-                        <span style={{ color: SLATE, fontWeight: 600 }}>Broker</span>
-                        <span style={{
-                          color: selectedBrokerId ? NAVY : MUTE,
-                          fontWeight: selectedBrokerId ? 600 : 400, textAlign: 'right', fontSize: 12,
-                        }}>
-                          {selectedBroker ? brokerLabel(selectedBroker) : 'Not selected'}
-                        </span>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 11, color: MUTE, marginTop: 8, lineHeight: 1.5 }}>
-                      On release, the report posts to the client{'\u2019'}s EvidLY account (insured {'\u2014'} always) and a shared grant goes to the selected broker. Both resolve by intake, not document.
-                    </div>
-
-                    {/* Release button */}
-                    {stage === 'released' ? (
-                      <>
-                        <button
-                          disabled
-                          style={{
-                            width: '100%', padding: '11px 14px', borderRadius: 9, marginTop: 13,
-                            fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13.5,
-                            border: `1px solid ${TEAL}`, background: '#E8F2F1', color: TEAL, cursor: 'default',
-                          }}
-                        >
-                          Released {'\u2713'}
-                        </button>
-                        <div style={{ marginTop: 8, fontSize: 11.5, color: MUTE, textAlign: 'center' }}>
-                          Posted to the client account and shared with the broker.
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          disabled={!canRelease || releasing}
-                          onClick={handleRelease}
-                          style={{
-                            width: '100%', padding: '11px 14px', borderRadius: 9, marginTop: 13,
-                            fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13.5,
-                            border: `1px solid ${canRelease ? NAVY : LINE}`,
-                            background: canRelease ? NAVY : '#E7E3D8',
-                            color: canRelease ? '#fff' : '#9AA1AC',
-                            cursor: canRelease && !releasing ? 'pointer' : 'not-allowed',
-                            opacity: releasing ? 0.6 : 1,
-                          }}
-                        >
-                          {releasing ? 'Releasing\u2026' : 'Release report'}
-                        </button>
-                        <div style={{ marginTop: 8, fontSize: 11.5, color: MUTE, textAlign: 'center' }}>
-                          {!allReviewed
-                            ? `${findings.length - reviewedCount} reading${findings.length - reviewedCount !== 1 ? 's' : ''} still need${findings.length - reviewedCount === 1 ? 's' : ''} review.`
-                            : !selectedBrokerId
-                              ? 'Choose a broker to release.'
-                              : 'Posts to the client account and shares with the broker.'}
-                        </div>
-                      </>
-                    )}
-
-                    {/* Release token */}
-                    {releaseToken && (
-                      <div style={{ marginTop: 12, padding: 12, background: '#E8F2F1', borderRadius: 8, border: `1px solid ${TEAL}30` }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: TEAL, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
-                          Agent report link
-                        </div>
-                        <div style={{
-                          fontSize: 12, color: NAVY, wordBreak: 'break-all', fontFamily: 'monospace',
-                          background: '#fff', padding: 8, borderRadius: 4,
-                        }}>
-                          {`${window.location.origin}/report/${releaseToken}`}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
           </div>
 
         </div>

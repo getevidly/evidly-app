@@ -150,13 +150,14 @@ Deno.serve(async (req: Request) => {
     const unreviewed = allFindings.filter(
       (f: any) =>
         f.review_state === "pending" ||
+        f.review_state === "flagged" ||
         f.reviewed_by === null ||
         f.reviewed_at === null,
     );
     if (unreviewed.length > 0) {
       return json(
         {
-          error: `${unreviewed.length} finding(s) not genuinely reviewed (missing reviewer or timestamp)`,
+          error: `${unreviewed.length} finding(s) not releasable (must be accepted or corrected — flagged or unreviewed findings block release)`,
           unreviewed_count: unreviewed.length,
         },
         422,
