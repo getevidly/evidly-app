@@ -91,7 +91,7 @@ Deno.serve(async (req: Request) => {
     // ── Resolve the authorizing org (insured) from the intake ───────
     const { data: intakeCheck, error: intakeErr } = await supabase
       .from("policy_lens_intakes")
-      .select("organization_id, broker_party_id, source")
+      .select("organization_id, broker_party_id, source, business_name")
       .eq("id", intake_id)
       .single();
 
@@ -310,6 +310,7 @@ Deno.serve(async (req: Request) => {
           granted_by_org_id: grantedByOrgId,
           recipient_party_id: effectiveRecipient,
           consent_type: "per_report",
+          business_name: intakeCheck.business_name,
         })
         .select("id, intake_id, run_id, door, expires_at, granted_by_org_id, recipient_party_id, consent_type, created_at")
         .single();
