@@ -119,6 +119,8 @@ export default function PolicyLensQueue() {
   // ── Filter + sort (worst-first) ──────────────────────────────
   const filtered = useMemo(() => {
     let list = rows;
+    // released runs leave the queue (live in Released Reports) unless explicitly viewed
+    if (stageFilter !== 'released') list = list.filter(r => r.stage !== 'released');
     if (stageFilter !== 'all') list = list.filter(r => r.stage === stageFilter);
     if (flagFilter !== 'all') list = list.filter(r => r.worst === flagFilter);
     if (search.trim()) {

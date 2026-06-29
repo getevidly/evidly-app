@@ -75,6 +75,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Policy Lens',
     items: [
       { label: 'Queue',              path: '/admin/policy-lens' },
+      { label: 'Released reports',   path: '/admin/policy-lens/released' },
     ],
   },
   {
