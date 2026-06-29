@@ -420,6 +420,18 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Failed to save extraction passes" }, 500, headers);
     }
 
+    // back-fill carrier on the intake from parsed declarations (manual entry wins)
+    const parsedCarrier =
+      (passB.parsed?.declarations?.carrier ??
+       passA.parsed?.declarations?.carrier ?? "").toString().trim();
+    if (parsedCarrier) {
+      await supabase
+        .from("policy_lens_intakes")
+        .update({ carrier: parsedCarrier })
+        .eq("id", intake_id)
+        .is("carrier", null);   // only fill when empty — don't clobber a typed value
+    }
+
     // ── Chain -> pl-reconcile (best-effort) ────────────────
     try {
       const reconcileResp = await fetch(

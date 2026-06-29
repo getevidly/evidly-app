@@ -1,0 +1,72 @@
+// middleware.ts
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+// old /scoretable/<county> and /scoretable/<county>-county  ->  live <county> slug
+const SCORETABLE: Record<string, string> = {
+  'san-joaquin': 'san-joaquin', 'san-joaquin-county': 'san-joaquin',
+  'madera': 'madera', 'madera-county': 'madera',
+  'napa': 'napa', 'napa-county': 'napa',
+  'monterey': 'monterey', 'monterey-county': 'monterey',
+  'butte': 'butte',
+  'kings-county': 'kings',
+  'riverside-county': 'riverside',
+  'alameda-county': 'alameda',
+  'alpine-county': 'alpine',
+  'sacramento-county': 'sacramento',
+  'el-dorado-county': 'el-dorado',
+  'merced-county': 'merced',
+  'solano-county': 'solano',
+  'san-bernardino-county': 'san-bernardino',
+  'fresno-county': 'fresno',
+  'tuolumne-county': 'tuolumne',
+  'contra-costa-county': 'contra-costa',
+  'mariposa-county': 'mariposa',
+  'siskiyou-county': 'siskiyou',
+  'nevada-county': 'nevada-ca',          // live slug is nevada-ca, NOT nevada
+  'del-norte-county': 'del-norte',
+  'kern-county': 'kern',
+  'santa-clara-county': 'santa-clara',
+  'santa-barbara-county': 'santa-barbara',
+  'trinity-county': 'trinity',
+}
+
+// old /city/<city>  ->  live health-jurisdiction slug
+const CITY: Record<string, string> = {
+  'gardena': 'la-county', 'hermosa-beach': 'la-county', 'westlake-village': 'la-county',
+  'san-gabriel': 'la-county', 'redondo-beach': 'la-county', 'irwindale': 'la-county',
+  'manhattan-beach': 'la-county', 'commerce': 'la-county', 'claremont': 'la-county',
+  'baldwin-park': 'la-county', 'signal-hill': 'la-county', 'lancaster': 'la-county',
+  'montebello': 'la-county',
+  'la-habra': 'orange-county', 'cypress': 'orange-county', 'stanton': 'orange-county',
+  'lake-forest': 'orange-county', 'los-alamitos': 'orange-county', 'dana-point': 'orange-county',
+  'san-jacinto': 'riverside', 'banning': 'riverside', 'indian-wells': 'riverside',
+  'canyon-lake': 'riverside',
+  'grand-terrace': 'san-bernardino', 'loma-linda': 'san-bernardino',
+  'millbrae': 'san-mateo', 'east-palo-alto': 'san-mateo',
+  'los-altos': 'santa-clara',
+  'st-helena': 'napa',
+}
+
+// 410 Gone — removed on purpose, no California equivalent
+const GONE = new Set<string>([
+  '/scoretable/oregon/or-gilliam',   // Oregon, off-brand under CA-only
+  '/city/mt.-angel',                 // Oregon
+  '/operations-check',
+])
+
+const REDIRECTS: Record<string, string> = {}
+for (const [from, to] of Object.entries(SCORETABLE)) REDIRECTS[`/scoretable/${from}`] = `/scoretable/california/${to}`
+for (const [from, to] of Object.entries(CITY))       REDIRECTS[`/city/${from}`]       = `/scoretable/california/${to}`
+
+export function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname.replace(/\/+$/, '') || '/'
+  if (GONE.has(path)) return new NextResponse(null, { status: 410 })
+  const dest = REDIRECTS[path]
+  if (dest) return NextResponse.redirect(new URL(dest, req.url), 308)
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/scoretable/:path*', '/city/:path*', '/operations-check'],
+}

@@ -156,12 +156,28 @@ export default function PolicyLens() {
   }
 
   return (
-    <PolicyLensReport
-      findings={data.findings || []}
-      coverage={data.coverage_detail || null}
-      mode="bound"
-      edition="kitchen"
-    />
+    <>
+      <style>{`
+        @media print {
+          [data-print-hide] { display: none !important; }
+          nav, header, aside, [role="navigation"] { display: none !important; }
+          body { background: #fff !important; }
+          @page { margin: 0.6in; }
+          [data-pl-reading] { break-inside: avoid; }
+        }
+      `}</style>
+      <div data-print-hide style={{ maxWidth: 768, margin: "0 auto", padding: "16px 24px 0", textAlign: "right" }}>
+        <button onClick={() => window.print()} style={{ fontFamily: "'Helvetica Neue',Arial,sans-serif", fontSize: 13, fontWeight: 600, color: "#1E2D4D", background: "#fff", border: "1px solid #1E2D4D", borderRadius: 6, padding: "7px 16px", cursor: "pointer" }}>
+          Print / Save as PDF
+        </button>
+      </div>
+      <PolicyLensReport
+        findings={data.findings || []}
+        coverage={data.coverage_detail || null}
+        mode="bound"
+        edition="kitchen"
+      />
+    </>
   );
 }
 

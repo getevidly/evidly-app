@@ -101,7 +101,7 @@ function FindingCard({ f, edition, mode }) {
   const corr = f.correlation ? { ...f.correlation, flag: f.flag } : null;
   const refs = e.refs || (f.agent && f.agent.refs) || null;
   return (
-    <div style={{ background: "#fff", border: `1px solid ${LINE}`, borderLeft: `2px solid ${GOLD}`, borderRadius: 6, padding: "16px 18px", marginBottom: 14 }}>
+    <div data-pl-reading style={{ background: "#fff", border: `1px solid ${LINE}`, borderLeft: `2px solid ${GOLD}`, borderRadius: 6, padding: "16px 18px", marginBottom: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, flexWrap: "wrap" }}>
         <div style={{ fontFamily: FONT_UI, fontWeight: 700, fontSize: 13.5, color: NAVY }}>
           <span style={{ color: GOLD, marginRight: 8 }}>{f.id}</span>{e.title}
