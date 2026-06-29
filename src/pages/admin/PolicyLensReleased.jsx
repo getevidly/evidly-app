@@ -43,7 +43,7 @@ export default function PolicyLensReleased() {
         .select('id, intake_id, released_at, released_by, release_status'),
       supabase
         .from('pl_report_grants')
-        .select('id, run_id, intake_id, recipient_party_id, expires_at, door'),
+        .select('id, run_id, intake_id, recipient_party_id, expires_at, door, last_accessed_at, access_count'),
     ]);
     if (sRes.data) setSeals(sRes.data);
     if (iRes.data) setIntakes(iRes.data);
@@ -91,13 +91,13 @@ export default function PolicyLensReleased() {
   }, [rows]);
 
   function fmtDate(iso) {
-    if (!iso) return '\u2014';
+    if (!iso) return '—';
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
   function fmtHash(h) {
-    if (!h) return '\u2014';
-    return h.slice(0, 8) + '\u2026' + h.slice(-6);
+    if (!h) return '—';
+    return h.slice(0, 8) + '…' + h.slice(-6);
   }
 
   return (
@@ -124,21 +124,22 @@ export default function PolicyLensReleased() {
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search carrier, business, agent, hash\u2026"
+          placeholder="Search carrier, business, agent, hash…"
           style={{ width: '100%', padding: '8px 12px 8px 36px', border: '1px solid #E5E7EB', borderRadius: 8, fontSize: 13, outline: 'none' }}
         />
       </div>
 
       {loading ? (
-        <p style={{ color: MUTE, fontSize: 13, padding: 24 }}>Loading\u2026</p>
+        <p style={{ color: MUTE, fontSize: 13, padding: 24 }}>Loading…</p>
       ) : filtered.length === 0 ? (
         <EmptyState icon={<Shield size={32} />} title="No released reports" message="Reports will appear here after they are sealed and released." />
       ) : (
         <div style={{ border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 100px 120px 160px 36px', gap: 0, background: '#F9FAFB', borderBottom: '1px solid #E5E7EB', padding: '10px 16px', fontSize: 11, fontWeight: 600, color: MUTE, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 100px 140px 120px 160px 36px', gap: 0, background: '#F9FAFB', borderBottom: '1px solid #E5E7EB', padding: '10px 16px', fontSize: 11, fontWeight: 600, color: MUTE, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             <span>Carrier / Business</span>
             <span>Agent / Agency</span>
             <span>Path</span>
+            <span>Opened</span>
             <span>Sealed</span>
             <span>Content hash</span>
             <span></span>
@@ -147,16 +148,16 @@ export default function PolicyLensReleased() {
             <div
               key={r.id}
               onClick={() => navigate(`/admin/policy-lens/${r.intake_id}`)}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 100px 120px 160px 36px', gap: 0, padding: '12px 16px', borderBottom: '1px solid #F3F4F6', cursor: 'pointer', fontSize: 13, alignItems: 'center' }}
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 100px 140px 120px 160px 36px', gap: 0, padding: '12px 16px', borderBottom: '1px solid #F3F4F6', cursor: 'pointer', fontSize: 13, alignItems: 'center' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#FAFAF8'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
             >
               <div>
                 <div style={{ fontWeight: 600, color: NAVY }}>{r.intake.carrier || 'No carrier'}</div>
-                <div style={{ fontSize: 11, color: MUTE }}>{r.intake.business_name || '\u2014'}</div>
+                <div style={{ fontSize: 11, color: MUTE }}>{r.intake.business_name || '—'}</div>
               </div>
               <div>
-                <div style={{ color: NAVY }}>{r.intake.agent_name || '\u2014'}</div>
+                <div style={{ color: NAVY }}>{r.intake.agent_name || '—'}</div>
                 <div style={{ fontSize: 11, color: MUTE }}>{r.intake.agency_name || ''}</div>
               </div>
               <div>
@@ -166,8 +167,17 @@ export default function PolicyLensReleased() {
                   background: r.grant ? '#FBF3E0' : '#EEF1F6',
                   color: r.grant ? GOLD : NAVY,
                 }}>
-                  {r.grant?.door === 'agent' ? 'Broker' : r.grant ? 'Insured' : '\u2014'}
+                  {r.grant?.door === 'agent' ? 'Broker' : r.grant ? 'Insured' : '—'}
                 </span>
+              </div>
+              <div style={{ padding: '0', fontSize: 13 }}>
+                {r.grant?.access_count > 0 ? (
+                  <span style={{ color: '#0F6E56', fontWeight: 600 }}>
+                    Opened {new Date(r.grant.last_accessed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                ) : (
+                  <span style={{ color: '#9CA3AF' }}>Not yet opened</span>
+                )}
               </div>
               <div style={{ fontSize: 12, color: MUTE }}>{fmtDate(r.sealed_at)}</div>
               <div style={{ fontFamily: 'monospace', fontSize: 11, color: MUTE }}>{fmtHash(r.content_hash)}</div>
