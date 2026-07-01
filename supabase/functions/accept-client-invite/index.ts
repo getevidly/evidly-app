@@ -25,7 +25,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { token, password, address, city, state, zip } = body;
+    const { token, password, business_name, address, city, state, zip } = body;
 
     if (!token || !password) {
       return json({ error: "token and password are required" }, 400, headers);
@@ -37,7 +37,7 @@ Deno.serve(async (req: Request) => {
     // ── 1. Validate invite ──────────────────────────────────
     const { data: invite, error: invErr } = await supabase
       .from("evidly_client_invites")
-      .select("id, business_name, contact_name, email, status, expires_at")
+      .select("id, business_name, contact_name, email, phone, client_role, status, expires_at")
       .eq("token", token)
       .single();
 
@@ -78,7 +78,7 @@ Deno.serve(async (req: Request) => {
     const { data: org, error: orgErr } = await supabase
       .from("organizations")
       .insert({
-        name: invite.business_name,
+        name: (business_name && String(business_name).trim()) || invite.business_name,
         primary_contact_name: invite.contact_name,
         state: state || null,
         onboarding_completed: false,
@@ -116,6 +116,18 @@ Deno.serve(async (req: Request) => {
       });
     if (accErr) throw new Error("access insert failed: " + accErr.message);
 
+    // ── 5b. User profile (role from invite) ─────────────────
+    const { error: profErr } = await supabase
+      .from("user_profiles")
+      .insert({
+        id: authUserId,
+        full_name: invite.contact_name,
+        phone: invite.phone || null,
+        organization_id: org.id,
+        role: invite.client_role || "owner_operator",
+      });
+    if (profErr) throw new Error("profile insert failed: " + profErr.message);
+
     // ── 6. Mark accepted ────────────────────────────────────
     await supabase.from("evidly_client_invites")
       .update({ status: "accepted", accepted_at: new Date().toISOString() })
@@ -131,6 +143,7 @@ Deno.serve(async (req: Request) => {
   } catch (err) {
     logger.error("[accept-client-invite] chain failed — rolling back", err);
     if (orgId) {
+      if (authUserId) await supabase.from("user_profiles").delete().eq("id", authUserId).catch(() => {});
       await supabase.from("user_location_access").delete().eq("organization_id", orgId).catch(() => {});
       await supabase.from("locations").delete().eq("organization_id", orgId).catch(() => {});
       await supabase.from("organizations").delete().eq("id", orgId).catch(() => {});

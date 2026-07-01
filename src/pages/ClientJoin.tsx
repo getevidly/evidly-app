@@ -26,6 +26,7 @@ export function ClientJoin() {
   const [invite, setInvite] = useState<Invite | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const [businessName, setBusinessName] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [showPw, setShowPw] = useState(false);
@@ -63,6 +64,7 @@ export function ClientJoin() {
       if (data.status !== 'pending') { setLoadError(`This invite is ${data.status}.`); setLoading(false); return; }
       if (new Date(data.expires_at) < new Date()) { setLoadError('This invite has expired.'); setLoading(false); return; }
       setInvite(data as Invite);
+      setBusinessName(data.business_name || '');
       setLoading(false);
     })();
   }, [token]);
@@ -81,7 +83,7 @@ export function ClientJoin() {
     special: /[^A-Za-z0-9]/.test(password),
   };
   const pwValid = Object.values(reqs).every(Boolean);
-  const canSubmit = pwValid && password === confirm && !submitting;
+  const canSubmit = pwValid && password === confirm && businessName.trim().length > 0 && !submitting;
 
   async function handleSubmit() {
     if (!canSubmit || !invite) return;
@@ -90,7 +92,7 @@ export function ClientJoin() {
       const res = await fetch(FN_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
-        body: JSON.stringify({ token, password, address, city, state: stateVal, zip }),
+        body: JSON.stringify({ token, password, business_name: businessName, address, city, state: stateVal, zip }),
       });
       const out = await res.json();
       if (!res.ok) { toast.error(out.error || 'Could not complete signup.'); setSubmitting(false); return; }
@@ -217,6 +219,9 @@ export function ClientJoin() {
             </button>
           </div>
           {confirm && confirm !== password && <p style={{ fontSize:12, color:'#dc2626', margin:'0 0 12px' }}>Passwords don't match</p>}
+
+          <label className="cj-lbl">Business name</label>
+          <input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Your business name" className="cj-inp" style={{ marginBottom:12 }} />
 
           <label className="cj-lbl">Kitchen address</label>
           <input value={address} onChange={e => setAddress(e.target.value)} placeholder="1420 Fulton St" className="cj-inp" style={{ marginBottom:12 }} />

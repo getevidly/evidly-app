@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json();
     const {
-      invite_id, business_name, contact_name, email, phone, message, sender_name,
+      invite_id, business_name, contact_name, email, phone, message, sender_name, client_role,
     } = body;
 
     const appBase = Deno.env.get("APP_PUBLIC_BASE") || "https://app.getevidly.com";
@@ -86,8 +86,8 @@ Deno.serve(async (req: Request) => {
     }
 
     // ═══ NEW INVITE PATH ═══
-    if (!business_name || !contact_name || !email) {
-      return json({ error: "business_name, contact_name, and email are required" }, 400, headers);
+    if (!contact_name || !email) {
+      return json({ error: "contact_name and email are required" }, 400, headers);
     }
 
     const token = crypto.randomUUID();
@@ -95,9 +95,11 @@ Deno.serve(async (req: Request) => {
     const { data: created, error: insErr } = await supabase
       .from("evidly_client_invites")
       .insert({
-        business_name, contact_name, email,
+        business_name: business_name || null,
+        contact_name, email,
         phone: phone || null,
         message: message || null,
+        client_role: client_role || "owner_operator",
         token, status: "pending", invited_by: user.id,
       })
       .select("id")
