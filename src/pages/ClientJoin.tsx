@@ -89,7 +89,7 @@ export function ClientJoin() {
     try {
       const res = await fetch(FN_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY },
+        headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
         body: JSON.stringify({ token, password, address, city, state: stateVal, zip }),
       });
       const out = await res.json();
@@ -210,7 +210,12 @@ export function ClientJoin() {
           </div>
 
           <label className="cj-lbl">Confirm password</label>
-          <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} className="cj-inp" style={{ marginBottom: confirm && confirm !== password ? 4 : 12 }} />
+          <div style={{ position:'relative', marginBottom: confirm && confirm !== password ? 4 : 12 }}>
+            <input type={showPw ? 'text' : 'password'} value={confirm} onChange={e => setConfirm(e.target.value)} className="cj-inp" style={{ paddingRight:36 }} />
+            <button type="button" onClick={() => setShowPw(!showPw)} style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#94a3b8' }} aria-label="Toggle password visibility">
+              {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
           {confirm && confirm !== password && <p style={{ fontSize:12, color:'#dc2626', margin:'0 0 12px' }}>Passwords don't match</p>}
 
           <label className="cj-lbl">Kitchen address</label>
