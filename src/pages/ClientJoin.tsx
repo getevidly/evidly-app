@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Check, X, Flame, Leaf, Radar } from 'lucide-react';
+import { Eye, EyeOff, Check, X, Flame, Leaf, Radar, Phone, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-client-invite`;
+const CALENDLY_URL = import.meta.env.VITE_FOUNDER_CALENDLY || 'https://calendly.com/arthur-getevidly/evidly';
+const FOUNDER_PHONE = import.meta.env.VITE_FOUNDER_PHONE || '';
 
 interface Invite {
   business_name: string;
@@ -34,6 +36,21 @@ export function ClientJoin() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    const id = 'calendly-widget-js';
+    if (!document.getElementById(id)) {
+      const s = document.createElement('script');
+      s.id = id;
+      s.src = 'https://assets.calendly.com/assets/external/widget.js';
+      s.async = true;
+      document.body.appendChild(s);
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://assets.calendly.com/assets/external/widget.css';
+      document.head.appendChild(l);
+    }
+  }, []);
+
+  useEffect(() => {
     (async () => {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
       const { data, error } = await supabase
@@ -49,6 +66,12 @@ export function ClientJoin() {
       setLoading(false);
     })();
   }, [token]);
+
+  function openCalendly() {
+    const w = window as unknown as { Calendly?: { initPopupWidget: (o: { url: string }) => void } };
+    if (w.Calendly) { w.Calendly.initPopupWidget({ url: CALENDLY_URL }); }
+    else { window.open(CALENDLY_URL, '_blank'); }
+  }
 
   const reqs = {
     len: password.length >= 12,
@@ -66,21 +89,13 @@ export function ClientJoin() {
     try {
       const res = await fetch(FN_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-        },
+        headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY },
         body: JSON.stringify({ token, password, address, city, state: stateVal, zip }),
       });
       const out = await res.json();
       if (!res.ok) { toast.error(out.error || 'Could not complete signup.'); setSubmitting(false); return; }
-
       const { error: signInErr } = await signIn(invite.email, password);
-      if (signInErr) {
-        toast.success('Account created. Please sign in.');
-        navigate('/login');
-        return;
-      }
+      if (signInErr) { toast.success('Account created. Please sign in.'); navigate('/login'); return; }
       toast.success('Welcome to EvidLY!');
       navigate('/dashboard');
     } catch {
@@ -94,7 +109,7 @@ export function ClientJoin() {
     .cj-card { width:100%; max-width:760px; background:#fff; border-radius:14px; overflow:hidden; border:1px solid #E7E2D6; display:grid; grid-template-columns:300px 1fr; }
     .cj-panel { background:#1E2D4D; padding:28px 24px; color:#fff; display:flex; flex-direction:column; }
     .cj-form { padding:28px; }
-    .cj-mark { font-size:21px; font-weight:700; letter-spacing:0.5px; margin-bottom:22px; }
+    .cj-mark { font-size:21px; font-weight:700; letter-spacing:0.5px; margin-bottom:20px; }
     .cj-badge { display:flex; align-items:center; gap:11px; padding:12px; background:rgba(160,140,90,0.10); border:1px solid rgba(160,140,90,0.35); border-radius:12px; margin-bottom:18px; }
     .cj-av { flex:none; width:40px; height:40px; border-radius:50%; background:#A08C5A; color:#1E2D4D; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
     .cj-feat { display:flex; align-items:flex-start; gap:11px; }
@@ -105,6 +120,7 @@ export function ClientJoin() {
     .cj-btn { width:100%; background:#1E2D4D; color:#fff; border:none; border-radius:9px; padding:13px; font-size:14.5px; font-weight:600; cursor:pointer; transition:opacity .15s; }
     .cj-btn:disabled { opacity:0.4; cursor:not-allowed; }
     .cj-lbl { font-size:11.5px; color:#64748b; display:block; margin-bottom:4px; font-weight:500; }
+    .cj-contact { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; border:1px solid #E2E8F0; border-radius:9px; padding:9px; font-size:12.5px; color:#1E2D4D; font-weight:500; background:none; cursor:pointer; }
     @media (max-width:720px) { .cj-card { grid-template-columns:1fr; max-width:440px; } }
   `;
 
@@ -112,12 +128,6 @@ export function ClientJoin() {
     <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:11.5, color: ok ? '#0F6E56' : '#94a3b8' }}>
       {ok ? <Check size={13} /> : <X size={13} />}{label}
     </span>
-  );
-
-  const Wordmark = () => (
-    <div className="cj-mark">
-      <span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#FFFFFF' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span>
-    </div>
   );
 
   if (loading) {
@@ -145,7 +155,7 @@ export function ClientJoin() {
       <div className="cj-card">
 
         <div className="cj-panel">
-          <Wordmark />
+          <div className="cj-mark"><span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#FFFFFF' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span></div>
 
           <div className="cj-badge">
             <span className="cj-av">AH</span>
@@ -159,14 +169,14 @@ export function ClientJoin() {
           <p style={{ fontSize:16.5, fontWeight:500, lineHeight:1.35, margin:'0 0 6px', color:'#fff' }}>Everything's ready for {invite!.business_name}</p>
           <p style={{ fontSize:12.5, color:'#AEB8CC', lineHeight:1.55, margin:'0 0 20px' }}>Your account is set up. Here's what EvidLY keeps for your kitchen.</p>
 
-          <div style={{ display:'flex', flexDirection:'column', gap:14, marginBottom:22 }}>
+          <div style={{ display:'flex', flexDirection:'column', gap:15, marginBottom:22 }}>
             <div className="cj-feat">
               <span className="cj-fic"><Flame size={12} /></span>
-              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Fire safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Hood cleaning, fire suppression, sprinkler, and alarm records</p></div>
+              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Fire safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Hood cleaning, fire suppression, sprinkler, alarm, and fire marshal inspection records, and more</p></div>
             </div>
             <div className="cj-feat">
               <span className="cj-fic"><Leaf size={12} /></span>
-              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Food safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Pest control, grease trap, and health inspection records</p></div>
+              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Food safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Daily temperature readings, HACCP plans, pest control, grease trap, health inspection records, continuous operations monitoring, and more</p></div>
             </div>
             <div className="cj-feat">
               <span className="cj-fic"><Radar size={12} /></span>
@@ -196,11 +206,7 @@ export function ClientJoin() {
             </button>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'3px 14px', marginBottom:14 }}>
-            <Req ok={reqs.len} label="12+ characters" />
-            <Req ok={reqs.upper} label="Uppercase" />
-            <Req ok={reqs.lower} label="Lowercase" />
-            <Req ok={reqs.num} label="Number" />
-            <Req ok={reqs.special} label="Special character" />
+            <Req ok={reqs.len} label="12+ characters" /><Req ok={reqs.upper} label="Uppercase" /><Req ok={reqs.lower} label="Lowercase" /><Req ok={reqs.num} label="Number" /><Req ok={reqs.special} label="Special character" />
           </div>
 
           <label className="cj-lbl">Confirm password</label>
@@ -216,10 +222,18 @@ export function ClientJoin() {
             <div><label className="cj-lbl">ZIP</label><input value={zip} onChange={e => setZip(e.target.value)} placeholder="93721" className="cj-inp" /></div>
           </div>
 
-          <button onClick={handleSubmit} disabled={!canSubmit} className="cj-btn">
-            {submitting ? 'Creating your account…' : 'Create my account'}
-          </button>
-          <p style={{ textAlign:'center', fontSize:11.5, color:'#94a3b8', margin:'12px 0 0' }}>Takes two minutes. Your records are waiting inside.</p>
+          <button onClick={handleSubmit} disabled={!canSubmit} className="cj-btn">{submitting ? 'Creating your account…' : 'Create my account'}</button>
+          <p style={{ textAlign:'center', fontSize:11.5, color:'#94a3b8', margin:'12px 0 16px' }}>Takes two minutes. Your records are waiting inside.</p>
+
+          <div style={{ borderTop:'1px solid #EEF0F3', paddingTop:14 }}>
+            <p style={{ fontSize:11.5, color:'#64748b', textAlign:'center', margin:'0 0 10px' }}>Questions? Talk to Arthur directly.</p>
+            <div style={{ display:'flex', gap:10 }}>
+              {FOUNDER_PHONE && (
+                <a href={`tel:${FOUNDER_PHONE}`} className="cj-contact"><Phone size={15} color="#A08C5A" />{FOUNDER_PHONE}</a>
+              )}
+              <button onClick={openCalendly} className="cj-contact"><Calendar size={15} color="#A08C5A" />Book a time</button>
+            </div>
+          </div>
         </div>
 
       </div>
