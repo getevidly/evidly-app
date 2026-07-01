@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { Eye, EyeOff, Check, X, Flame, Leaf, Radar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-client-invite`;
 
 interface Invite {
@@ -91,100 +89,139 @@ export function ClientJoin() {
     }
   }
 
+  const styles = `
+    .cj-wrap { min-height:100vh; background:#FAF7F0; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .cj-card { width:100%; max-width:760px; background:#fff; border-radius:14px; overflow:hidden; border:1px solid #E7E2D6; display:grid; grid-template-columns:300px 1fr; }
+    .cj-panel { background:#1E2D4D; padding:28px 24px; color:#fff; display:flex; flex-direction:column; }
+    .cj-form { padding:28px; }
+    .cj-mark { font-size:21px; font-weight:700; letter-spacing:0.5px; margin-bottom:22px; }
+    .cj-badge { display:flex; align-items:center; gap:11px; padding:12px; background:rgba(160,140,90,0.10); border:1px solid rgba(160,140,90,0.35); border-radius:12px; margin-bottom:18px; }
+    .cj-av { flex:none; width:40px; height:40px; border-radius:50%; background:#A08C5A; color:#1E2D4D; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+    .cj-feat { display:flex; align-items:flex-start; gap:11px; }
+    .cj-fic { flex:none; width:22px; height:22px; border-radius:50%; background:#A08C5A; display:flex; align-items:center; justify-content:center; margin-top:1px; color:#1E2D4D; }
+    .cj-inp { width:100%; padding:10px 12px; border-radius:9px; border:1px solid #E2E8F0; font-size:13.5px; box-sizing:border-box; outline:none; }
+    .cj-inp:focus { border-color:#A08C5A; box-shadow:0 0 0 3px rgba(160,140,90,0.12); }
+    .cj-inp:disabled { background:#F8FAFB; color:#64748b; }
+    .cj-btn { width:100%; background:#1E2D4D; color:#fff; border:none; border-radius:9px; padding:13px; font-size:14.5px; font-weight:600; cursor:pointer; transition:opacity .15s; }
+    .cj-btn:disabled { opacity:0.4; cursor:not-allowed; }
+    .cj-lbl { font-size:11.5px; color:#64748b; display:block; margin-bottom:4px; font-weight:500; }
+    @media (max-width:720px) { .cj-card { grid-template-columns:1fr; max-width:440px; } }
+  `;
+
   const Req = ({ ok, label }: { ok: boolean; label: string }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: ok ? '#0F6E56' : '#94a3b8' }}>
+    <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:11.5, color: ok ? '#0F6E56' : '#94a3b8' }}>
       {ok ? <Check size={13} /> : <X size={13} />}{label}
+    </span>
+  );
+
+  const Wordmark = () => (
+    <div className="cj-mark">
+      <span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#FFFFFF' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span>
     </div>
   );
 
   if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#FAF7F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: NAVY }}>Loading…</div>
-      </div>
-    );
+    return <div className="cj-wrap"><style>{styles}</style><div style={{ color:'#1E2D4D' }}>Loading…</div></div>;
   }
 
   if (loadError) {
     return (
-      <div style={{ minHeight: '100vh', background: '#FAF7F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-        <div style={{ maxWidth: 420, width: '100%', background: '#fff', borderRadius: 12, border: `0.5px solid ${NAVY}1A`, padding: 28, textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>
-            <span style={{ color: GOLD }}>E</span><span style={{ color: NAVY }}>vid</span><span style={{ color: GOLD }}>LY</span>
+      <div className="cj-wrap">
+        <style>{styles}</style>
+        <div style={{ maxWidth:420, width:'100%', background:'#fff', borderRadius:12, border:'1px solid #E7E2D6', padding:28, textAlign:'center' }}>
+          <div style={{ fontSize:22, fontWeight:700, marginBottom:12 }}>
+            <span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#1E2D4D' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span>
           </div>
-          <p style={{ color: NAVY, fontSize: 15 }}>{loadError}</p>
-          <button onClick={() => navigate('/login')} style={{ marginTop: 16, background: NAVY, color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}>
-            Go to sign in
-          </button>
+          <p style={{ color:'#1E2D4D', fontSize:15 }}>{loadError}</p>
+          <button onClick={() => navigate('/login')} className="cj-btn" style={{ marginTop:16, width:'auto', padding:'10px 20px' }}>Go to sign in</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#FAF7F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ maxWidth: 440, width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: 0.5 }}>
-            <span style={{ color: GOLD }}>E</span><span style={{ color: NAVY }}>vid</span><span style={{ color: GOLD }}>LY</span>
+    <div className="cj-wrap">
+      <style>{styles}</style>
+      <div className="cj-card">
+
+        <div className="cj-panel">
+          <Wordmark />
+
+          <div className="cj-badge">
+            <span className="cj-av">AH</span>
+            <div style={{ minWidth:0 }}>
+              <p style={{ fontSize:14, fontWeight:600, color:'#fff', margin:0, lineHeight:1.25 }}>Arthur Haggerty</p>
+              <p style={{ fontSize:11.5, color:'#D9C79E', margin:'1px 0 0', lineHeight:1.3 }}>Founder &amp; CEO, Cleaning Pros Plus</p>
+              <p style={{ fontSize:10.5, color:'#8A94AB', margin:'2px 0 0', lineHeight:1.3 }}>An EvidLY-affiliated company</p>
+            </div>
+          </div>
+
+          <p style={{ fontSize:16.5, fontWeight:500, lineHeight:1.35, margin:'0 0 6px', color:'#fff' }}>Everything's ready for {invite!.business_name}</p>
+          <p style={{ fontSize:12.5, color:'#AEB8CC', lineHeight:1.55, margin:'0 0 20px' }}>Your account is set up. Here's what EvidLY keeps for your kitchen.</p>
+
+          <div style={{ display:'flex', flexDirection:'column', gap:14, marginBottom:22 }}>
+            <div className="cj-feat">
+              <span className="cj-fic"><Flame size={12} /></span>
+              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Fire safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Hood cleaning, fire suppression, sprinkler, and alarm records</p></div>
+            </div>
+            <div className="cj-feat">
+              <span className="cj-fic"><Leaf size={12} /></span>
+              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Food safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Pest control, grease trap, and health inspection records</p></div>
+            </div>
+            <div className="cj-feat">
+              <span className="cj-fic"><Radar size={12} /></span>
+              <div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Intelligence</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Identifies what's expiring and what's missing before it costs you</p></div>
+            </div>
+          </div>
+
+          <div style={{ marginTop:'auto', paddingTop:18, borderTop:'1px solid rgba(255,255,255,0.12)', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+            <div><p style={{ fontSize:12, fontWeight:600, color:'#A08C5A', margin:0 }}>Predict</p><p style={{ fontSize:10, color:'#8A94AB', margin:'2px 0 0', lineHeight:1.3 }}>what's expiring</p></div>
+            <div><p style={{ fontSize:12, fontWeight:600, color:'#A08C5A', margin:0 }}>Reduce</p><p style={{ fontSize:10, color:'#8A94AB', margin:'2px 0 0', lineHeight:1.3 }}>citation risk</p></div>
+            <div><p style={{ fontSize:12, fontWeight:600, color:'#A08C5A', margin:0 }}>Prove</p><p style={{ fontSize:10, color:'#8A94AB', margin:'2px 0 0', lineHeight:1.3 }}>on demand</p></div>
           </div>
         </div>
-        <div style={{ background: '#fff', borderRadius: 12, border: `0.5px solid ${NAVY}1A`, padding: 24 }}>
-          <p style={{ fontSize: 12, fontWeight: 600, color: GOLD, letterSpacing: 0.6, margin: '0 0 6px' }}>YOU'RE INVITED</p>
-          <p style={{ fontSize: 16, fontWeight: 600, color: NAVY, margin: '0 0 4px' }}>
-            Cleaning Pros Plus set up an account for {invite!.business_name}
-          </p>
-          <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 18px', lineHeight: 1.6 }}>
-            Set a password and confirm your kitchen's details. Your hood-cleaning records flow in automatically.
-          </p>
 
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>Email</label>
-          <input value={invite!.email} disabled style={{ width: '100%', padding: '9px 11px', marginBottom: 12, borderRadius: 8, border: '1px solid #e2e8f0', background: '#f8fafc', color: '#64748b', boxSizing: 'border-box' }} />
+        <div className="cj-form">
+          <p style={{ fontSize:18, fontWeight:600, color:'#1E2D4D', margin:'0 0 3px' }}>Create your account</p>
+          <p style={{ fontSize:12.5, color:'#64748b', margin:'0 0 18px' }}>Set a password and confirm your kitchen's details.</p>
 
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>Create a password</label>
-          <div style={{ position: 'relative', marginBottom: 8 }}>
-            <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', padding: '9px 36px 9px 11px', borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
-            <button type="button" onClick={() => setShowPw(!showPw)} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+          <label className="cj-lbl">Email</label>
+          <input value={invite!.email} disabled className="cj-inp" style={{ marginBottom:14 }} />
+
+          <label className="cj-lbl">Create a password</label>
+          <div style={{ position:'relative', marginBottom:8 }}>
+            <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="cj-inp" style={{ paddingRight:36 }} />
+            <button type="button" onClick={() => setShowPw(!showPw)} style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#94a3b8' }} aria-label="Toggle password visibility">
               {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 12px', marginBottom: 12 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'3px 14px', marginBottom:14 }}>
             <Req ok={reqs.len} label="12+ characters" />
             <Req ok={reqs.upper} label="Uppercase" />
             <Req ok={reqs.lower} label="Lowercase" />
             <Req ok={reqs.num} label="Number" />
-            <Req ok={reqs.special} label="Special char" />
+            <Req ok={reqs.special} label="Special character" />
           </div>
 
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>Confirm password</label>
-          <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} style={{ width: '100%', padding: '9px 11px', marginBottom: confirm && confirm !== password ? 4 : 12, borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
-          {confirm && confirm !== password && <p style={{ fontSize: 12, color: '#dc2626', margin: '0 0 12px' }}>Passwords don't match</p>}
+          <label className="cj-lbl">Confirm password</label>
+          <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} className="cj-inp" style={{ marginBottom: confirm && confirm !== password ? 4 : 12 }} />
+          {confirm && confirm !== password && <p style={{ fontSize:12, color:'#dc2626', margin:'0 0 12px' }}>Passwords don't match</p>}
 
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>Kitchen address</label>
-          <input value={address} onChange={e => setAddress(e.target.value)} placeholder="1420 Fulton St" style={{ width: '100%', padding: '9px 11px', marginBottom: 12, borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
+          <label className="cj-lbl">Kitchen address</label>
+          <input value={address} onChange={e => setAddress(e.target.value)} placeholder="1420 Fulton St" className="cj-inp" style={{ marginBottom:12 }} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 70px 90px', gap: 10, marginBottom: 18 }}>
-            <div>
-              <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>City</label>
-              <input value={city} onChange={e => setCity(e.target.value)} placeholder="Fresno" style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>State</label>
-              <input value={stateVal} onChange={e => setStateVal(e.target.value)} placeholder="CA" maxLength={2} style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 4 }}>ZIP</label>
-              <input value={zip} onChange={e => setZip(e.target.value)} placeholder="93721" style={{ width: '100%', padding: '9px 11px', borderRadius: 8, border: '1px solid #e2e8f0', boxSizing: 'border-box' }} />
-            </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 64px 84px', gap:10, marginBottom:20 }}>
+            <div><label className="cj-lbl">City</label><input value={city} onChange={e => setCity(e.target.value)} placeholder="Fresno" className="cj-inp" /></div>
+            <div><label className="cj-lbl">State</label><input value={stateVal} onChange={e => setStateVal(e.target.value)} placeholder="CA" maxLength={2} className="cj-inp" /></div>
+            <div><label className="cj-lbl">ZIP</label><input value={zip} onChange={e => setZip(e.target.value)} placeholder="93721" className="cj-inp" /></div>
           </div>
 
-          <button onClick={handleSubmit} disabled={!canSubmit} style={{ width: '100%', background: canSubmit ? NAVY : '#cbd5e1', color: '#fff', border: 'none', borderRadius: 8, padding: '12px', fontSize: 14, fontWeight: 600, cursor: canSubmit ? 'pointer' : 'not-allowed' }}>
+          <button onClick={handleSubmit} disabled={!canSubmit} className="cj-btn">
             {submitting ? 'Creating your account…' : 'Create my account'}
           </button>
+          <p style={{ textAlign:'center', fontSize:11.5, color:'#94a3b8', margin:'12px 0 0' }}>Takes two minutes. Your records are waiting inside.</p>
         </div>
-        <p style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', margin: '14px 6px 0' }}>
-          Invited by Cleaning Pros Plus · EvidLY Founder rollout
-        </p>
+
       </div>
     </div>
   );
