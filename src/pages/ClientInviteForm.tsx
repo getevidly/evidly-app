@@ -14,23 +14,18 @@ const ROLES = [
   { v: 'kitchen_manager', l: 'Kitchen manager' },
 ];
 
+interface Org { id: string; name: string; state: string | null; city: string | null; }
 interface Invite {
-  id: string;
-  business_name: string | null;
-  contact_name: string;
-  email: string;
-  status: string;
-  client_role: string;
-  reminder_count: number;
-  created_at: string;
+  id: string; organization_name: string | null; contact_name: string; email: string;
+  status: string; client_role: string; reminder_count: number; created_at: string;
 }
 
 export function ClientInviteForm() {
+  const [orgs, setOrgs] = useState<Org[]>([]);
+  const [orgId, setOrgId] = useState('');
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('owner_operator');
-  const [businessName, setBusinessName] = useState('');
-  const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
@@ -38,15 +33,27 @@ export function ClientInviteForm() {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [remindingId, setRemindingId] = useState<string | null>(null);
 
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('organizations')
+        .select('id, name, state, is_system')
+        .order('created_at', { ascending: false });
+      if (data) {
+        setOrgs((data as (Org & { is_system?: boolean })[])
+          .filter(o => !o.is_system && o.name !== '__SYSTEM_TEMPLATES__'));
+      }
+    })();
+  }, []);
+
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
       .from('evidly_client_invites')
-      .select('id, business_name, contact_name, email, status, client_role, reminder_count, created_at')
+      .select('id, organization_name, contact_name, email, status, client_role, reminder_count, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
     if (data) setInvites(data as Invite[]);
   }, []);
-
   useEffect(() => { loadInvites(); }, [loadInvites]);
 
   async function authedHeaders() {
@@ -60,22 +67,22 @@ export function ClientInviteForm() {
   }
 
   async function handleSend() {
+    if (!orgId) { setFeedback({ ok: false, text: 'Select an organization.' }); return; }
     if (!contactName.trim() || !email.trim()) {
-      setFeedback({ ok: false, text: 'Contact name and email are required.' });
-      return;
+      setFeedback({ ok: false, text: 'Contact name and email are required.' }); return;
     }
-    setSending(true);
-    setFeedback(null);
+    setSending(true); setFeedback(null);
+    const orgName = orgs.find(o => o.id === orgId)?.name || null;
     try {
       const res = await fetch(CREATE_FN, {
         method: 'POST',
         headers: await authedHeaders(),
         body: JSON.stringify({
+          organization_id: orgId,
+          organization_name: orgName,
           contact_name: contactName,
           email,
           client_role: role,
-          business_name: businessName || null,
-          phone: phone || null,
           message: message || null,
           sender_name: 'Arthur',
         }),
@@ -83,8 +90,7 @@ export function ClientInviteForm() {
       const out = await res.json();
       if (!res.ok) { setFeedback({ ok: false, text: out.error || 'Could not send invite.' }); setSending(false); return; }
       setFeedback({ ok: true, text: `Invite sent to ${email}.` });
-      setContactName(''); setEmail(''); setRole('owner_operator');
-      setBusinessName(''); setPhone(''); setMessage('');
+      setContactName(''); setEmail(''); setRole('owner_operator'); setMessage(''); setOrgId('');
       loadInvites();
     } catch {
       setFeedback({ ok: false, text: 'Something went wrong. Try again.' });
@@ -96,16 +102,13 @@ export function ClientInviteForm() {
     setRemindingId(inviteId);
     try {
       const res = await fetch(CREATE_FN, {
-        method: 'POST',
-        headers: await authedHeaders(),
+        method: 'POST', headers: await authedHeaders(),
         body: JSON.stringify({ invite_id: inviteId, sender_name: 'Arthur' }),
       });
       const out = await res.json();
       if (!res.ok) setFeedback({ ok: false, text: out.error || 'Reminder failed.' });
       else { setFeedback({ ok: true, text: 'Reminder sent.' }); loadInvites(); }
-    } catch {
-      setFeedback({ ok: false, text: 'Reminder failed.' });
-    }
+    } catch { setFeedback({ ok: false, text: 'Reminder failed.' }); }
     setRemindingId(null);
   }
 
@@ -124,7 +127,7 @@ export function ClientInviteForm() {
     <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Invite a client</h2>
-        <p className="text-[#1E2D4D]/70">Send a client an EvidLY account. They complete anything you leave blank on sign-up.</p>
+        <p className="text-[#1E2D4D]/70">Give a client login access to the account you set up for them. Their kitchen, county, and records are already in place.</p>
       </div>
 
       {feedback && (
@@ -132,6 +135,13 @@ export function ClientInviteForm() {
           {feedback.text}
         </div>
       )}
+
+      <label className="block text-sm text-[#1E2D4D]/70 mb-1">Organization *</label>
+      <select value={orgId} onChange={e => setOrgId(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2 mb-1">
+        <option value="">Select the client's organization…</option>
+        {orgs.map(o => <option key={o.id} value={o.id}>{o.name}{o.state ? ` · ${o.state}` : ''}</option>)}
+      </select>
+      <p className="text-xs text-[#1E2D4D]/50 mb-4">The account you already configured. The invite grants access to this org.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
@@ -152,22 +162,8 @@ export function ClientInviteForm() {
         <p className="text-xs text-[#1E2D4D]/50 mt-1">Sets what they see in EvidLY. Default: owner / operator.</p>
       </div>
 
-      <div className="border-t border-[#1E2D4D]/10 my-4"></div>
-      <p className="text-xs text-[#1E2D4D]/50 italic mb-4">Optional — leave blank and they fill it in on sign-up.</p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-sm text-[#1E2D4D]/70 mb-1">Business name</label>
-          <input value={businessName} onChange={e => setBusinessName(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2" placeholder="Blue Oak Grill" />
-        </div>
-        <div>
-          <label className="block text-sm text-[#1E2D4D]/70 mb-1">Phone</label>
-          <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2" placeholder="(559) 555-0148" />
-        </div>
-      </div>
-
       <div className="mb-6">
-        <label className="block text-sm text-[#1E2D4D]/70 mb-1">Personal message</label>
+        <label className="block text-sm text-[#1E2D4D]/70 mb-1">Personal message <span className="text-[#1E2D4D]/40">· optional</span></label>
         <textarea value={message} onChange={e => setMessage(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2" rows={2} placeholder="A short note from you" />
       </div>
 
@@ -182,7 +178,7 @@ export function ClientInviteForm() {
             {invites.map(inv => (
               <div key={inv.id} className="border border-[#1E2D4D]/10 rounded-lg px-4 py-3 flex items-center justify-between">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.business_name || inv.contact_name}</p>
+                  <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.organization_name || inv.contact_name}</p>
                   <p className="text-xs text-[#1E2D4D]/60 truncate">{inv.email} · {inv.client_role.replace(/_/g, ' ')}{inv.reminder_count > 0 ? ` · reminded ${inv.reminder_count}×` : ''}</p>
                 </div>
                 <div className="flex items-center gap-3 flex-none">

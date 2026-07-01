@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json();
     const {
-      invite_id, business_name, contact_name, email, phone, message, sender_name, client_role,
+      invite_id, organization_id, organization_name, contact_name, email, phone, message, sender_name, client_role,
     } = body;
 
     const appBase = Deno.env.get("APP_PUBLIC_BASE") || "https://app.getevidly.com";
@@ -54,7 +54,7 @@ Deno.serve(async (req: Request) => {
     if (invite_id) {
       const { data: inv, error: invErr } = await supabase
         .from("evidly_client_invites")
-        .select("id, business_name, contact_name, email, token, message, status, reminder_count")
+        .select("id, organization_name, contact_name, email, token, message, status, reminder_count")
         .eq("id", invite_id)
         .single();
 
@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
       const { subject, html } = buildClientInviteEmail({
         recipientName: inv.contact_name,
         senderName: sender_name || undefined,
-        businessName: inv.business_name,
+        businessName: inv.organization_name || 'your kitchen',
         inviteLink: `${appBase}/join/${inv.token}`,
         personalMessage: inv.message || undefined,
       });
@@ -86,8 +86,8 @@ Deno.serve(async (req: Request) => {
     }
 
     // ═══ NEW INVITE PATH ═══
-    if (!contact_name || !email) {
-      return json({ error: "contact_name and email are required" }, 400, headers);
+    if (!contact_name || !email || !organization_id) {
+      return json({ error: "contact_name, email, and organization_id are required" }, 400, headers);
     }
 
     const token = crypto.randomUUID();
@@ -95,7 +95,8 @@ Deno.serve(async (req: Request) => {
     const { data: created, error: insErr } = await supabase
       .from("evidly_client_invites")
       .insert({
-        business_name: business_name || null,
+        organization_id,
+        organization_name: organization_name || null,
         contact_name, email,
         phone: phone || null,
         message: message || null,
@@ -113,7 +114,7 @@ Deno.serve(async (req: Request) => {
     const { subject, html } = buildClientInviteEmail({
       recipientName: contact_name,
       senderName: sender_name || undefined,
-      businessName: business_name,
+      businessName: organization_name || 'your kitchen',
       inviteLink: `${appBase}/join/${token}`,
       personalMessage: message || undefined,
     });
