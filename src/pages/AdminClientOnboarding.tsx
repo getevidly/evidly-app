@@ -7,6 +7,7 @@ import { JurisdictionSelect } from '../components/jurisdiction/JurisdictionSelec
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
+import { ClientInviteForm } from './ClientInviteForm';
 
 // 7 CA tribal jurisdictions seeded by CASINO-JIE-01 migration
 const TRIBAL_OPTIONS = [
@@ -29,6 +30,7 @@ const DEFAULT_OUTLET_NAMES = [
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const [mode, setMode] = useState<'invite' | 'manual'>('invite');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -172,6 +174,12 @@ export function AdminClientOnboarding() {
     <>
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-3xl mx-auto">
+        <div className="flex gap-2 mb-6">
+          <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite a client</button>
+          <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Provision manually</button>
+        </div>
+        {mode === 'invite' && <ClientInviteForm />}
+        {mode === 'manual' && (
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Create Client Organization</h2>
@@ -439,6 +447,7 @@ export function AdminClientOnboarding() {
             </div>
           </form>
         </div>
+        )}
       </div>
     </>
   );
