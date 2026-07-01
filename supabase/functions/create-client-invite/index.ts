@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
         recipientName: inv.contact_name,
         senderName: sender_name || undefined,
         businessName: inv.business_name,
-        inviteLink: `${appBase}/join?token=${inv.token}`,
+        inviteLink: `${appBase}/join/${inv.token}`,
         personalMessage: inv.message || undefined,
       });
 
@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
       recipientName: contact_name,
       senderName: sender_name || undefined,
       businessName: business_name,
-      inviteLink: `${appBase}/join?token=${token}`,
+      inviteLink: `${appBase}/join/${token}`,
       personalMessage: message || undefined,
     });
 

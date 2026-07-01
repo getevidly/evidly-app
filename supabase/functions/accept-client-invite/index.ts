@@ -30,8 +30,8 @@ Deno.serve(async (req: Request) => {
     if (!token || !password) {
       return json({ error: "token and password are required" }, 400, headers);
     }
-    if (String(password).length < 8) {
-      return json({ error: "Password must be at least 8 characters" }, 400, headers);
+    if (String(password).length < 12) {
+      return json({ error: "Password must be at least 12 characters" }, 400, headers);
     }
 
     // ── 1. Validate invite ──────────────────────────────────
