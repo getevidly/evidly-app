@@ -92,7 +92,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
   <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-      <span style="color: #ffffff;">Evid</span><span style="color: #A08C5A;">LY</span>
+      <span style="color: #A08C5A;">E</span><span style="color: #ffffff;">vid</span><span style="color: #A08C5A;">LY</span>
     </h1>
   </div>
   ${urgencyBlock}
@@ -103,7 +103,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
     ${footerNote}
   </div>
   <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
-    <p style="margin: 0 0 8px 0;">&copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand</p>
+    <p style="margin: 0 0 8px 0;">&copy; 2026 EvidLY &mdash; Predict &middot; Reduce &middot; Prove</p>
     <p style="margin: 0 0 4px 0; font-size: 11px; color: #999;">
       You're receiving this because you have an EvidLY account or submitted an operations check.
     </p>
@@ -113,7 +113,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
       <a href="${params.unsubscribeToken ? `https://app.getevidly.com/unsubscribe?token=${params.unsubscribeToken}` : 'https://app.getevidly.com/settings/notifications'}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
     </p>
     <p style="margin: 4px 0 0 0; font-size: 10px; color: #b0b8c4;">
-      EvidLY LLC &bull; Merced County, CA
+      EvidLY LLC
     </p>
   </div>
 </div>`;
