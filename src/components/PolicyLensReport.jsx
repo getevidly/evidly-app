@@ -37,16 +37,12 @@ function ExposureChip({ flag }) {
 function SatisfiedChip() {
   return <span style={{ fontFamily: FONT_UI, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", background: "#E8F2F1", color: TEAL, borderRadius: 3, padding: "3px 8px", whiteSpace: "nowrap" }}>YOU'RE MEETING THIS</span>;
 }
-function ActTag({ act }) {
-  return <span style={{ fontFamily: FONT_UI, fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", color: GOLD, textTransform: "uppercase" }}>{act}</span>;
-}
-function SectionHead({ kicker, title, part, act }) {
+function SectionHead({ kicker, title, part }) {
   return (
     <div style={{ marginTop: 36 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <span style={{ fontFamily: FONT_UI, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: MUTE, textTransform: "uppercase" }}>{kicker}</span>
         {part && <PartTag part={part} />}
-        {act && <ActTag act={act} />}
       </div>
       <h2 style={{ fontFamily: FONT_HEAD, fontWeight: 800, fontSize: 19, color: NAVY, margin: "6px 0 0" }}>{title}</h2>
       <GoldRule />
@@ -89,10 +85,10 @@ function CorrelationBlock({ edition, mode, corr }) {
   if (expects == null && shows == null && gap == null) return null;
   return (
     <div style={{ background: "#FBFAF6", border: `1px solid ${LINE}`, borderRadius: 5, padding: "4px 14px 8px", marginTop: 12 }}>
-      <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 6 }}><ActTag act="Prove" /></div>
+      {/* ActTag removed — no internal Prove/Predict labels in report */}
       <CorrRow label={e === "agent" ? "Clause expects" : "Your policy expects"}>{expects}</CorrRow>
       <CorrRow label={e === "agent" ? "Record shows" : "Your file shows"} accent={m === "prospect" ? AMBER : undefined}>{shows}</CorrRow>
-      <CorrRow label="Gap" accent={corr.gapAccent || (corr.flag === "satisfied" ? TEAL : CORAL)}>{gap}</CorrRow>
+      <CorrRow label="If you can't" accent={corr.gapAccent || (corr.flag === "satisfied" ? TEAL : CORAL)}>{gap}</CorrRow>
     </div>
   );
 }
@@ -127,12 +123,12 @@ function ReportHeader({ edition, policy, locCount }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
         <div>
           <div style={{ fontFamily: FONT_HEAD, fontWeight: 800, fontSize: 24, letterSpacing: "0.01em" }}>
-            <span style={{ color: GOLD }}>E</span><span style={{ color: "#fff" }}>vid</span><span style={{ color: GOLD }}>LY</span>
-            <span style={{ color: "#C9C2B2", fontWeight: 500, fontSize: 14, marginLeft: 10, letterSpacing: "0.04em" }}>Policy Lens</span>
+            <span style={{ color: GOLD }}>E</span><span style={{ color: "#fff" }}>vid</span><span style={{ color: GOLD }}>LY&#8482;</span>
+            <span style={{ color: "#C9C2B2", fontWeight: 500, fontSize: 14, marginLeft: 10, letterSpacing: "0.04em" }}>Policy Lens&#8482;</span>
           </div>
           <div style={{ width: 24, height: 2, background: GOLD, margin: "10px 0" }} />
           <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 15, color: "#fff" }}>
-            {edition === "agent" ? "Policy Findings Brief — For the Producer of Record" : "Your Policy Reading — Business Brief"}
+            {edition === "agent" ? "Policy Findings Brief — For the Producer of Record" : "Your Policy Read — Business Brief"}
           </div>
           <div style={{ fontFamily: FONT_UI, fontSize: 11, color: "#AEB6C6", marginTop: 4 }}>
             {edition === "agent" ? "Clause-level findings for licensed coverage evaluation" : "What we read in your policy, in plain English"}
@@ -168,7 +164,7 @@ function EvidlySection({ edition, mode }) {
   const agent = edition === "agent";
   return (
     <>
-      <SectionHead kicker="Closing" title={agent ? "Record Availability" : "How EvidLY Helps"} act="Prove" />
+      <SectionHead kicker="Closing" title={agent ? "Record Availability" : "How EvidLY Helps"} />
       <div style={{ fontFamily: FONT_BODY, fontSize: 13.5, lineHeight: 1.7, color: INK }}>
         {!agent && mode === "bound" && <>Most of what this reading identified comes down to records: certificates with dates, service that matches the schedule your policy expects, corrections tied to your county's inspection results, and temperature records that stand behind your food safety practice. EvidLY keeps that record current for each of your kitchens — food safety and fire safety kept separate, each kitchen held to its own county's methodology — so the proof your policy depends on exists before anyone asks. Some findings aren't record questions at all; those belong to you and your agent.</>}
         {!agent && mode === "prospect" && <>Most of what this reading identified comes down to records that don't yet exist in one place: dated cleaning certificates, equipment service tags, a written impairment step, correction files that match your county's results, temperature records. Whoever keeps them, these are the records to start keeping now — they're what your policy's conditions quietly depend on. EvidLY's part, if you choose it, is holding that record per kitchen, food and fire kept separate.</>}
@@ -176,9 +172,23 @@ function EvidlySection({ edition, mode }) {
     </>
   );
 }
-function Footer({ edition }) {
+function SealBlock({ seal }) {
+  if (!seal) return null;
   return (
-    <div style={{ borderTop: `1px solid ${LINE}`, marginTop: 24, paddingTop: 14 }}>
+    <div style={{ background: NAVY, borderRadius: 6, padding: "16px 18px", marginTop: 24, display: "flex", alignItems: "center", gap: 16 }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 13, color: GOLD, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>Sealed for the Record</div>
+        {seal.url && <div style={{ fontFamily: FONT_UI, fontSize: 10, color: "#AEB6C6", lineHeight: 1.7 }}>Verify: {seal.url}</div>}
+        {seal.hash && <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#AEB6C6", lineHeight: 1.7 }}>Seal: {seal.hash}</div>}
+      </div>
+      {seal.qr && <img src={seal.qr} alt="Verification QR" style={{ width: 56, height: 56 }} />}
+    </div>
+  );
+}
+function Footer() {
+  return (
+    <div style={{ background: "#F4F1E9", border: `1px solid ${LINE}`, borderRadius: 6, padding: "16px 18px", marginTop: 16 }}>
+      <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 13, color: NAVY, marginBottom: 8 }}>What this reading is — and isn't</div>
       <div style={{ fontFamily: FONT_UI, fontSize: 10, lineHeight: 1.7, color: MUTE }}>
         EvidLY reads policy documents and identifies items for discussion with your licensed insurance professional. EvidLY is not an insurance agent or broker and does not evaluate, rate, or recommend insurance coverage. Coverage decisions belong to you and your licensed agent. Findings reflect the documents and records available on the date of reading. Independently cross-checked and reviewed before release.
       </div>
@@ -190,7 +200,7 @@ const PARTS = [
   { key: "food", kicker: "Part II", title: { agent: "Food Safety Findings", kitchen: "Food Safety — Where Your Policy May Not Respond" } },
   { key: "general", kicker: "Part III", title: { agent: "Policy-Wide Conditions", kitchen: "Conditions That Sit Over Everything" } },
 ];
-function Edition({ findings, edition, mode }) {
+function Edition({ findings, edition, mode, seal }) {
   const used = new Set(PARTS.map((p) => p.key));
   const otherParts = [...new Set(findings.map((f) => f.part).filter((p) => p && !used.has(p)))];
   return (
@@ -198,7 +208,7 @@ function Edition({ findings, edition, mode }) {
       {edition === "kitchen" && (
         <div style={{ background: "#F4F1E9", borderLeft: `2px solid ${GOLD}`, borderRadius: 6, padding: "16px 18px", marginTop: 22 }}>
           <div style={{ fontFamily: FONT_BODY, fontSize: 14, lineHeight: 1.7, color: INK }}>
-            We read your full policy the way a carrier reads it after a loss. Most of what matters to your business isn't on the declarations page — it's in the conditions. Below is what we identified, in business terms. Nothing here is insurance advice; evaluating your coverage is your licensed agent's work.
+            We read your full policy the way a carrier reads it after a loss. Nothing here rates your kitchen — it shows what your policy expects and where your records stand against those expectations. Below is what we identified, in business terms. Nothing here is insurance advice; evaluating your coverage is your licensed agent's work.
           </div>
         </div>
       )}
@@ -207,23 +217,24 @@ function Edition({ findings, edition, mode }) {
         if (items.length === 0) return null;
         return (
           <div key={p.key}>
-            <SectionHead kicker={p.kicker} title={p.title[edition]} part={p.key} act="Predict" />
+            <SectionHead kicker={p.kicker} title={p.title[edition]} part={p.key} />
             {items.map((f, i) => <FindingCard key={`${f.id}-${i}`} f={f} edition={edition} mode={mode} />)}
           </div>
         );
       })}
       {otherParts.map((pk) => (
         <div key={pk}>
-          <SectionHead kicker="Additional" title={pk} part={pk} act="Predict" />
+          <SectionHead kicker="Additional" title={pk} part={pk} />
           {findings.filter((f) => f.part === pk).map((f, i) => <FindingCard key={`${f.id}-${i}`} f={f} edition={edition} mode={mode} />)}
         </div>
       ))}
       <EvidlySection edition={edition} mode={mode} />
-      <Footer edition={edition} />
+      <SealBlock seal={seal} />
+      <Footer />
     </div>
   );
 }
-export default function PolicyLensReport({ findings = [], coverage = null, mode = "bound", edition = "kitchen" }) {
+export default function PolicyLensReport({ findings = [], coverage = null, mode = "bound", edition = "kitchen", seal = null }) {
   const list = Array.isArray(findings) ? findings : [];
   const locCount = 1;
   return (
@@ -232,7 +243,7 @@ export default function PolicyLensReport({ findings = [], coverage = null, mode 
         <div style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: `1px solid ${LINE}` }}>
           <ReportHeader edition={edition} policy={null} locCount={locCount} />
           <MetaStrip mode={mode} />
-          <Edition findings={list} edition={edition} mode={mode} />
+          <Edition findings={list} edition={edition} mode={mode} seal={seal} />
         </div>
       </div>
     </div>
