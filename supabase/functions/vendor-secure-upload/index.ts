@@ -290,6 +290,33 @@ Deno.serve(async (req: Request) => {
         console.error("[UPLOAD] Email notification failed — non-critical");
       }
 
+      // ── 6. Extract service fields (background, vendor_service only) ──
+      // Advisory AI read of the fields a sealed service record needs.
+      // Runs AFTER the response so the vendor is not blocked on a slow AI call.
+      // Commits nothing: writes suggestions to compliance_documents.metadata.
+      if (doc?.category === "vendor_service") {
+        const extractUrl = `${supabaseUrl}/functions/v1/extract-service-fields`;
+        const extractTask = fetch(extractUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            document_id: request.document_id,
+            organization_id: request.organization_id,
+          }),
+        }).catch((e) =>
+          console.error("[UPLOAD] extraction trigger failed — non-critical", e)
+        );
+        try {
+          // @ts-ignore EdgeRuntime provided by Supabase edge runtime
+          EdgeRuntime.waitUntil(extractTask);
+        } catch {
+          await extractTask;
+        }
+      }
+
       return jsonResponse({
         success: true,
         message:
