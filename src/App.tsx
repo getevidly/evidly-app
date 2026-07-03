@@ -185,6 +185,9 @@ const MaintenanceMode = lazy(() => import('./pages/admin/MaintenanceMode'));
 const EvidlyVault = lazy(() => import('./pages/admin/EvidlyVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
+const MarketingAccounts = lazy(() => import('./pages/admin/marketing/MarketingAccounts'));
+const MarketingNetwork = lazy(() => import('./pages/admin/marketing/MarketingNetwork'));
+const MarketingMethods = lazy(() => import('./pages/admin/marketing/MarketingMethods'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
 const SupportTickets = lazy(() => import('./pages/admin/SupportTickets'));
@@ -821,6 +824,9 @@ function AppRoutes() {
           <Route path="/admin/evidly-vault" element={<EvidlyVault />} />
           <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} />
           <Route path="/admin/event-log" element={<EventLog />} />
+          <Route path="/admin/marketing/accounts" element={<SalesGuard><MarketingAccounts /></SalesGuard>} />
+          <Route path="/admin/marketing/network" element={<SalesGuard><MarketingNetwork /></SalesGuard>} />
+          <Route path="/admin/marketing/methods" element={<SalesGuard><MarketingMethods /></SalesGuard>} />
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
           <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
           <Route path="/admin/pipeline" element={<Navigate to="/admin/sales" replace />} />

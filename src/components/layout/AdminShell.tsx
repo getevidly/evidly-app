@@ -103,6 +103,15 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'Marketing',
+    items: [
+      { label: 'Accounts',            path: '/admin/marketing/accounts',  salesOnly: true },
+      { label: 'Network',             path: '/admin/marketing/network',   salesOnly: true },
+      { label: 'Methods',             path: '/admin/marketing/methods',   salesOnly: true },
+      { label: 'Campaigns',           path: '/admin/campaigns',           salesOnly: true },
+    ],
+  },
+  {
     title: 'Security',
     items: [
       { label: 'Security',            path: '/admin/security',           perm: 'canSecurity' },
