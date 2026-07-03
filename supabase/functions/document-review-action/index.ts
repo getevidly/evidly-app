@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
     const { data: doc, error: docError } = await supabase
       .from("compliance_documents")
       .select(
-        "id, organization_id, status, storage_path, vendor_id, type, name"
+        "id, organization_id, status, storage_path, vendor_id, type, name, service_type_code, location_id, category, metadata"
       )
       .eq("id", documentId)
       .single();
@@ -116,7 +116,15 @@ Deno.serve(async (req: Request) => {
         console.error("[ACCEPT] Activity log insert failed — non-critical");
       }
 
-      return jsonResponse({ success: true, status: "current" });
+      // 3. Service-record bridge — seal PSE, file the rest, advance the schedule if one exists.
+      let bridge: Record<string, unknown> = { bridge: "skipped" };
+      try {
+        bridge = await runServiceBridge(supabase, supabaseUrl, supabaseKey, doc);
+      } catch (e) {
+        console.error("[ACCEPT] bridge threw — non-critical:", e);
+      }
+
+      return jsonResponse({ success: true, status: "current", ...bridge });
     }
 
     // ══════════════════════════════════════════════════════════
@@ -294,4 +302,127 @@ function jsonResponse(data: Record<string, unknown>, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+// ── SERVICE-RECORD BRIDGE (Unit 2b) ──────────────────────────
+const PSE_SAFEGUARD: Record<string, string> = {
+  KEC: "hood_cleaning",
+  FS: "fire_suppression",
+  FA: "fire_alarm",
+  SP: "sprinklers",
+};
+
+async function advanceSchedule(
+  supabase: any,
+  doc: any,
+  serviceDate: string,
+): Promise<"advanced" | "no_schedule" | "error"> {
+  if (!doc.service_type_code || !doc.location_id) return "no_schedule";
+  const { data: sched } = await supabase
+    .from("location_service_schedules")
+    .select("id, frequency_interval_days")
+    .eq("organization_id", doc.organization_id)
+    .eq("location_id", doc.location_id)
+    .eq("service_type_code", doc.service_type_code)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (!sched) return "no_schedule";
+  const interval = sched.frequency_interval_days;
+  let nextDue: string | null = null;
+  if (interval && Number.isFinite(interval)) {
+    const d = new Date(serviceDate + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + interval);
+    nextDue = d.toISOString().slice(0, 10);
+  }
+  const { error: schedErr } = await supabase
+    .from("location_service_schedules")
+    .update({ last_service_date: serviceDate, next_due_date: nextDue })
+    .eq("id", sched.id);
+  return schedErr ? "error" : "advanced";
+}
+
+async function runServiceBridge(
+  supabase: any,
+  supabaseUrl: string,
+  supabaseKey: string,
+  doc: any,
+): Promise<Record<string, unknown>> {
+  if (doc.category !== "vendor_service") return { bridge: "skipped_not_service" };
+
+  const ext = (doc.metadata && doc.metadata.service_extraction) || null;
+  const isPse = !!doc.service_type_code && doc.service_type_code in PSE_SAFEGUARD;
+
+  if (isPse) {
+    const sd = ext?.service_date;
+    const sdConf = Number(ext?.service_date_confidence ?? 0);
+    const certAbsent = ext?.cert_number_absent === true;
+    const certVal = ext?.cert_number;
+    const certConf = Number(ext?.cert_number_confidence ?? 0);
+    const typeMatch = ext?.document_type_match === true;
+    const legible = ext?.is_legible === true;
+    const notFail = ext?.result !== "fail";
+    const dateOk = !!sd && sdConf >= 0.95;
+    const certOk = certAbsent || (!!certVal && certConf >= 0.95);
+    const passed = !!ext && typeMatch && legible && notFail && dateOk && certOk;
+
+    if (!passed) {
+      const reason = !ext
+        ? "no_extraction"
+        : !dateOk
+          ? "service_date_unconfirmed"
+          : !certOk
+            ? "cert_number_unconfirmed"
+            : !typeMatch
+              ? "type_mismatch"
+              : !legible
+                ? "illegible"
+                : "result_fail";
+      await supabase
+        .from("compliance_documents")
+        .update({ metadata: { ...(doc.metadata || {}), seal_pending: { reason, at: new Date().toISOString() } } })
+        .eq("id", doc.id);
+      const adv = await advanceSchedule(supabase, doc, sd || new Date().toISOString().slice(0, 10));
+      return { bridge: "seal_deferred", reason, schedule: adv };
+    }
+
+    let vendorName = "Vendor";
+    if (doc.vendor_id) {
+      const { data: v } = await supabase.from("vendors").select("company_name").eq("id", doc.vendor_id).maybeSingle();
+      if (v?.company_name) vendorName = v.company_name;
+    }
+    const certNumber = certAbsent ? "NONE" : certVal;
+
+    let sealed = false;
+    try {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(`${supabaseUrl}/functions/v1/seal-service-record`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseKey}` },
+        body: JSON.stringify({
+          organization_id: doc.organization_id,
+          location_id: doc.location_id,
+          safeguard_type: PSE_SAFEGUARD[doc.service_type_code],
+          service_type_code: doc.service_type_code,
+          vendor_name: vendorName,
+          service_date: sd,
+          cert_number: certNumber,
+          source_file_bucket: "documents",
+          source_file_path: doc.storage_path,
+        }),
+        signal: controller.signal,
+      });
+      sealed = res.ok;
+      if (!res.ok) console.error("[BRIDGE] seal failed:", res.status, await res.text());
+    } catch (e) {
+      console.error("[BRIDGE] seal call threw:", e);
+    }
+
+    const adv = await advanceSchedule(supabase, doc, sd);
+    return { bridge: sealed ? "sealed" : "seal_error", schedule: adv };
+  }
+
+  const svcDate = ext?.service_date || new Date().toISOString().slice(0, 10);
+  const adv = await advanceSchedule(supabase, doc, svcDate);
+  return { bridge: "filed_non_pse", schedule: adv };
 }
