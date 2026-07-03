@@ -164,7 +164,6 @@ export function RequestFromVendorModal({
     supabase
       .from('service_type_definitions')
       .select('code, name, short_name, category')
-      .is('parent_code', null)
       .eq('is_active', true)
       .then(({ data }) => { if (data) setCatalogServices(data as CatalogService[]); });
   }, [orgId, sourceTab]);
