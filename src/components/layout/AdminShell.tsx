@@ -63,6 +63,15 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'Marketing',
+    items: [
+      { label: 'Accounts',            path: '/admin/marketing/accounts',  salesOnly: true },
+      { label: 'Network',             path: '/admin/marketing/network',   salesOnly: true },
+      { label: 'Methods',             path: '/admin/marketing/methods',   salesOnly: true },
+      { label: 'Campaigns',           path: '/admin/campaigns',           salesOnly: true },
+    ],
+  },
+  {
     title: 'Operations',
     items: [
       { label: 'Admin Home',          path: '/admin' },
@@ -100,15 +109,6 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Platform',
     items: [
       { label: 'Staff & Roles',       path: '/admin/staff',              perm: 'canStaffManage' },
-    ],
-  },
-  {
-    title: 'Marketing',
-    items: [
-      { label: 'Accounts',            path: '/admin/marketing/accounts',  salesOnly: true },
-      { label: 'Network',             path: '/admin/marketing/network',   salesOnly: true },
-      { label: 'Methods',             path: '/admin/marketing/methods',   salesOnly: true },
-      { label: 'Campaigns',           path: '/admin/campaigns',           salesOnly: true },
     ],
   },
   {
