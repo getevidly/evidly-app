@@ -2,8 +2,10 @@
  * useMarketingData — Supabase reads/writes for the Marketing console
  *
  * Reads:  sales_pipeline, marketing_influencers, marketing_relationship_types, marketing_sends
- * Writes: sales_pipeline (addAccount, updateAccount)
- *         marketing_influencers / types / sends — stub signatures, wired in 3b/3c
+ * Writes: sales_pipeline (addAccount, updateAccount, setBroker)
+ *         marketing_influencers (addInfluencer)
+ *         marketing_relationship_types (addType)
+ *         marketing_sends — stub (Phase 3c)
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase';
@@ -36,7 +38,11 @@ export interface InfluencerRow {
   type_id: string | null;
   name: string;
   org: string | null;
+  contact_name: string | null;
   contact_email: string | null;
+  contact_phone: string | null;
+  stage: string | null;
+  notes: string | null;
   created_at: string;
 }
 
@@ -53,7 +59,7 @@ export interface SendRow {
   sent_at: string;
 }
 
-// ── Add-account input ────────────────────────────────────────────
+// ── Input types ──────────────────────────────────────────────────
 
 export interface AddAccountInput {
   name: string;
@@ -70,6 +76,17 @@ export interface AddAccountInput {
   insurer?: string;
   source?: string;
   nextAction?: string;
+  notes?: string;
+}
+
+export interface AddInfluencerInput {
+  name: string;
+  org?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  typeId?: string | null;
+  stage?: string | null;
   notes?: string;
 }
 
@@ -95,7 +112,7 @@ export function useMarketingData() {
       if (acctErr) throw acctErr;
       setAccounts((acctData || []) as AccountRow[]);
 
-      // Influencers — may not exist yet; fail gracefully
+      // Influencers
       try {
         const { data: infData } = await supabase
           .from('marketing_influencers')
@@ -104,7 +121,7 @@ export function useMarketingData() {
         setInfluencers((infData || []) as InfluencerRow[]);
       } catch { setInfluencers([]); }
 
-      // Relationship types — may not exist yet
+      // Relationship types
       try {
         const { data: typeData } = await supabase
           .from('marketing_relationship_types')
@@ -114,7 +131,7 @@ export function useMarketingData() {
         setTypes((typeData || []) as RelationshipTypeRow[]);
       } catch { setTypes([]); }
 
-      // Sends — may not exist yet
+      // Sends — stub read (Phase 3c)
       try {
         const { data: sendData } = await supabase
           .from('marketing_sends')
@@ -171,15 +188,55 @@ export function useMarketingData() {
     return { error: null };
   };
 
-  // ── Stubs: wired in 3b/3c ──────────────────────────────────────
+  // ── setBroker: link/unlink a champion on an account ─────────────
 
-  const addInfluencer = async (_form: Partial<InfluencerRow>): Promise<{ error: string | null }> => {
-    return { error: 'Not implemented — Phase 3b' };
+  const setBroker = async (
+    accountId: string,
+    brokerId: string | null,
+  ): Promise<{ error: string | null }> => {
+    const { error: updateErr } = await supabase
+      .from('sales_pipeline')
+      .update({ broker_id: brokerId, updated_at: new Date().toISOString() })
+      .eq('id', accountId);
+    if (updateErr) return { error: updateErr.message };
+    await refresh();
+    return { error: null };
   };
 
-  const addType = async (_form: Partial<RelationshipTypeRow>): Promise<{ error: string | null }> => {
-    return { error: 'Not implemented — Phase 3b' };
+  // ── CRUD: Relationship types ────────────────────────────────────
+
+  const addType = async (name: string): Promise<{ error: string | null }> => {
+    // Determine next sort_order
+    const maxSort = types.reduce((mx, t) => Math.max(mx, t.sort_order), 0);
+    const { error: insertErr } = await supabase
+      .from('marketing_relationship_types')
+      .insert({ name, is_hero: false, sort_order: maxSort + 1 });
+    if (insertErr) return { error: insertErr.message };
+    await refresh();
+    return { error: null };
   };
+
+  // ── CRUD: Influencers ───────────────────────────────────────────
+
+  const addInfluencer = async (form: AddInfluencerInput): Promise<{ error: string | null }> => {
+    const { error: insertErr } = await supabase
+      .from('marketing_influencers')
+      .insert({
+        name: form.name,
+        org: form.org || null,
+        contact_name: form.contactName || null,
+        contact_email: form.contactEmail || null,
+        contact_phone: form.contactPhone || null,
+        type_id: form.typeId || null,
+        stage: form.stage || null,
+        notes: form.notes || null,
+      });
+    if (insertErr) return { error: insertErr.message };
+    await refresh();
+    return { error: null };
+  };
+
+  // ── Stub: sends (Phase 3c) ─────────────────────────────────────
 
   const recordSend = async (_form: Partial<SendRow>): Promise<{ error: string | null }> => {
     return { error: 'Not implemented — Phase 3c' };
@@ -195,6 +252,7 @@ export function useMarketingData() {
     refresh,
     addAccount,
     updateAccount,
+    setBroker,
     addInfluencer,
     addType,
     recordSend,

@@ -12,7 +12,14 @@ import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../../components/admin/KpiTile';
 import { Modal } from '../../../components/ui/Modal';
-import { useMarketingData, AddAccountInput } from '../../../lib/marketing/useMarketingData';
+import {
+  useMarketingData,
+  AddAccountInput,
+  AddInfluencerInput,
+  AccountRow,
+  InfluencerRow,
+  RelationshipTypeRow,
+} from '../../../lib/marketing/useMarketingData';
 import {
   JURISDICTIONS,
   SEGMENTS,
@@ -24,7 +31,7 @@ import {
 } from '../../../lib/marketing/gtmReference';
 import { toast } from 'sonner';
 
-// ── Types ────────────────────────────────────────────────────────
+// ── Constants ────────────────────────────────────────────────────
 
 interface MarketingConsoleProps {
   defaultTab: 'accounts' | 'network';
@@ -33,9 +40,11 @@ interface MarketingConsoleProps {
 const JURISDICTION_NAMES = Object.keys(JURISDICTIONS);
 const SEGMENT_NAMES = Object.keys(SEGMENTS);
 
-// ── Empty add-account form ───────────────────────────────────────
+const ENABLEMENT_STAGES = ['Identified', 'Equipped', 'Championing', 'Growing'] as const;
 
-const EMPTY_FORM: AddAccountInput = {
+// ── Empty forms ──────────────────────────────────────────────────
+
+const EMPTY_ACCOUNT_FORM: AddAccountInput = {
   name: '',
   contactName: '',
   contactEmail: '',
@@ -53,17 +62,29 @@ const EMPTY_FORM: AddAccountInput = {
   notes: '',
 };
 
+const EMPTY_MEMBER_FORM: AddInfluencerInput = {
+  name: '',
+  org: '',
+  contactName: '',
+  contactEmail: '',
+  contactPhone: '',
+  typeId: null,
+  stage: null,
+  notes: '',
+};
+
 // ── Component ────────────────────────────────────────────────────
 
 export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'accounts' | 'network'>(defaultTab);
-  const { accounts, influencers, loading, error, addAccount } = useMarketingData();
+  const data = useMarketingData();
+  const { accounts, influencers, types, loading, error } = data;
 
   // Add-account modal
-  const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState<AddAccountInput>({ ...EMPTY_FORM });
-  const [saving, setSaving] = useState(false);
+  const [showAddAccount, setShowAddAccount] = useState(false);
+  const [accountForm, setAccountForm] = useState<AddAccountInput>({ ...EMPTY_ACCOUNT_FORM });
+  const [savingAccount, setSavingAccount] = useState(false);
 
   // Tab switching (deep-linked to route)
   const switchTab = (t: 'accounts' | 'network') => {
@@ -93,39 +114,46 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
     return map;
   }, [influencers]);
 
+  // ── Hero influencers (for championed-by dropdown) ──────────────
+
+  const heroInfluencers = useMemo(() => {
+    const heroTypeIds = new Set(types.filter(t => t.is_hero).map(t => t.id));
+    return influencers.filter(inf => inf.type_id && heroTypeIds.has(inf.type_id));
+  }, [influencers, types]);
+
   // ── Live-preview ICP from form ─────────────────────────────────
 
   const previewICP = deriveICP({
-    county: form.county || null,
-    segment: form.segment || null,
-    location_count: form.locations ?? 1,
-    insurer: form.insurer || null,
+    county: accountForm.county || null,
+    segment: accountForm.segment || null,
+    location_count: accountForm.locations ?? 1,
+    insurer: accountForm.insurer || null,
   });
   const previewBand = priorityBand(previewICP);
 
   // ── Submit add-account ─────────────────────────────────────────
 
-  const handleAdd = async () => {
-    if (!form.name.trim()) {
+  const handleAddAccount = async () => {
+    if (!accountForm.name.trim()) {
       toast.error('Kitchen name is required');
       return;
     }
-    setSaving(true);
-    const { error: addErr } = await addAccount(form);
-    setSaving(false);
+    setSavingAccount(true);
+    const { error: addErr } = await data.addAccount(accountForm);
+    setSavingAccount(false);
     if (addErr) {
       toast.error(`Failed to add account: ${addErr}`);
     } else {
       toast.success('Account added');
-      setShowAdd(false);
-      setForm({ ...EMPTY_FORM });
+      setShowAddAccount(false);
+      setAccountForm({ ...EMPTY_ACCOUNT_FORM });
     }
   };
 
   // ── Auto-default buyer type on segment change ──────────────────
 
   const onSegmentChange = (seg: string) => {
-    setForm(prev => ({
+    setAccountForm(prev => ({
       ...prev,
       segment: seg,
       buyerType: seg ? buyerTypeFromSegment(seg) : prev.buyerType,
@@ -170,16 +198,22 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
           stats={stats}
           loading={loading}
           error={error}
-          onAdd={() => setShowAdd(true)}
+          onAdd={() => setShowAddAccount(true)}
         />
       ) : (
-        <div className="p-10 text-center text-gray-400 text-[13px]">
-          Network roster coming in 3b.
-        </div>
+        <NetworkTab
+          accounts={accounts}
+          influencers={influencers}
+          types={types}
+          loading={loading}
+          error={error}
+          addType={data.addType}
+          addInfluencer={data.addInfluencer}
+        />
       )}
 
-      {/* Add-account modal */}
-      <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} size="lg">
+      {/* ── Add-account modal ──────────────────────────────────────── */}
+      <Modal isOpen={showAddAccount} onClose={() => setShowAddAccount(false)} size="lg">
         <div className="p-6">
           <h2 className="text-[18px] font-bold text-navy mb-4 font-logo">Add Account</h2>
 
@@ -188,8 +222,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div className="sm:col-span-2">
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Kitchen Name *</label>
               <input
-                value={form.name}
-                onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                value={accountForm.name}
+                onChange={e => setAccountForm(prev => ({ ...prev, name: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                 placeholder="e.g. Joe's Grill"
               />
@@ -199,7 +233,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Segment</label>
               <select
-                value={form.segment || ''}
+                value={accountForm.segment || ''}
                 onChange={e => onSegmentChange(e.target.value)}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               >
@@ -212,8 +246,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">County</label>
               <select
-                value={form.county || ''}
-                onChange={e => setForm(prev => ({ ...prev, county: e.target.value }))}
+                value={accountForm.county || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, county: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               >
                 <option value="">Select county</option>
@@ -229,9 +263,9 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
                   <button
                     key={bt}
                     type="button"
-                    onClick={() => setForm(prev => ({ ...prev, buyerType: bt }))}
+                    onClick={() => setAccountForm(prev => ({ ...prev, buyerType: bt }))}
                     className={`flex-1 py-[7px] text-[12px] font-semibold rounded-md border cursor-pointer transition-colors ${
-                      form.buyerType === bt
+                      accountForm.buyerType === bt
                         ? 'bg-navy text-white border-navy'
                         : 'bg-white text-slate_ui border-border_ui-warm hover:border-navy'
                     }`}
@@ -248,8 +282,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
               <input
                 type="number"
                 min={1}
-                value={form.locations ?? 1}
-                onChange={e => setForm(prev => ({ ...prev, locations: parseInt(e.target.value) || 1 }))}
+                value={accountForm.locations ?? 1}
+                onChange={e => setAccountForm(prev => ({ ...prev, locations: parseInt(e.target.value) || 1 }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               />
             </div>
@@ -258,8 +292,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Insurer</label>
               <input
-                value={form.insurer || ''}
-                onChange={e => setForm(prev => ({ ...prev, insurer: e.target.value }))}
+                value={accountForm.insurer || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, insurer: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                 placeholder="Carrier name"
               />
@@ -269,8 +303,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Name</label>
               <input
-                value={form.contactName || ''}
-                onChange={e => setForm(prev => ({ ...prev, contactName: e.target.value }))}
+                value={accountForm.contactName || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, contactName: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               />
             </div>
@@ -280,8 +314,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Email</label>
               <input
                 type="email"
-                value={form.contactEmail || ''}
-                onChange={e => setForm(prev => ({ ...prev, contactEmail: e.target.value }))}
+                value={accountForm.contactEmail || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, contactEmail: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               />
             </div>
@@ -290,8 +324,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Title</label>
               <input
-                value={form.role || ''}
-                onChange={e => setForm(prev => ({ ...prev, role: e.target.value }))}
+                value={accountForm.role || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, role: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                 placeholder="e.g. Owner, GM"
               />
@@ -301,8 +335,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Stage</label>
               <select
-                value={form.stage || 'prospect'}
-                onChange={e => setForm(prev => ({ ...prev, stage: e.target.value }))}
+                value={accountForm.stage || 'prospect'}
+                onChange={e => setAccountForm(prev => ({ ...prev, stage: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               >
                 {STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
@@ -315,8 +349,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
               <input
                 type="number"
                 min={0}
-                value={form.mrr ?? 0}
-                onChange={e => setForm(prev => ({ ...prev, mrr: parseInt(e.target.value) || 0 }))}
+                value={accountForm.mrr ?? 0}
+                onChange={e => setAccountForm(prev => ({ ...prev, mrr: parseInt(e.target.value) || 0 }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
               />
             </div>
@@ -325,19 +359,34 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
             <div>
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Source</label>
               <input
-                value={form.source || ''}
-                onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
+                value={accountForm.source || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, source: e.target.value }))}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
                 placeholder="e.g. Referral, Cold, Event"
               />
+            </div>
+
+            {/* Championed by */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Championed By</label>
+              <select
+                value={accountForm.brokerId || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, brokerId: e.target.value || null }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              >
+                <option value="">— unclaimed —</option>
+                {heroInfluencers.map(inf => (
+                  <option key={inf.id} value={inf.id}>{inf.name}{inf.org ? ` (${inf.org})` : ''}</option>
+                ))}
+              </select>
             </div>
 
             {/* Notes */}
             <div className="sm:col-span-2">
               <label className="text-[11px] font-semibold text-slate_ui block mb-1">Notes</label>
               <textarea
-                value={form.notes || ''}
-                onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
+                value={accountForm.notes || ''}
+                onChange={e => setAccountForm(prev => ({ ...prev, notes: e.target.value }))}
                 rows={2}
                 className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full resize-y"
               />
@@ -369,7 +418,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
               <div>
                 <span className="text-[11px] text-gray-400 mr-1">Buyer:</span>
                 <span className="text-[12px] font-semibold text-navy">
-                  {form.buyerType || '—'}
+                  {accountForm.buyerType || '—'}
                 </span>
               </div>
             </div>
@@ -378,19 +427,19 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
           {/* Actions */}
           <div className="flex gap-2 justify-end">
             <button
-              onClick={() => { setShowAdd(false); setForm({ ...EMPTY_FORM }); }}
+              onClick={() => { setShowAddAccount(false); setAccountForm({ ...EMPTY_ACCOUNT_FORM }); }}
               className="py-2 px-4 text-[13px] font-semibold rounded-md cursor-pointer bg-gray-100 text-slate_ui border-none"
             >
               Cancel
             </button>
             <button
-              onClick={handleAdd}
-              disabled={saving}
+              onClick={handleAddAccount}
+              disabled={savingAccount}
               className={`py-2 px-5 text-[13px] font-semibold rounded-md cursor-pointer border-none ${
-                saving ? 'bg-gray-200 text-gray-400' : 'bg-navy text-white'
+                savingAccount ? 'bg-gray-200 text-gray-400' : 'bg-navy text-white'
               }`}
             >
-              {saving ? 'Adding...' : 'Add Account'}
+              {savingAccount ? 'Adding...' : 'Add Account'}
             </button>
           </div>
         </div>
@@ -399,10 +448,12 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
   );
 }
 
-// ── Accounts Tab ─────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════
+// Accounts Tab
+// ═════════════════════════════════════════════════════════════════
 
 interface AccountsTabProps {
-  accounts: ReturnType<typeof useMarketingData>['accounts'];
+  accounts: AccountRow[];
   influencerMap: Record<string, string>;
   stats: { total: number; championed: number; hot: number; inPipeline: number };
   loading: boolean;
@@ -536,6 +587,413 @@ function AccountsTab({ accounts, influencerMap, stats, loading, error, onAdd }: 
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// Network Tab
+// ═════════════════════════════════════════════════════════════════
+
+interface NetworkTabProps {
+  accounts: AccountRow[];
+  influencers: InfluencerRow[];
+  types: RelationshipTypeRow[];
+  loading: boolean;
+  error: string | null;
+  addType: (name: string) => Promise<{ error: string | null }>;
+  addInfluencer: (form: AddInfluencerInput) => Promise<{ error: string | null }>;
+}
+
+function NetworkTab({ accounts, influencers, types, loading, error, addType, addInfluencer }: NetworkTabProps) {
+  const [filterTypeId, setFilterTypeId] = useState<string | null>(null);
+
+  // Add-type modal
+  const [showAddType, setShowAddType] = useState(false);
+  const [typeName, setTypeName] = useState('');
+  const [savingType, setSavingType] = useState(false);
+
+  // Add-member modal
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [memberForm, setMemberForm] = useState<AddInfluencerInput>({ ...EMPTY_MEMBER_FORM });
+  const [savingMember, setSavingMember] = useState(false);
+
+  // ── Type map for lookups ───────────────────────────────────────
+
+  const typeMap = useMemo(() => {
+    const map: Record<string, RelationshipTypeRow> = {};
+    for (const t of types) map[t.id] = t;
+    return map;
+  }, [types]);
+
+  // ── Type counts ────────────────────────────────────────────────
+
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const inf of influencers) {
+      const tid = inf.type_id || '__none';
+      counts[tid] = (counts[tid] || 0) + 1;
+    }
+    return counts;
+  }, [influencers]);
+
+  // ── Filtered roster ────────────────────────────────────────────
+
+  const roster = useMemo(() => {
+    if (!filterTypeId) return influencers;
+    return influencers.filter(inf => inf.type_id === filterTypeId);
+  }, [influencers, filterTypeId]);
+
+  // ── Book: accounts championed by a given broker ────────────────
+
+  const bookFor = (brokerId: string): AccountRow[] =>
+    accounts.filter(a => a.broker_id === brokerId);
+
+  // ── Determine if selected type in member form is hero ──────────
+
+  const selectedTypeIsHero = memberForm.typeId ? typeMap[memberForm.typeId]?.is_hero ?? false : false;
+
+  // ── Submit add-type ────────────────────────────────────────────
+
+  const handleAddType = async () => {
+    if (!typeName.trim()) { toast.error('Type name is required'); return; }
+    setSavingType(true);
+    const { error: err } = await addType(typeName.trim());
+    setSavingType(false);
+    if (err) { toast.error(`Failed: ${err}`); }
+    else { toast.success('Type added'); setShowAddType(false); setTypeName(''); }
+  };
+
+  // ── Submit add-member ──────────────────────────────────────────
+
+  const handleAddMember = async () => {
+    if (!memberForm.name.trim()) { toast.error('Name is required'); return; }
+    setSavingMember(true);
+    const payload: AddInfluencerInput = {
+      ...memberForm,
+      stage: selectedTypeIsHero ? (memberForm.stage || 'Identified') : null,
+    };
+    const { error: err } = await addInfluencer(payload);
+    setSavingMember(false);
+    if (err) { toast.error(`Failed: ${err}`); }
+    else { toast.success('Member added'); setShowAddMember(false); setMemberForm({ ...EMPTY_MEMBER_FORM }); }
+  };
+
+  // ── Render ─────────────────────────────────────────────────────
+
+  return (
+    <div className="space-y-5">
+      {/* Error */}
+      {error && (
+        <div className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-md px-4 py-2">
+          {error}
+        </div>
+      )}
+
+      {/* Type registry bar */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* All chip */}
+        <button
+          onClick={() => setFilterTypeId(null)}
+          className={`py-1 px-3 text-[11px] font-semibold rounded-full border cursor-pointer transition-colors ${
+            filterTypeId === null
+              ? 'bg-navy text-white border-navy'
+              : 'bg-white text-slate_ui border-border_ui-warm hover:border-navy'
+          }`}
+        >
+          All ({influencers.length})
+        </button>
+
+        {/* Type chips */}
+        {types.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setFilterTypeId(filterTypeId === t.id ? null : t.id)}
+            className={`py-1 px-3 text-[11px] font-semibold rounded-full border cursor-pointer transition-colors ${
+              filterTypeId === t.id
+                ? 'bg-navy text-white border-navy'
+                : 'bg-white text-slate_ui border-border_ui-warm hover:border-navy'
+            }`}
+          >
+            {t.is_hero ? '\u2605 ' : ''}{t.name} ({typeCounts[t.id] || 0})
+          </button>
+        ))}
+
+        {/* Add type button */}
+        <button
+          onClick={() => setShowAddType(true)}
+          className="py-1 px-3 text-[11px] font-semibold rounded-full border border-dashed border-border_ui-warm text-slate_ui cursor-pointer hover:border-navy bg-transparent"
+        >
+          + Add type
+        </button>
+
+        {/* Spacer + Add to network */}
+        <div className="flex-1" />
+        <button
+          onClick={() => setShowAddMember(true)}
+          className="py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer bg-navy text-white border-none"
+        >
+          + Add to Network
+        </button>
+      </div>
+
+      {/* Roster */}
+      {loading ? (
+        <div className="p-10 text-center text-gray-400 text-[13px]">Loading network...</div>
+      ) : roster.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-[14px] text-gray-400 mb-3">Your network is empty</p>
+          <button
+            onClick={() => setShowAddMember(true)}
+            className="py-2 px-5 text-[13px] font-semibold rounded-md cursor-pointer bg-navy text-white border-none"
+          >
+            + Add to Network
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {roster.map(inf => {
+            const infType = inf.type_id ? typeMap[inf.type_id] : null;
+            const isHero = infType?.is_hero ?? false;
+            const book = isHero ? bookFor(inf.id) : [];
+
+            return (
+              <div
+                key={inf.id}
+                className="bg-white border border-border_ui-warm rounded-[10px] p-5"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <div className="text-[15px] font-bold text-navy">{inf.name}</div>
+                    {inf.org && (
+                      <div className="text-[12px] text-slate_ui mt-0.5">{inf.org}</div>
+                    )}
+                  </div>
+                  {infType && (
+                    <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full ${
+                      isHero ? 'bg-amber-50 text-amber-700' : 'bg-gray-50 text-slate_ui'
+                    }`}>
+                      {isHero ? '\u2605 ' : ''}{infType.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Contact line */}
+                <div className="text-[11px] text-gray-400 mb-3 space-y-0.5">
+                  {inf.contact_name && <div>{inf.contact_name}</div>}
+                  {inf.contact_email && <div>{inf.contact_email}</div>}
+                  {inf.contact_phone && <div>{inf.contact_phone}</div>}
+                </div>
+
+                {/* Enablement arc (hero only) */}
+                {isHero && inf.stage && (
+                  <div className="mb-3">
+                    <p className="text-[10px] font-bold text-slate_ui uppercase tracking-wider mb-1.5">Enablement</p>
+                    <div className="flex gap-1">
+                      {ENABLEMENT_STAGES.map(s => (
+                        <div
+                          key={s}
+                          className={`flex-1 text-center py-1 text-[10px] font-semibold rounded ${
+                            inf.stage === s
+                              ? 'bg-gold text-white'
+                              : 'bg-gray-100 text-gray-400'
+                          }`}
+                        >
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Book (hero only) */}
+                {isHero && (
+                  <div>
+                    <p className="text-[10px] font-bold text-slate_ui uppercase tracking-wider mb-1.5">
+                      Book ({book.length})
+                    </p>
+                    {book.length === 0 ? (
+                      <p className="text-[11px] text-gray-400 italic">No accounts championed yet.</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {book.map(a => (
+                          <div key={a.id} className="text-[11px] text-navy flex gap-2">
+                            <span className="font-semibold">{a.org_name}</span>
+                            {a.county && <span className="text-gray-400">{a.county}</span>}
+                            <span className="text-gray-400">
+                              {STAGE_LABELS[a.stage as keyof typeof STAGE_LABELS] || a.stage}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Notes (non-hero) */}
+                {!isHero && inf.notes && (
+                  <div className="text-[11px] text-gray-400 mt-1">{inf.notes}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Add-type modal ─────────────────────────────────────────── */}
+      <Modal isOpen={showAddType} onClose={() => setShowAddType(false)} size="sm">
+        <div className="p-6">
+          <h2 className="text-[18px] font-bold text-navy mb-4 font-logo">Add Relationship Type</h2>
+          <div className="mb-4">
+            <label className="text-[11px] font-semibold text-slate_ui block mb-1">Type Name *</label>
+            <input
+              value={typeName}
+              onChange={e => setTypeName(e.target.value)}
+              className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              placeholder="e.g. Distributor, CPA"
+              onKeyDown={e => { if (e.key === 'Enter') handleAddType(); }}
+            />
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { setShowAddType(false); setTypeName(''); }}
+              className="py-2 px-4 text-[13px] font-semibold rounded-md cursor-pointer bg-gray-100 text-slate_ui border-none"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddType}
+              disabled={savingType}
+              className={`py-2 px-5 text-[13px] font-semibold rounded-md cursor-pointer border-none ${
+                savingType ? 'bg-gray-200 text-gray-400' : 'bg-navy text-white'
+              }`}
+            >
+              {savingType ? 'Adding...' : 'Add Type'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Add-member modal ───────────────────────────────────────── */}
+      <Modal isOpen={showAddMember} onClose={() => setShowAddMember(false)} size="lg">
+        <div className="p-6">
+          <h2 className="text-[18px] font-bold text-navy mb-4 font-logo">Add to Network</h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            {/* Type */}
+            <div className="sm:col-span-2">
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Type</label>
+              <select
+                value={memberForm.typeId || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, typeId: e.target.value || null, stage: null }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              >
+                <option value="">Select type</option>
+                {types.map(t => (
+                  <option key={t.id} value={t.id}>
+                    {t.is_hero ? '\u2605 ' : ''}{t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Name */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Name *</label>
+              <input
+                value={memberForm.name}
+                onChange={e => setMemberForm(prev => ({ ...prev, name: e.target.value }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              />
+            </div>
+
+            {/* Org */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Organization</label>
+              <input
+                value={memberForm.org || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, org: e.target.value }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              />
+            </div>
+
+            {/* Contact name */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Name</label>
+              <input
+                value={memberForm.contactName || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, contactName: e.target.value }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              />
+            </div>
+
+            {/* Contact email */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Email</label>
+              <input
+                type="email"
+                value={memberForm.contactEmail || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, contactEmail: e.target.value }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              />
+            </div>
+
+            {/* Contact phone */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Contact Phone</label>
+              <input
+                value={memberForm.contactPhone || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, contactPhone: e.target.value }))}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+              />
+            </div>
+
+            {/* Enablement stage (hero types only) */}
+            {selectedTypeIsHero && (
+              <div>
+                <label className="text-[11px] font-semibold text-slate_ui block mb-1">Enablement Stage</label>
+                <select
+                  value={memberForm.stage || 'Identified'}
+                  onChange={e => setMemberForm(prev => ({ ...prev, stage: e.target.value }))}
+                  className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full"
+                >
+                  {ENABLEMENT_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            )}
+
+            {/* Notes */}
+            <div className="sm:col-span-2">
+              <label className="text-[11px] font-semibold text-slate_ui block mb-1">Notes</label>
+              <textarea
+                value={memberForm.notes || ''}
+                onChange={e => setMemberForm(prev => ({ ...prev, notes: e.target.value }))}
+                rows={2}
+                className="py-[7px] px-[10px] text-[13px] border border-border_ui-warm rounded-md outline-none text-navy bg-white w-full resize-y"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { setShowAddMember(false); setMemberForm({ ...EMPTY_MEMBER_FORM }); }}
+              className="py-2 px-4 text-[13px] font-semibold rounded-md cursor-pointer bg-gray-100 text-slate_ui border-none"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddMember}
+              disabled={savingMember}
+              className={`py-2 px-5 text-[13px] font-semibold rounded-md cursor-pointer border-none ${
+                savingMember ? 'bg-gray-200 text-gray-400' : 'bg-navy text-white'
+              }`}
+            >
+              {savingMember ? 'Adding...' : 'Add Member'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
