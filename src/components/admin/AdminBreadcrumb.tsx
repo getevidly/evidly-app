@@ -57,6 +57,9 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/messages': 'System',
   '/admin/demo/dashboard': 'Growth',
   '/admin/violation-outreach': 'Growth',
+  '/admin/marketing/accounts': 'Marketing',
+  '/admin/marketing/network': 'Marketing',
+  '/admin/marketing/methods': 'Marketing',
 };
 
 const SEP_COLOR = '#D1D5DB';
