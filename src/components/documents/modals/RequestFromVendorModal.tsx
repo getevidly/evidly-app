@@ -28,16 +28,20 @@ interface RecentVendor {
   vendor_id: string | null;
 }
 
-const SERVICE_DOC_TYPES = [
-  'Hood Cleaning Report',
-  'Suppression Test Cert',
-  'Pest Control Service Log',
-  'Grease Trap Manifest',
-  'Fire Alarm Inspection Report',
-  'Sprinkler Inspection Report',
-  'Fire Extinguisher Service Tag',
-  'Fan Performance Report',
-];
+interface ServiceCandidate {
+  code: string;
+  locationId: string | null;
+  serviceName: string;
+  locationName: string;
+  category: string;
+}
+
+interface CatalogService {
+  code: string;
+  name: string;
+  short_name: string;
+  category: string;
+}
 
 const BUSINESS_DOC_TYPES = [
   'COI - General Liability',
@@ -77,6 +81,15 @@ export function RequestFromVendorModal({
 
   // Document type
   const [docType, setDocType] = useState('');
+
+  // Service capture — drives which schedule the accept step advances + the doc label
+  const [serviceTypeCode, setServiceTypeCode] = useState<string | null>(null);
+  const [locationId, setLocationId] = useState<string | null>(null);
+  const [serviceName, setServiceName] = useState<string>('');
+  const [locationName, setLocationName] = useState<string>('');
+  const [serviceCandidates, setServiceCandidates] = useState<ServiceCandidate[]>([]);
+  const [catalogServices, setCatalogServices] = useState<CatalogService[]>([]);
+  const [loadingSchedules, setLoadingSchedules] = useState(false);
 
   // Cover message
   const [coverMsg, setCoverMsg] = useState('');
@@ -146,6 +159,16 @@ export function RequestFromVendorModal({
     });
   }, [orgId]);
 
+  useEffect(() => {
+    if (!orgId || sourceTab !== 'service') return;
+    supabase
+      .from('service_type_definitions')
+      .select('code, name, short_name, category')
+      .is('parent_code', null)
+      .eq('is_active', true)
+      .then(({ data }) => { if (data) setCatalogServices(data as CatalogService[]); });
+  }, [orgId, sourceTab]);
+
   // Auto-draft cover message when vendor + docType are set
   useEffect(() => {
     if (vendorName && docType) {
@@ -157,10 +180,46 @@ export function RequestFromVendorModal({
     }
   }, [vendorName, docType, profile]);
 
+  const loadVendorSchedules = async (vId: string) => {
+    setServiceTypeCode(null); setLocationId(null); setServiceName(''); setLocationName(''); setServiceCandidates([]);
+    if (!orgId || !vId) { setLoadingSchedules(false); return; }
+    const { data: lss } = await supabase
+      .from('location_service_schedules')
+      .select('service_type_code, location_id')
+      .eq('organization_id', orgId)
+      .eq('vendor_id', vId)
+      .eq('is_active', true);
+    if (lss && lss.length > 0) {
+      const codes = Array.from(new Set(lss.map((r: any) => r.service_type_code).filter(Boolean)));
+      const locIds = Array.from(new Set(lss.map((r: any) => r.location_id).filter(Boolean)));
+      const [{ data: defs }, { data: locs }] = await Promise.all([
+        supabase.from('service_type_definitions').select('code, short_name, category').in('code', codes.length ? codes : ['__none__']),
+        supabase.from('locations').select('id, name').in('id', locIds.length ? locIds : ['00000000-0000-0000-0000-000000000000']),
+      ]);
+      const defMap = new Map((defs || []).map((d: any) => [d.code, d]));
+      const locMap = new Map((locs || []).map((l: any) => [l.id, l.name]));
+      const cands: ServiceCandidate[] = lss.map((r: any) => ({
+        code: r.service_type_code,
+        locationId: r.location_id,
+        serviceName: defMap.get(r.service_type_code)?.short_name || r.service_type_code,
+        locationName: locMap.get(r.location_id) || 'Location',
+        category: defMap.get(r.service_type_code)?.category || 'facility_services',
+      }));
+      setServiceCandidates(cands);
+      if (cands.length === 1) {
+        const c = cands[0];
+        setServiceTypeCode(c.code); setLocationId(c.locationId);
+        setServiceName(c.serviceName); setLocationName(c.locationName); setDocType(c.serviceName);
+      }
+    }
+    setLoadingSchedules(false);
+  };
+
   const selectVendor = (id: string, name: string, email: string) => {
     setVendorId(id);
     setVendorName(name);
     setVendorEmail(email);
+    if (sourceTab === 'service') { setLoadingSchedules(true); void loadVendorSchedules(id); }
     setStep(2);
   };
 
@@ -190,13 +249,18 @@ export function RequestFromVendorModal({
       setVendorId(newId);
       setVendorName(data.companyName);
       setVendorEmail(data.primaryContactEmail);
+      setServiceTypeCode(null); setLocationId(null); setServiceCandidates([]); setLoadingSchedules(false);
       setStep(2);
     } else {
       toast.error('Failed to create vendor');
     }
   }, [orgId, createVendor]);
 
-  const docTypes = sourceTab === 'service' ? SERVICE_DOC_TYPES : BUSINESS_DOC_TYPES;
+  const businessDocTypes = BUSINESS_DOC_TYPES;
+  const serviceOptions: ServiceCandidate[] =
+    serviceCandidates.length > 0
+      ? serviceCandidates
+      : catalogServices.map((s) => ({ code: s.code, locationId: null, serviceName: s.short_name || s.name, locationName: '', category: s.category }));
 
   const handleSend = useCallback(async () => {
     if (!orgId || !vendorEmail.trim()) return;
@@ -216,6 +280,8 @@ export function RequestFromVendorModal({
           name: `${docType || 'Document'} \u2014 Requested from ${vendorName}`,
           status: 'requested',
           vendor_id: vendorId || null,
+          service_type_code: serviceTypeCode,
+          location_id: locationId,
         })
         .select('id')
         .single();
@@ -238,6 +304,8 @@ export function RequestFromVendorModal({
           recipient_email: vendorEmail.trim(),
           recipient_name: vendorName,
           note_to_recipient: coverMsg,
+          service_type_code: serviceTypeCode,
+          location_id: locationId,
         });
 
       if (reqErr) {
@@ -267,7 +335,7 @@ export function RequestFromVendorModal({
     } finally {
       setSending(false);
     }
-  }, [orgId, vendorId, vendorName, vendorEmail, docType, coverMsg, sourceTab, profile, onComplete, onClose]);
+  }, [orgId, vendorId, vendorName, vendorEmail, docType, coverMsg, serviceTypeCode, locationId, sourceTab, profile, onComplete, onClose]);
 
   const canNext =
     (step === 2 && !!docType) ||
@@ -377,25 +445,58 @@ export function RequestFromVendorModal({
 
         {step === 2 && (
           <>
-            <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2.5">
-              What are you requesting?
-            </div>
-            <div className="grid gap-2 max-h-[340px] overflow-y-auto">
-              {docTypes.map((dt) => (
-                <button
-                  key={dt}
-                  type="button"
-                  onClick={() => setDocType(dt)}
-                  className="text-left px-3.5 py-3 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer"
-                  style={{
-                    background: docType === dt ? '#FAF7F0' : '#FFF',
-                    border: `2px solid ${docType === dt ? '#A08C5A' : '#E2DDD4'}`,
-                  }}
-                >
-                  {dt}
-                </button>
-              ))}
-            </div>
+            {sourceTab === 'service' && (
+              <>
+                {serviceTypeCode ? (
+                  <div className="flex items-center justify-between px-3.5 py-2.5 rounded-md" style={{ backgroundColor: '#FAF7F0', border: '1px solid #E2DDD4' }}>
+                    <div className="text-[12px] text-[#1E2D4D]"><span className="text-[#8A93A6]">Service · </span><span className="font-semibold">{serviceName}{locationName ? ` · ${locationName}` : ''}</span></div>
+                    <button type="button" onClick={() => { setServiceTypeCode(null); setLocationId(null); setDocType(''); }} className="text-[11px] font-semibold text-[#A08C5A] hover:underline">Change</button>
+                  </div>
+                ) : loadingSchedules ? (
+                  <div className="text-center py-6 text-[13px] text-[#8A93A6]">Loading services…</div>
+                ) : (
+                  <>
+                    <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2.5">{serviceCandidates.length > 0 ? 'Which scheduled service is this record for?' : 'What service record are you requesting?'}</div>
+                    {serviceCandidates.length === 0 && (
+                      <div className="text-[11px] text-[#8A93A6] mb-3 leading-relaxed">This vendor has no schedule yet — the record will be filed, and reminders begin once their cadence is set.</div>
+                    )}
+                    <div className="max-h-[340px] overflow-y-auto">
+                      {(['fire_safety', 'food_safety', 'facility_services'] as const).map((cat) => {
+                        const group = serviceOptions.filter((c) => c.category === cat);
+                        if (group.length === 0) return null;
+                        const label = cat === 'fire_safety' ? 'Fire Safety' : cat === 'food_safety' ? 'Food Safety' : 'Facility Services';
+                        return (
+                          <div key={cat} className="mb-2.5">
+                            <div className="text-[10px] text-[#A08C5A] font-bold uppercase tracking-wider mb-1.5">{label}</div>
+                            <div className="grid gap-2">
+                              {group.map((c) => (
+                                <button key={c.code + (c.locationId || '')} type="button" onClick={() => { setServiceTypeCode(c.code); setLocationId(c.locationId); setServiceName(c.serviceName); setLocationName(c.locationName); setDocType(c.serviceName); }} className="text-left flex items-center justify-between px-3.5 py-3 rounded-md border border-[#E2DDD4] hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors">
+                                  <div>
+                                    <div className="text-[13px] font-semibold text-[#1E2D4D]">{c.serviceName}</div>
+                                    {c.locationName && <div className="text-[11px] text-[#8A93A6]">{c.locationName}</div>}
+                                  </div>
+                                  <ChevronRight size={14} className="text-[#8A93A6]" />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+            {sourceTab === 'business' && (
+              <>
+                <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2.5">What are you requesting?</div>
+                <div className="grid gap-2 max-h-[340px] overflow-y-auto">
+                  {businessDocTypes.map((dt) => (
+                    <button key={dt} type="button" onClick={() => setDocType(dt)} className="text-left px-3.5 py-3 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer" style={{ background: docType === dt ? '#FAF7F0' : '#FFF', border: `2px solid ${docType === dt ? '#A08C5A' : '#E2DDD4'}` }}>{dt}</button>
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
 
@@ -435,6 +536,12 @@ export function RequestFromVendorModal({
                 <span className="text-[#8A93A6]">From</span>
                 <span className="font-semibold text-[#1E2D4D]">{vendorName}</span>
               </div>
+              {sourceTab === 'service' && serviceTypeCode && (
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[#8A93A6]">Service</span>
+                  <span className="font-semibold text-[#1E2D4D]">{serviceName}{locationName ? ` · ${locationName}` : ''}</span>
+                </div>
+              )}
               <div className="text-[13px]">
                 <span className="text-[#8A93A6] block mb-1">Vendor email</span>
                 <input
