@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
+import { useUpcomingServices } from '../../../hooks/useUpcomingServices';
+import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useOrgSummary } from '../../../hooks/useOrgSummary';
@@ -30,6 +32,9 @@ export function PrpHeader() {
 
   // Drift counts — pillar-split, NEVER summed
   const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
+  const upcoming = useUpcomingServices(14, selectedLocationId);
+  const { catches: driftCatches } = useDriftCatches();
+  const handledCount = (driftCatches || []).filter((d) => d.status === 'ack').length;
 
   // Tasks: filter by location in single-location mode
   const { totalToday, doneToday, loading: todayLoading } = useTodayList(
@@ -70,6 +75,8 @@ export function PrpHeader() {
   });
 
   const openToday = Math.max(totalToday - doneToday, 0);
+  // REDUCE = findings handled (acknowledged) this period
+  const reducedCount = handledCount;
   const driftCount = tempData?.counts?.failing ?? 0;
   const sensorTotal = tempData?.counts?.total ?? 0;
 
@@ -103,6 +110,9 @@ export function PrpHeader() {
                 <p className={`prp-num${foodDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18 }}>
                   Food: {foodDrift === 0 ? 'clear' : foodDrift}
                 </p>
+                <p className="prp-sub" style={{ marginTop: 2 }}>
+                  {upcoming.total === 0 ? 'No services due soon' : `${upcoming.total} service${upcoming.total === 1 ? '' : 's'} due soon`}
+                </p>
                 <p className={`prp-num${fireDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18, marginTop: 2 }}>
                   Fire: {fireDrift === 0 ? 'clear' : fireDrift}
                 </p>
@@ -115,7 +125,7 @@ export function PrpHeader() {
           <div className="prp-icon"><i className="ti ti-shield-check" /></div>
           <div>
             <p className="prp-label">What's Handled</p>
-            <p className="prp-num">{todayLoading ? '—' : openToday}</p>
+            <p className="prp-num">{todayLoading ? '—' : reducedCount}</p>
             <p className="prp-sub">{reduceSub}</p>
           </div>
         </div>
