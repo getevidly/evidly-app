@@ -144,7 +144,7 @@ export function TeamEmptyState({ onInviteClick }: TeamEmptyStateProps = {}) {
           Invite first team member
         </Link>
       )}
-      <p style={subText}>4 seats included on your {planDisplayName} plan</p>
+      <p style={subText}>Unlimited seats included on your {planDisplayName} plan</p>
     </div>
   );
 }

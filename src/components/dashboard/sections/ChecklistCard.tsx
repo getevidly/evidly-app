@@ -7,6 +7,7 @@
 
 import { useOrgSummary } from '../../../hooks/useOrgSummary';
 import type { ChecklistItem, ChecklistItemStatus } from '../../../hooks/useChecklistStatus';
+import { daysSince } from '../../../lib/daysSince';
 
 interface ChecklistCardProps {
   cadence: 'daily' | 'weekly' | 'monthly';
@@ -40,7 +41,7 @@ function formatTimeTag(
   if (status === 'overdue') {
     const diffMs = Date.now() - new Date(dueAt).getTime();
     const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-    if (diffHrs >= 24) return `${Math.floor(diffHrs / 24)}d late`;
+    if (diffHrs >= 24) return `${daysSince(dueAt)}d late`;
     if (diffHrs >= 1) return `${diffHrs}h late`;
     return `${Math.max(1, Math.floor(diffMs / 60000))}m late`;
   }

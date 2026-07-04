@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { useOrgAge } from '../../../hooks/useOrgAge';
+import { daysSince } from '../../../lib/daysSince';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -112,7 +113,7 @@ function timeAgo(iso: string): string {
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
+  const days = daysSince(iso);
   return `${days}d ago`;
 }
 

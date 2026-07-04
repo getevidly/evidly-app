@@ -49,11 +49,6 @@ const STAKES: Record<string, string> = {
   task_skipped:                'A skipped task is documented proof of a lapse.',
 };
 
-function daysBetween(from: string, to: Date): number {
-  const diff = to.getTime() - new Date(from).getTime();
-  return Math.max(0, Math.floor(diff / 86_400_000));
-}
-
 function buildEvidence(drift: DriftCatchWithAcks): string {
   let ev = `Evidence: ${getSourceTableLabel(drift.source_table)}`;
   if (drift.expected_value && drift.actual_value) {
