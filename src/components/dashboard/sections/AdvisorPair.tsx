@@ -45,6 +45,22 @@ export function AdvisorPair() {
     return () => { cancelled = true; };
   }, [selectedLocationId]);
 
+  // Location id -> name, so findings can show their kitchen
+  const [locationNames, setLocationNames] = useState<Record<string, string>>({});
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from('locations')
+      .select('id, name')
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        const m: Record<string, string> = {};
+        for (const l of data as { id: string; name: string }[]) m[l.id] = l.name;
+        setLocationNames(m);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const isAllMode = isMultiLocation && selectedLocationId === null;
   const scopeLine = isAllMode && countyCount > 1
     ? `across ${countyCount} counties`
@@ -53,8 +69,8 @@ export function AdvisorPair() {
   return (
     <div>
       <div className="advisor-row">
-        <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems showConsult isStale={staleness.food_safety} countyDepartment={depts?.food} regenFailed={regenFailed} />
-        <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems showConsult isStale={staleness.fire_safety} countyDepartment={depts?.fire} regenFailed={regenFailed} />
+        <BriefCard variant="food_safety" briefing={food_safety} timezone={timezone} showItems showConsult isStale={staleness.food_safety} countyDepartment={depts?.food} locationNames={locationNames} regenFailed={regenFailed} />
+        <BriefCard variant="fire_safety" briefing={fire_safety} timezone={timezone} showItems showConsult isStale={staleness.fire_safety} countyDepartment={depts?.fire} locationNames={locationNames} regenFailed={regenFailed} />
       </div>
       {scopeLine && (
         <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: '-14px 0 18px', fontStyle: 'italic' }}>

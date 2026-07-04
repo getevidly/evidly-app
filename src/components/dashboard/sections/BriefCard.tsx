@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
-import type { ReactNode } from 'react';
 import { ShieldCheck, Flame } from 'lucide-react';
-import type { AdvisorBriefing, OpenItem } from '../../../hooks/useAdvisorBriefings';
-import { CitationChip } from '../CitationChip';
+import type { AdvisorBriefing } from '../../../hooks/useAdvisorBriefings';
 import { daysSince } from '../../../lib/daysSince';
 
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
@@ -10,24 +8,19 @@ type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
 interface BriefCardProps {
   variant: AdvisorType;
   briefing: AdvisorBriefing | null;
-  timezone: string;
+  timezone?: string;
   showItems?: boolean;
   showConsult?: boolean;
   isStale?: boolean;
   countyDepartment?: string;
+  locationNames?: Record<string, string>;
   regenFailed?: boolean;
 }
 
-const CSS_CLASS: Record<AdvisorType, string> = {
-  compliance_officer: 'compliance',
-  food_safety: 'food',
-  fire_safety: 'fire',
-};
-
-const EYEBROW: Record<AdvisorType, { icon: ReactNode; label: string; showDate: boolean }> = {
-  compliance_officer: { icon: <ShieldCheck size={13} />, label: 'Compliance read', showDate: true },
-  food_safety: { icon: <ShieldCheck size={13} />, label: 'Food Safety Advisor', showDate: false },
-  fire_safety: { icon: <Flame size={13} />, label: 'Fire Safety Advisor', showDate: false },
+const EYEBROW: Record<AdvisorType, { label: string; authority: string }> = {
+  compliance_officer: { label: 'COMPLIANCE', authority: '' },
+  food_safety: { label: 'FOOD SAFETY', authority: 'Current with FDA Food Code, CalCode' },
+  fire_safety: { label: 'FIRE SAFETY', authority: 'Current with NFPA 10, 17A, 25, 72, 96, CA Fire Code' },
 };
 
 const CONSULT_LABEL: Record<AdvisorType, string> = {
@@ -42,199 +35,91 @@ const CONSULT_ROUTE: Record<AdvisorType, string> = {
   fire_safety: '/fire-safety/kec',
 };
 
-const ITEMS_LABEL: Record<AdvisorType, string> = {
-  compliance_officer: 'Open in compliance',
-  food_safety: 'Open in food safety',
-  fire_safety: 'Open in fire safety',
+const CLEAR_BODY: Record<AdvisorType, string> = {
+  compliance_officer: 'Nothing open. Everything current.',
+  food_safety: 'All food-safety controls current. Nothing missing this period.',
+  fire_safety: 'Hood cleaning, suppression, sprinkler, alarm, and extinguisher service all current. Nothing missing this period.',
 };
 
-const URGENCY_DOT: Record<string, string> = {
-  urgent: 'urgent',
-  pulling: 'soon',
-  review: 'review',
-};
+const TINT = {
+  clear:     { bg: '#F8FCFA', border: '#CFE9DE', pill: '#E1F5EE', pillText: '#0F6E56' },
+  attention: { bg: '#FFFDF8', border: '#EBD9B6', pill: '#FAEEDA', pillText: '#8A5A0B' },
+} as const;
 
-/* ── Text parsing ──────────────────────────────────────────────── */
-
-function parseBriefing(text: string): { body: string; credentials: string } {
-  // Watch/alarm templates separate body and credentials with \n
-  const lines = text.split('\n');
-  if (lines.length >= 2) {
-    const last = lines[lines.length - 1].trim();
-    if (last.startsWith('Current with')) {
-      return { body: lines.slice(0, -1).join('\n').trim(), credentials: last };
-    }
-  }
-  // Solid templates embed credentials inline: "Posture: solid — Current with..."
-  const idx = text.lastIndexOf('Current with');
-  if (idx > 0) {
-    const body = text.substring(0, idx).replace(/\s*—\s*$/, '').trim();
-    const credentials = text.substring(idx).replace(/\.?\s*$/, '').trim();
-    return { body, credentials };
-  }
-  return { body: text, credentials: '' };
+function ageLabel(days: number): string {
+  if (days >= 1) return `${days} day${days === 1 ? '' : 's'} unaddressed`;
+  return 'flagged today';
 }
 
-function extractPostureLine(body: string): { postureLine: string; bodyText: string } {
-  const regex = /\s*Posture:\s*\w+(?:\s*—\s*(.+?))?\.?\s*$/;
-  const match = body.match(regex);
-  if (match) {
-    return {
-      postureLine: (match[1] || '').trim().replace(/\.$/, ''),
-      bodyText: body.substring(0, match.index!).trim(),
-    };
-  }
-  return { postureLine: '', bodyText: body };
-}
+export function BriefCard({ variant, briefing, showItems = true, showConsult = false, isStale = false, countyDepartment, locationNames, regenFailed }: BriefCardProps) {
+  const eyebrow = EYEBROW[variant];
+  const Icon = variant === 'fire_safety' ? Flame : ShieldCheck;
+  const authorityLine = countyDepartment
+    ? `${eyebrow.authority} \u00B7 ${countyDepartment}`
+    : eyebrow.authority;
 
-function defaultPostureLine(posture: string, items: OpenItem[]): string {
-  if (posture === 'solid') return 'All clear.';
-  const urgentN = items.filter(i => i.urgency === 'urgent').length;
-  const pullingN = items.filter(i => i.urgency === 'pulling').length;
-  if (urgentN > 0) return `${urgentN} urgent item${urgentN === 1 ? '' : 's'}.`;
-  if (pullingN > 0) return `${pullingN} pulling item${pullingN === 1 ? '' : 's'}.`;
-  return `${items.length} open item${items.length === 1 ? '' : 's'}.`;
-}
-
-/* ── Citation parsing ──────────────────────────────────────────── */
-
-const CITATION_RE =
-  /<citation\s+data-id="([^"]+)"\s+data-section="([^"]+)"\s+data-family="([^"]+)">([^<]+)<\/citation>/g;
-
-function renderBodyWithCitations(text: string): ReactNode[] {
-  const parts: ReactNode[] = [];
-  let lastIndex = 0;
-  let key = 0;
-
-  CITATION_RE.lastIndex = 0;
-  let match: RegExpExecArray | null;
-  while ((match = CITATION_RE.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
-    }
-    const [, id, , , label] = match;
-    parts.push(
-      <CitationChip key={`cite-${key++}`} citationId={id}>
-        {label}
-      </CitationChip>,
+  if (!briefing && regenFailed) {
+    return (
+      <div className="brief-lite" style={{ background: '#FFF', border: '1px solid #E7E1D5', borderRadius: 12, padding: 16 }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#A08C5A', margin: 0 }}>{eyebrow.label}</p>
+        <p style={{ fontSize: 13, color: '#8A93A6', margin: '10px 0 0' }}>Couldn't load — try refreshing.</p>
+      </div>
     );
-    lastIndex = match.index + match[0].length;
+  }
+  if (!briefing) {
+    return (
+      <div className="brief-lite" style={{ background: '#FFF', border: '1px solid #E7E1D5', borderRadius: 12, padding: 16, minHeight: 120 }}>
+        <div style={{ height: 10, width: '55%', background: '#EFEBE0', borderRadius: 4, marginBottom: 12 }} />
+        <div style={{ height: 12, width: '40%', background: '#EFEBE0', borderRadius: 4, marginBottom: 10 }} />
+        <div style={{ height: 10, width: '90%', background: '#EFEBE0', borderRadius: 4 }} />
+      </div>
+    );
   }
 
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-
-  return parts.length > 0 ? parts : [text];
-}
-
-/* ── Date formatting ───────────────────────────────────────────── */
-
-function formatBriefingDate(generatedAt: string, tz: string): string {
-  try {
-    const now = new Date();
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
-    if (fmt.format(now) === fmt.format(new Date(generatedAt))) return 'Today';
-    return new Intl.DateTimeFormat('en-US', { timeZone: tz, month: 'short', day: 'numeric' }).format(new Date(generatedAt));
-  } catch { return ''; }
-}
-
-function formatItemTag(detectedAt: string, tz: string): string {
-  try {
-    const now = new Date();
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
-    const todayStr = fmt.format(now);
-    const itemStr = fmt.format(new Date(detectedAt));
-    const todayMs = new Date(todayStr + 'T00:00:00').getTime();
-    const itemMs = new Date(itemStr + 'T00:00:00').getTime();
-    const diffDays = daysSince(detectedAt);
-    if (diffDays === 0) return 'Today';
-    if (diffDays === -1) return 'Tomorrow';
-    if (diffDays > 0 && diffDays < 30) return `${diffDays}d late`;
-    return new Intl.DateTimeFormat('en-US', { timeZone: tz, month: 'short', day: 'numeric' }).format(new Date(detectedAt));
-  } catch { return ''; }
-}
-
-/* ── Skeleton ──────────────────────────────────────────────────── */
-
-function BriefCardSkeleton({ variant }: { variant: AdvisorType }) {
-  return (
-    <div className={`brief ${CSS_CLASS[variant]} brief-skeleton`}>
-      <div className="brief-skel-bar" style={{ width: '60%', height: 10, marginBottom: 10 }} />
-      <div className="brief-skel-bar" style={{ width: '40%', height: 14, marginBottom: 12 }} />
-      <div className="brief-skel-bar" style={{ width: '100%', height: 10, marginBottom: 6 }} />
-      <div className="brief-skel-bar" style={{ width: '85%', height: 10 }} />
-    </div>
-  );
-}
-
-function BriefCardError({ variant }: { variant: AdvisorType }) {
-  const eyebrow = EYEBROW[variant];
-  return (
-    <div className={`brief ${CSS_CLASS[variant]}`}>
-      <p className="brief-eyebrow">{eyebrow.icon}{eyebrow.label}</p>
-      <p style={{ fontSize: 13, color: 'rgba(250,247,240,0.55)', margin: '8px 0 0' }}>
-        Couldn't load — try refreshing the page.
-      </p>
-    </div>
-  );
-}
-
-/* ── Main component ────────────────────────────────────────────── */
-
-export function BriefCard({ variant, briefing, timezone, showItems = true, showConsult = false, isStale = false, countyDepartment, regenFailed }: BriefCardProps) {
-  if (!briefing && regenFailed) return <BriefCardError variant={variant} />;
-  if (!briefing) return <BriefCardSkeleton variant={variant} />;
-
-  const cls = CSS_CLASS[variant];
-  const eyebrow = EYEBROW[variant];
-  const { body, credentials } = parseBriefing(briefing.briefing_text);
-  const { postureLine, bodyText } = extractPostureLine(body);
-  const summary = (briefing._locationFiltered ? '' : postureLine) || defaultPostureLine(briefing.posture, briefing.open_items);
-  const dateLabel = eyebrow.showDate ? ` \u00B7 ${formatBriefingDate(briefing.generated_at, timezone)}` : '';
+  const items = briefing.open_items || [];
+  const isClear = briefing.posture === 'solid' || items.length === 0;
+  const t = isClear ? TINT.clear : TINT.attention;
+  const badge = isClear ? 'Clear' : (briefing.posture === 'alarm' ? 'Action' : 'Attention');
+  const oldest = items.reduce((mx, i) => Math.max(mx, daysSince(i.detected_at)), 0);
+  const headline = isClear ? 'All in good standing' : `${items.length} open, ${ageLabel(oldest)}`;
 
   return (
-    <div className={`brief ${cls}`}>
-      <p className="brief-eyebrow">
-        {eyebrow.icon}
-        {eyebrow.label}{dateLabel}
-        {credentials && <span className="brief-credentials">{credentials}</span>}
-        {isStale && <span style={{fontSize: '10px', color: 'rgba(250,247,240,0.45)', marginLeft: '8px'}}>&middot; refreshing soon</span>}
+    <div className="brief-lite" style={{ background: t.bg, border: `1px solid ${t.border}`, borderRadius: 12, padding: 16 }}>
+      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#A08C5A', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <Icon size={12} /> {eyebrow.label}
       </p>
-      <p className="brief-posture">
-        <span className={`badge ${briefing.posture}`}>
-          {briefing.posture.charAt(0).toUpperCase() + briefing.posture.slice(1)}
-        </span>
-        {summary}
-      </p>
-      {bodyText && <p className="brief-body">{renderBodyWithCitations(bodyText)}</p>}
-      {briefing.open_items.length > 0 && (() => {
-        const top = briefing.open_items.find(i => i.urgency === 'urgent')
-          || briefing.open_items.find(i => i.urgency === 'pulling')
-          || briefing.open_items[0];
-        return top ? (
-          <p style={{ fontSize: 12, fontStyle: 'italic', color: 'rgba(250,247,240,0.6)', margin: '10px 0 0' }}>
-            What I'd do next: {top.title}
-            {countyDepartment && <span style={{ display: 'block', marginTop: 2 }}>In {countyDepartment}, that's the record an inspector opens with.</span>}
-          </p>
-        ) : null;
-      })()}
-      {showItems && briefing.open_items.length > 0 && (
-        <div className="brief-items">
-          <p className="brief-items-h">{ITEMS_LABEL[variant]}</p>
-          {briefing.open_items.map((item) => (
-            <div className="brief-item" key={`${item.source}-${item.source_id}`}>
-              <span className={`ds ${URGENCY_DOT[item.urgency] || 'review'}`} />
-              <span>{item.title}</span>
-              <span className="tag">{formatItemTag(item.detected_at, timezone)}</span>
-            </div>
-          ))}
-        </div>
+      {authorityLine && <p style={{ fontSize: 10.5, color: '#8A93A6', lineHeight: 1.45, margin: '3px 0 0' }}>{authorityLine}</p>}
+
+      <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: '2px 9px', background: t.pill, color: t.pillText }}>{badge}</span>
+        <span style={{ fontSize: 14, fontWeight: 600, color: '#1E2D4D' }}>{headline}</span>
+        {isStale && <span style={{ fontSize: 10, color: '#B0A99A' }}>&middot; refreshing soon</span>}
+      </div>
+
+      {isClear ? (
+        <div style={{ fontSize: 12, color: '#5C6473', lineHeight: 1.5, marginTop: 8 }}>{CLEAR_BODY[variant]}</div>
+      ) : (
+        showItems && items.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            {items.map((item) => {
+              const d = daysSince(item.detected_at);
+              const loc = item.location_id && locationNames ? locationNames[item.location_id] : '';
+              return (
+                <div key={`${item.source}-${item.source_id}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderTop: '1px solid #EDE8DD' }}>
+                  <span style={{ fontSize: 12.5, color: '#1E2D4D' }}>
+                    {item.title}{loc && <span style={{ color: '#8A93A6' }}> &middot; {loc}</span>}
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: '2px 9px', background: '#FBE4DB', color: '#B4462A', whiteSpace: 'nowrap' }}>{d}d</span>
+                </div>
+              );
+            })}
+          </div>
+        )
       )}
+
       {showConsult && (
-        <Link to={CONSULT_ROUTE[variant]} className="brief-consult">
-          <i className="ti ti-external-link" />
-          {CONSULT_LABEL[variant]}
+        <Link to={CONSULT_ROUTE[variant]} style={{ marginTop: 14, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: '#1E2D4D', background: 'transparent', border: '1px solid #D9D3C6', borderRadius: 7, padding: '7px 13px', textDecoration: 'none' }}>
+          <i className="ti ti-external-link" /> {CONSULT_LABEL[variant]}
         </Link>
       )}
     </div>
