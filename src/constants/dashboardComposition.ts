@@ -41,11 +41,10 @@ export type DashboardRole = Exclude<UserRole, 'platform_admin'>;
 export const DASHBOARD_COMPOSITION: Record<DashboardRole, SectionKey[]> = {
   owner_operator: [
     'prp_header',
-    'today_list',
-    'drifts_caught',
     'advisor_pair',
+    'drifts_caught',
+    'today_list',
     'decisions_queue',
-    'inspection_package',
     'county_readiness',
     'team_grid',
     'intelligence_slot',
