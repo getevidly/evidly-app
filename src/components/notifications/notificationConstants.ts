@@ -11,6 +11,7 @@ import {
   type NotificationSeverity,
   type NotificationCategory,
 } from '../../constants/statusColors';
+import { daysSince as _daysSince } from '../../lib/daysSince';
 
 // ── Re-exports for convenience ───────────────────────────────
 
@@ -142,7 +143,7 @@ export function timeAgo(iso: string): string {
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
+  const days = _daysSince(iso);
   return `${days}d ago`;
 }
 

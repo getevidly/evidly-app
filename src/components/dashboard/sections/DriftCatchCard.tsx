@@ -8,6 +8,7 @@
 
 import { useRole } from '../../../contexts/RoleContext';
 import { getDriftLabel, getSourceTableLabel } from '../../../constants/driftTypeLabels';
+import { daysSince } from '../../../lib/daysSince';
 import type { DriftCatchWithAcks } from '../../../hooks/useDriftCatches';
 
 interface DriftCatchCardProps {
@@ -64,7 +65,7 @@ function buildEvidence(drift: DriftCatchWithAcks): string {
 export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCardProps) {
   const { userRole } = useRole();
   const roleLabel = ROLE_LABELS[userRole] || userRole;
-  const days = daysBetween(drift.detected_at, new Date());
+  const days = daysSince(drift.detected_at);
   const stakesText = STAKES[drift.drift_type] || 'A gap here becomes a finding when an inspector arrives.';
   const ackNames = drift.acknowledgments.map(a => a.user_full_name);
 

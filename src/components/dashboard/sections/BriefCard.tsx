@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { ShieldCheck, Flame } from 'lucide-react';
 import type { AdvisorBriefing, OpenItem } from '../../../hooks/useAdvisorBriefings';
 import { CitationChip } from '../CitationChip';
+import { daysSince } from '../../../lib/daysSince';
 
 type AdvisorType = 'compliance_officer' | 'food_safety' | 'fire_safety';
 
@@ -146,7 +147,7 @@ function formatItemTag(detectedAt: string, tz: string): string {
     const itemStr = fmt.format(new Date(detectedAt));
     const todayMs = new Date(todayStr + 'T00:00:00').getTime();
     const itemMs = new Date(itemStr + 'T00:00:00').getTime();
-    const diffDays = Math.round((todayMs - itemMs) / 86_400_000);
+    const diffDays = daysSince(detectedAt);
     if (diffDays === 0) return 'Today';
     if (diffDays === -1) return 'Tomorrow';
     if (diffDays > 0 && diffDays < 30) return `${diffDays}d late`;
