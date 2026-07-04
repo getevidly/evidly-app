@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Download, X, Clock, Send, RefreshCw, FileText, Archive } from 'lucide-react';
+import { Download, X, Clock, Send, RefreshCw, FileText, Archive, ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
 import { Modal } from '../../ui/Modal';
 import { StatusPill } from '../StatusPill';
 import { RequestStateBadge } from '../RequestStateBadge';
@@ -55,6 +55,14 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
   const [issuingFresh, setIssuingFresh] = useState(false);
   const [activity, setActivity] = useState<ActivityEntry[]>([]);
   const [activityLoading, setActivityLoading] = useState(true);
+  const sealPending = (doc.metadata as Record<string, unknown> | null)?.seal_pending as { reason?: string } | undefined;
+  const sealDone = !!(doc.metadata as Record<string, unknown> | null)?.seal_record_id;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const extract = (doc.metadata as Record<string, unknown> | null)?.service_extraction as Record<string, any> | undefined;
+  const [confDate, setConfDate] = useState<string>(extract?.service_date || '');
+  const [confCert, setConfCert] = useState<string>(extract?.cert_number || '');
+  const [confNoCert, setConfNoCert] = useState(false);
+  const [sealing, setSealing] = useState(false);
 
   // Fetch activity timeline
   useEffect(() => {
@@ -87,6 +95,10 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
       const result = typeof data === 'string' ? JSON.parse(data) : data;
       if (result?.error) {
         toast.error(result.error);
+      } else if (result?.bridge === 'seal_deferred') {
+        toast.success('Accepted — confirm details to seal');
+        onRefresh();
+        setConfirmOpen(true);
       } else {
         toast.success('Document accepted');
         onRefresh();
@@ -202,6 +214,28 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
     }
   };
 
+  const handleConfirmSeal = async () => {
+    if (!confNoCert && !confCert.trim()) {
+      toast.error('Enter the certificate number, or mark that the document has none.');
+      return;
+    }
+    if (!confDate) { toast.error('Confirm the service date.'); return; }
+    setSealing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('confirm-seal-service', {
+        body: { documentId: doc.id, serviceDate: confDate, certNumber: confNoCert ? undefined : confCert.trim(), certAbsent: confNoCert },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) { toast.error(result.error); }
+      else { toast.success('Record sealed'); onRefresh(); onClose(); }
+    } catch {
+      toast.error('Failed to seal record');
+    } finally {
+      setSealing(false);
+    }
+  };
+
   // AI insight line — contextual one-liner
   const aiInsight = getInsight(doc);
 
@@ -216,6 +250,16 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
         <div className="mt-2 flex items-center gap-2">
           <StatusPill status={doc.status} />
           <RequestStateBadge stage={doc.request_stage} />
+          {sealPending && !sealDone && (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold rounded-full px-2.5 py-0.5" style={{ color: '#8A5A0B', backgroundColor: '#FAEEDA' }}>
+              <ShieldAlert size={12} /> Needs confirmation
+            </span>
+          )}
+          {sealDone && (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold rounded-full px-2.5 py-0.5" style={{ color: '#0F6E56', backgroundColor: '#E1F5EE' }}>
+              <ShieldCheck size={12} /> Sealed
+            </span>
+          )}
         </div>
       </div>
 
@@ -225,6 +269,46 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
           <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-[#EEF2FF] border border-[#C7D2FE]">
             <span className="text-[14px] mt-0.5">&#x2728;</span>
             <p className="text-[12px] text-[#4338CA] font-medium">{aiInsight}</p>
+          </div>
+        )}
+
+        {/* Seal confirmation panel */}
+        {sealPending && !sealDone && (
+          <div className="rounded-lg border p-4" style={{ borderColor: '#E8D5A8', backgroundColor: '#FFFDF8' }}>
+            <div className="flex items-start gap-2 mb-3">
+              <ShieldAlert size={15} className="mt-0.5" style={{ color: '#8A5A0B' }} />
+              <p className="text-[12px] font-medium" style={{ color: '#8A5A0B' }}>
+                {sealPending.reason === 'cert_number_unconfirmed'
+                  ? "The certificate number couldn't be read clearly. Confirm the details below to seal this record."
+                  : sealPending.reason === 'service_date_unconfirmed'
+                    ? "The service date couldn't be read clearly. Confirm the details below to seal this record."
+                    : sealPending.reason === 'no_extraction'
+                      ? "The document couldn't be read automatically. Confirm the details below to seal this record."
+                      : "Confirm the details below to seal this record."}
+              </p>
+            </div>
+            <div className="mb-3">
+              <label className="block text-[11px] font-bold text-[#8A93A6] uppercase tracking-wider mb-1">Service date</label>
+              <input type="date" value={confDate} onChange={(e) => setConfDate(e.target.value)}
+                className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30" />
+            </div>
+            <div className="mb-2">
+              <label className="block text-[11px] font-bold text-[#8A93A6] uppercase tracking-wider mb-1">Certificate number</label>
+              <input value={confNoCert ? '' : confCert} disabled={confNoCert} onChange={(e) => setConfCert(e.target.value)}
+                placeholder="Enter the number shown on the document"
+                className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[13px] text-[#1E2D4D] disabled:bg-[#F4F2EC] disabled:text-[#8A93A6] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30" />
+            </div>
+            <label className="flex items-center gap-2 text-[12px] text-[#1E2D4D] cursor-pointer mb-4">
+              <input type="checkbox" checked={confNoCert} onChange={(e) => setConfNoCert(e.target.checked)} />
+              This document has no certificate number
+            </label>
+            <div className="flex justify-end">
+              <button type="button" onClick={handleConfirmSeal} disabled={sealing}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}>
+                <Lock size={13} /> {sealing ? 'Sealing\u2026' : 'Confirm & seal'}
+              </button>
+            </div>
           </div>
         )}
 
