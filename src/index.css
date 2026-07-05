@@ -1145,3 +1145,16 @@ body {
 @media (max-width: 767px) {
   .hm-grid { grid-template-columns: 1fr; }
 }
+
+/* PRP strip -- premium 2x2, monochrome, Fire/Food per tile */
+.prp-grid-2x2 { grid-template-columns: 1fr 1fr !important; gap: 1px !important; background: #EBE7DC; border: 1px solid #EBE7DC; border-radius: 14px; overflow: hidden; }
+.prp-lite { background: #FFFFFF !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 18px 20px !important; }
+.prp-lite-label { color: #9A93A6 !important; font-size: 10px; font-weight: 600; letter-spacing: .1em; margin: 0 0 12px; }
+.prp-lite-num { font-size: 19px !important; font-weight: 600 !important; color: #1E2D4D !important; line-height: 1; }
+.prp-pillar { padding: 8px 0; }
+.prp-pillar + .prp-pillar { border-top: 1px solid #F1EEE7; }
+.prp-pline { display: flex; align-items: baseline; gap: 10px; }
+.prp-pk { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #A39DAB; width: 30px; flex-shrink: 0; }
+.prp-pdet { font-size: 11px; color: #9A93A6; line-height: 1.4; margin: 3px 0 0 40px; }
+.prp-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin-left: 6px; }
+@media (max-width: 640px) { .prp-grid-2x2 { grid-template-columns: 1fr !important; } }

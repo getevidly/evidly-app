@@ -87,6 +87,24 @@ export function PrpHeader() {
   const openToday = Math.max(totalToday - doneToday, 0);
   // REDUCE = findings handled (acknowledged) this period
   const reducedCount = handledCount;
+
+  // -- Per-pillar splits (Fire / Food -- never summed) --
+  const _openTasks = (todayItems || []).filter((i) => i.status !== 'done');
+  const _foodTasks = _openTasks.filter((i) => i.pillar === 'food_safety');
+  const _fireTasks = _openTasks.filter((i) => i.pillar === 'fire_safety');
+  const _taskDet = (arr: typeof _openTasks) => [
+    arr.filter((i) => i.kind === 'checklist').length ? `${arr.filter((i) => i.kind === 'checklist').length} checklist${arr.filter((i) => i.kind === 'checklist').length === 1 ? '' : 's'}` : '',
+    arr.filter((i) => i.kind === 'reading').length ? `${arr.filter((i) => i.kind === 'reading').length} temp log${arr.filter((i) => i.kind === 'reading').length === 1 ? '' : 's'}` : '',
+  ].filter(Boolean).join(' · ');
+  // Predict per pillar: Fire leans services, Food leans daily ops -- but show both counts honestly
+  const predictFire = _fireTasks.length + upcoming.fire;
+  const predictFood = _foodTasks.length + upcoming.food;
+  const predictFireDet = [_taskDet(_fireTasks), upcoming.fire ? `${upcoming.fire} service${upcoming.fire === 1 ? '' : 's'} due` : ''].filter(Boolean).join(' · ') || 'Nothing coming';
+  const predictFoodDet = [_taskDet(_foodTasks), upcoming.food ? `${upcoming.food} service${upcoming.food === 1 ? '' : 's'} due` : ''].filter(Boolean).join(' · ') || 'Nothing coming';
+  // Reduce per pillar: acknowledged drifts
+  const _ack = (driftCatches || []).filter((d) => d.status === 'ack');
+  const reduceFire = _ack.filter((d) => d.pillar === 'fire_safety').length;
+  const reduceFood = _ack.filter((d) => d.pillar === 'food_safety').length;
   const driftCount = tempData?.counts?.failing ?? 0;
   const sensorTotal = tempData?.counts?.total ?? 0;
 
@@ -107,64 +125,84 @@ export function PrpHeader() {
 
   return (
     <div>
-      <div className="prp-accent" />
-      <div className="prp-row">
-        <Link to="/insights/operational-drift" className="prp predict" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
-          <div className="prp-icon"><i className="ti ti-trending-up" /></div>
+            <div className="prp-accent" />
+      <div className="prp-row prp-grid-2x2">
+
+        {/* PREDICT */}
+        <Link to="/insights/operational-drift" className="prp predict prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
           <div>
-            <p className="prp-label">What's Coming</p>
-            {driftLoading ? (
-              <p className="prp-num">—</p>
+            <p className="prp-label prp-lite-label">What’s Coming</p>
+            {(driftLoading || todayLoading || upcoming.loading) ? (
+              <p className="prp-num prp-lite-num">—</p>
             ) : (
               <>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                  <span className={`prp-num${taskTotal > 0 ? '' : ' steady'}`} style={{ fontSize: 20 }}>{todayLoading ? '—' : taskTotal}</span>
-                  <span style={{ fontSize: 12.5, color: '#1E2D4D' }}>{taskTotal === 1 ? 'task today' : 'tasks today'}</span>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num" style={{ color: predictFire > 0 ? '#B8823A' : '#1E2D4D' }}>{predictFire}</span></div>
+                  <p className="prp-pdet">{predictFireDet}</p>
                 </div>
-                <p className="prp-sub" style={{ marginTop: 1 }}>{taskTotal === 0 ? 'All of today’s checks done' : taskDetail}</p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
-                  <span className={`prp-num${svcTotal > 0 ? '' : ' steady'}`} style={{ fontSize: 20 }}>{upcoming.loading ? '—' : svcTotal}</span>
-                  <span style={{ fontSize: 12.5, color: '#1E2D4D' }}>{svcTotal === 1 ? 'service due soon' : 'services due soon'}</span>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num" style={{ color: predictFood > 0 ? '#B8823A' : '#1E2D4D' }}>{predictFood}</span></div>
+                  <p className="prp-pdet">{predictFoodDet}</p>
                 </div>
-                <p className="prp-sub" style={{ marginTop: 1 }}>{svcTotal === 0 ? 'Nothing to book in the next 14 days' : `${svcDetail} — needs booking`}</p>
               </>
             )}
-            {driftSub && <p className="prp-sub">{driftSub}</p>}
           </div>
         </Link>
-        <div className="prp reduce">
-          <div className="prp-icon"><i className="ti ti-shield-check" /></div>
+
+        {/* REDUCE */}
+        <div className="prp reduce prp-lite">
           <div>
-            <p className="prp-label">What's Handled</p>
-            <p className="prp-num">{todayLoading ? '—' : reducedCount}</p>
-            <p className="prp-sub">{reduceSub}</p>
-          </div>
-        </div>
-        <div className="prp prove">
-          <div className="prp-icon"><i className="ti ti-file-check" /></div>
-          <div>
-            <p className="prp-label">What You Can Prove</p>
-            {(proveLoading || docsLoading || tempLoading || todayLoading) ? (
-              <p className="prp-num">—</p>
-            ) : hasEvidence ? (
-              <>
-                <p className="prp-num">{proveDays}</p>
-                <p className="prp-sub">{proveSub}</p>
-                {docTotal > 0 && (
-                  <p style={{ fontSize: 10, color: 'var(--muted)', margin: '2px 0 0' }}>
-                    {docCurrent} of {docTotal} docs current
-                    {expiringWithin30Days > 0 && ` · ${expiringWithin30Days} expire within 30 days`}
-                  </p>
-                )}
-              </>
+            <p className="prp-label prp-lite-label">What’s Handled</p>
+            {todayLoading ? (
+              <p className="prp-num prp-lite-num">—</p>
             ) : (
               <>
-                <p className="prp-num steady">Start your record</p>
-                <p className="prp-sub">Upload or log your first evidence</p>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num">{reduceFire}</span></div>
+                  <p className="prp-pdet">Acknowledged &amp; acted on</p>
+                </div>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num">{reduceFood}</span></div>
+                  <p className="prp-pdet">Acknowledged &amp; acted on</p>
+                </div>
               </>
             )}
           </div>
         </div>
+
+        {/* PROVE — honest interim: real docs-current, NOT a fabricated county-insurance fraction */}
+        <div className="prp prove prp-lite">
+          <div>
+            <p className="prp-label prp-lite-label">What You Can Prove</p>
+            {(proveLoading || docsLoading || tempLoading || todayLoading) ? (
+              <p className="prp-num prp-lite-num">—</p>
+            ) : hasEvidence ? (
+              <>
+                <div className="prp-pline"><span className="prp-lite-num">{docCurrent}<span style={{ fontSize: 13, fontWeight: 400, color: '#B4AEB8' }}> of {docTotal}</span></span>{docTotal > 0 && docCurrent === docTotal && <span className="prp-dot" style={{ background: '#3E9E7A' }} />}</div>
+                <p className="prp-pdet" style={{ marginLeft: 0 }}>Records current{expiringWithin30Days > 0 ? ` · ${expiringWithin30Days} expiring` : ''}</p>
+                <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 6, color: '#B0A99A' }}>Coverage scoring coming soon</p>
+              </>
+            ) : (
+              <>
+                <p className="prp-num steady prp-lite-num">Start your record</p>
+                <p className="prp-pdet" style={{ marginLeft: 0 }}>Upload or log your first evidence</p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* INTELLIGENCE — placeholder; feeds wired after the deep-dig audit */}
+        <div className="prp prp-lite">
+          <div>
+            <p className="prp-label prp-lite-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Intelligence</span>
+              <Link to="/insights/intelligence" style={{ fontSize: 10, fontWeight: 600, color: '#A08C5A', textTransform: 'none', letterSpacing: 0, textDecoration: 'none' }}>Open ›</Link>
+            </p>
+            <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 4 }}>Risk, benchmarks, and regulatory signals for your kitchen.</p>
+            <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Signals arriving soon</p>
+          </div>
+        </div>
+
       </div>
       {/* Sensor strip: only show loading and failing states; suppress no-equipment and all-clear noise */}
       {tempLoading ? (
