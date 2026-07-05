@@ -16,6 +16,7 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
 import { useUpcomingServices } from '../../../hooks/useUpcomingServices';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
+import { useOnboardingState } from '../../../hooks/onboarding/useOnboardingState';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useOrgSummary } from '../../../hooks/useOrgSummary';
@@ -34,6 +35,13 @@ export function PrpHeader() {
   const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
+  const { foodSafety: proveFood, fireSafety: proveFire, loading: onboardingLoading } = useOnboardingState();
+  const proveCell = (c: number, t: number) => {
+    if (t === 0) return { show: '\u2014', sub: 'No county requirements set', short: false, complete: false };
+    return { show: `${c} of ${t}`, sub: c === t ? 'County requirements met' : `${t - c} to complete \u00B7 county`, short: c !== t, complete: c === t };
+  };
+  const proveFireCell = proveCell(proveFire?.completedCount ?? 0, proveFire?.totalCount ?? 0);
+  const proveFoodCell = proveCell(proveFood?.completedCount ?? 0, proveFood?.totalCount ?? 0);
 
   // Tasks: filter by location in single-location mode
   const { items: todayItems, totalToday, doneToday, loading: todayLoading } = useTodayList(
@@ -157,26 +165,27 @@ export function PrpHeader() {
           </div>
         </Link>
 
-        {/* PROVE — honest interim: real docs-current, NOT a fabricated county-insurance fraction */}
-        <div className="prp prove prp-lite">
+        {/* PROVE — real county requirement coverage per pillar */}
+        <Link to="/onboarding" className="prp prove prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
           <div>
             <p className="prp-label prp-lite-label">What's Proven</p>
-            {(proveLoading || docsLoading || tempLoading || todayLoading) ? (
+            {onboardingLoading ? (
               <p className="prp-num prp-lite-num">—</p>
-            ) : hasEvidence ? (
-              <>
-                <div className="prp-pline"><span className="prp-lite-num">{docCurrent}<span style={{ fontSize: 13, fontWeight: 400, color: '#B4AEB8' }}> of {docTotal}</span></span>{docTotal > 0 && docCurrent === docTotal && <span className="prp-dot" style={{ background: '#3E9E7A' }} />}</div>
-                <p className="prp-pdet" style={{ marginLeft: 0 }}>Records current{expiringWithin30Days > 0 ? ` · ${expiringWithin30Days} expiring` : ''}</p>
-                <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 6, color: '#B0A99A' }}>Coverage scoring coming soon</p>
-              </>
             ) : (
               <>
-                <p className="prp-num steady prp-lite-num">Start your record</p>
-                <p className="prp-pdet" style={{ marginLeft: 0 }}>Upload or log your first evidence</p>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num" style={{ color: proveFireCell.short ? '#B8823A' : '#1E2D4D' }}>{proveFireCell.show}</span>{proveFireCell.complete && <span className="prp-dot" style={{ background: '#3E9E7A' }} />}</div>
+                  <p className="prp-pdet">{proveFireCell.sub}</p>
+                </div>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num" style={{ color: proveFoodCell.short ? '#B8823A' : '#1E2D4D' }}>{proveFoodCell.show}</span>{proveFoodCell.complete && <span className="prp-dot" style={{ background: '#3E9E7A' }} />}</div>
+                  <p className="prp-pdet">{proveFoodCell.sub}</p>
+                </div>
+                <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Insurance coverage — coming</p>
               </>
             )}
           </div>
-        </div>
+        </Link>
 
         {/* INTELLIGENCE — placeholder; feeds wired after the deep-dig audit */}
         <div className="prp prp-lite">
