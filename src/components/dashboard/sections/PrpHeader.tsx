@@ -34,7 +34,7 @@ export function PrpHeader() {
   const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
-  
+
   // PREDICT — tasks (today, done by you) + services (due soon, need coordinating)
   const openTasks = (todayItems || []).filter((i) => i.status !== 'done');
   const taskChecklists = openTasks.filter((i) => i.kind === 'checklist').length;
