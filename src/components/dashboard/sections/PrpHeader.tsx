@@ -137,9 +137,9 @@ export function PrpHeader() {
         </Link>
 
         {/* REDUCE */}
-        <div className="prp reduce prp-lite">
+        <Link to="/insights/operational-drift" className="prp reduce prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
           <div>
-            <p className="prp-label prp-lite-label">What’s Handled</p>
+            <p className="prp-label prp-lite-label">What's Handled</p>
             {todayLoading ? (
               <p className="prp-num prp-lite-num">—</p>
             ) : (
@@ -155,7 +155,7 @@ export function PrpHeader() {
               </>
             )}
           </div>
-        </div>
+        </Link>
 
         {/* PROVE — honest interim: real docs-current, NOT a fabricated county-insurance fraction */}
         <div className="prp prove prp-lite">
