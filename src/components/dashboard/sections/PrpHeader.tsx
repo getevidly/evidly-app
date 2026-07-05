@@ -34,10 +34,20 @@ export function PrpHeader() {
   const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
-  const handledCount = (driftCatches || []).filter((d) => d.status === 'ack').length;
+  
+  // PREDICT — tasks (today, done by you) + services (due soon, need coordinating)
+  const openTasks = (todayItems || []).filter((i) => i.status !== 'done');
+  const taskChecklists = openTasks.filter((i) => i.kind === 'checklist').length;
+  const taskReadings = openTasks.filter((i) => i.kind === 'reading').length;
+  const taskTotal = openTasks.length;
+  const svcTotal = upcoming.total;
+  const svcDetail = upcoming.topLabel
+    ? (svcTotal > 1 ? `$` + `{upcoming.topLabel} + $` + `{svcTotal - 1} more` : upcoming.topLabel)
+    : null;
+  const taskDetail = [taskChecklists && `$` + `{taskChecklists} checklist$` + `{taskChecklists === 1 ? '' : 's'}`, taskReadings && `$` + `{taskReadings} temp reading$` + `{taskReadings === 1 ? '' : 's'}`].filter(Boolean).join(' · ');
 
   // Tasks: filter by location in single-location mode
-  const { totalToday, doneToday, loading: todayLoading } = useTodayList(
+  const { items: todayItems, totalToday, doneToday, loading: todayLoading } = useTodayList(
     selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined
   );
 
@@ -107,15 +117,16 @@ export function PrpHeader() {
               <p className="prp-num">—</p>
             ) : (
               <>
-                <p className={`prp-num${foodDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18 }}>
-                  Food: {foodDrift === 0 ? 'clear' : foodDrift}
-                </p>
-                <p className="prp-sub" style={{ marginTop: 2 }}>
-                  {upcoming.total === 0 ? 'No services due soon' : `${upcoming.total} service${upcoming.total === 1 ? '' : 's'} due soon`}
-                </p>
-                <p className={`prp-num${fireDrift > 0 ? '' : ' steady'}`} style={{ fontSize: 18, marginTop: 2 }}>
-                  Fire: {fireDrift === 0 ? 'clear' : fireDrift}
-                </p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <span className={`prp-num${taskTotal > 0 ? '' : ' steady'}`} style={{ fontSize: 20 }}>{todayLoading ? '—' : taskTotal}</span>
+                  <span style={{ fontSize: 12.5, color: '#1E2D4D' }}>{taskTotal === 1 ? 'task today' : 'tasks today'}</span>
+                </div>
+                <p className="prp-sub" style={{ marginTop: 1 }}>{taskTotal === 0 ? 'All of today’s checks done' : taskDetail}</p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
+                  <span className={`prp-num${svcTotal > 0 ? '' : ' steady'}`} style={{ fontSize: 20 }}>{upcoming.loading ? '—' : svcTotal}</span>
+                  <span style={{ fontSize: 12.5, color: '#1E2D4D' }}>{svcTotal === 1 ? 'service due soon' : 'services due soon'}</span>
+                </div>
+                <p className="prp-sub" style={{ marginTop: 1 }}>{svcTotal === 0 ? 'Nothing to book in the next 14 days' : `${svcDetail} — needs booking`}</p>
               </>
             )}
             {driftSub && <p className="prp-sub">{driftSub}</p>}
