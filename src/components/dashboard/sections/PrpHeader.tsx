@@ -74,8 +74,6 @@ export function PrpHeader() {
   });
 
   const openToday = Math.max(totalToday - doneToday, 0);
-  // REDUCE = findings handled (acknowledged) this period
-  const reducedCount = handledCount;
 
   // -- Per-pillar splits (Fire / Food -- never summed) --
   const _openTasks = (todayItems || []).filter((i) => i.status !== 'done');
