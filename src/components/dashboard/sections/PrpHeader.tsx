@@ -160,7 +160,7 @@ export function PrpHeader() {
         {/* PROVE — honest interim: real docs-current, NOT a fabricated county-insurance fraction */}
         <div className="prp prove prp-lite">
           <div>
-            <p className="prp-label prp-lite-label">What You Can Prove</p>
+            <p className="prp-label prp-lite-label">What's Proven</p>
             {(proveLoading || docsLoading || tempLoading || todayLoading) ? (
               <p className="prp-num prp-lite-num">—</p>
             ) : hasEvidence ? (
