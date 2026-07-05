@@ -42,7 +42,7 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   const orgId = profile?.organization_id;
   const { foodSafety: fsReqsAll, fireSafety: firReqsAll, requirements: allRequirements, loading: reqLoading, stateCode } = usePillarRequirements();
   const { viewMode, assignedRequirementCodes } = useOnboardingView();
-  const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, refreshState, loading: stateLoading } = useOnboardingState();
+  const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, confirmItem, unconfirmItem, refreshState, loading: stateLoading } = useOnboardingState();
   const { summaries: evidenceSummaries } = useEvidenceThreadSummaries(responsibilitiesLocked ? orgId : undefined);
 
   // Scope requirements to assigned items for invitees
@@ -119,15 +119,16 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   }, [refreshState]);
 
   const handleConfirm = useCallback(async (requirementCode: string) => {
-    await skipItem(requirementCode);
+    await confirmItem(requirementCode);
     toast.success('Confirmed');
     refreshState();
-  }, [skipItem, refreshState]);
+  }, [confirmItem, refreshState]);
 
   const handleResume = useCallback(async (requirementCode: string) => {
     await unskipItem(requirementCode);
+    await unconfirmItem(requirementCode);
     refreshState();
-  }, [unskipItem, refreshState]);
+  }, [unskipItem, unconfirmItem, refreshState]);
 
   const handleResendInvite = useCallback(async (_requirementCode: string) => {
     toast.info('Invite was already sent. The team member can use the original link.');

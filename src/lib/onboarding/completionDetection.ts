@@ -40,17 +40,19 @@ export async function checkOnboardingConditions(orgId: string): Promise<boolean>
 
     if (!locCount || locCount === 0) return false;
 
-    // Get skipped items for pillar checks
+    // Get skipped + confirmed items for pillar checks
     const { data: orgData } = await supabase
       .from('organizations')
-      .select('onboarding_skipped_items')
+      .select('onboarding_skipped_items, onboarding_confirmed_items')
       .eq('id', orgId)
       .maybeSingle();
 
     const skipped: string[] = (orgData?.onboarding_skipped_items as string[]) || [];
+    const confirmed: string[] = (orgData?.onboarding_confirmed_items as string[]) || [];
 
-    // Condition 3: Food Safety ≥1 done or skipped
-    const foodSkipped = skipped.some(code => FOOD_SAFETY_CODES.includes(code));
+    // Condition 3: Food Safety ≥1 done, skipped, or confirmed
+    const foodSkipped = skipped.some(code => FOOD_SAFETY_CODES.includes(code))
+      || confirmed.some(code => FOOD_SAFETY_CODES.includes(code));
     let foodDone = false;
     if (!foodSkipped) {
       // Check compliance_documents for food safety upload items
@@ -82,8 +84,9 @@ export async function checkOnboardingConditions(orgId: string): Promise<boolean>
       if (!foodDone) return false;
     }
 
-    // Condition 4: Fire Safety ≥1 done or skipped
-    const fireSkipped = skipped.some(code => FIRE_SAFETY_CODES.includes(code));
+    // Condition 4: Fire Safety ≥1 done, skipped, or confirmed
+    const fireSkipped = skipped.some(code => FIRE_SAFETY_CODES.includes(code))
+      || confirmed.some(code => FIRE_SAFETY_CODES.includes(code));
     let fireDone = false;
     if (!fireSkipped) {
       const { count: schedCount } = await supabase

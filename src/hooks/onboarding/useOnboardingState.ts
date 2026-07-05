@@ -26,8 +26,11 @@ interface UseOnboardingStateReturn {
   overallComplete: boolean;
   loading: boolean;
   skippedItems: string[];
+  confirmedItems: string[];
   skipItem: (requirementCode: string) => Promise<void>;
   unskipItem: (requirementCode: string) => Promise<void>;
+  confirmItem: (requirementCode: string) => Promise<void>;
+  unconfirmItem: (requirementCode: string) => Promise<void>;
   refreshState: () => void;
 }
 
@@ -45,6 +48,7 @@ export function useOnboardingState(): UseOnboardingStateReturn {
   const { requirements, foodSafety: fsReqs, fireSafety: firReqs, loading: reqLoading } = usePillarRequirements();
 
   const [skippedItems, setSkippedItems] = useState<string[]>([]);
+  const [confirmedItems, setConfirmedItems] = useState<string[]>([]);
   const [completionMap, setCompletionMap] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -64,19 +68,21 @@ export function useOnboardingState(): UseOnboardingStateReturn {
       // 1. Get org's skipped items
       const { data: orgData } = await supabase
         .from('organizations')
-        .select('onboarding_skipped_items')
+        .select('onboarding_skipped_items, onboarding_confirmed_items')
         .eq('id', orgId)
         .maybeSingle();
 
       if (cancelled) return;
       const skipped: string[] = (orgData?.onboarding_skipped_items as string[]) || [];
       setSkippedItems(skipped);
+      const confirmed: string[] = (orgData?.onboarding_confirmed_items as string[]) || [];
+      setConfirmedItems(confirmed);
 
       // 2. Detect completion for each requirement
       const map: Record<string, boolean> = {};
 
       for (const req of requirements) {
-        if (skipped.includes(req.requirement_code)) {
+        if (skipped.includes(req.requirement_code) && !confirmed.includes(req.requirement_code)) {
           map[req.requirement_code] = false; // skipped, not done
           continue;
         }
@@ -125,9 +131,9 @@ export function useOnboardingState(): UseOnboardingStateReturn {
             break;
           }
           case 'confirm': {
-            // Confirm items are "done" when explicitly confirmed via skipped_items
+            // Confirm items are "done" when explicitly confirmed via confirmed_items
             // (confirm = user clicks "I have this" without uploading)
-            map[req.requirement_code] = skipped.includes(req.requirement_code);
+            map[req.requirement_code] = confirmed.includes(req.requirement_code);
             break;
           }
           case 'identify_vendor': {
@@ -243,6 +249,27 @@ export function useOnboardingState(): UseOnboardingStateReturn {
       .eq('id', orgId);
   }, [orgId, skippedItems]);
 
+  const confirmItem = useCallback(async (requirementCode: string) => {
+    if (!orgId) return;
+    const updated = [...confirmedItems, requirementCode];
+    setConfirmedItems(updated);
+    await supabase
+      .from('organizations')
+      .update({ onboarding_confirmed_items: updated })
+      .eq('id', orgId);
+    evaluateOnboardingComplete(orgId);
+  }, [orgId, confirmedItems]);
+
+  const unconfirmItem = useCallback(async (requirementCode: string) => {
+    if (!orgId) return;
+    const updated = confirmedItems.filter(c => c !== requirementCode);
+    setConfirmedItems(updated);
+    await supabase
+      .from('organizations')
+      .update({ onboarding_confirmed_items: updated })
+      .eq('id', orgId);
+  }, [orgId, confirmedItems]);
+
   const refreshState = useCallback(() => {
     setRefreshKey(k => k + 1);
   }, []);
@@ -253,8 +280,11 @@ export function useOnboardingState(): UseOnboardingStateReturn {
     overallComplete,
     loading,
     skippedItems,
+    confirmedItems,
     skipItem,
     unskipItem,
+    confirmItem,
+    unconfirmItem,
     refreshState,
   };
 }
