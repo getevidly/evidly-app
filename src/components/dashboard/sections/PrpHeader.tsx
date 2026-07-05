@@ -35,17 +35,6 @@ export function PrpHeader() {
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
 
-  // PREDICT — tasks (today, done by you) + services (due soon, need coordinating)
-  const openTasks = (todayItems || []).filter((i) => i.status !== 'done');
-  const taskChecklists = openTasks.filter((i) => i.kind === 'checklist').length;
-  const taskReadings = openTasks.filter((i) => i.kind === 'reading').length;
-  const taskTotal = openTasks.length;
-  const svcTotal = upcoming.total;
-  const svcDetail = upcoming.topLabel
-    ? (svcTotal > 1 ? `$` + `{upcoming.topLabel} + $` + `{svcTotal - 1} more` : upcoming.topLabel)
-    : null;
-  const taskDetail = [taskChecklists && `$` + `{taskChecklists} checklist$` + `{taskChecklists === 1 ? '' : 's'}`, taskReadings && `$` + `{taskReadings} temp reading$` + `{taskReadings === 1 ? '' : 's'}`].filter(Boolean).join(' · ');
-
   // Tasks: filter by location in single-location mode
   const { items: todayItems, totalToday, doneToday, loading: todayLoading } = useTodayList(
     selectedLocationId ? { locationIdFilter: selectedLocationId } : undefined
