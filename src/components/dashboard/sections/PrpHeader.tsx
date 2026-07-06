@@ -211,7 +211,7 @@ export function PrpHeader() {
         </Link>
 
         {/* WHAT'S AT RISK — residual exposure from useWhatsAtRisk */}
-        <div className="prp prp-lite">
+        <Link to="/insights/whats-at-risk" className="prp prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
           <div>
             <p className="prp-label prp-lite-label">What’s at Risk</p>
             {risk.loading ? (
@@ -232,7 +232,7 @@ export function PrpHeader() {
               </>
             )}
           </div>
-        </div>
+        </Link>
 
       </div>
       {/* Sensor strip: only show loading and failing states; suppress no-equipment and all-clear noise */}

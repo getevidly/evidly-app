@@ -20,6 +20,7 @@ export interface PillarRisk {
   counts: { done: number; pending: number; live: number; total: number };
 }
 export interface WhatsAtRisk {
+  lines: { food: Record<string, { low: number; high: number }>; fire: Record<string, { low: number; high: number }> };
   food: PillarRisk; fire: PillarRisk;
   total: { baseline: Range; reduced: Range; pending: Range; live: Range };
   worst: { food: Range; fire: Range };
@@ -120,7 +121,7 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       food: emptyPillar(), fire: emptyPillar(),
       total:{ baseline:{low:0,high:0}, reduced:{low:0,high:0}, pending:{low:0,high:0}, live:{low:0,high:0} },
       worst:{ food:{low:0,high:0}, fire:{low:0,high:0} },
-      isPlaceholder:true, segment, loading,
+      isPlaceholder:true, segment, loading, lines:{ food:{}, fire:{} },
     };
     if (loading) return base;
 
@@ -128,10 +129,12 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
     const pillarBaseline: Record<Pillar, Range> = { food:{low:0,high:0}, fire:{low:0,high:0} };
     const pillarWorst: Record<Pillar, Range> = { food:{low:0,high:0}, fire:{low:0,high:0} };
     let placeholder = false;
+    const _lines: { food: Record<string, {low:number;high:number}>; fire: Record<string, {low:number;high:number}> } = { food:{}, fire:{} };
     for (const b of bench!) {
       const p = b.pillar as Pillar;
       pillarBaseline[p].low += Number(b.typical_low); pillarBaseline[p].high += Number(b.typical_high);
       pillarWorst[p] = { low: Number(b.worst_low), high: Number(b.worst_high) };
+      _lines[p][b.loss_line] = { low: Number(b.typical_low), high: Number(b.typical_high) };
       if (b.is_placeholder) placeholder = true;
     }
 
@@ -200,6 +203,7 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       live:    { low: base.food.live.low+base.fire.live.low,         high: base.food.live.high+base.fire.live.high },
     };
     base.worst = { food: pillarWorst.food, fire: pillarWorst.fire };
+    base.lines = _lines;
     base.isPlaceholder = placeholder;
     return base;
   };

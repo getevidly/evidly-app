@@ -283,6 +283,7 @@ const VendorPerformancePage = lazy(() => import('./pages/insights/VendorPerforma
 const JurisdictionSignalsPage = lazy(() => import('./pages/insights/JurisdictionSignals').then(m => ({ default: m.JurisdictionSignals })));
 const TeamLeaderboardPage = lazy(() => import('./pages/insights/TeamLeaderboard').then(m => ({ default: m.TeamLeaderboard })));
 const OperationalDriftPage = lazy(() => import('./pages/insights/OperationalDrift').then(m => ({ default: m.OperationalDrift })));
+const WhatsAtRiskPage = lazy(() => import('./pages/insights/WhatsAtRisk').then(m => ({ default: m.WhatsAtRisk })));
 const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.ToolsHub })));
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
@@ -859,6 +860,7 @@ function AppRoutes() {
           <Route path="/internal/pmr" element={<ProspectMarketingReport />} />
           </Route>
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
+          <Route path="/insights/whats-at-risk" element={<WhatsAtRiskPage />} />
           <Route path="/insights/reports" element={<ClientReports />} />
           <Route path="/insights/predictions" element={<PredictiveAnalysis />} />
           <Route path="/insights/inspection-forecast" element={<InspectionForecastPage />} />
