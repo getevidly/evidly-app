@@ -45,20 +45,25 @@ export function PrpHeader() {
     return '$' + v.toLocaleString();
   };
   const rRange = (lo: number, hi: number) => rMoney(lo) + '–' + rMoney(hi);
-  const riskLine = (pr: typeof risk.food) => {
+  const riskLine = (pr: typeof risk.food, pillarLabel: string) => {
     const stillLo = pr.pending.low + pr.live.low, stillHi = pr.pending.high + pr.live.high;
+    const liveCount = pr.counts.live;
     return {
       total: pr.counts.total,
-      clear: pr.counts.total > 0 && stillHi === 0,
+      clear: pr.counts.total > 0 && stillHi === 0 && liveCount === 0,
+      // placeholder state: hero = count, no dollars
+      countHero: liveCount > 0 ? `${liveCount} overdue` : 'Clear',
+      countHasLive: liveCount > 0,
+      // real state: hero = dollar range
       still: rRange(stillLo, stillHi),
       hasLive: pr.live.high > 0,
-      live: rRange(pr.live.low, pr.live.high) + ' live · ' + pr.counts.live + ' overdue',
+      liveSub: `${liveCount} overdue`,
       hasReduced: pr.reduced.high > 0,
       reduced: '↓ ' + rRange(pr.reduced.low, pr.reduced.high) + ' reduced',
     };
   };
-  const rFood = riskLine(risk.food);
-  const rFire = riskLine(risk.fire);
+  const rFire = riskLine(risk.fire, 'Fire');
+  const rFood = riskLine(risk.food, 'Food');
   const proveCell = (c: number, t: number) => {
     if (t === 0) return { show: '\u2014', sub: 'No county requirements set', short: false, complete: false };
     return { show: `${c} of ${t}`, sub: c === t ? 'County requirements met' : `${t - c} to complete \u00B7 county`, short: c !== t, complete: c === t };
@@ -217,16 +222,19 @@ export function PrpHeader() {
             ) : (
               <>
                 <div className="prp-pillar">
-                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFood.hasLive ? '#B4472E' : '#1E2D4D' }}>{rFood.clear ? 'Clear' : rFood.still}</span></div>
-                  {rFood.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFood.live}</p>}
-                  {rFood.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFood.reduced}</p>}
+                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFire.countHasLive ? '#B4472E' : '#1E2D4D' }}>{risk.isPlaceholder ? rFire.countHero : (rFire.clear ? 'Clear' : rFire.still)}</span></div>
+                  {!risk.isPlaceholder && rFire.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFire.liveSub}</p>}
+                  {!risk.isPlaceholder && rFire.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFire.reduced}</p>}
                 </div>
                 <div className="prp-pillar">
-                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFire.hasLive ? '#B4472E' : '#1E2D4D' }}>{rFire.clear ? 'Clear' : rFire.still}</span></div>
-                  {rFire.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFire.live}</p>}
-                  {rFire.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFire.reduced}</p>}
+                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFood.countHasLive ? '#B4472E' : '#1E2D4D' }}>{risk.isPlaceholder ? rFood.countHero : (rFood.clear ? 'Clear' : rFood.still)}</span></div>
+                  {!risk.isPlaceholder && rFood.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFood.liveSub}</p>}
+                  {!risk.isPlaceholder && rFood.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFood.reduced}</p>}
                 </div>
-                {risk.isPlaceholder && <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Illustrative · casual</p>}
+                {risk.isPlaceholder
+                  ? <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Dollar exposure — coming</p>
+                  : <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>{risk.segment} · {risk.version}</p>
+                }
               </>
             )}
           </div>

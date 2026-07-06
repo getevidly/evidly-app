@@ -56,6 +56,7 @@ export interface PortfolioSummary {
   totalOpenItems: number;
   totalHandled: number;
   totalAtRiskCents: number;
+  benchmarkPlaceholder: boolean;
 }
 
 interface UsePortfolioDataResult {
@@ -124,7 +125,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
     totalLocations: 0,
     foodAlarm: 0, foodWatch: 0, foodSolid: 0,
     fireAlarm: 0, fireWatch: 0, fireSolid: 0,
-    totalOpenItems: 0, totalHandled: 0, totalAtRiskCents: 0,
+    totalOpenItems: 0, totalHandled: 0, totalAtRiskCents: 0, benchmarkPlaceholder: true,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -215,9 +216,11 @@ export function usePortfolioData(): UsePortfolioDataResult {
         // ── What's at Risk: coi_benchmarks (casual) + fire_service_standing (org-wide, batched) ──
         const { data: benchData } = await supabase.from('coi_benchmarks').select('*').eq('segment', 'casual');
         const _fireBase = { low: 0, high: 0 }, _foodBase = { low: 0, high: 0 };
+        let _benchPlaceholder = false;
         for (const b of benchData || []) {
           if ((b as any).pillar === 'fire') { _fireBase.low += Number((b as any).typical_low); _fireBase.high += Number((b as any).typical_high); }
           else if ((b as any).pillar === 'food') { _foodBase.low += Number((b as any).typical_low); _foodBase.high += Number((b as any).typical_high); }
+          if ((b as any).is_placeholder) _benchPlaceholder = true;
         }
         const { data: fireStandData } = await supabase.from('fire_service_standing').select('location_id, service_type_code, standing');
         const fireStandByLoc = groupBy(fireStandData || [], (r: any) => r.location_id);
@@ -341,6 +344,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
           totalAtRiskCents: totalAtRisk,
           atRiskLow,
           atRiskHigh,
+          benchmarkPlaceholder: _benchPlaceholder,
         });
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));

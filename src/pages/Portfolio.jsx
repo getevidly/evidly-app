@@ -163,7 +163,7 @@ function KpiTile({ icon, title, value, subtitle }) {
   );
 }
 
-function KitchenRow({ location, onNavigate }) {
+function KitchenRow({ location, onNavigate, benchmarkPlaceholder }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -183,13 +183,15 @@ function KitchenRow({ location, onNavigate }) {
         <td style={{ padding: '10px 12px', fontSize: 13, color: NAVY, textAlign: 'center' }}>
           {location.openCount}
         </td>
-        <td style={{ padding: '10px 12px', fontSize: 13, textAlign: 'right', color: (location.atRiskHigh > 0 ? '#B4472E' : '#3E9E7A'), fontWeight: 600 }}>
-          {rRange(location.atRiskLow || 0, location.atRiskHigh || 0)}
+        <td style={{ padding: '10px 12px', fontSize: 13, textAlign: 'right', color: (location.openCount > 0 ? '#B4472E' : '#3E9E7A'), fontWeight: 600 }}>
+          {benchmarkPlaceholder
+            ? (location.openCount > 0 ? `${location.openCount} open` : 'Clear')
+            : rRange(location.atRiskLow || 0, location.atRiskHigh || 0)}
         </td>
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={4} style={{ padding: '8px 12px 16px 32px', background: '#FAFAF8' }}>
+          <td colSpan={5} style={{ padding: '8px 12px 16px 32px', background: '#FAFAF8' }}>
             {location.openItems.length === 0 ? (
               <p style={{ fontSize: 12, color: MUTED, margin: 0 }}>No open items at this location.</p>
             ) : (
@@ -463,8 +465,8 @@ export default function Portfolio() {
         <KpiTile
           icon={<AlertTriangle size={16} color={CORAL} />}
           title="At risk"
-          value={rRange(summary.atRiskLow || 0, summary.atRiskHigh || 0)}
-          subtitle="Across all kitchens · illustrative"
+          value={summary.benchmarkPlaceholder ? `${summary.totalOpenItems} open` : rRange(summary.atRiskLow || 0, summary.atRiskHigh || 0)}
+          subtitle={summary.benchmarkPlaceholder ? 'Dollar exposure — coming' : 'Across all kitchens'}
         />
       </div>
 
@@ -540,7 +542,7 @@ export default function Portfolio() {
               </tr>
             ) : (
               filtered.map(loc => (
-                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} />
+                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} benchmarkPlaceholder={summary.benchmarkPlaceholder} />
               ))
             )}
           </tbody>

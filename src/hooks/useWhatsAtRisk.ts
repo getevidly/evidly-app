@@ -23,7 +23,7 @@ export interface WhatsAtRisk {
   food: PillarRisk; fire: PillarRisk;
   total: { baseline: Range; reduced: Range; pending: Range; live: Range };
   worst: { food: Range; fire: Range };
-  isPlaceholder: boolean; segment: string; loading: boolean;
+  isPlaceholder: boolean; segment: string; version: string; sourceRefs: string[]; loading: boolean;
 }
 
 const rank: Record<string, number> = { live: 3, pending: 2, done: 1 };
@@ -133,7 +133,7 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       food: emptyPillar(), fire: emptyPillar(),
       total: { baseline: { low: 0, high: 0 }, reduced: { low: 0, high: 0 }, pending: { low: 0, high: 0 }, live: { low: 0, high: 0 } },
       worst: { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } },
-      isPlaceholder: true, segment, loading, lines: { food: {}, fire: {} },
+      isPlaceholder: true, segment, version: '', sourceRefs: [], loading, lines: { food: {}, fire: {} },
     };
     if (loading) return base;
 
@@ -141,6 +141,8 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
     const pillarBaseline: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
     const pillarWorst: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
     let placeholder = false;
+    let _version = '';
+    const _sourceSet = new Set<string>();
     const _lines: { food: Record<string, { low: number; high: number }>; fire: Record<string, { low: number; high: number }> } = { food: {}, fire: {} };
     for (const b of bench!) {
       const p = b.pillar as Pillar;
@@ -148,6 +150,8 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       pillarWorst[p] = { low: Number(b.worst_low), high: Number(b.worst_high) };
       _lines[p][b.loss_line] = { low: Number(b.typical_low), high: Number(b.typical_high) };
       if (b.is_placeholder) placeholder = true;
+      if (b.version) _version = b.version;
+      if (b.source_ref) _sourceSet.add(b.source_ref);
     }
 
     // ---- FIRE: countable services (fire_service_standing) + insurance fire conditions ----
@@ -196,6 +200,8 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
     base.worst = { food: pillarWorst.food, fire: pillarWorst.fire };
     base.lines = _lines;
     base.isPlaceholder = placeholder;
+    base.version = _version;
+    base.sourceRefs = [..._sourceSet];
     return base;
   };
 
