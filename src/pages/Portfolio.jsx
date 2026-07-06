@@ -163,7 +163,7 @@ function KpiTile({ icon, title, value, subtitle }) {
   );
 }
 
-function KitchenRow({ location, onNavigate, benchmarkPlaceholder }) {
+function KitchenRow({ location, onNavigate }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -184,7 +184,7 @@ function KitchenRow({ location, onNavigate, benchmarkPlaceholder }) {
           {location.openCount}
         </td>
         <td style={{ padding: '10px 12px', fontSize: 13, textAlign: 'right', color: (location.openCount > 0 ? '#B4472E' : '#3E9E7A'), fontWeight: 600 }}>
-          {benchmarkPlaceholder
+          {location.benchmarkPlaceholder
             ? (location.openCount > 0 ? `${location.openCount} open` : 'Clear')
             : rRange(location.atRiskLow || 0, location.atRiskHigh || 0)}
         </td>
@@ -251,11 +251,7 @@ export default function Portfolio() {
   const [sortDir, setSortDir] = useState('asc');
   const [filter, setFilter] = useState('all');
 
-  // Single-location orgs: redirect to dashboard
-  if (!loading && summary.totalLocations <= 1) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
+  // useMemo MUST be above all early returns (React hook ordering)
   const filtered = useMemo(() => {
     let locs = [...locations];
 
@@ -284,6 +280,11 @@ export default function Portfolio() {
 
     return locs;
   }, [locations, filter, sortKey, sortDir]);
+
+  // Single-location orgs: redirect to dashboard (AFTER all hooks)
+  if (!loading && summary.totalLocations <= 1) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const foodAlarmLocs = locations.filter(l => l.foodStatus === 'alarm');
   const _sevNA = { alarm: 3, watch: 2, solid: 1 };
@@ -542,7 +543,7 @@ export default function Portfolio() {
               </tr>
             ) : (
               filtered.map(loc => (
-                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} benchmarkPlaceholder={summary.benchmarkPlaceholder} />
+                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} />
               ))
             )}
           </tbody>

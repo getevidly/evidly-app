@@ -18,6 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
 import { computePosture } from '../lib/computePosture';
 import type { Posture } from '../lib/computePosture';
+import { INDUSTRY_SEGMENT_TO_COI } from '../constants/segmentMap';
 
 export type PostureStatus = Posture;
 
@@ -43,6 +44,9 @@ export interface PortfolioLocation {
   openItems: PortfolioOpenItem[];
   foodOpenCount: number;
   fireOpenCount: number;
+  atRiskLow: number;
+  atRiskHigh: number;
+  benchmarkPlaceholder: boolean;
 }
 
 export interface PortfolioSummary {
@@ -56,6 +60,8 @@ export interface PortfolioSummary {
   totalOpenItems: number;
   totalHandled: number;
   totalAtRiskCents: number;
+  atRiskLow: number;
+  atRiskHigh: number;
   benchmarkPlaceholder: boolean;
 }
 
@@ -125,7 +131,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
     totalLocations: 0,
     foodAlarm: 0, foodWatch: 0, foodSolid: 0,
     fireAlarm: 0, fireWatch: 0, fireSolid: 0,
-    totalOpenItems: 0, totalHandled: 0, totalAtRiskCents: 0, benchmarkPlaceholder: true,
+    totalOpenItems: 0, totalHandled: 0, totalAtRiskCents: 0, atRiskLow: 0, atRiskHigh: 0, benchmarkPlaceholder: true,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -148,7 +154,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
           // 1. Org locations
           supabase
             .from('locations')
-            .select('id, name')
+            .select('id, name, industry_segment')
             .eq('organization_id', orgId)
             .eq('status', 'active')
             .order('name'),
@@ -213,21 +219,28 @@ export function usePortfolioData(): UsePortfolioDataResult {
         }
 
         // ── Build briefing posture map (most-recent per location+advisor) ──
-        // ── What's at Risk: coi_benchmarks (casual) + fire_service_standing (org-wide, batched) ──
-        const { data: benchData } = await supabase.from('coi_benchmarks').select('*').eq('segment', 'casual');
-        const _fireBase = { low: 0, high: 0 }, _foodBase = { low: 0, high: 0 };
-        let _benchPlaceholder = false;
+        // ── What's at Risk: coi_benchmarks (all segments) + fire_service_standing (org-wide, batched) ──
+        const { data: benchData } = await supabase.from('coi_benchmarks').select('*');
+        const benchBySegment = new Map<string, any[]>();
         for (const b of benchData || []) {
-          if ((b as any).pillar === 'fire') { _fireBase.low += Number((b as any).typical_low); _fireBase.high += Number((b as any).typical_high); }
-          else if ((b as any).pillar === 'food') { _foodBase.low += Number((b as any).typical_low); _foodBase.high += Number((b as any).typical_high); }
-          if ((b as any).is_placeholder) _benchPlaceholder = true;
+          const seg = (b as any).segment;
+          if (!benchBySegment.has(seg)) benchBySegment.set(seg, []);
+          benchBySegment.get(seg)!.push(b);
         }
         const { data: fireStandData } = await supabase.from('fire_service_standing').select('location_id, service_type_code, standing');
         const fireStandByLoc = groupBy(fireStandData || [], (r: any) => r.location_id);
         const _rank: Record<string, number> = { live: 3, pending: 2, done: 1 };
         const _worse = (a: string | undefined, b: string) => (_rank[a || ''] >= _rank[b] ? (a as string) : b);
         const _fireStandingToState = (st: string) => st === 'overdue' ? 'live' : (st === 'approaching' || st === 'awaiting_first_service') ? 'pending' : 'done';
-        const kitchenAtRisk = (locId: string, foodStatus: string): { low: number; high: number } => {
+        const kitchenAtRisk = (locId: string, foodStatus: string, industrySegment: string | null): { low: number; high: number; isPlaceholder: boolean } => {
+          const coiSeg = industrySegment ? (INDUSTRY_SEGMENT_TO_COI[industrySegment] || null) : null;
+          const segRows = coiSeg ? (benchBySegment.get(coiSeg) || []) : [];
+          const isPlaceholder = !coiSeg || segRows.length === 0 || segRows.some((b: any) => b.is_placeholder);
+          const _fb = { low: 0, high: 0 }, _fdb = { low: 0, high: 0 };
+          for (const b of segRows) {
+            if ((b as any).pillar === 'fire') { _fb.low += Number((b as any).typical_low); _fb.high += Number((b as any).typical_high); }
+            else if ((b as any).pillar === 'food') { _fdb.low += Number((b as any).typical_low); _fdb.high += Number((b as any).typical_high); }
+          }
           // FIRE: countable services from fire_service_standing
           const rows = (fireStandByLoc.get(locId) || []) as any[];
           const fireObl: Record<string, string> = {};
@@ -235,13 +248,13 @@ export function usePortfolioData(): UsePortfolioDataResult {
           let fD = 0, fP = 0, fL = 0;
           for (const st of Object.values(fireObl)) { if (st === 'done') fD++; else if (st === 'pending') fP++; else fL++; }
           const fT = fD + fP + fL, fShare = (n: number) => fT > 0 ? n / fT : 0;
-          const fireAtLow = _fireBase.low * fShare(fP) + _fireBase.low * fShare(fL);
-          const fireAtHigh = _fireBase.high * fShare(fP) + _fireBase.high * fShare(fL);
+          const fireAtLow = _fb.low * fShare(fP) + _fb.low * fShare(fL);
+          const fireAtHigh = _fb.high * fShare(fP) + _fb.high * fShare(fL);
           // FOOD: posture -> state-based
           const ff = foodStatus === 'solid' ? { pending: 0, live: 0 } : foodStatus === 'alarm' ? { pending: 0, live: 1 } : { pending: 0.5, live: 0.5 };
-          const foodAtLow = _foodBase.low * ff.pending + _foodBase.low * ff.live;
-          const foodAtHigh = _foodBase.high * ff.pending + _foodBase.high * ff.live;
-          return { low: fireAtLow + foodAtLow, high: fireAtHigh + foodAtHigh };
+          const foodAtLow = _fdb.low * ff.pending + _fdb.low * ff.live;
+          const foodAtHigh = _fdb.high * ff.pending + _fdb.high * ff.live;
+          return { low: fireAtLow + foodAtLow, high: fireAtHigh + foodAtHigh, isPlaceholder };
         };
 
         const postureMap = new Map<string, PostureStatus>();
@@ -263,6 +276,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
         let totalOpen = 0;
         let totalAtRisk = 0;
         let atRiskLow = 0, atRiskHigh = 0;
+        let anyPlaceholder = false;
 
         const result: PortfolioLocation[] = locRows.map(loc => {
           const allDrifts = driftsByLoc.get(loc.id) || [];
@@ -316,8 +330,9 @@ export function usePortfolioData(): UsePortfolioDataResult {
           totalOpen += items.length;
           totalAtRisk += items.reduce((s, i) => s + i.estimated_savings_cents, 0);
 
-          const _kAtRisk = kitchenAtRisk(loc.id, foodStatus);
+          const _kAtRisk = kitchenAtRisk(loc.id, foodStatus, (loc as any).industry_segment);
           atRiskLow += _kAtRisk.low; atRiskHigh += _kAtRisk.high;
+          if (_kAtRisk.isPlaceholder) anyPlaceholder = true;
           return {
             id: loc.id,
             name: loc.name,
@@ -325,6 +340,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
             fireStatus,
             atRiskLow: _kAtRisk.low,
             atRiskHigh: _kAtRisk.high,
+            benchmarkPlaceholder: _kAtRisk.isPlaceholder,
             openCount: items.length,
             openItems: items,
             foodOpenCount: foodItems.length,
@@ -344,7 +360,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
           totalAtRiskCents: totalAtRisk,
           atRiskLow,
           atRiskHigh,
-          benchmarkPlaceholder: _benchPlaceholder,
+          benchmarkPlaceholder: anyPlaceholder,
         });
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
