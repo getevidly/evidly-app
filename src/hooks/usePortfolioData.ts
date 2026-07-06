@@ -212,6 +212,35 @@ export function usePortfolioData(): UsePortfolioDataResult {
         }
 
         // ── Build briefing posture map (most-recent per location+advisor) ──
+        // ── What's at Risk: coi_benchmarks (casual) + fire_service_standing (org-wide, batched) ──
+        const { data: benchData } = await supabase.from('coi_benchmarks').select('*').eq('segment', 'casual');
+        const _fireBase = { low: 0, high: 0 }, _foodBase = { low: 0, high: 0 };
+        for (const b of benchData || []) {
+          if ((b as any).pillar === 'fire') { _fireBase.low += Number((b as any).typical_low); _fireBase.high += Number((b as any).typical_high); }
+          else if ((b as any).pillar === 'food') { _foodBase.low += Number((b as any).typical_low); _foodBase.high += Number((b as any).typical_high); }
+        }
+        const { data: fireStandData } = await supabase.from('fire_service_standing').select('location_id, service_type_code, standing');
+        const fireStandByLoc = groupBy(fireStandData || [], (r: any) => r.location_id);
+        const _rank: Record<string, number> = { live: 3, pending: 2, done: 1 };
+        const _worse = (a: string | undefined, b: string) => (_rank[a || ''] >= _rank[b] ? (a as string) : b);
+        const _fireStandingToState = (st: string) => st === 'overdue' ? 'live' : (st === 'approaching' || st === 'awaiting_first_service') ? 'pending' : 'done';
+        const kitchenAtRisk = (locId: string, foodStatus: string): { low: number; high: number } => {
+          // FIRE: countable services from fire_service_standing
+          const rows = (fireStandByLoc.get(locId) || []) as any[];
+          const fireObl: Record<string, string> = {};
+          for (const r of rows) fireObl[r.service_type_code] = _worse(fireObl[r.service_type_code], _fireStandingToState(r.standing));
+          let fD = 0, fP = 0, fL = 0;
+          for (const st of Object.values(fireObl)) { if (st === 'done') fD++; else if (st === 'pending') fP++; else fL++; }
+          const fT = fD + fP + fL, fShare = (n: number) => fT > 0 ? n / fT : 0;
+          const fireAtLow = _fireBase.low * fShare(fP) + _fireBase.low * fShare(fL);
+          const fireAtHigh = _fireBase.high * fShare(fP) + _fireBase.high * fShare(fL);
+          // FOOD: posture -> state-based
+          const ff = foodStatus === 'solid' ? { pending: 0, live: 0 } : foodStatus === 'alarm' ? { pending: 0, live: 1 } : { pending: 0.5, live: 0.5 };
+          const foodAtLow = _foodBase.low * ff.pending + _foodBase.low * ff.live;
+          const foodAtHigh = _foodBase.high * ff.pending + _foodBase.high * ff.live;
+          return { low: fireAtLow + foodAtLow, high: fireAtHigh + foodAtHigh };
+        };
+
         const postureMap = new Map<string, PostureStatus>();
         for (const b of briefRes.data || []) {
           const key = `${b.location_id}:${b.advisor_type}`;
@@ -230,6 +259,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
         let fireAlarm = 0, fireWatch = 0, fireSolid = 0;
         let totalOpen = 0;
         let totalAtRisk = 0;
+        let atRiskLow = 0, atRiskHigh = 0;
 
         const result: PortfolioLocation[] = locRows.map(loc => {
           const allDrifts = driftsByLoc.get(loc.id) || [];
@@ -283,11 +313,15 @@ export function usePortfolioData(): UsePortfolioDataResult {
           totalOpen += items.length;
           totalAtRisk += items.reduce((s, i) => s + i.estimated_savings_cents, 0);
 
+          const _kAtRisk = kitchenAtRisk(loc.id, foodStatus);
+          atRiskLow += _kAtRisk.low; atRiskHigh += _kAtRisk.high;
           return {
             id: loc.id,
             name: loc.name,
             foodStatus,
             fireStatus,
+            atRiskLow: _kAtRisk.low,
+            atRiskHigh: _kAtRisk.high,
             openCount: items.length,
             openItems: items,
             foodOpenCount: foodItems.length,
@@ -305,6 +339,8 @@ export function usePortfolioData(): UsePortfolioDataResult {
           totalOpenItems: totalOpen,
           totalHandled: handledRes.count || 0,
           totalAtRiskCents: totalAtRisk,
+          atRiskLow,
+          atRiskHigh,
         });
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
