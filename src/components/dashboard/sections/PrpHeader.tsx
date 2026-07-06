@@ -16,7 +16,7 @@ import { useDashboardLocation } from '../../../contexts/DashboardLocationContext
 import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
 import { useUpcomingServices } from '../../../hooks/useUpcomingServices';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
-import { useOnboardingState } from '../../../hooks/onboarding/useOnboardingState';
+import { usePillarProof } from '../../../hooks/prove/usePillarProof';
 import { useWhatsAtRisk } from '../../../hooks/useWhatsAtRisk';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
@@ -36,7 +36,7 @@ export function PrpHeader() {
   const { foodCount: foodDrift, fireCount: fireDrift, loading: driftLoading } = useOpenDriftCounts(selectedLocationId);
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
-  const { foodSafety: proveFood, fireSafety: proveFire, loading: onboardingLoading } = useOnboardingState();
+  const { foodSafety: proveFood, fireSafety: proveFire, loading: onboardingLoading } = usePillarProof();
   const risk = useWhatsAtRisk(selectedLocationId);
   const rMoney = (n: number) => {
     const v = Math.round(n);
