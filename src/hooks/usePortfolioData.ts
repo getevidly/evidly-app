@@ -137,7 +137,7 @@ export function usePortfolioData(): UsePortfolioDataResult {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!orgId) { setLoading(false); return; }
+    if (!orgId) return; // stay loading until auth resolves and orgId is available
     let cancelled = false;
 
     async function load() {
