@@ -17,6 +17,7 @@ import { useOpenDriftCounts } from '../../../hooks/useOpenDriftCounts';
 import { useUpcomingServices } from '../../../hooks/useUpcomingServices';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { useOnboardingState } from '../../../hooks/onboarding/useOnboardingState';
+import { useWhatsAtRisk } from '../../../hooks/useWhatsAtRisk';
 import { useTodayList } from '../../../hooks/useTodayList';
 import { useOrgAge } from '../../../hooks/useOrgAge';
 import { useOrgSummary } from '../../../hooks/useOrgSummary';
@@ -36,6 +37,28 @@ export function PrpHeader() {
   const upcoming = useUpcomingServices(14, selectedLocationId);
   const { catches: driftCatches } = useDriftCatches();
   const { foodSafety: proveFood, fireSafety: proveFire, loading: onboardingLoading } = useOnboardingState();
+  const risk = useWhatsAtRisk(selectedLocationId);
+  const rMoney = (n: number) => {
+    const v = Math.round(n);
+    if (v >= 1000000) return '$' + (v/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
+    if (v >= 1000) return '$' + (v/1000).toFixed(1).replace(/\.0$/,'') + 'k';
+    return '$' + v.toLocaleString();
+  };
+  const rRange = (lo: number, hi: number) => rMoney(lo) + '–' + rMoney(hi);
+  const riskLine = (pr: typeof risk.food) => {
+    const stillLo = pr.pending.low + pr.live.low, stillHi = pr.pending.high + pr.live.high;
+    return {
+      total: pr.counts.total,
+      clear: pr.counts.total > 0 && stillHi === 0,
+      still: rRange(stillLo, stillHi),
+      hasLive: pr.live.high > 0,
+      live: rRange(pr.live.low, pr.live.high) + ' live · ' + pr.counts.live + ' overdue',
+      hasReduced: pr.reduced.high > 0,
+      reduced: '↓ ' + rRange(pr.reduced.low, pr.reduced.high) + ' reduced',
+    };
+  };
+  const rFood = riskLine(risk.food);
+  const rFire = riskLine(risk.fire);
   const proveCell = (c: number, t: number) => {
     if (t === 0) return { show: '\u2014', sub: 'No county requirements set', short: false, complete: false };
     return { show: `${c} of ${t}`, sub: c === t ? 'County requirements met' : `${t - c} to complete \u00B7 county`, short: c !== t, complete: c === t };
@@ -187,15 +210,27 @@ export function PrpHeader() {
           </div>
         </Link>
 
-        {/* INTELLIGENCE — placeholder; feeds wired after the deep-dig audit */}
+        {/* WHAT'S AT RISK — residual exposure from useWhatsAtRisk */}
         <div className="prp prp-lite">
           <div>
-            <p className="prp-label prp-lite-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Intelligence</span>
-              <Link to="/insights/intelligence" style={{ fontSize: 10, fontWeight: 600, color: '#A08C5A', textTransform: 'none', letterSpacing: 0, textDecoration: 'none' }}>Open ›</Link>
-            </p>
-            <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 4 }}>Risk, benchmarks, and regulatory signals for your kitchen.</p>
-            <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Signals arriving soon</p>
+            <p className="prp-label prp-lite-label">What’s at Risk</p>
+            {risk.loading ? (
+              <p className="prp-num prp-lite-num">—</p>
+            ) : (
+              <>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Food</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFood.hasLive ? '#B4472E' : '#1E2D4D' }}>{rFood.clear ? 'Clear' : rFood.still}</span></div>
+                  {rFood.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFood.live}</p>}
+                  {rFood.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFood.reduced}</p>}
+                </div>
+                <div className="prp-pillar">
+                  <div className="prp-pline"><span className="prp-pk">Fire</span><span className="prp-lite-num" style={{ fontSize: 15, color: rFire.hasLive ? '#B4472E' : '#1E2D4D' }}>{rFire.clear ? 'Clear' : rFire.still}</span></div>
+                  {rFire.hasLive && <p className="prp-pdet" style={{ color: '#B4472E', fontWeight: 600 }}>{rFire.live}</p>}
+                  {rFire.hasReduced && <p className="prp-pdet" style={{ color: '#3E9E7A' }}>{rFire.reduced}</p>}
+                </div>
+                {risk.isPlaceholder && <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Illustrative · casual</p>}
+              </>
+            )}
           </div>
         </div>
 
