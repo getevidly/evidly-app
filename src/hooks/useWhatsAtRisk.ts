@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { useOnboardingState } from './onboarding/useOnboardingState';
-import { REQUIREMENT_TO_SERVICE_CODE } from '../components/onboarding/work/workConstants';
 
 // "What's at Risk" (internal: COI) — residual dollar exposure per pillar, three states.
-// Obligation set = county (useOnboardingState -> service_type_code) UNION insurance
-// (pl_pse_conditions -> symbol registry satisfied_by_codes -> service_type_code),
-// deduplicated on service_type_code. Each obligation is done / pending / live(overdue).
-// Baseline from coi_benchmarks (segment, default casual). All figures reconcile:
-// reduced + pending + live = baseline, both bounds. Read-only (never calls pl-pse-eval,
-// which writes drifts). Misses come from drift_catches (county task drifts + insurance
-// pse_condition drifts, already unified in that table).
+// Obligations come from what the COUNTY and INSURANCE require, measured against real
+// ONGOING operational state — NOT onboarding/setup completion. Fire and food are
+// structurally different pillars and are computed differently:
+//   FIRE = countable services (fire_service_standing view: standing per service_type_code).
+//   FOOD = state-based (posture from open food drifts; food has no discrete service list).
+//   INSURANCE (both) = pl_pse_conditions -> symbol registry satisfied_by_codes.
+// Baseline from coi_benchmarks (segment, default casual). Exposure = baseline × state share.
+// Read-only (never calls pl-pse-eval, which writes drifts).
 
 type Pillar = 'food' | 'fire';
 type Range = { low: number; high: number };
@@ -27,24 +26,29 @@ export interface WhatsAtRisk {
   isPlaceholder: boolean; segment: string; loading: boolean;
 }
 
-const SERVICE_PILLAR: Record<string, Pillar> = {
-  KEC:'fire', FS:'fire', FA:'fire', SP:'fire', FE:'fire',
-  PC:'food', GT:'food', BFT:'food',
-};
-const rank: Record<string, number> = { live:3, pending:2, done:1 };
+const rank: Record<string, number> = { live: 3, pending: 2, done: 1 };
 const worse = (a: string | undefined, b: string) => (rank[a || ''] >= rank[b] ? (a as string) : b);
 const emptyPillar = (): PillarRisk => ({
-  baseline:{low:0,high:0}, reduced:{low:0,high:0}, pending:{low:0,high:0}, live:{low:0,high:0},
-  counts:{done:0,pending:0,live:0,total:0},
+  baseline: { low: 0, high: 0 }, reduced: { low: 0, high: 0 }, pending: { low: 0, high: 0 }, live: { low: 0, high: 0 },
+  counts: { done: 0, pending: 0, live: 0, total: 0 },
 });
+
+// fire_service_standing.standing -> three-state
+const fireStandingToState = (standing: string): string => {
+  if (standing === 'overdue') return 'live';
+  if (standing === 'approaching' || standing === 'awaiting_first_service') return 'pending';
+  return 'done'; // current, deferred, monitored
+};
 
 export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const segment = 'casual'; // segment field TBD — default casual placeholder (governed follow-up)
-  const onboarding = useOnboardingState();
+
   const [ins, setIns] = useState<{ symbol_code: string; pillar: string; legState: string }[] | null>(null);
-  const [drifts, setDrifts] = useState<{ pillar: string; service: string | null }[] | null>(null);
+  const [fireStanding, setFireStanding] = useState<{ service_type_code: string; standing: string }[] | null>(null);
+  const [foodPosture, setFoodPosture] = useState<string | null>(null);
+  const [foodDrifts, setFoodDrifts] = useState<number | null>(null);
   const [bench, setBench] = useState<any[] | null>(null);
 
   // coi_benchmarks (segment)
@@ -57,27 +61,22 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
     return () => { dead = true; };
   }, [segment]);
 
-  // insurance conditions -> resolve satisfied_by_codes ; misses from drift_catches
   useEffect(() => {
-    if (!orgId) { setIns([]); setDrifts([]); return; }
+    if (!orgId) { setIns([]); setFireStanding([]); setFoodPosture('solid'); setFoodDrifts(0); return; }
     let dead = false;
     (async () => {
-      // active conditions (optionally location-scoped)
+      // ---- INSURANCE: active conditions -> satisfied_by_codes ----
       let condQ = supabase.from('pl_pse_conditions')
         .select('symbol_code, pillar, endorsement_expiration_date, location_id')
         .eq('condition_status', 'active');
       if (locationId) condQ = condQ.eq('location_id', locationId);
       const { data: conds } = await condQ;
-
-      // symbol registry -> satisfied_by_codes
-      const { data: regs } = await supabase.from('pl_pse_symbol_registry')
-        .select('symbol_code, requirement');
+      const { data: regs } = await supabase.from('pl_pse_symbol_registry').select('symbol_code, requirement');
       const satisfiedBy: Record<string, string[]> = {};
       for (const r of regs || []) {
         const codes = (r as any)?.requirement?.evidence?.satisfied_by_codes;
         satisfiedBy[(r as any).symbol_code] = Array.isArray(codes) ? codes : [];
       }
-      // condition -> legState (current/approaching/lapsed) from expiration date
       const now = Date.now();
       const legOf = (iso: string | null): string => {
         if (!iso) return 'no_due_date';
@@ -90,46 +89,59 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       };
       const insRows: { symbol_code: string; pillar: string; legState: string }[] = [];
       for (const c of conds || []) {
-        insRows.push({ symbol_code: (c as any).symbol_code, pillar: (c as any).pillar,
-                       legState: legOf((c as any).endorsement_expiration_date) });
+        insRows.push({ symbol_code: (c as any).symbol_code, pillar: (c as any).pillar, legState: legOf((c as any).endorsement_expiration_date) });
       }
+      (insRows as any)._satisfiedBy = satisfiedBy;
 
-      // open drift_catches -> misses (county task drifts + insurance pse_condition drifts)
-      let driftQ = supabase.from('drift_catches')
-        .select('pillar, dimension, source_record_id, drift_type, status, location_id')
+      // ---- FIRE COUNTY: fire_service_standing (required services + standing) ----
+      let fsQ = supabase.from('fire_service_standing').select('location_id, service_type_code, standing');
+      if (locationId) fsQ = fsQ.eq('location_id', locationId);
+      const { data: fsData } = await fsQ;
+      // worst standing per service_type_code across locations (in-scope)
+      const fsByCode: Record<string, string> = {};
+      for (const row of fsData || []) {
+        const code = (row as any).service_type_code;
+        const st = fireStandingToState((row as any).standing);
+        fsByCode[code] = worse(fsByCode[code], st);
+      }
+      const fireRows = Object.entries(fsByCode).map(([service_type_code, standing]) => ({ service_type_code, standing }));
+
+      // ---- FOOD COUNTY: posture from open food drifts (food has no service list) ----
+      let fdQ = supabase.from('drift_catches')
+        .select('pillar, status, location_id')
         .eq('status', 'open')
-        .in('drift_type', ['task_overdue', 'task_skipped', 'compliance']);
-      if (locationId) driftQ = driftQ.eq('location_id', locationId);
-      const { data: dr } = await driftQ;
-      const driftRows = (dr || []).map((d: any) => ({ pillar: d.pillar, service: null }));
+        .eq('pillar', 'food_safety');
+      if (locationId) fdQ = fdQ.eq('location_id', locationId);
+      const { data: fdData } = await fdQ;
+      const foodOpen = (fdData || []).length;
+      const posture = foodOpen === 0 ? 'solid' : foodOpen >= 3 ? 'alarm' : 'watch';
 
       if (!dead) {
-        // stash satisfiedBy on the ins rows via closure by expanding here
-        (insRows as any)._satisfiedBy = satisfiedBy;
         setIns(insRows);
-        setDrifts(driftRows);
+        setFireStanding(fireRows);
+        setFoodPosture(posture);
+        setFoodDrifts(foodOpen);
       }
     })();
     return () => { dead = true; };
   }, [orgId, locationId]);
 
-  const loading = onboarding.loading || ins === null || drifts === null || bench === null;
+  const loading = ins === null || fireStanding === null || foodPosture === null || foodDrifts === null || bench === null;
 
-  // ---- compute ----
   const build = (): WhatsAtRisk => {
     const base: WhatsAtRisk = {
       food: emptyPillar(), fire: emptyPillar(),
-      total:{ baseline:{low:0,high:0}, reduced:{low:0,high:0}, pending:{low:0,high:0}, live:{low:0,high:0} },
-      worst:{ food:{low:0,high:0}, fire:{low:0,high:0} },
-      isPlaceholder:true, segment, loading, lines:{ food:{}, fire:{} },
+      total: { baseline: { low: 0, high: 0 }, reduced: { low: 0, high: 0 }, pending: { low: 0, high: 0 }, live: { low: 0, high: 0 } },
+      worst: { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } },
+      isPlaceholder: true, segment, loading, lines: { food: {}, fire: {} },
     };
     if (loading) return base;
 
-    // baseline per pillar from coi_benchmarks (sum loss lines; worst at pillar grain)
-    const pillarBaseline: Record<Pillar, Range> = { food:{low:0,high:0}, fire:{low:0,high:0} };
-    const pillarWorst: Record<Pillar, Range> = { food:{low:0,high:0}, fire:{low:0,high:0} };
+    // baseline per pillar from coi_benchmarks
+    const pillarBaseline: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
+    const pillarWorst: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
     let placeholder = false;
-    const _lines: { food: Record<string, {low:number;high:number}>; fire: Record<string, {low:number;high:number}> } = { food:{}, fire:{} };
+    const _lines: { food: Record<string, { low: number; high: number }>; fire: Record<string, { low: number; high: number }> } = { food: {}, fire: {} };
     for (const b of bench!) {
       const p = b.pillar as Pillar;
       pillarBaseline[p].low += Number(b.typical_low); pillarBaseline[p].high += Number(b.typical_high);
@@ -138,69 +150,48 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       if (b.is_placeholder) placeholder = true;
     }
 
-    // obligation set: service_type_code -> state, per pillar
-    const obl: Record<Pillar, Map<string, string>> = { food:new Map(), fire:new Map() };
-
-    // county
-    const countyItems = [...(onboarding.foodSafety?.items || []), ...(onboarding.fireSafety?.items || [])];
-    for (const it of countyItems as any[]) {
-      if (it.status === 'skipped') continue;
-      const svc = (REQUIREMENT_TO_SERVICE_CODE as any)[it.requirement_code];
-      if (!svc) continue;
-      const p = SERVICE_PILLAR[svc]; if (!p) continue;
-      const st = it.status === 'done' ? 'done' : 'pending';
-      obl[p].set(svc, worse(obl[p].get(svc), st));
-    }
-    // insurance (expand satisfied_by_codes; P-5 -> KEC+FS)
+    // ---- FIRE: countable services (fire_service_standing) + insurance fire conditions ----
+    const fireObl: Record<string, string> = {};
+    for (const r of fireStanding!) fireObl[r.service_type_code] = worse(fireObl[r.service_type_code], r.standing);
+    // insurance fire conditions expand satisfied_by_codes into fire service codes
     const satisfiedBy = (ins as any)?._satisfiedBy || {};
+    const FIRE_CODES = new Set(['KEC', 'FS', 'FA', 'SP', 'FE']);
     for (const c of ins!) {
       const codes: string[] = satisfiedBy[c.symbol_code] || [];
-      const st = c.legState === 'current' ? 'done'
-               : (c.legState === 'approaching' || c.legState === 'no_due_date') ? 'pending' : 'live';
-      for (const svc of codes) {
-        const p = SERVICE_PILLAR[svc]; if (!p) continue;
-        obl[p].set(svc, worse(obl[p].get(svc), st));
-      }
+      const st = c.legState === 'current' ? 'done' : (c.legState === 'approaching' || c.legState === 'no_due_date') ? 'pending' : 'live';
+      for (const svc of codes) if (FIRE_CODES.has(svc)) fireObl[svc] = worse(fireObl[svc], st);
     }
-    // drift misses -> pillar-level: mark any not-done obligation in that pillar live if drift present.
-    // (service-grain drift linkage is partial; apply at pillar grain: if there is an open drift in a
-    //  pillar, the pending items most at risk become live. Conservative: bump pending->live up to drift count.)
-    const driftCountByPillar: Record<Pillar, number> = { food:0, fire:0 };
-    for (const d of drifts!) {
-      const p = d.pillar === 'fire_safety' ? 'fire' : d.pillar === 'food_safety' ? 'food' : null;
-      if (p) driftCountByPillar[p]++;
-    }
-    (['food','fire'] as Pillar[]).forEach(p => {
-      let bump = driftCountByPillar[p];
-      if (bump <= 0) return;
-      for (const [svc, st] of obl[p]) {
-        if (bump <= 0) break;
-        if (st === 'pending') { obl[p].set(svc, 'live'); bump--; }
-      }
-    });
+    let fDone = 0, fPend = 0, fLive = 0;
+    for (const st of Object.values(fireObl)) { if (st === 'done') fDone++; else if (st === 'pending') fPend++; else fLive++; }
+    const fTotal = fDone + fPend + fLive;
+    const fShare = (n: number) => fTotal > 0 ? n / fTotal : 0;
+    const fb = pillarBaseline.fire;
+    base.fire = {
+      baseline: fb,
+      reduced: { low: fb.low * fShare(fDone), high: fb.high * fShare(fDone) },
+      pending: { low: fb.low * fShare(fPend), high: fb.high * fShare(fPend) },
+      live: { low: fb.low * fShare(fLive), high: fb.high * fShare(fLive) },
+      counts: { done: fDone, pending: fPend, live: fLive, total: fTotal },
+    };
 
-    // partition + dollar-weight
-    (['food','fire'] as Pillar[]).forEach(p => {
-      let done=0, pending=0, live=0;
-      for (const st of obl[p].values()) { if (st==='done') done++; else if (st==='pending') pending++; else live++; }
-      const total = done + pending + live;
-      const bl = pillarBaseline[p];
-      const share = (n: number) => total > 0 ? n/total : 0;
-      const pr: PillarRisk = {
-        baseline: bl,
-        reduced: { low: bl.low*share(done),    high: bl.high*share(done) },
-        pending: { low: bl.low*share(pending), high: bl.high*share(pending) },
-        live:    { low: bl.low*share(live),    high: bl.high*share(live) },
-        counts: { done, pending, live, total },
-      };
-      base[p] = pr;
-    });
+    // ---- FOOD: state-based from posture (solid=reduced, watch=split, alarm=live) ----
+    const foodFrac = foodPosture === 'solid' ? { done: 1, pending: 0, live: 0 }
+                   : foodPosture === 'alarm' ? { done: 0, pending: 0, live: 1 }
+                   : { done: 0, pending: 0.5, live: 0.5 }; // watch
+    const fdb = pillarBaseline.food;
+    base.food = {
+      baseline: fdb,
+      reduced: { low: fdb.low * foodFrac.done, high: fdb.high * foodFrac.done },
+      pending: { low: fdb.low * foodFrac.pending, high: fdb.high * foodFrac.pending },
+      live: { low: fdb.low * foodFrac.live, high: fdb.high * foodFrac.live },
+      counts: { done: foodFrac.done ? 1 : 0, pending: foodFrac.pending ? 1 : 0, live: (foodDrifts as number) || (foodFrac.live ? 1 : 0), total: 1 },
+    };
 
     base.total = {
-      baseline:{ low: base.food.baseline.low+base.fire.baseline.low, high: base.food.baseline.high+base.fire.baseline.high },
-      reduced: { low: base.food.reduced.low+base.fire.reduced.low,   high: base.food.reduced.high+base.fire.reduced.high },
-      pending: { low: base.food.pending.low+base.fire.pending.low,   high: base.food.pending.high+base.fire.pending.high },
-      live:    { low: base.food.live.low+base.fire.live.low,         high: base.food.live.high+base.fire.live.high },
+      baseline: { low: base.food.baseline.low + base.fire.baseline.low, high: base.food.baseline.high + base.fire.baseline.high },
+      reduced: { low: base.food.reduced.low + base.fire.reduced.low, high: base.food.reduced.high + base.fire.reduced.high },
+      pending: { low: base.food.pending.low + base.fire.pending.low, high: base.food.pending.high + base.fire.pending.high },
+      live: { low: base.food.live.low + base.fire.live.low, high: base.food.live.high + base.fire.live.high },
     };
     base.worst = { food: pillarWorst.food, fire: pillarWorst.fire };
     base.lines = _lines;
