@@ -84,8 +84,9 @@ export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCard
           </span>
           <button
             type="button"
-            className="catch-ack-btn navy"
+            className="catch-ack-btn"
             onClick={() => onAcknowledge(drift.id)}
+            style={{ background: '#1E2D4D', color: '#ffffff', border: '1px solid #1E2D4D', fontWeight: 600, padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             Acknowledge as {roleLabel}
           </button>
