@@ -34,7 +34,7 @@ const MUTED = '#6B7280';
 
 const STATUS_CONFIG = {
   alarm: { label: 'Needs action', color: CORAL, bg: '#FEF2F2' },
-  watch: { label: 'Watching', color: WARN, bg: '#FFFBEB' },
+  watch: { label: 'At risk', color: WARN, bg: '#FFFBEB' },
   solid: { label: 'Clear', color: TEAL, bg: '#F0FDF4' },
 };
 
@@ -404,7 +404,7 @@ export default function Portfolio() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#1E2D4D' }}>{l.name}</div>
                   <div style={{ fontSize: 11, color: '#8A6A5C', marginTop: 1 }}>{naReason(l)}</div>
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', padding: '2px 8px', borderRadius: 10, background: (_worstNA(l) === 3 ? '#FCF0EC' : '#FBF3E3'), color: (_worstNA(l) === 3 ? '#B4472E' : '#8A5A0B') }}>{_worstNA(l) === 3 ? 'Alarm' : 'Watch'}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', padding: '2px 8px', borderRadius: 10, background: (_worstNA(l) === 3 ? '#FCF0EC' : '#FBF3E3'), color: (_worstNA(l) === 3 ? '#B4472E' : '#8A5A0B') }}>{_worstNA(l) === 3 ? 'Needs action' : 'At risk'}</span>
               </div>
             ))}
           </div>
