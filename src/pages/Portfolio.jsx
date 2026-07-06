@@ -132,6 +132,14 @@ function PillarTriageRow({ pillar, alarmCount, watchCount, solidCount, alarmLocs
   );
 }
 
+const rMoney = (n) => {
+  const v = Math.round(n);
+  if (v >= 1000000) return '$' + (v / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (v >= 1000) return '$' + (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return '$' + v.toLocaleString();
+};
+const rRange = (lo, hi) => (hi <= 0 ? 'Clear' : rMoney(lo) + '–' + rMoney(hi));
+
 function KpiTile({ icon, title, value, subtitle }) {
   return (
     <div
@@ -174,6 +182,9 @@ function KitchenRow({ location, onNavigate }) {
         <td style={{ padding: '10px 12px' }}><StatusChip status={location.fireStatus} /></td>
         <td style={{ padding: '10px 12px', fontSize: 13, color: NAVY, textAlign: 'center' }}>
           {location.openCount}
+        </td>
+        <td style={{ padding: '10px 12px', fontSize: 13, textAlign: 'right', color: (location.atRiskHigh > 0 ? '#B4472E' : '#3E9E7A'), fontWeight: 600 }}>
+          {rRange(location.atRiskLow || 0, location.atRiskHigh || 0)}
         </td>
       </tr>
       {expanded && (
@@ -265,6 +276,7 @@ export default function Portfolio() {
       if (sortKey === 'food') return dir * (statusOrd(a.foodStatus) - statusOrd(b.foodStatus));
       if (sortKey === 'fire') return dir * (statusOrd(a.fireStatus) - statusOrd(b.fireStatus));
       if (sortKey === 'open') return dir * (a.openCount - b.openCount);
+      if (sortKey === 'atrisk') return dir * ((a.atRiskHigh || 0) - (b.atRiskHigh || 0));
       return 0;
     });
 
@@ -448,6 +460,12 @@ export default function Portfolio() {
           value={summary.totalHandled + summary.totalOpenItems}
           subtitle="Total items documented (90 days)"
         />
+        <KpiTile
+          icon={<AlertTriangle size={16} color={CORAL} />}
+          title="At risk"
+          value={rRange(summary.atRiskLow || 0, summary.atRiskHigh || 0)}
+          subtitle="Across all kitchens · illustrative"
+        />
       </div>
 
       {/* Kitchens table */}
@@ -491,6 +509,7 @@ export default function Portfolio() {
                 { key: 'food', label: 'Food Safety' },
                 { key: 'fire', label: 'Fire Safety' },
                 { key: 'open', label: 'Open' },
+                { key: 'atrisk', label: 'At Risk' },
               ].map(col => (
                 <th
                   key={col.key}
@@ -500,7 +519,7 @@ export default function Portfolio() {
                     fontSize: 11,
                     fontWeight: 600,
                     color: MUTED,
-                    textAlign: col.key === 'open' ? 'center' : 'left',
+                    textAlign: (col.key === 'open') ? 'center' : (col.key === 'atrisk') ? 'right' : 'left',
                     cursor: 'pointer',
                     userSelect: 'none',
                     textTransform: 'uppercase',
@@ -515,7 +534,7 @@ export default function Portfolio() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: '20px 12px', fontSize: 13, color: MUTED, textAlign: 'center' }}>
+                <td colSpan={5} style={{ padding: '20px 12px', fontSize: 13, color: MUTED, textAlign: 'center' }}>
                   No kitchens match this filter.
                 </td>
               </tr>
