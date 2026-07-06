@@ -234,7 +234,7 @@ export default function Portfolio() {
   const { locations, summary, loading, error } = usePortfolioData();
   const navigate = useNavigate();
 
-  const [sortKey, setSortKey] = useState('name');
+  const [sortKey, setSortKey] = useState('priority');
   const [sortDir, setSortDir] = useState('asc');
   const [filter, setFilter] = useState('all');
 
@@ -252,6 +252,15 @@ export default function Portfolio() {
 
     const dir = sortDir === 'asc' ? 1 : -1;
     locs.sort((a, b) => {
+      const _sev = { alarm: 3, watch: 2, solid: 1 };
+      const _worst = (l) => Math.max(_sev[l.foodStatus] || 0, _sev[l.fireStatus] || 0);
+      if (sortKey === 'priority') {
+        const w = _worst(b) - _worst(a);
+        if (w !== 0) return w;
+        const o = b.openCount - a.openCount;
+        if (o !== 0) return o;
+        return a.name.localeCompare(b.name);
+      }
       if (sortKey === 'name') return dir * a.name.localeCompare(b.name);
       if (sortKey === 'food') return dir * (statusOrd(a.foodStatus) - statusOrd(b.foodStatus));
       if (sortKey === 'fire') return dir * (statusOrd(a.fireStatus) - statusOrd(b.fireStatus));
@@ -263,6 +272,25 @@ export default function Portfolio() {
   }, [locations, filter, sortKey, sortDir]);
 
   const foodAlarmLocs = locations.filter(l => l.foodStatus === 'alarm');
+  const _sevNA = { alarm: 3, watch: 2, solid: 1 };
+  const _worstNA = (l) => Math.max(_sevNA[l.foodStatus] || 0, _sevNA[l.fireStatus] || 0);
+  const needsActionLocs = locations
+    .filter(l => l.foodStatus === 'alarm' || l.fireStatus === 'alarm' || l.foodStatus === 'watch' || l.fireStatus === 'watch')
+    .sort((a, b) => {
+      const w = _worstNA(b) - _worstNA(a);
+      if (w !== 0) return w;
+      const o = b.openCount - a.openCount;
+      if (o !== 0) return o;
+      return a.name.localeCompare(b.name);
+    });
+  const naReason = (l) => {
+    const parts = [];
+    if (l.foodStatus === 'alarm') parts.push('Food: alarm · ' + l.foodOpenCount + ' open');
+    else if (l.foodStatus === 'watch') parts.push('Food: watch · ' + l.foodOpenCount + ' open');
+    if (l.fireStatus === 'alarm') parts.push('Fire: alarm · ' + l.fireOpenCount + ' open');
+    else if (l.fireStatus === 'watch') parts.push('Fire: watch · ' + l.fireOpenCount + ' open');
+    return parts.join(' · ');
+  };
   const foodWatchLocs = locations.filter(l => l.foodStatus === 'watch');
   const foodSolidLocs = locations.filter(l => l.foodStatus === 'solid');
   const fireAlarmLocs = locations.filter(l => l.fireStatus === 'alarm');
@@ -351,7 +379,25 @@ export default function Portfolio() {
         </span>
       </div>
 
-      {/* Triage card */}
+      {needsActionLocs.length > 0 && (
+          <div style={{ background: '#fff', border: '1px solid #F0D9D2', borderRadius: 12, padding: 18, marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+              <span style={{ fontWeight: 600, fontSize: 14, color: '#B4472E' }}>Needs action first</span>
+              <span style={{ fontSize: 11, color: 'var(--muted)' }}>{needsActionLocs.length} of {locations.length} kitchens</span>
+            </div>
+            {needsActionLocs.map((l, i) => (
+              <div key={l.id} onClick={() => handleNavigateToKitchen(l.id)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderTop: i > 0 ? '1px solid #F1EEE7' : 'none', cursor: 'pointer' }}>
+                <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#1E2D4D', color: '#fff', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{i + 1}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1E2D4D' }}>{l.name}</div>
+                  <div style={{ fontSize: 11, color: '#8A6A5C', marginTop: 1 }}>{naReason(l)}</div>
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', padding: '2px 8px', borderRadius: 10, background: (_worstNA(l) === 3 ? '#FCF0EC' : '#FBF3E3'), color: (_worstNA(l) === 3 ? '#B4472E' : '#8A5A0B') }}>{_worstNA(l) === 3 ? 'Alarm' : 'Watch'}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Triage card */}
       <div
         style={{
           background: '#fff',
