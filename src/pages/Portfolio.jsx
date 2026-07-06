@@ -281,8 +281,11 @@ export default function Portfolio() {
     return locs;
   }, [locations, filter, sortKey, sortDir]);
 
+  // TEMP-DIAG: log every render's guard values
+  console.warn('[PORTFOLIO-DIAG] guard', { loading, totalLocations: summary?.totalLocations, locationsLength: locations.length, orgId: profile?.organization_id, error: error?.message });
   // Single-location orgs: redirect to dashboard (AFTER all hooks)
   if (!loading && summary.totalLocations <= 1) {
+    console.warn('[PORTFOLIO-DIAG] REDIRECTING — guard fired', { loading, totalLocations: summary?.totalLocations });
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -504,6 +504,12 @@ function ProtectedLayout() {
 
   // Role-based route guard — redirect to dashboard if role not allowed
   // Authenticated users: EvidlyAdmin bypasses guards; others use DB profile role
+  // TEMP-DIAG: log role-check values when hitting /portfolio
+  if (location.pathname === '/portfolio' || location.pathname.startsWith('/portfolio/')) {
+    const _diagRole = effectiveDemoMode ? userRole : (!isEvidlyAdmin ? dbRoleToUserRole(profile?.role) : 'platform_admin' as UserRole);
+    const _diagAllowed = isRouteAllowedForRole(location.pathname, _diagRole);
+    console.warn('[PORTFOLIO-DIAG] ProtectedLayout role-check', { pathname: location.pathname, effectiveRole: _diagRole, dbRole: profile?.role, allowed: _diagAllowed, isEvidlyAdmin, effectiveDemoMode, profileOrgId: profile?.organization_id });
+  }
   if (effectiveDemoMode) {
     if (!isRouteAllowedForRole(location.pathname, userRole)) {
       return <Navigate to="/dashboard" replace />;
