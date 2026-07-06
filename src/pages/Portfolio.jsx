@@ -163,7 +163,7 @@ function KpiTile({ icon, title, value, subtitle }) {
   );
 }
 
-function KitchenRow({ location, onNavigate }) {
+function KitchenRow({ location, onNavigate, benchmarkPlaceholder }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -184,7 +184,7 @@ function KitchenRow({ location, onNavigate }) {
           {location.openCount}
         </td>
         <td style={{ padding: '10px 12px', fontSize: 13, textAlign: 'right', color: (location.openCount > 0 ? '#B4472E' : '#3E9E7A'), fontWeight: 600 }}>
-          {location.benchmarkPlaceholder
+          {benchmarkPlaceholder
             ? (location.openCount > 0 ? `${location.openCount} open` : 'Clear')
             : rRange(location.atRiskLow || 0, location.atRiskHigh || 0)}
         </td>
@@ -542,7 +542,7 @@ export default function Portfolio() {
               </tr>
             ) : (
               filtered.map(loc => (
-                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} />
+                <KitchenRow key={loc.id} location={loc} onNavigate={handleNavigateToKitchen} benchmarkPlaceholder={summary.benchmarkPlaceholder} />
               ))
             )}
           </tbody>
