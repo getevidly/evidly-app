@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { INDUSTRY_SEGMENT_TO_COI } from '../constants/segmentMap';
 
 // "What's at Risk" (internal: COI) — residual dollar exposure per pillar, three states.
 // Obligations come from what the COUNTY and INSURANCE require, measured against real
@@ -9,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 //   FIRE = countable services (fire_service_standing view: standing per service_type_code).
 //   FOOD = state-based (posture from open food drifts; food has no discrete service list).
 //   INSURANCE (both) = pl_pse_conditions -> symbol registry satisfied_by_codes.
-// Baseline from coi_benchmarks (segment, default casual). Exposure = baseline × state share.
+// Baseline from coi_benchmarks (segment resolved from locations.industry_segment via segmentMap).
 // Read-only (never calls pl-pse-eval, which writes drifts).
 
 type Pillar = 'food' | 'fire';
@@ -43,23 +44,37 @@ const fireStandingToState = (standing: string): string => {
 export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
-  const segment = 'casual'; // segment field TBD — default casual placeholder (governed follow-up)
 
+  const [resolvedSegment, setResolvedSegment] = useState('');
   const [ins, setIns] = useState<{ symbol_code: string; pillar: string; legState: string }[] | null>(null);
   const [fireStanding, setFireStanding] = useState<{ service_type_code: string; standing: string }[] | null>(null);
   const [foodPosture, setFoodPosture] = useState<string | null>(null);
   const [foodDrifts, setFoodDrifts] = useState<number | null>(null);
   const [bench, setBench] = useState<any[] | null>(null);
 
-  // coi_benchmarks (segment)
+  // Resolve segment from location's industry_segment, then fetch coi_benchmarks
   useEffect(() => {
+    if (!orgId) { setBench([]); setResolvedSegment(''); return; }
     let dead = false;
     (async () => {
-      const { data } = await supabase.from('coi_benchmarks').select('*').eq('segment', segment);
-      if (!dead) setBench(data || []);
+      // Derive segment from scoped location (or org's first location if no locationId)
+      let locQ = supabase.from('locations').select('industry_segment')
+        .eq('organization_id', orgId);
+      if (locationId) locQ = locQ.eq('id', locationId);
+      const { data: locData } = await locQ.limit(1).maybeSingle();
+      const raw = (locData as any)?.industry_segment || '';
+      const seg = INDUSTRY_SEGMENT_TO_COI[raw] || '';
+
+      if (!seg) {
+        if (!dead) { setBench([]); setResolvedSegment(''); }
+        return;
+      }
+
+      const { data } = await supabase.from('coi_benchmarks').select('*').eq('segment', seg);
+      if (!dead) { setBench(data || []); setResolvedSegment(seg); }
     })();
     return () => { dead = true; };
-  }, [segment]);
+  }, [orgId, locationId]);
 
   useEffect(() => {
     if (!orgId) { setIns([]); setFireStanding([]); setFoodPosture('solid'); setFoodDrifts(0); return; }
@@ -133,14 +148,14 @@ export function useWhatsAtRisk(locationId?: string | null): WhatsAtRisk {
       food: emptyPillar(), fire: emptyPillar(),
       total: { baseline: { low: 0, high: 0 }, reduced: { low: 0, high: 0 }, pending: { low: 0, high: 0 }, live: { low: 0, high: 0 } },
       worst: { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } },
-      isPlaceholder: true, segment, version: '', sourceRefs: [], loading, lines: { food: {}, fire: {} },
+      isPlaceholder: true, segment: resolvedSegment, version: '', sourceRefs: [], loading, lines: { food: {}, fire: {} },
     };
     if (loading) return base;
 
     // baseline per pillar from coi_benchmarks
     const pillarBaseline: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
     const pillarWorst: Record<Pillar, Range> = { food: { low: 0, high: 0 }, fire: { low: 0, high: 0 } };
-    let placeholder = false;
+    let placeholder = !resolvedSegment || bench!.length === 0;
     let _version = '';
     const _sourceSet = new Set<string>();
     const _lines: { food: Record<string, { low: number; high: number }>; fire: Record<string, { low: number; high: number }> } = { food: {}, fire: {} };
