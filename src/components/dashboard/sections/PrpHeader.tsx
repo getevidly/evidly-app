@@ -189,8 +189,7 @@ export function PrpHeader() {
         </Link>
 
         {/* PROVE — real county requirement coverage per pillar */}
-        <Link to="/onboarding" className="prp prove prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
-          <div>
+        <div className="prp prove prp-lite">
             <p className="prp-label prp-lite-label">What's Proven</p>
             {onboardingLoading ? (
               <p className="prp-num prp-lite-num">—</p>
@@ -207,8 +206,7 @@ export function PrpHeader() {
                 <p className="prp-pdet" style={{ marginLeft: 0, marginTop: 8, color: '#B0A99A' }}>Insurance coverage — coming</p>
               </>
             )}
-          </div>
-        </Link>
+        </div>
 
         {/* WHAT'S AT RISK — residual exposure from useWhatsAtRisk */}
         <Link to="/insights/whats-at-risk" className="prp prp-lite" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
