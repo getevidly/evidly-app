@@ -114,7 +114,7 @@ function PillarTriageRow({ pillar, alarmCount, watchCount, solidCount, alarmLocs
           </ExpandRow>
         )}
         {watchCount > 0 && (
-          <ExpandRow label={<><span style={{ color: WARN }}>{watchCount}</span> watching</>}>
+          <ExpandRow label={<><span style={{ color: WARN }}>{watchCount}</span> at risk</>}>
             {watchLocs.map(l => (
               <div key={l.id} style={{ fontSize: 12, color: NAVY, padding: '2px 0' }}>{l.name}</div>
             ))}
@@ -352,7 +352,7 @@ export default function Portfolio() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10, flexWrap: 'wrap' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEAL, fontWeight: 600 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: TEAL, animation: 'pulse 2s infinite' }} />
-            Watching {summary.totalLocations} kitchen{summary.totalLocations !== 1 ? 's' : ''}
+            Across {summary.totalLocations} kitchen{summary.totalLocations !== 1 ? 's' : ''}
           </span>
           <button
             type="button"
