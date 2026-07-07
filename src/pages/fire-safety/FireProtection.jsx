@@ -352,53 +352,53 @@ export default function FireProtection() {
         tabIndex={0}
         onClick={() => navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`)}
         onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`); }}
-        style={{ borderLeft: `3px solid ${borderColor}`, background: colors.white, padding: 10, boxShadow: shadows.sm, cursor: 'pointer' }}
+        style={{ borderLeft: `3px solid ${borderColor}`, background: colors.white, padding: '10px 12px', boxShadow: shadows.sm, cursor: 'pointer' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <SysIcon size={16} color="#D85A30" style={{ flexShrink: 0 }} />
-          <p style={{ flex: 1, fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>
-            {sub.name}
-          </p>
-          {sub.tooltip_risk_copy && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
-              style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
-              aria-label={'Info about ' + sub.name}
-            >
-              <Info size={14} color={colors.textMuted} />
-            </button>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+            <SysIcon size={16} color="#D85A30" />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>{sub.name}</p>
+                {sub.tooltip_risk_copy && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
+                    style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
+                    aria-label={'Info about ' + sub.name}
+                  >
+                    <Info size={14} color={colors.textMuted} />
+                  </button>
+                )}
+              </div>
+              <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sub)}</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text, whiteSpace: 'nowrap' }}>
+              {pill.label}
+            </span>
+            {sched ? (
+              <button
+                onClick={(e) => { e.stopPropagation(); setRescheduleModal({ code: sub.code, name: sub.name, dueDate: sched.next_due_date || '', scheduleId: sched.id }); }}
+                style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Request different date
+              </button>
+            ) : (
+              <button
+                onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.code }); }}
+                style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Request schedule
+              </button>
+            )}
+          </div>
         </div>
         {tooltipOpen === sub.code && sub.tooltip_risk_copy && (
           <div style={{ fontSize: typography.size.xs, color: colors.textSecondary, background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
             {sub.tooltip_risk_copy}
           </div>
         )}
-        <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, marginBottom: 0 }}>{citationTag(sub)}</p>
-        <div style={{ borderTop: `1px solid ${colors.border}`, margin: '8px 0' }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span
-            className="rounded-full"
-            style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text }}
-          >
-            {pill.label}
-          </span>
-          {sched ? (
-            <button
-              onClick={(e) => { e.stopPropagation(); setRescheduleModal({ code: sub.code, name: sub.name, dueDate: sched.next_due_date || '', scheduleId: sched.id }); }}
-              style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
-            >
-              Request different date
-            </button>
-          ) : (
-            <button
-              onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.code }); }}
-              style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
-            >
-              Request schedule
-            </button>
-          )}
-        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
           <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
           <span>Next: {sched ? fmtDate(sched.next_due_date) : '\u2014'}</span>
