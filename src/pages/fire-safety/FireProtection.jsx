@@ -538,7 +538,7 @@ export default function FireProtection() {
 
               {/* No forecast micro-copy */}
               <p style={{ fontSize: typography.size.xs, color: colors.textMuted, fontStyle: 'italic' }}>
-                Forecast unavailable — protection services vary by system type and inspection cycle.
+                Forecast unavailable — protection services vary by system type and service cycle.
               </p>
             </>
           )}
@@ -574,10 +574,10 @@ export default function FireProtection() {
         )}
       </div>
 
-      {/* ── 6. Inspection History ─────────────────────────── */}
+      {/* ── 6. Vendor Service Records ────────────────────── */}
       <div>
         <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, marginBottom: 6 }}>
-          Inspection History
+          Vendor Service Records
         </p>
         {historyLoading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
@@ -585,7 +585,7 @@ export default function FireProtection() {
           </div>
         ) : history.length === 0 ? (
           <div className="rounded-lg" style={{ background: colors.white, padding: '16px', boxShadow: shadows.sm, textAlign: 'center' }}>
-            <p style={{ fontSize: typography.size.sm, color: colors.textMuted }}>No inspection records yet.</p>
+            <p style={{ fontSize: typography.size.sm, color: colors.textMuted }}>No vendor service records yet.</p>
           </div>
         ) : (
           <div className="space-y-2">
