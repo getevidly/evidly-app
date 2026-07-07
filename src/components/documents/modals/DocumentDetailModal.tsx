@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Download, X, Clock, Send, RefreshCw, FileText, Archive, ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
+import { Download, X, Clock, Send, RefreshCw, FileText, Archive, ShieldAlert, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { Modal } from '../../ui/Modal';
 import { StatusPill } from '../StatusPill';
 import { RequestStateBadge } from '../RequestStateBadge';
@@ -63,6 +63,21 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
   const [confCert, setConfCert] = useState<string>(extract?.cert_number || '');
   const [confNoCert, setConfNoCert] = useState(false);
   const [sealing, setSealing] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
+
+  // Fetch signed URL for inline preview
+  useEffect(() => {
+    if (!doc.storage_path) return;
+    setPreviewLoading(true);
+    setPreviewError(false);
+    setPreviewUrl(null);
+    getSignedUrl(BUCKETS.DOCUMENTS, doc.storage_path)
+      .then((url) => setPreviewUrl(url))
+      .catch(() => setPreviewError(true))
+      .finally(() => setPreviewLoading(false));
+  }, [doc.id, doc.storage_path]);
 
   // Fetch activity timeline
   useEffect(() => {
@@ -366,12 +381,54 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
           </div>
         )}
 
-        {/* PDF preview placeholder */}
+        {/* Inline document preview */}
         {doc.storage_path && (
-          <div className="h-[180px] bg-[#F7F8FA] border border-dashed border-[#E2DDD4] rounded-lg flex items-center justify-center text-[#8A93A6] text-[13px]">
-            <FileText size={20} className="mr-2 text-[#B0B8C8]" />
-            Document preview
-          </div>
+          previewLoading ? (
+            <div className="h-[180px] bg-[#F7F8FA] border border-dashed border-[#E2DDD4] rounded-lg flex items-center justify-center text-[#8A93A6] text-[13px]">
+              <Loader2 size={20} className="mr-2 text-[#B0B8C8] animate-spin" />
+              Loading preview…
+            </div>
+          ) : previewError || !previewUrl ? (
+            <div className="h-[180px] bg-[#F7F8FA] border border-dashed border-[#E2DDD4] rounded-lg flex flex-col items-center justify-center text-[#8A93A6] text-[13px] gap-2">
+              <FileText size={20} className="text-[#B0B8C8]" />
+              <span>Preview unavailable</span>
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="text-[12px] font-semibold underline"
+                style={{ color: '#1E2D4D' }}
+              >
+                Download to view
+              </button>
+            </div>
+          ) : doc.mime_type === 'application/pdf' ? (
+            <iframe
+              src={previewUrl}
+              title="Document preview"
+              className="w-full h-[420px] rounded-lg border border-[#E2DDD4]"
+            />
+          ) : doc.mime_type?.startsWith('image/') ? (
+            <div className="rounded-lg border border-[#E2DDD4] overflow-hidden bg-[#F7F8FA] flex items-center justify-center" style={{ maxHeight: 420 }}>
+              <img
+                src={previewUrl}
+                alt={doc.title || 'Document'}
+                className="max-w-full max-h-[420px] object-contain"
+              />
+            </div>
+          ) : (
+            <div className="h-[180px] bg-[#F7F8FA] border border-dashed border-[#E2DDD4] rounded-lg flex flex-col items-center justify-center text-[#8A93A6] text-[13px] gap-2">
+              <FileText size={20} className="text-[#B0B8C8]" />
+              <span>Download to view this file type</span>
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="text-[12px] font-semibold underline"
+                style={{ color: '#1E2D4D' }}
+              >
+                Download
+              </button>
+            </div>
+          )
         )}
 
         {/* Activity timeline */}
