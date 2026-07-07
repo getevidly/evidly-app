@@ -193,7 +193,7 @@ export default function UploadServiceRecordModal({ category, defaultLocationId, 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h3 style={{ fontSize: typography.size.h3, fontWeight: typography.weight.bold, color: colors.textPrimary }}>
-            Upload Service Record
+            Upload Vendor Service Record
           </h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
             <X size={20} color={colors.textMuted} />

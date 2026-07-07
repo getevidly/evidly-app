@@ -642,7 +642,7 @@ export default function FireProtection() {
             color: colors.white, background: colors.navy, border: 'none', borderRadius: radius.md, cursor: 'pointer',
           }}
         >
-          <Upload size={16} /> Upload Inspection Report
+          <Upload size={16} /> Upload Vendor Service Record
         </button>
       </div>
 
