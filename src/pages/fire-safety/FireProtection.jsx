@@ -335,14 +335,11 @@ export default function FireProtection() {
     );
   };
 
-  // ── KEC sub-row renderer (nested inside KEC card, no card styling, no icon) ──
-  const renderSubRow = (sub) => {
+  // ── KEC sub-row renderer (nested inside KEC card, on beige connector rail) ──
+  const renderSubRow = (sub, isLast) => {
     const sched = systemSchedules[sub.code];
     const state = deriveSystemState(sched);
     const pill = statusPill(state);
-    const borderColor = state === 'overdue' || state === 'no_schedule' ? '#C0392B'
-      : state === 'due_soon' ? '#D9862B'
-      : state === 'current' ? '#2E9E6B' : colors.border;
     return (
       <div
         key={sub.code}
@@ -350,12 +347,12 @@ export default function FireProtection() {
         tabIndex={0}
         onClick={() => navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`)}
         onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`); }}
-        style={{ borderLeft: `3px solid ${borderColor}`, padding: '8px 12px', cursor: 'pointer' }}
+        style={{ padding: '13px 0', borderBottom: isLast ? 'none' : '1px solid #F4EFE3', cursor: 'pointer' }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>{sub.name}</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary, margin: 0 }}>{sub.name}</p>
               {sub.tooltip_risk_copy && (
                 <button
                   onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
@@ -366,7 +363,7 @@ export default function FireProtection() {
                 </button>
               )}
             </div>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sub)}</p>
+            <p style={{ fontSize: 12, color: '#9A968C', margin: 0 }}>{citationTag(sub)}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text, whiteSpace: 'nowrap' }}>
@@ -390,11 +387,11 @@ export default function FireProtection() {
           </div>
         </div>
         {tooltipOpen === sub.code && sub.tooltip_risk_copy && (
-          <div style={{ fontSize: typography.size.xs, color: colors.textSecondary, background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
+          <div style={{ fontSize: 12, color: '#9A968C', background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
             {sub.tooltip_risk_copy}
           </div>
         )}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 4, fontSize: typography.size.xs, color: colors.textSecondary }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 4, fontSize: 11.5, color: '#B0AB9F' }}>
           <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
           <span>Next: {sched ? fmtDate(sched.next_due_date) : '\u2014'}</span>
           <span>{frequencyLabel(sched)}</span>
@@ -557,8 +554,10 @@ export default function FireProtection() {
           <div key={sys.code}>
             {renderSystemRow(sys)}
             {sys.code === 'KEC' && kecChildren.length > 0 && (
-              <div style={{ paddingLeft: 16, marginTop: 8 }} className="space-y-2">
-                {kecChildren.map(renderSubRow)}
+              <div style={{ padding: '4px 18px 12px 30px' }}>
+                <div style={{ borderLeft: '2px solid #E4DCCB', paddingLeft: 18 }}>
+                  {kecChildren.map((sub, i) => renderSubRow(sub, i === kecChildren.length - 1))}
+                </div>
               </div>
             )}
           </div>
