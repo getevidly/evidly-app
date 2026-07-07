@@ -383,8 +383,8 @@ const SECTION_DEFS: Record<string, SectionDef> = {
 
 /** Section render order */
 const SECTION_ORDER = [
-  'shiftIntelligence', 'operations', 'foodSafety', 'fireSafety', 'programs', 'jurisdiction',
-  'vendors', 'insights', 'tools', 'admin',
+  'foodSafety', 'fireSafety', 'vendors', 'operations', 'shiftIntelligence', 'admin',
+  'programs', 'jurisdiction', 'insights', 'tools',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -394,7 +394,7 @@ const SECTION_ORDER = [
 // ══════════════════════════════════════════════════════════
 
 const TOP_LEVEL_IDS = [
-  'portfolio', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity',
+  'portfolio', 'calendar', 'documents', 'policies', 'policyLens', 'reports', 'kitchenToCommunity',
 ] as const;
 
 // ══════════════════════════════════════════════════════════
@@ -502,11 +502,10 @@ export function getRoleConfig(role: UserRole, kitchenType?: string | null): Role
   // Calendar is always visible to every role
   const topItems: NavItem[] = [];
   for (const id of TOP_LEVEL_IDS) {
-    if (allowed.includes(id) && I[id]) {
+    if ((id === 'calendar' || allowed.includes(id)) && I[id]) {
       topItems.push(I[id]);
     }
   }
-  topItems.push(I.calendar);
 
   // ── Sections ──
   const sections: SidebarSection[] = [];
