@@ -12,11 +12,13 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 // Model: vendors upload certs → AI extracts advisory metadata → client VERIFIES.
 // Human (client) verify = the gate. No AI writes compliance.
 //
-// Dedup: deterministic event_id = org-location-code-date.
+// Dedup: deterministic event_id = org-location-code-date (same as hoodops-webhook).
 //        UNIQUE constraint on vendor_service_records.event_id prevents duplicates.
-//        Immutability trigger blocks UPDATE, so we INSERT-or-skip (not UPSERT).
-//        A later HoodOps webhook for the same service shares the event_id pattern,
-//        so it will also be deduped (its insert will conflict and it handles errors).
+//        VSR rows are IMMUTABLE (trigger blocks UPDATE) — a true UPSERT would error
+//        on the update path. So we SELECT-first, INSERT-if-absent. The UNIQUE
+//        constraint is the race-condition safety net. If a VSR already exists for
+//        this service event, we link the document to it but CANNOT replace the
+//        cert_url on the existing row (immutability). Report created vs. linked.
 //
 // INPUT:
 //   document_id       — compliance_documents.id to verify
@@ -202,63 +204,80 @@ Deno.serve(async (req: Request) => {
       nextDueDate = due.toISOString().slice(0, 10);
     }
 
-    // ── INSERT VSR (dedup via event_id UNIQUE constraint) ────────────────
-    // We use INSERT, not UPSERT, because the immutability trigger on
-    // vendor_service_records blocks UPDATE. If event_id already exists the
-    // UNIQUE constraint rejects the insert and we fall back to SELECT.
+    // ── VSR: SELECT-first, INSERT-if-absent ────────────────────────────
+    // VSR rows are IMMUTABLE (trigger blocks UPDATE). A true UPSERT would
+    // error on the conflict-update path. Instead:
+    //   1. Check if a VSR already exists for this event_id.
+    //   2. If yes → link the document to it (cert_url NOT replaceable).
+    //   3. If no  → INSERT a new VSR.
+    // The UNIQUE constraint on event_id is the race-condition safety net:
+    // if two requests pass the SELECT simultaneously, only one INSERT wins.
     const certificateUrl = `documents:${doc.storage_path}`;
 
     let vsrId: string;
+    let vsrCreated = false;
 
-    const { data: inserted, error: insertErr } = await supabase
+    // Step 1: check for existing VSR with this event_id
+    const { data: existingVsr } = await supabase
       .from("vendor_service_records")
-      .insert({
-        event_id: eventId,
-        organization_id: doc.organization_id,
-        location_id: doc.location_id,
-        safeguard_type,
-        service_type_code,
-        vendor_name: vendorName,
-        vendor_id: effectiveVendorId || null,
-        service_date,
-        cert_number: certNumber,
-        certificate_url: certificateUrl,
-        next_due_date: nextDueDate,
-        source: "document_bridge",
-        notes: `Verified from compliance document ${doc.id}`,
-      })
-      .select("id")
-      .single();
+      .select("id, certificate_url")
+      .eq("event_id", eventId)
+      .maybeSingle();
 
-    if (insertErr) {
-      // UNIQUE constraint on event_id → VSR already exists for this service event
-      if (
-        insertErr.code === "23505" ||
-        insertErr.message?.includes("unique") ||
-        insertErr.message?.includes("duplicate")
-      ) {
-        const { data: existing } = await supabase
-          .from("vendor_service_records")
-          .select("id")
-          .eq("event_id", eventId)
-          .single();
-        if (!existing) {
+    if (existingVsr) {
+      // VSR already exists for this (org, location, code, date) tuple.
+      // Rows are immutable — certificate_url cannot be replaced.
+      vsrId = existingVsr.id;
+    } else {
+      // Step 2: no existing VSR — insert
+      const { data: inserted, error: insertErr } = await supabase
+        .from("vendor_service_records")
+        .insert({
+          event_id: eventId,
+          organization_id: doc.organization_id,
+          location_id: doc.location_id,
+          safeguard_type,
+          service_type_code,
+          vendor_name: vendorName,
+          vendor_id: effectiveVendorId || null,
+          service_date,
+          cert_number: certNumber,
+          certificate_url: certificateUrl,
+          next_due_date: nextDueDate,
+          source: "document_bridge",
+          notes: `Verified from compliance document ${doc.id}`,
+        })
+        .select("id")
+        .single();
+
+      if (insertErr) {
+        // Race condition: another request inserted between our SELECT and INSERT.
+        // UNIQUE constraint on event_id catches it — fetch the winner's row.
+        if (insertErr.code === "23505") {
+          const { data: raceRow } = await supabase
+            .from("vendor_service_records")
+            .select("id")
+            .eq("event_id", eventId)
+            .single();
+          if (!raceRow) {
+            return jsonResponse(
+              { error: "VSR insert failed", detail: insertErr.message },
+              500,
+              corsHeaders,
+            );
+          }
+          vsrId = raceRow.id;
+        } else {
           return jsonResponse(
-            { error: "VSR insert failed and no existing row found", detail: insertErr.message },
+            { error: "VSR insert failed", detail: insertErr.message },
             500,
             corsHeaders,
           );
         }
-        vsrId = existing.id;
       } else {
-        return jsonResponse(
-          { error: "VSR insert failed", detail: insertErr.message },
-          500,
-          corsHeaders,
-        );
+        vsrId = inserted.id;
+        vsrCreated = true;
       }
-    } else {
-      vsrId = inserted.id;
     }
 
     // ── UPDATE SCHEDULE ──────────────────────────────────────────────────
@@ -304,6 +323,7 @@ Deno.serve(async (req: Request) => {
           vendor_name: vendorName,
           vsr_id: vsrId,
           event_id: eventId,
+          vsr_created: vsrCreated,
           schedule: scheduleStatus,
         },
       });
@@ -317,10 +337,14 @@ Deno.serve(async (req: Request) => {
         success: true,
         vsr_id: vsrId,
         event_id: eventId,
+        created: vsrCreated,
+        // VSR rows are immutable. If we linked to an existing VSR, its
+        // certificate_url is the original cert — not this document's file.
+        cert_url_replaced: false,
         schedule: scheduleStatus,
         next_due_date: nextDueDate,
       },
-      201,
+      vsrCreated ? 201 : 200,
       corsHeaders,
     );
   } catch (err) {
