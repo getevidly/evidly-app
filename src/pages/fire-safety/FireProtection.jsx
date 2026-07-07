@@ -16,12 +16,12 @@ import { useRole } from '../../contexts/RoleContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useServiceHistory } from '../../hooks/useServiceHistory';
 import { useServiceCostIntelligence } from '../../hooks/useServiceCostIntelligence';
-import { useServiceSubscriptions } from '../../hooks/useServiceSubscriptions';
 import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
 const RequestServiceModal = lazy(() => import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal })));
+const RescheduleServiceModal = lazy(() => import('../../components/services/RescheduleServiceModal').then(m => ({ default: m.RescheduleServiceModal })));
 
 // ── Icon map (DB icon name → lucide component) ──────────────
 const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert, BellRing, Droplets, FireExtinguisher };
@@ -40,11 +40,12 @@ const SAFEGUARD_LABEL_MAP = {
 };
 
 // ── Helpers ──────────────────────────────────────────────────
-function deriveSystemState(schedule) {
+function deriveSystemState(schedule, isSolidFuelKec = false) {
   if (!schedule?.next_due_date) return 'no_schedule';
   const days = Math.ceil((new Date(schedule.next_due_date + 'T00:00:00') - new Date()) / 86400000);
   if (days < 0) return 'overdue';
-  if (days <= 30) return 'due_soon';
+  const threshold = isSolidFuelKec ? 15 : 7;
+  if (days < threshold) return 'due_soon';
   return 'current';
 }
 
@@ -108,10 +109,11 @@ export default function FireProtection() {
   const [scheduleLoading, setScheduleLoading] = useState(true);
   const [exclusions, setExclusions] = useState([]);
   const [allFireRecords, setAllFireRecords] = useState([]);
+  const [cookingType, setCookingType] = useState(null);
 
-  const subs = useServiceSubscriptions(orgId, locationId);
   const [tooltipOpen, setTooltipOpen] = useState(null);
   const [requestModal, setRequestModal] = useState({ open: false, serviceType: '' });
+  const [rescheduleModal, setRescheduleModal] = useState(null);
 
   // ── Fetch service_type_definitions (fire_safety) ──────────
   useEffect(() => {
@@ -132,7 +134,7 @@ export default function FireProtection() {
     if (!orgId) return;
     supabase
       .from('locations')
-      .select('id, name, jurisdiction_id')
+      .select('id, name, jurisdiction_id, cooking_type')
       .eq('organization_id', orgId)
       .eq('status', 'active')
       .order('name')
@@ -143,6 +145,7 @@ export default function FireProtection() {
           setLocationId(locs[0].id);
           setLocationName(locs[0].name);
           setJurisdictionId(locs[0].jurisdiction_id || undefined);
+          setCookingType(locs[0].cooking_type || null);
         }
       });
   }, [orgId]);
@@ -153,6 +156,7 @@ export default function FireProtection() {
     const loc = locations.find(l => l.id === id);
     setLocationName(loc?.name || '');
     setJurisdictionId(loc?.jurisdiction_id || undefined);
+    setCookingType(loc?.cooking_type || null);
   }, [locations]);
 
   // ── Fetch schedules ───────────────────────────────────────
@@ -163,7 +167,7 @@ export default function FireProtection() {
     setScheduleLoading(true);
     supabase
       .from('location_service_schedules')
-      .select('service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
+      .select('id, service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
       .eq('organization_id', orgId)
       .eq('location_id', locationId)
       .in('service_type_code', codes)
@@ -254,16 +258,17 @@ export default function FireProtection() {
   const renderSystemRow = (sys) => {
     const excluded = isExcluded(sys.code);
     const sched = systemSchedules[sys.code];
-    const state = deriveSystemState(sched);
+    const isSolidFuelKec = sys.code === 'KEC' && cookingType === 'solid_fuel';
+    const state = deriveSystemState(sched, isSolidFuelKec);
     const pill = excluded
       ? { bg: '#F3F4F6', text: '#6B7280', label: exclusionLabel(sys.code) }
       : statusPill(state);
     const SysIcon = getIcon(sys.icon);
     const isKec = sys.code === 'KEC';
     const borderColor = excluded ? colors.border
-      : state === 'overdue' || state === 'no_schedule' ? colors.danger
-      : state === 'due_soon' ? colors.warning
-      : state === 'current' ? colors.success : colors.border;
+      : state === 'overdue' || state === 'no_schedule' ? '#C0392B'
+      : state === 'due_soon' ? '#D9862B'
+      : state === 'current' ? '#2E9E6B' : colors.border;
 
     return (
       <div
@@ -286,7 +291,14 @@ export default function FireProtection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
             <SysIcon size={16} color={excluded ? colors.textMuted : '#D85A30'} />
             <div style={{ minWidth: 0 }}>
-              <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: excluded ? colors.textMuted : colors.textPrimary }}>{sys.name}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: excluded ? colors.textMuted : colors.textPrimary, margin: 0 }}>{sys.name}</p>
+                {isSolidFuelKec && (
+                  <span className="rounded-full" style={{ fontSize: 9, fontWeight: typography.weight.semibold, padding: '1px 6px', background: '#FEE2E2', color: '#991B1B', whiteSpace: 'nowrap' }}>
+                    Solid fuel &middot; high risk
+                  </span>
+                )}
+              </div>
               <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sys)}</p>
             </div>
           </div>
@@ -295,12 +307,21 @@ export default function FireProtection() {
               {pill.label}
             </span>
             {!excluded && (
-              <button
-                onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sys.code }); }}
-                style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
-              >
-                Schedule
-              </button>
+              sched ? (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setRescheduleModal({ code: sys.code, name: sys.name, dueDate: sched.next_due_date || '', scheduleId: sched.id }); }}
+                  style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                >
+                  Request different date
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sys.code }); }}
+                  style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                >
+                  Request schedule
+                </button>
+              )
             )}
           </div>
         </div>
@@ -316,9 +337,13 @@ export default function FireProtection() {
 
   // ── KEC sub-row renderer ──────────────────────────────────
   const renderSubRow = (sub) => {
-    const subKey = 'has' + sub.code;
-    const isSubActive = !subs.loading && subs[subKey];
+    const sched = systemSchedules[sub.code];
+    const state = deriveSystemState(sched);
+    const pill = statusPill(state);
     const SysIcon = getIcon(sub.icon);
+    const borderColor = state === 'overdue' || state === 'no_schedule' ? '#C0392B'
+      : state === 'due_soon' ? '#D9862B'
+      : state === 'current' ? '#2E9E6B' : colors.border;
     return (
       <div
         key={sub.code}
@@ -327,7 +352,7 @@ export default function FireProtection() {
         tabIndex={0}
         onClick={() => navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`)}
         onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`); }}
-        style={{ background: colors.white, padding: 10, boxShadow: shadows.sm, cursor: 'pointer' }}
+        style={{ borderLeft: `3px solid ${borderColor}`, background: colors.white, padding: 10, boxShadow: shadows.sm, cursor: 'pointer' }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <SysIcon size={16} color="#D85A30" style={{ flexShrink: 0 }} />
@@ -354,20 +379,31 @@ export default function FireProtection() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span
             className="rounded-full"
-            style={{
-              fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px',
-              backgroundColor: isSubActive ? '#D1FAE5' : '#FEE2E2',
-              color: isSubActive ? '#065F46' : '#991B1B',
-            }}
+            style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text }}
           >
-            {subs.loading ? '...' : isSubActive ? 'Clear' : 'Needs action'}
+            {pill.label}
           </span>
-          <button
-            onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.code }); }}
-            style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
-          >
-            Schedule
-          </button>
+          {sched ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); setRescheduleModal({ code: sub.code, name: sub.name, dueDate: sched.next_due_date || '', scheduleId: sched.id }); }}
+              style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
+            >
+              Request different date
+            </button>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.code }); }}
+              style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
+            >
+              Request schedule
+            </button>
+          )}
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
+          <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
+          <span>Next: {sched ? fmtDate(sched.next_due_date) : '\u2014'}</span>
+          <span>{frequencyLabel(sched)}</span>
+          {sched?.vendor_name && <span>Vendor: {sched.vendor_name}</span>}
         </div>
       </div>
     );
@@ -390,7 +426,7 @@ export default function FireProtection() {
   })();
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', paddingBottom: 100 }} className="space-y-4 px-4 pt-4">
+    <div style={{ paddingBottom: 100 }} className="space-y-4 px-4 pt-4">
 
       {/* ── 1. Page Header ─────────────────────────────────── */}
       <div>
@@ -639,6 +675,23 @@ export default function FireProtection() {
             defaultServiceType={requestModal.serviceType}
             vendorId={modalVendorId}
             vendorName={modalVendorName}
+            requestSubtype="schedule"
+          />
+        </Suspense>
+      )}
+
+      {/* ── Reschedule Service Modal ──────────────────────── */}
+      {rescheduleModal && orgId && (
+        <Suspense fallback={null}>
+          <RescheduleServiceModal
+            isOpen
+            onClose={() => setRescheduleModal(null)}
+            locationId={locationId || ''}
+            organizationId={orgId}
+            serviceTypeCode={rescheduleModal.code}
+            serviceName={rescheduleModal.name}
+            currentDueDate={rescheduleModal.dueDate}
+            scheduleId={rescheduleModal.scheduleId}
           />
         </Suspense>
       )}
