@@ -3,7 +3,7 @@
  * Used by KitchenExhaustCleaning and FireProtection pages.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,19 +11,19 @@ import { useRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
 import { colors, typography, radius, shadows } from '../../lib/designSystem';
 
-// ── Service type options per category ────────────────────────
-const CATEGORY_SERVICE_TYPES = {
-  hood_cleaning: [
-    { code: 'KEC', safeguardType: 'hood_cleaning', label: 'Kitchen Exhaust Cleaning' },
-    { code: 'FPM', safeguardType: 'hood_cleaning', label: 'Fan Performance' },
-    { code: 'GFX', safeguardType: 'hood_cleaning', label: 'Grease Filter Exchange' },
-    { code: 'RGC', safeguardType: 'hood_cleaning', label: 'Rooftop Grease Containment' },
-  ],
-  fire_protection: [
-    { code: 'FS', safeguardType: 'fire_suppression', label: 'Fire Suppression' },
-    { code: 'FA', safeguardType: 'fire_alarm', label: 'Fire Alarm' },
-    { code: 'SP', safeguardType: 'sprinklers', label: 'Sprinkler System' },
-  ],
+// ── All 8 fire service codes in display order ───────────────
+const FIRE_SERVICE_CODES = ['KEC', 'GFX', 'FPM', 'RGC', 'FS', 'FA', 'SP', 'FE'];
+
+// Code → safeguard_type mapping (mirrors seal-service-record + hoodops-webhook)
+const CODE_TO_SAFEGUARD = {
+  KEC: 'hood_cleaning',
+  GFX: 'hood_cleaning',
+  FPM: 'hood_cleaning',
+  RGC: 'hood_cleaning',
+  FS: 'fire_suppression',
+  FA: 'fire_alarm',
+  SP: 'sprinklers',
+  FE: 'fire_extinguisher',
 };
 
 const COST_ROLES = ['owner_operator', 'executive', 'facilities_manager', 'platform_admin'];
@@ -35,11 +35,27 @@ export default function UploadServiceRecordModal({ category, defaultLocationId, 
   const showCost = COST_ROLES.includes(userRole);
   const orgId = profile?.organization_id;
 
-  const serviceTypes = CATEGORY_SERVICE_TYPES[category] || CATEGORY_SERVICE_TYPES.hood_cleaning;
+  // Fetch labels from service_type_definitions by code (not by category)
+  const [serviceTypes, setServiceTypes] = useState([]);
+  useEffect(() => {
+    supabase
+      .from('service_type_definitions')
+      .select('code, name')
+      .in('code', FIRE_SERVICE_CODES)
+      .eq('is_active', true)
+      .then(({ data }) => {
+        if (!data || data.length === 0) return;
+        const sorted = FIRE_SERVICE_CODES
+          .map(code => data.find(d => d.code === code))
+          .filter(Boolean)
+          .map(d => ({ code: d.code, safeguardType: CODE_TO_SAFEGUARD[d.code], label: d.name }));
+        setServiceTypes(sorted);
+      });
+  }, []);
 
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    serviceTypeCode: serviceTypes[0]?.code || '',
+    serviceTypeCode: FIRE_SERVICE_CODES[0],
     serviceDate: new Date().toISOString().split('T')[0],
     vendorName: '',
     price: '',
@@ -50,7 +66,8 @@ export default function UploadServiceRecordModal({ category, defaultLocationId, 
 
   const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
-  const selectedType = serviceTypes.find(t => t.code === form.serviceTypeCode) || serviceTypes[0];
+  const selectedType = serviceTypes.find(t => t.code === form.serviceTypeCode)
+    || { code: form.serviceTypeCode, safeguardType: CODE_TO_SAFEGUARD[form.serviceTypeCode], label: form.serviceTypeCode };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
