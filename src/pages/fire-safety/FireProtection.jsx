@@ -1,14 +1,15 @@
 /**
  * FireProtection — All fire safety systems: kitchen exhaust, suppression, alarm, sprinkler, extinguisher + Cost Intelligence.
  * Route: /fire-safety/protection
+ * Data-driven off service_type_definitions (Phase 1 flags) + location_service_exclusions.
  */
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Flame, CheckCircle, AlertTriangle, Clock, DollarSign,
-  TrendingUp, TrendingDown, Minus, FileText, Upload, Calendar,
-  Loader2, Shield, Bell, Droplets, FireExtinguisher, Fan, Filter, Info,
+  Flame, DollarSign, TrendingUp, TrendingDown, Minus, FileText, Upload,
+  Loader2, Shield, Droplets, FireExtinguisher, Fan, Filter, Info,
+  ShieldAlert, BellRing, Calendar,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
@@ -20,71 +21,53 @@ import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
-const EquipmentFormModal = lazy(() => import('../../components/equipment/EquipmentFormModal').then(m => ({ default: m.EquipmentFormModal })));
 const RequestServiceModal = lazy(() => import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal })));
+
+// ── Icon map (DB icon name → lucide component) ──────────────
+const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert, BellRing, Droplets, FireExtinguisher };
 
 // ── Constants ────────────────────────────────────────────────
 const FP_SAFEGUARD_TYPES = ['fire_suppression', 'fire_alarm', 'sprinklers'];
 const HISTORY_SAFEGUARD_TYPES = ['fire_suppression', 'fire_alarm', 'sprinklers', 'hood_cleaning'];
 const COST_ROLES = ['owner_operator', 'executive', 'facilities_manager', 'platform_admin'];
 
-const PROTECTION_SYSTEMS = [
-  { safeguardType: 'hood_cleaning',      code: 'KEC', label: 'Kitchen Exhaust System',  Icon: Fan,              subDetail: 'NFPA 96 \u00b7 PSE', group: 'pse', route: '/fire-safety/kec' },
-  { safeguardType: 'fire_suppression',   code: 'FS',  label: 'Fire Suppression',        Icon: Flame,            subDetail: 'NFPA 17A \u00b7 NFPA 96 \u00b7 PSE', group: 'pse' },
-  { safeguardType: 'fire_alarm',         code: 'FA',  label: 'Automatic Fire Alarm',    Icon: Bell,             subDetail: 'NFPA 72 \u00b7 PSE', group: 'pse' },
-  { safeguardType: 'sprinklers',         code: 'SP',  label: 'Fire Sprinkler',          Icon: Droplets,         subDetail: 'NFPA 25 \u00b7 PSE', group: 'pse' },
-  { safeguardType: 'fire_extinguisher',  code: 'FE',  label: 'Fire Extinguishers',      Icon: FireExtinguisher, subDetail: 'NFPA 10', group: 'other' },
-];
+const SAFEGUARD_LABEL_MAP = {
+  hood_cleaning: 'Kitchen Exhaust System',
+  fire_suppression: 'Fire Suppression',
+  fire_alarm: 'Automatic Fire Alarm',
+  sprinklers: 'Fire Sprinkler',
+  fire_extinguisher: 'Fire Extinguishers',
+};
 
-const KEC_SUB_SYSTEMS = [
-  {
-    code: 'GFX',
-    label: 'Grease Filter Exchange (GFX)',
-    Icon: Filter,
-    subDetail: 'NFPA 96 \u00b7 CWA-required',
-    tooltip: 'Replaces saturated baffle filters off-site under NFPA 96. Required for Clean Water Act compliance \u2014 on-site wash discharges into sanitary drain in violation of CWA wastewater pH limits. Without GFX, filter grease saturation also increases fire load.',
-    route: '/fire-safety/kec/gfx',
-    requestServiceType: 'GFX',
-    subKey: 'hasGFX',
-  },
-  {
-    code: 'FPM',
-    label: 'Fan Performance Management (FPM)',
-    Icon: Fan,
-    subDetail: 'NFPA 96',
-    tooltip: 'Preventive maintenance for the exhaust fan under NFPA 96 \u2014 belts, bearings, motor amperage, vibration. Without FPM, fan failure risk goes unidentified between cleanings.',
-    route: '/fire-safety/kec/fpm',
-    requestServiceType: 'FPM',
-    subKey: 'hasFPM',
-  },
-  {
-    code: 'RGC',
-    label: 'Rooftop Grease Containment (RGC)',
-    Icon: Shield,
-    subDetail: 'NFPA 96',
-    tooltip: 'Captures rooftop grease before it accumulates under NFPA 96. Without RGC, rooftop grease creates fire spread vector.',
-    route: '/fire-safety/kec/rgc',
-    requestServiceType: 'RGC',
-    subKey: 'hasRGC',
-  },
-];
-
+// ── Helpers ──────────────────────────────────────────────────
 function deriveSystemState(schedule) {
-  if (!schedule?.next_due_date) return 'not_monitored';
+  if (!schedule?.next_due_date) return 'no_schedule';
   const days = Math.ceil((new Date(schedule.next_due_date + 'T00:00:00') - new Date()) / 86400000);
   if (days < 0) return 'overdue';
   if (days <= 30) return 'due_soon';
   return 'current';
 }
 
-function systemStatePill(state) {
+function statusPill(state) {
   switch (state) {
-    case 'current':  return { bg: '#D1FAE5', text: '#065F46', label: 'Current' };
-    case 'due_soon': return { bg: '#FEF3C7', text: '#92400E', label: 'Due soon' };
-    case 'overdue':  return { bg: '#FEE2E2', text: '#991B1B', label: 'Overdue' };
-    default:         return { bg: '#F3F4F6', text: '#6B7280', label: 'Not yet monitored' };
+    case 'current':  return { bg: '#D1FAE5', text: '#065F46', label: 'Clear' };
+    case 'due_soon': return { bg: '#FEF3C7', text: '#92400E', label: 'At risk' };
+    case 'overdue':  return { bg: '#FEE2E2', text: '#991B1B', label: 'Needs action' };
+    default:         return { bg: '#FEE2E2', text: '#991B1B', label: 'Needs action' };
   }
 }
+
+function stateToTriple(state) {
+  if (state === 'current') return 'clear';
+  if (state === 'due_soon') return 'at_risk';
+  return 'needs_action';
+}
+
+const TRIPLE_COLORS = {
+  needs_action: { bar: '#FCA5A5', pill: '#FEE2E2', text: '#991B1B' },
+  at_risk:      { bar: '#FDE68A', pill: '#FEF3C7', text: '#92400E' },
+  clear:        { bar: '#6EE7B7', pill: '#D1FAE5', text: '#065F46' },
+};
 
 function fmtDate(d) {
   if (!d) return '\u2014';
@@ -113,30 +96,38 @@ export default function FireProtection() {
   const showCost = COST_ROLES.includes(userRole);
   const orgId = profile?.organization_id;
 
-  // Location state
   const [locations, setLocations] = useState([]);
   const [locationId, setLocationId] = useState(null);
   const [locationName, setLocationName] = useState('');
   const [jurisdictionId, setJurisdictionId] = useState(undefined);
   const [showUpload, setShowUpload] = useState(false);
-  const [showAddEquipment, setShowAddEquipment] = useState(false);
 
-  // Per-system schedule data
+  const [fireServices, setFireServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
   const [systemSchedules, setSystemSchedules] = useState({});
   const [scheduleLoading, setScheduleLoading] = useState(true);
-
-  // Per-system latest vendor_service_records
-  const [fpServiceRecords, setFpServiceRecords] = useState({});
-
-  // All fire service records (for page total)
+  const [exclusions, setExclusions] = useState([]);
   const [allFireRecords, setAllFireRecords] = useState([]);
 
-  // KEC sub-system state
   const subs = useServiceSubscriptions(orgId, locationId);
   const [tooltipOpen, setTooltipOpen] = useState(null);
   const [requestModal, setRequestModal] = useState({ open: false, serviceType: '' });
 
-  // Fetch locations
+  // ── Fetch service_type_definitions (fire_safety) ──────────
+  useEffect(() => {
+    supabase
+      .from('service_type_definitions')
+      .select('code, name, short_name, parent_code, nfpa_citation, is_pse, always_required, counts_toward_coverage, icon, is_cwa, tooltip_risk_copy')
+      .eq('category', 'fire_safety')
+      .eq('is_active', true)
+      .order('sort_order')
+      .then(({ data, error }) => {
+        setFireServices(error ? [] : (data || []));
+        setServicesLoading(false);
+      });
+  }, []);
+
+  // ── Fetch locations ───────────────────────────────────────
   useEffect(() => {
     if (!orgId) return;
     supabase
@@ -164,48 +155,42 @@ export default function FireProtection() {
     setJurisdictionId(loc?.jurisdiction_id || undefined);
   }, [locations]);
 
-  // Fetch schedules for all fire systems
+  // ── Fetch schedules ───────────────────────────────────────
   useEffect(() => {
     if (!orgId || !locationId) return;
+    const codes = fireServices.map(s => s.code);
+    if (codes.length === 0) { setScheduleLoading(false); return; }
     setScheduleLoading(true);
     supabase
       .from('location_service_schedules')
       .select('service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
       .eq('organization_id', orgId)
       .eq('location_id', locationId)
-      .in('service_type_code', ['FS', 'FA', 'SP', 'FE', 'KEC', 'GFX', 'FPM', 'RGC'])
+      .in('service_type_code', codes)
       .eq('is_active', true)
       .then(({ data }) => {
         const map = {};
-        for (const r of (data || [])) {
-          map[r.service_type_code] = r;
-        }
+        for (const r of (data || [])) map[r.service_type_code] = r;
         setSystemSchedules(map);
         setScheduleLoading(false);
       });
-  }, [orgId, locationId]);
+  }, [orgId, locationId, fireServices]);
 
-  // Fetch latest vendor_service_records per system
+  // ── Fetch exclusions ──────────────────────────────────────
   useEffect(() => {
-    if (!orgId || !locationId) return;
+    if (!orgId || !locationId) { setExclusions([]); return; }
+    const today = new Date().toISOString().slice(0, 10);
     supabase
-      .from('vendor_service_records')
-      .select('safeguard_type, service_date, vendor_name')
+      .from('location_service_exclusions')
+      .select('service_type_code, source')
       .eq('organization_id', orgId)
       .eq('location_id', locationId)
-      .eq('is_sample', false)
-      .in('safeguard_type', ['fire_suppression', 'fire_alarm', 'sprinklers', 'fire_extinguisher', 'hood_cleaning'])
-      .order('service_date', { ascending: false })
-      .then(({ data }) => {
-        const map = {};
-        for (const r of (data || [])) {
-          if (!map[r.safeguard_type]) map[r.safeguard_type] = r;
-        }
-        setFpServiceRecords(map);
-      });
+      .eq('status', 'active')
+      .or(`expiration_date.is.null,expiration_date.gte.${today}`)
+      .then(({ data, error }) => setExclusions(error ? [] : (data || [])));
   }, [orgId, locationId]);
 
-  // Fetch ALL fire service records (for page total — no limit)
+  // ── Fetch ALL fire service records (page total) ───────────
   useEffect(() => {
     if (!orgId || !locationId) return;
     supabase
@@ -215,76 +200,109 @@ export default function FireProtection() {
       .eq('location_id', locationId)
       .eq('is_sample', false)
       .in('safeguard_type', ['fire_suppression', 'fire_alarm', 'sprinklers', 'fire_extinguisher', 'hood_cleaning'])
-      .then(({ data }) => {
-        setAllFireRecords(data || []);
-      });
+      .then(({ data }) => setAllFireRecords(data || []));
   }, [orgId, locationId]);
 
-  // Hooks
+  // ── Existing hooks (Cost Intelligence untouched) ──────────
   const { data: history, isLoading: historyLoading } = useServiceHistory(orgId, locationId, HISTORY_SAFEGUARD_TYPES, 5);
   const { data: costData, isLoading: costLoading } = useServiceCostIntelligence(orgId, locationId, FP_SAFEGUARD_TYPES, jurisdictionId);
 
-  // Derive per-system state from schedule next_due_date
-  const systemStates = PROTECTION_SYSTEMS.map(sys => ({
-    ...sys,
-    state: deriveSystemState(systemSchedules[sys.code]),
-  }));
+  // ── Derived data ──────────────────────────────────────────
+  const exclusionMap = {};
+  for (const ex of exclusions) {
+    if (!exclusionMap[ex.service_type_code]) exclusionMap[ex.service_type_code] = [];
+    if (!exclusionMap[ex.service_type_code].includes(ex.source)) {
+      exclusionMap[ex.service_type_code].push(ex.source);
+    }
+  }
 
-  const overdueCount = systemStates.filter(s => s.state === 'overdue').length;
-  const dueSoonCount = systemStates.filter(s => s.state === 'due_soon').length;
-  const notMonitoredCount = systemStates.filter(s => s.state === 'not_monitored').length;
-  const monitoredCount = systemStates.length - notMonitoredCount;
+  const topLevel = fireServices.filter(s => !s.parent_code);
+  const kecChildren = fireServices.filter(s => s.parent_code === 'KEC');
+  const pseSystems = topLevel.filter(s => s.is_pse || s.counts_toward_coverage);
+  const requiredSystems = topLevel.filter(s => s.always_required && !s.is_pse);
 
-  // Aggregate banner status — priority: overdue > due soon > not yet monitored > all current
-  const bannerStatus = (() => {
-    if (overdueCount > 0) return { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: `${overdueCount} overdue` };
-    if (dueSoonCount > 0) return { bg: '#FEF3C7', text: '#92400E', border: colors.warning, label: `${dueSoonCount} due soon` };
-    if (notMonitoredCount > 0) return { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: `${notMonitoredCount} not yet monitored` };
-    return { bg: '#D1FAE5', text: '#065F46', border: colors.success, label: 'All systems current' };
-  })();
+  // Coverage hero
+  const coverageSystems = topLevel.filter(s => s.counts_toward_coverage);
+  const excludedCodes = new Set(coverageSystems.filter(s => exclusionMap[s.code]).map(s => s.code));
+  const countedSystems = coverageSystems.filter(s => !excludedCodes.has(s.code));
+  const denominatorM = countedSystems.length;
+  const countedStates = countedSystems.map(sys => ({ ...sys, state: deriveSystemState(systemSchedules[sys.code]) }));
+  const numeratorN = countedStates.filter(s => s.state === 'current').length;
+  const tally = { needs_action: 0, at_risk: 0, clear: 0 };
+  for (const cs of countedStates) tally[stateToTriple(cs.state)]++;
 
-  // Banner sub-detail
-  const bannerSubParts = [`${monitoredCount} active`];
-  if (notMonitoredCount > 0) bannerSubParts.push(`${notMonitoredCount} not yet monitored`);
-  const bannerSubDetail = bannerSubParts.join(' \u00b7 ');
-
-  // Page Total — sum price_charged from ALL fire service records (not the limited history slice)
   const pageTotal = allFireRecords.reduce((sum, rec) => sum + (Number(rec.price_charged) || 0), 0);
+  const getIcon = (iconName) => ICON_MAP[iconName] || Shield;
+  const isExcluded = (code) => !!exclusionMap[code];
+  const exclusionLabel = (code) => {
+    const sources = exclusionMap[code];
+    if (!sources) return null;
+    return 'Excluded by ' + sources.join(' + ');
+  };
+  const citationTag = (sys) => {
+    const parts = [];
+    if (sys.nfpa_citation) parts.push(sys.nfpa_citation);
+    if (sys.is_cwa) parts.push('CWA-required');
+    if (sys.is_pse) parts.push('PSE');
+    if (sys.always_required && !sys.is_pse) parts.push('Always required');
+    return parts.join(' \u00b7 ');
+  };
 
   if (!profile) return null;
 
-  // Shared system row renderer (used by both PSE and Other sections)
-  const renderSystemRow = (sys, sched, pill) => {
+  // ── Row renderer ──────────────────────────────────────────
+  const renderSystemRow = (sys) => {
+    const excluded = isExcluded(sys.code);
+    const sched = systemSchedules[sys.code];
+    const state = deriveSystemState(sched);
+    const pill = excluded
+      ? { bg: '#F3F4F6', text: '#6B7280', label: exclusionLabel(sys.code) }
+      : statusPill(state);
+    const SysIcon = getIcon(sys.icon);
     const isKec = sys.code === 'KEC';
+    const borderColor = excluded ? colors.border
+      : state === 'overdue' || state === 'no_schedule' ? colors.danger
+      : state === 'due_soon' ? colors.warning
+      : state === 'current' ? colors.success : colors.border;
+
     return (
       <div
+        key={sys.code}
         className="rounded-lg"
         role={isKec ? 'button' : undefined}
         tabIndex={isKec ? 0 : undefined}
-        onClick={isKec ? () => navigate(sys.route) : undefined}
-        onKeyDown={isKec ? (e) => { if (e.key === 'Enter') navigate(sys.route); } : undefined}
+        onClick={isKec ? () => navigate('/fire-safety/kec') : undefined}
+        onKeyDown={isKec ? (e) => { if (e.key === 'Enter') navigate('/fire-safety/kec'); } : undefined}
         style={{
-          borderLeft: `3px solid ${sys.state === 'overdue' ? colors.danger : sys.state === 'due_soon' ? colors.warning : sys.state === 'current' ? colors.success : colors.border}`,
+          borderLeft: `3px solid ${borderColor}`,
           background: colors.white,
           padding: '10px 12px',
           boxShadow: shadows.sm,
+          opacity: excluded ? 0.55 : 1,
           cursor: isKec ? 'pointer' : undefined,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <sys.Icon size={16} color="#D85A30" />
-            <div>
-              <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{sys.label}</p>
-              <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{sys.subDetail}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+            <SysIcon size={16} color={excluded ? colors.textMuted : '#D85A30'} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: excluded ? colors.textMuted : colors.textPrimary }}>{sys.name}</p>
+              <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sys)}</p>
             </div>
           </div>
-          <span
-            className="rounded-full"
-            style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text }}
-          >
-            {pill.label}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text, whiteSpace: 'nowrap' }}>
+              {pill.label}
+            </span>
+            {!excluded && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sys.code }); }}
+                style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Schedule
+              </button>
+            )}
+          </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
           <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
@@ -295,6 +313,81 @@ export default function FireProtection() {
       </div>
     );
   };
+
+  // ── KEC sub-row renderer ──────────────────────────────────
+  const renderSubRow = (sub) => {
+    const subKey = 'has' + sub.code;
+    const isSubActive = !subs.loading && subs[subKey];
+    const SysIcon = getIcon(sub.icon);
+    return (
+      <div
+        key={sub.code}
+        className="rounded-lg"
+        role="button"
+        tabIndex={0}
+        onClick={() => navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`)}
+        onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`); }}
+        style={{ background: colors.white, padding: 10, boxShadow: shadows.sm, cursor: 'pointer' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <SysIcon size={16} color="#D85A30" style={{ flexShrink: 0 }} />
+          <p style={{ flex: 1, fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>
+            {sub.name}
+          </p>
+          {sub.tooltip_risk_copy && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
+              style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
+              aria-label={'Info about ' + sub.name}
+            >
+              <Info size={14} color={colors.textMuted} />
+            </button>
+          )}
+        </div>
+        {tooltipOpen === sub.code && sub.tooltip_risk_copy && (
+          <div style={{ fontSize: typography.size.xs, color: colors.textSecondary, background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
+            {sub.tooltip_risk_copy}
+          </div>
+        )}
+        <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, marginBottom: 0 }}>{citationTag(sub)}</p>
+        <div style={{ borderTop: `1px solid ${colors.border}`, margin: '8px 0' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span
+            className="rounded-full"
+            style={{
+              fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px',
+              backgroundColor: isSubActive ? '#D1FAE5' : '#FEE2E2',
+              color: isSubActive ? '#065F46' : '#991B1B',
+            }}
+          >
+            {subs.loading ? '...' : isSubActive ? 'Clear' : 'Needs action'}
+          </span>
+          <button
+            onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.code }); }}
+            style={{ padding: '4px 10px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer' }}
+          >
+            Schedule
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // ── Vendor lookup for RequestServiceModal ──────────────────
+  const modalVendorId = (() => {
+    const code = requestModal.serviceType;
+    if (systemSchedules[code]?.vendor_id) return systemSchedules[code].vendor_id;
+    const child = fireServices.find(s => s.code === code);
+    if (child?.parent_code === 'KEC' && systemSchedules['KEC']?.vendor_id) return systemSchedules['KEC'].vendor_id;
+    return undefined;
+  })();
+  const modalVendorName = (() => {
+    const code = requestModal.serviceType;
+    if (systemSchedules[code]?.vendor_name) return systemSchedules[code].vendor_name;
+    const child = fireServices.find(s => s.code === code);
+    if (child?.parent_code === 'KEC' && systemSchedules['KEC']?.vendor_name) return systemSchedules['KEC'].vendor_name;
+    return undefined;
+  })();
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', paddingBottom: 100 }} className="space-y-4 px-4 pt-4">
@@ -321,39 +414,31 @@ export default function FireProtection() {
         )}
       </div>
 
-      {/* ── 2. System Status Banner ────────────────────────── */}
-      <div
-        className="rounded-lg"
-        style={{
-          borderLeft: `4px solid ${bannerStatus.border}`,
-          background: colors.white,
-          padding: '12px 14px',
-          boxShadow: shadows.sm,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
-              Protection Systems
-            </p>
-            <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 1 }}>{bannerSubDetail}</p>
+      {/* ── 2. Coverage Hero ───────────────────────────────── */}
+      <div className="rounded-lg" style={{ background: colors.white, padding: '14px', boxShadow: shadows.sm }}>
+        <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
+          Protection Systems
+        </p>
+        <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 2 }}>
+          {numeratorN} of {denominatorM} systems have current records
+        </p>
+        {/* Segmented bar */}
+        {denominatorM > 0 && (
+          <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden', marginTop: 10, background: '#E5E7EB' }}>
+            {countedStates.map((cs, i) => (
+              <div key={cs.code} style={{ flex: 1, background: TRIPLE_COLORS[stateToTriple(cs.state)].bar, borderRight: i < countedStates.length - 1 ? '1px solid white' : undefined }} />
+            ))}
           </div>
-          <span
-            className="rounded-full"
-            style={{
-              fontSize: typography.size.xs,
-              fontWeight: typography.weight.semibold,
-              padding: '3px 10px',
-              backgroundColor: bannerStatus.bg,
-              color: bannerStatus.text,
-            }}
-          >
-            {bannerStatus.label}
-          </span>
+        )}
+        {/* Tally */}
+        <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: typography.size.xs }}>
+          <span style={{ color: TRIPLE_COLORS.needs_action.text }}>{tally.needs_action} Needs action</span>
+          <span style={{ color: TRIPLE_COLORS.at_risk.text }}>{tally.at_risk} At risk</span>
+          <span style={{ color: TRIPLE_COLORS.clear.text }}>{tally.clear} Clear</span>
         </div>
       </div>
 
-      {/* ── 3. Cost Intelligence (role-gated) ──────────────── */}
+      {/* ── 3. Cost Intelligence (role-gated — UNCHANGED) ──── */}
       {showCost && (
         <div className="rounded-lg" style={{ background: colors.white, padding: '14px', boxShadow: shadows.sm }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
@@ -400,7 +485,7 @@ export default function FireProtection() {
                 <div style={{ marginBottom: 10 }}>
                   <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginBottom: 4 }}>Per-system breakdown (TTM)</p>
                   {costData.perSystem.map(ps => {
-                    const sysLabel = PROTECTION_SYSTEMS.find(s => s.safeguardType === ps.safeguardType)?.label || ps.safeguardType;
+                    const sysLabel = SAFEGUARD_LABEL_MAP[ps.safeguardType] || ps.safeguardType;
                     return (
                       <div key={ps.safeguardType} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: typography.size.sm }}>
                         <span style={{ color: colors.textSecondary }}>{sysLabel}</span>
@@ -432,114 +517,34 @@ export default function FireProtection() {
         </div>
       )}
 
-      {/* ── 4. Protection Systems ──────────────────────────── */}
+      {/* ── 4. PSE Systems ─────────────────────────────────── */}
       <div className="space-y-2">
-        {/* PSE Systems sub-header */}
         <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2, marginTop: 4 }}>
-          PSE Systems
+          Protection systems &middot; Protective Safeguards Endorsement (PSE)
         </p>
-        {systemStates.filter(s => s.group === 'pse').map((sys) => {
-          const sched = systemSchedules[sys.code];
-          const pill = systemStatePill(sys.state);
-          return (
-            <div key={sys.code}>
-              {renderSystemRow(sys, sched, pill)}
-              {/* KEC sub-systems */}
-              {sys.code === 'KEC' && (
-                <div style={{ paddingLeft: 16, marginTop: 8 }} className="space-y-2">
-                  {KEC_SUB_SYSTEMS.map((sub) => {
-                    const isActive = !subs.loading && subs[sub.subKey];
-                    return (
-                      <div
-                        key={sub.code}
-                        className="rounded-lg"
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => navigate(sub.route)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') navigate(sub.route); }}
-                        style={{
-                          background: colors.white,
-                          padding: 10,
-                          boxShadow: shadows.sm,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <sub.Icon size={16} color="#D85A30" style={{ flexShrink: 0 }} />
-                          <p style={{ flex: 1, fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>
-                            {sub.label}
-                          </p>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
-                            style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
-                            aria-label={'Info about ' + sub.label}
-                          >
-                            <Info size={14} color={colors.textMuted} />
-                          </button>
-                        </div>
-                        {tooltipOpen === sub.code && (
-                          <div style={{ fontSize: typography.size.xs, color: colors.textSecondary, background: '#F9FAFB', borderRadius: 6, padding: '8px 10px', marginTop: 6, lineHeight: 1.4 }}>
-                            {sub.tooltip}
-                          </div>
-                        )}
-                        <p style={{ fontSize: typography.size.xs, color: colors.textMuted, marginTop: 4, marginBottom: 0 }}>
-                          {sub.subDetail}
-                        </p>
-                        <div style={{ borderTop: `1px solid ${colors.border}`, margin: '8px 0' }} />
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span
-                            className="rounded-full"
-                            style={{
-                              fontSize: 10,
-                              fontWeight: typography.weight.semibold,
-                              padding: '2px 8px',
-                              backgroundColor: isActive ? '#D1FAE5' : '#FCEBEB',
-                              color: isActive ? '#065F46' : '#501313',
-                            }}
-                          >
-                            {subs.loading ? '...' : isActive ? 'Active' : 'Not active'}
-                          </span>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sub.requestServiceType }); }}
-                            style={{
-                              padding: '4px 10px',
-                              fontSize: typography.size.xs,
-                              fontWeight: typography.weight.semibold,
-                              color: colors.white,
-                              background: colors.navy,
-                              border: 'none',
-                              borderRadius: 6,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Schedule
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {pseSystems.map((sys) => (
+          <div key={sys.code}>
+            {renderSystemRow(sys)}
+            {sys.code === 'KEC' && kecChildren.length > 0 && (
+              <div style={{ paddingLeft: 16, marginTop: 8 }} className="space-y-2">
+                {kecChildren.map(renderSubRow)}
+              </div>
+            )}
+          </div>
+        ))}
 
-        {/* Other Fire Safety sub-header */}
-        <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2, marginTop: 12 }}>
-          Other Fire Safety
-        </p>
-        {systemStates.filter(s => s.group === 'other').map((sys) => {
-          const sched = systemSchedules[sys.code];
-          const pill = systemStatePill(sys.state);
-          return (
-            <div key={sys.code}>
-              {renderSystemRow(sys, sched, pill)}
-            </div>
-          );
-        })}
+        {/* ── 5. Required · not PSE ────────────────────────── */}
+        {requiredSystems.length > 0 && (
+          <>
+            <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2, marginTop: 12 }}>
+              Required &middot; not PSE
+            </p>
+            {requiredSystems.map((sys) => renderSystemRow(sys))}
+          </>
+        )}
       </div>
 
-      {/* ── 5. Inspection History ──────────────────────────── */}
+      {/* ── 6. Inspection History ─────────────────────────── */}
       <div>
         <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, marginBottom: 6 }}>
           Inspection History
@@ -555,18 +560,12 @@ export default function FireProtection() {
         ) : (
           <div className="space-y-2">
             {history.map((rec) => {
-              const sysLabel = PROTECTION_SYSTEMS.find(s => s.safeguardType === rec.safeguard_type)?.label || rec.safeguard_type;
+              const sysLabel = SAFEGUARD_LABEL_MAP[rec.safeguard_type] || rec.safeguard_type;
               return (
-                <div
-                  key={rec.id}
-                  className="rounded-lg"
-                  style={{ background: colors.white, padding: '10px 12px', boxShadow: shadows.sm }}
-                >
+                <div key={rec.id} className="rounded-lg" style={{ background: colors.white, padding: '10px 12px', boxShadow: shadows.sm }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                      <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.textPrimary }}>
-                        {fmtDate(rec.service_date)}
-                      </p>
+                      <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.textPrimary }}>{fmtDate(rec.service_date)}</p>
                       <p style={{ fontSize: typography.size.xs, color: colors.textSecondary }}>
                         {sysLabel}{rec.vendor_name ? ` \u00b7 ${rec.vendor_name}` : ''}
                       </p>
@@ -591,12 +590,8 @@ export default function FireProtection() {
                 </div>
               );
             })}
-            {/* Page Total */}
             {showCost && pageTotal > 0 && (
-              <div
-                className="rounded-lg"
-                style={{ background: colors.white, padding: '10px 12px', boxShadow: shadows.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-              >
+              <div className="rounded-lg" style={{ background: colors.white, padding: '10px 12px', boxShadow: shadows.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>Total</p>
                 <span className="rounded-full" style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, padding: '2px 8px', background: '#EEF2FF', color: '#3730A3' }}>
                   {fmtCurrency(pageTotal)}
@@ -607,51 +602,21 @@ export default function FireProtection() {
         )}
       </div>
 
-      {/* ── 6. Action Buttons ──────────────────────────────── */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      {/* ── 7. Upload Button ─────────────────────────────── */}
+      <div>
         <button
           onClick={() => setShowUpload(true)}
           style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            padding: '10px 0',
-            fontSize: typography.size.sm,
-            fontWeight: typography.weight.semibold,
-            color: colors.white,
-            background: colors.navy,
-            border: 'none',
-            borderRadius: radius.md,
-            cursor: 'pointer',
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            padding: '10px 0', fontSize: typography.size.sm, fontWeight: typography.weight.semibold,
+            color: colors.white, background: colors.navy, border: 'none', borderRadius: radius.md, cursor: 'pointer',
           }}
         >
           <Upload size={16} /> Upload Inspection Report
         </button>
-        <button
-          onClick={() => setShowAddEquipment(true)}
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            padding: '10px 0',
-            fontSize: typography.size.sm,
-            fontWeight: typography.weight.semibold,
-            color: colors.navy,
-            background: colors.borderLight,
-            border: '1px solid transparent',
-            borderRadius: radius.md,
-            cursor: 'pointer',
-          }}
-        >
-          <Shield size={16} /> Add Protection System
-        </button>
       </div>
 
-      {/* ── Upload Modal ──────────────────────────────────── */}
+      {/* ── Upload Modal ─────────────────────────────────── */}
       {showUpload && (
         <Suspense fallback={null}>
           <UploadServiceRecordModal
@@ -663,18 +628,7 @@ export default function FireProtection() {
         </Suspense>
       )}
 
-      {/* ── Add Equipment Modal ──────────────────────────── */}
-      {showAddEquipment && (
-        <Suspense fallback={null}>
-          <EquipmentFormModal
-            defaultEquipmentType="suppression"
-            onClose={() => setShowAddEquipment(false)}
-            onSuccess={() => setShowAddEquipment(false)}
-          />
-        </Suspense>
-      )}
-
-      {/* ── Request Service Modal (KEC sub-system scheduling) ── */}
+      {/* ── Request Service Modal ────────────────────────── */}
       {requestModal.open && orgId && (
         <Suspense fallback={null}>
           <RequestServiceModal
@@ -683,8 +637,8 @@ export default function FireProtection() {
             locationId={locationId || ''}
             organizationId={orgId}
             defaultServiceType={requestModal.serviceType}
-            vendorId={systemSchedules['KEC']?.vendor_id || undefined}
-            vendorName={systemSchedules['KEC']?.vendor_name || undefined}
+            vendorId={modalVendorId}
+            vendorName={modalVendorName}
           />
         </Suspense>
       )}

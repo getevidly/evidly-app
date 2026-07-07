@@ -196,7 +196,7 @@ export default function KitchenExhaustCleaning() {
 
   const kecBannerStatus = (() => {
     if (!latestKecServiceDate) {
-      return { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: 'Not yet monitored' };
+      return { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: 'Needs action' };
     }
     const daysSince = Math.ceil((new Date() - new Date(latestKecServiceDate + 'T00:00:00')) / 86400000);
     if (daysSince <= 90) return { bg: '#D1FAE5', text: '#065F46', border: colors.success, label: 'In compliance' };
@@ -445,11 +445,11 @@ export default function KitchenExhaustCleaning() {
                       fontSize: 10,
                       fontWeight: typography.weight.semibold,
                       padding: '2px 8px',
-                      backgroundColor: isActive ? '#D1FAE5' : '#FCEBEB',
-                      color: isActive ? '#065F46' : '#501313',
+                      backgroundColor: isActive ? '#D1FAE5' : '#FEE2E2',
+                      color: isActive ? '#065F46' : '#991B1B',
                     }}
                   >
-                    {subs.loading ? '...' : isActive ? 'Active' : 'Not active'}
+                    {subs.loading ? '...' : isActive ? 'Clear' : 'Needs action'}
                   </span>
                   <button
                     onClick={(e) => { e.stopPropagation(); setRequestModal({ open: true, serviceType: sys.requestServiceType }); }}

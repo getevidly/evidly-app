@@ -130,7 +130,7 @@ export default function FanPerformanceManagement() {
 
   const overallDays = schedule ? daysUntil(schedule.next_due_date) : null;
   const overallStatus = hasRecords === false && !schedule
-    ? { bg: '#F3F4F6', text: '#6B7280', border: colors.border, label: 'Service not active' }
+    ? { bg: '#FEE2E2', text: '#991B1B', border: colors.danger, label: 'Needs action' }
     : statusColor(overallDays);
 
   if (!profile) return null;
