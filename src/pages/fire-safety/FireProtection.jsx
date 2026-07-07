@@ -335,43 +335,38 @@ export default function FireProtection() {
     );
   };
 
-  // ── KEC sub-row renderer ──────────────────────────────────
+  // ── KEC sub-row renderer (nested inside KEC card, no card styling, no icon) ──
   const renderSubRow = (sub) => {
     const sched = systemSchedules[sub.code];
     const state = deriveSystemState(sched);
     const pill = statusPill(state);
-    const SysIcon = getIcon(sub.icon);
     const borderColor = state === 'overdue' || state === 'no_schedule' ? '#C0392B'
       : state === 'due_soon' ? '#D9862B'
       : state === 'current' ? '#2E9E6B' : colors.border;
     return (
       <div
         key={sub.code}
-        className="rounded-lg"
         role="button"
         tabIndex={0}
         onClick={() => navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`)}
         onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/fire-safety/kec/${sub.code.toLowerCase()}`); }}
-        style={{ borderLeft: `3px solid ${borderColor}`, background: colors.white, padding: '10px 12px', boxShadow: shadows.sm, cursor: 'pointer' }}
+        style={{ borderLeft: `3px solid ${borderColor}`, padding: '8px 12px', cursor: 'pointer' }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
-            <SysIcon size={16} color="#D85A30" />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>{sub.name}</p>
-                {sub.tooltip_risk_copy && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
-                    style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
-                    aria-label={'Info about ' + sub.name}
-                  >
-                    <Info size={14} color={colors.textMuted} />
-                  </button>
-                )}
-              </div>
-              <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sub)}</p>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>{sub.name}</p>
+              {sub.tooltip_risk_copy && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setTooltipOpen(tooltipOpen === sub.code ? null : sub.code); }}
+                  style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', flexShrink: 0 }}
+                  aria-label={'Info about ' + sub.name}
+                >
+                  <Info size={14} color={colors.textMuted} />
+                </button>
+              )}
             </div>
+            <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>{citationTag(sub)}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text, whiteSpace: 'nowrap' }}>
@@ -399,7 +394,7 @@ export default function FireProtection() {
             {sub.tooltip_risk_copy}
           </div>
         )}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 6, fontSize: typography.size.xs, color: colors.textSecondary }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 4, fontSize: typography.size.xs, color: colors.textSecondary }}>
           <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
           <span>Next: {sched ? fmtDate(sched.next_due_date) : '\u2014'}</span>
           <span>{frequencyLabel(sched)}</span>
