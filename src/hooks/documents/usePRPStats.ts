@@ -1,5 +1,5 @@
 /**
- * usePRPStats — computes Predict / Reduce / Prove card values.
+ * usePRPStats — computes Predict / Prove card values.
  * Uses static COMMON_REQUIRED_RECORDS for the "required not on file" count.
  */
 import { useMemo } from 'react';
@@ -11,10 +11,6 @@ export interface PRPStats {
     expiringIn30Days: number;
     requiredNotOnFile: number | null;
     total: number;
-  };
-  reduce: {
-    state: 'pending';
-    dollarRange: null;
   };
   prove: {
     currentCount: number;
@@ -53,7 +49,6 @@ export function usePRPStats(
 
     return {
       predict: { expiringIn30Days, requiredNotOnFile, total },
-      reduce: { state: 'pending' as const, dollarRange: null },
       prove: { currentCount },
     };
   }, [documents, prpEnabled]);

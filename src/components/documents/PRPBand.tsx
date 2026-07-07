@@ -11,7 +11,7 @@ const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
 
 export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* ── PREDICT ────────────────────────────────────── */}
       <button
         type="button"
@@ -38,30 +38,6 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
           )}
         </div>
       </button>
-
-      {/* ── REDUCE (pending state) ─────────────────────── */}
-      <div
-        className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left pending"
-        style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
-      >
-        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>
-          REDUCE
-        </div>
-        <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
-        <div
-          className="mt-2 font-normal"
-          style={{ color: prp.reduce.accent, fontSize: '18px', fontFamily: 'Inter, sans-serif' }}
-        >
-          Exposure pending
-        </div>
-
-        <div className="mt-3 pt-3" style={{ borderTop: '1px dashed #E2DDD4' }}>
-          <p className="text-[11px] text-[#6B7F96] leading-relaxed">
-            Range will appear once your county's citation sources are verified for your record types.
-            We don't show a number we can't back.
-          </p>
-        </div>
-      </div>
 
       {/* ── PROVE ──────────────────────────────────────── */}
       <div
