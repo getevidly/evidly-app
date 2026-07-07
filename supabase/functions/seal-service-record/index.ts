@@ -304,6 +304,24 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // ── STEP 10b: UPDATE SCHEDULE ───────────────────────────────────────
+    // Advance last_service_date + next_due_date on the schedule so the
+    // Fire Protection page reflects the seal immediately. Mirrors the
+    // hoodops-webhook and confirm-seal-service pattern.
+    if (lssRow) {
+      await supabase
+        .from("location_service_schedules")
+        .update({
+          last_service_date: service_date as string,
+          next_due_date: nextDueDate,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("organization_id", organization_id)
+        .eq("location_id", location_id)
+        .eq("service_type_code", service_type_code)
+        .eq("is_active", true);
+    }
+
     // ── STEP 11: RETURN ─────────────────────────────────────────────────
     return jsonResponse(
       {
