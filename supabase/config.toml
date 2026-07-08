@@ -375,6 +375,7 @@ allow_dynamic_registration = false
 #   trigger-crawl          — admin-invoked, validates Bearer token + email domain
 #   classify-signals       — admin-invoked, validates Bearer token + @getevidly.com
 #   violation-crawl        — cron job, no user context
+#   generate-report        — public GET by share_token; POST validates Bearer internally
 #   vendor-secure-upload   — public vendor upload, token in URL is auth
 #
 # verify_jwt = true (DEFAULT — all other functions):
@@ -409,6 +410,11 @@ verify_jwt = false
 
 # Violation crawl — cron job, no user context needed
 [functions.violation-crawl]
+verify_jwt = false
+
+# Report viewer — public GET by share_token (token is the auth).
+# POST validates Bearer + user internally (auth.getUser -> 401).
+[functions.generate-report]
 verify_jwt = false
 
 # Vendor secure upload — public endpoint for vendors uploading documents
