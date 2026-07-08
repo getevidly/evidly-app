@@ -22,7 +22,7 @@ import { logger } from "../_shared/logger.ts";
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
 // Top-level safeguards only. Sub-services (GFX/FPM/RGC) inherit from KEC.
-const SAFEGUARD_CODES = ["KEC", "FS", "FA", "SP"] as const;
+const SAFEGUARD_CODES = ["KEC", "FS", "FA", "SP", "FE"] as const;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -131,6 +131,7 @@ The safeguard systems to evaluate:
 2. FS — Fire Suppression System (wet chemical suppression, Ansul, etc.)
 3. FA — Fire Alarm (detection and alarm systems)
 4. SP — Fire Sprinkler (sprinkler system)
+5. FE �� Fire Extinguisher (portable fire extinguishers, NFPA 10)
 
 For EACH safeguard, determine:
 - maintenance_party: who is responsible for maintaining/servicing this system ("tenant", "landlord", "shared", or "unspecified")
@@ -147,7 +148,7 @@ For EACH safeguard, determine:
 CRITICAL RULES:
 - If the lease is SILENT about a safeguard (doesn't mention it at all), still report it with finding_type "silent" and parties as "unspecified". Silence IS a finding.
 - If language is ambiguous, report finding_type "ambiguous" with your best interpretation in the parties but a lower confidence.
-- Do NOT guess or infer beyond what the lease text states. If it says "Tenant shall maintain all fire safety equipment" that covers KEC/FS/FA/SP. If it only says "Tenant maintains the hood system" that's only KEC.
+- Do NOT guess or infer beyond what the lease text states. If it says "Tenant shall maintain all fire safety equipment" that covers KEC/FS/FA/SP/FE. If it only says "Tenant maintains the hood system" that's only KEC.
 - Look for: maintenance/repair clauses, insurance requirement clauses, indemnification clauses, exhibit/addendum schedules, and any fire/safety-specific provisions.
 - "Shared" means BOTH parties have explicit responsibilities for that system.
 
@@ -164,7 +165,8 @@ Respond in this EXACT JSON format and nothing else:
     },
     "FS": { ... same shape ... },
     "FA": { ... same shape ... },
-    "SP": { ... same shape ... }
+    "SP": { ... same shape ... },
+    "FE": { ... same shape ... }
   },
   "lease_summary": "One sentence describing the overall responsibility allocation pattern in this lease",
   "extraction_notes": ["any caveats or issues encountered reading the document"]
