@@ -445,6 +445,7 @@ export const DOCUMENT_TYPE_OPTIONS = [
   // Facility
   { value: 'business_license', label: 'Business License', pillar: 'facility' },
   { value: 'certificate_occupancy', label: 'Certificate of Occupancy', pillar: 'facility' },
+  { value: 'lease_agreement', label: 'Lease Agreement', pillar: 'facility' },
   { value: 'grease_trap_records', label: 'Grease Trap Record', pillar: 'facility' },
   { value: 'backflow_test', label: 'Backflow Test Report', pillar: 'facility' },
   // Unknown

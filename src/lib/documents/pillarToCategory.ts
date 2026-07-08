@@ -7,6 +7,7 @@ export function pillarToCategory(pillar: string): string {
     case 'fire_safety': return 'service';
     case 'food_safety': return 'kitchen';
     case 'vendor':      return 'business';
+    case 'facility':    return 'business';
     default:            return 'kitchen';
   }
 }

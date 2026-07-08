@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Download, X, Clock, Send, RefreshCw, FileText, Archive, ShieldAlert, ShieldCheck, Lock, Loader2 } from 'lucide-react';
+import { Download, X, Clock, Send, RefreshCw, FileText, Archive, ShieldAlert, ShieldCheck, Lock, Loader2, FileSearch } from 'lucide-react';
 import { Modal } from '../../ui/Modal';
 import { StatusPill } from '../StatusPill';
 import { RequestStateBadge } from '../RequestStateBadge';
@@ -8,6 +8,7 @@ import { relativeTime, expiryLabel } from '../../../lib/relativeTime';
 import { supabase } from '../../../lib/supabase';
 import { getSignedUrl, BUCKETS } from '../../../lib/storage';
 import type { EnrichedDocument } from '../../../hooks/documents/useDocumentsByTab';
+import { useLocations } from '../../../hooks/api/useLocations';
 
 interface DocumentDetailModalProps {
   doc: EnrichedDocument;
@@ -66,6 +67,14 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
+
+  // Lease extraction state
+  const isLease = doc.type === 'lease_agreement';
+  const { data: orgLocations } = useLocations();
+  const [leaseExtracting, setLeaseExtracting] = useState(false);
+  const [leaseExtractDone, setLeaseExtractDone] = useState(false);
+  const [leaseExtractError, setLeaseExtractError] = useState<string | null>(null);
+  const [leaseLocationId, setLeaseLocationId] = useState<string>(doc.location_id || '');
 
   // Fetch signed URL for inline preview
   useEffect(() => {
@@ -251,6 +260,53 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
     }
   };
 
+  const handleLeaseExtraction = async () => {
+    const locId = doc.location_id || leaseLocationId;
+    if (!locId) {
+      toast.error('Select a location for this lease before running extraction.');
+      return;
+    }
+    // If doc has no location_id, persist the chosen one
+    if (!doc.location_id && locId) {
+      const { error: updErr } = await supabase
+        .from('compliance_documents')
+        .update({ location_id: locId })
+        .eq('id', doc.id);
+      if (updErr) {
+        toast.error(`Failed to assign location: ${updErr.message}`);
+        return;
+      }
+    }
+    setLeaseExtracting(true);
+    setLeaseExtractError(null);
+    setLeaseExtractDone(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('extract-lease-responsibility', {
+        body: {
+          lease_document_id: doc.id,
+          organization_id: doc.organization_id,
+          location_id: locId,
+        },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        setLeaseExtractError(result.error);
+        toast.error(`Extraction failed: ${result.error}`);
+      } else {
+        setLeaseExtractDone(true);
+        toast.success(`Extraction complete — ${result.staged_count || 0} findings sent to review`);
+        onRefresh();
+      }
+    } catch (err: any) {
+      const msg = err?.message || 'Extraction failed';
+      setLeaseExtractError(msg);
+      toast.error(msg);
+    } finally {
+      setLeaseExtracting(false);
+    }
+  };
+
   // AI insight line — contextual one-liner
   const aiInsight = getInsight(doc);
 
@@ -324,6 +380,73 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
                 <Lock size={13} /> {sealing ? 'Sealing\u2026' : 'Confirm & seal'}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Lease extraction panel */}
+        {isLease && (
+          <div className="rounded-lg border p-4" style={{
+            borderColor: leaseExtractDone ? '#A7F3D0' : leaseExtractError ? '#FECACA' : '#D1D5DB',
+            backgroundColor: leaseExtractDone ? '#F0FDF4' : leaseExtractError ? '#FEF2F2' : '#F9FAFB',
+          }}>
+            <div className="flex items-start gap-2 mb-3">
+              <FileSearch size={15} className="mt-0.5" style={{ color: leaseExtractDone ? '#059669' : '#1E2D4D' }} />
+              <div>
+                <p className="text-[12px] font-semibold" style={{ color: '#1E2D4D' }}>
+                  Lease Responsibility Extraction
+                </p>
+                <p className="text-[11px] mt-0.5" style={{ color: '#6B7280' }}>
+                  {leaseExtractDone
+                    ? 'Extraction complete — findings are being reviewed by the admin team.'
+                    : leaseExtracting
+                      ? 'Reading lease and extracting maintenance and notification responsibilities…'
+                      : 'Run the AI extraction to identify who is responsible for each protective safeguard (hood cleaning, fire suppression, alarms, sprinklers, extinguishers).'}
+                </p>
+              </div>
+            </div>
+            {leaseExtractError && (
+              <p className="text-[11px] text-red-600 mb-3">{leaseExtractError}</p>
+            )}
+            {!leaseExtractDone && !leaseExtracting && !doc.location_id && (
+              <div className="mb-3">
+                <label className="block text-[11px] font-bold text-[#8A93A6] uppercase tracking-wider mb-1">
+                  Location (required)
+                </label>
+                <select
+                  value={leaseLocationId}
+                  onChange={(e) => setLeaseLocationId(e.target.value)}
+                  className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
+                >
+                  <option value="">Select a kitchen…</option>
+                  {(orgLocations || []).map((loc) => (
+                    <option key={loc.id} value={loc.id}>{loc.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {!leaseExtractDone && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleLeaseExtraction}
+                  disabled={leaseExtracting || (!doc.location_id && !leaseLocationId)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                  style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+                >
+                  {leaseExtracting ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin" />
+                      Extracting…
+                    </>
+                  ) : (
+                    <>
+                      <FileSearch size={13} />
+                      Run lease extraction
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
