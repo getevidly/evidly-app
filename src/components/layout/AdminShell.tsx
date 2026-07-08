@@ -89,6 +89,12 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'Lease Intake',
+    items: [
+      { label: 'Queue',              path: '/admin/lease-queue' },
+    ],
+  },
+  {
     title: 'Content & Intelligence',
     items: [
       { label: 'EvidLY Intelligence',       path: '/admin/intelligence',              perm: 'canIntelligence' },

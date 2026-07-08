@@ -203,6 +203,7 @@ const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const FeatureBaselineTracker = lazy(() => import('./pages/admin/FeatureBaselineTracker'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const PolicyLensQueue = lazy(() => import('./pages/admin/PolicyLensQueue'));
+const LeaseQueue = lazy(() => import('./pages/admin/LeaseQueue'));
 const PolicyLensReleased = lazy(() => import('./pages/admin/PolicyLensReleased'));
 const PolicyLensMessages = lazy(() => import('./pages/admin/PolicyLensMessages'));
 const AdvisorBriefings = lazy(() => import('./pages/admin/AdvisorBriefings'));
@@ -859,6 +860,7 @@ function AppRoutes() {
           <Route path="/admin/feature-baseline" element={<FeatureBaselineTracker />} />
           <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
           <Route path="/admin/policy-lens" element={<PolicyLensQueue />} />
+          <Route path="/admin/lease-queue" element={<LeaseQueue />} />
           <Route path="/admin/policy-lens/released" element={<PolicyLensReleased />} />
           <Route path="/admin/policy-lens/messages" element={<PolicyLensMessages />} />
           <Route path="/admin/policy-lens/:intakeId" element={<ExtractionDetail />} />
