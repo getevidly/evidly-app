@@ -4,10 +4,13 @@
  * Header location selector for multi-location orgs.
  * "All locations (N)" + individual location pills with health dots.
  * Single-location orgs: renders nothing.
+ *
+ * Health dots now derived from canonical posture via PortfolioDataContext
+ * instead of independent useLocationHealthData computation.
  */
 
 import { useDashboardLocation } from '../../contexts/DashboardLocationContext';
-import { useLocationHealthData, type HealthState } from '../../hooks/useLocationHealthData';
+import { usePortfolioDataContext, worstPosture, postureToHealth, type HealthState } from '../../contexts/PortfolioDataContext';
 
 const DOT_COLORS: Record<HealthState, string> = {
   coral: '#C75543',
@@ -29,10 +32,16 @@ function HealthDot({ health }: { health: HealthState }) {
 }
 
 export function LocationSwitcher() {
-  const { selectedLocationId, setSelectedLocationId, locationCount, isMultiLocation } = useDashboardLocation();
-  const { data: healthData } = useLocationHealthData();
+  const { selectedLocationId, setSelectedLocationId, locations, locationCount, isMultiLocation } = useDashboardLocation();
+  const { locations: portfolioLocs } = usePortfolioDataContext();
 
   if (!isMultiLocation) return null;
+
+  // Build health lookup from canonical posture
+  const healthMap = new Map<string, HealthState>();
+  for (const loc of portfolioLocs) {
+    healthMap.set(loc.id, postureToHealth(worstPosture(loc.foodStatus, loc.fireStatus)));
+  }
 
   const isAll = selectedLocationId === null;
 
@@ -45,17 +54,18 @@ export function LocationSwitcher() {
       >
         All locations ({locationCount})
       </button>
-      {healthData.map(loc => {
-        const isActive = selectedLocationId === loc.locationId;
+      {locations.map(loc => {
+        const isActive = selectedLocationId === loc.id;
+        const health = healthMap.get(loc.id) || 'green';
         return (
           <button
-            key={loc.locationId}
+            key={loc.id}
             type="button"
             className={`loc-pill${isActive ? ' active' : ''}`}
-            onClick={() => setSelectedLocationId(loc.locationId)}
+            onClick={() => setSelectedLocationId(loc.id)}
           >
-            <HealthDot health={loc.health} />
-            {loc.locationName}
+            <HealthDot health={health} />
+            {loc.name}
           </button>
         );
       })}

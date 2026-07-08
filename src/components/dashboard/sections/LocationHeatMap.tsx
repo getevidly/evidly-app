@@ -4,18 +4,31 @@
  * All-locations mode only. One tile per location showing health state,
  * three mini-numbers (signals/open/drift), and expandable detail.
  *
- * Health state:
- *   coral  = drift > 0 OR critical unread > 0
- *   teal   = open work or unread (non-critical)
- *   green  = clean
+ * Health state now derived from canonical posture via PortfolioDataContext
+ * (usePortfolioData) instead of independent task/temperature computation.
+ *   alarm → coral, watch → teal, solid → green
  *
- * Tile tap expands inline detail with Predict/Reduce/Prove/Temperature rows
- * and "Open this location" button.
+ * Temperature drift count is still sourced from useTemperatureState
+ * (unique sensor data not part of posture).
  */
 
 import { useState } from 'react';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
-import { useLocationHealthData, type LocationHealth, type HealthState } from '../../../hooks/useLocationHealthData';
+import { usePortfolioDataContext, worstPosture, postureToHealth, type HealthState } from '../../../contexts/PortfolioDataContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useOrgSummary } from '../../../hooks/useOrgSummary';
+import { useTemperatureState } from '../../../lib/canonicalQueries/temperature-state';
+
+export type { HealthState };
+
+export interface LocationHealth {
+  locationId: string;
+  locationName: string;
+  openTasks: number;
+  driftCount: number;
+  signalCount: number;
+  health: HealthState;
+}
 
 const HEALTH_LABELS: Record<HealthState, string> = {
   coral: 'Needs attention',
@@ -92,11 +105,31 @@ function HeatMapTile({ loc, isExpanded, onToggle, onSelect }: {
 
 export function LocationHeatMap() {
   const { selectedLocationId, setSelectedLocationId, isMultiLocation } = useDashboardLocation();
-  const { data: healthData, loading } = useLocationHealthData();
+  const { locations: portfolioLocs, loading: portfolioLoading } = usePortfolioDataContext();
+  const { profile } = useAuth();
+  const orgId = profile?.organization_id || '';
+  const { timezone } = useOrgSummary();
+  const { data: tempData, isLoading: tempLoading } = useTemperatureState({ orgId, tz: timezone });
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // Only render in All mode for multi-location orgs
   if (!isMultiLocation || selectedLocationId !== null) return null;
+
+  const loading = portfolioLoading || tempLoading;
+
+  // Map portfolio posture → health state, keep temperature drift for display
+  const healthData: LocationHealth[] = portfolioLocs.map(loc => {
+    const health = postureToHealth(worstPosture(loc.foodStatus, loc.fireStatus));
+    const driftCount = tempData?.byLocation?.[loc.id]?.counts?.failing ?? 0;
+    return {
+      locationId: loc.id,
+      locationName: loc.name,
+      openTasks: loc.openCount,
+      driftCount,
+      signalCount: 0,
+      health,
+    };
+  });
 
   if (loading) {
     return (

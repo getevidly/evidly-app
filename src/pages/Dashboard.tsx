@@ -9,6 +9,7 @@ import { DashboardSplash } from '../components/dashboard/DashboardSplash';
 import { DashboardComposition } from '../components/dashboard/DashboardComposition';
 import { DashboardWelcome } from '../components/dashboard/DashboardWelcome';
 import { DashboardLocationProvider } from '../contexts/DashboardLocationContext';
+import { PortfolioDataProvider } from '../contexts/PortfolioDataContext';
 import { LocationSwitcher } from '../components/dashboard/LocationSwitcher';
 
 export function Dashboard() {
@@ -38,19 +39,21 @@ export function Dashboard() {
 
   return (
     <DashboardLocationProvider>
-      <div>
-        {showWelcome && (
-          <WelcomeModal
-            firstName={welcomeFirstName}
-            onDismiss={() => setShowWelcome(false)}
-          />
-        )}
-        <SignalAlertBanner />
-        {!showWelcome && <PushOptInBanner />}
-        <DashboardWelcome />
-        <LocationSwitcher />
-        <DashboardComposition />
-      </div>
+      <PortfolioDataProvider>
+        <div>
+          {showWelcome && (
+            <WelcomeModal
+              firstName={welcomeFirstName}
+              onDismiss={() => setShowWelcome(false)}
+            />
+          )}
+          <SignalAlertBanner />
+          {!showWelcome && <PushOptInBanner />}
+          <DashboardWelcome />
+          <LocationSwitcher />
+          <DashboardComposition />
+        </div>
+      </PortfolioDataProvider>
     </DashboardLocationProvider>
   );
 }
