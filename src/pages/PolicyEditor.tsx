@@ -155,6 +155,7 @@ export function PolicyEditor() {
   }
 
   const categoryLabel = (policy.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const allSectionsEmpty = sections.length > 0 && sections.every(s => !s.content?.trim());
 
   return (
     <div className="p-6 pb-24 space-y-5">
@@ -220,6 +221,15 @@ export function PolicyEditor() {
           </div>
         </div>
       </div>
+
+      {/* All-empty banner (scaffolding template) */}
+      {allSectionsEmpty && (
+        <div className="bg-[#FAF7F0] border border-[#E5E0D8] rounded-lg px-4 py-3">
+          <p className="text-sm text-[#1E2D4D]/60 italic">
+            This is a template outline — section content will be added.
+          </p>
+        </div>
+      )}
 
       {/* Section list */}
       <div className="space-y-2">
@@ -324,9 +334,15 @@ export function PolicyEditor() {
                     </div>
                   ) : (
                     <div className="pt-3">
-                      <p className="text-sm text-[#1E2D4D]/80 whitespace-pre-wrap leading-relaxed">
-                        {section.content || '(No content)'}
-                      </p>
+                      {section.content ? (
+                        <p className="text-sm text-[#1E2D4D]/80 whitespace-pre-wrap leading-relaxed">
+                          {section.content}
+                        </p>
+                      ) : !allSectionsEmpty ? (
+                        <p className="text-sm text-[#1E2D4D]/40 italic">
+                          Content for this section hasn't been added yet.
+                        </p>
+                      ) : null}
                     </div>
                   )}
                 </div>

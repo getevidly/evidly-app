@@ -307,9 +307,14 @@ function AdoptModal({ templates, adoptedIds, adopting, loading, onAdopt, onClose
                   >
                     <div className="min-w-0 flex-1">
                       <span className="text-sm font-medium text-[#1E2D4D] block truncate">{t.title}</span>
-                      <span className="text-[11px] text-[#1E2D4D]/50">
-                        {(t.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] text-[#1E2D4D]/50">
+                          {(t.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                        </span>
+                        {Array.isArray(t.body_sections) && t.body_sections.length > 0 && t.body_sections.every(s => !s.content?.trim()) && (
+                          <span className="text-[10px] text-[#1E2D4D]/40 italic">&middot; Outline</span>
+                        )}
+                      </div>
                     </div>
                     {alreadyAdopted ? (
                       <span className="flex items-center gap-1 text-[11px] text-[#2E7D32] font-medium">
