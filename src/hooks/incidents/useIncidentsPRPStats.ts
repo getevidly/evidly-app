@@ -24,7 +24,7 @@ export interface IncidentsPRPStats {
 }
 
 const MS_24H = 24 * 60 * 60 * 1000;
-const OPEN_STATUSES = ['open', 'reported', 'assigned', 'investigating', 'in_progress'];
+const OPEN_STATUSES = ['reported', 'assigned', 'in_progress'];
 
 /**
  * Returns the start of the current ISO week (Monday 00:00).

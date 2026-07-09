@@ -852,7 +852,7 @@ export function IncidentLog() {
         title: newTitle,
         description: newDescription,
         location_name: newLocation,
-        status: 'open',
+        status: 'reported',
         assigned_to: assignee,
         reported_by: user?.id ?? null,
         photos: newPhotos,
@@ -869,8 +869,8 @@ export function IncidentLog() {
       if (inserted) {
         insertedDbId = inserted.id;
         await supabase.from('incident_timeline').insert([
-          { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
-          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: 'System' },
+          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: user?.id ?? null },
+          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'reported', performed_by: 'System' },
         ]);
       }
     }
@@ -884,7 +884,7 @@ export function IncidentLog() {
       title: newTitle,
       description: newDescription,
       location: newLocation,
-      status: 'open',
+      status: 'reported',
       assignedTo: assignee ?? '',
       reportedBy: user?.id ?? '',
       createdAt: nowIso,
@@ -908,7 +908,7 @@ export function IncidentLog() {
   const handleTakeAction = async () => {
     if (!selectedIncident || !actionText.trim()) return;
     const updated = { ...selectedIncident };
-    updated.status = 'investigating';
+    updated.status = 'in_progress';
     updated.correctiveAction = actionText;
     updated.actionChips = actionChips;
     updated.updatedAt = new Date().toISOString();
@@ -916,7 +916,7 @@ export function IncidentLog() {
     updated.timeline = [...updated.timeline, {
       id: `t-${Date.now()}`,
       action: `Corrective action: ${actionText}${estLabel}`,
-      status: 'investigating',
+      status: 'in_progress',
       user: user?.id ?? '',
       timestamp: new Date().toISOString(),
       photos: actionPhotos.length > 0 ? actionPhotos : undefined,
@@ -928,7 +928,7 @@ export function IncidentLog() {
         return;
       }
       await supabase.from('incidents').update({
-        status: 'investigating',
+        status: 'in_progress',
         corrective_action: actionText,
         action_chips: actionChips,
         updated_at: new Date().toISOString(),
@@ -937,7 +937,7 @@ export function IncidentLog() {
       await supabase.from('incident_timeline').insert({
         incident_id: selectedIncident.dbId,
         action: `Corrective action: ${actionText}${estLabel}`,
-        status: 'investigating',
+        status: 'in_progress',
         performed_by: user?.id ?? null,
         photos: actionPhotos.length > 0 ? actionPhotos : [],
       });
@@ -1016,13 +1016,13 @@ export function IncidentLog() {
         timestamp: new Date().toISOString(),
       }];
     } else {
-      updated.status = 'investigating';
+      updated.status = 'in_progress';
       updated.resolvedAt = undefined;
       updated.updatedAt = new Date().toISOString();
       updated.timeline = [...updated.timeline, {
         id: `t-${Date.now()}`,
         action: 'Resolution rejected — sent back for additional action',
-        status: 'investigating',
+        status: 'in_progress',
         user: user?.id ?? '',
         timestamp: new Date().toISOString(),
       }];
@@ -1049,7 +1049,7 @@ export function IncidentLog() {
         });
       } else {
         await supabase.from('incidents').update({
-          status: 'investigating',
+          status: 'in_progress',
           resolved_at: null,
           updated_at: nowIso,
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
@@ -1057,7 +1057,7 @@ export function IncidentLog() {
         await supabase.from('incident_timeline').insert({
           incident_id: selectedIncident.dbId,
           action: 'Resolution rejected — sent back for additional action',
-          status: 'investigating',
+          status: 'in_progress',
           performed_by: user?.id ?? null,
         });
       }
@@ -1157,7 +1157,7 @@ export function IncidentLog() {
                 <h2 className="text-lg text-[#1E2D4D]/80">{inc.title}</h2>
               </div>
               <div className="flex gap-2 flex-wrap">
-                {inc.status === 'open' && (
+                {inc.status === 'reported' && (
                   <button
                     onClick={() => setShowActionForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
@@ -1165,7 +1165,7 @@ export function IncidentLog() {
                     {t('incidents.takeAction')}
                   </button>
                 )}
-                {inc.status === 'investigating' && (
+                {inc.status === 'in_progress' && (
                   <button
                     onClick={() => setShowResolveForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"

@@ -52,7 +52,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 // ─────────────────────────────────────────────────────────────────────
 
 export type IncidentCategory = 'food_safety' | 'fire_safety' | 'facility_services';
-export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
+export type IncidentStatus = 'reported' | 'assigned' | 'in_progress' | 'resolved' | 'verified';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentUrgency =
   | 'immediate'
@@ -122,7 +122,7 @@ export interface UseIncidentsStateResult {
 // Constants
 // ─────────────────────────────────────────────────────────────────────
 
-const ALL_STATUSES: IncidentStatus[] = ['open', 'investigating', 'resolved', 'verified'];
+const ALL_STATUSES: IncidentStatus[] = ['reported', 'assigned', 'in_progress', 'resolved', 'verified'];
 
 const ALL_SEVERITIES: IncidentSeverity[] = ['critical', 'high', 'medium', 'low'];
 
