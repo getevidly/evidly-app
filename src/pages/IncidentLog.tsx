@@ -692,6 +692,7 @@ export function IncidentLog() {
         sourceType: row.source_type || undefined,
         sourceId: row.source_id || undefined,
         sourceLabel: row.source_label || undefined,
+        linkedCorrectiveActionId: row.linked_corrective_action_id || undefined,
         photos: row.photos || [],
         resolutionPhotos: row.resolution_photos || [],
         timeline: (row.incident_timeline || [])
@@ -987,6 +988,68 @@ export function IncidentLog() {
       } catch (tlErr) {
         console.error('[IncidentLog] Timeline insert failed (action saved):', tlErr);
       }
+
+      // ── Auto-create or update corrective_actions row ──
+      const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
+      const caSeverity = severityMap[selectedIncident.severity] || 'medium';
+      const caCategory = selectedIncident.category;
+      const caPillar = caCategory === 'facility_services' ? null : caCategory;
+      const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
+      const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
+
+      if (!selectedIncident.linkedCorrectiveActionId) {
+        // No CA yet — create one
+        try {
+          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
+            organization_id: profile.organization_id,
+            location_id: selectedIncident.locationId || null,
+            title: selectedIncident.title,
+            description: actionText,
+            category: caCategory,
+            pillar: caPillar,
+            severity: caSeverity,
+            status: 'in_progress',
+            source: 'incident',
+            source_type: 'incident',
+            source_id: selectedIncident.dbId,
+            due_date: dueDate,
+          }).select('id').single();
+
+          if (!caErr && ca?.id) {
+            // Link incident → CA
+            await supabase.from('incidents').update({
+              linked_corrective_action_id: ca.id,
+            }).eq('id', selectedIncident.dbId);
+
+            // Audit trail
+            try {
+              await supabase.from('corrective_action_history').insert({
+                corrective_action_id: ca.id,
+                action: 'status_changed',
+                from_value: null,
+                to_value: 'in_progress',
+                performed_by: user?.id || null,
+                detail: `Auto-created from incident ${selectedIncident.id}.`,
+              });
+            } catch { /* non-blocking */ }
+
+            updated.linkedCorrectiveActionId = ca.id;
+          } else {
+            console.error('[IncidentLog] CA auto-create failed:', caErr);
+          }
+        } catch (err) {
+          console.error('[IncidentLog] CA auto-create threw:', err);
+        }
+      } else {
+        // CA exists — update description with new action text
+        try {
+          await supabase.from('corrective_actions').update({
+            description: actionText,
+          }).eq('id', selectedIncident.linkedCorrectiveActionId);
+        } catch (err) {
+          console.error('[IncidentLog] CA update failed:', err);
+        }
+      }
     }
 
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
@@ -1039,6 +1102,85 @@ export function IncidentLog() {
         });
       } catch (tlErr) {
         console.error('[IncidentLog] Timeline insert failed (resolve saved):', tlErr);
+      }
+
+      // ── Update or create corrective_actions row on resolve ──
+      if (selectedIncident.linkedCorrectiveActionId) {
+        // CA exists — update to resolved
+        try {
+          await supabase.from('corrective_actions').update({
+            status: 'resolved',
+            resolution_note: resolutionSummary,
+            root_cause: rootCause,
+            resolved_at: nowIso,
+            resolved_by: user?.id || null,
+          }).eq('id', selectedIncident.linkedCorrectiveActionId);
+
+          try {
+            await supabase.from('corrective_action_history').insert({
+              corrective_action_id: selectedIncident.linkedCorrectiveActionId,
+              action: 'status_changed',
+              from_value: 'in_progress',
+              to_value: 'resolved',
+              performed_by: user?.id || null,
+              detail: `Resolved via incident ${selectedIncident.id}.`,
+            });
+          } catch { /* non-blocking */ }
+        } catch (err) {
+          console.error('[IncidentLog] CA resolve-update failed:', err);
+        }
+      } else {
+        // Edge case: resolved without Take Action — create CA now as resolved
+        const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
+        const caSeverity = severityMap[selectedIncident.severity] || 'medium';
+        const caCategory = selectedIncident.category;
+        const caPillar = caCategory === 'facility_services' ? null : caCategory;
+        const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
+        const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
+
+        try {
+          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
+            organization_id: profile.organization_id,
+            location_id: selectedIncident.locationId || null,
+            title: selectedIncident.title,
+            description: selectedIncident.correctiveAction || resolutionSummary,
+            category: caCategory,
+            pillar: caPillar,
+            severity: caSeverity,
+            status: 'resolved',
+            source: 'incident',
+            source_type: 'incident',
+            source_id: selectedIncident.dbId,
+            due_date: dueDate,
+            resolution_note: resolutionSummary,
+            root_cause: rootCause,
+            resolved_at: nowIso,
+            resolved_by: user?.id || null,
+          }).select('id').single();
+
+          if (!caErr && ca?.id) {
+            await supabase.from('incidents').update({
+              linked_corrective_action_id: ca.id,
+            }).eq('id', selectedIncident.dbId);
+
+            try {
+              await supabase.from('corrective_action_history').insert({
+                corrective_action_id: ca.id,
+                action: 'status_changed',
+                from_value: null,
+                to_value: 'resolved',
+                performed_by: user?.id || null,
+                detail: `Auto-created (resolved) from incident ${selectedIncident.id}.`,
+              });
+            } catch { /* non-blocking */ }
+
+            updated.linkedCorrectiveActionId = ca.id;
+          } else {
+            console.error('[IncidentLog] CA auto-create on resolve failed:', caErr);
+          }
+        } catch (err) {
+          console.error('[IncidentLog] CA auto-create on resolve threw:', err);
+        }
       }
     }
 
@@ -1321,89 +1463,7 @@ export function IncidentLog() {
                     </span>
                   </div>
                 )}
-                {/* Create Corrective Action from Incident */}
-                {!inc.linkedCorrectiveActionId && inc.status !== 'verified' && (
-                  <button
-                    onClick={() => {
-                      guardAction('create_ca', 'Corrective Actions', async () => {
-                        if (isDemoMode || !profile?.organization_id) {
-                          showToast('Corrective action link requires a live account.');
-                          return;
-                        }
-                        if (!inc.dbId) {
-                          console.error('[IncidentLog] Missing dbId on incident — CA write skipped', inc);
-                          showToast('Unable to create corrective action: incident record not found.');
-                          return;
-                        }
-
-                        // Map incident severity (critical/major/minor) → CA severity (critical/high/medium/low)
-                        const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
-                        const caSeverity = severityMap[inc.severity] || 'medium';
-
-                        // Category is identity-mapped (all 3 values valid per PROD CHECK)
-                        const caCategory = inc.category; // food_safety | fire_safety | facility_services
-                        // Pillar: facility_services has no pillar (nullable per migration 20260930000004)
-                        const caPillar = inc.category === 'facility_services' ? null : inc.category;
-
-                        // Due date: critical → 24h, high → 48h, else 7 days (mirrors temp pattern's 24h for critical)
-                        const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
-                        const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
-
-                        try {
-                          // 1. Insert corrective action (mirrors tempSignalDispatch pattern)
-                          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
-                            organization_id: profile.organization_id,
-                            location_id: inc.locationId || null,
-                            title: inc.title,
-                            description: `${inc.description || ''} Auto-created from incident ${inc.id}.`.trim(),
-                            category: caCategory,
-                            pillar: caPillar,
-                            severity: caSeverity,
-                            status: 'reported',
-                            source: 'incident',
-                            source_type: 'incident',
-                            source_id: inc.dbId,
-                            due_date: dueDate,
-                          }).select('id').single();
-
-                          if (caErr || !ca?.id) {
-                            console.error('[IncidentLog] CA insert failed:', caErr);
-                            showToast('Failed to create corrective action.');
-                            return;
-                          }
-
-                          // 2. Insert audit row into corrective_action_history
-                          await supabase.from('corrective_action_history').insert({
-                            corrective_action_id: ca.id,
-                            action: 'status_changed',
-                            from_value: null,
-                            to_value: 'reported',
-                            performed_by: user?.id || null,
-                            detail: `Auto-created from incident ${inc.id}.`,
-                          });
-
-                          // 3. Update incidents.linked_corrective_action_id
-                          await supabase.from('incidents').update({
-                            linked_corrective_action_id: ca.id,
-                          }).eq('id', inc.dbId);
-
-                          // 4. Update local React state with the real CA id
-                          const updated = { ...inc, linkedCorrectiveActionId: ca.id };
-                          setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
-                          setSelectedIncident(updated);
-                          showToast('Corrective action created and linked to incident.');
-                        } catch (err) {
-                          console.error('[IncidentLog] CA creation failed:', err);
-                          showToast('Failed to create corrective action.');
-                        }
-                      });
-                    }}
-                    className="flex items-center gap-2 text-sm font-medium text-[#1E2D4D] hover:underline"
-                  >
-                    <ClipboardList className="h-4 w-4" />
-                    Create Corrective Action from this Incident
-                  </button>
-                )}
+                {/* CA auto-created on Take Action / Resolve — no manual button needed */}
                 {inc.correctiveAction && (
                   <div>
                     <span className="text-[#1E2D4D]/50 text-sm block mb-1">{t('common.correctiveAction')}</span>

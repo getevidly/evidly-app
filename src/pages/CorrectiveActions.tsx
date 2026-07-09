@@ -88,7 +88,6 @@ interface CreateCAForm {
   rootCause: string;
   regulationReference: string;
   templateId: string | null;
-  linkedIncidentId: string | null;
 }
 
 const EMPTY_FORM: CreateCAForm = {
@@ -103,7 +102,6 @@ const EMPTY_FORM: CreateCAForm = {
   rootCause: '',
   regulationReference: '',
   templateId: null,
-  linkedIncidentId: null,
 };
 
 function formatDate(iso: string): string {
@@ -139,9 +137,6 @@ export function CorrectiveActions() {
   const [createTab, setCreateTab] = useState<'template' | 'scratch'>('template');
   const [templateCategory, setTemplateCategory] = useState<CACategory | 'all'>('all');
   const [createForm, setCreateForm] = useState<CreateCAForm>(EMPTY_FORM);
-
-  // Incident picker state (FIX 3)
-  const [orgIncidents, setOrgIncidents] = useState<{ id: string; incident_number: string; title: string; category: string; severity: string }[]>([]);
 
   // AI Assist tracking
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
@@ -394,20 +389,8 @@ export function CorrectiveActions() {
       setCreateTab('template');
       setTemplateCategory('all');
       setShowCreateModal(true);
-      // Fetch linkable incidents (live mode only)
-      if (!isDemoMode && profile?.organization_id) {
-        supabase.from('incidents')
-          .select('id, incident_number, title, category, severity')
-          .eq('organization_id', profile.organization_id)
-          .in('status', ['open', 'investigating'])
-          .is('archived_at', null)
-          .is('linked_corrective_action_id', null)
-          .order('created_at', { ascending: false })
-          .limit(50)
-          .then(({ data }) => { if (data) setOrgIncidents(data); });
-      }
     });
-  }, [guardAction, isDemoMode, profile?.organization_id]);
+  }, [guardAction]);
 
   const handleSelectTemplate = useCallback((tpl: CATemplate) => {
     setCreateForm({
@@ -440,12 +423,8 @@ export function CorrectiveActions() {
       // Pillar: facility_services has no pillar (nullable per migration 20260930000004)
       const caPillar = createForm.category === 'facility_services' ? null : createForm.category;
 
-      // Source fields from incident picker or manual entry
-      const sourceType = createForm.linkedIncidentId ? 'incident' : 'manual';
-      const sourceId = createForm.linkedIncidentId || null;
-      const sourceLabel = createForm.linkedIncidentId
-        ? orgIncidents.find(i => i.id === createForm.linkedIncidentId)?.title || 'Incident'
-        : (createForm.source || 'Manual');
+      // Source fields (manual CAs only — incident-sourced CAs are auto-created in IncidentLog)
+      const sourceLabel = createForm.source || 'Manual';
 
       if (!isDemoMode && profile?.organization_id) {
         // ── Live mode: persist to Supabase ──
@@ -460,8 +439,8 @@ export function CorrectiveActions() {
             severity: createForm.severity,
             status: caStatus,
             source: sourceLabel,
-            source_type: sourceType,
-            source_id: sourceId,
+            source_type: 'manual',
+            source_id: null,
             assigned_to: createForm.assignee || null,
             due_date: createForm.dueDate || null,
             root_cause: createForm.rootCause || null,
@@ -476,13 +455,6 @@ export function CorrectiveActions() {
             return;
           }
 
-          // Link back to incident if selected
-          if (createForm.linkedIncidentId) {
-            await supabase.from('incidents').update({
-              linked_corrective_action_id: ca.id,
-            }).eq('id', createForm.linkedIncidentId);
-          }
-
           // Build local item for immediate display
           const locName = locationOptions.find(l => l.id === createForm.locationId)?.name || '';
           const newCA: CorrectiveActionItem = {
@@ -495,8 +467,8 @@ export function CorrectiveActions() {
             severity: createForm.severity,
             status: caStatus,
             source: sourceLabel,
-            source_type: sourceType as any,
-            source_id: sourceId,
+            source_type: 'manual' as any,
+            source_id: null,
             assignee: createForm.assignee ? assigneeName : '',
             assigned_by: '',
             assignedAt: createForm.assignee ? now.toISOString().slice(0, 10) : null,
@@ -590,7 +562,7 @@ export function CorrectiveActions() {
         setTimeout(() => advanceInspectionItem(), 300);
       }
     });
-  }, [guardAction, createForm, aiFields, inspectionItems.length, advanceInspectionItem, isDemoMode, profile, orgMembers, locationOptions, orgIncidents]);
+  }, [guardAction, createForm, aiFields, inspectionItems.length, advanceInspectionItem, isDemoMode, profile, orgMembers, locationOptions]);
 
   const handleExportPdf = useCallback(() => {
     const locationName = filterLocation !== 'all'
@@ -1112,38 +1084,6 @@ export function CorrectiveActions() {
                     </div>
                   </div>
 
-                  {/* Link Incident (FIX 3) */}
-                  {!isDemoMode && orgIncidents.length > 0 && (
-                    <div>
-                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Link to Incident (optional)</label>
-                      <select
-                        value={createForm.linkedIncidentId || ''}
-                        onChange={e => {
-                          const incId = e.target.value || null;
-                          const inc = orgIncidents.find(i => i.id === incId);
-                          setCreateForm(f => ({
-                            ...f,
-                            linkedIncidentId: incId,
-                            // Prefill category/severity from incident
-                            ...(inc ? {
-                              category: (inc.category || f.category) as CACategory,
-                              severity: (inc.severity || f.severity) as CASeverity,
-                              source: inc.title || f.source,
-                            } : {}),
-                          }));
-                        }}
-                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2"
-                      >
-                        <option value="">None — manual source</option>
-                        {orgIncidents.map(inc => (
-                          <option key={inc.id} value={inc.id}>
-                            {inc.incident_number} — {inc.title}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-
                   {/* Source + Location side by side */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -1154,7 +1094,6 @@ export function CorrectiveActions() {
                         onChange={e => setCreateForm(f => ({ ...f, source: e.target.value }))}
                         placeholder="e.g. Temperature Log"
                         className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
-                        disabled={!!createForm.linkedIncidentId}
                       />
                     </div>
                     <div>
