@@ -1463,7 +1463,10 @@ export function IncidentLog() {
                   <div className="flex items-center gap-2 text-sm bg-amber-50 border border-amber-200 rounded-xl p-3">
                     <ClipboardList className="h-4 w-4 text-amber-600" />
                     <span className="text-amber-800">
-                      Linked Corrective Action: <button onClick={() => navigate('/corrective-actions')} className="font-semibold underline hover:text-amber-900">{inc.linkedCorrectiveActionId}</button>
+                      Corrective Action linked &mdash;{' '}
+                      <button onClick={() => navigate(`/corrective-actions/${inc.linkedCorrectiveActionId}`)} className="font-semibold underline hover:text-amber-900">
+                        View Corrective Action &rarr;
+                      </button>
                     </span>
                   </div>
                 )}
@@ -1645,9 +1648,14 @@ export function IncidentLog() {
                     </div>
                   )}
                   {inc.linkedCorrectiveActionId && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-[#1E2D4D]/50">Corrective Action</span>
-                      <span className="font-medium text-[#1E2D4D]">{inc.linkedCorrectiveActionId}</span>
+                      <button
+                        onClick={() => navigate(`/corrective-actions/${inc.linkedCorrectiveActionId}`)}
+                        className="font-medium text-amber-700 hover:text-amber-900 hover:underline text-sm"
+                      >
+                        View CA &rarr;
+                      </button>
                     </div>
                   )}
                 </div>
