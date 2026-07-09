@@ -5,10 +5,10 @@
 
 export type IncidentCategory = 'food_safety' | 'fire_safety' | 'facility_services';
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
-export type IncidentStatus = 'reported' | 'assigned' | 'in_progress' | 'resolved' | 'verified';
+export type IncidentStatus = 'open' | 'investigating' | 'resolved' | 'verified';
 
 /** Statuses where an incident is still open (needs attention). */
-export const OPEN_INCIDENT_STATUSES = ['reported', 'assigned', 'in_progress'] as const;
+export const OPEN_INCIDENT_STATUSES = ['open', 'investigating'] as const;
 
 /** Statuses where an incident is closed/complete. */
 export const CLOSED_INCIDENT_STATUSES = ['resolved', 'verified'] as const;

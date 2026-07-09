@@ -132,9 +132,8 @@ const SEVERITIES: { value: Severity; label: string; color: string; bg: string }[
 ];
 
 const STATUS_CONFIG: Record<IncidentStatus, { label: string; color: string; bg: string }> = {
-  reported: { label: 'Reported', color: '#dc2626', bg: '#fef2f2' },
-  assigned: { label: 'Assigned', color: '#d97706', bg: '#fffbeb' },
-  in_progress: { label: 'In Progress', color: '#2563eb', bg: '#eff6ff' },
+  open: { label: 'Open', color: '#dc2626', bg: '#fef2f2' },
+  investigating: { label: 'Investigating', color: '#d97706', bg: '#fffbeb' },
   resolved: { label: 'Resolved', color: '#16a34a', bg: '#f0fdf4' },
   verified: { label: 'Verified', color: '#059669', bg: '#ecfdf5' },
 };
@@ -174,7 +173,7 @@ const DEMO_INCIDENTS: Incident[] = [
     title: 'Walk-in Cooler temperature at 47°F',
     description: 'Walk-in cooler #1 recorded at 47°F during routine check, exceeding the 41°F maximum. All perishable items at risk.',
     location: 'Location 1', // demo
-    status: 'in_progress',
+    status: 'investigating',
     assignedTo: 'Maria Garcia',
     reportedBy: 'John Smith',
     createdAt: h(3),
@@ -187,9 +186,9 @@ const DEMO_INCIDENTS: Incident[] = [
     correctiveAction: 'Called refrigeration repair tech. Moved high-risk items to backup cooler.',
     actionChips: ['Called vendor', 'Adjusted equipment'],
     timeline: [
-      { id: 't1', action: 'Incident reported from temperature log', status: 'reported', user: 'John Smith', timestamp: h(3) },
-      { id: 't2', action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: h(3) },
-      { id: 't3', action: 'Taking corrective action — vendor called, items relocated', status: 'in_progress', user: 'Maria Garcia', timestamp: h(1) },
+      { id: 't1', action: 'Incident reported from temperature log', status: 'open', user: 'John Smith', timestamp: h(3) },
+      { id: 't2', action: 'Auto-assigned to location manager', status: 'open', user: 'System', timestamp: h(3) },
+      { id: 't3', action: 'Taking corrective action — vendor called, items relocated', status: 'investigating', user: 'Maria Garcia', timestamp: h(1) },
     ],
     comments: [
       { id: 'c1', user: 'Maria Garcia', text: 'Repair tech ETA 45 minutes. All TCS items moved to backup unit.', timestamp: h(2) },
@@ -220,9 +219,9 @@ const DEMO_INCIDENTS: Incident[] = [
     correctiveAction: 'Re-cleaned all floor drains. Sanitized surrounding area.',
     actionChips: ['Re-cleaned area'],
     timeline: [
-      { id: 't1', action: 'Incident reported from checklist failure', status: 'reported', user: 'David Kim', timestamp: d(1) },
-      { id: 't2', action: 'Assigned to Emily Rogers', status: 'assigned', user: 'System', timestamp: d(1) },
-      { id: 't3', action: 'Cleaning in progress', status: 'in_progress', user: 'Emily Rogers', timestamp: h(22) },
+      { id: 't1', action: 'Incident reported from checklist failure', status: 'open', user: 'David Kim', timestamp: d(1) },
+      { id: 't2', action: 'Assigned to Emily Rogers', status: 'open', user: 'System', timestamp: d(1) },
+      { id: 't3', action: 'Cleaning in progress', status: 'investigating', user: 'Emily Rogers', timestamp: h(22) },
       { id: 't4', action: 'Drains cleaned and sanitized', status: 'resolved', user: 'Emily Rogers', timestamp: h(18) },
     ],
     comments: [
@@ -255,9 +254,9 @@ const DEMO_INCIDENTS: Incident[] = [
     correctiveAction: 'Reorganized all cooler shelving. Conducted refresher training for all kitchen staff.',
     actionChips: ['Retrained staff', 'Adjusted equipment'],
     timeline: [
-      { id: 't1', action: 'Citation reported by management', status: 'reported', user: 'Sarah Chen', timestamp: d(5) },
-      { id: 't2', action: 'Assigned to Maria Garcia', status: 'assigned', user: 'Sarah Chen', timestamp: d(5) },
-      { id: 't3', action: 'Corrective action started — reorganizing coolers', status: 'in_progress', user: 'Maria Garcia', timestamp: d(5) },
+      { id: 't1', action: 'Citation reported by management', status: 'open', user: 'Sarah Chen', timestamp: d(5) },
+      { id: 't2', action: 'Assigned to Maria Garcia', status: 'open', user: 'Sarah Chen', timestamp: d(5) },
+      { id: 't3', action: 'Corrective action started — reorganizing coolers', status: 'investigating', user: 'Maria Garcia', timestamp: d(5) },
       { id: 't4', action: 'Coolers reorganized, staff retrained', status: 'resolved', user: 'Maria Garcia', timestamp: d(4) },
       { id: 't5', action: 'Resolution verified — inspected all coolers personally', status: 'verified', user: 'Sarah Chen', timestamp: d(3) },
     ],
@@ -274,7 +273,7 @@ const DEMO_INCIDENTS: Incident[] = [
     title: 'Hot holding unit not reaching 135°F',
     description: 'Hot holding unit #2 stuck at 128°F. Cannot maintain safe hot holding temperature for buffet line.',
     location: 'Location 3', // demo
-    status: 'assigned',
+    status: 'open',
     assignedTo: 'Michael Torres',
     reportedBy: 'Emily Rogers',
     createdAt: h(5),
@@ -282,8 +281,8 @@ const DEMO_INCIDENTS: Incident[] = [
     photos: [],
     resolutionPhotos: [],
     timeline: [
-      { id: 't1', action: 'Equipment failure reported', status: 'reported', user: 'Emily Rogers', timestamp: h(5) },
-      { id: 't2', action: 'Assigned to Michael Torres', status: 'assigned', user: 'System', timestamp: h(4) },
+      { id: 't1', action: 'Equipment failure reported', status: 'open', user: 'Emily Rogers', timestamp: h(5) },
+      { id: 't2', action: 'Assigned to Michael Torres', status: 'open', user: 'System', timestamp: h(4) },
     ],
     comments: [],
   },
@@ -295,7 +294,7 @@ const DEMO_INCIDENTS: Incident[] = [
     title: 'Rodent droppings found in dry storage',
     description: 'Staff found rodent droppings near flour storage in dry goods area. Immediate pest control needed.',
     location: 'Location 2', // demo
-    status: 'in_progress',
+    status: 'investigating',
     assignedTo: 'David Kim',
     reportedBy: 'Maria Garcia',
     createdAt: h(8),
@@ -306,9 +305,9 @@ const DEMO_INCIDENTS: Incident[] = [
     correctiveAction: 'Called pest control. Discarded all open dry goods within 3 feet of droppings. Deep cleaning in progress.',
     actionChips: ['Called vendor', 'Discarded product', 'Re-cleaned area'],
     timeline: [
-      { id: 't1', action: 'Pest sighting reported', status: 'reported', user: 'Maria Garcia', timestamp: h(8) },
-      { id: 't2', action: 'Assigned to David Kim', status: 'assigned', user: 'System', timestamp: h(8) },
-      { id: 't3', action: 'Pest control called, cleanup started', status: 'in_progress', user: 'David Kim', timestamp: h(6) },
+      { id: 't1', action: 'Pest sighting reported', status: 'open', user: 'Maria Garcia', timestamp: h(8) },
+      { id: 't2', action: 'Assigned to David Kim', status: 'open', user: 'System', timestamp: h(8) },
+      { id: 't3', action: 'Pest control called, cleanup started', status: 'investigating', user: 'David Kim', timestamp: h(6) },
     ],
     comments: [
       { id: 'c1', user: 'David Kim', text: 'Pest control arriving at 2pm. All affected product quarantined and logged.', timestamp: h(7) },
@@ -335,9 +334,9 @@ const DEMO_INCIDENTS: Incident[] = [
     photos: [],
     resolutionPhotos: [],
     timeline: [
-      { id: 't1', action: 'Customer complaint reported', status: 'reported', user: 'Emily Rogers', timestamp: d(2) },
-      { id: 't2', action: 'Assigned to John Smith', status: 'assigned', user: 'System', timestamp: d(2) },
-      { id: 't3', action: 'Handling complaint', status: 'in_progress', user: 'John Smith', timestamp: d(2) },
+      { id: 't1', action: 'Customer complaint reported', status: 'open', user: 'Emily Rogers', timestamp: d(2) },
+      { id: 't2', action: 'Assigned to John Smith', status: 'open', user: 'System', timestamp: d(2) },
+      { id: 't3', action: 'Handling complaint', status: 'investigating', user: 'John Smith', timestamp: d(2) },
       { id: 't4', action: 'Customer served replacement, staff briefed', status: 'resolved', user: 'John Smith', timestamp: d(2) },
     ],
     comments: [],
@@ -365,9 +364,9 @@ const DEMO_INCIDENTS: Incident[] = [
     correctiveAction: 'Placed signs immediately. Updated checklist templates.',
     actionChips: ['Other'],
     timeline: [
-      { id: 't1', action: 'Safety concern reported', status: 'reported', user: 'David Kim', timestamp: d(3) },
-      { id: 't2', action: 'Assigned to Michael Torres', status: 'assigned', user: 'System', timestamp: d(3) },
-      { id: 't3', action: 'Signs placed and checklists updated', status: 'in_progress', user: 'Michael Torres', timestamp: d(3) },
+      { id: 't1', action: 'Safety concern reported', status: 'open', user: 'David Kim', timestamp: d(3) },
+      { id: 't2', action: 'Assigned to Michael Torres', status: 'open', user: 'System', timestamp: d(3) },
+      { id: 't3', action: 'Signs placed and checklists updated', status: 'investigating', user: 'Michael Torres', timestamp: d(3) },
       { id: 't4', action: 'Resolution complete', status: 'resolved', user: 'Michael Torres', timestamp: d(3) },
       { id: 't5', action: 'Verified — signs in place, checklist updated', status: 'verified', user: 'Sarah Chen', timestamp: d(2) },
     ],
@@ -381,7 +380,7 @@ const DEMO_INCIDENTS: Incident[] = [
     title: 'Prep cooler temp at 44°F during morning check',
     description: 'Prep cooler read 44°F during opening check. Door seal appears worn. Items still safe but at threshold.',
     location: 'Location 2', // demo
-    status: 'reported',
+    status: 'open',
     assignedTo: 'Emily Rogers',
     reportedBy: 'John Smith',
     createdAt: h(1),
@@ -392,7 +391,7 @@ const DEMO_INCIDENTS: Incident[] = [
     photos: [],
     resolutionPhotos: [],
     timeline: [
-      { id: 't1', action: 'Incident auto-created from out-of-range temperature reading', status: 'reported', user: 'System', timestamp: h(1) },
+      { id: 't1', action: 'Incident auto-created from out-of-range temperature reading', status: 'open', user: 'System', timestamp: h(1) },
     ],
     comments: [],
   },
@@ -841,6 +840,8 @@ export function IncidentLog() {
     const nowIso = new Date().toISOString();
 
     // Live mode: insert to Supabase
+    // Map UI severity (critical/major/minor) → PROD CHECK (critical/high/medium/low)
+    const dbSeverity = newSeverity === 'major' ? 'high' : newSeverity === 'minor' ? 'medium' : newSeverity;
     let insertedDbId: string | undefined;
     if (!isDemoMode && profile?.organization_id) {
       const { data: inserted, error } = await supabase.from('incidents').insert({
@@ -848,14 +849,14 @@ export function IncidentLog() {
         incident_number: incNumber,
         category: newCategory,
         type: newType,
-        severity: newSeverity,
+        severity: dbSeverity,
         title: newTitle,
         description: newDescription,
         location_name: newLocation,
-        status: 'reported',
+        status: 'open',
         assigned_to: assignee,
         reported_by: user?.id ?? null,
-        photos: newPhotos,
+        photos: newPhotos.map(p => p.dataUrl),
         resolution_photos: [],
       }).select().single();
 
@@ -869,8 +870,8 @@ export function IncidentLog() {
       if (inserted) {
         insertedDbId = inserted.id;
         await supabase.from('incident_timeline').insert([
-          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: user?.id ?? null },
-          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'reported', performed_by: 'System' },
+          { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
+          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: 'System' },
         ]);
       }
     }
@@ -884,7 +885,7 @@ export function IncidentLog() {
       title: newTitle,
       description: newDescription,
       location: newLocation,
-      status: 'reported',
+      status: 'open',
       assignedTo: assignee ?? '',
       reportedBy: user?.id ?? '',
       createdAt: nowIso,
@@ -893,8 +894,8 @@ export function IncidentLog() {
       photos: newPhotos,
       resolutionPhotos: [],
       timeline: [
-        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: user?.id ?? '', timestamp: nowIso },
-        { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: nowIso },
+        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'open', user: user?.id ?? '', timestamp: nowIso },
+        { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'open', user: 'System', timestamp: nowIso },
       ],
       comments: [],
     };
@@ -908,7 +909,7 @@ export function IncidentLog() {
   const handleTakeAction = async () => {
     if (!selectedIncident || !actionText.trim()) return;
     const updated = { ...selectedIncident };
-    updated.status = 'in_progress';
+    updated.status = 'investigating';
     updated.correctiveAction = actionText;
     updated.actionChips = actionChips;
     updated.updatedAt = new Date().toISOString();
@@ -916,7 +917,7 @@ export function IncidentLog() {
     updated.timeline = [...updated.timeline, {
       id: `t-${Date.now()}`,
       action: `Corrective action: ${actionText}${estLabel}`,
-      status: 'in_progress',
+      status: 'investigating',
       user: user?.id ?? '',
       timestamp: new Date().toISOString(),
       photos: actionPhotos.length > 0 ? actionPhotos : undefined,
@@ -928,7 +929,7 @@ export function IncidentLog() {
         return;
       }
       await supabase.from('incidents').update({
-        status: 'in_progress',
+        status: 'investigating',
         corrective_action: actionText,
         action_chips: actionChips,
         updated_at: new Date().toISOString(),
@@ -937,9 +938,9 @@ export function IncidentLog() {
       await supabase.from('incident_timeline').insert({
         incident_id: selectedIncident.dbId,
         action: `Corrective action: ${actionText}${estLabel}`,
-        status: 'in_progress',
+        status: 'investigating',
         performed_by: user?.id ?? null,
-        photos: actionPhotos.length > 0 ? actionPhotos : [],
+        photos: actionPhotos.length > 0 ? actionPhotos.map(p => p.dataUrl) : [],
       });
     }
 
@@ -979,7 +980,7 @@ export function IncidentLog() {
         resolved_at: nowIso,
         resolution_summary: resolutionSummary,
         root_cause: rootCause,
-        resolution_photos: resolutionPhotos,
+        resolution_photos: resolutionPhotos.map(p => p.dataUrl),
         updated_at: nowIso,
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
@@ -988,7 +989,7 @@ export function IncidentLog() {
         action: `Resolved: ${resolutionSummary}`,
         status: 'resolved',
         performed_by: user?.id ?? null,
-        photos: resolutionPhotos.length > 0 ? resolutionPhotos : [],
+        photos: resolutionPhotos.length > 0 ? resolutionPhotos.map(p => p.dataUrl) : [],
       });
     }
 
@@ -1016,13 +1017,13 @@ export function IncidentLog() {
         timestamp: new Date().toISOString(),
       }];
     } else {
-      updated.status = 'in_progress';
+      updated.status = 'investigating';
       updated.resolvedAt = undefined;
       updated.updatedAt = new Date().toISOString();
       updated.timeline = [...updated.timeline, {
         id: `t-${Date.now()}`,
         action: 'Resolution rejected — sent back for additional action',
-        status: 'in_progress',
+        status: 'investigating',
         user: user?.id ?? '',
         timestamp: new Date().toISOString(),
       }];
@@ -1049,7 +1050,7 @@ export function IncidentLog() {
         });
       } else {
         await supabase.from('incidents').update({
-          status: 'in_progress',
+          status: 'investigating',
           resolved_at: null,
           updated_at: nowIso,
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
@@ -1057,7 +1058,7 @@ export function IncidentLog() {
         await supabase.from('incident_timeline').insert({
           incident_id: selectedIncident.dbId,
           action: 'Resolution rejected — sent back for additional action',
-          status: 'in_progress',
+          status: 'investigating',
           performed_by: user?.id ?? null,
         });
       }
@@ -1157,7 +1158,7 @@ export function IncidentLog() {
                 <h2 className="text-lg text-[#1E2D4D]/80">{inc.title}</h2>
               </div>
               <div className="flex gap-2 flex-wrap">
-                {inc.status === 'reported' && (
+                {inc.status === 'open' && (
                   <button
                     onClick={() => setShowActionForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
@@ -1165,7 +1166,7 @@ export function IncidentLog() {
                     {t('incidents.takeAction')}
                   </button>
                 )}
-                {inc.status === 'in_progress' && (
+                {inc.status === 'investigating' && (
                   <button
                     onClick={() => setShowResolveForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
