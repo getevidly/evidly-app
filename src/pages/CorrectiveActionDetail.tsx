@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   AlertTriangle,
@@ -20,6 +20,9 @@ import {
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { SuggestionPill } from '../components/ai/SuggestionPill';
 import { GhostInput } from '../components/ai/GhostInput';
 import { useRole } from '../contexts/RoleContext';
@@ -68,14 +71,99 @@ function formatTimestamp(iso: string): string {
 export function CorrectiveActionDetail() {
   const { actionId } = useParams<{ actionId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { isDemoMode } = useDemo();
+  const { user, profile } = useAuth();
   const { userRole } = useRole();
   const { members: orgMembers } = useOrgMembers();
   const { triggerConfetti } = useConfetti();
   const { pendingMilestone, checkMilestone, dismissMilestone } = useMilestoneCheck();
 
-  // Local state for lifecycle + notes (no seeded data — items come from list page or DB)
-  const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(null);
+  // Local state — populated from location state (instant) or DB fetch (live mode)
+  const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(() => {
+    // If navigated from list page with state, use that for instant render
+    const stateItem = (location.state as any)?.caItem as CorrectiveActionItem | undefined;
+    return stateItem ?? null;
+  });
+  const [fetchAttempted, setFetchAttempted] = useState(false);
+
+  // Fetch from DB if we don't have local data (direct URL visit, page refresh)
+  useEffect(() => {
+    if (!actionId || localAction || isDemoMode || !profile?.organization_id || fetchAttempted) return;
+    setFetchAttempted(true);
+
+    (async () => {
+      const { data: row, error } = await supabase
+        .from('corrective_actions')
+        .select('id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id, notes, attachments, history, corrective_steps, preventive_measures, assigned_at, assigned_by_user_id')
+        .eq('id', actionId)
+        .eq('organization_id', profile.organization_id)
+        .single();
+
+      if (error || !row) {
+        console.error('[CADetail] Fetch failed:', error);
+        return;
+      }
+
+      // Resolve location name
+      let locationName = '';
+      if (row.location_id) {
+        const { data: loc } = await supabase
+          .from('locations')
+          .select('name')
+          .eq('id', row.location_id)
+          .single();
+        locationName = loc?.name || '';
+      }
+
+      // Resolve assignee name from org members if not stored
+      const assigneeName = row.assignee_name
+        || orgMembers.find(m => m.id === row.assignee_id)?.full_name
+        || '';
+
+      // Resolve assigned_by name
+      const assignedByName = row.assigned_by_user_id
+        ? (orgMembers.find(m => m.id === row.assigned_by_user_id)?.full_name || '')
+        : '';
+
+      const mapped: CorrectiveActionItem = {
+        id: row.id,
+        title: row.title || '',
+        description: row.description || '',
+        location: locationName,
+        locationId: row.location_id || '',
+        category: (row.category || 'food_safety') as any,
+        severity: (row.severity || 'medium') as any,
+        status: (row.status || 'reported') as any,
+        source: row.source || '',
+        source_type: row.source_type || 'manual',
+        source_id: row.source_id || null,
+        assignee: assigneeName,
+        assigned_by: assignedByName,
+        assignedAt: row.assigned_at?.slice(0, 10) || null,
+        createdAt: row.created_at?.slice(0, 10) || '',
+        dueDate: row.due_date || '',
+        resolvedAt: row.resolved_at?.slice(0, 10) || null,
+        resolved_by: row.resolved_by || null,
+        resolution_note: row.resolution_note || null,
+        verifiedAt: row.verified_at?.slice(0, 10) || null,
+        verified_by: row.verified_by || null,
+        verification_note: row.verification_note || null,
+        rootCause: row.root_cause || '',
+        correctiveSteps: row.corrective_steps || '',
+        preventiveMeasures: row.preventive_measures || '',
+        regulationReference: row.regulation_reference || '',
+        templateId: row.template_id || null,
+        ai_draft: row.ai_draft || null,
+        notes: Array.isArray(row.notes) ? row.notes : [],
+        attachments: Array.isArray(row.attachments) ? row.attachments : [],
+        history: Array.isArray(row.history) ? row.history : [],
+      };
+
+      setLocalAction(mapped);
+    })();
+  }, [actionId, localAction, isDemoMode, profile?.organization_id, fetchAttempted, orgMembers]);
 
   const [newNote, setNewNote] = useState('');
   const [resolutionNote, setResolutionNote] = useState('');
@@ -189,18 +277,29 @@ export function CorrectiveActionDetail() {
     toast.success('AI draft applied to resolution note');
   }, [item?.ai_draft]);
 
-  // ── Not found ────────────────────────────────────────────
+  // ── Loading / Not found ─────────────────────────────────
 
   if (!item) {
+    // Still fetching — show loading if we haven't attempted yet
+    const isLoading = !isDemoMode && profile?.organization_id && !fetchAttempted;
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <button onClick={() => navigate('/corrective-actions')} className="flex items-center gap-1.5 text-sm font-medium mb-6" style={{ color: NAVY }}>
           <ArrowLeft size={16} /> Back to Corrective Actions
         </button>
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
-          <p className="text-sm font-medium text-[#1E2D4D]/80">Corrective action not found</p>
-          <p className="text-xs text-[#1E2D4D]/50 mt-1">The requested corrective action does not exist.</p>
+          {isLoading ? (
+            <>
+              <Clock className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3 animate-pulse" />
+              <p className="text-sm font-medium text-[#1E2D4D]/80">Loading corrective action...</p>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
+              <p className="text-sm font-medium text-[#1E2D4D]/80">Corrective action not found</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">The requested corrective action does not exist.</p>
+            </>
+          )}
         </div>
       </div>
     );

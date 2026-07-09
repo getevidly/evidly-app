@@ -125,6 +125,8 @@ const DYNAMIC_PATTERNS: { pattern: RegExp; parent: string; label: string }[] = [
   { pattern: /^\/playbooks\/active\/[^/]+$/, parent: '/playbooks', label: 'Active Playbook' },
   { pattern: /^\/playbooks\/history\/[^/]+$/, parent: '/playbooks', label: 'Playbook History' },
   { pattern: /^\/dashboard\/training\/[^/]+$/, parent: '/dashboard/training', label: 'Employee Profile' },
+  { pattern: /^\/corrective-actions\/[^/]+$/, parent: '/corrective-actions', label: 'Corrective Action' },
+  { pattern: /^\/deficiencies\/[^/]+$/, parent: '/deficiencies', label: 'Deficiency' },
   { pattern: /^\/reports\/[^/]+$/, parent: '/reports', label: 'Report' },
   { pattern: /^\/equipment\/[^/]+\/service\/new$/, parent: '/equipment', label: 'New Service Record' },
   { pattern: /^\/equipment\/[^/]+$/, parent: '/equipment', label: 'Equipment Detail' },

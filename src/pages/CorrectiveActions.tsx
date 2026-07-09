@@ -812,7 +812,7 @@ export function CorrectiveActions() {
               <div
                 key={item.id}
                 className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden cursor-pointer transition-all hover:border-[#1E2D4D]/15"
-                onClick={() => navigate(`/corrective-actions/${item.id}`)}
+                onClick={() => navigate(`/corrective-actions/${item.id}`, { state: { caItem: item } })}
               >
                 <div className="p-4">
                   <div className="flex items-start gap-3">
