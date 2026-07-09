@@ -1662,61 +1662,49 @@ export function IncidentLog() {
                 </div>
               </div>
 
-              {/* Export / Proof Packet */}
-              {(inc.status === 'resolved' || inc.status === 'verified') ? (
-                <button
-                  onClick={() => guardAction('export', 'incident reports', async () => {
-                    // Fetch linked CA data if exists
-                    let linkedCA: ProofPacketCA | null = null;
-                    if (inc.linkedCorrectiveActionId && !isDemoMode && profile?.organization_id) {
-                      const { data: caRow } = await supabase
-                        .from('corrective_actions')
-                        .select('title, description, corrective_steps, status, assignee_name')
-                        .eq('id', inc.linkedCorrectiveActionId)
-                        .single();
-                      if (caRow) linkedCA = caRow;
-                    }
-                    const packetData: ProofPacketIncident = {
-                      id: inc.id,
-                      title: inc.title,
-                      description: inc.description,
-                      category: inc.category,
-                      type: inc.type,
-                      severity: inc.severity,
-                      location: inc.location,
-                      status: inc.status,
-                      assignedTo: inc.assignedTo,
-                      reportedBy: inc.reportedBy,
-                      createdAt: inc.createdAt,
-                      resolvedAt: inc.resolvedAt,
-                      verifiedAt: inc.verifiedAt,
-                      verifiedBy: inc.verifiedBy,
-                      correctiveAction: inc.correctiveAction,
-                      resolutionSummary: inc.resolutionSummary,
-                      rootCause: inc.rootCause,
-                      linkedCorrectiveActionId: inc.linkedCorrectiveActionId,
-                      photos: inc.photos,
-                      resolutionPhotos: inc.resolutionPhotos,
-                      timeline: inc.timeline,
-                    };
-                    exportProofPacketPdf(packetData, linkedCA);
-                    showToast('Proof packet downloaded for ' + inc.id);
-                  })}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold text-white"
-                  style={{ backgroundColor: '#1E2D4D' }}
-                >
-                  <Shield className="h-4 w-4" />
-                  Download Proof Packet
-                </button>
-              ) : (
-                <button
-                  onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-                >
-                  <Download className="h-4 w-4" />
-                  {t('incidents.exportToPdf')}
-                </button>
-              )}
+              {/* Export to PDF (proof packet for resolved, incident report for open) */}
+              <button
+                onClick={() => guardAction('export', 'incident reports', async () => {
+                  let linkedCA: ProofPacketCA | null = null;
+                  if (inc.linkedCorrectiveActionId && !isDemoMode && profile?.organization_id) {
+                    const { data: caRow } = await supabase
+                      .from('corrective_actions')
+                      .select('title, description, corrective_steps, status, assignee_name')
+                      .eq('id', inc.linkedCorrectiveActionId)
+                      .single();
+                    if (caRow) linkedCA = caRow;
+                  }
+                  const packetData: ProofPacketIncident = {
+                    id: inc.id,
+                    title: inc.title,
+                    description: inc.description,
+                    category: inc.category,
+                    type: inc.type,
+                    severity: inc.severity,
+                    location: inc.location,
+                    status: inc.status,
+                    assignedTo: inc.assignedTo,
+                    reportedBy: inc.reportedBy,
+                    createdAt: inc.createdAt,
+                    resolvedAt: inc.resolvedAt,
+                    verifiedAt: inc.verifiedAt,
+                    verifiedBy: inc.verifiedBy,
+                    correctiveAction: inc.correctiveAction,
+                    resolutionSummary: inc.resolutionSummary,
+                    rootCause: inc.rootCause,
+                    linkedCorrectiveActionId: inc.linkedCorrectiveActionId,
+                    photos: inc.photos,
+                    resolutionPhotos: inc.resolutionPhotos,
+                    timeline: inc.timeline,
+                  };
+                  exportProofPacketPdf(packetData, linkedCA);
+                  showToast('PDF downloaded for ' + inc.id);
+                })}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+              >
+                <Download className="h-4 w-4" />
+                {t('incidents.exportToPdf')}
+              </button>
             </div>
           </div>
         </div>

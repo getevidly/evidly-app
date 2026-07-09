@@ -142,13 +142,20 @@ export function exportProofPacketPdf(
   resolvedByName?: string,
 ): void {
   const doc = createReportPdf();
+  const isResolved = incident.status === 'resolved' || incident.status === 'verified';
   const dateRange = `${fmtDate(incident.createdAt)} \u2013 ${fmtDate(incident.resolvedAt || incident.createdAt)}`;
 
   // ── Header ──
+  const headerTitle = isResolved
+    ? `PROOF OF RESOLUTION \u2014 ${incident.id}`
+    : `INCIDENT REPORT \u2014 ${incident.id}`;
+  const headerSub = isResolved
+    ? 'Evidence trail for regulatory, insurance, and audit review'
+    : 'Incident details for review';
   let y = drawReportHeader(
     doc,
-    `PROOF OF RESOLUTION \u2014 ${incident.id}`,
-    'Evidence trail for regulatory, insurance, and audit review',
+    headerTitle,
+    headerSub,
     incident.location || 'All Locations',
     dateRange,
   );
@@ -354,6 +361,7 @@ export function exportProofPacketPdf(
   }
 
   // ── Save ──
-  const filename = `EvidLY-Proof-Packet-${incident.id}-${new Date().toISOString().slice(0, 10)}.pdf`;
+  const tag = isResolved ? 'Proof-Packet' : 'Incident-Report';
+  const filename = `EvidLY-${tag}-${incident.id}-${new Date().toISOString().slice(0, 10)}.pdf`;
   saveReportPdf(doc, filename);
 }
