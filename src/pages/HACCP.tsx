@@ -1114,7 +1114,7 @@ export function HACCP() {
       'CCP-03': 'cold_holding',
       'CCP-04': 'hot_holding',
       'CCP-05': 'cooldown',
-      'CCP-06': 'equipment',
+      'CCP-06': 'reheating',
     };
 
     // Status pill styles

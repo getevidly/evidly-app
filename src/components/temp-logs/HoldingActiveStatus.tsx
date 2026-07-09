@@ -5,7 +5,7 @@ import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApiQuery } from '../../hooks/api/useApiQuery';
 import { useLogTemperature } from '../../hooks/api/useTemperatureLogs';
-import { isHoldingCold, isHoldingHot } from '../../lib/equipmentHelpers';
+import { isHoldingCold, isHoldingHot, isReheating } from '../../lib/equipmentHelpers';
 import { TEMP_CHECK_INTERVALS } from '../../config/tempConfig';
 import { colors, shadows } from '../../lib/designSystem';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from './AddHoldingReadingModal';
@@ -19,6 +19,8 @@ import { HotHoldingSectionHeader } from './HotHoldingSectionHeader';
 import { HotHoldingNoUnitsEmptyState } from './HotHoldingNoUnitsEmptyState';
 import { ColdHoldingSectionHeader } from './ColdHoldingSectionHeader';
 import { ColdHoldingNoUnitsEmptyState } from './ColdHoldingNoUnitsEmptyState';
+import { ReheatingSectionHeader } from './ReheatingSectionHeader';
+import { ReheatingNoUnitsEmptyState } from './ReheatingNoUnitsEmptyState';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────
@@ -35,7 +37,9 @@ interface EquipmentWithStatus extends TemperatureEquipment {
 function deriveStatus(eq: TemperatureEquipment): EquipmentStatus {
   if (!eq.last_check) return 'setup';
   const ageMin = (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60);
-  const overdueMin = isHoldingHot(eq.equipment_type)
+  const overdueMin = isReheating(eq.equipment_type)
+    ? TEMP_CHECK_INTERVALS.REHEATING_OVERDUE_MINUTES
+    : isHoldingHot(eq.equipment_type)
     ? TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES
     : TEMP_CHECK_INTERVALS.COLD_HOLDING_OVERDUE_MINUTES;
   if (ageMin > 24 * 60) return 'stale';
@@ -63,7 +67,7 @@ function formatTimeSince(minutes: number | null): string {
 // ── Main Component ─────────────────────────────────────────────
 
 interface HoldingActiveStatusProps {
-  variant: 'hot' | 'cold';
+  variant: 'hot' | 'cold' | 'reheating';
   driftingUnits?: DriftingUnit[];
 }
 
@@ -140,10 +144,12 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
     if (!eqData || eqData.length === 0) return [];
 
     const filtered = eqData.filter(eq =>
-      variant === 'hot' ? isHoldingHot(eq.equipment_type) : isHoldingCold(eq.equipment_type)
+      variant === 'reheating' ? isReheating(eq.equipment_type)
+        : variant === 'hot' ? isHoldingHot(eq.equipment_type)
+        : isHoldingCold(eq.equipment_type)
     );
 
-    const heldWindowMs = (variant === 'hot' ? 4 : 8) * 60 * 60 * 1000;
+    const heldWindowMs = (variant === 'hot' || variant === 'reheating' ? 4 : 8) * 60 * 60 * 1000;
     const heldCutoff = new Date(Date.now() - heldWindowMs).toISOString();
 
     const withChecks = await Promise.all(
@@ -259,7 +265,7 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
       await logTemperature({
         locationId,
         equipmentId: data.equipmentId,
-        step: variant === 'hot' ? 'hot_holding' : 'cold_holding',
+        step: variant === 'reheating' ? 'reheating' : variant === 'hot' ? 'hot_holding' : 'cold_holding',
         temperature: data.temperature,
         requiredMin: eq.min_temp,
         requiredMax: eq.max_temp,
@@ -316,7 +322,8 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
   // ── Theme ──────────────────────────────────────
 
   const isHot = variant === 'hot';
-  const title = isHot ? 'Hot Holding' : 'Cold Holding';
+  const isReheat = variant === 'reheating';
+  const title = isReheat ? 'Reheating' : isHot ? 'Hot Holding' : 'Cold Holding';
 
   // Drifting equipment IDs set for inline callouts
   const driftingIds = useMemo(
@@ -329,7 +336,9 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
   let content;
 
   if (!locationId) {
-    content = isHot ? (
+    content = isReheat ? (
+      <ReheatingNoUnitsEmptyState />
+    ) : isHot ? (
       <HotHoldingNoUnitsEmptyState />
     ) : (
       <ColdHoldingNoUnitsEmptyState />
@@ -356,7 +365,9 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
       </div>
     );
   } else if (equipmentWithStatus.length === 0) {
-    content = isHot ? (
+    content = isReheat ? (
+      <ReheatingNoUnitsEmptyState />
+    ) : isHot ? (
       <HotHoldingNoUnitsEmptyState />
     ) : (
       <ColdHoldingNoUnitsEmptyState />
@@ -394,7 +405,13 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
           className="rounded-xl border p-4 sm:p-5"
           style={{ backgroundColor: colors.white, borderColor: colors.border, boxShadow: shadows.sm }}
         >
-          {isHot ? (
+          {isReheat ? (
+            <ReheatingSectionHeader
+              headerLabel={headerLabel}
+              allPass={allMeasured && passCount === totalActive}
+              noneMeasured={noneMeasured}
+            />
+          ) : isHot ? (
             <HotHoldingSectionHeader
               headerLabel={headerLabel}
               allPass={allMeasured && passCount === totalActive}
@@ -417,9 +434,9 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
                               : eq.status === 'fail' ? colors.danger
                               : colors.textSecondary;
               const isSetup = eq.status === 'setup';
-              const threshold = isHot ? 135 : 41;
-              const barMin = isHot ? 100 : 20;
-              const barMax = isHot ? 180 : 60;
+              const threshold = isReheat ? 165 : isHot ? 135 : 41;
+              const barMin = isReheat ? 120 : isHot ? 100 : 20;
+              const barMax = isReheat ? 200 : isHot ? 180 : 60;
               const dotPercent = hasReading
                 ? Math.max(2, Math.min(98, ((tempValue - barMin) / (barMax - barMin)) * 100))
                 : null;
@@ -446,8 +463,8 @@ export function HoldingActiveStatus({ variant, driftingUnits = [] }: HoldingActi
                 : colors.border;
 
               // Status line text (both variants)
-              const statusLineText = isHot
-                ? cardState === 'crit' ? 'Below target'
+              const statusLineText = (isHot || isReheat)
+                ? cardState === 'crit' ? (isReheat ? 'Below 165°F' : 'Below target')
                 : isDrifting ? 'Drifting down'
                 : eq.status === 'stale' ? 'Stale'
                 : 'In range'

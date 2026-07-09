@@ -5,6 +5,7 @@
 export const TEMP_CHECK_INTERVALS = {
   HOT_HOLDING_OVERDUE_MINUTES: 240,     // 4 hours — FDA Food Code 3-501.16
   COLD_HOLDING_OVERDUE_MINUTES: 240,    // 4 hours
+  REHEATING_OVERDUE_MINUTES: 120,       // 2 hours — FDA Food Code 3-403.11 (must reach 165°F within 2hr)
   EQUIPMENT_CHECK_OVERDUE_MINUTES: 480, // 8 hours (start of shift)
   RECEIVING_OVERDUE_HOURS: 24,          // Daily receiving log
 } as const;
@@ -21,6 +22,7 @@ export function getLogType(
 ): string {
   if (context === 'cooling') return 'cooling';
   if (context === 'receiving') return 'equipment_check';
+  if (equipmentType === 'reheating' || equipmentType === 'oven_reheat') return 'reheating';
   if (equipmentType.includes('holding') || equipmentType === 'hot_hold') {
     return equipmentType.includes('hot') || equipmentType === 'hot_hold'
       ? 'hot_holding'

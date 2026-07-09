@@ -4,7 +4,7 @@ import { useApiQuery, useApiMutation, type ApiQueryResult, type ApiMutationResul
 
 // ── Types ─────────────────────────────────────────────────────
 
-export type HaccpStep = 'hot_holding' | 'cold_holding' | 'storage' | 'prep' | 'cooking' | 'serving';
+export type HaccpStep = 'hot_holding' | 'cold_holding' | 'storage' | 'prep' | 'cooking' | 'serving' | 'reheating';
 export type InputMethod = 'manual' | 'qr_scan' | 'iot_sensor';
 
 export interface TemperatureLog {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History, Gauge } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3, Snowflake, History, Gauge, Flame } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -49,6 +49,9 @@ import { useHotHoldingTabSignals } from '../hooks/temperatures/useHotHoldingTabS
 import { ColdHoldingTabSignalStrip } from '../components/temp-logs/ColdHoldingTabSignalStrip';
 import { ColdHoldingCriticalBanner } from '../components/temp-logs/ColdHoldingCriticalBanner';
 import { useColdHoldingTabSignals } from '../hooks/temperatures/useColdHoldingTabSignals';
+import { ReheatingTabSignalStrip } from '../components/temp-logs/ReheatingTabSignalStrip';
+import { ReheatingCriticalBanner } from '../components/temp-logs/ReheatingCriticalBanner';
+import { useReheatingTabSignals } from '../hooks/temperatures/useReheatingTabSignals';
 import { CooldownTabSignalStrip } from '../components/temp-logs/CooldownTabSignalStrip';
 import { CooldownCriticalBanner } from '../components/temp-logs/CooldownCriticalBanner';
 import { useCooldownTabSignals } from '../hooks/temperatures/useCooldownTabSignals';
@@ -178,6 +181,9 @@ export function TempLogs() {
   const coldHoldingSignals = useColdHoldingTabSignals();
   const coldDriftingUnits = prpDrifting.filter(d => d.variant === 'cold');
 
+  // Reheating tab hooks
+  const reheatingSignals = useReheatingTabSignals();
+
   // Cooldown tab hooks
   const cooldownSignals = useCooldownTabSignals();
 
@@ -190,7 +196,7 @@ export function TempLogs() {
   const [correctiveAction, setCorrectiveAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
   const [searchParams] = useSearchParams();
-  const validTabs = ['equipment', 'receiving', 'history', 'cooldown', 'iot', 'hot_holding', 'cold_holding', 'analytics'] as const;
+  const validTabs = ['equipment', 'receiving', 'history', 'cooldown', 'reheating', 'iot', 'hot_holding', 'cold_holding', 'analytics'] as const;
   type TabKey = typeof validTabs[number];
   const initialTab = validTabs.includes(searchParams.get('tab') as TabKey) ? (searchParams.get('tab') as TabKey) : 'equipment';
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
@@ -1378,6 +1384,7 @@ export function TempLogs() {
             { key: 'receiving', label: t('tempLogs.receiving'), icon: <Package className="h-3.5 w-3.5" style={{ color: '#D97706' }} /> },
             { key: 'hot_holding', label: 'Hot Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: '#EA580C' }} /> },
             { key: 'cold_holding', label: 'Cold Holding', icon: <Thermometer className="h-3.5 w-3.5" style={{ color: colors.info }} /> },
+            { key: 'reheating', label: 'Reheating', icon: <Flame className="h-3.5 w-3.5" style={{ color: '#DC2626' }} /> },
             { key: 'cooldown', label: t('tempLogs.cooldown'), icon: <Snowflake className="h-3.5 w-3.5" style={{ color: '#0891B2' }} /> },
             { key: 'iot', label: 'Live Sensors', icon: <Radio className="h-3.5 w-3.5" style={{ color: '#059669' }} /> },
             { key: 'history', label: t('tempLogs.history'), icon: <History className="h-3.5 w-3.5" style={{ color: '#6B7F96' }} /> },
@@ -2044,6 +2051,15 @@ export function TempLogs() {
             <ColdHoldingCriticalBanner signals={coldHoldingSignals} />
             <ColdHoldingTabSignalStrip signals={coldHoldingSignals} />
             <HoldingActiveStatus variant="cold" driftingUnits={coldDriftingUnits} />
+          </>
+        )}
+
+        {/* Reheating Tab */}
+        {activeTab === 'reheating' && (
+          <>
+            <ReheatingCriticalBanner signals={reheatingSignals} />
+            <ReheatingTabSignalStrip signals={reheatingSignals} />
+            <HoldingActiveStatus variant="reheating" driftingUnits={[]} />
           </>
         )}
 
