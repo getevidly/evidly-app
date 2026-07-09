@@ -376,6 +376,18 @@ export function CorrectiveActionDetail() {
           <DetailField label="Category" value={CATEGORY_LABELS[item.category]} />
           <DetailField label="Source Type" value={SOURCE_TYPE_LABELS[item.source_type]} />
           <DetailField label="Source" value={item.source} />
+          {item.source === 'incident' && item.source_id && (
+            <div className="col-span-1">
+              <p className="text-xs font-medium text-[#1E2D4D]/50 mb-1">Linked Incident</p>
+              <button
+                onClick={() => navigate('/incidents')}
+                className="flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:underline"
+              >
+                <AlertTriangle className="h-3.5 w-3.5" />
+                View originating incident
+              </button>
+            </div>
+          )}
           <DetailField label="Regulation" value={item.regulationReference || 'N/A'} />
           <DetailField label="Root Cause" value={item.rootCause || 'Not yet documented'} full />
           {item.correctiveSteps && (
