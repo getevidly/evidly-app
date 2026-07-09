@@ -182,7 +182,7 @@ export function CorrectiveActions() {
     if (isDemoMode || !profile?.organization_id || caFetched) return;
     setCaFetched(true);
     supabase.from('corrective_actions')
-      .select('id, title, description, category, severity, status, source, source_type, source_id, assigned_to, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id')
+      .select('id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id')
       .eq('organization_id', profile.organization_id)
       .is('archived_at', null)
       .order('created_at', { ascending: false })
@@ -190,19 +190,21 @@ export function CorrectiveActions() {
         if (error || !data) return;
         const locs = dbLocations ?? [];
         const members = orgMembers ?? [];
+        // Reverse-map DB categories → UI categories
+        const dbToUiCategory: Record<string, string> = { facility_safety: 'fire_safety', operational: 'facility_services' };
         setLocalActions(data.map((row: any) => ({
           id: row.id,
           title: row.title || '',
           description: row.description || '',
           location: locs.find((l: any) => l.id === row.location_id)?.name || '',
           locationId: row.location_id || '',
-          category: (row.category || 'food_safety') as CACategory,
+          category: (dbToUiCategory[row.category] || row.category || 'food_safety') as CACategory,
           severity: (row.severity || 'medium') as CASeverity,
           status: (row.status || 'reported') as CAStatus,
           source: row.source || '',
           source_type: row.source_type || 'manual',
           source_id: row.source_id || null,
-          assignee: members.find((m: any) => m.id === row.assigned_to)?.full_name || row.assigned_to || '',
+          assignee: row.assignee_name || members.find((m: any) => m.id === row.assignee_id)?.full_name || '',
           assigned_by: '',
           assignedAt: null,
           createdAt: row.created_at?.slice(0, 10) || '',
@@ -420,11 +422,12 @@ export function CorrectiveActions() {
       const assigneeMember = orgMembers.find(m => m.id === createForm.assignee);
       const assigneeName = assigneeMember?.full_name || assigneeMember?.email || createForm.assignee;
 
-      // Pillar: facility_services has no pillar (nullable per migration 20260930000004)
-      const caPillar = createForm.category === 'facility_services' ? null : createForm.category;
-
       // Source fields (manual CAs only — incident-sourced CAs are auto-created in IncidentLog)
       const sourceLabel = createForm.source || 'Manual';
+
+      // Map UI categories → DB CHECK values (fire_safety→facility_safety, facility_services→operational)
+      const uiToDbCategory: Record<string, string> = { fire_safety: 'facility_safety', facility_services: 'operational' };
+      const dbCategory = uiToDbCategory[createForm.category] || createForm.category;
 
       if (!isDemoMode && profile?.organization_id) {
         // ── Live mode: persist to Supabase ──
@@ -434,14 +437,14 @@ export function CorrectiveActions() {
             location_id: createForm.locationId || null,
             title: createForm.title,
             description: createForm.description || null,
-            category: createForm.category,
-            pillar: caPillar,
+            category: dbCategory,
             severity: createForm.severity,
             status: caStatus,
             source: sourceLabel,
             source_type: 'manual',
             source_id: null,
-            assigned_to: createForm.assignee || null,
+            assignee_id: createForm.assignee || null,
+            assignee_name: assigneeName || null,
             due_date: createForm.dueDate || null,
             root_cause: createForm.rootCause || null,
             regulation_reference: createForm.regulationReference || null,

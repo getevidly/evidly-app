@@ -992,28 +992,30 @@ export function IncidentLog() {
       // ── Auto-create or update corrective_actions row ──
       const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
       const caSeverity = severityMap[selectedIncident.severity] || 'medium';
-      const caCategory = selectedIncident.category;
-      const caPillar = caCategory === 'facility_services' ? null : caCategory;
+      // Map incident categories → CA categories (different CHECK constraints)
+      const caCategoryMap: Record<string, string> = { food_safety: 'food_safety', fire_safety: 'facility_safety', facility_services: 'operational' };
+      const caCategory = caCategoryMap[selectedIncident.category] || 'food_safety';
       const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
       const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
 
       if (!selectedIncident.linkedCorrectiveActionId) {
         // No CA yet — create one
         try {
-          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
+          const caPayload = {
             organization_id: profile.organization_id,
             location_id: selectedIncident.locationId || null,
             title: selectedIncident.title,
             description: actionText,
             category: caCategory,
-            pillar: caPillar,
             severity: caSeverity,
             status: 'in_progress',
             source: 'incident',
-            source_type: 'incident',
+            source_type: 'manual',
             source_id: selectedIncident.dbId,
             due_date: dueDate,
-          }).select('id').single();
+          };
+          console.log('[IncidentLog] CA auto-create payload:', JSON.stringify(caPayload));
+          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert(caPayload).select('id').single();
 
           if (!caErr && ca?.id) {
             // Link incident → CA
@@ -1133,30 +1135,31 @@ export function IncidentLog() {
         // Edge case: resolved without Take Action — create CA now as resolved
         const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
         const caSeverity = severityMap[selectedIncident.severity] || 'medium';
-        const caCategory = selectedIncident.category;
-        const caPillar = caCategory === 'facility_services' ? null : caCategory;
+        const caCategoryMap: Record<string, string> = { food_safety: 'food_safety', fire_safety: 'facility_safety', facility_services: 'operational' };
+        const caCategory = caCategoryMap[selectedIncident.category] || 'food_safety';
         const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
         const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
 
         try {
-          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
+          const caPayload = {
             organization_id: profile.organization_id,
             location_id: selectedIncident.locationId || null,
             title: selectedIncident.title,
             description: selectedIncident.correctiveAction || resolutionSummary,
             category: caCategory,
-            pillar: caPillar,
             severity: caSeverity,
             status: 'resolved',
             source: 'incident',
-            source_type: 'incident',
+            source_type: 'manual',
             source_id: selectedIncident.dbId,
             due_date: dueDate,
             resolution_note: resolutionSummary,
             root_cause: rootCause,
             resolved_at: nowIso,
             resolved_by: user?.id || null,
-          }).select('id').single();
+          };
+          console.log('[IncidentLog] CA auto-create (resolve) payload:', JSON.stringify(caPayload));
+          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert(caPayload).select('id').single();
 
           if (!caErr && ca?.id) {
             await supabase.from('incidents').update({
