@@ -3696,17 +3696,17 @@ export interface TemperatureLog {
 }
 
 export const temperatureLogs: TemperatureLog[] = [
-  { id: 'tl-1', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 38.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
-  { id: 'tl-2', facilityId: '1', equipmentId: 'eq-2', inputMethod: 'iot_sensor', temperature: -4.1, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-2', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Location 1' },
-  { id: 'tl-3', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 142, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(1), shift: 'morning', logType: 'hot_holding', loggedBy: 'user-km-1', sensorId: null, qrCodeId: null, notes: 'Soup holding steady', correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
-  { id: 'tl-4', facilityId: '1', equipmentId: 'eq-4', inputMethod: 'qr_scan', temperature: 39.5, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(1.5), shift: 'morning', logType: 'cold_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: 'qr-4', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Cold Holding Unit', locationName: 'Location 1' },
-  { id: 'tl-5', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'manual', temperature: 44.8, requiredMin: null, requiredMax: 41, tempPass: false, readingTime: hoursAgo(2), shift: 'morning', logType: 'equipment_check', loggedBy: 'user-km-2', sensorId: null, qrCodeId: null, notes: 'Door was left open', correctiveAction: 'Closed door, rechecking in 30 min', haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
-  { id: 'tl-6', facilityId: '2', equipmentId: 'eq-a2', inputMethod: 'iot_sensor', temperature: -2.3, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.25), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-ap-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Location 2' },
-  { id: 'tl-7', facilityId: '3', equipmentId: 'eq-u1', inputMethod: 'qr_scan', temperature: 40.1, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(3), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-3', sensorId: null, qrCodeId: 'qr-5', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Reach-in Cooler', locationName: 'Location 3' },
-  { id: 'tl-8', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 131, requiredMin: 135, requiredMax: null, tempPass: false, readingTime: hoursAgo(4), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Reheated to 165°F', correctiveAction: 'Reheated to 165°F and returned to holding', haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
-  { id: 'tl-9', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 39.0, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(4.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
-  { id: 'tl-10', facilityId: '3', equipmentId: 'eq-u2', inputMethod: 'manual', temperature: 138, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(5), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-km-3', sensorId: null, qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 3' },
-  { id: 'tl-11', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'qr_scan', temperature: 40.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(5.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-2', sensorId: null, qrCodeId: 'qr-4', notes: 'Recheck after door fix', correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
+  { id: 'tl-1', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 38.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
+  { id: 'tl-2', facilityId: '1', equipmentId: 'eq-2', inputMethod: 'iot_sensor', temperature: -4.1, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-2', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Freezer', locationName: 'Location 1' },
+  { id: 'tl-3', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 142, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(1), shift: 'morning', logType: 'hot_holding', loggedBy: 'user-km-1', sensorId: null, qrCodeId: null, notes: 'Soup holding steady', correctiveAction: null, haccpCcpNumber: 'CCP-04', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-4', facilityId: '1', equipmentId: 'eq-4', inputMethod: 'qr_scan', temperature: 39.5, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(1.5), shift: 'morning', logType: 'cold_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: 'qr-4', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-03', equipmentName: 'Cold Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-5', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'manual', temperature: 44.8, requiredMin: null, requiredMax: 41, tempPass: false, readingTime: hoursAgo(2), shift: 'morning', logType: 'equipment_check', loggedBy: 'user-km-2', sensorId: null, qrCodeId: null, notes: 'Door was left open', correctiveAction: 'Closed door, rechecking in 30 min', haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
+  { id: 'tl-6', facilityId: '2', equipmentId: 'eq-a2', inputMethod: 'iot_sensor', temperature: -2.3, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.25), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-ap-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Freezer', locationName: 'Location 2' },
+  { id: 'tl-7', facilityId: '3', equipmentId: 'eq-u1', inputMethod: 'qr_scan', temperature: 40.1, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(3), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-3', sensorId: null, qrCodeId: 'qr-5', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Reach-in Cooler', locationName: 'Location 3' },
+  { id: 'tl-8', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 131, requiredMin: 135, requiredMax: null, tempPass: false, readingTime: hoursAgo(4), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Reheated to 165°F', correctiveAction: 'Reheated to 165°F and returned to holding', haccpCcpNumber: 'CCP-04', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-9', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 39.0, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(4.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
+  { id: 'tl-10', facilityId: '3', equipmentId: 'eq-u2', inputMethod: 'manual', temperature: 138, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(5), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-km-3', sensorId: null, qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-04', equipmentName: 'Hot Holding Unit', locationName: 'Location 3' },
+  { id: 'tl-11', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'qr_scan', temperature: 40.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(5.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-2', sensorId: null, qrCodeId: 'qr-4', notes: 'Recheck after door fix', correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
   { id: 'tl-12', facilityId: '1', equipmentId: 'eq-5', inputMethod: 'manual', temperature: 37.4, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(6), shift: 'evening', logType: 'pre_shift', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Evening shift check', correctiveAction: null, haccpCcpNumber: null, equipmentName: 'Prep Station Fridge', locationName: 'Location 1' },
 ];
 
@@ -3902,7 +3902,7 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
     daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
     locationIds: ['1', '2', '3'],
     assignedRoles: ['kitchen_manager', 'kitchen_staff'],
-    haccpCcpNumber: 'CCP-01',
+    haccpCcpNumber: 'CCP-02',
     category: 'food_safety',
   },
   {
@@ -3916,7 +3916,7 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
     daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
     locationIds: ['1', '2', '3'],
     assignedRoles: ['kitchen_manager', 'kitchen_staff'],
-    haccpCcpNumber: 'CCP-01',
+    haccpCcpNumber: 'CCP-02',
     category: 'food_safety',
   },
   {
@@ -3930,7 +3930,7 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
     daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
     locationIds: ['1', '2', '3'],
     assignedRoles: ['kitchen_manager', 'kitchen_staff'],
-    haccpCcpNumber: 'CCP-02',
+    haccpCcpNumber: null,
     category: 'food_safety',
   },
 ];

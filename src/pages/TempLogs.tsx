@@ -221,7 +221,7 @@ export function TempLogs() {
   const [receivingItems, setReceivingItems] = useState<ReceivingItem[]>([]);
   const [receivedBy, setReceivedBy] = useState('');
 
-  // CCP-04 corrective action state
+  // CCP-01 (Receiving) corrective action state
   const [showCcpModal, setShowCcpModal] = useState(false);
   const [pendingFailItem, setPendingFailItem] = useState<ReceivingItem | null>(null);
   const [ccpActionTaken, setCcpActionTaken] = useState('');
@@ -687,7 +687,7 @@ export function TempLogs() {
             created_at: item.reading_time,
             input_method: item.input_method,
             shift: item.shift,
-            ccp_number: item.log_type === 'hot_holding' || item.log_type === 'cold_holding' ? 'CCP-02' : 'CCP-01',
+            ccp_number: item.log_type === 'hot_holding' ? 'CCP-04' : item.log_type === 'cold_holding' ? 'CCP-03' : 'CCP-02',
             logged_retroactively: item.logged_retroactively ?? false,
             retroactive_reason: item.retroactive_reason ?? null,
             retroactive_logged_at: item.retroactive_logged_at ?? null,
@@ -1009,7 +1009,7 @@ export function TempLogs() {
     };
 
     if (!isPass) {
-      // CCP-04 deviation — show corrective action prompt
+      // CCP-01 (Receiving) deviation — show corrective action prompt
       setPendingFailItem(newItem);
       setCcpActionTaken('');
       setCcpNotes('');
@@ -1025,7 +1025,7 @@ export function TempLogs() {
 
   const handleCcpSave = () => {
     if (!ccpActionTaken || !ccpNotes.trim()) {
-      toast.error('Action Taken and Notes are required for CCP-04 deviations.');
+      toast.error('Action Taken and Notes are required for CCP-01 deviations.');
       return;
     }
     if (!pendingFailItem) return;
@@ -1044,7 +1044,7 @@ export function TempLogs() {
     setReceivingTemp('');
     setShowCcpModal(false);
     setPendingFailItem(null);
-    toast.success('Item added with CCP-04 corrective action recorded.');
+    toast.success('Item added with CCP-01 corrective action recorded.');
   };
 
   const handleFinalizeReceiving = async () => {
@@ -1580,13 +1580,13 @@ export function TempLogs() {
                 </button>
               </form>
 
-              {/* CCP-04 Corrective Action Modal */}
+              {/* CCP-01 (Receiving) Corrective Action Modal */}
               <Modal isOpen={!!(showCcpModal && pendingFailItem)} onClose={() => { setShowCcpModal(false); setPendingFailItem(null); }} size="lg">
                 {pendingFailItem && (
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-6 w-6" style={{ color: '#C62828' }} />
-                      <h3 className="text-lg font-bold" style={{ color: '#C62828' }}>CCP-04 Deviation — Corrective Action Required</h3>
+                      <h3 className="text-lg font-bold" style={{ color: '#C62828' }}>CCP-01 Deviation — Corrective Action Required</h3>
                     </div>
                     <div className="p-3 bg-red-50 rounded-xl border border-red-200 mb-4 text-sm">
                       <p className="font-medium text-red-800">
@@ -1675,7 +1675,7 @@ export function TempLogs() {
                         </div>
                         <div className="flex items-center gap-2">
                           {item.ccpDeviation && (
-                            <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-200 text-red-800">CCP-04</span>
+                            <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-200 text-red-800">CCP-01</span>
                           )}
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                             item.isPass ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'

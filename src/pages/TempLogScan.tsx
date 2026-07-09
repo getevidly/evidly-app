@@ -22,11 +22,11 @@ interface MatchedEquipment {
 
 // Equipment lookup with temp ranges, type, and CCP mapping
 const EQUIPMENT_RANGES: Record<string, { minTemp: number; maxTemp: number; type: string; ccp: string; thresholdLabel: string }> = {
-  'eq-1': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
-  'eq-2': { minTemp: -Infinity, maxTemp: 0, type: 'Freezer', ccp: 'CCP-01', thresholdLabel: '≤0°F' },
-  'eq-3': { minTemp: 135, maxTemp: 165, type: 'Hot Holding', ccp: 'CCP-02', thresholdLabel: '≥135°F' },
-  'eq-4': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
-  'eq-5': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
+  'eq-1': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-02', thresholdLabel: '≤41°F' },
+  'eq-2': { minTemp: -Infinity, maxTemp: 0, type: 'Freezer', ccp: 'CCP-02', thresholdLabel: '≤0°F' },
+  'eq-3': { minTemp: 135, maxTemp: 165, type: 'Hot Holding', ccp: 'CCP-04', thresholdLabel: '≥135°F' },
+  'eq-4': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-02', thresholdLabel: '≤41°F' },
+  'eq-5': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-02', thresholdLabel: '≤41°F' },
 };
 
 function lookupByQR(code: string): MatchedEquipment | null {
@@ -38,7 +38,7 @@ function lookupByQR(code: string): MatchedEquipment | null {
   }
   const match = equipmentQRCodes.find(q => q.qrCode === qrValue);
   if (!match) return null;
-  const range = EQUIPMENT_RANGES[match.equipmentId] || { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' };
+  const range = EQUIPMENT_RANGES[match.equipmentId] || { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-02', thresholdLabel: '≤41°F' };
   return {
     id: match.equipmentId,
     name: match.equipmentName,

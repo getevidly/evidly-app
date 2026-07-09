@@ -22,7 +22,7 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-// Default CCP definitions
+// Default CCP definitions — CANONICAL numbering from 20260525200000_haccp_canonical_ccp_seed.sql
 const DEFAULT_CCPS: Record<
   string,
   {
@@ -35,51 +35,76 @@ const DEFAULT_CCPS: Record<
   }
 > = {
   "CCP-01": {
-    name: "Cold Storage Monitoring",
-    hazard: "Biological — pathogen growth due to temperature abuse",
-    critical_limit: "≤41°F for cold storage, ≤0°F for frozen",
+    name: "Receiving",
+    hazard: "Pathogen growth on TCS foods delivered above safe temperature",
+    critical_limit:
+      "Cold TCS ≤41°F (5°C) on receipt; frozen solid; hot TCS ≥135°F (57°C)",
     monitoring_procedure:
-      "Check walk-in cooler, walk-in freezer, and reach-in cooler temperatures every shift using calibrated thermometer",
+      "Probe thermometer reading on every TCS delivery; visual inspection of packaging and frozen state",
     corrective_action:
-      "If above 41°F for <4 hours: move product to working unit. If >4 hours: discard all TCS food. Document disposition.",
+      "Reject delivery; document with photo; notify supplier; record on delivery log",
     verification:
-      "Manager reviews daily temperature logs weekly via EvidLY dashboard",
+      "Daily review of receiving log by Kitchen Manager; weekly thermometer calibration",
   },
   "CCP-02": {
-    name: "Hot Holding Verification",
-    hazard: "Biological — pathogen growth due to inadequate hot holding",
-    critical_limit: "≥135°F for all hot held TCS food",
+    name: "Cold Storage",
+    hazard: "Pathogen growth in TCS foods held above 41°F",
+    critical_limit:
+      "Internal temperature ≤41°F (5°C) — CalCode §113996; FDA Food Code 3-501.16",
     monitoring_procedure:
-      "Check internal temperature of all hot held items every 2 hours using calibrated thermometer",
+      "Walk-in and reach-in refrigeration temperature check; ambient air temperature plus probe of representative TCS item",
     corrective_action:
-      "If below 135°F for <2 hours: reheat to 165°F within 1 hour. If >2 hours: discard. Document disposition.",
+      "Move TCS to working unit; assess time-out-of-temp; discard if >4hr above 41°F; service call on failed unit",
     verification:
-      "Manager reviews daily hot holding logs weekly via EvidLY dashboard",
+      "Daily temperature log review; monthly thermometer calibration",
   },
   "CCP-03": {
-    name: "Cooling Process Control",
-    hazard:
-      "Biological — pathogen growth during cooling (danger zone 135°F-41°F)",
-    critical_limit: "135°F → 70°F within 2 hours, 70°F → 41°F within 4 hours",
+    name: "Cold Holding",
+    hazard: "Pathogen growth in TCS foods on service line above 41°F",
+    critical_limit:
+      "Internal temperature ≤41°F (5°C) — CalCode §113996; FDA Food Code 3-501.16",
     monitoring_procedure:
-      "Monitor items in cooling process at 2-hour and 6-hour marks. Log temperature at each check.",
+      "Probe internal temperature of TCS items in cold wells, salad bars, prep tables",
     corrective_action:
-      "If not at 70°F within 2 hours: reheat to 165°F and restart cooling. If not at 41°F within 6 hours total: discard.",
+      "Discard if >4hr above 41°F; move to working cold unit; ice down service line",
     verification:
-      "Manager reviews cooling logs weekly. Verify ice bath or blast chiller used.",
+      "Per-shift temperature log review by Kitchen Manager",
   },
   "CCP-04": {
-    name: "Receiving Temperature Verification",
-    hazard:
-      "Biological — TCS food received at improper temperature may harbor pathogens",
+    name: "Hot Holding",
+    hazard: "Pathogen growth in TCS foods held below 135°F",
     critical_limit:
-      "≤41°F for refrigerated TCS food, ≤0°F for frozen food on delivery",
+      "Internal temperature ≥135°F (57°C) — CalCode §113996; FDA Food Code 3-501.16",
     monitoring_procedure:
-      "Check internal temperature of all TCS deliveries upon receipt. Verify packaging integrity.",
+      "Probe internal temperature of TCS items in steam tables, hot wells, holding cabinets",
     corrective_action:
-      "Reject any TCS food above 41°F (refrigerated) or showing signs of thawing (frozen). Document rejection and notify supplier.",
+      "Reheat to 165°F within 2hr if time permits; discard if held below 135°F >4hr",
+    verification: "Per-shift temperature log review",
+  },
+  "CCP-05": {
+    name: "Cooling",
+    hazard:
+      "Pathogen growth during cooling of TCS foods through danger zone",
+    critical_limit:
+      "135°F to 70°F within 2 hours; 70°F to 41°F within 4 additional hours — CalCode §114002; FDA Food Code 3-501.14",
+    monitoring_procedure:
+      "Probe internal temperature at start of cooling, at 2-hour mark (must be ≤70°F), and at 6-hour mark (must be ≤41°F)",
+    corrective_action:
+      "If >70°F at 2hr: reheat to 165°F and restart cooling once; if fails again, discard. If >41°F at 6hr: discard.",
     verification:
-      "Manager reviews receiving logs weekly. Verify supplier corrective action if repeated violations.",
+      "Cooldown event review by Kitchen Manager; weekly thermometer calibration",
+  },
+  "CCP-06": {
+    name: "Reheating",
+    hazard:
+      "Survival of pathogens in previously cooked and cooled TCS foods",
+    critical_limit:
+      "Internal temperature ≥165°F (74°C) within 2 hours, held for 15 seconds — CalCode §114014; FDA Food Code 3-403.11",
+    monitoring_procedure:
+      "Probe internal temperature at thickest part of item before service",
+    corrective_action:
+      "Continue reheating until ≥165°F; discard if cannot reach within 2hr",
+    verification: "Per-shift reheating log review",
   },
 };
 

@@ -67,7 +67,7 @@ export function ReceivingSaveBar({ items, vendorName, receivedBy, loading, onSav
           </span>
         </div>
         <p className="text-xs mb-3" style={{ color: '#6B7F96' }}>
-          {failedCount} item{failedCount !== 1 ? 's' : ''} flagged with CCP-04 corrective action recorded.
+          {failedCount} item{failedCount !== 1 ? 's' : ''} flagged with CCP-01 corrective action recorded.
         </p>
         <button
           onClick={onSave}

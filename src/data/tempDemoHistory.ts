@@ -103,8 +103,8 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
         // CCP mapping from equipment type
         const ccpNumber: string | null =
-          eq.type.includes('cold') || eq.type.includes('frozen') || eq.type === 'cooler' || eq.type === 'freezer' ? 'CCP-01'
-          : eq.type.includes('hot') || eq.type === 'hot_hold' ? 'CCP-02'
+          eq.type.includes('cold') || eq.type.includes('frozen') || eq.type === 'cooler' || eq.type === 'freezer' ? 'CCP-02'
+          : eq.type.includes('hot') || eq.type === 'hot_hold' ? 'CCP-04'
           : null;
 
         history.push({
