@@ -131,6 +131,18 @@ const SEVERITIES: { value: Severity; label: string; color: string; bg: string }[
   { value: 'minor', label: 'Minor', color: '#2563eb', bg: '#eff6ff' },
 ];
 
+// DB stores critical/high/medium/low; UI form uses critical/major/minor.
+// Reverse-map on fetch so local objects use form vocabulary consistently.
+function mapDbSeverityToForm(dbSev: string): Severity {
+  if (dbSev === 'high') return 'major';
+  if (dbSev === 'medium' || dbSev === 'low') return 'minor';
+  if (dbSev === 'critical') return 'critical';
+  return 'major'; // safe default
+}
+
+const FALLBACK_SEVERITY_CONFIG = { label: 'Unknown', color: '#6b7280', bg: '#f3f4f6' };
+const FALLBACK_STATUS_CONFIG = { label: 'Unknown', color: '#6b7280', bg: '#f3f4f6' };
+
 const STATUS_CONFIG: Record<IncidentStatus, { label: string; color: string; bg: string }> = {
   open: { label: 'Open', color: '#dc2626', bg: '#fef2f2' },
   investigating: { label: 'Investigating', color: '#d97706', bg: '#fffbeb' },
@@ -660,7 +672,7 @@ export function IncidentLog() {
         dbId: row.id,
         category: (row.category || 'food_safety') as IncidentCategory,
         type: row.type as IncidentType,
-        severity: row.severity as Severity,
+        severity: mapDbSeverityToForm(row.severity),
         title: row.title,
         description: row.description,
         location: row.location_name || locMap[row.location_id] || 'Unknown',
@@ -1143,7 +1155,7 @@ export function IncidentLog() {
 
   // ── Severity badge ─────────────────────────────────────────────
   const SeverityBadge = ({ severity }: { severity: Severity }) => {
-    const config = SEVERITIES.find(s => s.value === severity)!;
+    const config = SEVERITIES.find(s => s.value === severity) ?? FALLBACK_SEVERITY_CONFIG;
     return (
       <span style={{
         fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
@@ -1155,7 +1167,7 @@ export function IncidentLog() {
   };
 
   const StatusBadge = ({ status }: { status: IncidentStatus }) => {
-    const config = STATUS_CONFIG[status];
+    const config = STATUS_CONFIG[status] ?? FALLBACK_STATUS_CONFIG;
     return (
       <span style={{
         fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '6px',
@@ -1435,7 +1447,7 @@ export function IncidentLog() {
                 <div className="relative pl-6">
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[#1E2D4D]/8" />
                   {inc.timeline.map((entry, idx) => {
-                    const statusConf = STATUS_CONFIG[entry.status];
+                    const statusConf = STATUS_CONFIG[entry.status] ?? FALLBACK_STATUS_CONFIG;
                     return (
                       <div key={entry.id} className="relative mb-6 last:mb-0">
                         <div
