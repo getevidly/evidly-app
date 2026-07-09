@@ -836,8 +836,23 @@ export function IncidentLog() {
       return;
     }
     const assignee = isDemoMode ? TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)] : null;
-    const incNumber = `INC-${String(incidents.length + 1).padStart(3, '0')}`;
     const nowIso = new Date().toISOString();
+
+    // Generate incident number from DB max to avoid UNIQUE(org, incident_number) collision
+    let incNumber = `INC-${String(incidents.length + 1).padStart(3, '0')}`;
+    if (!isDemoMode && profile?.organization_id) {
+      const { data: maxRow } = await supabase
+        .from('incidents')
+        .select('incident_number')
+        .eq('organization_id', profile.organization_id)
+        .order('incident_number', { ascending: false })
+        .limit(1)
+        .single();
+      const maxNum = maxRow?.incident_number
+        ? parseInt(maxRow.incident_number.replace(/\D/g, ''), 10) || 0
+        : 0;
+      incNumber = `INC-${String(maxNum + 1).padStart(3, '0')}`;
+    }
 
     // Live mode: insert to Supabase
     // Map UI severity (critical/major/minor) → PROD CHECK (critical/high/medium/low)
@@ -866,13 +881,17 @@ export function IncidentLog() {
         return;
       }
 
-      // Insert timeline entries
+      // Insert timeline entries (non-blocking — incident already saved)
       if (inserted) {
         insertedDbId = inserted.id;
-        await supabase.from('incident_timeline').insert([
-          { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
-          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: 'System' },
-        ]);
+        try {
+          await supabase.from('incident_timeline').insert([
+            { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
+            { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: null },
+          ]);
+        } catch (tlErr) {
+          console.error('[IncidentLog] Timeline insert failed (incident saved):', tlErr);
+        }
       }
     }
 
@@ -935,13 +954,17 @@ export function IncidentLog() {
         updated_at: new Date().toISOString(),
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
-      await supabase.from('incident_timeline').insert({
-        incident_id: selectedIncident.dbId,
-        action: `Corrective action: ${actionText}${estLabel}`,
-        status: 'investigating',
-        performed_by: user?.id ?? null,
-        photos: actionPhotos.length > 0 ? actionPhotos.map(p => p.dataUrl) : [],
-      });
+      try {
+        await supabase.from('incident_timeline').insert({
+          incident_id: selectedIncident.dbId,
+          action: `Corrective action: ${actionText}${estLabel}`,
+          status: 'investigating',
+          performed_by: user?.id ?? null,
+          photos: actionPhotos.length > 0 ? actionPhotos.map(p => p.dataUrl) : [],
+        });
+      } catch (tlErr) {
+        console.error('[IncidentLog] Timeline insert failed (action saved):', tlErr);
+      }
     }
 
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
@@ -984,13 +1007,17 @@ export function IncidentLog() {
         updated_at: nowIso,
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
-      await supabase.from('incident_timeline').insert({
-        incident_id: selectedIncident.dbId,
-        action: `Resolved: ${resolutionSummary}`,
-        status: 'resolved',
-        performed_by: user?.id ?? null,
-        photos: resolutionPhotos.length > 0 ? resolutionPhotos.map(p => p.dataUrl) : [],
-      });
+      try {
+        await supabase.from('incident_timeline').insert({
+          incident_id: selectedIncident.dbId,
+          action: `Resolved: ${resolutionSummary}`,
+          status: 'resolved',
+          performed_by: user?.id ?? null,
+          photos: resolutionPhotos.length > 0 ? resolutionPhotos.map(p => p.dataUrl) : [],
+        });
+      } catch (tlErr) {
+        console.error('[IncidentLog] Timeline insert failed (resolve saved):', tlErr);
+      }
     }
 
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
@@ -1042,12 +1069,16 @@ export function IncidentLog() {
           updated_at: nowIso,
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
-        await supabase.from('incident_timeline').insert({
-          incident_id: selectedIncident.dbId,
-          action: 'Resolution verified and approved',
-          status: 'verified',
-          performed_by: user?.id ?? null,
-        });
+        try {
+          await supabase.from('incident_timeline').insert({
+            incident_id: selectedIncident.dbId,
+            action: 'Resolution verified and approved',
+            status: 'verified',
+            performed_by: user?.id ?? null,
+          });
+        } catch (tlErr) {
+          console.error('[IncidentLog] Timeline insert failed (verify saved):', tlErr);
+        }
       } else {
         await supabase.from('incidents').update({
           status: 'investigating',
@@ -1055,12 +1086,16 @@ export function IncidentLog() {
           updated_at: nowIso,
         }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
-        await supabase.from('incident_timeline').insert({
-          incident_id: selectedIncident.dbId,
-          action: 'Resolution rejected — sent back for additional action',
-          status: 'investigating',
-          performed_by: user?.id ?? null,
-        });
+        try {
+          await supabase.from('incident_timeline').insert({
+            incident_id: selectedIncident.dbId,
+            action: 'Resolution rejected — sent back for additional action',
+            status: 'investigating',
+            performed_by: user?.id ?? null,
+          });
+        } catch (tlErr) {
+          console.error('[IncidentLog] Timeline insert failed (reject saved):', tlErr);
+        }
       }
     }
 
