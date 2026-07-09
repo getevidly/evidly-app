@@ -19,6 +19,10 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { useLocations } from '../hooks/api/useLocations';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -84,6 +88,7 @@ interface CreateCAForm {
   rootCause: string;
   regulationReference: string;
   templateId: string | null;
+  linkedIncidentId: string | null;
 }
 
 const EMPTY_FORM: CreateCAForm = {
@@ -98,6 +103,7 @@ const EMPTY_FORM: CreateCAForm = {
   rootCause: '',
   regulationReference: '',
   templateId: null,
+  linkedIncidentId: null,
 };
 
 function formatDate(iso: string): string {
@@ -114,6 +120,10 @@ export function CorrectiveActions() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
   const { members: orgMembers } = useOrgMembers();
+  const { user, profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const { data: dbLocations } = useLocations();
+  const locationOptions = isDemoMode ? DEMO_LOCATIONS : (dbLocations ?? []);
 
   // URL param pre-filter
   const urlLocation = searchParams.get('location') || 'all';
@@ -129,6 +139,9 @@ export function CorrectiveActions() {
   const [createTab, setCreateTab] = useState<'template' | 'scratch'>('template');
   const [templateCategory, setTemplateCategory] = useState<CACategory | 'all'>('all');
   const [createForm, setCreateForm] = useState<CreateCAForm>(EMPTY_FORM);
+
+  // Incident picker state (FIX 3)
+  const [orgIncidents, setOrgIncidents] = useState<{ id: string; incident_number: string; title: string; category: string; severity: string }[]>([]);
 
   // AI Assist tracking
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
@@ -165,8 +178,59 @@ export function CorrectiveActions() {
     setAiDraftApplied(true);
   };
 
-  // Local actions state (user-created actions in this session)
+  // Local actions state — seeded from DB in live mode
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
+  const [caFetched, setCaFetched] = useState(false);
+
+  // Fetch existing CAs from DB (live mode)
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id || caFetched) return;
+    setCaFetched(true);
+    supabase.from('corrective_actions')
+      .select('id, title, description, category, severity, status, source, source_type, source_id, assigned_to, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id')
+      .eq('organization_id', profile.organization_id)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (error || !data) return;
+        const locs = dbLocations ?? [];
+        const members = orgMembers ?? [];
+        setLocalActions(data.map((row: any) => ({
+          id: row.id,
+          title: row.title || '',
+          description: row.description || '',
+          location: locs.find((l: any) => l.id === row.location_id)?.name || '',
+          locationId: row.location_id || '',
+          category: (row.category || 'food_safety') as CACategory,
+          severity: (row.severity || 'medium') as CASeverity,
+          status: (row.status || 'reported') as CAStatus,
+          source: row.source || '',
+          source_type: row.source_type || 'manual',
+          source_id: row.source_id || null,
+          assignee: members.find((m: any) => m.id === row.assigned_to)?.full_name || row.assigned_to || '',
+          assigned_by: '',
+          assignedAt: null,
+          createdAt: row.created_at?.slice(0, 10) || '',
+          dueDate: row.due_date || '',
+          resolvedAt: row.resolved_at?.slice(0, 10) || null,
+          resolved_by: row.resolved_by || null,
+          resolution_note: row.resolution_note || null,
+          verifiedAt: row.verified_at?.slice(0, 10) || null,
+          verified_by: row.verified_by || null,
+          verification_note: row.verification_note || null,
+          rootCause: row.root_cause || '',
+          correctiveSteps: '',
+          preventiveMeasures: '',
+          regulationReference: row.regulation_reference || '',
+          templateId: row.template_id || null,
+          ai_draft: row.ai_draft || null,
+          notes: [],
+          attachments: [],
+          history: [],
+        })));
+      });
+  }, [isDemoMode, profile?.organization_id]);
+
   const allActions = localActions;
 
   // ── Self-Inspection Handoff ──────────────────────────────────
@@ -330,8 +394,20 @@ export function CorrectiveActions() {
       setCreateTab('template');
       setTemplateCategory('all');
       setShowCreateModal(true);
+      // Fetch linkable incidents (live mode only)
+      if (!isDemoMode && profile?.organization_id) {
+        supabase.from('incidents')
+          .select('id, incident_number, title, category, severity')
+          .eq('organization_id', profile.organization_id)
+          .in('status', ['open', 'investigating'])
+          .is('archived_at', null)
+          .is('linked_corrective_action_id', null)
+          .order('created_at', { ascending: false })
+          .limit(50)
+          .then(({ data }) => { if (data) setOrgIncidents(data); });
+      }
     });
-  }, [guardAction]);
+  }, [guardAction, isDemoMode, profile?.organization_id]);
 
   const handleSelectTemplate = useCallback((tpl: CATemplate) => {
     setCreateForm({
@@ -353,71 +429,168 @@ export function CorrectiveActions() {
   }, []);
 
   const handleCreateCA = useCallback(() => {
-    guardAction('create', 'Corrective Actions', () => {
-      // Build new CA with reported status + initial history
+    guardAction('create', 'Corrective Actions', async () => {
       const now = new Date();
-      const newCA: CorrectiveActionItem = {
-        id: `ca-new-${Date.now()}`,
-        title: createForm.title,
-        description: createForm.description,
-        location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name || 'Location 1',
-        locationId: createForm.locationId || 'downtown',
-        category: createForm.category,
-        severity: createForm.severity,
-        status: 'reported',
-        source: createForm.source || 'Manual',
-        source_type: 'manual',
-        source_id: null,
-        assignee: createForm.assignee,
-        assigned_by: '',
-        assignedAt: createForm.assignee ? now.toISOString().slice(0, 10) : null,
-        createdAt: now.toISOString().slice(0, 10),
-        dueDate: createForm.dueDate || now.toISOString().slice(0, 10),
-        resolvedAt: null,
-        resolved_by: null,
-        resolution_note: null,
-        verifiedAt: null,
-        verified_by: null,
-        verification_note: null,
-        rootCause: createForm.rootCause,
-        correctiveSteps: '',
-        preventiveMeasures: '',
-        regulationReference: createForm.regulationReference,
-        templateId: createForm.templateId,
-        ai_draft: aiFields.has('description') ? createForm.description : null,
-        notes: [],
-        attachments: [],
-        history: [
-          { action: 'status_changed', to: 'reported', by: 'You', timestamp: now.toISOString() },
-        ],
-      };
+      const caStatus: CAStatus = createForm.assignee ? 'assigned' : 'reported';
 
-      // If assignee was set, also mark as assigned
-      if (createForm.assignee) {
-        newCA.status = 'assigned';
-        newCA.assigned_by = 'You';
-        newCA.history.push({
-          action: 'status_changed',
-          from: 'reported',
-          to: 'assigned',
-          by: 'You',
-          timestamp: now.toISOString(),
-          detail: `Assigned to ${createForm.assignee}`,
-        });
+      // Resolve assignee name from UUID for display
+      const assigneeMember = orgMembers.find(m => m.id === createForm.assignee);
+      const assigneeName = assigneeMember?.full_name || assigneeMember?.email || createForm.assignee;
+
+      // Pillar: facility_services has no pillar (nullable per migration 20260930000004)
+      const caPillar = createForm.category === 'facility_services' ? null : createForm.category;
+
+      // Source fields from incident picker or manual entry
+      const sourceType = createForm.linkedIncidentId ? 'incident' : 'manual';
+      const sourceId = createForm.linkedIncidentId || null;
+      const sourceLabel = createForm.linkedIncidentId
+        ? orgIncidents.find(i => i.id === createForm.linkedIncidentId)?.title || 'Incident'
+        : (createForm.source || 'Manual');
+
+      if (!isDemoMode && profile?.organization_id) {
+        // ── Live mode: persist to Supabase ──
+        try {
+          const { data: ca, error: caErr } = await supabase.from('corrective_actions').insert({
+            organization_id: profile.organization_id,
+            location_id: createForm.locationId || null,
+            title: createForm.title,
+            description: createForm.description || null,
+            category: createForm.category,
+            pillar: caPillar,
+            severity: createForm.severity,
+            status: caStatus,
+            source: sourceLabel,
+            source_type: sourceType,
+            source_id: sourceId,
+            assigned_to: createForm.assignee || null,
+            due_date: createForm.dueDate || null,
+            root_cause: createForm.rootCause || null,
+            regulation_reference: createForm.regulationReference || null,
+            template_id: createForm.templateId || null,
+            ai_draft: aiFields.has('description') ? createForm.description : null,
+          }).select('id, created_at').single();
+
+          if (caErr || !ca?.id) {
+            console.error('[CorrectiveActions] CA insert failed:', caErr);
+            toast.error('Failed to create corrective action.');
+            return;
+          }
+
+          // Link back to incident if selected
+          if (createForm.linkedIncidentId) {
+            await supabase.from('incidents').update({
+              linked_corrective_action_id: ca.id,
+            }).eq('id', createForm.linkedIncidentId);
+          }
+
+          // Build local item for immediate display
+          const locName = locationOptions.find(l => l.id === createForm.locationId)?.name || '';
+          const newCA: CorrectiveActionItem = {
+            id: ca.id,
+            title: createForm.title,
+            description: createForm.description,
+            location: locName,
+            locationId: createForm.locationId || '',
+            category: createForm.category,
+            severity: createForm.severity,
+            status: caStatus,
+            source: sourceLabel,
+            source_type: sourceType as any,
+            source_id: sourceId,
+            assignee: createForm.assignee ? assigneeName : '',
+            assigned_by: '',
+            assignedAt: createForm.assignee ? now.toISOString().slice(0, 10) : null,
+            createdAt: ca.created_at?.slice(0, 10) || now.toISOString().slice(0, 10),
+            dueDate: createForm.dueDate || now.toISOString().slice(0, 10),
+            resolvedAt: null,
+            resolved_by: null,
+            resolution_note: null,
+            verifiedAt: null,
+            verified_by: null,
+            verification_note: null,
+            rootCause: createForm.rootCause,
+            correctiveSteps: '',
+            preventiveMeasures: '',
+            regulationReference: createForm.regulationReference,
+            templateId: createForm.templateId,
+            ai_draft: aiFields.has('description') ? createForm.description : null,
+            notes: [],
+            attachments: [],
+            history: [],
+          };
+
+          setLocalActions(prev => [newCA, ...prev]);
+          toast.success('Corrective action created');
+        } catch (err) {
+          console.error('[CorrectiveActions] CA creation failed:', err);
+          toast.error('Failed to create corrective action.');
+          return;
+        }
+      } else {
+        // ── Demo mode: state-only ──
+        const newCA: CorrectiveActionItem = {
+          id: `ca-new-${Date.now()}`,
+          title: createForm.title,
+          description: createForm.description,
+          location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name || 'Location 1',
+          locationId: createForm.locationId || 'downtown',
+          category: createForm.category,
+          severity: createForm.severity,
+          status: caStatus,
+          source: createForm.source || 'Manual',
+          source_type: 'manual',
+          source_id: null,
+          assignee: createForm.assignee,
+          assigned_by: '',
+          assignedAt: createForm.assignee ? now.toISOString().slice(0, 10) : null,
+          createdAt: now.toISOString().slice(0, 10),
+          dueDate: createForm.dueDate || now.toISOString().slice(0, 10),
+          resolvedAt: null,
+          resolved_by: null,
+          resolution_note: null,
+          verifiedAt: null,
+          verified_by: null,
+          verification_note: null,
+          rootCause: createForm.rootCause,
+          correctiveSteps: '',
+          preventiveMeasures: '',
+          regulationReference: createForm.regulationReference,
+          templateId: createForm.templateId,
+          ai_draft: aiFields.has('description') ? createForm.description : null,
+          notes: [],
+          attachments: [],
+          history: [
+            { action: 'status_changed', to: 'reported', by: 'You', timestamp: now.toISOString() },
+          ],
+        };
+
+        if (createForm.assignee) {
+          newCA.status = 'assigned';
+          newCA.assigned_by = 'You';
+          newCA.history.push({
+            action: 'status_changed',
+            from: 'reported',
+            to: 'assigned',
+            by: 'You',
+            timestamp: now.toISOString(),
+            detail: `Assigned to ${createForm.assignee}`,
+          });
+        }
+
+        setLocalActions(prev => [newCA, ...prev]);
+        toast.success('Corrective action created');
       }
 
-      setLocalActions(prev => [newCA, ...prev]);
       setShowCreateModal(false);
       setCreateForm(EMPTY_FORM);
       setAiFields(new Set());
       setAiDraftApplied(false);
-      toast.success('Corrective action created');
       // If processing items from self-inspection, advance to next
       if (inspectionItems.length > 0) {
         setTimeout(() => advanceInspectionItem(), 300);
       }
     });
-  }, [guardAction, createForm, aiFields, inspectionItems.length, advanceInspectionItem]);
+  }, [guardAction, createForm, aiFields, inspectionItems.length, advanceInspectionItem, isDemoMode, profile, orgMembers, locationOptions, orgIncidents]);
 
   const handleExportPdf = useCallback(() => {
     const locationName = filterLocation !== 'all'
@@ -939,6 +1112,38 @@ export function CorrectiveActions() {
                     </div>
                   </div>
 
+                  {/* Link Incident (FIX 3) */}
+                  {!isDemoMode && orgIncidents.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Link to Incident (optional)</label>
+                      <select
+                        value={createForm.linkedIncidentId || ''}
+                        onChange={e => {
+                          const incId = e.target.value || null;
+                          const inc = orgIncidents.find(i => i.id === incId);
+                          setCreateForm(f => ({
+                            ...f,
+                            linkedIncidentId: incId,
+                            // Prefill category/severity from incident
+                            ...(inc ? {
+                              category: (inc.category || f.category) as CACategory,
+                              severity: (inc.severity || f.severity) as CASeverity,
+                              source: inc.title || f.source,
+                            } : {}),
+                          }));
+                        }}
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2"
+                      >
+                        <option value="">None — manual source</option>
+                        {orgIncidents.map(inc => (
+                          <option key={inc.id} value={inc.id}>
+                            {inc.incident_number} — {inc.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   {/* Source + Location side by side */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -949,6 +1154,7 @@ export function CorrectiveActions() {
                         onChange={e => setCreateForm(f => ({ ...f, source: e.target.value }))}
                         placeholder="e.g. Temperature Log"
                         className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+                        disabled={!!createForm.linkedIncidentId}
                       />
                     </div>
                     <div>
@@ -959,7 +1165,7 @@ export function CorrectiveActions() {
                         className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2"
                       >
                         <option value="">Select location...</option>
-                        {DEMO_LOCATIONS.map(loc => (
+                        {locationOptions.map(loc => (
                           <option key={loc.id} value={loc.id}>{loc.name}</option>
                         ))}
                       </select>
@@ -977,7 +1183,7 @@ export function CorrectiveActions() {
                       >
                         <option value="">Unassigned</option>
                         {orgMembers.map(m => (
-                          <option key={m.id} value={m.full_name || m.email || m.id}>{m.full_name || m.email || 'Unknown'}</option>
+                          <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>
                         ))}
                       </select>
                     </div>

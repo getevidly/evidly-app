@@ -1340,9 +1340,10 @@ export function IncidentLog() {
                         const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
                         const caSeverity = severityMap[inc.severity] || 'medium';
 
-                        // Map incident category → CA category (DB constraint: food_safety/facility_safety/operational)
-                        const categoryMap: Record<string, string> = { food_safety: 'food_safety', fire_safety: 'facility_safety', facility_services: 'operational' };
-                        const caCategory = categoryMap[inc.category] || 'food_safety';
+                        // Category is identity-mapped (all 3 values valid per PROD CHECK)
+                        const caCategory = inc.category; // food_safety | fire_safety | facility_services
+                        // Pillar: facility_services has no pillar (nullable per migration 20260930000004)
+                        const caPillar = inc.category === 'facility_services' ? null : inc.category;
 
                         // Due date: critical → 24h, high → 48h, else 7 days (mirrors temp pattern's 24h for critical)
                         const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
@@ -1356,9 +1357,11 @@ export function IncidentLog() {
                             title: inc.title,
                             description: `${inc.description || ''} Auto-created from incident ${inc.id}.`.trim(),
                             category: caCategory,
+                            pillar: caPillar,
                             severity: caSeverity,
                             status: 'reported',
                             source: 'incident',
+                            source_type: 'incident',
                             source_id: inc.dbId,
                             due_date: dueDate,
                           }).select('id').single();
