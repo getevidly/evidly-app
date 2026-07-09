@@ -190,15 +190,13 @@ export function CorrectiveActions() {
         if (error || !data) return;
         const locs = dbLocations ?? [];
         const members = orgMembers ?? [];
-        // Reverse-map DB categories → UI categories
-        const dbToUiCategory: Record<string, string> = { facility_safety: 'fire_safety', operational: 'facility_services' };
         setLocalActions(data.map((row: any) => ({
           id: row.id,
           title: row.title || '',
           description: row.description || '',
           location: locs.find((l: any) => l.id === row.location_id)?.name || '',
           locationId: row.location_id || '',
-          category: (dbToUiCategory[row.category] || row.category || 'food_safety') as CACategory,
+          category: (row.category || 'food_safety') as CACategory,
           severity: (row.severity || 'medium') as CASeverity,
           status: (row.status || 'reported') as CAStatus,
           source: row.source || '',
@@ -425,9 +423,8 @@ export function CorrectiveActions() {
       // Source fields (manual CAs only — incident-sourced CAs are auto-created in IncidentLog)
       const sourceLabel = createForm.source || 'Manual';
 
-      // Map UI categories → DB CHECK values (fire_safety→facility_safety, facility_services→operational)
-      const uiToDbCategory: Record<string, string> = { fire_safety: 'facility_safety', facility_services: 'operational' };
-      const dbCategory = uiToDbCategory[createForm.category] || createForm.category;
+      // Pillar: food_safety/fire_safety get pillar set to category; facility_services → null
+      const caPillar = createForm.category === 'facility_services' ? null : createForm.category;
 
       if (!isDemoMode && profile?.organization_id) {
         // ── Live mode: persist to Supabase ──
@@ -437,7 +434,8 @@ export function CorrectiveActions() {
             location_id: createForm.locationId || null,
             title: createForm.title,
             description: createForm.description || null,
-            category: dbCategory,
+            category: createForm.category,
+            pillar: caPillar,
             severity: createForm.severity,
             status: caStatus,
             source: sourceLabel,

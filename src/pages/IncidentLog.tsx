@@ -992,9 +992,8 @@ export function IncidentLog() {
       // ── Auto-create or update corrective_actions row ──
       const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
       const caSeverity = severityMap[selectedIncident.severity] || 'medium';
-      // Map incident categories → CA categories (different CHECK constraints)
-      const caCategoryMap: Record<string, string> = { food_safety: 'food_safety', fire_safety: 'facility_safety', facility_services: 'operational' };
-      const caCategory = caCategoryMap[selectedIncident.category] || 'food_safety';
+      const caCategory = selectedIncident.category; // identity — PROD CHECK: food_safety|fire_safety|facility_services
+      const caPillar = caCategory === 'facility_services' ? null : caCategory; // pillar CHECK: food_safety|fire_safety; NULL for facility_services
       const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
       const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
 
@@ -1007,10 +1006,11 @@ export function IncidentLog() {
             title: selectedIncident.title,
             description: actionText,
             category: caCategory,
+            pillar: caPillar,
             severity: caSeverity,
             status: 'in_progress',
             source: 'incident',
-            source_type: 'manual',
+            source_type: 'incident',
             source_id: selectedIncident.dbId,
             due_date: dueDate,
           };
@@ -1135,8 +1135,8 @@ export function IncidentLog() {
         // Edge case: resolved without Take Action — create CA now as resolved
         const severityMap: Record<string, string> = { critical: 'critical', major: 'high', minor: 'medium' };
         const caSeverity = severityMap[selectedIncident.severity] || 'medium';
-        const caCategoryMap: Record<string, string> = { food_safety: 'food_safety', fire_safety: 'facility_safety', facility_services: 'operational' };
-        const caCategory = caCategoryMap[selectedIncident.category] || 'food_safety';
+        const caCategory = selectedIncident.category; // identity — PROD CHECK: food_safety|fire_safety|facility_services
+        const caPillar = caCategory === 'facility_services' ? null : caCategory;
         const dueDays = caSeverity === 'critical' ? 1 : caSeverity === 'high' ? 2 : 7;
         const dueDate = new Date(Date.now() + dueDays * 86400000).toISOString().split('T')[0];
 
@@ -1147,10 +1147,11 @@ export function IncidentLog() {
             title: selectedIncident.title,
             description: selectedIncident.correctiveAction || resolutionSummary,
             category: caCategory,
+            pillar: caPillar,
             severity: caSeverity,
             status: 'resolved',
             source: 'incident',
-            source_type: 'manual',
+            source_type: 'incident',
             source_id: selectedIncident.dbId,
             due_date: dueDate,
             resolution_note: resolutionSummary,
