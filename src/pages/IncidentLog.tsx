@@ -859,7 +859,7 @@ export function IncidentLog() {
     const dbSeverity = newSeverity === 'major' ? 'high' : newSeverity === 'minor' ? 'medium' : newSeverity;
     let insertedDbId: string | undefined;
     if (!isDemoMode && profile?.organization_id) {
-      const { data: inserted, error } = await supabase.from('incidents').insert({
+      const incPayload = {
         organization_id: profile.organization_id,
         incident_number: incNumber,
         category: newCategory,
@@ -873,24 +873,34 @@ export function IncidentLog() {
         reported_by: user?.id ?? null,
         photos: newPhotos.map(p => p.dataUrl),
         resolution_photos: [],
-      }).select().single();
+      };
+      console.log('[IncidentLog] incidents INSERT payload:', JSON.stringify(incPayload));
+      const { data: inserted, error } = await supabase.from('incidents').insert(incPayload).select().single();
 
       if (error) {
-        console.error('Error creating incident:', error);
+        console.error('[IncidentLog] incidents INSERT error:', JSON.stringify(error));
         showToast('Failed to create incident.');
         return;
       }
+      console.log('[IncidentLog] incidents INSERT success:', JSON.stringify(inserted));
 
       // Insert timeline entries (non-blocking — incident already saved)
       if (inserted) {
         insertedDbId = inserted.id;
+        const tlPayload = [
+          { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
+          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: null },
+        ];
+        console.log('[IncidentLog] incident_timeline INSERT payload:', JSON.stringify(tlPayload));
         try {
-          await supabase.from('incident_timeline').insert([
-            { incident_id: inserted.id, action: 'Incident reported', status: 'open', performed_by: user?.id ?? null },
-            { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'open', performed_by: null },
-          ]);
+          const { error: tlError } = await supabase.from('incident_timeline').insert(tlPayload);
+          if (tlError) {
+            console.error('[IncidentLog] incident_timeline INSERT error:', JSON.stringify(tlError));
+          } else {
+            console.log('[IncidentLog] incident_timeline INSERT success');
+          }
         } catch (tlErr) {
-          console.error('[IncidentLog] Timeline insert failed (incident saved):', tlErr);
+          console.error('[IncidentLog] Timeline insert threw (incident saved):', tlErr);
         }
       }
     }
