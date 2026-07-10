@@ -7,8 +7,8 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours } from '../contexts/OperatingHoursContext';
-import { getAvailableCounties } from '../lib/jurisdictionScoring';
 import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
+import { createLocation } from '../lib/locations/createLocation';
 import { colors, prp } from '../lib/designSystem';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -396,53 +396,78 @@ export function OrgHierarchy() {
     setSelectedId(id);
   };
 
-  // Local React state only — no DB write. If this is ever wired to persist,
-  // it MUST use createLocation() from src/lib/locations/createLocation.ts.
-  const handleAddLocation = (data: NewLocationData) => {
-    const newId = `loc-${Date.now()}`;
-    const counties = getAvailableCounties();
-    const county = counties.find(c => c.slug === data.jurisdictionSlug);
+  const handleAddLocation = async (data: NewLocationData) => {
+    if (!orgId) {
+      toast.error('Organization not found');
+      return;
+    }
 
-    const newNode: OrgTreeNode = {
-      id: newId,
-      name: data.name,
-      code: data.code,
-      type: 'location',
-      openItems: 0,
-      foodSafetyStatus: 'Compliant',
-      foodSafetyJurisdiction: county?.name || 'Health Department',
-      facilitySafetyVerdict: 'Pass',
-      facilitySafetyAhj: 'Local Fire Department',
-    };
+    try {
+      const DAY_CHARS = 'MTWRFSU';
+      const daysStr = data.days.map((on, i) => on ? DAY_CHARS[i] : '').join('');
 
-    setOrgTreeState(prev => {
-      const updated = { ...prev };
-      if (updated.children && updated.children.length > 0) {
-        const firstRegion = { ...updated.children[0] };
-        firstRegion.children = [...(firstRegion.children || []), newNode];
-        firstRegion.locationCount = (firstRegion.locationCount || 0) + 1;
-        updated.children = [firstRegion, ...updated.children.slice(1)];
-      } else {
-        updated.children = [newNode];
+      const row = await createLocation({
+        organization_id: orgId,
+        name: data.name,
+        jurisdiction_id: data.jurisdictionId,
+        address: data.street || undefined,
+        city: data.city || undefined,
+        state: data.state || undefined,
+        zip: data.zip || undefined,
+        business_hours_start: data.openTime || undefined,
+        business_hours_end: data.closeTime || undefined,
+        business_hours_days: daysStr || undefined,
+      });
+
+      // Grant the creator access so RLS lets them see the new location
+      if (profile?.id) {
+        await supabase.from('user_location_access').insert({
+          user_id: profile.id,
+          organization_id: orgId,
+          location_id: row.id,
+          role: profile.role || 'member',
+        });
       }
-      updated.locationCount = (updated.locationCount || 0) + 1;
-      return updated;
-    });
 
-    // Register operating hours
-    setLocationHours([
-      ...locationHours,
-      {
-        locationName: data.name,
-        days: data.days,
-        openTime: data.openTime,
-        closeTime: data.closeTime,
-      },
-    ]);
+      const newNode: OrgTreeNode = {
+        id: row.id,
+        name: row.name,
+        code: [data.city, data.state].filter(Boolean).join(', '),
+        type: 'location',
+        openItems: 0,
+      };
 
-    setSelectedId(newId);
-    setShowAddModal(false);
-    toast.success(`${data.name} added successfully`);
+      setOrgTreeState(prev => {
+        const updated = { ...prev };
+        if (updated.children && updated.children.length > 0) {
+          const firstRegion = { ...updated.children[0] };
+          firstRegion.children = [...(firstRegion.children || []), newNode];
+          firstRegion.locationCount = (firstRegion.locationCount || 0) + 1;
+          updated.children = [firstRegion, ...updated.children.slice(1)];
+        } else {
+          updated.children = [newNode];
+        }
+        updated.locationCount = (updated.locationCount || 0) + 1;
+        return updated;
+      });
+
+      setLocationHours([
+        ...locationHours,
+        {
+          locationName: data.name,
+          days: data.days,
+          openTime: data.openTime,
+          closeTime: data.closeTime,
+        },
+      ]);
+
+      setSelectedId(row.id);
+      setShowAddModal(false);
+      toast.success(`${data.name} added successfully`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to add location';
+      toast.error(message);
+    }
   };
 
   return (
