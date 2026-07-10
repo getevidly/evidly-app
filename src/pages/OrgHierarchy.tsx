@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
-  Building2, Upload, MapPin, Plus,
+  Building2, Upload, MapPin, Plus, Pencil,
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours } from '../contexts/OperatingHoursContext';
 import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
+import { EditLocationModal, type EditLocationData } from '../components/locations/EditLocationModal';
 import { createLocation } from '../lib/locations/createLocation';
+import { updateLocation } from '../lib/locations/updateLocation';
 import { colors, prp } from '../lib/designSystem';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -139,7 +141,7 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
 // Renders real data from the location node. Fields not yet in the data shape
 // (Last Inspection date, Address, Vendor count, Equipment count) show "—".
 
-function LocationDetail({ node }: { node: OrgTreeNode }) {
+function LocationDetail({ node, onEdit }: { node: OrgTreeNode; onEdit?: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Header */}
@@ -150,7 +152,26 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
             {node.code} &middot; Location
           </p>
         </div>
-        {node.foodSafetyStatus && <StatusPill label={node.foodSafetyStatus} />}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              title="Edit location"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 32, height: 32, borderRadius: 6,
+                border: `1px solid ${colors.borderLight}`, background: 'white',
+                cursor: 'pointer', color: colors.textSecondary,
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F4F6FA'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'white'; }}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+          {node.foodSafetyStatus && <StatusPill label={node.foodSafetyStatus} />}
+        </div>
       </div>
 
       {/* Summary stats */}
@@ -337,6 +358,9 @@ export function OrgHierarchy() {
   });
   const [selectedId, setSelectedId] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editLocationId, setEditLocationId] = useState<string | null>(null);
+  const [editLocationData, setEditLocationData] = useState<EditLocationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -466,6 +490,95 @@ export function OrgHierarchy() {
       toast.success(`${data.name} added successfully`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to add location';
+      toast.error(message);
+    }
+  };
+
+  const handleEditClick = async (locationId: string) => {
+    if (!orgId) return;
+    const { data, error } = await supabase
+      .from('locations')
+      .select('*')
+      .eq('id', locationId)
+      .eq('organization_id', orgId)
+      .single();
+
+    if (error || !data) {
+      toast.error('Failed to load location details');
+      return;
+    }
+
+    const DAY_CHARS = 'MTWRFSU';
+    const daysStr = data.business_hours_days || 'MTWRFSU';
+
+    setEditLocationData({
+      name: data.name || '',
+      address: data.address || '',
+      city: data.city || '',
+      state: data.state || '',
+      zip: data.zip || '',
+      phone: data.phone || '',
+      jurisdictionId: data.jurisdiction_id || '',
+      status: data.status || 'active',
+      kitchenType: data.kitchen_type || '',
+      cookingType: data.cooking_type || '',
+      industrySegment: data.industry_segment || 'other',
+      days: DAY_CHARS.split('').map(c => daysStr.includes(c)),
+      openTime: data.business_hours_start || '07:00',
+      closeTime: data.business_hours_end || '22:00',
+    });
+    setEditLocationId(locationId);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async (data: EditLocationData) => {
+    if (!editLocationId || !orgId) return;
+
+    try {
+      const DAY_CHARS = 'MTWRFSU';
+      const daysStr = data.days.map((on, i) => on ? DAY_CHARS[i] : '').join('');
+
+      const row = await updateLocation(editLocationId, orgId, {
+        name: data.name,
+        address: data.address || undefined,
+        city: data.city || undefined,
+        state: data.state || undefined,
+        zip: data.zip || undefined,
+        phone: data.phone || undefined,
+        jurisdiction_id: data.jurisdictionId || undefined,
+        status: data.status || undefined,
+        kitchen_type: data.kitchenType || undefined,
+        cooking_type: data.cookingType || undefined,
+        industry_segment: data.industrySegment || undefined,
+        business_hours_start: data.openTime || undefined,
+        business_hours_end: data.closeTime || undefined,
+        business_hours_days: daysStr || undefined,
+      });
+
+      // Update tree state from returned row
+      setOrgTreeState(prev => {
+        const updateNode = (node: OrgTreeNode): OrgTreeNode => {
+          if (node.id === editLocationId) {
+            return {
+              ...node,
+              name: row.name,
+              code: [row.city, row.state].filter(Boolean).join(', '),
+            };
+          }
+          if (node.children) {
+            return { ...node, children: node.children.map(updateNode) };
+          }
+          return node;
+        };
+        return updateNode(prev);
+      });
+
+      setShowEditModal(false);
+      setEditLocationId(null);
+      setEditLocationData(null);
+      toast.success(`${row.name} updated successfully`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update location';
       toast.error(message);
     }
   };
@@ -626,7 +739,7 @@ export function OrgHierarchy() {
         /* Single-location flat view — location IS the organization */
         <div className="max-w-2xl">
           <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-5" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-            <LocationDetail node={allLocations[0]} />
+            <LocationDetail node={allLocations[0]} onEdit={() => handleEditClick(allLocations[0].id)} />
           </div>
         </div>
 
@@ -652,7 +765,7 @@ export function OrgHierarchy() {
           <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-5 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
             {selectedNode ? (
               selectedNode.type === 'location'
-                ? <LocationDetail node={selectedNode} />
+                ? <LocationDetail node={selectedNode} onEdit={() => handleEditClick(selectedNode.id)} />
                 : <RegionDetail node={selectedNode} />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center" style={{ padding: '40px 16px' }}>
@@ -682,6 +795,14 @@ export function OrgHierarchy() {
         onClose={() => setShowAddModal(false)}
         onSave={handleAddLocation}
         existingCodes={existingCodes}
+      />
+
+      {/* Edit Location Modal */}
+      <EditLocationModal
+        open={showEditModal}
+        onClose={() => { setShowEditModal(false); setEditLocationId(null); setEditLocationData(null); }}
+        onSave={handleSaveEdit}
+        initialData={editLocationData}
       />
     </div>
   );
