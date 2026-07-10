@@ -157,7 +157,7 @@ const CATEGORY_TEMP_CONFIG: Record<string, { tempRequired: boolean; maxTemp?: nu
 
 export function TempLogs() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
@@ -1230,14 +1230,56 @@ export function TempLogs() {
   };
 
   // ── Manual Add Reading handlers ──────────────────────────────
-  const handleSaveCurrentReading = (data: CurrentReadingSaveData) => {
+  const handleSaveCurrentReading = async (data: CurrentReadingSaveData) => {
     const eq = equipment.find(e => e.id === data.equipmentId);
     if (!eq) return;
     const isWithinRange = data.temperature >= eq.min_temp && data.temperature <= eq.max_temp;
     const now = data.readingTime;
+    const actorName = profile?.full_name || user?.email || 'Unknown';
+
+    // Persist to DB in live mode (mirrors handleLogTemp / handleSubmitBatch)
+    if (!isDemoMode && profile?.organization_id) {
+      const facilityId = (eq as any).location_id;
+      const logType = getLogType(eq.equipment_type);
+      const { error } = await supabase.from('temperature_logs').insert({
+        facility_id: facilityId,
+        equipment_id: eq.id,
+        input_method: 'manual',
+        temperature: data.temperature,
+        required_min: eq.min_temp === -Infinity ? null : eq.min_temp,
+        required_max: eq.max_temp,
+        temp_pass: isWithinRange,
+        reading_time: now,
+        shift: getShift(),
+        log_type: logType,
+        logged_by: selectedUser || profile?.id || null,
+        corrective_action: !isWithinRange ? (data.correctiveAction || null) : null,
+      });
+
+      if (error) {
+        toast.error('Failed to save temperature reading');
+        console.error('[TempLogs] Current reading insert failed:', error);
+        return;
+      }
+
+      // Dispatch violation signal if out of range
+      if (!isWithinRange) {
+        dispatchTempViolationSignal(supabase, {
+          facility_id: facilityId,
+          equipment_name: eq.name,
+          temperature: data.temperature,
+          required_min: eq.min_temp === -Infinity ? null : eq.min_temp,
+          required_max: eq.max_temp,
+          log_type: logType,
+          corrective_action: data.correctiveAction || null,
+        }, profile?.organization_id, facilityId);
+      }
+    }
+
+    // Update local state
     setEquipment(prev => prev.map(e =>
       e.id === data.equipmentId
-        ? { ...e, last_check: { temperature_value: data.temperature, created_at: now, is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
+        ? { ...e, last_check: { temperature_value: data.temperature, created_at: now, is_within_range: isWithinRange, recorded_by_name: actorName } }
         : e
     ));
     setHistory(prev => [{
@@ -1247,7 +1289,7 @@ export function TempLogs() {
       equipment_type: eq.equipment_type,
       temperature_value: data.temperature,
       is_within_range: isWithinRange,
-      recorded_by_name: 'Demo User',
+      recorded_by_name: actorName,
       corrective_action: !isWithinRange ? (data.correctiveAction || 'Temperature deviation noted') : null,
       created_at: now,
       input_method: 'manual' as InputMethod,
@@ -1259,7 +1301,37 @@ export function TempLogs() {
     }
   };
 
-  const handleSaveReceivingReading = (data: ReceivingReadingSaveData) => {
+  const handleSaveReceivingReading = async (data: ReceivingReadingSaveData) => {
+    // Persist to DB in live mode (mirrors handleFinalizeReceiving batch insert)
+    if (!isDemoMode && profile?.organization_id) {
+      const { data: locationData } = await supabase
+        .from('locations')
+        .select('id')
+        .eq('organization_id', profile.organization_id)
+        .limit(1)
+        .maybeSingle();
+
+      const { error } = await supabase.from('receiving_temp_logs').insert({
+        organization_id: profile.organization_id,
+        location_id: locationData?.id || null,
+        vendor_name: data.vendorName || vendorName || 'Unknown',
+        item_description: data.itemDescription,
+        item_category: data.foodCategory || null,
+        temperature_value: data.temperature ?? 0,
+        is_pass: data.isPass,
+        received_by: user?.id || null,
+        notes: data.notes || null,
+        corrective_action: null,
+      });
+
+      if (error) {
+        toast.error('Failed to save receiving reading');
+        console.error('[TempLogs] Receiving insert failed:', error);
+        return;
+      }
+    }
+
+    // Update local state
     const newItem: ReceivingItem = {
       itemDescription: data.itemDescription,
       temperature: data.temperature ?? 0,
@@ -1270,8 +1342,25 @@ export function TempLogs() {
     toast.success(`${data.itemDescription} — ${data.isPass ? 'Accepted' : 'Rejected'}`);
   };
 
-  const handleSaveCooldownReading = (data: CooldownSaveData) => {
+  const handleSaveCooldownReading = async (data: CooldownSaveData) => {
+    const actorName = profile?.full_name || user?.email || 'Unknown';
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
     if (data.mode === 'check') {
+      // Persist check to DB in live mode (mirrors useLogCooldownCheck)
+      if (!isDemoMode && profile?.organization_id && data.cooldownId && isUUID.test(data.cooldownId)) {
+        const { error } = await supabase.from('cooldown_checks').insert({
+          cooldown_event_id: data.cooldownId,
+          temperature: data.temperature,
+          notes: data.notes || null,
+          checked_by: user?.id || null,
+        });
+
+        if (error) {
+          console.error('[TempLogs] Cooldown check insert failed:', error);
+        }
+      }
+
       const newCheck: CooldownCheck = {
         temperature: data.temperature,
         time: new Date(data.readingTime),
@@ -1286,13 +1375,60 @@ export function TempLogs() {
       saveCooldownsToStorage(updatedCooldowns);
       toast.success(`Temperature check logged: ${data.temperature}°F`);
     } else {
+      let newId = Date.now().toString();
+
+      // Persist new cooldown to DB in live mode (mirrors useCreateCooldownEvent)
+      if (!isDemoMode && profile?.organization_id) {
+        const { data: locationData } = await supabase
+          .from('locations')
+          .select('id')
+          .eq('organization_id', profile.organization_id)
+          .limit(1)
+          .maybeSingle();
+
+        const startTime = new Date(data.timeStarted);
+        const stage1Target = new Date(startTime.getTime() + 2 * 60 * 60 * 1000);
+        const stage2Target = new Date(startTime.getTime() + 6 * 60 * 60 * 1000);
+
+        const { data: eventRow, error: evErr } = await supabase
+          .from('cooldown_events')
+          .insert({
+            organization_id: profile.organization_id,
+            location_id: locationData?.id || null,
+            food_item_name: data.foodItem,
+            starting_temperature: data.startTemp,
+            cooling_location: data.location || null,
+            assigned_to: user?.id || null,
+            started_at: data.timeStarted,
+            stage_1_target_at: stage1Target.toISOString(),
+            stage_2_target_at: stage2Target.toISOString(),
+            created_by: user?.id || null,
+          })
+          .select('id')
+          .single();
+
+        if (evErr || !eventRow) {
+          toast.error('Failed to create cooldown event');
+          console.error('[TempLogs] Cooldown event insert failed:', evErr);
+          return;
+        }
+
+        newId = eventRow.id;
+
+        // Insert initial temp check + current reading check
+        await supabase.from('cooldown_checks').insert([
+          { cooldown_event_id: eventRow.id, temperature: data.startTemp, checked_by: user?.id || null },
+          { cooldown_event_id: eventRow.id, temperature: data.currentTemp, checked_by: user?.id || null },
+        ]);
+      }
+
       const newCooldown: Cooldown = {
-        id: Date.now().toString(),
+        id: newId,
         itemName: data.foodItem,
         startTemp: data.startTemp,
         startTime: new Date(data.timeStarted),
         location: data.location,
-        startedBy: 'Demo User',
+        startedBy: actorName,
         checks: [
           { temperature: data.startTemp, time: new Date(data.timeStarted) },
           { temperature: data.currentTemp, time: new Date(data.currentReadingTime) },

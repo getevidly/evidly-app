@@ -174,106 +174,217 @@ export function CorrectiveActionDetail() {
   // ── Handlers ─────────────────────────────────────────────
 
   const handleAdvanceStatus = useCallback((nextStatus: CAStatus) => {
-    guardAction('update', 'Corrective Actions', () => {
-      setLocalAction(prev => {
-        if (!prev) return prev;
-        const now = new Date();
-        const updates: Partial<CorrectiveActionItem> = { status: nextStatus };
-        const historyEntry = {
-          action: 'status_changed' as const,
-          from: prev.status,
-          to: nextStatus,
-          by: 'You',
-          timestamp: now.toISOString(),
-          detail: '',
-        };
+    guardAction('update', 'Corrective Actions', async () => {
+      const prev = localAction;
+      if (!prev) return;
 
-        if (nextStatus === 'assigned' && !prev.assignee) {
-          // Can't assign without an assignee — handled by UI disabling
-          return prev;
-        }
-        if ((nextStatus === 'resolved' || nextStatus === 'verified') && !prev.assignee) {
-          // Can't resolve/verify without an assignee
-          return prev;
-        }
-        if (nextStatus === 'resolved') {
-          updates.resolvedAt = now.toISOString().slice(0, 10);
-          updates.resolved_by = 'You';
-          updates.resolution_note = resolutionNote;
-          historyEntry.detail = resolutionNote;
-        }
-        if (nextStatus === 'verified') {
-          updates.verifiedAt = now.toISOString().slice(0, 10);
-          updates.verified_by = 'You';
-          updates.verification_note = verificationNote;
-          historyEntry.detail = verificationNote;
+      if (nextStatus === 'assigned' && !prev.assignee) return;
+      if ((nextStatus === 'resolved' || nextStatus === 'verified') && !prev.assignee) return;
+
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const actorName = profile?.full_name || user?.email || 'Unknown';
+
+      const historyEntry = {
+        action: 'status_changed' as const,
+        from: prev.status,
+        to: nextStatus,
+        by: actorName,
+        timestamp: nowIso,
+        detail: '',
+      };
+
+      const dbUpdates: Record<string, any> = { status: nextStatus };
+
+      if (nextStatus === 'resolved') {
+        dbUpdates.resolved_at = nowIso;
+        dbUpdates.resolved_by = user?.id || null;
+        dbUpdates.resolution_note = resolutionNote;
+        historyEntry.detail = resolutionNote;
+      }
+      if (nextStatus === 'verified') {
+        dbUpdates.verified_at = nowIso;
+        dbUpdates.verified_by = user?.id || null;
+        dbUpdates.verification_note = verificationNote;
+        historyEntry.detail = verificationNote;
+      }
+
+      dbUpdates.history = [...prev.history, historyEntry];
+
+      // Persist to DB in live mode
+      if (!isDemoMode && actionId) {
+        const { error } = await supabase
+          .from('corrective_actions')
+          .update(dbUpdates)
+          .eq('id', actionId);
+
+        if (error) {
+          toast.error('Failed to update status');
+          console.error('[CADetail] Status update failed:', error);
+          return;
         }
 
-        return {
-          ...prev,
-          ...updates,
-          history: [...prev.history, historyEntry],
-        };
-      });
+        // Audit trail row
+        await supabase.from('corrective_action_history').insert({
+          corrective_action_id: actionId,
+          action: 'status_changed',
+          from_value: prev.status,
+          to_value: nextStatus,
+          performed_by: user?.id || null,
+          performed_by_name: actorName,
+          detail: historyEntry.detail || `Status changed to ${nextStatus}`,
+        });
+      }
+
+      // Update local state
+      const localUpdates: Partial<CorrectiveActionItem> = { status: nextStatus };
+      if (nextStatus === 'resolved') {
+        localUpdates.resolvedAt = nowIso.slice(0, 10);
+        localUpdates.resolved_by = actorName;
+        localUpdates.resolution_note = resolutionNote;
+      }
+      if (nextStatus === 'verified') {
+        localUpdates.verifiedAt = nowIso.slice(0, 10);
+        localUpdates.verified_by = actorName;
+        localUpdates.verification_note = verificationNote;
+      }
+
+      setLocalAction(prev => prev ? {
+        ...prev,
+        ...localUpdates,
+        history: [...prev.history, historyEntry],
+      } : prev);
+
       toast.success(`Status updated to ${CA_STATUS_MAP[nextStatus].label}`);
 
-      // Celebration on verified (final status)
       if (nextStatus === 'verified') {
         triggerConfetti();
         navigator.vibrate?.([30, 20, 30]);
         checkMilestone('zero_open_cas');
       }
     });
-  }, [guardAction, resolutionNote, verificationNote, triggerConfetti, checkMilestone]);
+  }, [guardAction, localAction, actionId, user, profile, isDemoMode, resolutionNote, verificationNote, triggerConfetti, checkMilestone]);
 
-  const handleReassign = useCallback((newAssignee: string) => {
-    guardAction('update', 'Corrective Actions', () => {
+  const handleReassign = useCallback((memberId: string, memberName: string) => {
+    guardAction('update', 'Corrective Actions', async () => {
+      const prev = localAction;
+      if (!prev) return;
+
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const actorName = profile?.full_name || user?.email || 'Unknown';
+
+      const historyEntry = {
+        action: 'reassigned',
+        from: prev.assignee || 'Unassigned',
+        to: memberName,
+        by: actorName,
+        timestamp: nowIso,
+        detail: `Reassigned to ${memberName}`,
+      };
+
+      // Persist to DB in live mode
+      if (!isDemoMode && actionId) {
+        const { error } = await supabase
+          .from('corrective_actions')
+          .update({
+            assignee_id: memberId,
+            assignee_name: memberName,
+            assigned_at: nowIso,
+            assigned_by_user_id: user?.id || null,
+            history: [...prev.history, historyEntry],
+          })
+          .eq('id', actionId);
+
+        if (error) {
+          toast.error('Failed to reassign');
+          console.error('[CADetail] Reassign failed:', error);
+          return;
+        }
+
+        await supabase.from('corrective_action_history').insert({
+          corrective_action_id: actionId,
+          action: 'reassigned',
+          from_value: prev.assignee || 'Unassigned',
+          to_value: memberName,
+          performed_by: user?.id || null,
+          performed_by_name: actorName,
+          detail: `Reassigned to ${memberName}`,
+        });
+      }
+
       setLocalAction(prev => {
         if (!prev) return prev;
-        const now = new Date();
         return {
           ...prev,
-          assignee: newAssignee,
-          assigned_by: 'You',
-          assignedAt: now.toISOString().slice(0, 10),
-          history: [...prev.history, {
-            action: 'reassigned',
-            from: prev.assignee || 'Unassigned',
-            to: newAssignee,
-            by: 'You',
-            timestamp: now.toISOString(),
-            detail: `Reassigned to ${newAssignee}`,
-          }],
+          assignee: memberName,
+          assigned_by: actorName,
+          assignedAt: nowIso.slice(0, 10),
+          history: [...prev.history, historyEntry],
         };
       });
-      toast.success(`Reassigned to ${newAssignee}`);
+      toast.success(`Reassigned to ${memberName}`);
     });
-  }, [guardAction]);
+  }, [guardAction, localAction, actionId, user, profile, isDemoMode]);
 
   const handleAddNote = useCallback(() => {
     if (!newNote.trim()) return;
-    guardAction('update', 'Corrective Actions', () => {
+    guardAction('update', 'Corrective Actions', async () => {
+      const prev = localAction;
+      if (!prev) return;
+
+      const actorName = profile?.full_name || user?.email || 'Unknown';
+      const nowIso = new Date().toISOString();
+
       const note: CANote = {
         text: newNote.trim(),
-        author: 'You',
-        timestamp: new Date().toISOString(),
+        author: actorName,
+        timestamp: nowIso,
       };
+
+      const historyEntry = {
+        action: 'note_added',
+        by: actorName,
+        timestamp: nowIso,
+        detail: newNote.trim().length > 60 ? newNote.trim().substring(0, 60) + '\u2026' : newNote.trim(),
+      };
+
+      // Persist to DB in live mode
+      if (!isDemoMode && actionId) {
+        const { error } = await supabase
+          .from('corrective_actions')
+          .update({
+            notes: [...prev.notes, note],
+            history: [...prev.history, historyEntry],
+          })
+          .eq('id', actionId);
+
+        if (error) {
+          toast.error('Failed to add note');
+          console.error('[CADetail] Add note failed:', error);
+          return;
+        }
+
+        await supabase.from('corrective_action_history').insert({
+          corrective_action_id: actionId,
+          action: 'note_added',
+          performed_by: user?.id || null,
+          performed_by_name: actorName,
+          detail: newNote.trim().length > 60 ? newNote.trim().substring(0, 60) + '\u2026' : newNote.trim(),
+        });
+      }
+
       setLocalAction(prev =>
         prev ? {
           ...prev,
           notes: [...prev.notes, note],
-          history: [...prev.history, {
-            action: 'note_added',
-            by: 'You',
-            timestamp: new Date().toISOString(),
-            detail: newNote.trim().length > 60 ? newNote.trim().substring(0, 60) + '\u2026' : newNote.trim(),
-          }],
+          history: [...prev.history, historyEntry],
         } : prev
       );
       setNewNote('');
       toast.success('Note added');
     });
-  }, [newNote, guardAction]);
+  }, [newNote, guardAction, localAction, actionId, user, profile, isDemoMode]);
 
   const handleApplyAiDraft = useCallback(() => {
     if (!item?.ai_draft) return;
@@ -462,12 +573,17 @@ export function CorrectiveActionDetail() {
             <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Reassign to</label>
             <select
               value=""
-              onChange={e => { if (e.target.value) handleReassign(e.target.value); }}
+              onChange={e => {
+                const mid = e.target.value;
+                if (!mid) return;
+                const member = orgMembers.find(m => m.id === mid);
+                if (member) handleReassign(mid, member.full_name || member.email || 'Unknown');
+              }}
               className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-1.5 text-[#1E2D4D]/80 w-full sm:w-auto"
             >
               <option value="">Select team member...</option>
               {orgMembers.filter(m => (m.full_name || m.email) !== item.assignee).map(m => (
-                <option key={m.id} value={m.full_name || m.email || m.id}>{m.full_name || m.email || 'Unknown'}</option>
+                <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>
               ))}
             </select>
           </div>

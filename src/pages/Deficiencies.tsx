@@ -12,6 +12,8 @@ import {
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AddDeficiencyModal } from '../components/deficiencies/AddDeficiencyModal';
@@ -51,6 +53,7 @@ export function Deficiencies() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { user, profile } = useAuth();
   usePageTitle('Deficiencies');
 
   const statusFilter = (searchParams.get('status') || 'all') as DefStatus | 'all';
@@ -166,7 +169,98 @@ export function Deficiencies() {
     locationDescription: string; locationId: string;
     severity: DefSeverity; estimatedCost: number | null;
   }) => {
-    guardAction('create', 'Deficiencies', () => {
+    guardAction('create', 'Deficiencies', async () => {
+      const actorName = profile?.full_name || user?.email || 'You';
+      const today = new Date().toISOString().slice(0, 10);
+
+      // Live mode: persist to DB
+      if (!isDemoMode && profile?.organization_id) {
+        const { data: row, error } = await supabase
+          .from('deficiencies')
+          .insert({
+            organization_id: profile.organization_id,
+            location_id: data.locationId || null,
+            code: data.code,
+            title: data.title,
+            description: data.description || null,
+            location_description: data.locationDescription || null,
+            severity: data.severity,
+            category: data.category,
+            status: 'open',
+            found_date: today,
+            found_by: actorName,
+            estimated_cost: data.estimatedCost,
+            timeline_requirement: '30_days',
+            ai_detected: false,
+          })
+          .select('id')
+          .single();
+
+        if (error || !row) {
+          toast.error('Failed to add deficiency');
+          console.error('[Deficiencies] Insert failed:', error);
+          return;
+        }
+
+        // Insert timeline entry
+        await supabase.from('deficiency_timeline').insert({
+          deficiency_id: row.id,
+          status: 'open',
+          changed_by: user?.id || null,
+          changed_by_name: actorName,
+          notes: 'Manually created.',
+        });
+
+        // Resolve location name
+        let locationName = data.locationId;
+        if (data.locationId) {
+          const { data: locData } = await supabase
+            .from('locations')
+            .select('name')
+            .eq('id', data.locationId)
+            .single();
+          locationName = locData?.name || data.locationId;
+        }
+
+        const newDef: DeficiencyItem = {
+          id: row.id,
+          category: data.category,
+          code: data.code,
+          title: data.title,
+          description: data.description,
+          locationDescription: data.locationDescription,
+          severity: data.severity,
+          status: 'open',
+          locationId: data.locationId,
+          locationName: locationName,
+          customerName: '',
+          equipmentId: null,
+          equipmentName: null,
+          serviceRecordId: null,
+          foundBy: actorName,
+          foundDate: today,
+          requiredAction: '',
+          timelineRequirement: '30_days',
+          estimatedCost: data.estimatedCost,
+          resolvedAt: null,
+          resolvedBy: null,
+          resolutionNotes: null,
+          followUpServiceRecordId: null,
+          deferredReason: null,
+          deferredUntil: null,
+          timeline: [{ status: 'open', date: today, by: actorName, notes: 'Manually created.' }],
+          photoIds: [],
+          resolutionPhotoIds: [],
+          aiDetected: false,
+          aiConfidence: null,
+        };
+        setLocalRecords(prev => [newDef, ...prev]);
+        setShowAddModal(false);
+        toast.success('Deficiency added');
+        return;
+      }
+
+      // Demo mode: local state only
       const loc = data.locationId;
       const newDef: DeficiencyItem = {
         id: `def-new-${Date.now()}`,
@@ -179,12 +273,12 @@ export function Deficiencies() {
         status: 'open',
         locationId: data.locationId,
         locationName: loc,
-        customerName: 'Maria Rodriguez',
+        customerName: '',
         equipmentId: null,
         equipmentName: null,
         serviceRecordId: null,
-        foundBy: 'You',
-        foundDate: new Date().toISOString().slice(0, 10),
+        foundBy: actorName,
+        foundDate: today,
         requiredAction: '',
         timelineRequirement: '30_days',
         estimatedCost: data.estimatedCost,
@@ -194,7 +288,7 @@ export function Deficiencies() {
         followUpServiceRecordId: null,
         deferredReason: null,
         deferredUntil: null,
-        timeline: [{ status: 'open', date: new Date().toISOString().slice(0, 10), by: 'You', notes: 'Manually created.' }],
+        timeline: [{ status: 'open', date: today, by: actorName, notes: 'Manually created.' }],
         photoIds: [],
         resolutionPhotoIds: [],
         aiDetected: false,
