@@ -1086,6 +1086,20 @@ export function IncidentLog() {
         console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
         return;
       }
+
+      // Gate: linked CA must have an assignee before incident can be resolved
+      if (selectedIncident.linkedCorrectiveActionId) {
+        const { data: caCheck } = await supabase
+          .from('corrective_actions')
+          .select('assignee_id')
+          .eq('id', selectedIncident.linkedCorrectiveActionId)
+          .single();
+        if (!caCheck?.assignee_id) {
+          showToast('Assign someone to the linked corrective action before resolving this incident.');
+          return;
+        }
+      }
+
       await supabase.from('incidents').update({
         status: 'resolved',
         resolved_at: nowIso,
@@ -1155,6 +1169,8 @@ export function IncidentLog() {
             source_type: 'incident',
             source_id: selectedIncident.dbId,
             due_date: dueDate,
+            assignee_id: user?.id || null,
+            assignee_name: profile.full_name || user?.email || null,
             resolution_note: resolutionSummary,
             root_cause: rootCause,
             resolved_at: nowIso,

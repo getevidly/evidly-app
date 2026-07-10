@@ -192,6 +192,10 @@ export function CorrectiveActionDetail() {
           // Can't assign without an assignee — handled by UI disabling
           return prev;
         }
+        if ((nextStatus === 'resolved' || nextStatus === 'verified') && !prev.assignee) {
+          // Can't resolve/verify without an assignee
+          return prev;
+        }
         if (nextStatus === 'resolved') {
           updates.resolvedAt = now.toISOString().slice(0, 10);
           updates.resolved_by = 'You';
@@ -317,9 +321,11 @@ export function CorrectiveActionDetail() {
     ? Math.ceil((new Date(item.resolvedAt).getTime() - new Date(item.createdAt).getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  // Gate: resolved requires resolution note, verified requires verification note
+  // Gate: resolved/verified requires assignee + resolution/verification note
+  const noAssignee = !item.assignee;
   const advanceBlocked = (() => {
     if (!lifecycle) return true;
+    if ((lifecycle.next === 'resolved' || lifecycle.next === 'verified') && noAssignee) return true;
     if (lifecycle.next === 'resolved' && !resolutionNote.trim()) return true;
     if (lifecycle.next === 'verified' && !verificationNote.trim()) return true;
     return false;
@@ -726,10 +732,13 @@ export function CorrectiveActionDetail() {
             <ArrowRight size={14} />
             {lifecycle.label}
           </button>
-          {advanceBlocked && lifecycle.next === 'resolved' && (
+          {advanceBlocked && noAssignee && (lifecycle.next === 'resolved' || lifecycle.next === 'verified') && (
+            <span className="text-xs text-red-500/70">Assign someone to this corrective action before it can be resolved</span>
+          )}
+          {advanceBlocked && !noAssignee && lifecycle.next === 'resolved' && (
             <span className="text-xs text-[#1E2D4D]/30">Resolution note required</span>
           )}
-          {advanceBlocked && lifecycle.next === 'verified' && (
+          {advanceBlocked && !noAssignee && lifecycle.next === 'verified' && (
             <span className="text-xs text-[#1E2D4D]/30">Verification note required</span>
           )}
         </div>
