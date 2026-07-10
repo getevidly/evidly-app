@@ -36,7 +36,7 @@ const SOURCE_TYPE_LABELS = {
   incident: 'Incident',
 };
 
-const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified', 'closed', 'archived'];
+const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified'];
 
 function daysAgo(n) {
   return new Date(Date.now() - n * 86400000).toISOString();

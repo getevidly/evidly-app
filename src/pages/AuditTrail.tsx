@@ -15,6 +15,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -377,6 +379,7 @@ const SectionHeader = memo(function SectionHeader({ id, icon: Icon, title, count
 export function AuditTrail() {
   const reportRef = useRef<HTMLDivElement>(null);
   const { isDemoMode } = useDemo();
+  const { user, profile } = useAuth();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Config state
@@ -389,9 +392,38 @@ export function AuditTrail() {
   const [reportHash, setReportHash] = useState('');
   const [reportNumber, setReportNumber] = useState('');
   const [showHistory, setShowHistory] = useState(false);
-  const [history, setHistory] = useState<ReportHistoryEntry[]>(loadHistory);
+  const [history, setHistory] = useState<ReportHistoryEntry[]>(() => isDemoMode ? loadHistory() : []);
   const [verifying, setVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<'match' | 'mismatch' | null>(null);
+
+  // Load report history from DB in live mode
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from('audit_trail_reports')
+        .select('id, report_number, generated_at, sha256_hash, location_filter, date_range_start, date_range_end, modules_included, status, share_token, share_expires_at')
+        .eq('organization_id', profile.organization_id)
+        .order('generated_at', { ascending: false })
+        .limit(20);
+      if (error) { console.error('[AuditTrail] Failed to load history:', error); return; }
+      if (data) {
+        setHistory(data.map(r => ({
+          id: r.id,
+          reportNumber: r.report_number,
+          generatedAt: r.generated_at,
+          hash: r.sha256_hash,
+          location: r.location_filter ?? 'all',
+          dateRange: r.date_range_start && r.date_range_end
+            ? `${r.date_range_start} — ${r.date_range_end}` : '30',
+          modules: r.modules_included ?? [],
+          status: r.status as 'completed' | 'shared' | 'expired',
+          shareToken: r.share_token ?? undefined,
+          shareExpiry: r.share_expires_at ?? undefined,
+        })));
+      }
+    })();
+  }, [isDemoMode, profile?.organization_id]);
 
   // Module toggles
   const [modules, setModules] = useState<ModuleConfig[]>([
@@ -460,9 +492,9 @@ export function AuditTrail() {
     if (!reportData || !generated) return;
     const num = generateReportNumber();
     setReportNumber(num);
-    computeSHA256(reportData).then(hash => {
+    computeSHA256(reportData).then(async (hash) => {
       setReportHash(hash);
-      // Save to history — use updater form to avoid stale closure on history
+
       const entry: ReportHistoryEntry = {
         id: crypto.randomUUID(),
         reportNumber: num,
@@ -473,11 +505,36 @@ export function AuditTrail() {
         modules: enabledModulesRef.current,
         status: 'completed',
       };
-      setHistory(prev => {
-        const updated = [entry, ...prev].slice(0, 20);
-        saveHistory(updated);
-        return updated;
-      });
+
+      // Persist to DB in live mode, localStorage in demo
+      if (!isDemoMode && profile?.organization_id && user?.id) {
+        const daysVal = dateRangeRef.current === 'custom' ? 30 : parseInt(dateRangeRef.current);
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date(Date.now() - daysVal * 86400000).toISOString().split('T')[0];
+        const { data: row, error } = await supabase.from('audit_trail_reports').insert({
+          id: entry.id,
+          organization_id: profile.organization_id,
+          report_number: num,
+          generated_by: user.id,
+          sha256_hash: hash,
+          date_range_start: startDate,
+          date_range_end: endDate,
+          location_filter: locationFilterRef.current === 'all' ? null : locationFilterRef.current,
+          modules_included: enabledModulesRef.current,
+          report_data: reportData,
+          status: 'completed',
+        }).select('id').single();
+        if (error) {
+          console.error('[AuditTrail] DB insert failed, falling back to localStorage:', error);
+          saveHistory([entry, ...history].slice(0, 20));
+        } else if (row) {
+          entry.id = row.id;
+        }
+      } else {
+        saveHistory([entry, ...history].slice(0, 20));
+      }
+
+      setHistory(prev => [entry, ...prev].slice(0, 20));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generated, reportData]);
@@ -608,19 +665,32 @@ export function AuditTrail() {
   };
 
   const handleShareLink = useCallback(() => {
-    guardAction('share', 'audit trail reports', () => {
+    guardAction('share', 'audit trail reports', async () => {
       const token = crypto.randomUUID();
       const expiry = new Date(Date.now() + 72 * 3600000);
       const link = `${window.location.origin}/audit-trail/shared/${token}`;
 
-      // Update history entry
+      // Persist share to DB in live mode
+      if (!isDemoMode && profile?.organization_id) {
+        const target = history.find(h => h.reportNumber === reportNumber);
+        if (target) {
+          const { error } = await supabase.from('audit_trail_reports').update({
+            share_token: token,
+            share_expires_at: expiry.toISOString(),
+            status: 'shared',
+          }).eq('id', target.id);
+          if (error) console.error('[AuditTrail] Share update failed:', error);
+        }
+      }
+
+      // Update local state
       setHistory(prev => {
         const updated = prev.map(h =>
           h.reportNumber === reportNumber
             ? { ...h, status: 'shared' as const, shareToken: token, shareExpiry: expiry.toISOString() }
             : h
         );
-        saveHistory(updated);
+        if (isDemoMode) saveHistory(updated);
         return updated;
       });
 
@@ -628,7 +698,7 @@ export function AuditTrail() {
         toast.success(`Share link copied — expires ${format(expiry, 'MMM d, yyyy h:mm a')}`);
       });
     });
-  }, [guardAction, reportNumber]);
+  }, [guardAction, reportNumber, isDemoMode, profile?.organization_id, history]);
 
   const handleVerifyHash = useCallback(async () => {
     if (!reportData) return;
@@ -644,10 +714,15 @@ export function AuditTrail() {
     guardAction('print', 'audit trail reports', () => { window.print(); });
   };
 
-  const handleDeleteHistory = (id: string) => {
+  const handleDeleteHistory = async (id: string) => {
+    // Delete from DB in live mode
+    if (!isDemoMode && profile?.organization_id) {
+      const { error } = await supabase.from('audit_trail_reports').delete().eq('id', id);
+      if (error) console.error('[AuditTrail] Delete failed:', error);
+    }
     setHistory(prev => {
       const updated = prev.filter(h => h.id !== id);
-      saveHistory(updated);
+      if (isDemoMode) saveHistory(updated);
       return updated;
     });
     toast.success('Report removed from history');

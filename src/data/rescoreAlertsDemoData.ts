@@ -78,7 +78,7 @@ export function evaluateTriggers(input: TriggerInput): Omit<ReScoreAlert, 'id'>[
 
   // Corrective action overdue
   for (const ca of input.correctiveActions) {
-    if (['completed', 'verified', 'closed', 'archived'].includes(ca.status)) continue;
+    if (['resolved', 'verified'].includes(ca.status)) continue;
     const due = new Date(ca.dueDate).getTime();
     if (due < now) {
       const isCriticalOverdue = ca.severity === 'critical' &&

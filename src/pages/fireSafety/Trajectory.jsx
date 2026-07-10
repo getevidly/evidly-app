@@ -30,7 +30,7 @@ const METRIC_OPTIONS = [
   { value: 'closed', label: 'Findings closed' },
 ];
 
-const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified', 'closed', 'archived'];
+const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified'];
 
 function daysAgo(n) {
   return new Date(Date.now() - n * 86400000).toISOString();

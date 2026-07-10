@@ -185,7 +185,7 @@ export function useLogCooldownDisposition(): ApiMutationResult<LogDispositionInp
         description: `Stage ${input.failedStage ?? '?'} failure. Disposition: ${dispositionLabel}. ${input.dispositionNotes}`.trim(),
         category: 'food_safety',
         severity: 'critical',
-        status: 'created',
+        status: 'reported',
         source: `cooldown_event:${input.cooldownEventId}`,
         regulation_reference: 'CalCode §114002 · FDA §3-501.14',
       })

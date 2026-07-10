@@ -23,7 +23,7 @@ const TIME_RANGES = [
   { label: 'Last 90 days', days: 90 },
 ];
 
-const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified', 'closed', 'archived'];
+const OPEN_STATUSES_EXCLUDE = ['resolved', 'verified'];
 
 // Fire findings source_type labels — never show checklist or temperature for fire
 const SOURCE_TYPE_LABELS = {

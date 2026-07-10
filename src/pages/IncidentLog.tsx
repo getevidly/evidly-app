@@ -971,12 +971,18 @@ export function IncidentLog() {
         console.error('[IncidentLog] Missing dbId on incident in live mode — write skipped', selectedIncident);
         return;
       }
-      await supabase.from('incidents').update({
+      const { error: statusErr } = await supabase.from('incidents').update({
         status: 'investigating',
         corrective_action: actionText,
         action_chips: actionChips,
         updated_at: new Date().toISOString(),
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+
+      if (statusErr) {
+        console.error('[IncidentLog] Status update failed:', statusErr);
+        toast.error('Failed to save corrective action — please retry');
+        return;
+      }
 
       try {
         await supabase.from('incident_timeline').insert({
