@@ -104,6 +104,7 @@ export default function FireProtection() {
   const [showUpload, setShowUpload] = useState(false);
 
   const [fireServices, setFireServices] = useState([]);
+  console.log('[FP-BODY]', { orgId, locationId, fireServicesLen: fireServices.length });
   const [servicesLoading, setServicesLoading] = useState(true);
   const [systemSchedules, setSystemSchedules] = useState({});
   const [scheduleLoading, setScheduleLoading] = useState(true);
@@ -161,12 +162,10 @@ export default function FireProtection() {
 
   // ── Fetch schedules ───────────────────────────────────────
   useEffect(() => {
-    console.log('[FP-DIAG] schedule effect entry', { orgId, locationId, fireServicesLen: fireServices.length });
-    if (!orgId || !locationId) { console.log('[FP-DIAG] BAIL: orgId or locationId falsy', { orgId, locationId }); return; }
+    if (!orgId || !locationId) return;
     const codes = fireServices.map(s => s.code);
-    if (codes.length === 0) { console.log('[FP-DIAG] BAIL: codes empty'); setScheduleLoading(false); return; }
+    if (codes.length === 0) { setScheduleLoading(false); return; }
     setScheduleLoading(true);
-    console.log('[FP-DIAG] schedule query firing', { orgId, locationId, codes });
     supabase
       .from('location_service_schedules')
       .select('id, service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
@@ -174,11 +173,9 @@ export default function FireProtection() {
       .eq('location_id', locationId)
       .in('service_type_code', codes)
       .eq('is_active', true)
-      .then(({ data, error }) => {
-        console.log('[FP-DIAG] schedule response', { rowCount: (data || []).length, data, error });
+      .then(({ data }) => {
         const map = {};
         for (const r of (data || [])) map[r.service_type_code] = r;
-        console.log('[FP-DIAG] systemSchedules map', map);
         setSystemSchedules(map);
         setScheduleLoading(false);
       });
@@ -262,7 +259,6 @@ export default function FireProtection() {
   const renderSystemRow = (sys) => {
     const excluded = isExcluded(sys.code);
     const sched = systemSchedules[sys.code];
-    if (sys.code === 'KEC') console.log('[FP-DIAG] KEC render', { sched, allKeys: Object.keys(systemSchedules) });
     const isSolidFuelKec = sys.code === 'KEC' && cookingType === 'solid_fuel';
     const state = deriveSystemState(sched, isSolidFuelKec);
     const pill = excluded
