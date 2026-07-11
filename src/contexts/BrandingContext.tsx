@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 
 // ── Types ───────────────────────────────────────────────────
 
@@ -158,7 +157,6 @@ const BrandingContext = createContext<BrandingContextType>({
 // ── Provider ────────────────────────────────────────────────
 
 const STORAGE_KEY = 'evidly_brand_preset';
-const BRANDING_CACHE_KEY = 'evidly_branding_cache';
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
   const [activeBrandKey, setActiveBrandKey] = useState<string>(() => {
@@ -170,17 +168,9 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   });
 
   const [branding, setBranding] = useState<BrandingConfig>(() => {
-    // Try DB cache for instant render before auth resolves
-    try {
-      const cached = localStorage.getItem(BRANDING_CACHE_KEY);
-      if (cached) return mergeBranding(DEFAULT_BRANDING, JSON.parse(cached));
-    } catch { /* fall through */ }
     const preset = DEMO_BRAND_PRESETS[activeBrandKey] || {};
     return mergeBranding(DEFAULT_BRANDING, preset);
   });
-
-  // Track org ID for DB persistence (can't use useAuth — BrandingProvider wraps AuthProvider)
-  const orgIdRef = useRef<string | null>(null);
 
   const setBrandPreset = useCallback((key: string) => {
     setActiveBrandKey(key);
@@ -189,27 +179,12 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     setBranding(merged);
     applyCSSVariables(merged.colors);
     try { localStorage.setItem(STORAGE_KEY, key); } catch { /* noop */ }
-    try { localStorage.setItem(BRANDING_CACHE_KEY, JSON.stringify(merged)); } catch { /* noop */ }
-    // Persist to DB
-    const oid = orgIdRef.current;
-    if (oid) {
-      supabase.from('organizations').update({ branding: merged }).eq('id', oid)
-        .then(({ error }) => { if (error) console.error('Branding persist failed:', error.message); });
-    }
   }, []);
 
   const updateBranding = useCallback((partial: Partial<BrandingConfig>) => {
     setBranding(prev => {
       const next = mergeBranding(prev, partial);
       applyCSSVariables(next.colors);
-      // Cache locally
-      try { localStorage.setItem(BRANDING_CACHE_KEY, JSON.stringify(next)); } catch { /* noop */ }
-      // Persist to DB (fire-and-forget)
-      const oid = orgIdRef.current;
-      if (oid) {
-        supabase.from('organizations').update({ branding: next }).eq('id', oid)
-          .then(({ error }) => { if (error) console.error('Branding persist failed:', error.message); });
-      }
       return next;
     });
   }, []);
@@ -217,36 +192,6 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   // Apply CSS variables on mount
   useEffect(() => {
     applyCSSVariables(branding.colors);
-  }, []);
-
-  // Load branding from DB when auth session is available
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!session?.user) {
-        orgIdRef.current = null;
-        return;
-      }
-      const { data: prof } = await supabase
-        .from('user_profiles')
-        .select('organization_id')
-        .eq('id', session.user.id)
-        .single();
-      if (!prof?.organization_id) return;
-      orgIdRef.current = prof.organization_id;
-
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('branding')
-        .eq('id', prof.organization_id)
-        .single();
-      if (org?.branding && typeof org.branding === 'object' && Object.keys(org.branding as Record<string, unknown>).length > 0) {
-        const merged = mergeBranding(DEFAULT_BRANDING, org.branding as Partial<BrandingConfig>);
-        setBranding(merged);
-        applyCSSVariables(merged.colors);
-        try { localStorage.setItem(BRANDING_CACHE_KEY, JSON.stringify(merged)); } catch { /* noop */ }
-      }
-    });
-    return () => subscription.unsubscribe();
   }, []);
 
   return (
