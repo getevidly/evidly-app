@@ -165,6 +165,7 @@ export default function FireProtection() {
     const codes = fireServices.map(s => s.code);
     if (codes.length === 0) { setScheduleLoading(false); return; }
     setScheduleLoading(true);
+    console.log('[FP-DIAG] schedule query firing', { orgId, locationId, codes });
     supabase
       .from('location_service_schedules')
       .select('id, service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
@@ -172,9 +173,11 @@ export default function FireProtection() {
       .eq('location_id', locationId)
       .in('service_type_code', codes)
       .eq('is_active', true)
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        console.log('[FP-DIAG] schedule response', { rowCount: (data || []).length, data, error });
         const map = {};
         for (const r of (data || [])) map[r.service_type_code] = r;
+        console.log('[FP-DIAG] systemSchedules map', map);
         setSystemSchedules(map);
         setScheduleLoading(false);
       });
@@ -258,6 +261,7 @@ export default function FireProtection() {
   const renderSystemRow = (sys) => {
     const excluded = isExcluded(sys.code);
     const sched = systemSchedules[sys.code];
+    if (sys.code === 'KEC') console.log('[FP-DIAG] KEC render', { sched, allKeys: Object.keys(systemSchedules) });
     const isSolidFuelKec = sys.code === 'KEC' && cookingType === 'solid_fuel';
     const state = deriveSystemState(sched, isSolidFuelKec);
     const pill = excluded
