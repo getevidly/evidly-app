@@ -145,7 +145,7 @@ Deno.serve(async (req: Request) => {
       }
 
       // AUDIT-FIX-07 / H-3: Upsert with event_id for idempotency (was insert)
-      const { error: upsertRecordError } = await supabase
+      const { data: serviceRecord, error: upsertRecordError } = await supabase
         .from("vendor_service_records")
         .upsert({
           event_id: eventId,
@@ -161,7 +161,9 @@ Deno.serve(async (req: Request) => {
           notes: notes || null,
           source: "hoodops",
           webhook_payload: body,
-        }, { onConflict: "event_id" });
+        }, { onConflict: "event_id" })
+        .select("id")
+        .single();
 
       if (upsertRecordError) {
         console.error("Upsert record error:", upsertRecordError);
@@ -209,7 +211,7 @@ Deno.serve(async (req: Request) => {
         priority: "high",
         severity: "info",
         sourceType: "vendor_service_record",
-        sourceId: eventId,
+        sourceId: serviceRecord?.id || undefined,
         roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
       }).catch(() => {});
 
@@ -226,7 +228,7 @@ Deno.serve(async (req: Request) => {
         frequency || "quarterly",
       );
 
-      const { error: upsertError } = await supabase
+      const { data: schedule, error: upsertError } = await supabase
         .from("location_service_schedules")
         .upsert(
           {
@@ -240,7 +242,9 @@ Deno.serve(async (req: Request) => {
             updated_at: new Date().toISOString(),
           },
           { onConflict: "organization_id,location_id,service_type_code" },
-        );
+        )
+        .select("id")
+        .single();
 
       if (upsertError) {
         console.error("Upsert error:", upsertError);
@@ -264,7 +268,7 @@ Deno.serve(async (req: Request) => {
         priority: "high",
         severity: "info",
         sourceType: "service_schedule",
-        sourceId: `${organization_id}-${location_id}-${service_type_code}`,
+        sourceId: schedule?.id || undefined,
         roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
       }).catch(() => {});
 
