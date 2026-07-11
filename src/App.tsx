@@ -49,7 +49,6 @@ const PolicyLensUpload = lazy(() => import('./pages/PolicyLensUpload'));
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const ProspectMarketingReport = lazy(() => import('./pages/internal/ProspectMarketingReport'));
 const ReportViewer = lazy(() => import('./pages/public/ReportViewer').then(m => ({ default: m.ReportViewer })));
-const Vendors = lazy(() => import('./pages/Vendors').then(m => ({ default: m.Vendors })));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
 const VendorsPage = lazy(() => import('./pages/vendors/VendorsPage'));
 const ServiceDetail = lazy(() => import('./pages/vendors/ServiceDetail'));
@@ -379,7 +378,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
 
   if (loading) {
     return (
@@ -393,7 +392,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={isAdmin ? '/admin' : '/dashboard'} replace />;
   }
 
   return <>{children}</>;

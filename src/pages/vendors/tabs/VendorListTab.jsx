@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Building2 } from 'lucide-react';
+import { Plus, Send, Building2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDemo } from '../../../contexts/DemoContext';
 import { useVendors } from '../../../hooks/useVendors';
@@ -9,6 +9,7 @@ import { AISynthesisStrip } from '../../../components/vendors/AISynthesisStrip';
 import { MetricsStrip } from '../../../components/vendors/MetricsStrip';
 import { VendorRow } from '../../../components/vendors/VendorRow';
 import { AddVendorModal } from '../../../components/vendor/AddVendorModal';
+import { InviteVendorModal } from '../../../components/vendor/InviteVendorModal';
 import { RecommendVendorModal } from '../../../components/vendors/RecommendVendorModal';
 import { prp } from '../../../lib/designSystem';
 
@@ -24,6 +25,7 @@ export function VendorListTab() {
 
   const [filter, setFilter] = useState('all');
   const [addOpen, setAddOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [recommendVendor, setRecommendVendor] = useState(null);
   const [recommendedIds, setRecommendedIds] = useState(new Set());
 
@@ -106,7 +108,7 @@ export function VendorListTab() {
   if (!isPopulated) {
     return (
       <>
-        <DayOneVendorList onAdd={() => setAddOpen(true)} />
+        <DayOneVendorList onAdd={() => setAddOpen(true)} onInvite={() => setInviteOpen(true)} />
         <AddVendorModal
           isOpen={addOpen}
           onClose={() => setAddOpen(false)}
@@ -115,6 +117,14 @@ export function VendorListTab() {
           organizationId={organizationId}
           accessibleLocations={accessibleLocations}
           existingEmails={existingEmails}
+        />
+        <InviteVendorModal
+          isOpen={inviteOpen}
+          onClose={() => setInviteOpen(false)}
+          onInviteSent={() => { setInviteOpen(false); refetch(); }}
+          isDemoMode={isDemoMode}
+          organizationId={organizationId}
+          accessibleLocations={accessibleLocations}
         />
       </>
     );
@@ -146,7 +156,7 @@ export function VendorListTab() {
         ))}
       </div>
 
-      {/* Add action */}
+      {/* Actions */}
       <div className="flex items-center gap-2.5 mb-3">
         <button
           type="button"
@@ -156,6 +166,15 @@ export function VendorListTab() {
         >
           <Plus size={14} />
           Add vendor
+        </button>
+        <button
+          type="button"
+          onClick={() => setInviteOpen(true)}
+          className="px-4 py-2 rounded-md flex items-center gap-1.5"
+          style={{ fontSize: '12px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #E2DDD4', backgroundColor: '#FFFFFF' }}
+        >
+          <Send size={14} />
+          Invite vendor
         </button>
       </div>
 
@@ -179,6 +198,15 @@ export function VendorListTab() {
         organizationId={organizationId}
         accessibleLocations={accessibleLocations}
         existingEmails={existingEmails}
+      />
+
+      <InviteVendorModal
+        isOpen={inviteOpen}
+        onClose={() => setInviteOpen(false)}
+        onInviteSent={() => { setInviteOpen(false); refetch(); }}
+        isDemoMode={isDemoMode}
+        organizationId={organizationId}
+        accessibleLocations={accessibleLocations}
       />
 
       <RecommendVendorModal
@@ -212,7 +240,7 @@ function getInitials(name) {
 
 /* ─── Day-one state (Surface 13) ─────────────────────────────────── */
 
-function DayOneVendorList({ onAdd }) {
+function DayOneVendorList({ onAdd, onInvite }) {
   return (
     <div
       className="rounded-xl flex flex-col items-center text-center py-14 px-6"
@@ -280,15 +308,26 @@ function DayOneVendorList({ onAdd }) {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onAdd}
-        className="inline-flex items-center gap-1.5 rounded-lg font-bold"
-        style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0', padding: '12px 22px', fontSize: 14, minHeight: 44 }}
-      >
-        <Plus size={14} />
-        Add your first vendor
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onAdd}
+          className="inline-flex items-center gap-1.5 rounded-lg font-bold"
+          style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0', padding: '12px 22px', fontSize: 14, minHeight: 44 }}
+        >
+          <Plus size={14} />
+          Add your first vendor
+        </button>
+        <button
+          type="button"
+          onClick={onInvite}
+          className="inline-flex items-center gap-1.5 rounded-lg font-bold"
+          style={{ color: '#1E2D4D', padding: '12px 22px', fontSize: 14, minHeight: 44, border: '1px solid #E2DDD4', backgroundColor: '#FFFFFF' }}
+        >
+          <Send size={14} />
+          Invite vendor
+        </button>
+      </div>
     </div>
   );
 }
