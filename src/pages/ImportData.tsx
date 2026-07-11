@@ -30,6 +30,8 @@ import { validateImportData, ImportSummary } from '../lib/importValidator';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 // ---------------------------------------------------------------------------
 // Icon map for data type cards
@@ -72,6 +74,7 @@ export function ImportData() {
   const [searchParams] = useSearchParams();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature} =
     useDemoGuard();
+  const { user, profile } = useAuth();
 
   // Wizard state
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -228,74 +231,210 @@ export function ImportData() {
   }, [dataType]);
 
   // -----------------------------------------------------------------------
-  // Import (simulated)
+  // Import (REAL — writes to Supabase, org-scoped)
   // -----------------------------------------------------------------------
 
   const runImport = useCallback(() => {
     if (!validation || !dataType) return;
 
-    // In demo mode, show upgrade prompt
     guardAction('edit', 'bulk data import', () => {
-      // Live mode — simulate batch processing
-      setImporting(true);
-      setImportProgress(0);
-      setStep(4);
+      // Not-yet-supported types: show honest message, don't fake success
+      if (dataType === 'temperature_logs') {
+        toast.error('Temperature log import requires equipment mapping and is not yet available. Please log temperatures through the Temperature Logs page.');
+        return;
+      }
+      if (dataType === 'documents') {
+        toast.error('Document import requires file upload and is not yet available. Please upload documents through the Documents page.');
+        return;
+      }
 
-      const rowsToImport = validation.results.filter(
-        (r) => (skipErrors ? r.status !== 'error' : true)
-      );
-      const totalBatches = Math.ceil(rowsToImport.length / 50);
-      let currentBatch = 0;
+      if (!profile?.organization_id || !user?.id) {
+        toast.error('Authentication required');
+        return;
+      }
 
-      const processBatch = () => {
-        currentBatch++;
-        const progress = Math.min(
-          Math.round((currentBatch / totalBatches) * 100),
-          100
+      // Fire async import
+      (async () => {
+        const orgId = profile.organization_id!;
+        setImporting(true);
+        setImportProgress(0);
+        setStep(4);
+
+        const rowsToImport = validation.results.filter(
+          (r) => (skipErrors ? r.status !== 'error' : true),
         );
-        setImportProgress(progress);
 
-        if (currentBatch >= totalBatches) {
-          // Complete
-          const successCount = rowsToImport.filter(
-            (r) => r.status !== 'error'
-          ).length;
-          const failedCount = rowsToImport.length - successCount;
+        let successCount = 0;
+        let failedCount = 0;
+        const errors: string[] = [];
+        let invitationsSent = 0;
 
-          // For team imports, count rows with email and trigger invitations
-          let invitationsSent = 0;
-          if (dataType === 'team') {
-            const emailRows = rowsToImport.filter(
-              (r) => r.status !== 'error' && r.data.email && r.data.email.trim()
-            );
-            invitationsSent = emailRows.length;
-            // Trigger demo invitation for each email
-            emailRows.forEach((r) => {
-              toast.success(`Invitation sent to ${r.data.email} as ${r.data.role || 'Staff'}`);
-            });
+        // Equipment imports need a location_id (NOT NULL in PROD)
+        let locationId: string | null = null;
+        if (dataType === 'equipment') {
+          const { data: locs } = await supabase
+            .from('user_location_access')
+            .select('location_id')
+            .eq('organization_id', orgId)
+            .eq('user_id', user!.id)
+            .limit(1);
+          locationId = locs?.[0]?.location_id || null;
+          if (!locationId) {
+            const { data: orgLocs } = await supabase
+              .from('locations')
+              .select('id')
+              .eq('organization_id', orgId)
+              .limit(1);
+            locationId = orgLocs?.[0]?.id || null;
+          }
+          if (!locationId) {
+            toast.error('No locations found. Please add a location before importing equipment.');
+            setImporting(false);
+            setStep(3);
+            return;
+          }
+        }
+
+        const FACILITY_SAFETY_TYPES = new Set([
+          'hood', 'fire_suppression', 'grease_trap', 'grease_interceptor',
+          'backflow_preventer', 'extinguisher',
+        ]);
+        const FREQ_TO_DAYS: Record<string, number> = {
+          monthly: 30, quarterly: 90, semi_annual: 180, annual: 365,
+        };
+
+        // Process rows
+        for (let i = 0; i < rowsToImport.length; i++) {
+          const result = rowsToImport[i];
+          if (result.status === 'error') { failedCount++; continue; }
+          const d = result.data;
+
+          try {
+            switch (dataType) {
+              case 'equipment': {
+                const eqType = d.type || 'other';
+                const { error } = await supabase.from('equipment').insert({
+                  organization_id: orgId,
+                  location_id: locationId,
+                  name: d.name,
+                  equipment_type: eqType,
+                  category: FACILITY_SAFETY_TYPES.has(eqType) ? 'fire_safety' : 'food_safety',
+                  installed_area: d.location_area || null,
+                  manufacturer: d.manufacturer || null,
+                  model: d.model || null,
+                  serial_number: d.serial_number || null,
+                  install_date: d.install_date || null,
+                  last_service_date: d.last_service_date || null,
+                  service_frequency_days: d.service_frequency ? (FREQ_TO_DAYS[d.service_frequency] ?? null) : null,
+                  notes: d.notes || null,
+                });
+                if (error) throw error;
+                successCount++;
+                break;
+              }
+
+              case 'vendors': {
+                const { error } = await supabase.from('vendors').insert({
+                  organization_id: orgId,
+                  company_name: d.company_name,
+                  contact_name: d.contact_name || null,
+                  email: d.email || null,
+                  phone: d.phone || null,
+                  service_type: d.service_type || null,
+                  license_number: d.license_number || null,
+                  notes: d.notes || null,
+                });
+                if (error) throw error;
+                successCount++;
+                break;
+              }
+
+              case 'locations': {
+                const { data: locRow, error } = await supabase.from('locations').insert({
+                  organization_id: orgId,
+                  name: d.name,
+                  address: d.address || null,
+                  city: d.city || null,
+                  state: d.state || null,
+                  zip: d.zip || null,
+                  phone: d.phone || null,
+                  site_contact_email: d.manager_email || null,
+                  business_hours_timezone: 'America/Los_Angeles',
+                }).select('id').single();
+                if (error) throw error;
+                // Grant creator access for RLS
+                if (locRow) {
+                  await supabase.from('user_location_access').insert({
+                    user_id: user!.id,
+                    organization_id: orgId,
+                    location_id: locRow.id,
+                    role: profile.role || 'member',
+                  });
+                }
+                successCount++;
+                break;
+              }
+
+              case 'team': {
+                const { data: inv, error } = await supabase.from('user_invitations').insert({
+                  organization_id: orgId,
+                  email: d.email,
+                  full_name: d.full_name || null,
+                  role: d.role || 'Staff',
+                  phone: d.phone || null,
+                  invited_by: user!.id,
+                  invitation_method: d.phone ? 'both' : 'email',
+                }).select('token').single();
+                if (error) throw error;
+                successCount++;
+                // Send invitation via same edge function Team.tsx uses
+                if (inv?.token && d.email) {
+                  const inviteUrl = `${window.location.origin}/accept-invite?token=${inv.token}`;
+                  const { error: emailErr } = await supabase.functions.invoke('send-team-invite', {
+                    body: {
+                      email: d.email,
+                      inviteUrl,
+                      role: d.role || 'Staff',
+                      inviterName: profile.full_name || user!.email || 'Admin',
+                    },
+                  });
+                  if (!emailErr) invitationsSent++;
+                }
+                break;
+              }
+            }
+          } catch (err: unknown) {
+            failedCount++;
+            const msg = err instanceof Error ? err.message : 'Insert failed';
+            errors.push(`Row ${result.row}: ${msg}`);
           }
 
-          setImportResult({
-            success: successCount,
-            failed: failedCount,
-            errors: [],
-            invitationsSent: dataType === 'team' ? invitationsSent : undefined,
-          });
-          setImporting(false);
+          // Update progress every row
+          setImportProgress(Math.min(Math.round(((i + 1) / rowsToImport.length) * 100), 100));
+        }
+
+        setImportResult({
+          success: successCount,
+          failed: failedCount,
+          errors,
+          invitationsSent: dataType === 'team' ? invitationsSent : undefined,
+        });
+        setImporting(false);
+
+        if (successCount > 0 && failedCount === 0) {
           toast.success(
             dataType === 'team'
               ? `Imported ${successCount} team members, ${invitationsSent} invitation${invitationsSent !== 1 ? 's' : ''} sent`
-              : `Successfully imported ${successCount} ${dataType} records`
+              : `Successfully imported ${successCount} ${dataType} records`,
           );
+        } else if (successCount > 0) {
+          toast.warning(`Imported ${successCount} records, ${failedCount} failed`);
         } else {
-          setTimeout(processBatch, 500);
+          toast.error(`Import failed: ${failedCount} error${failedCount !== 1 ? 's' : ''}`);
         }
-      };
-
-      // Start first batch after short delay
-      setTimeout(processBatch, 500);
+      })();
     });
-  }, [validation, dataType, skipErrors, guardAction]);
+  }, [validation, dataType, skipErrors, guardAction, profile, user]);
 
   // -----------------------------------------------------------------------
   // Navigation helpers

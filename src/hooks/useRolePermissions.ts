@@ -7,7 +7,7 @@
  * permission_audit_log.
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -94,8 +94,90 @@ export function useRolePermissions(): UseRolePermissionsReturn {
   const [auditLog, setAuditLog] = useState<PermissionAuditEntry[]>(
     isDemoMode ? [...DEMO_AUDIT_LOG] : [],
   );
-  const [loading] = useState(false);
-  const teamMembers = isDemoMode ? DEMO_TEAM_MEMBERS : [];
+  const [loading, setLoading] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<DemoTeamMember[]>(
+    isDemoMode ? DEMO_TEAM_MEMBERS : [],
+  );
+
+  // ── Production: load from DB on mount (D-7 fix) ───────────────
+
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    let cancelled = false;
+
+    (async () => {
+      setLoading(true);
+
+      // Load role_permissions
+      const { data: roleData } = await supabase
+        .from('role_permissions')
+        .select('id, role, permission_key, granted, modified_by, updated_at')
+        .eq('organization_id', profile.organization_id);
+
+      if (!cancelled && roleData) {
+        setRoleOverrides(roleData.map(r => ({
+          id: r.id,
+          role: r.role as UserRole,
+          permissionKey: r.permission_key,
+          granted: r.granted,
+          modifiedBy: r.modified_by || 'System',
+          modifiedAt: r.updated_at || new Date().toISOString(),
+        })));
+      }
+
+      // Load user_permission_overrides + resolve user names
+      const { data: exceptionData } = await supabase
+        .from('user_permission_overrides')
+        .select('id, user_id, permission_key, granted, reason, granted_by, updated_at')
+        .eq('organization_id', profile.organization_id);
+
+      if (!cancelled && exceptionData && exceptionData.length > 0) {
+        const userIds = [...new Set(exceptionData.map(e => e.user_id))];
+        const { data: profiles } = await supabase
+          .from('user_profiles')
+          .select('id, full_name, email, role')
+          .in('id', userIds);
+
+        const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+
+        setUserExceptions(exceptionData.map(e => {
+          const prof = profileMap.get(e.user_id);
+          return {
+            id: e.id,
+            userId: e.user_id,
+            userName: prof?.full_name || 'Unknown',
+            userEmail: prof?.email || '',
+            userRole: (prof?.role || 'member') as UserRole,
+            permissionKey: e.permission_key,
+            granted: e.granted,
+            reason: e.reason || '',
+            grantedBy: e.granted_by || 'System',
+            grantedAt: e.updated_at || new Date().toISOString(),
+          };
+        }));
+      }
+
+      // Load team members for exception picker
+      const { data: memberData } = await supabase
+        .from('user_profiles')
+        .select('id, full_name, email, role')
+        .eq('organization_id', profile.organization_id);
+
+      if (!cancelled && memberData) {
+        setTeamMembers(memberData.map(m => ({
+          id: m.id,
+          name: m.full_name,
+          email: m.email || '',
+          role: (m.role || 'member') as UserRole,
+          avatar: '',
+        })));
+      }
+
+      if (!cancelled) setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [isDemoMode, profile?.organization_id]);
 
   // ── Helpers ─────────────────────────────────────────────────────
 
@@ -339,11 +421,13 @@ export function useRolePermissions(): UseRolePermissionsReturn {
   );
 
   const resetUserToDefaults = useCallback(
-    (userId: string) => {
+    async (userId: string) => {
       const removed = userExceptions.filter(e => e.userId === userId);
       if (removed.length === 0) return;
 
       const userName = removed[0].userName;
+
+      // Optimistic update
       setUserExceptions(prev => prev.filter(e => e.userId !== userId));
 
       setAuditLog(prev => [
@@ -362,14 +446,18 @@ export function useRolePermissions(): UseRolePermissionsReturn {
       ]);
 
       if (!isDemoMode) {
-        supabase
+        const { error } = await supabase
           .from('user_permission_overrides')
           .delete()
           .eq('organization_id', profile?.organization_id)
-          .eq('user_id', userId)
-          .then(({ error }) => {
-            if (error) toast.error('Failed to reset user');
-          });
+          .eq('user_id', userId);
+
+        if (error) {
+          // Revert: re-add the removed exceptions
+          setUserExceptions(prev => [...prev, ...removed]);
+          toast.error('Failed to reset user permissions');
+          return;
+        }
       }
 
       toast.success(`${userName} reset to role defaults${isDemoMode ? ' (Demo)' : ''}`);

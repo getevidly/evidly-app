@@ -163,7 +163,20 @@ export default function ServiceThreadListPage() {
       `)
       .in('id', entityIds);
 
-    // Step 3: merge
+    // Step 3: fetch thread reads from DB for current user
+    const threadIds = threadRows.map((t: ThreadRow) => t.id);
+    const { data: readRows } = await supabase
+      .from('thread_reads')
+      .select('thread_id, last_read_at')
+      .eq('user_id', profile?.id)
+      .eq('organization_id', orgId)
+      .in('thread_id', threadIds);
+
+    const readMap = new Map<string, string>(
+      (readRows || []).map((r: { thread_id: string; last_read_at: string }) => [r.thread_id, r.last_read_at]),
+    );
+
+    // Step 4: merge
     const requestMap = new Map<string, ServiceRequestRow>();
     for (const r of (requestRows || []) as ServiceRequestRow[]) {
       requestMap.set(r.id, r);
@@ -180,8 +193,8 @@ export default function ServiceThreadListPage() {
         const lastMsg = msgs[0] || null;
         const lastMessageAt = lastMsg?.created_at || null;
 
-        // Unread: lastMessageAt > localStorage seen timestamp
-        const seenAt = localStorage.getItem(`evidly_thread_seen_${t.id}`);
+        // Unread: lastMessageAt > DB read timestamp (fall back to localStorage cache)
+        const seenAt = readMap.get(t.id) || localStorage.getItem(`evidly_thread_seen_${t.id}`);
         const isUnread = lastMessageAt
           ? (!seenAt || new Date(lastMessageAt) > new Date(seenAt))
           : false;

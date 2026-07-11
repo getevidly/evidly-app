@@ -574,20 +574,37 @@ export function SelfInspection() {
     }
   };
 
-  const discardDraft = () => {
+  const discardDraft = async () => {
+    // Delete orphaned DB session before clearing local state
+    if (!isDemoMode && dbSessionId.current && profile?.organization_id) {
+      await supabase
+        .from('self_inspection_sessions')
+        .delete()
+        .eq('id', dbSessionId.current)
+        .eq('org_id', profile.organization_id);
+    }
+    dbSessionId.current = null;
     localStorage.removeItem(STORAGE_KEY);
     setHasSavedState(false);
     toast.success('Draft discarded');
   };
 
-  const resetAudit = () => {
+  const resetAudit = async () => {
+    // Delete orphaned DB session before resetting
+    if (!isDemoMode && dbSessionId.current && profile?.organization_id) {
+      await supabase
+        .from('self_inspection_sessions')
+        .delete()
+        .eq('id', dbSessionId.current)
+        .eq('org_id', profile.organization_id);
+    }
+    dbSessionId.current = null;
     localStorage.removeItem(STORAGE_KEY);
     setSections(buildSections(activeTrack === 'federal'));
     setCurrentSection(0);
     setStartedAt(null);
     setAuditPhase('overview');
     setHasSavedState(false);
-    dbSessionId.current = null;
   };
 
   const setItemStatus = (sectionIdx: number, itemIdx: number, status: ItemStatus) => {

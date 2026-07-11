@@ -163,8 +163,22 @@ export default function ServiceThreadDetailPage() {
 
     setHasVendorMessage((count || 0) > 0);
 
-    // 4. Mark as seen (unread state)
-    localStorage.setItem(`evidly_thread_seen_${threadId}`, new Date().toISOString());
+    // 4. Mark as seen (persist to DB + localStorage cache)
+    const seenNow = new Date().toISOString();
+    localStorage.setItem(`evidly_thread_seen_${threadId}`, seenNow);
+    if (profile?.id && orgId) {
+      supabase.from('thread_reads').upsert(
+        {
+          thread_id: threadId,
+          user_id: profile.id,
+          organization_id: orgId,
+          last_read_at: seenNow,
+        },
+        { onConflict: 'thread_id,user_id' },
+      ).then(({ error }) => {
+        if (error) console.error('Failed to persist thread read:', error.message);
+      });
+    }
 
     setLoading(false);
   }
