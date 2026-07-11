@@ -196,6 +196,23 @@ Deno.serve(async (req: Request) => {
         console.error("Upsert error:", upsertError);
       }
 
+      // M4: Notify client that service was completed
+      await createOrgNotification({
+        supabase,
+        organizationId: organization_id,
+        type: "service_completed",
+        category: "vendors",
+        title: `Service completed — ${service_type_code}`,
+        body: `${vendor_name || "Vendor"} completed ${service_type_code} service on ${effectiveDate}.${certificate_url ? " Certificate available." : ""}`,
+        actionUrl: "/services",
+        actionLabel: "View Record",
+        priority: "high",
+        severity: "info",
+        sourceType: "vendor_service_record",
+        sourceId: eventId,
+        roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+      }).catch(() => {});
+
       await logAudit(true);
       return new Response(
         JSON.stringify({ ok: true, event: "service.completed", event_id: eventId, next_due: nextDue }),
@@ -233,6 +250,23 @@ Deno.serve(async (req: Request) => {
           { status: 500, headers: { "Content-Type": "application/json" } },
         );
       }
+
+      // M2: Notify client that service is booked/confirmed
+      await createOrgNotification({
+        supabase,
+        organizationId: organization_id,
+        type: "service_scheduled",
+        category: "vendors",
+        title: `Service scheduled — ${service_type_code}`,
+        body: `${vendor_name || "Vendor"} confirmed ${service_type_code} service for ${nextDue}.`,
+        actionUrl: "/services",
+        actionLabel: "View Schedule",
+        priority: "high",
+        severity: "info",
+        sourceType: "service_schedule",
+        sourceId: `${organization_id}-${location_id}-${service_type_code}`,
+        roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+      }).catch(() => {});
 
       await logAudit(true);
       return new Response(

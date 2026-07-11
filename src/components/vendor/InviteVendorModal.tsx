@@ -73,7 +73,7 @@ export function InviteVendorModal({
         const token = crypto.randomUUID();
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-        const { error: inviteError } = await supabase
+        const { data: invitation, error: inviteError } = await supabase
           .from('user_invitations')
           .insert({
             organization_id: organizationId,
@@ -86,10 +86,39 @@ export function InviteVendorModal({
             invitation_method: 'email',
             email_status: 'pending',
             location_ids: form.locationIds.length > 0 ? form.locationIds : null,
-          });
+          })
+          .select('id, token')
+          .single();
 
         if (inviteError) {
           toast.error(`Failed to send invite: ${inviteError.message}`);
+          setSubmitting(false);
+          return;
+        }
+
+        // Send the actual invite email via send-team-invite edge function
+        const inviteUrl = `${window.location.origin}/invite/${invitation.token}`;
+        const { data: userData } = await supabase.auth.getUser();
+        const inviterName = userData?.user?.user_metadata?.full_name || userData?.user?.email || 'Your team';
+
+        const { error: emailError } = await supabase.functions.invoke('send-team-invite', {
+          body: {
+            email: emailLower,
+            inviteUrl,
+            role: 'Vendor',
+            inviterName,
+          },
+        });
+
+        // Update email_status based on actual send result
+        const emailStatus = emailError ? 'failed' : 'sent';
+        await supabase
+          .from('user_invitations')
+          .update({ email_status: emailStatus })
+          .eq('id', invitation.id);
+
+        if (emailError) {
+          toast.error('Invitation created but email could not be sent. Please try resending.');
           setSubmitting(false);
           return;
         }
