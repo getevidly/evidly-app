@@ -161,9 +161,10 @@ export default function FireProtection() {
 
   // ── Fetch schedules ───────────────────────────────────────
   useEffect(() => {
-    if (!orgId || !locationId) return;
+    console.log('[FP-DIAG] schedule effect entry', { orgId, locationId, fireServicesLen: fireServices.length });
+    if (!orgId || !locationId) { console.log('[FP-DIAG] BAIL: orgId or locationId falsy', { orgId, locationId }); return; }
     const codes = fireServices.map(s => s.code);
-    if (codes.length === 0) { setScheduleLoading(false); return; }
+    if (codes.length === 0) { console.log('[FP-DIAG] BAIL: codes empty'); setScheduleLoading(false); return; }
     setScheduleLoading(true);
     console.log('[FP-DIAG] schedule query firing', { orgId, locationId, codes });
     supabase
