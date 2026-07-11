@@ -13,6 +13,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { EmulationProvider } from './contexts/EmulationContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { BrandingSync } from './components/BrandingSync';
 import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
@@ -921,6 +922,7 @@ function App() {
       <BrandingProvider>
       <Router>
         <AuthProvider>
+          <BrandingSync />
           <DemoProvider>
             <LanguageProvider>
               <RoleProvider>

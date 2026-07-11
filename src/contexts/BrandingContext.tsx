@@ -157,6 +157,7 @@ const BrandingContext = createContext<BrandingContextType>({
 // ── Provider ────────────────────────────────────────────────
 
 const STORAGE_KEY = 'evidly_brand_preset';
+const BRANDING_CACHE_KEY = 'evidly_branding_cache';
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
   const [activeBrandKey, setActiveBrandKey] = useState<string>(() => {
@@ -168,6 +169,16 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   });
 
   const [branding, setBranding] = useState<BrandingConfig>(() => {
+    // Try localStorage cache for instant render (BrandingSync hydrates from DB in background)
+    try {
+      const cached = localStorage.getItem(BRANDING_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+          return mergeBranding(DEFAULT_BRANDING, parsed);
+        }
+      }
+    } catch { /* fall through */ }
     const preset = DEMO_BRAND_PRESETS[activeBrandKey] || {};
     return mergeBranding(DEFAULT_BRANDING, preset);
   });
@@ -179,12 +190,14 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     setBranding(merged);
     applyCSSVariables(merged.colors);
     try { localStorage.setItem(STORAGE_KEY, key); } catch { /* noop */ }
+    try { localStorage.setItem(BRANDING_CACHE_KEY, JSON.stringify(merged)); } catch { /* noop */ }
   }, []);
 
   const updateBranding = useCallback((partial: Partial<BrandingConfig>) => {
     setBranding(prev => {
       const next = mergeBranding(prev, partial);
       applyCSSVariables(next.colors);
+      try { localStorage.setItem(BRANDING_CACHE_KEY, JSON.stringify(next)); } catch { /* noop */ }
       return next;
     });
   }, []);
