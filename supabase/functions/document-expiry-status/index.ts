@@ -153,7 +153,6 @@ Deno.serve(async (req: Request) => {
 
     const isExpired = u.targetStatus === "expired";
     const notifType = isExpired ? "document_expired" : "document_expiring";
-    const compositeSourceId = `${u.id}:${isExpired ? "expired" : "expiring"}`;
     const formattedDate = formatDate(u.expiryDate);
     const docLabel = u.type || "Document";
     const docName = u.name || u.type || "Document";
@@ -179,8 +178,8 @@ Deno.serve(async (req: Request) => {
         actionLabel: "View Document",
         priority: "high",
         severity: "info",
-        sourceType: "compliance_document",
-        sourceId: compositeSourceId,
+        sourceType: `compliance_document_${isExpired ? "expired" : "expiring"}`,
+        sourceId: u.id,
         deduplicate: true,
       });
       notificationsSent += result.count;

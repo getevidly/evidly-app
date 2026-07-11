@@ -57,8 +57,8 @@ Deno.serve(async (req: Request) => {
         actionLabel: "View Tasks",
         priority: "medium",
         severity: "info",
-        sourceType: "task_instance",
-        sourceId: `${task.id}_reminder`,
+        sourceType: "task_instance_reminder",
+        sourceId: task.id,
         deduplicate: true,
       });
       await supabase
@@ -91,8 +91,8 @@ Deno.serve(async (req: Request) => {
         actionLabel: "View Tasks",
         priority: "high",
         severity: "advisory",
-        sourceType: "task_instance",
-        sourceId: `${task.id}_due_soon`,
+        sourceType: "task_instance_due_soon",
+        sourceId: task.id,
         deduplicate: true,
       });
       await supabase
@@ -132,8 +132,8 @@ Deno.serve(async (req: Request) => {
           actionLabel: "Complete Now",
           priority: "high",
           severity: "urgent",
-          sourceType: "task_instance",
-          sourceId: `${task.id}_overdue`,
+          sourceType: "task_instance_overdue",
+          sourceId: task.id,
           deduplicate: true,
         });
       }
@@ -182,8 +182,8 @@ Deno.serve(async (req: Request) => {
           actionLabel: "View Task",
           priority: "critical",
           severity: "urgent",
-          sourceType: "task_instance",
-          sourceId: `${task.id}_escalation_${level + 1}`,
+          sourceType: `task_instance_escalation_${level + 1}`,
+          sourceId: task.id,
           deduplicate: true,
         });
       }

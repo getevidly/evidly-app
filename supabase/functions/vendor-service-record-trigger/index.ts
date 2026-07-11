@@ -259,8 +259,8 @@ Deno.serve(async (req: Request) => {
             ? "high"
             : "medium",
         severity: alert.severity === "due_soon" ? "advisory" : "urgent",
-        sourceType: "service_alert",
-        sourceId: `${alert.schedule.id}_${alert.severity}`,
+        sourceType: `service_alert_${alert.severity}`,
+        sourceId: alert.schedule.id,
         deduplicate: true,
         roleFilter: OPERATOR_ROLES,
       });

@@ -210,8 +210,8 @@ Deno.serve(async (req: Request) => {
               actionLabel: "View Documents",
               priority: stage.days <= 0 ? "high" : stage.days <= 7 ? "medium" : "low",
               severity: stage.days <= 0 ? "urgent" : "advisory",
-              sourceType: "vendor_document_expiry",
-              sourceId: `${row.id}_${stage.days}d`,
+              sourceType: `vendor_document_expiry_${stage.days}d`,
+              sourceId: row.id,
               deduplicate: true,
             });
           }

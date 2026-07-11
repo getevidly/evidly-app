@@ -355,8 +355,8 @@ async function notifyClientForReview(
         actionLabel: "Review Document",
         priority: "medium",
         severity: "advisory",
-        sourceType: "vendor_document",
-        sourceId: `${submission.id}_review`,
+        sourceType: "vendor_document_review",
+        sourceId: submission.id,
         deduplicate: true,
       });
     }
