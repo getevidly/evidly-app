@@ -23,8 +23,19 @@ export interface ServiceScheduleDetail {
   cta: null;
 }
 
+export interface ServiceRecord {
+  id: string;
+  service_date: string | null;
+  technician_name: string | null;
+  cert_number: string | null;
+  certificate_url: string | null;
+  document_url: string | null;
+  document_filename: string | null;
+}
+
 interface UseServiceScheduleDetailResult {
   service: ServiceScheduleDetail | null;
+  records: ServiceRecord[];
   loading: boolean;
   error: string | null;
 }
@@ -33,6 +44,7 @@ export function useServiceScheduleDetail(scheduleId: string | undefined): UseSer
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const [service, setService] = useState<ServiceScheduleDetail | null>(null);
+  const [records, setRecords] = useState<ServiceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,8 +94,20 @@ export function useServiceScheduleDetail(scheduleId: string | undefined): UseSer
           answerLine: null,
           cta: null,
         });
+
+        // Fetch completed service records for this schedule's location + service type
+        const { data: recs } = await supabase
+          .from('vendor_service_records')
+          .select('id, service_date, technician_name, cert_number, certificate_url, document_url, document_filename')
+          .eq('organization_id', orgId)
+          .eq('location_id', row.location_id as string)
+          .eq('service_type_code', row.service_type_code as string)
+          .order('service_date', { ascending: false });
+
+        setRecords((recs ?? []) as ServiceRecord[]);
       } else {
         setService(null);
+        setRecords([]);
       }
     } catch {
       setError('Failed to fetch service schedule');
@@ -118,5 +142,5 @@ export function useServiceScheduleDetail(scheduleId: string | undefined): UseSer
     return () => { supabase.removeChannel(channel); };
   }, [orgId, isDemoMode, scheduleId, fetchDetail]);
 
-  return { service, loading, error };
+  return { service, records, loading, error };
 }

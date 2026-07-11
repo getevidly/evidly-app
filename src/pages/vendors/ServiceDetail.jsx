@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MapPin, Shield } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Shield, FileText } from 'lucide-react';
 import { useServiceScheduleDetail } from '../../hooks/useServiceScheduleDetail';
 import { useAuth } from '../../contexts/AuthContext';
 import { AISynthesisStrip } from '../../components/vendors/AISynthesisStrip';
@@ -15,7 +15,7 @@ import { ThreadedConversation } from '../../components/messaging/ThreadedConvers
 export default function ServiceDetail() {
   const { serviceId } = useParams();
   const { profile } = useAuth();
-  const { service, loading, error } = useServiceScheduleDetail(serviceId);
+  const { service, records, loading, error } = useServiceScheduleDetail(serviceId);
 
   if (loading) {
     return (
@@ -206,13 +206,67 @@ export default function ServiceDetail() {
           </div>
         )}
 
+        {/* Service history */}
+        <p
+          className="uppercase tracking-wider mb-2 mt-4"
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#5A6478' }}
+        >
+          Service history
+        </p>
+        {records.length === 0 ? (
+          <div
+            className="rounded-md px-3 py-3 mb-4"
+            style={{ backgroundColor: '#FCFBF8', border: '1px solid #E2DDD4' }}
+          >
+            <p style={{ fontSize: '11px', color: '#5A6478' }}>No completed visits yet.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 mb-4">
+            {records.map(rec => {
+              const docUrl = rec.certificate_url || rec.document_url;
+              return (
+                <div
+                  key={rec.id}
+                  className="bg-white rounded-lg px-4 py-3"
+                  style={{ border: '1px solid #E2DDD4' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: '#1E2D4D' }}>
+                        {rec.service_date
+                          ? new Date(rec.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                          : 'No date'}
+                      </p>
+                      <p style={{ fontSize: '11px', color: '#5A6478' }}>
+                        {[rec.technician_name, rec.cert_number ? `Cert: ${rec.cert_number}` : null].filter(Boolean).join(' · ') || 'No details'}
+                      </p>
+                    </div>
+                    {docUrl && (
+                      <a
+                        href={docUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md"
+                        style={{ fontSize: '11px', fontWeight: 500, color: '#1E2D4D', border: '1px solid #E2DDD4', backgroundColor: '#FCFBF8' }}
+                      >
+                        <FileText size={12} />
+                        Open
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Vendor Conversation */}
         <div className="mt-4">
           <ThreadedConversation
             entityType="service_schedule"
             entityId={serviceId || null}
             organizationId={profile?.organization_id || null}
-            readOnly
+            defaultSubject={service?.name || 'Service inquiry'}
           />
         </div>
       </div>

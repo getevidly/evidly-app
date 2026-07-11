@@ -221,11 +221,41 @@ export function useThreadedConversation({
         }
       } else {
         // Direct DB write path — inserts into messages table.
-        // Used by service_request threads where no outbound edge function exists yet.
-        const threadId = threadIdRef.current;
+        let threadId = threadIdRef.current;
+
+        // Auto-create thread when none exists (e.g. first message on a service_schedule)
         if (!threadId) {
-          setError('No active thread');
-          return false;
+          const { data: newThread, error: threadErr } = await supabase
+            .from('message_threads')
+            .insert({
+              organization_id: organizationId,
+              entity_type: entityType,
+              entity_id: entityId,
+            })
+            .select('id')
+            .single();
+
+          if (threadErr) {
+            // Handle race: another tab/user may have created it between fetch and insert
+            const { data: existing } = await supabase
+              .from('message_threads')
+              .select('id')
+              .eq('entity_type', entityType)
+              .eq('entity_id', entityId!)
+              .eq('organization_id', organizationId!)
+              .maybeSingle();
+
+            if (!existing) {
+              setError(threadErr.message || 'Failed to create conversation thread');
+              return false;
+            }
+            threadId = existing.id as string;
+          } else {
+            threadId = newThread.id as string;
+          }
+
+          threadIdRef.current = threadId;
+          setThread({ id: threadId });
         }
 
         const { data: { user } } = await supabase.auth.getUser();
