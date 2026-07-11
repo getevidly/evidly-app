@@ -26,7 +26,8 @@ import {
   getImportSchema,
   generateTemplateCSV,
 } from '../lib/importTemplates';
-import { validateImportData, ImportSummary } from '../lib/importValidator';
+import { validateImportData, ImportSummary, parseDate } from '../lib/importValidator';
+import { getLogType } from '../config/tempConfig';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -42,7 +43,6 @@ const DATA_TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }
   vendors: Truck,
   team: Users,
   temperature_logs: Thermometer,
-  documents: FileText,
   locations: MapPin,
 };
 
@@ -55,7 +55,6 @@ const IMPORT_NAV_TARGETS: Record<ImportDataType, string> = {
   vendors: '/vendors',
   team: '/team',
   temperature_logs: '/temp-logs',
-  documents: '/documents',
   locations: '/settings',
 };
 
@@ -99,7 +98,7 @@ export function ImportData() {
   useEffect(() => {
     const typeParam = searchParams.get('type');
     if (typeParam && !dataType) {
-      const validTypes: ImportDataType[] = ['equipment', 'vendors', 'team', 'temperature_logs', 'documents', 'locations'];
+      const validTypes: ImportDataType[] = ['equipment', 'vendors', 'team', 'temperature_logs', 'locations'];
       if (validTypes.includes(typeParam as ImportDataType)) {
         setDataType(typeParam as ImportDataType);
         setStep(2);
@@ -238,16 +237,6 @@ export function ImportData() {
     if (!validation || !dataType) return;
 
     guardAction('edit', 'bulk data import', () => {
-      // Not-yet-supported types: show honest message, don't fake success
-      if (dataType === 'temperature_logs') {
-        toast.error('Temperature log import requires equipment mapping and is not yet available. Please log temperatures through the Temperature Logs page.');
-        return;
-      }
-      if (dataType === 'documents') {
-        toast.error('Document import requires file upload and is not yet available. Please upload documents through the Documents page.');
-        return;
-      }
-
       if (!profile?.organization_id || !user?.id) {
         toast.error('Authentication required');
         return;
@@ -292,6 +281,26 @@ export function ImportData() {
             setImporting(false);
             setStep(3);
             return;
+          }
+        }
+
+        // Temperature log imports need equipment lookup for thresholds
+        type TempEquipRow = { id: string; name: string; location_id: string; equipment_type: string; min_temp: number; max_temp: number };
+        const tempEquipMap = new Map<string, TempEquipRow>();
+        if (dataType === 'temperature_logs') {
+          const { data: teRows } = await supabase
+            .from('temperature_equipment')
+            .select('id, name, location_id, equipment_type, min_temp, max_temp')
+            .eq('organization_id', orgId)
+            .eq('is_active', true);
+          if (!teRows || teRows.length === 0) {
+            toast.error('No temperature equipment found. Please add equipment on the Temperature Logs page before importing.');
+            setImporting(false);
+            setStep(3);
+            return;
+          }
+          for (const eq of teRows) {
+            tempEquipMap.set(eq.name.toLowerCase().trim(), eq);
           }
         }
 
@@ -400,6 +409,94 @@ export function ImportData() {
                   });
                   if (!emailErr) invitationsSent++;
                 }
+                break;
+              }
+
+              case 'temperature_logs': {
+                // Resolve equipment by name
+                const eqName = (d.equipment_name || '').toLowerCase().trim();
+                const eq = tempEquipMap.get(eqName);
+                if (!eq) {
+                  throw new Error(`Equipment "${d.equipment_name || '(blank)'}" not found in your organization`);
+                }
+
+                // Parse temperature
+                const tempValue = parseFloat(d.temperature);
+                if (isNaN(tempValue)) {
+                  throw new Error(`Invalid temperature "${d.temperature}"`);
+                }
+
+                // Parse reading_time from date + time
+                const parsedDate = parseDate(d.date);
+                if (!parsedDate) {
+                  throw new Error(`Invalid date "${d.date}"`);
+                }
+                // Parse time: HH:MM, H:MM AM/PM, HH:MM AM/PM, or empty → 00:00
+                let hours = 0;
+                let minutes = 0;
+                const timeStr = (d.time || '').trim();
+                if (timeStr) {
+                  const match12 = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                  const match24 = timeStr.match(/^(\d{1,2}):(\d{2})$/);
+                  if (match12) {
+                    hours = parseInt(match12[1], 10);
+                    minutes = parseInt(match12[2], 10);
+                    const period = match12[3].toUpperCase();
+                    if (period === 'PM' && hours !== 12) hours += 12;
+                    if (period === 'AM' && hours === 12) hours = 0;
+                  } else if (match24) {
+                    hours = parseInt(match24[1], 10);
+                    minutes = parseInt(match24[2], 10);
+                  } else {
+                    throw new Error(`Invalid time "${d.time}" (use HH:MM or H:MM AM/PM)`);
+                  }
+                  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+                    throw new Error(`Invalid time "${d.time}"`);
+                  }
+                }
+                const readingDate = new Date(`${parsedDate}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`);
+
+                // Compute temp_pass (mirrors handleSubmitTemp in TempLogs.tsx)
+                const minTemp = eq.min_temp;
+                const maxTemp = eq.max_temp;
+                const isWithinRange = tempValue >= minTemp && tempValue <= maxTemp;
+
+                // Derive log_type from equipment_type
+                const logType = getLogType(eq.equipment_type);
+
+                // Map log_type → haccp_step
+                const stepMap: Record<string, string> = {
+                  hot_holding: 'hot_holding',
+                  cold_holding: 'cold_holding',
+                  reheating: 'reheating',
+                  cooling: 'cooldown',
+                  equipment_check: 'storage',
+                  pre_shift: 'storage',
+                  post_shift: 'storage',
+                };
+                const haccpStep = stepMap[logType] || 'storage';
+
+                // Derive shift from reading time
+                const readingHour = readingDate.getHours();
+                const shift = readingHour < 12 ? 'morning' : readingHour < 17 ? 'afternoon' : 'evening';
+
+                const { error } = await supabase.from('temperature_logs').insert({
+                  facility_id: eq.location_id,
+                  equipment_id: eq.id,
+                  input_method: 'manual',
+                  temperature: tempValue,
+                  required_min: minTemp,
+                  required_max: maxTemp,
+                  temp_pass: isWithinRange,
+                  reading_time: readingDate.toISOString(),
+                  shift,
+                  log_type: logType,
+                  step: haccpStep,
+                  logged_by: user!.id,
+                  notes: d.notes || null,
+                });
+                if (error) throw error;
+                successCount++;
                 break;
               }
             }

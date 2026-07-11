@@ -6,7 +6,6 @@ export type ImportDataType =
   | 'vendors'
   | 'team'
   | 'temperature_logs'
-  | 'documents'
   | 'locations';
 
 export interface ImportColumn {
@@ -113,27 +112,6 @@ const schemas: Record<ImportDataType, ImportSchema> = {
     exampleRows: [
       ['Walk-in Cooler #1', '36.5', '2024-12-01', '08:00 AM', 'Ana Torres', 'Morning check'], // demo
       ['Walk-in Cooler #1', '37.2', '2024-12-01', '04:00 PM', 'James Park', 'Afternoon check'], // demo
-    ],
-  },
-
-  documents: {
-    dataType: 'documents',
-    label: 'Documents',
-    description: 'Import document records such as permits, licenses, and reports',
-    icon: 'FileText',
-    columns: [
-      { header: 'Document Name', field: 'document_name', required: true, type: 'string' },
-      { header: 'Type', field: 'type', required: true, type: 'enum', enumValues: ['inspection_report', 'insurance', 'license', 'permit', 'certification', 'cleaning_report', 'training_record', 'other'] },
-      { header: 'Issue Date', field: 'issue_date', required: false, type: 'date' },
-      { header: 'Expiry Date', field: 'expiry_date', required: false, type: 'date' },
-      { header: 'Issuing Authority', field: 'issuing_authority', required: false, type: 'string' },
-      { header: 'Related Vendor', field: 'related_vendor', required: false, type: 'string' },
-      { header: 'Related Equipment', field: 'related_equipment', required: false, type: 'string' },
-      { header: 'Notes', field: 'notes', required: false, type: 'string' },
-    ],
-    exampleRows: [
-      ['Health Permit 2024', 'permit', '2024-01-15', '2025-01-14', 'County Health Dept', '', '', 'Annual health permit renewal'],
-      ['Hood Cleaning Report - Dec', 'cleaning_report', '2024-12-10', '', '', 'CleanAir Hoods LLC', 'Main Hood System', 'Quarterly cleaning completed'],
     ],
   },
 

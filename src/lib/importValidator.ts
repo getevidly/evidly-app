@@ -207,8 +207,6 @@ function getDedupeKey(dataType: ImportDataType, data: Record<string, string>): s
       return data.email?.toLowerCase() ?? null;
     case 'temperature_logs':
       return null; // no dedup for temp logs
-    case 'documents':
-      return data.document_name?.toLowerCase() ?? null;
     case 'locations':
       return data.name?.toLowerCase() ?? null;
     default:
