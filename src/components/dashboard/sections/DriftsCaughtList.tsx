@@ -23,6 +23,8 @@ const PILLAR_EMPTY: Record<string, string> = {
 export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProps) {
   const { selectedLocationId } = useDashboardLocation();
   const { catches, totalSaved, loading, error, acknowledge } = useDriftCatches({ pillarFilter, locationIdFilter: selectedLocationId || undefined });
+  const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
+  const routingMap = useDriftRouting(openCatches.map(c => c.id));
 
   if (loading) {
     return (
@@ -45,9 +47,6 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
       </div>
     );
   }
-
-  const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
-  const routingMap = useDriftRouting(openCatches.map(c => c.id));
 
   // Org-wide (all locations) with nothing: hide section entirely.
   // Specific location with nothing: show header + clear message so it doesn't look broken.
