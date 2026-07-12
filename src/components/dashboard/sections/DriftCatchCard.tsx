@@ -10,11 +10,13 @@ import { useRole } from '../../../contexts/RoleContext';
 import { getDriftLabel, getSourceTableLabel } from '../../../constants/driftTypeLabels';
 import { daysSince } from '../../../lib/daysSince';
 import type { DriftCatchWithAcks } from '../../../hooks/useDriftCatches';
+import type { DriftRecipient } from '../../../hooks/useDriftRouting';
 
 interface DriftCatchCardProps {
   drift: DriftCatchWithAcks;
   variant: 'standard' | 'audit';
   onAcknowledge: (id: string) => void;
+  recipients?: DriftRecipient[];
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -57,12 +59,41 @@ function buildEvidence(drift: DriftCatchWithAcks): string {
   return ev;
 }
 
-export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCardProps) {
+function buildRoutingText(recipients: DriftRecipient[]): string | null {
+  if (recipients.length === 0) return null;
+  const unacked = recipients.filter(r => !r.acknowledged_at && !r.escalated_at);
+  const escalated = recipients.filter(r => r.escalated_at);
+  if (escalated.length > 0) {
+    const targets = recipients.filter(r => !r.escalated_at && !r.acknowledged_at);
+    if (targets.length > 0) {
+      return `Escalated to ${targets.map(t => `${t.full_name} (${ROLE_LABELS[t.role] || t.role})`).join(', ')}`;
+    }
+    return 'Escalated — awaiting response';
+  }
+  if (unacked.length > 0) {
+    const soonest = unacked
+      .filter(r => r.escalation_deadline)
+      .sort((a, b) => (a.escalation_deadline! < b.escalation_deadline! ? -1 : 1))[0];
+    const names = unacked.map(r => `${r.full_name} (${ROLE_LABELS[r.role] || r.role})`).join(', ');
+    if (soonest?.escalation_deadline) {
+      const minutesLeft = Math.max(0, Math.round((new Date(soonest.escalation_deadline).getTime() - Date.now()) / 60_000));
+      if (minutesLeft > 0) {
+        return `Routed to ${names} · escalating in ${minutesLeft} min`;
+      }
+      return `Routed to ${names} · escalation pending`;
+    }
+    return `Routed to ${names}`;
+  }
+  return null;
+}
+
+export function DriftCatchCard({ drift, variant, onAcknowledge, recipients = [] }: DriftCatchCardProps) {
   const { userRole } = useRole();
   const roleLabel = ROLE_LABELS[userRole] || userRole;
   const days = daysSince(drift.detected_at);
   const stakesText = STAKES[drift.drift_type] || 'A gap here becomes a finding when an inspector arrives.';
   const ackNames = drift.acknowledgments.map(a => a.user_full_name);
+  const routingText = buildRoutingText(recipients);
 
   return (
     <div className="catch">
@@ -76,6 +107,11 @@ export function DriftCatchCard({ drift, variant, onAcknowledge }: DriftCatchCard
         <p className="catch-meta">{days} day{days === 1 ? '' : 's'} running</p>
         <p className="catch-stakes">{stakesText}</p>
         {variant === 'audit' && <p className="catch-meta">{buildEvidence(drift)}</p>}
+        {routingText && (
+          <p className="catch-meta" style={{ fontSize: 11, color: '#5A6478', marginBottom: 4 }}>
+            {routingText}
+          </p>
+        )}
         <div className="catch-ack-row">
           <span className="catch-ack-stat">
             {ackNames.length > 0

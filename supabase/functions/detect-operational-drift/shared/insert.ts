@@ -13,6 +13,14 @@ import {
   SEVERITY_PRIORITY,
 } from './types.ts';
 
+// Severity-based escalation deadlines (minutes until escalation fires)
+const ESCALATION_MINUTES: Record<string, number> = {
+  urgent: 30,
+  high: 60,
+  medium: 120,
+  low: 480, // 8 hours
+};
+
 /**
  * Batch insert drift catches with ON CONFLICT DO NOTHING.
  * Returns only the rows that were actually inserted (not deduped).
@@ -89,6 +97,9 @@ export async function createNotifications(
     const body = `EvidLY caught a pulling item: ${label.toLowerCase()}. Review and acknowledge.`;
     const priority = SEVERITY_PRIORITY[c.severity] || 'medium';
 
+    const escalationMinutes = ESCALATION_MINUTES[priority] || 120;
+    const escalationDeadline = new Date(Date.now() + escalationMinutes * 60_000).toISOString();
+
     for (const user of targetUsers) {
       notifications.push({
         organization_id: c.org_id,
@@ -98,6 +109,9 @@ export async function createNotifications(
         body,
         action_url: '/dashboard',
         priority,
+        source_type: 'drift_catch',
+        source_id: c.id,
+        escalation_deadline: escalationDeadline,
       });
     }
   }

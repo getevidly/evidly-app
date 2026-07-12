@@ -7,6 +7,7 @@
 
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
+import { useDriftRouting } from '../../../hooks/useDriftRouting';
 import { DriftCatchCard } from './DriftCatchCard';
 
 interface DriftsCaughtListProps {
@@ -46,6 +47,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
   }
 
   const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
+  const routingMap = useDriftRouting(openCatches.map(c => c.id));
 
   // Org-wide (all locations) with nothing: hide section entirely.
   // Specific location with nothing: show header + clear message so it doesn't look broken.
@@ -80,6 +82,7 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
             drift={drift}
             variant={variant}
             onAcknowledge={acknowledge}
+            recipients={routingMap[drift.id] || []}
           />
         ))}
       </div>
