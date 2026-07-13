@@ -91,6 +91,7 @@ async function provisionNewUser(userId: string, meta: Record<string, string>): P
       phone: null,
       terms_accepted_at: null,
       jurisdiction: null,
+      pl_intake_id: null,
     },
   });
 
@@ -158,11 +159,12 @@ export function EmailConfirmed() {
 
           // Clean up transient signup metadata
           await supabase.auth.updateUser({
-            data: { org_name: null, state: null, phone: null, terms_accepted_at: null },
+            data: { org_name: null, state: null, phone: null, terms_accepted_at: null, pl_intake_id: null },
           });
 
           setStatus('success');
-          setTimeout(() => navigate('/signup/locations', { replace: true }), 1500);
+          const dest = meta.pl_intake_id ? '/policy-lens' : '/signup/locations';
+          setTimeout(() => navigate(dest, { replace: true }), 1500);
           return;
         }
 
@@ -175,7 +177,8 @@ export function EmailConfirmed() {
         }
 
         setStatus('success');
-        setTimeout(() => navigate('/signup/locations', { replace: true }), 1500);
+        const dest = meta.pl_intake_id ? '/policy-lens' : '/signup/locations';
+        setTimeout(() => navigate(dest, { replace: true }), 1500);
       } else {
         // Returning user or OAuth user — just redirect
         setStatus('success');
