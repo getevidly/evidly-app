@@ -51,7 +51,7 @@ export const SERVICE_TYPES: Record<ServiceTypeCode, ServiceTypeDefinition> = {
     basePrice: 450,
     complianceCodes: ['NFPA96-T12.4', 'CFC-904.12'],
     defaultFrequency: 'quarterly',
-    nfpaCitation: 'NFPA 96-2024 Table 12.4',
+    nfpaCitation: 'NFPA 96-2021 Table 12.4',
     catalogId: 'hood_cleaning',
   },
   FPM: {
@@ -135,7 +135,7 @@ export const SERVICE_CODE_TO_SAFEGUARD: Record<ServiceTypeCode, string | null> =
 
 /** PSE safeguard configuration with NFPA references and linked service codes */
 export const PSE_SAFEGUARD_CONFIG = [
-  { key: 'hood_cleaning',    label: 'Hood Cleaning',           code: 'NFPA 96-2024 Table 12.4', service_codes: ['KEC'] as ServiceTypeCode[] },
+  { key: 'hood_cleaning',    label: 'Hood Cleaning',           code: 'NFPA 96-2021 Table 12.4', service_codes: ['KEC'] as ServiceTypeCode[] },
   { key: 'fire_suppression', label: 'Fire Suppression System', code: 'NFPA 96',                 service_codes: ['FS']  as ServiceTypeCode[] },
   { key: 'fire_alarm',       label: 'Fire Alarm System',       code: 'NFPA 72',                 service_codes: []      as ServiceTypeCode[] },
   { key: 'sprinklers',       label: 'Sprinkler System',        code: 'NFPA 25',                 service_codes: []      as ServiceTypeCode[] },

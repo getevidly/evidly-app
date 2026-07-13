@@ -293,7 +293,7 @@ const PD={
   regulatory:[
     {type:"n",h:"Regulatory Updates",s:"California · Food & Fire Safety"},
     ["Recent Updates",null,
-      ["d","🔥","NFPA 96-2024 — Hood cleaning frequency table updated","Jan 15, 2026","er","Fire Safety"],
+      ["d","🔥","NFPA 96-2021 — Hood cleaning frequency table updated","Jan 15, 2026","er","Fire Safety"],
       ["d","🍽️","CalCode 2025 — Temperature holding requirements clarified","Dec 1, 2025","in","Food Safety"],
       ["d","⚖️","Fresno County EHD — New inspection scoring weights Q1 2026","Nov 14, 2025","in","Jurisdiction"],
     ],

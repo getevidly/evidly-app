@@ -168,10 +168,10 @@ describe('Fire Jurisdiction Config', () => {
       expect(new Set(stateEditions).size).toBe(3);
     });
 
-    it('all states reference NFPA 96-2024 (national standard)', () => {
+    it('all states reference NFPA 96-2021 (national standard)', () => {
       // NFPA 96 edition is the same regardless of state fire code
-      const nfpaEdition = '2024';
-      expect(nfpaEdition).toBe('2024');
+      const nfpaEdition = '2021';
+      expect(nfpaEdition).toBe('2021');
     });
   });
 

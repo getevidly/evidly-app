@@ -1,5 +1,5 @@
 /**
- * NFPA 96-2024 Table 12.4 — Hood Cleaning Frequency Map
+ * NFPA 96-2021 Table 12.4 — Hood Cleaning Frequency Map
  *
  * Determines required kitchen exhaust system cleaning frequency
  * based on cooking type / volume. This is the canonical source

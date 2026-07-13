@@ -222,7 +222,7 @@ export interface PSESafeguard {
 export const SAMPLE_PSE_SAFEGUARDS: PSESafeguard[] = [
   {
     label: 'Hood & Exhaust Cleaning',
-    standard: 'NFPA 96-2024 \u00B7 Table 12.4',
+    standard: 'NFPA 96-2021 \u00B7 Table 12.4',
     authority: 'AHJ (Fire)',
     vendor: 'Cleaning Pros Plus',
     cert: 'IKECA CECS #CPP-2024-0042',

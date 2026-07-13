@@ -166,10 +166,10 @@ const FEDERAL: JurisdictionProfile = {
   requiredDocuments: [],
   requiredPostings: [],
   serviceFrequencies: [
-    { service: 'Hood Cleaning (Solid Fuel)', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Solid fuel cooking (wood, charcoal, pellets)', source: 'NFPA 96-2024 Table 12.4' },
-    { service: 'Hood Cleaning (High Volume)', frequencyDays: 90, frequencyLabel: 'Quarterly', condition: '24-hour operations, wok cooking, charbroiling', source: 'NFPA 96-2024 Table 12.4' },
-    { service: 'Hood Cleaning (Moderate Volume)', frequencyDays: 180, frequencyLabel: 'Semi-annually', condition: 'Standard cooking operations', source: 'NFPA 96-2024 Table 12.4' },
-    { service: 'Hood Cleaning (Low Volume)', frequencyDays: 365, frequencyLabel: 'Annually', condition: 'Churches, day camps, seasonal, low-volume', source: 'NFPA 96-2024 Table 12.4' },
+    { service: 'Hood Cleaning (Solid Fuel)', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Solid fuel cooking (wood, charcoal, pellets)', source: 'NFPA 96-2021 Table 12.4' },
+    { service: 'Hood Cleaning (High Volume)', frequencyDays: 90, frequencyLabel: 'Quarterly', condition: '24-hour operations, wok cooking, charbroiling', source: 'NFPA 96-2021 Table 12.4' },
+    { service: 'Hood Cleaning (Moderate Volume)', frequencyDays: 180, frequencyLabel: 'Semi-annually', condition: 'Standard cooking operations', source: 'NFPA 96-2021 Table 12.4' },
+    { service: 'Hood Cleaning (Low Volume)', frequencyDays: 365, frequencyLabel: 'Annually', condition: 'Churches, day camps, seasonal, low-volume', source: 'NFPA 96-2021 Table 12.4' },
     { service: 'Fire Suppression System', frequencyDays: 180, frequencyLabel: 'Semi-annually', source: 'NFPA 96 Chapter 11 / NFPA 17A-2025' },
     { service: 'Fire Extinguisher Visual Inspection', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual check', source: 'NFPA 10-2025 §7.2.1' },
     { service: 'Fire Extinguisher Professional Service', frequencyDays: 365, frequencyLabel: 'Annually', source: 'NFPA 10-2025 §7.3.1' },
@@ -229,7 +229,7 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'Workers Compensation Insurance', description: 'Certificate of workers compensation insurance', renewalFrequency: 'Annual', source: 'California Labor Code §3700' },
     { name: 'General Liability Insurance', description: 'Certificate of general liability insurance', renewalFrequency: 'Annual', source: 'Business requirement' },
     { name: 'Fire Inspection Certificate', description: 'Annual fire inspection by local fire department', renewalFrequency: 'Annual', source: 'California Fire Code' },
-    { name: 'Hood Cleaning Certificate', description: 'Professional hood/exhaust system cleaning certificate — must clean to bare metal', renewalFrequency: 'Per NFPA 96 schedule', source: 'NFPA 96-2024 / CalCode' },
+    { name: 'Hood Cleaning Certificate', description: 'Professional hood/exhaust system cleaning certificate — must clean to bare metal', renewalFrequency: 'Per NFPA 96 schedule', source: 'NFPA 96-2021 / CalCode' },
     { name: 'Fire Suppression Inspection', description: 'Semi-annual fire suppression system inspection', renewalFrequency: 'Semi-annual', source: 'NFPA 96 Chapter 11' },
     { name: 'Fire Extinguisher Certification', description: 'Annual professional fire extinguisher service', renewalFrequency: 'Annual', source: 'NFPA 10-2025 §7.3.1' },
     { name: 'Grease Trap Maintenance Record', description: 'Grease interceptor pumping and cleaning records', renewalFrequency: 'Per local requirement', source: 'Local pretreatment ordinance' },
@@ -238,7 +238,7 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'Pest Prevention Training Records', description: 'Training records for all employees on pest prevention procedures', renewalFrequency: 'Ongoing', source: 'AB 1147 / H&S Code §114266' },
     // California Fire Code (CFC) — Title 24, Part 9 documents
     { name: 'Fire Prevention Permit', description: 'Fire prevention permit from local fire authority (AHJ) — separate from health department permit. Permit fees vary by jurisdiction.', renewalFrequency: 'Annual', source: 'CFC §105.6' },
-    { name: 'UL 300 Suppression System Compliance Certificate', description: 'Certificate verifying UL 300 compliant wet chemical fire suppression system installed on all Type I commercial cooking hoods', renewalFrequency: 'Upon installation / modification', source: 'CFC Ch. 6.07 / NFPA 96-2024' },
+    { name: 'UL 300 Suppression System Compliance Certificate', description: 'Certificate verifying UL 300 compliant wet chemical fire suppression system installed on all Type I commercial cooking hoods', renewalFrequency: 'Upon installation / modification', source: 'CFC Ch. 6.07 / NFPA 96-2021' },
     { name: 'SDS (Safety Data Sheets) Binder', description: 'Safety Data Sheets for all cleaning chemicals and hazardous materials — must be accessible to all employees at all times', renewalFrequency: 'Ongoing — update when products change', source: 'CFC Ch. 50 / OSHA 29 CFR 1910.1200' },
   ],
   requiredPostings: [

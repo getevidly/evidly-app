@@ -286,7 +286,7 @@ const SAMPLE_CORRELATIONS = [
     pillar: 'Liability',
     pillarColor: '#991B1B',
     title: 'Hood Cleaning Overdue → Insurance Claim Trigger',
-    description: 'NFPA 96-2024 Table 12.4 overdue intervals (>30 days past schedule) correlate with 2.8× higher fire suppression claim frequency.',
+    description: 'NFPA 96-2021 Table 12.4 overdue intervals (>30 days past schedule) correlate with 2.8× higher fire suppression claim frequency.',
     signalCount: 17,
     impactRange: '$120,000 – $650,000',
     confidence: 84,
