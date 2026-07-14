@@ -436,7 +436,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
               <span style={{ ...s('font-size:15px;font-weight:600;white-space:nowrap;'), color: gateOpen ? TONE.sage.text : TONE.red.text }}>
                 {gateOpen ? (
                   <>
-                    <span style={s('text-decoration:line-through;font-weight:400;opacity:.6;')}>{risk.fire.ceiling}</span>
+                    <span style={{ ...s('text-decoration:line-through;font-weight:400;'), color: TONE.red.text, opacity: 0.8 }}>{risk.fire.ceiling}</span>
                     &nbsp;&nbsp;Closed
                   </>
                 ) : risk.fire.ceiling}
@@ -534,7 +534,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                             </div>
                           </div>
                           <div style={{ ...s("font-family:'Spectral',serif;font-size:22px;font-weight:500;white-space:nowrap;"), color: closed ? TONE.sage.text : '#1C2A3A' }}>
-                            {closed ? <><span style={s('text-decoration:line-through;font-weight:400;opacity:.6;')}>{p.worst}</span>&nbsp;&nbsp;Closed</> : p.worst}
+                            {closed ? <><span style={{ ...s('text-decoration:line-through;font-weight:400;'), color: TONE.red.text, opacity: 0.8 }}>{p.worst}</span>&nbsp;&nbsp;Closed</> : p.worst}
                           </div>
                         </div>
                       );
