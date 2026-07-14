@@ -1,36 +1,45 @@
 /**
  * ClientJoin — the /join/:token signup page.
  *
- * This is NOT an acquisition form. The account already exists.
- * An admin created it, the admin sent an invite, and the user
- * lands here to set a password and view their records.
+ * Ported from the approved SignupScreenMockup. The layout, copy, colors, and
+ * structure are byte-for-byte from the mockup. Only four fields are dynamic
+ * (from evidly_client_invites): organization_name, contact_name, email, phone.
  *
- * Every account field is pre-populated and read-only.
- * The only editable region is the password.
+ * Wiring:
+ *   CTA            -> accept-client-invite (creates auth user + profile)
+ *   password focus  -> mark-record-viewed  (stamps journey_stages.record_viewed_at)
+ *   share panel     -> mailto / clipboard only. No marketing_sends.
  */
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Eye, EyeOff, Check, X, Share2,
-  ChevronDown, ChevronUp, Copy, Mail,
+  Flame, Utensils, CheckCircle2,
+  Eye, ArrowRight, Send, Lock, Shield, Key,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
-import { FONT, SURFACE, TEXT, LINE, TONE, BRAND } from '../design/tokens';
-import { EvidLYDashboard } from '../components/join/EvidLYDashboard';
+import { EvidLYDashboard, LOC_TABS } from '../components/join/EvidLYDashboard';
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-client-invite`;
 const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
 
-/* Preview location tabs — simulated (sanctioned demo exception) */
-const PREVIEW_LOCATIONS = [
-  { id: 'all', name: null },     // uses org name at render time
-  { id: 'loc1', name: 'Vista Grill' },
-  { id: 'loc2', name: 'Harbor House' },
-  { id: 'loc3', name: 'The Anchor Room' },
-];
+/* Design-token aliases — same values as EvidLYDashboard, kept local to avoid
+   coupling the page shell to the preview's internal constants. */
+const SERIF = "'Spectral', Georgia, serif";
+const SANS  = "'Instrument Sans', system-ui, -apple-system, sans-serif";
+const MONO  = "'IBM Plex Mono', ui-monospace, monospace";
+const BRAND_FONT = "'Montserrat', sans-serif";
+
+const NAVY  = '#1C2A3A';
+const CREAM = '#F7F1E6';
+const LINE  = '#EEE7D9';
+const MUTED = '#5F6875';
+const GREEN = '#3E5E4B';
+const RED   = '#9E3B32';
+const GOLD  = '#A08C5A';
+const GOLD_TEXT = '#8A6412';
 
 interface Invite {
   organization_id: string;
@@ -41,34 +50,6 @@ interface Invite {
   phone: string | null;
   status: string;
   expires_at: string;
-}
-
-/* ── Wordmark: E-gold · vid-contextual · LY-gold ─────────────── */
-function Wordmark({ onDark = false }: { onDark?: boolean }) {
-  const midColor = onDark ? TEXT.onDark : TEXT.ink;
-  return (
-    <span style={{
-      fontSize: 20, fontWeight: 800, letterSpacing: 0.5,
-      fontFamily: "'Montserrat', sans-serif",
-    }}>
-      <span style={{ color: BRAND.gold }}>E</span>
-      <span style={{ color: midColor }}>vid</span>
-      <span style={{ color: BRAND.gold }}>LY</span>
-    </span>
-  );
-}
-
-/* ── Password requirement indicator ───────────────────────────── */
-function Req({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <span style={{
-      display: 'flex', alignItems: 'center', gap: 5,
-      fontSize: 11.5, fontFamily: FONT.body,
-      color: ok ? TONE.sage.text : TEXT.muted,
-    }}>
-      {ok ? <Check size={13} /> : <X size={13} />} {label}
-    </span>
-  );
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -82,19 +63,14 @@ export function ClientJoin() {
   const [invite, setInvite] = useState<Invite | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const [showShare, setShowShare] = useState(false);
+  const [previewLoc, setPreviewLoc] = useState('all');
+  const [showPreviewOnMobile, setShowPreviewOnMobile] = useState(false);
+  const [showSenderEdit, setShowSenderEdit] = useState(false);
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [showPw, setShowPw] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const [previewLoc, setPreviewLoc] = useState('all');
-  const [shareOpen, setShareOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(true);
-  const [linkCopied, setLinkCopied] = useState(false);
-
-  // record_viewed_at — fire once on password focus (interactive signal,
-  // not page load, to avoid false positives from email scanners).
-  // Requires server-side journey_stages integration — stubbed for now.
   const viewedRef = useRef(false);
 
   /* ── Fetch invite ──────────────────────────────────────────── */
@@ -116,15 +92,16 @@ export function ClientJoin() {
   }, [token]);
 
   /* ── Password validation ───────────────────────────────────── */
-  const reqs = {
-    len: password.length >= 12,
+  const rules = {
+    length: password.length >= 12,
     upper: /[A-Z]/.test(password),
     lower: /[a-z]/.test(password),
-    num: /[0-9]/.test(password),
+    number: /[0-9]/.test(password),
     special: /[^A-Za-z0-9]/.test(password),
   };
-  const pwValid = Object.values(reqs).every(Boolean);
-  const canSubmit = pwValid && password === confirm && !submitting;
+  const allRules = Object.values(rules).every(Boolean);
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+  const canSubmit = allRules && passwordsMatch && !submitting;
 
   /* ── Submit ────────────────────────────────────────────────── */
   async function handleSubmit() {
@@ -166,36 +143,14 @@ export function ClientJoin() {
     }).catch(() => { /* best-effort — don't block the signup */ });
   }
 
-  /* ── Share helpers ─────────────────────────────────────────── */
-  function handleCopyLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    });
-  }
-
-  function handleShareEmail() {
-    const orgLabel = invite?.organization_name || invite?.business_name || 'our kitchen';
-    const subject = encodeURIComponent(`View your records on EvidLY — ${orgLabel}`);
-    const body = encodeURIComponent(
-      `I'm sharing this so you can preview what EvidLY looks like for ${orgLabel}.\n\n` +
-      `Open this link to see what's already set up:\n${window.location.href}\n\n` +
-      `You'll get your own invite to view records.`
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  }
-
   /* ── Derived ───────────────────────────────────────────────── */
   const orgLabel = invite?.organization_name || invite?.business_name || 'your kitchen';
 
   /* ── Loading ───────────────────────────────────────────────── */
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh', background: SURFACE.page,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <span style={{ color: TEXT.ink, fontFamily: FONT.body, fontSize: 15 }}>Loading…</span>
+      <div style={{ minHeight: '100vh', background: CREAM, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ color: NAVY, fontFamily: SANS, fontSize: 15 }}>Loading…</span>
       </div>
     );
   }
@@ -203,23 +158,15 @@ export function ClientJoin() {
   /* ── Error ──────────────────────────────────────────────────── */
   if (loadError) {
     return (
-      <div style={{
-        minHeight: '100vh', background: SURFACE.page,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
-      }}>
-        <div style={{
-          maxWidth: 420, width: '100%', background: SURFACE.paper,
-          borderRadius: 12, border: `1px solid ${LINE.soft}`, padding: 28, textAlign: 'center',
-        }}>
-          <div style={{ marginBottom: 12 }}><Wordmark /></div>
-          <p style={{ color: TEXT.ink, fontSize: 15, fontFamily: FONT.body }}>{loadError}</p>
+      <div style={{ minHeight: '100vh', background: CREAM, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div style={{ maxWidth: 420, width: '100%', background: '#fff', borderRadius: 12, border: `1px solid ${LINE}`, padding: 28, textAlign: 'center' }}>
+          <div style={{ marginBottom: 12, fontFamily: BRAND_FONT, fontWeight: 800, fontSize: 20 }}>
+            <span style={{ color: GOLD }}>E</span><span style={{ color: NAVY }}>vid</span><span style={{ color: GOLD }}>LY</span>
+          </div>
+          <p style={{ color: NAVY, fontSize: 15, fontFamily: SANS }}>{loadError}</p>
           <button
             onClick={() => navigate('/login')}
-            style={{
-              marginTop: 16, padding: '10px 20px', borderRadius: 9,
-              background: TEXT.ink, color: TEXT.onDark, border: 'none',
-              fontFamily: FONT.body, fontSize: 14, fontWeight: 600, cursor: 'pointer',
-            }}
+            style={{ marginTop: 16, padding: '10px 20px', borderRadius: 9, background: NAVY, color: '#F5EFE4', border: 'none', fontFamily: SANS, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
           >
             Go to sign in
           </button>
@@ -230,406 +177,408 @@ export function ClientJoin() {
 
   /* ═══════════════════════════════════════════════════════════ */
   return (
-    <div style={{ minHeight: '100vh', background: SURFACE.page }}>
+    <div style={{ backgroundColor: CREAM, minHeight: '100vh', fontFamily: SANS }} className="py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white shadow-2xl" style={{ borderRadius: 4 }}>
 
-      {/* ═══ HEADER — dark navy bar ═══ */}
-      <header style={{ background: TEXT.ink, position: 'sticky', top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          {/* Top row: wordmark + eyebrow + share */}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '14px 0 0', flexWrap: 'wrap', gap: 12,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-              <Wordmark onDark />
-              <span style={{
-                fontSize: 10, fontWeight: 600, letterSpacing: '0.2em',
-                textTransform: 'uppercase' as const, color: TEXT.onDark,
-                opacity: 0.7, fontFamily: FONT.mono,
-              }}>
-                PREVIEW WHAT EVIDLY LOOKS LIKE
-              </span>
-            </div>
-            <button
-              onClick={() => setShareOpen(!shareOpen)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '6px 14px', borderRadius: 6,
-                background: 'transparent', border: `1px solid ${TEXT.onDark}40`,
-                color: TEXT.onDark, fontSize: 12, fontWeight: 600,
-                fontFamily: FONT.body, cursor: 'pointer',
-                letterSpacing: '0.1em', textTransform: 'uppercase' as const,
-              }}
-            >
-              <Share2 size={13} /> SHARE
-            </button>
-          </div>
+          {/* ============ TOP HEADER — TABS IN HEADER ============ */}
+          <div className="border-b" style={{ borderColor: LINE, backgroundColor: NAVY }}>
+            <div className="px-8 py-4 flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <div className="font-black tracking-tight text-2xl" style={{ fontFamily: BRAND_FONT, fontWeight: 800 }}>
+                  <span style={{ color: GOLD }}>E</span>
+                  <span style={{ color: 'white' }}>vid</span>
+                  <span style={{ color: GOLD }}>LY</span>
+                </div>
+                <div className="border-l border-white/20 pl-4 hidden md:block">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">Preview what EvidLY looks like</div>
+                  <div className="text-[10px] tracking-wide text-white/40 mt-0.5" style={{ fontFamily: MONO }}>A Cleaning Pros Plus Company</div>
+                </div>
+              </div>
 
-          {/* Location tabs */}
-          <nav style={{
-            display: 'flex', overflowX: 'auto',
-            WebkitOverflowScrolling: 'touch', paddingTop: 8,
-            scrollbarWidth: 'none',
-          }}>
-            {PREVIEW_LOCATIONS.map(loc => {
-              const label = loc.id === 'all' ? orgLabel : loc.name;
-              const active = previewLoc === loc.id;
-              return (
-                <button
-                  key={loc.id}
-                  onClick={() => setPreviewLoc(loc.id)}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-1 border border-white/20 overflow-x-auto"
+                     style={{ scrollbarWidth: 'none' as const }}>
+                  {LOC_TABS.map(([id, label]) => {
+                    const a = previewLoc === id;
+                    const tabLabel = id === 'all' ? orgLabel : label;
+                    return (
+                      <button key={id} onClick={() => { setPreviewLoc(id); setShowPreviewOnMobile(true); }}
+                        className="text-xs px-3.5 py-2 font-semibold transition whitespace-nowrap"
+                        style={{
+                          backgroundColor: a ? GOLD : 'transparent',
+                          color: a ? 'white' : 'rgba(255,255,255,0.7)',
+                          fontFamily: a ? SERIF : 'inherit',
+                        }}>
+                        {tabLabel}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button onClick={() => setShowShare(!showShare)}
+                  className="inline-flex items-center gap-1.5 border px-3 py-2 transition"
                   style={{
-                    padding: '10px 16px', whiteSpace: 'nowrap' as const,
-                    fontSize: 13, fontWeight: active ? 600 : 400,
-                    color: active ? TEXT.onDark : `${TEXT.onDark}80`,
-                    background: 'transparent', border: 'none',
-                    borderBottom: active ? `2px solid ${BRAND.gold}` : '2px solid transparent',
-                    fontFamily: FONT.body, cursor: 'pointer',
-                    transition: 'all 0.15s',
+                    borderColor: showShare ? GOLD : 'rgba(255,255,255,0.2)',
+                    backgroundColor: showShare ? GOLD : 'transparent',
+                    color: showShare ? 'white' : 'rgba(255,255,255,0.7)',
                   }}
-                >
-                  {label}
+                  title="Forward this invite">
+                  <Send size={13} />
+                  <span className="text-[10px] uppercase tracking-widest font-semibold hidden sm:inline">Share</span>
                 </button>
-              );
-            })}
-          </nav>
-        </div>
-      </header>
-
-      {/* ═══ SHARE PANEL (inline, toggled) ═══ */}
-      {shareOpen && (
-        <div style={{
-          background: SURFACE.paper, borderBottom: `1px solid ${LINE.soft}`, padding: '24px 0',
-        }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
-              textTransform: 'uppercase' as const, color: TONE.amber.text,
-              fontFamily: FONT.mono, marginBottom: 6,
-            }}>
-              FORWARD THIS INVITE
-            </div>
-            <h3 style={{
-              fontSize: 20, fontWeight: 500, color: TEXT.ink,
-              fontFamily: FONT.display, margin: '0 0 6px',
-            }}>
-              Share with a kitchen decision maker or facility manager
-            </h3>
-            <p style={{
-              fontSize: 14, color: TEXT.body, fontFamily: FONT.body, margin: '0 0 20px',
-            }}>
-              They'll see the same preview and get their own invite to view records.
-            </p>
-
-            {/* Sender info */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{
-                fontSize: 10, fontWeight: 600, letterSpacing: '0.15em',
-                textTransform: 'uppercase' as const, color: TEXT.label,
-                fontFamily: FONT.mono, marginBottom: 6,
-              }}>
-                SENDING AS · AUTO-POPULATED FROM YOUR ACCOUNT
               </div>
-              <div style={{
-                padding: '12px 16px', background: SURFACE.raised, borderRadius: 8,
-              }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: TEXT.ink, fontFamily: FONT.body }}>
-                  {invite!.contact_name}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12">
+            {/* ============ LEFT NAVY RAIL ============ */}
+            <div className="lg:col-span-4 p-8" style={{ backgroundColor: NAVY, color: 'white' }}>
+              <h1 className="text-2xl mb-3 leading-tight" style={{ fontFamily: SERIF, fontWeight: 600 }}>
+                Everything's ready for<br />{orgLabel}
+              </h1>
+              <p className="text-sm text-white/70 mb-8 leading-relaxed">
+                You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY — alongside everything else your kitchen needs to prove compliance.
+              </p>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                    <Eye size={14} style={{ color: GOLD_TEXT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Intelligence</div>
+                    <div className="text-xs text-white/60 leading-relaxed">Real-time alerts, predictive reminders, automated escalation, regulation cross-referencing, and sealed proof on demand</div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 12, color: TEXT.muted, fontFamily: FONT.body }}>
-                  {orgLabel}
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                    <Flame size={14} style={{ color: GOLD_TEXT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Fire Safety</div>
+                    <div className="text-xs text-white/60 leading-relaxed">Hood cleaning (NFPA 96), fire suppression (17A), sprinklers (25), alarms (72), extinguisher tags (10), and employee fire safety training</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                    <Utensils size={14} style={{ color: GOLD_TEXT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Food Safety</div>
+                    <div className="text-xs text-white/60 leading-relaxed">Employee Food Handler Cards, Certified Food Protection Manager certifications, daily temperature logs, HACCP, receiving inspections, pest control, and health inspection history</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Share actions */}
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button
-                onClick={handleShareEmail}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '10px 18px', borderRadius: 8,
-                  border: `1px solid ${LINE.strong}`, background: SURFACE.paper,
-                  color: TEXT.ink, fontSize: 13, fontWeight: 500,
-                  fontFamily: FONT.body, cursor: 'pointer',
-                }}
-              >
-                <Mail size={15} /> Share via email
-              </button>
-              <button
-                onClick={handleCopyLink}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '10px 18px', borderRadius: 8,
-                  border: `1px solid ${LINE.strong}`, background: SURFACE.paper,
-                  color: TEXT.ink, fontSize: 13, fontWeight: 500,
-                  fontFamily: FONT.body, cursor: 'pointer',
-                }}
-              >
-                <Copy size={15} /> {linkCopied ? 'Copied!' : 'Copy link'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ MAIN CONTENT ═══ */}
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
-
-        {/* ─── HERO ─── */}
-        <section style={{ padding: '40px 0 24px' }}>
-          <h1 style={{
-            fontSize: 32, fontWeight: 400, color: TEXT.ink,
-            fontFamily: FONT.display, margin: 0, lineHeight: 1.25,
-          }}>
-            Everything's ready for{' '}
-            <strong style={{ fontWeight: 600 }}>{orgLabel}</strong>
-          </h1>
-        </section>
-
-        {/* ─── PREVIEW (collapsible on mobile) ─── */}
-        <section style={{ marginBottom: 40 }}>
-          <button
-            onClick={() => setPreviewOpen(!previewOpen)}
-            className="md:hidden"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-              padding: '12px 0', background: 'transparent', border: 'none',
-              color: TEXT.ink, fontSize: 14, fontWeight: 600,
-              fontFamily: FONT.body, cursor: 'pointer',
-            }}
-          >
-            {previewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            {previewOpen ? 'Hide preview' : 'Show preview'}
-          </button>
-          <div className={previewOpen ? '' : 'hidden md:block'}>
-            <EvidLYDashboard embedded loc={previewLoc} orgName={orgLabel} />
-          </div>
-        </section>
-
-        {/* ─── ACCOUNT DETAILS (read-only) ─── */}
-        <section style={{
-          background: SURFACE.paper, borderRadius: 12,
-          border: `1px solid ${LINE.soft}`, padding: '28px 24px', marginBottom: 24,
-        }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
-            textTransform: 'uppercase' as const, color: TEXT.label,
-            fontFamily: FONT.mono, marginBottom: 20,
-          }}>
-            YOUR ACCOUNT
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Owner & Business */}
-            <div>
-              <div style={{
-                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
-                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
-              }}>
-                Owner &amp; Business
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
-                {invite!.contact_name}
-              </div>
-              <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
-                {invite!.business_name || invite!.organization_name || ''}
+              <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-3">
+                <div>
+                  <div className="text-xs font-bold mb-0.5" style={{ color: GOLD_TEXT, fontFamily: SERIF }}>Predict</div>
+                  <div className="text-[10px] text-white/60">what's expiring</div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold mb-0.5" style={{ color: GOLD_TEXT, fontFamily: SERIF }}>Reduce</div>
+                  <div className="text-[10px] text-white/60">the cost</div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold mb-0.5" style={{ color: GOLD_TEXT, fontFamily: SERIF }}>Prove</div>
+                  <div className="text-[10px] text-white/60">on demand</div>
+                </div>
               </div>
             </div>
-            {/* Contact */}
-            <div>
-              <div style={{
-                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
-                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
-              }}>
-                Contact
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
-                {invite!.email}
-              </div>
-              {invite!.phone && (
-                <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
-                  {invite!.phone}
+
+            {/* ============ RIGHT PANEL ============ */}
+            <div className="lg:col-span-8 p-8">
+              {/* Inline Share panel */}
+              {showShare && (
+                <div className="mb-6 border p-5" style={{ borderColor: LINE, borderLeftWidth: 3, borderLeftColor: GOLD, backgroundColor: '#FBF9F2' }}>
+                  <div className="flex items-start justify-between mb-3 gap-3">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest font-bold mb-0.5" style={{ color: GOLD_TEXT }}>Forward this invite</div>
+                      <h3 className="text-lg font-bold" style={{ color: NAVY, fontFamily: SERIF }}>Share with a kitchen decision maker or facility manager</h3>
+                      <p className="text-xs mt-1" style={{ color: MUTED }}>They'll see the same preview and get their own invite to view records.</p>
+                    </div>
+                    <button onClick={() => setShowShare(false)}
+                      className="text-[10px] uppercase tracking-widest font-semibold flex-shrink-0" style={{ color: MUTED }}>
+                      {'\u2715'} Close
+                    </button>
+                  </div>
+
+                  <div className="mb-4 pb-4 border-b" style={{ borderColor: LINE }}>
+                    <div className="flex items-center justify-between mb-2 gap-3 flex-wrap">
+                      <div className="text-[10px] uppercase tracking-widest font-bold" style={{ color: MUTED }}>Sending as · auto-populated from your account</div>
+                      <button onClick={() => setShowSenderEdit(!showSenderEdit)}
+                        className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: NAVY }}>
+                        {showSenderEdit ? '\u2715 Cancel' : 'Edit \u2192'}
+                      </button>
+                    </div>
+
+                    {!showSenderEdit ? (
+                      <div>
+                        <div className="text-sm font-bold" style={{ color: NAVY, fontFamily: SERIF }}>{invite!.contact_name} · {orgLabel}</div>
+                        <div className="text-[11px]" style={{ color: MUTED }}>{invite!.phone ? `${invite!.phone} · ` : ''}{invite!.email}</div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Your name</label>
+                          <input type="text" className="w-full text-sm border px-3 py-2.5" style={{ borderColor: LINE }} defaultValue={invite!.contact_name} />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Your restaurant</label>
+                          <input type="text" className="w-full text-sm border px-3 py-2.5" style={{ borderColor: LINE }} defaultValue={orgLabel} />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Your phone</label>
+                          <input type="tel" className="w-full text-sm border px-3 py-2.5" style={{ borderColor: LINE }} defaultValue={invite!.phone || ''} />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Your email</label>
+                          <input type="email" className="w-full text-sm border px-3 py-2.5" style={{ borderColor: LINE }} defaultValue={invite!.email} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold" style={{ color: NAVY }}>Your message</label>
+                      <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: GOLD_TEXT }}>Edit to make it yours</span>
+                    </div>
+                    <textarea className="w-full text-sm border px-3 py-2.5" style={{ borderColor: LINE, minHeight: 120, resize: 'vertical' as const }}
+                      defaultValue={`Hi,
+
+Arthur at EvidLY just set my kitchen up — hood cleaning records from Cleaning Pros Plus, health inspections, fire suppression, food safety, all in one place. It catches what I'd miss and knows what's coming next. Thought you'd want to see it firsthand.
+
+Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
+                  </div>
+
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => {
+                          const orgLbl = orgLabel;
+                          const subject = encodeURIComponent(`View your records on EvidLY — ${orgLbl}`);
+                          const body = encodeURIComponent(
+                            `I'm sharing this so you can preview what EvidLY looks like for ${orgLbl}.\n\n` +
+                            `Open this link to see what's already set up:\n${window.location.href}\n\n` +
+                            `You'll get your own invite to view records.`
+                          );
+                          window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                        }}
+                        className="text-sm px-4 py-2 font-semibold inline-flex items-center gap-2"
+                        style={{ backgroundColor: NAVY, color: 'white' }}>
+                        <Send size={13} /> Send now
+                      </button>
+                      <button onClick={() => setShowShare(false)} className="text-sm font-semibold" style={{ color: MUTED }}>
+                        Cancel
+                      </button>
+                    </div>
+                    <div className="text-[11px]" style={{ color: MUTED }}>
+                      Sent from EvidLY on your behalf. We track opens to credit you.
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
-            {/* Location */}
-            <div>
-              <div style={{
-                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
-                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
-              }}>
-                Location
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
-                {orgLabel}
-              </div>
-              <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
-                Your locations are set up and waiting inside.
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* ─── SET YOUR ACCESS ─── */}
-        <section style={{
-          background: SURFACE.paper, borderRadius: 12,
-          border: `1px solid ${LINE.soft}`, padding: '28px 24px', marginBottom: 24,
-        }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
-            textTransform: 'uppercase' as const, color: TEXT.label,
-            fontFamily: FONT.mono, marginBottom: 4,
-          }}>
-            SET YOUR ACCESS
-          </div>
-          <p style={{ fontSize: 13, color: TEXT.muted, fontFamily: FONT.body, margin: '0 0 20px' }}>
-            Choose a password to sign in to your account.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Password */}
-            <div>
-              <label style={{
-                fontSize: 11, fontWeight: 600, color: TEXT.label,
-                fontFamily: FONT.mono, display: 'block', marginBottom: 4,
-              }}>
-                Password
-              </label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  onFocus={handlePasswordFocus}
-                  style={{
-                    width: '100%', padding: '10px 40px 10px 12px', borderRadius: 8,
-                    border: `1px solid ${LINE.soft}`, fontSize: 14, fontFamily: FONT.body,
-                    outline: 'none', boxSizing: 'border-box' as const, color: TEXT.ink,
-                    background: SURFACE.paper,
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  style={{
-                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', color: TEXT.muted, padding: 4,
-                  }}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+              {/* Mobile-only: expand button */}
+              {!showPreviewOnMobile && (
+                <button onClick={() => setShowPreviewOnMobile(true)}
+                  className="md:hidden w-full text-sm py-3 mb-4 border font-semibold inline-flex items-center justify-center gap-2"
+                  style={{ borderColor: LINE, color: NAVY, backgroundColor: '#FBF9F2' }}>
+                  <span style={{ color: GOLD_TEXT }}>{'\u2605'}</span> See what EvidLY looks like <ArrowRight size={13} />
                 </button>
-              </div>
-              <div style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr',
-                gap: '3px 14px', marginTop: 8,
-              }}>
-                <Req ok={reqs.len} label="12+ characters" />
-                <Req ok={reqs.upper} label="Uppercase" />
-                <Req ok={reqs.lower} label="Lowercase" />
-                <Req ok={reqs.num} label="Number" />
-                <Req ok={reqs.special} label="Special character" />
-              </div>
-            </div>
-
-            {/* Confirm */}
-            <div>
-              <label style={{
-                fontSize: 11, fontWeight: 600, color: TEXT.label,
-                fontFamily: FONT.mono, display: 'block', marginBottom: 4,
-              }}>
-                Confirm password
-              </label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  value={confirm}
-                  onChange={e => setConfirm(e.target.value)}
-                  style={{
-                    width: '100%', padding: '10px 40px 10px 12px', borderRadius: 8,
-                    border: `1px solid ${confirm && confirm !== password ? TONE.red.fill : LINE.soft}`,
-                    fontSize: 14, fontFamily: FONT.body,
-                    outline: 'none', boxSizing: 'border-box' as const, color: TEXT.ink,
-                    background: SURFACE.paper,
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  style={{
-                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', color: TEXT.muted, padding: 4,
-                  }}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              {confirm && confirm !== password && (
-                <p style={{ fontSize: 12, color: TONE.red.text, fontFamily: FONT.body, margin: '6px 0 0' }}>
-                  Passwords don't match
-                </p>
               )}
 
-              {/* MFA note */}
-              <div style={{
-                marginTop: 16, padding: '10px 14px',
-                background: SURFACE.raised, borderRadius: 8,
-              }}>
-                <span style={{ fontSize: 11, color: TEXT.meta, fontFamily: FONT.mono }}>
-                  Multi-factor authentication — coming soon
-                </span>
+              {/* Preview area */}
+              <div className={`mb-8 p-4 border ${showPreviewOnMobile ? 'block' : 'hidden md:block'}`} style={{ borderColor: LINE, backgroundColor: '#FBF9F2' }}>
+                {showPreviewOnMobile && (
+                  <div className="md:hidden mb-3 pb-3 border-b flex items-center justify-between" style={{ borderColor: LINE }}>
+                    <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: NAVY }}>Preview · {LOC_TABS.find(([id]) => id === previewLoc)?.[1]}</span>
+                    <button onClick={() => setShowPreviewOnMobile(false)}
+                      className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: MUTED }}>
+                      Hide
+                    </button>
+                  </div>
+                )}
+                <div style={{ border: `1px solid ${LINE}`, background: '#F7F1E6' }}>
+                  <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} />
+                </div>
               </div>
+
+              {/* View Account section */}
+              <div className="mb-5">
+                <div className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-1" style={{ color: GOLD_TEXT }}>
+                  Access your records
+                </div>
+                <h2 className="text-2xl mb-1" style={{ color: NAVY, fontFamily: SERIF, fontWeight: 600 }}>View Account</h2>
+                <p className="text-xs" style={{ color: MUTED }}>Your Cleaning Pros Plus hood cleaning record is ready to view. Set a password to open your account.</p>
+              </div>
+
+              {/* Pre-populated account details (readonly) */}
+              <div className="mb-6 border p-5" style={{ borderColor: LINE, backgroundColor: '#FBF9F2' }}>
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle2 size={13} style={{ color: GREEN }} />
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: GREEN }}>Set up for you</span>
+                </div>
+
+                {/* Owner & Business */}
+                <div className="mb-4">
+                  <div className="text-[10px] uppercase font-semibold mb-2 pb-1 border-b" style={{ color: GOLD_TEXT, letterSpacing: '0.15em', borderColor: LINE }}>Owner & Business</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Owner name</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>{invite!.contact_name}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Business name</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>{orgLabel}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Cleaning Pros Plus customer since</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>March 2023</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact */}
+                <div className="mb-4">
+                  <div className="text-[10px] uppercase font-semibold mb-2 pb-1 border-b" style={{ color: GOLD_TEXT, letterSpacing: '0.15em', borderColor: LINE }}>Contact</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Primary email</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>{invite!.email}</div>
+                    </div>
+                    {invite!.phone && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Business phone</div>
+                        <div className="text-sm font-semibold" style={{ color: NAVY }}>{invite!.phone}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div>
+                  <div className="text-[10px] uppercase font-semibold mb-2 pb-1 border-b" style={{ color: GOLD_TEXT, letterSpacing: '0.15em', borderColor: LINE }}>Location</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Address</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>1420 Kettner Blvd</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>City · State · ZIP</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>San Diego, California 92101</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>County</div>
+                      <div className="text-sm font-semibold" style={{ color: NAVY }}>San Diego County</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t text-[11px]" style={{ borderColor: LINE, color: MUTED }}>
+                  Something not right? <a href={`mailto:arthur@getevidly.com?subject=${encodeURIComponent(orgLabel + ' account correction')}`} className="font-semibold underline" style={{ color: NAVY }}>Message Arthur</a> — he set this up personally.
+                </div>
+              </div>
+
+              {/* Set your access */}
+              <div className="mb-6 border p-5" style={{ borderColor: LINE, borderLeftWidth: 3, borderLeftColor: GOLD }}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Key size={13} style={{ color: GOLD_TEXT }} />
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: NAVY }}>Set your access</span>
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Create a password</label>
+                  <div className="relative">
+                    <Lock size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: MUTED }} />
+                    <input type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onFocus={handlePasswordFocus}
+                      className="w-full text-sm border pl-9 pr-9 py-2.5" style={{ borderColor: LINE }}
+                      placeholder="Enter password" />
+                    <Eye size={14} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: MUTED }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-[11px]">
+                    <div className="inline-flex items-center gap-1" style={{ color: rules.length ? GREEN : MUTED }}>
+                      <CheckCircle2 size={11} /> 12+ characters
+                    </div>
+                    <div className="inline-flex items-center gap-1" style={{ color: rules.upper ? GREEN : MUTED }}>
+                      <CheckCircle2 size={11} /> Uppercase
+                    </div>
+                    <div className="inline-flex items-center gap-1" style={{ color: rules.lower ? GREEN : MUTED }}>
+                      <CheckCircle2 size={11} /> Lowercase
+                    </div>
+                    <div className="inline-flex items-center gap-1" style={{ color: rules.number ? GREEN : MUTED }}>
+                      <CheckCircle2 size={11} /> Number
+                    </div>
+                    <div className="inline-flex items-center gap-1" style={{ color: rules.special ? GREEN : MUTED }}>
+                      <CheckCircle2 size={11} /> Special character
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-5">
+                  <label className="text-xs font-semibold block mb-1" style={{ color: NAVY }}>Confirm password</label>
+                  <div className="relative">
+                    <Lock size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: MUTED }} />
+                    <input type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full text-sm border pl-9 pr-9 py-2.5" style={{ borderColor: LINE }}
+                      placeholder="Re-enter password" />
+                    {passwordsMatch && (
+                      <CheckCircle2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: GREEN }} />
+                    )}
+                  </div>
+                  {passwordsMatch && (
+                    <div className="text-[11px] mt-1.5 inline-flex items-center gap-1" style={{ color: GREEN }}>
+                      <CheckCircle2 size={11} /> Passwords match
+                    </div>
+                  )}
+                  {confirmPassword.length > 0 && !passwordsMatch && (
+                    <div className="text-[11px] mt-1.5" style={{ color: RED }}>
+                      Passwords don't match yet
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-3 border-t text-[11px] inline-flex items-start gap-2" style={{ borderColor: LINE, color: MUTED }}>
+                  <Shield size={11} style={{ marginTop: '2px', flexShrink: 0 }} />
+                  <span><strong style={{ color: NAVY }}>Two-factor authentication coming soon.</strong> We'll notify you when it's ready — an extra layer of protection for your compliance records.</span>
+                </div>
+              </div>
+
+              {/* 60 days FREE callout */}
+              <div className="border p-4 mb-3" style={{ borderColor: LINE, borderLeftWidth: 3, borderLeftColor: GREEN, backgroundColor: '#F0F4EF' }}>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-[10px] uppercase tracking-widest px-2.5 py-1 font-bold" style={{ backgroundColor: GREEN, color: 'white', fontFamily: MONO }}>
+                    No credit card needed
+                  </span>
+                  <div className="flex-1 text-xs" style={{ color: NAVY }}>
+                    <div className="font-bold mb-0.5" style={{ fontFamily: SERIF }}>Set a password. View your records.</div>
+                    <div style={{ color: MUTED }}>No card to see what's already yours. One is only needed when you begin — and nothing is charged for 60 days.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Primary CTA */}
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2"
+                style={{ backgroundColor: canSubmit ? NAVY : `${NAVY}40`, color: 'white', cursor: canSubmit ? 'pointer' : 'not-allowed' }}>
+                {submitting ? 'Opening your account…' : <>View My Records <ArrowRight size={15} /></>}
+              </button>
+              <div className="text-center text-[11px] mt-2" style={{ color: MUTED }}>
+                {'\u2192'} Your Cleaning Pros Plus hood cleaning record
+              </div>
+
             </div>
           </div>
-        </section>
-
-        {/* ─── CALLOUT ─── */}
-        <section style={{
-          background: SURFACE.paper, borderRadius: 12,
-          border: `1px solid ${LINE.soft}`, padding: '28px 24px',
-          marginBottom: 24, textAlign: 'center',
-        }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.25em',
-            textTransform: 'uppercase' as const,
-            color: TONE.amber.text, fontFamily: FONT.mono, marginBottom: 8,
-          }}>
-            NO CREDIT CARD NEEDED
-          </div>
-          <h3 style={{
-            fontSize: 20, fontWeight: 500, color: TEXT.ink,
-            fontFamily: FONT.display, margin: '0 0 8px',
-          }}>
-            Set a password. View your records.
-          </h3>
-          <p style={{
-            fontSize: 14, color: TEXT.body, fontFamily: FONT.body,
-            margin: 0, maxWidth: 520, marginLeft: 'auto', marginRight: 'auto',
-          }}>
-            No card to see what's already yours. One is only needed when you begin
-            — and nothing is charged for 60 days.
-          </p>
-        </section>
-
-        {/* ─── PRIMARY CTA ─── */}
-        <div style={{ textAlign: 'center', paddingBottom: 40 }}>
-          <button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            style={{
-              padding: '16px 48px', borderRadius: 10,
-              background: canSubmit ? TEXT.ink : `${TEXT.ink}40`,
-              color: TEXT.onDark, border: 'none',
-              fontSize: 16, fontWeight: 600, fontFamily: FONT.body,
-              cursor: canSubmit ? 'pointer' : 'not-allowed',
-              transition: 'opacity 0.15s', letterSpacing: '0.02em',
-            }}
-          >
-            {submitting ? 'Opening your account…' : 'Set password and view records'}
-          </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
