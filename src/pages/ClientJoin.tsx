@@ -22,13 +22,14 @@ import { FONT, SURFACE, TEXT, LINE, TONE, BRAND } from '../design/tokens';
 import { EvidLYDashboard } from '../components/join/EvidLYDashboard';
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-client-invite`;
+const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
 
 /* Preview location tabs — simulated (sanctioned demo exception) */
 const PREVIEW_LOCATIONS = [
   { id: 'all', name: null },     // uses org name at render time
-  { id: 'loc1', name: 'Los Angeles' },
-  { id: 'loc2', name: 'San Diego' },
-  { id: 'loc3', name: 'Long Beach' },
+  { id: 'loc1', name: 'Vista Grill' },
+  { id: 'loc2', name: 'Harbor House' },
+  { id: 'loc3', name: 'The Anchor Room' },
 ];
 
 interface Invite {
@@ -154,15 +155,35 @@ export function ClientJoin() {
   function handlePasswordFocus() {
     if (viewedRef.current) return;
     viewedRef.current = true;
-    // TODO: POST to edge function to set journey_stages.record_viewed_at
-    // when journey_stages frontend integration is built
+    fetch(VIEWED_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ token, action: 'viewed' }),
+    }).catch(() => { /* best-effort — don't block the signup */ });
   }
 
   /* ── Share helpers ─────────────────────────────────────────── */
+  function logShare(sendType: string, recipient?: string) {
+    fetch(VIEWED_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ token, action: 'shared', send_type: sendType, recipient }),
+    }).catch(() => { /* best-effort */ });
+  }
+
   function handleCopyLink() {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
+      logShare('copy_link');
     });
   }
 
@@ -174,6 +195,7 @@ export function ClientJoin() {
       `Open this link to see what's already set up:\n${window.location.href}\n\n` +
       `You'll get your own invite to view records.`
     );
+    logShare('email');
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 
