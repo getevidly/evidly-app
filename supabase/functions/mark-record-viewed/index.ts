@@ -1,107 +1,100 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
-import { getCorsHeaders } from "../_shared/cors.ts";
-import { logger } from "../_shared/logger.ts";
+// supabase/functions/mark-record-viewed/index.ts
+//
+// WHAT THIS DOES
+//   One job: stamp journey_stages.record_viewed_at.
+//   Runs on service_role because journey_stages RLS forbids client writes —
+//   deliberately, so nobody can set their own billing date.
 
-function json(data: unknown, status: number, headers: Record<string, string>) {
-  return new Response(JSON.stringify(data), { status, headers });
-}
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-/**
- * mark-record-viewed
- *
- * Fires on an INTERACTIVE signal (password field focus) — never on page load.
- * Corporate email scanners prefetch every link; page-load firing would produce
- * false positives seconds after sending.
- *
- * Supports two actions:
- *   "viewed"  → stamps journey_stages.record_viewed_at, advances to 'record_viewed'
- *               (only if current_stage is 'invited' — never moves a stage backwards)
- *   "shared"  → logs to marketing_sends (the only send ledger)
- */
-Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get("origin"));
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders });
-  }
-  const headers = { ...corsHeaders, "Content-Type": "application/json" };
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
 
   try {
-    const body = await req.json();
-    const { token, action } = body;
-
-    if (!token || !action) {
-      return json({ error: "token and action are required" }, 400, headers);
+    const { token } = await req.json();
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'token required' }), {
+        status: 400, headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
-    // ── Validate invite ───────────────────────────────────────
-    const { data: invite, error: invErr } = await supabase
-      .from("evidly_client_invites")
-      .select("id, organization_id, status, contact_name")
-      .eq("token", token)
-      .single();
+    // service_role — bypasses RLS. journey_stages is not client-writable.
+    const db = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
 
-    if (invErr || !invite) {
-      return json({ error: "Invalid token" }, 404, headers);
+    // Resolve the invite. Only a live invite counts as a view.
+    const { data: invite, error: inviteErr } = await db
+      .from('evidly_client_invites')
+      .select('organization_id, status')
+      .eq('token', token)
+      .maybeSingle();
+
+    if (inviteErr) throw inviteErr;
+    if (!invite?.organization_id) {
+      return new Response(JSON.stringify({ error: 'invite not found' }), {
+        status: 404, headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+    if (invite.status !== 'pending') {
+      // revoked / expired / already accepted — not a view worth recording
+      return new Response(JSON.stringify({ ok: true, skipped: invite.status }), {
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
-    // ── action: viewed ────────────────────────────────────────
-    if (action === "viewed") {
-      if (invite.status !== "pending") {
-        return json({ ok: true, skipped: true }, 200, headers);
-      }
+    const orgId = invite.organization_id;
 
-      const now = new Date().toISOString();
-      const { error: updateErr } = await supabase
-        .from("journey_stages")
+    // Read the current stage. Never move a journey backwards.
+    const { data: stage } = await db
+      .from('journey_stages')
+      .select('record_viewed_at, current_stage')
+      .eq('org_id', orgId)
+      .maybeSingle();
+
+    // Already viewed — idempotent, do nothing.
+    if (stage?.record_viewed_at) {
+      return new Response(JSON.stringify({ ok: true, already: true }), {
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const now = new Date().toISOString();
+
+    if (!stage) {
+      // No journey row yet — the invite was sent before journey_stages existed.
+      await db.from('journey_stages').insert({
+        org_id: orgId,
+        invited_at: now,
+        record_viewed_at: now,
+        current_stage: 'record_viewed',
+      });
+    } else {
+      // Only advance current_stage if we're still at 'invited'.
+      // A kitchen further along must not be dragged back.
+      const advance = stage.current_stage === 'invited';
+      await db
+        .from('journey_stages')
         .update({
           record_viewed_at: now,
-          current_stage: "record_viewed",
-          updated_at: now,
+          ...(advance ? { current_stage: 'record_viewed' } : {}),
         })
-        .eq("organization_id", invite.organization_id)
-        .eq("current_stage", "invited");
-
-      if (updateErr) {
-        logger.error("[mark-record-viewed] journey_stages update failed", updateErr);
-        // Don't fail — the view was still real
-      }
-
-      return json({ ok: true }, 200, headers);
+        .eq('org_id', orgId);
     }
 
-    // ── action: shared ────────────────────────────────────────
-    if (action === "shared") {
-      const { recipient, send_type } = body;
-
-      const { error: sendErr } = await supabase
-        .from("marketing_sends")
-        .insert({
-          door: "join",
-          send_type: send_type || "copy_link",
-          recipient: recipient || null,
-          token,
-          status: "sent",
-          sent_by: invite.contact_name,
-          sent_at: new Date().toISOString(),
-          account_id: invite.organization_id,
-        });
-
-      if (sendErr) {
-        logger.error("[mark-record-viewed] marketing_sends insert failed", sendErr);
-      }
-
-      return json({ ok: true }, 200, headers);
-    }
-
-    return json({ error: "Unknown action" }, 400, headers);
-  } catch (err) {
-    logger.error("[mark-record-viewed] unexpected error", err);
-    return json({ error: "Internal error" }, 500, headers);
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  } catch (e) {
+    console.error('mark-record-viewed:', e);
+    return new Response(JSON.stringify({ error: String(e) }), {
+      status: 500, headers: { ...cors, 'Content-Type': 'application/json' },
+    });
   }
 });

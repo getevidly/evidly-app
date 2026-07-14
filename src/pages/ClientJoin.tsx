@@ -162,28 +162,15 @@ export function ClientJoin() {
         'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
-      body: JSON.stringify({ token, action: 'viewed' }),
+      body: JSON.stringify({ token }),
     }).catch(() => { /* best-effort — don't block the signup */ });
   }
 
   /* ── Share helpers ─────────────────────────────────────────── */
-  function logShare(sendType: string, recipient?: string) {
-    fetch(VIEWED_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({ token, action: 'shared', send_type: sendType, recipient }),
-    }).catch(() => { /* best-effort */ });
-  }
-
   function handleCopyLink() {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
-      logShare('copy_link');
     });
   }
 
@@ -195,7 +182,6 @@ export function ClientJoin() {
       `Open this link to see what's already set up:\n${window.location.href}\n\n` +
       `You'll get your own invite to view records.`
     );
-    logShare('email');
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 
