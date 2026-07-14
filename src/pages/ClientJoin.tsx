@@ -1,27 +1,82 @@
-import { useState, useEffect } from 'react';
+/**
+ * ClientJoin — the /join/:token signup page.
+ *
+ * This is NOT an acquisition form. The account already exists.
+ * An admin created it, the admin sent an invite, and the user
+ * lands here to set a password and view their records.
+ *
+ * Every account field is pre-populated and read-only.
+ * The only editable region is the password.
+ */
+
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Check, X, Flame, Leaf, Radar, Phone, Calendar } from 'lucide-react';
+import {
+  Eye, EyeOff, Check, X, Share2,
+  ChevronDown, ChevronUp, Copy, Mail,
+} from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
+import { FONT, SURFACE, TEXT, LINE, TONE, BRAND } from '../design/tokens';
+import { EvidLYDashboard } from '../components/join/EvidLYDashboard';
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-client-invite`;
-const CALENDLY_URL = import.meta.env.VITE_FOUNDER_CALENDLY || 'https://calendly.com/arthur-getevidly/evidly';
-const FOUNDER_PHONE = import.meta.env.VITE_FOUNDER_PHONE || '';
+
+/* Preview location tabs — simulated (sanctioned demo exception) */
+const PREVIEW_LOCATIONS = [
+  { id: 'all', name: null },     // uses org name at render time
+  { id: 'loc1', name: 'Los Angeles' },
+  { id: 'loc2', name: 'San Diego' },
+  { id: 'loc3', name: 'Long Beach' },
+];
 
 interface Invite {
+  organization_id: string;
   organization_name: string | null;
+  business_name: string | null;
   contact_name: string;
   email: string;
+  phone: string | null;
   status: string;
   expires_at: string;
 }
 
+/* ── Wordmark: E-gold · vid-contextual · LY-gold ─────────────── */
+function Wordmark({ onDark = false }: { onDark?: boolean }) {
+  const midColor = onDark ? TEXT.onDark : TEXT.ink;
+  return (
+    <span style={{
+      fontSize: 20, fontWeight: 800, letterSpacing: 0.5,
+      fontFamily: "'Montserrat', sans-serif",
+    }}>
+      <span style={{ color: BRAND.gold }}>E</span>
+      <span style={{ color: midColor }}>vid</span>
+      <span style={{ color: BRAND.gold }}>LY</span>
+    </span>
+  );
+}
+
+/* ── Password requirement indicator ───────────────────────────── */
+function Req({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <span style={{
+      display: 'flex', alignItems: 'center', gap: 5,
+      fontSize: 11.5, fontFamily: FONT.body,
+      color: ok ? TONE.sage.text : TEXT.muted,
+    }}>
+      {ok ? <Check size={13} /> : <X size={13} />} {label}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
 export function ClientJoin() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { signIn } = useAuth();
 
+  /* ── State ─────────────────────────────────────────────────── */
   const [loading, setLoading] = useState(true);
   const [invite, setInvite] = useState<Invite | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -31,24 +86,23 @@ export function ClientJoin() {
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const id = 'calendly-widget-js';
-    if (!document.getElementById(id)) {
-      const s = document.createElement('script');
-      s.id = id; s.src = 'https://assets.calendly.com/assets/external/widget.js'; s.async = true;
-      document.body.appendChild(s);
-      const l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = 'https://assets.calendly.com/assets/external/widget.css';
-      document.head.appendChild(l);
-    }
-  }, []);
+  const [previewLoc, setPreviewLoc] = useState('all');
+  const [shareOpen, setShareOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(true);
+  const [linkCopied, setLinkCopied] = useState(false);
 
+  // record_viewed_at — fire once on password focus (interactive signal,
+  // not page load, to avoid false positives from email scanners).
+  // Requires server-side journey_stages integration — stubbed for now.
+  const viewedRef = useRef(false);
+
+  /* ── Fetch invite ──────────────────────────────────────────── */
   useEffect(() => {
     (async () => {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
       const { data, error } = await supabase
         .from('evidly_client_invites')
-        .select('organization_name, contact_name, email, status, expires_at')
+        .select('organization_id, organization_name, business_name, contact_name, email, phone, status, expires_at')
         .eq('token', token)
         .maybeSingle();
       if (error || !data) { setLoadError('This invite link is invalid.'); setLoading(false); return; }
@@ -60,12 +114,7 @@ export function ClientJoin() {
     })();
   }, [token]);
 
-  function openCalendly() {
-    const w = window as unknown as { Calendly?: { initPopupWidget: (o: { url: string }) => void } };
-    if (w.Calendly) w.Calendly.initPopupWidget({ url: CALENDLY_URL });
-    else window.open(CALENDLY_URL, '_blank');
-  }
-
+  /* ── Password validation ───────────────────────────────────── */
   const reqs = {
     len: password.length >= 12,
     upper: /[A-Z]/.test(password),
@@ -76,6 +125,7 @@ export function ClientJoin() {
   const pwValid = Object.values(reqs).every(Boolean);
   const canSubmit = pwValid && password === confirm && !submitting;
 
+  /* ── Submit ────────────────────────────────────────────────── */
   async function handleSubmit() {
     if (!canSubmit || !invite) return;
     setSubmitting(true);
@@ -101,118 +151,477 @@ export function ClientJoin() {
     }
   }
 
-  const styles = `
-    .cj-wrap { min-height:100vh; background:#FAF7F0; display:flex; align-items:center; justify-content:center; padding:20px; }
-    .cj-card { width:100%; max-width:680px; background:#fff; border-radius:14px; overflow:hidden; border:1px solid #E7E2D6; display:grid; grid-template-columns:290px 1fr; }
-    .cj-panel { background:#1E2D4D; padding:28px 24px; color:#fff; display:flex; flex-direction:column; }
-    .cj-form { padding:28px; }
-    .cj-mark { font-size:21px; font-weight:700; letter-spacing:0.5px; margin-bottom:20px; }
-    .cj-badge { display:flex; align-items:center; gap:11px; padding:12px; background:rgba(160,140,90,0.10); border:1px solid rgba(160,140,90,0.35); border-radius:12px; margin-bottom:18px; }
-    .cj-av { flex:none; width:40px; height:40px; border-radius:50%; background:#A08C5A; color:#1E2D4D; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
-    .cj-feat { display:flex; align-items:flex-start; gap:11px; }
-    .cj-fic { flex:none; width:22px; height:22px; border-radius:50%; background:#A08C5A; display:flex; align-items:center; justify-content:center; margin-top:1px; color:#1E2D4D; }
-    .cj-inp { width:100%; padding:10px 12px; border-radius:9px; border:1px solid #E2E8F0; font-size:13.5px; box-sizing:border-box; outline:none; }
-    .cj-inp:focus { border-color:#A08C5A; box-shadow:0 0 0 3px rgba(160,140,90,0.12); }
-    .cj-inp:disabled { background:#F8FAFB; color:#64748b; }
-    .cj-btn { width:100%; background:#1E2D4D; color:#fff; border:none; border-radius:9px; padding:13px; font-size:14.5px; font-weight:600; cursor:pointer; transition:opacity .15s; }
-    .cj-btn:disabled { opacity:0.4; cursor:not-allowed; }
-    .cj-lbl { font-size:11.5px; color:#64748b; display:block; margin-bottom:4px; font-weight:500; }
-    .cj-contact { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; border:1px solid #E2E8F0; border-radius:9px; padding:9px; font-size:12.5px; color:#1E2D4D; font-weight:500; background:none; cursor:pointer; }
-    @media (max-width:720px) { .cj-card { grid-template-columns:1fr; max-width:440px; } }
-  `;
+  function handlePasswordFocus() {
+    if (viewedRef.current) return;
+    viewedRef.current = true;
+    // TODO: POST to edge function to set journey_stages.record_viewed_at
+    // when journey_stages frontend integration is built
+  }
 
-  const Req = ({ ok, label }: { ok: boolean; label: string }) => (
-    <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:11.5, color: ok ? '#0F6E56' : '#94a3b8' }}>
-      {ok ? <Check size={13} /> : <X size={13} />}{label}
-    </span>
-  );
+  /* ── Share helpers ─────────────────────────────────────────── */
+  function handleCopyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  }
 
-  if (loading) return <div className="cj-wrap"><style>{styles}</style><div style={{ color:'#1E2D4D' }}>Loading…</div></div>;
+  function handleShareEmail() {
+    const orgLabel = invite?.organization_name || invite?.business_name || 'our kitchen';
+    const subject = encodeURIComponent(`View your records on EvidLY — ${orgLabel}`);
+    const body = encodeURIComponent(
+      `I'm sharing this so you can preview what EvidLY looks like for ${orgLabel}.\n\n` +
+      `Open this link to see what's already set up:\n${window.location.href}\n\n` +
+      `You'll get your own invite to view records.`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
 
+  /* ── Derived ───────────────────────────────────────────────── */
+  const orgLabel = invite?.organization_name || invite?.business_name || 'your kitchen';
+
+  /* ── Loading ───────────────────────────────────────────────── */
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh', background: SURFACE.page,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <span style={{ color: TEXT.ink, fontFamily: FONT.body, fontSize: 15 }}>Loading…</span>
+      </div>
+    );
+  }
+
+  /* ── Error ──────────────────────────────────────────────────── */
   if (loadError) {
     return (
-      <div className="cj-wrap">
-        <style>{styles}</style>
-        <div style={{ maxWidth:420, width:'100%', background:'#fff', borderRadius:12, border:'1px solid #E7E2D6', padding:28, textAlign:'center' }}>
-          <div style={{ fontSize:22, fontWeight:700, marginBottom:12 }}>
-            <span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#1E2D4D' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span>
-          </div>
-          <p style={{ color:'#1E2D4D', fontSize:15 }}>{loadError}</p>
-          <button onClick={() => navigate('/login')} className="cj-btn" style={{ marginTop:16, width:'auto', padding:'10px 20px' }}>Go to sign in</button>
+      <div style={{
+        minHeight: '100vh', background: SURFACE.page,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+      }}>
+        <div style={{
+          maxWidth: 420, width: '100%', background: SURFACE.paper,
+          borderRadius: 12, border: `1px solid ${LINE.soft}`, padding: 28, textAlign: 'center',
+        }}>
+          <div style={{ marginBottom: 12 }}><Wordmark /></div>
+          <p style={{ color: TEXT.ink, fontSize: 15, fontFamily: FONT.body }}>{loadError}</p>
+          <button
+            onClick={() => navigate('/login')}
+            style={{
+              marginTop: 16, padding: '10px 20px', borderRadius: 9,
+              background: TEXT.ink, color: TEXT.onDark, border: 'none',
+              fontFamily: FONT.body, fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            }}
+          >
+            Go to sign in
+          </button>
         </div>
       </div>
     );
   }
 
-  const orgLabel = invite!.organization_name || 'your kitchen';
-
+  /* ═══════════════════════════════════════════════════════════ */
   return (
-    <div className="cj-wrap">
-      <style>{styles}</style>
-      <div className="cj-card">
+    <div style={{ minHeight: '100vh', background: SURFACE.page }}>
 
-        <div className="cj-panel">
-          <div className="cj-mark"><span style={{ color:'#A08C5A' }}>E</span><span style={{ color:'#FFFFFF' }}>vid</span><span style={{ color:'#A08C5A' }}>LY</span></div>
-
-          <div className="cj-badge">
-            <span className="cj-av">AH</span>
-            <div style={{ minWidth:0 }}>
-              <p style={{ fontSize:14, fontWeight:600, color:'#fff', margin:0, lineHeight:1.25 }}>Arthur Haggerty</p>
-              <p style={{ fontSize:11.5, color:'#D9C79E', margin:'1px 0 0', lineHeight:1.3 }}>Founder &amp; CEO, Cleaning Pros Plus</p>
-              <p style={{ fontSize:10.5, color:'#8A94AB', margin:'2px 0 0', lineHeight:1.3 }}>An EvidLY-affiliated company</p>
+      {/* ═══ HEADER — dark navy bar ═══ */}
+      <header style={{ background: TEXT.ink, position: 'sticky', top: 0, zIndex: 50 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          {/* Top row: wordmark + eyebrow + share */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 0 0', flexWrap: 'wrap', gap: 12,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+              <Wordmark onDark />
+              <span style={{
+                fontSize: 10, fontWeight: 600, letterSpacing: '0.2em',
+                textTransform: 'uppercase' as const, color: TEXT.onDark,
+                opacity: 0.7, fontFamily: FONT.mono,
+              }}>
+                PREVIEW WHAT EVIDLY LOOKS LIKE
+              </span>
             </div>
-          </div>
-
-          <p style={{ fontSize:16, fontWeight:500, lineHeight:1.35, margin:'0 0 6px', color:'#fff' }}>Your account is ready for {orgLabel}</p>
-          <p style={{ fontSize:12.5, color:'#AEB8CC', lineHeight:1.55, margin:'0 0 20px' }}>Set a password to sign in. Your records are already inside.</p>
-
-          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            <div className="cj-feat"><span className="cj-fic"><Flame size={12} /></span><div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Fire safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Hood cleaning, fire suppression, sprinkler, and more</p></div></div>
-            <div className="cj-feat"><span className="cj-fic"><Leaf size={12} /></span><div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Food safety</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Temperature readings, HACCP plans, and more</p></div></div>
-            <div className="cj-feat"><span className="cj-fic"><Radar size={12} /></span><div><p style={{ fontSize:13.5, fontWeight:500, margin:0, color:'#fff' }}>Intelligence</p><p style={{ fontSize:11, color:'#8A94AB', margin:'1px 0 0', lineHeight:1.4 }}>Identifies what's expiring before it costs you</p></div></div>
-          </div>
-        </div>
-
-        <div className="cj-form">
-          <p style={{ fontSize:18, fontWeight:600, color:'#1E2D4D', margin:'0 0 3px' }}>Set your password</p>
-          <p style={{ fontSize:12.5, color:'#64748b', margin:'0 0 18px' }}>You're signing in to <strong style={{ color:'#1E2D4D' }}>{orgLabel}</strong>.</p>
-
-          <label className="cj-lbl">Email</label>
-          <input value={invite!.email} disabled className="cj-inp" style={{ marginBottom:14 }} />
-
-          <label className="cj-lbl">Create a password</label>
-          <div style={{ position:'relative', marginBottom:8 }}>
-            <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="cj-inp" style={{ paddingRight:36 }} />
-            <button type="button" onClick={() => setShowPw(!showPw)} style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#94a3b8' }} aria-label="Toggle password visibility">
-              {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+            <button
+              onClick={() => setShareOpen(!shareOpen)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 14px', borderRadius: 6,
+                background: 'transparent', border: `1px solid ${TEXT.onDark}40`,
+                color: TEXT.onDark, fontSize: 12, fontWeight: 600,
+                fontFamily: FONT.body, cursor: 'pointer',
+                letterSpacing: '0.1em', textTransform: 'uppercase' as const,
+              }}
+            >
+              <Share2 size={13} /> SHARE
             </button>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'3px 14px', marginBottom:14 }}>
-            <Req ok={reqs.len} label="12+ characters" /><Req ok={reqs.upper} label="Uppercase" /><Req ok={reqs.lower} label="Lowercase" /><Req ok={reqs.num} label="Number" /><Req ok={reqs.special} label="Special character" />
-          </div>
 
-          <label className="cj-lbl">Confirm password</label>
-          <div style={{ position:'relative', marginBottom: confirm && confirm !== password ? 4 : 18 }}>
-            <input type={showPw ? 'text' : 'password'} value={confirm} onChange={e => setConfirm(e.target.value)} className="cj-inp" style={{ paddingRight:36 }} />
-            <button type="button" onClick={() => setShowPw(!showPw)} style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#94a3b8' }} aria-label="Toggle password visibility">
-              {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          {confirm && confirm !== password && <p style={{ fontSize:12, color:'#dc2626', margin:'0 0 14px' }}>Passwords don't match</p>}
+          {/* Location tabs */}
+          <nav style={{
+            display: 'flex', overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch', paddingTop: 8,
+            scrollbarWidth: 'none',
+          }}>
+            {PREVIEW_LOCATIONS.map(loc => {
+              const label = loc.id === 'all' ? orgLabel : loc.name;
+              const active = previewLoc === loc.id;
+              return (
+                <button
+                  key={loc.id}
+                  onClick={() => setPreviewLoc(loc.id)}
+                  style={{
+                    padding: '10px 16px', whiteSpace: 'nowrap' as const,
+                    fontSize: 13, fontWeight: active ? 600 : 400,
+                    color: active ? TEXT.onDark : `${TEXT.onDark}80`,
+                    background: 'transparent', border: 'none',
+                    borderBottom: active ? `2px solid ${BRAND.gold}` : '2px solid transparent',
+                    fontFamily: FONT.body, cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </header>
 
-          <button onClick={handleSubmit} disabled={!canSubmit} className="cj-btn">{submitting ? 'Signing you in…' : 'Sign in to my account'}</button>
-          <p style={{ textAlign:'center', fontSize:11.5, color:'#94a3b8', margin:'12px 0 16px' }}>Your records are waiting inside.</p>
+      {/* ═══ SHARE PANEL (inline, toggled) ═══ */}
+      {shareOpen && (
+        <div style={{
+          background: SURFACE.paper, borderBottom: `1px solid ${LINE.soft}`, padding: '24px 0',
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <div style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
+              textTransform: 'uppercase' as const, color: TONE.amber.text,
+              fontFamily: FONT.mono, marginBottom: 6,
+            }}>
+              FORWARD THIS INVITE
+            </div>
+            <h3 style={{
+              fontSize: 20, fontWeight: 500, color: TEXT.ink,
+              fontFamily: FONT.display, margin: '0 0 6px',
+            }}>
+              Share with a kitchen decision maker or facility manager
+            </h3>
+            <p style={{
+              fontSize: 14, color: TEXT.body, fontFamily: FONT.body, margin: '0 0 20px',
+            }}>
+              They'll see the same preview and get their own invite to view records.
+            </p>
 
-          <div style={{ borderTop:'1px solid #EEF0F3', paddingTop:14 }}>
-            <p style={{ fontSize:11.5, color:'#64748b', textAlign:'center', margin:'0 0 10px' }}>Questions? Talk to Arthur directly.</p>
-            <div style={{ display:'flex', gap:10 }}>
-              {FOUNDER_PHONE && <a href={`tel:${FOUNDER_PHONE}`} className="cj-contact"><Phone size={15} color="#A08C5A" />{FOUNDER_PHONE}</a>}
-              <button onClick={openCalendly} className="cj-contact"><Calendar size={15} color="#A08C5A" />Book a time</button>
+            {/* Sender info */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 600, letterSpacing: '0.15em',
+                textTransform: 'uppercase' as const, color: TEXT.label,
+                fontFamily: FONT.mono, marginBottom: 6,
+              }}>
+                SENDING AS · AUTO-POPULATED FROM YOUR ACCOUNT
+              </div>
+              <div style={{
+                padding: '12px 16px', background: SURFACE.raised, borderRadius: 8,
+              }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: TEXT.ink, fontFamily: FONT.body }}>
+                  {invite!.contact_name}
+                </div>
+                <div style={{ fontSize: 12, color: TEXT.muted, fontFamily: FONT.body }}>
+                  {orgLabel}
+                </div>
+              </div>
+            </div>
+
+            {/* Share actions */}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button
+                onClick={handleShareEmail}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '10px 18px', borderRadius: 8,
+                  border: `1px solid ${LINE.strong}`, background: SURFACE.paper,
+                  color: TEXT.ink, fontSize: 13, fontWeight: 500,
+                  fontFamily: FONT.body, cursor: 'pointer',
+                }}
+              >
+                <Mail size={15} /> Share via email
+              </button>
+              <button
+                onClick={handleCopyLink}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '10px 18px', borderRadius: 8,
+                  border: `1px solid ${LINE.strong}`, background: SURFACE.paper,
+                  color: TEXT.ink, fontSize: 13, fontWeight: 500,
+                  fontFamily: FONT.body, cursor: 'pointer',
+                }}
+              >
+                <Copy size={15} /> {linkCopied ? 'Copied!' : 'Copy link'}
+              </button>
             </div>
           </div>
         </div>
+      )}
 
-      </div>
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px' }}>
+
+        {/* ─── HERO ─── */}
+        <section style={{ padding: '40px 0 24px' }}>
+          <h1 style={{
+            fontSize: 32, fontWeight: 400, color: TEXT.ink,
+            fontFamily: FONT.display, margin: 0, lineHeight: 1.25,
+          }}>
+            Everything's ready for{' '}
+            <strong style={{ fontWeight: 600 }}>{orgLabel}</strong>
+          </h1>
+        </section>
+
+        {/* ─── PREVIEW (collapsible on mobile) ─── */}
+        <section style={{ marginBottom: 40 }}>
+          <button
+            onClick={() => setPreviewOpen(!previewOpen)}
+            className="md:hidden"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+              padding: '12px 0', background: 'transparent', border: 'none',
+              color: TEXT.ink, fontSize: 14, fontWeight: 600,
+              fontFamily: FONT.body, cursor: 'pointer',
+            }}
+          >
+            {previewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            {previewOpen ? 'Hide preview' : 'Show preview'}
+          </button>
+          <div className={previewOpen ? '' : 'hidden md:block'}>
+            <EvidLYDashboard embedded loc={previewLoc} orgName={orgLabel} />
+          </div>
+        </section>
+
+        {/* ─── ACCOUNT DETAILS (read-only) ─── */}
+        <section style={{
+          background: SURFACE.paper, borderRadius: 12,
+          border: `1px solid ${LINE.soft}`, padding: '28px 24px', marginBottom: 24,
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
+            textTransform: 'uppercase' as const, color: TEXT.label,
+            fontFamily: FONT.mono, marginBottom: 20,
+          }}>
+            YOUR ACCOUNT
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Owner & Business */}
+            <div>
+              <div style={{
+                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
+                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
+              }}>
+                Owner &amp; Business
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
+                {invite!.contact_name}
+              </div>
+              <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
+                {invite!.business_name || invite!.organization_name || ''}
+              </div>
+            </div>
+            {/* Contact */}
+            <div>
+              <div style={{
+                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
+                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
+              }}>
+                Contact
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
+                {invite!.email}
+              </div>
+              {invite!.phone && (
+                <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
+                  {invite!.phone}
+                </div>
+              )}
+            </div>
+            {/* Location */}
+            <div>
+              <div style={{
+                fontSize: 11, fontWeight: 600, color: TEXT.meta, fontFamily: FONT.mono,
+                textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginBottom: 6,
+              }}>
+                Location
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 500, color: TEXT.ink, fontFamily: FONT.body }}>
+                {orgLabel}
+              </div>
+              <div style={{ fontSize: 13, color: TEXT.body, fontFamily: FONT.body }}>
+                Your locations are set up and waiting inside.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── SET YOUR ACCESS ─── */}
+        <section style={{
+          background: SURFACE.paper, borderRadius: 12,
+          border: `1px solid ${LINE.soft}`, padding: '28px 24px', marginBottom: 24,
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
+            textTransform: 'uppercase' as const, color: TEXT.label,
+            fontFamily: FONT.mono, marginBottom: 4,
+          }}>
+            SET YOUR ACCESS
+          </div>
+          <p style={{ fontSize: 13, color: TEXT.muted, fontFamily: FONT.body, margin: '0 0 20px' }}>
+            Choose a password to sign in to your account.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Password */}
+            <div>
+              <label style={{
+                fontSize: 11, fontWeight: 600, color: TEXT.label,
+                fontFamily: FONT.mono, display: 'block', marginBottom: 4,
+              }}>
+                Password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  onFocus={handlePasswordFocus}
+                  style={{
+                    width: '100%', padding: '10px 40px 10px 12px', borderRadius: 8,
+                    border: `1px solid ${LINE.soft}`, fontSize: 14, fontFamily: FONT.body,
+                    outline: 'none', boxSizing: 'border-box' as const, color: TEXT.ink,
+                    background: SURFACE.paper,
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  style={{
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: TEXT.muted, padding: 4,
+                  }}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <div style={{
+                display: 'grid', gridTemplateColumns: '1fr 1fr',
+                gap: '3px 14px', marginTop: 8,
+              }}>
+                <Req ok={reqs.len} label="12+ characters" />
+                <Req ok={reqs.upper} label="Uppercase" />
+                <Req ok={reqs.lower} label="Lowercase" />
+                <Req ok={reqs.num} label="Number" />
+                <Req ok={reqs.special} label="Special character" />
+              </div>
+            </div>
+
+            {/* Confirm */}
+            <div>
+              <label style={{
+                fontSize: 11, fontWeight: 600, color: TEXT.label,
+                fontFamily: FONT.mono, display: 'block', marginBottom: 4,
+              }}>
+                Confirm password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={confirm}
+                  onChange={e => setConfirm(e.target.value)}
+                  style={{
+                    width: '100%', padding: '10px 40px 10px 12px', borderRadius: 8,
+                    border: `1px solid ${confirm && confirm !== password ? TONE.red.fill : LINE.soft}`,
+                    fontSize: 14, fontFamily: FONT.body,
+                    outline: 'none', boxSizing: 'border-box' as const, color: TEXT.ink,
+                    background: SURFACE.paper,
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  style={{
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: TEXT.muted, padding: 4,
+                  }}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {confirm && confirm !== password && (
+                <p style={{ fontSize: 12, color: TONE.red.text, fontFamily: FONT.body, margin: '6px 0 0' }}>
+                  Passwords don't match
+                </p>
+              )}
+
+              {/* MFA note */}
+              <div style={{
+                marginTop: 16, padding: '10px 14px',
+                background: SURFACE.raised, borderRadius: 8,
+              }}>
+                <span style={{ fontSize: 11, color: TEXT.meta, fontFamily: FONT.mono }}>
+                  Multi-factor authentication — coming soon
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── CALLOUT ─── */}
+        <section style={{
+          background: SURFACE.paper, borderRadius: 12,
+          border: `1px solid ${LINE.soft}`, padding: '28px 24px',
+          marginBottom: 24, textAlign: 'center',
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.25em',
+            textTransform: 'uppercase' as const,
+            color: TONE.amber.text, fontFamily: FONT.mono, marginBottom: 8,
+          }}>
+            NO CREDIT CARD NEEDED
+          </div>
+          <h3 style={{
+            fontSize: 20, fontWeight: 500, color: TEXT.ink,
+            fontFamily: FONT.display, margin: '0 0 8px',
+          }}>
+            Set a password. View your records.
+          </h3>
+          <p style={{
+            fontSize: 14, color: TEXT.body, fontFamily: FONT.body,
+            margin: 0, maxWidth: 520, marginLeft: 'auto', marginRight: 'auto',
+          }}>
+            No card to see what's already yours. One is only needed when you begin
+            — and nothing is charged for 60 days.
+          </p>
+        </section>
+
+        {/* ─── PRIMARY CTA ─── */}
+        <div style={{ textAlign: 'center', paddingBottom: 40 }}>
+          <button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            style={{
+              padding: '16px 48px', borderRadius: 10,
+              background: canSubmit ? TEXT.ink : `${TEXT.ink}40`,
+              color: TEXT.onDark, border: 'none',
+              fontSize: 16, fontWeight: 600, fontFamily: FONT.body,
+              cursor: canSubmit ? 'pointer' : 'not-allowed',
+              transition: 'opacity 0.15s', letterSpacing: '0.02em',
+            }}
+          >
+            {submitting ? 'Opening your account…' : 'Set password and view records'}
+          </button>
+        </div>
+      </main>
     </div>
   );
 }
