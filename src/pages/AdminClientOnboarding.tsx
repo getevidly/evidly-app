@@ -167,111 +167,165 @@ function OnboardingQueue() {
     return <div className="text-center py-12 text-sm" style={{ color: TEXT.muted }}>No accounts in the journey pipeline yet.</div>;
   }
 
+  // Build plain-English state sentence for an account
+  function stateSentence(acct: QueueAccount): { text: string; doneCount: number; nextLabel: string | null; isManualNext: boolean } {
+    const doneCount = STAGES.filter(s => {
+      const k = `${s.key}_at` as keyof QueueAccount;
+      return !!acct[k];
+    }).length;
+
+    if (doneCount === STAGES.length) {
+      return { text: 'All 10 stages complete.', doneCount, nextLabel: null, isManualNext: false };
+    }
+
+    const nextIdx = STAGES.findIndex(s => {
+      const k = `${s.key}_at` as keyof QueueAccount;
+      return !acct[k];
+    });
+    const next = STAGES[nextIdx];
+    const lastDone = nextIdx > 0 ? STAGES[nextIdx - 1] : null;
+    const lastDoneText = lastDone ? `${lastDone.label} done.` : '';
+
+    if (next.manual) {
+      return {
+        text: `Stage ${doneCount} of 10 — ${lastDoneText} Waiting on you to mark '${next.label}.'`,
+        doneCount, nextLabel: next.label, isManualNext: true,
+      };
+    }
+    return {
+      text: `Stage ${doneCount} of 10 — ${lastDoneText} Waiting on system: ${next.label}.`,
+      doneCount, nextLabel: next.label, isManualNext: false,
+    };
+  }
+
   return (
-    <div className="rounded-xl p-6" style={{ background: SURFACE.paper, border: `1px solid ${LINE.soft}` }}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-bold" style={{ fontFamily: FONT.display, color: TEXT.ink }}>Onboarding queue</h2>
-          <p className="text-sm" style={{ color: TEXT.muted }}>{accounts.length} account{accounts.length !== 1 ? 's' : ''} in pipeline</p>
+    <div>
+      <div className="rounded-xl p-6" style={{ background: SURFACE.paper, border: `1px solid ${LINE.soft}` }}>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-bold" style={{ fontFamily: FONT.display, color: TEXT.ink }}>Onboarding queue</h2>
+            <p className="text-sm" style={{ color: TEXT.muted }}>{accounts.length} account{accounts.length !== 1 ? 's' : ''} in pipeline</p>
+          </div>
+          <button
+            onClick={loadQueue}
+            className="text-sm flex items-center gap-1 hover:opacity-80"
+            style={{ color: TEXT.muted }}
+          >
+            <RefreshCw size={14} /> Refresh
+          </button>
         </div>
-        <button
-          onClick={loadQueue}
-          className="text-sm flex items-center gap-1 hover:opacity-80"
-          style={{ color: TEXT.muted }}
-        >
-          <RefreshCw size={14} /> Refresh
-        </button>
-      </div>
 
-      {/* Stage header row */}
-      <div className="hidden lg:grid lg:grid-cols-[220px_1fr] gap-3 mb-2 px-1">
-        <div className="text-xs font-medium uppercase tracking-wide" style={{ color: TEXT.muted }}>{' '}</div>
-        <div className="flex items-center" style={{ gap: 3 }}>
-          {STAGES.map(s => (
-            <div key={s.key} className="flex-1 text-[10px] text-center leading-tight" style={{ color: TEXT.meta }}>
-              {s.short}
-            </div>
-          ))}
-        </div>
-      </div>
+        {/* Account rows */}
+        <div className="flex flex-col">
+          {accounts.map(acct => {
+            const nextUnstamped = STAGES.findIndex(s => {
+              const k = `${s.key}_at` as keyof QueueAccount;
+              return !acct[k];
+            });
+            const nextStage = nextUnstamped >= 0 ? STAGES[nextUnstamped] : null;
+            const canMarkDemo = nextStage?.key === 'demo_completed';
+            const canMarkTraining = nextStage?.key === 'training_completed';
+            const isMarking = markingId?.startsWith(acct.org_id);
+            const acctFeedback = feedback?.orgId === acct.org_id ? feedback : null;
+            const sentence = stateSentence(acct);
 
-      {/* Account rows */}
-      <div className="flex flex-col">
-        {accounts.map(acct => {
-          const nextUnstamped = STAGES.findIndex(s => {
-            const k = `${s.key}_at` as keyof QueueAccount;
-            return !acct[k];
-          });
-          const nextStage = nextUnstamped >= 0 ? STAGES[nextUnstamped] : null;
-          const canMarkDemo = nextStage?.key === 'demo_completed';
-          const canMarkTraining = nextStage?.key === 'training_completed';
-          const isMarking = markingId?.startsWith(acct.org_id);
-          const acctFeedback = feedback?.orgId === acct.org_id ? feedback : null;
-
-          return (
-            <div
-              key={acct.org_id}
-              className="px-1 py-3"
-              style={{ borderTop: `1px solid ${SURFACE.rail}` }}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3 items-center">
-                {/* Account info */}
-                <div className="min-w-0">
-                  <p className="truncate" style={{ fontFamily: FONT.body, fontSize: 14.5, fontWeight: 600, color: TEXT.ink }}>{acct.org_name}</p>
-                  {acct.contact_name && (
-                    <p className="text-xs truncate" style={{ color: TEXT.muted }}>
-                      {acct.contact_name}{acct.contact_email ? ` · ${acct.contact_email}` : ''}
-                    </p>
-                  )}
+            return (
+              <div
+                key={acct.org_id}
+                className="py-4"
+                style={{ borderTop: `1px solid ${SURFACE.rail}` }}
+              >
+                {/* Row 1: org name + contact + state sentence */}
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="min-w-0">
+                    <p className="truncate" style={{ fontFamily: FONT.body, fontSize: 14.5, fontWeight: 600, color: TEXT.ink }}>{acct.org_name}</p>
+                    {acct.contact_name && (
+                      <p className="text-xs truncate mt-0.5" style={{ color: TEXT.muted }}>
+                        {acct.contact_name}{acct.contact_email ? ` · ${acct.contact_email}` : ''}
+                      </p>
+                    )}
+                  </div>
+                  <span className="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded" style={{
+                    fontFamily: FONT.mono,
+                    background: sentence.doneCount === STAGES.length ? TONE.sage.tint : TONE.amber.tint,
+                    color: sentence.doneCount === STAGES.length ? TONE.sage.text : TONE.amber.text,
+                  }}>
+                    {sentence.doneCount}/{STAGES.length}
+                  </span>
                 </div>
 
-                {/* 10 pips */}
-                <div className="flex items-center" style={{ gap: 3 }}>
+                {/* State sentence */}
+                <p className="text-xs mb-3" style={{ color: sentence.isManualNext ? TONE.amber.text : TEXT.muted, fontFamily: FONT.body }}>
+                  {sentence.text}
+                </p>
+
+                {/* Row 2: pips with stage labels */}
+                <div className="flex items-start" style={{ gap: 2 }}>
                   {STAGES.map((s, idx) => {
                     const state = pipState(acct, s.key, idx);
                     const color = PIP_COLORS[state];
                     const tsKey = `${s.key}_at` as keyof QueueAccount;
                     const ts = acct[tsKey];
-                    const title = ts
-                      ? `${s.label}: ${new Date(ts as string).toLocaleDateString()}`
-                      : `${s.label}: pending`;
 
                     return (
-                      <div
-                        key={s.key}
-                        title={title}
-                        className="cursor-default transition-colors"
-                        style={{ flex: 1, height: 7, borderRadius: 2, background: color }}
-                      />
+                      <div key={s.key} className="flex-1 min-w-0">
+                        <div
+                          title={ts ? `${s.label}: ${new Date(ts as string).toLocaleDateString()}` : `${s.label}: pending`}
+                          className="cursor-default transition-colors"
+                          style={{ height: 7, borderRadius: 2, background: color }}
+                        />
+                        <div className="text-center mt-1" style={{
+                          fontFamily: FONT.mono,
+                          fontSize: 8,
+                          lineHeight: '1.2',
+                          color: state === 'done' ? TONE.sage.text : state === 'action' ? TONE.amber.text : TEXT.meta,
+                          fontWeight: state === 'action' ? 700 : 400,
+                        }}>
+                          {s.label}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
-              </div>
 
-              {/* Action row — manual stage buttons + billing anchor */}
-              {(canMarkDemo || canMarkTraining || acct.first_charge_at) && (
-                <div className="mt-2 pt-2 flex items-center gap-3 flex-wrap" style={{ borderTop: `1px solid ${LINE.soft}` }}>
+                {/* Row 3: action buttons */}
+                <div className="mt-3 flex items-center gap-3 flex-wrap">
                   {canMarkDemo && (
                     <button
                       onClick={() => handleMark(acct.org_id, 'demo_completed')}
                       disabled={!!isMarking}
-                      className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
+                      className="text-xs font-medium px-3 py-1.5 rounded flex flex-col items-center gap-0.5 transition-colors"
                       style={{ background: TONE.amber.tint, color: TONE.amber.text, border: `1px solid ${LINE.soft}` }}
                     >
-                      <CheckCircle2 size={12} />
-                      {isMarking ? 'Marking...' : 'Mark demo completed'}
+                      <span className="flex items-center gap-1.5">
+                        <CheckCircle2 size={12} />
+                        {isMarking ? 'Marking...' : 'Mark demo completed'}
+                      </span>
                     </button>
                   )}
                   {canMarkTraining && (
                     <button
                       onClick={() => handleMark(acct.org_id, 'training_completed')}
                       disabled={!!isMarking}
-                      className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
+                      className="text-xs font-medium px-3 py-2 rounded flex flex-col items-center gap-0.5 transition-colors"
                       style={{ background: TONE.amber.tint, color: TONE.amber.text, border: `1px solid ${LINE.soft}` }}
                     >
-                      <CheckCircle2 size={12} />
-                      {isMarking ? 'Marking...' : 'Mark training complete (billing anchor)'}
+                      <span className="flex items-center gap-1.5">
+                        <CheckCircle2 size={12} />
+                        {isMarking ? 'Marking...' : 'Mark training complete'}
+                      </span>
+                      <span style={{ fontFamily: FONT.mono, fontSize: 9, color: TEXT.meta, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        Sets first charge · +45 days
+                      </span>
                     </button>
+                  )}
+                  {!canMarkDemo && !canMarkTraining && sentence.doneCount < STAGES.length && (
+                    <span className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded" style={{
+                      fontFamily: FONT.mono, fontSize: 10, color: TEXT.meta, background: SURFACE.raised,
+                      textTransform: 'uppercase', letterSpacing: '0.04em',
+                    }}>
+                      Waiting on system
+                    </span>
                   )}
                   {acct.first_charge_at && (
                     <span className="text-xs flex items-center gap-1" style={{ color: TONE.sage.text }}>
@@ -286,23 +340,47 @@ function OnboardingQueue() {
                     </span>
                   )}
                 </div>
-              )}
 
-              {/* Feedback for this account */}
-              {acctFeedback && (
-                <div
-                  className="mt-2 text-xs px-3 py-1.5 rounded"
-                  style={{
-                    background: acctFeedback.ok ? TONE.sage.tint : TONE.red.tint,
-                    color: acctFeedback.ok ? TONE.sage.text : TONE.red.text,
-                  }}
-                >
-                  {acctFeedback.text}
-                </div>
-              )}
+                {/* Feedback for this account */}
+                {acctFeedback && (
+                  <div
+                    className="mt-2 text-xs px-3 py-1.5 rounded"
+                    style={{
+                      background: acctFeedback.ok ? TONE.sage.tint : TONE.red.tint,
+                      color: acctFeedback.ok ? TONE.sage.text : TONE.red.text,
+                    }}
+                  >
+                    {acctFeedback.text}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="mt-4 rounded-xl p-5" style={{ background: SURFACE.paper, border: `1px solid ${LINE.soft}` }}>
+        <h3 className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ fontFamily: FONT.mono, color: TEXT.meta, letterSpacing: '0.06em' }}>
+          Journey stages
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-4 gap-y-2">
+          {STAGES.map((s, idx) => (
+            <div key={s.key} className="flex items-start gap-2">
+              <span className="flex-shrink-0 w-4 text-right" style={{ fontFamily: FONT.mono, fontSize: 10, color: TEXT.meta }}>{idx + 1}</span>
+              <div className="min-w-0">
+                <p className="text-xs leading-tight" style={{ color: TEXT.ink, fontFamily: FONT.body }}>{s.label}</p>
+                <p style={{
+                  fontFamily: FONT.mono, fontSize: 9,
+                  color: s.manual ? TONE.amber.text : TONE.sage.text,
+                  textTransform: 'uppercase', letterSpacing: '0.04em',
+                }}>
+                  {s.manual ? 'You mark' : 'Automatic'}
+                </p>
+              </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </div>
   );
