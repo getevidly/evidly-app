@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock } from 'lucide-react';
+import { TONE, SURFACE, TEXT, LINE, FONT } from '../design/tokens';
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
@@ -144,13 +145,13 @@ function OnboardingQueue() {
   }
 
   const PIP_COLORS = {
-    done: '#9CB89C',      // sage
-    action: '#D4A843',    // amber
-    waiting: '#D4D4D0',   // rail-gray
+    done: TONE.sage.fill,    // #7FA98B
+    action: TONE.amber.fill, // #D8A93A
+    waiting: SURFACE.rail,   // #F0EADC
   };
 
   if (loading) {
-    return <div className="text-center py-12 text-sm text-[#1E2D4D]/60">Loading onboarding queue...</div>;
+    return <div className="text-center py-12 text-sm" style={{ color: TEXT.muted }}>Loading onboarding queue...</div>;
   }
 
   if (error) {
@@ -163,19 +164,20 @@ function OnboardingQueue() {
   }
 
   if (accounts.length === 0) {
-    return <div className="text-center py-12 text-sm text-[#1E2D4D]/60">No accounts in the journey pipeline yet.</div>;
+    return <div className="text-center py-12 text-sm" style={{ color: TEXT.muted }}>No accounts in the journey pipeline yet.</div>;
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+    <div className="rounded-xl p-6" style={{ background: SURFACE.paper, border: `1px solid ${LINE.soft}` }}>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-[#1E2D4D]">Onboarding Queue</h2>
-          <p className="text-sm text-[#1E2D4D]/60">{accounts.length} account{accounts.length !== 1 ? 's' : ''} in pipeline</p>
+          <h2 className="text-lg font-bold" style={{ fontFamily: FONT.display, color: TEXT.ink }}>Onboarding queue</h2>
+          <p className="text-sm" style={{ color: TEXT.muted }}>{accounts.length} account{accounts.length !== 1 ? 's' : ''} in pipeline</p>
         </div>
         <button
           onClick={loadQueue}
-          className="text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] flex items-center gap-1"
+          className="text-sm flex items-center gap-1 hover:opacity-80"
+          style={{ color: TEXT.muted }}
         >
           <RefreshCw size={14} /> Refresh
         </button>
@@ -183,10 +185,10 @@ function OnboardingQueue() {
 
       {/* Stage header row */}
       <div className="hidden lg:grid lg:grid-cols-[220px_1fr] gap-3 mb-2 px-1">
-        <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wide">Account</div>
-        <div className="grid grid-cols-10 gap-1">
+        <div className="text-xs font-medium uppercase tracking-wide" style={{ color: TEXT.muted }}>{' '}</div>
+        <div className="flex items-center" style={{ gap: 3 }}>
           {STAGES.map(s => (
-            <div key={s.key} className="text-[10px] text-center text-[#1E2D4D]/40 leading-tight">
+            <div key={s.key} className="flex-1 text-[10px] text-center leading-tight" style={{ color: TEXT.meta }}>
               {s.short}
             </div>
           ))}
@@ -194,7 +196,7 @@ function OnboardingQueue() {
       </div>
 
       {/* Account rows */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col">
         {accounts.map(acct => {
           const nextUnstamped = STAGES.findIndex(s => {
             const k = `${s.key}_at` as keyof QueueAccount;
@@ -209,24 +211,25 @@ function OnboardingQueue() {
           return (
             <div
               key={acct.org_id}
-              className="border border-[#1E2D4D]/8 rounded-lg px-4 py-3"
+              className="px-1 py-3"
+              style={{ borderTop: `1px solid ${SURFACE.rail}` }}
             >
               <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3 items-center">
                 {/* Account info */}
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#1E2D4D] truncate">{acct.org_name}</p>
+                  <p className="truncate" style={{ fontFamily: FONT.body, fontSize: 14.5, fontWeight: 600, color: TEXT.ink }}>{acct.org_name}</p>
                   {acct.contact_name && (
-                    <p className="text-xs text-[#1E2D4D]/50 truncate">
+                    <p className="text-xs truncate" style={{ color: TEXT.muted }}>
                       {acct.contact_name}{acct.contact_email ? ` · ${acct.contact_email}` : ''}
                     </p>
                   )}
                 </div>
 
                 {/* 10 pips */}
-                <div className="grid grid-cols-10 gap-1">
+                <div className="flex items-center" style={{ gap: 3 }}>
                   {STAGES.map((s, idx) => {
                     const state = pipState(acct, s.key, idx);
-                    const colors = PIP_COLORS[state];
+                    const color = PIP_COLORS[state];
                     const tsKey = `${s.key}_at` as keyof QueueAccount;
                     const ts = acct[tsKey];
                     const title = ts
@@ -237,8 +240,8 @@ function OnboardingQueue() {
                       <div
                         key={s.key}
                         title={title}
-                        className="h-2 rounded-full cursor-default transition-colors"
-                        style={{ background: colors }}
+                        className="cursor-default transition-colors"
+                        style={{ flex: 1, height: 7, borderRadius: 2, background: color }}
                       />
                     );
                   })}
@@ -247,13 +250,13 @@ function OnboardingQueue() {
 
               {/* Action row — manual stage buttons + billing anchor */}
               {(canMarkDemo || canMarkTraining || acct.first_charge_at) && (
-                <div className="mt-2 pt-2 border-t border-[#1E2D4D]/5 flex items-center gap-3 flex-wrap">
+                <div className="mt-2 pt-2 flex items-center gap-3 flex-wrap" style={{ borderTop: `1px solid ${LINE.soft}` }}>
                   {canMarkDemo && (
                     <button
                       onClick={() => handleMark(acct.org_id, 'demo_completed')}
                       disabled={!!isMarking}
                       className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
-                      style={{ background: '#FAEEDA', color: '#854F0B', border: '1px solid #E8D5A8' }}
+                      style={{ background: TONE.amber.tint, color: TONE.amber.text, border: `1px solid ${LINE.soft}` }}
                     >
                       <CheckCircle2 size={12} />
                       {isMarking ? 'Marking...' : 'Mark demo completed'}
@@ -264,20 +267,20 @@ function OnboardingQueue() {
                       onClick={() => handleMark(acct.org_id, 'training_completed')}
                       disabled={!!isMarking}
                       className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
-                      style={{ background: '#FAEEDA', color: '#854F0B', border: '1px solid #E8D5A8' }}
+                      style={{ background: TONE.amber.tint, color: TONE.amber.text, border: `1px solid ${LINE.soft}` }}
                     >
                       <CheckCircle2 size={12} />
                       {isMarking ? 'Marking...' : 'Mark training complete (billing anchor)'}
                     </button>
                   )}
                   {acct.first_charge_at && (
-                    <span className="text-xs text-[#0F6E56] flex items-center gap-1">
+                    <span className="text-xs flex items-center gap-1" style={{ color: TONE.sage.text }}>
                       <Clock size={12} />
                       First charge: {new Date(acct.first_charge_at).toLocaleDateString()}
                     </span>
                   )}
                   {acct.training_completed_at && !acct.first_charge_at && (
-                    <span className="text-xs text-[#1E2D4D]/50 flex items-center gap-1">
+                    <span className="text-xs flex items-center gap-1" style={{ color: TEXT.muted }}>
                       <Clock size={12} />
                       Training done {new Date(acct.training_completed_at).toLocaleDateString()} — charge date pending
                     </span>
@@ -290,8 +293,8 @@ function OnboardingQueue() {
                 <div
                   className="mt-2 text-xs px-3 py-1.5 rounded"
                   style={{
-                    background: acctFeedback.ok ? '#E1F5EE' : '#FCEBEB',
-                    color: acctFeedback.ok ? '#0F6E56' : '#A32D2D',
+                    background: acctFeedback.ok ? TONE.sage.tint : TONE.red.tint,
+                    color: acctFeedback.ok ? TONE.sage.text : TONE.red.text,
                   }}
                 >
                   {acctFeedback.text}
