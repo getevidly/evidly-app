@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
@@ -144,9 +144,9 @@ function OnboardingQueue() {
   }
 
   const PIP_COLORS = {
-    done: { bg: '#D1E7DD', border: '#0F6E56', text: '#0F6E56' },     // sage
-    action: { bg: '#FAEEDA', border: '#854F0B', text: '#854F0B' },   // amber
-    waiting: { bg: '#F1F1EF', border: '#C4C4C0', text: '#8A8A86' },  // rail
+    done: '#9CB89C',      // sage
+    action: '#D4A843',    // amber
+    waiting: '#D4D4D0',   // rail-gray
   };
 
   if (loading) {
@@ -237,21 +237,9 @@ function OnboardingQueue() {
                       <div
                         key={s.key}
                         title={title}
-                        className="flex items-center justify-center h-7 rounded text-[10px] font-bold cursor-default transition-colors"
-                        style={{
-                          background: colors.bg,
-                          border: `1.5px solid ${colors.border}`,
-                          color: colors.text,
-                        }}
-                      >
-                        {state === 'done' ? (
-                          <CheckCircle2 size={12} />
-                        ) : state === 'action' ? (
-                          <AlertCircle size={12} />
-                        ) : (
-                          s.short
-                        )}
-                      </div>
+                        className="h-2 rounded-full cursor-default transition-colors"
+                        style={{ background: colors }}
+                      />
                     );
                   })}
                 </div>
