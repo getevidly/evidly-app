@@ -143,6 +143,26 @@ export function OnboardingCard({ highlightReq }: { highlightReq?: string | null 
     );
   }
 
+  // Post-lock Work tab renders ChecklistView — full-page, no card wrapper
+  const isPostLockWork = activeTab === 'work' && (isInvitee || responsibilitiesLocked);
+
+  if (isPostLockWork) {
+    return (
+      <div>
+        {/* Owner tab bar so they can switch back */}
+        {!isInvitee && (
+          <div className="bg-white rounded-t-xl shadow-sm border border-b-0 border-[#E2DDD4] overflow-hidden">
+            <OnboardingTabs activeTab={activeTab} onTabChange={setActiveTab} responsibilitiesLocked={responsibilitiesLocked} viewMode={viewMode} />
+          </div>
+        )}
+        <WorkTab
+          responsibilitiesLocked
+          onGoToResponsibilities={() => setActiveTab('responsibilities')}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-[#E2DDD4] overflow-hidden flex flex-col max-h-[80vh]">
       {onboardingComplete && (

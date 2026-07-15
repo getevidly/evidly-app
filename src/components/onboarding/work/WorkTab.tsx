@@ -1,49 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { supabase } from '../../../lib/supabase';
 import { usePillarRequirements, type PillarRequirement } from '../../../hooks/onboarding/usePillarRequirements';
 import { useOnboardingState } from '../../../hooks/onboarding/useOnboardingState';
 import { PillarHeader } from '../shared/PillarHeader';
 import { EmptyStateMessage } from '../shared/EmptyStateMessage';
-import { PillarWorkCard } from './PillarWorkCard';
 import { useOnboardingView } from '../../../contexts/OnboardingViewContext';
-import type { CommitEntry, InviteInfo } from './RequirementWorkRow';
-import { UploadDocumentModal } from './modals/UploadDocumentModal';
-import { IdentifyVendorModal } from './modals/IdentifyVendorModal';
-import { RequestDocumentModal } from './modals/RequestDocumentModal';
-import { InviteRoleModal } from './modals/InviteRoleModal';
-import { toast } from 'sonner';
-import { useEvidenceThreadSummaries } from '../../../hooks/onboarding/useItemEvidenceTrail';
+import { ChecklistView } from './ChecklistView';
 
 interface WorkTabProps {
   responsibilitiesLocked: boolean;
   onGoToResponsibilities: () => void;
 }
 
-interface ActiveModal {
-  type: 'upload' | 'identify_vendor' | 'invite';
-  requirement: PillarRequirement;
-}
-
-interface COIRequest {
-  vendorId: string;
-  vendorEmail: string;
-  vendorName: string;
-  requirement: PillarRequirement;
-}
-
 /**
- * Work tab — pre-lock: read-only preview, post-lock: interactive execution surface.
- * Wires PillarWorkCard rows to drill-down modals + completion detection.
+ * Work tab — pre-lock: read-only preview, post-lock: ChecklistView document checklist.
  */
 export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: WorkTabProps) {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const { foodSafety: fsReqsAll, fireSafety: firReqsAll, requirements: allRequirements, loading: reqLoading, stateCode } = usePillarRequirements();
   const { viewMode, assignedRequirementCodes } = useOnboardingView();
-  const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, confirmItem, unconfirmItem, refreshState, loading: stateLoading } = useOnboardingState();
-  const { summaries: evidenceSummaries } = useEvidenceThreadSummaries(responsibilitiesLocked ? orgId : undefined);
+  const { foodSafety, fireSafety, skippedItems, skipItem, unskipItem, refreshState, loading: stateLoading } = useOnboardingState();
 
   // Scope requirements to assigned items for invitees
   const requirements = viewMode === 'invitee'
@@ -55,95 +32,6 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   const firReqs = viewMode === 'invitee'
     ? firReqsAll.filter(r => assignedRequirementCodes.has(r.requirement_code))
     : firReqsAll;
-
-  const [commits, setCommits] = useState<CommitEntry[]>([]);
-  const [invites, setInvites] = useState<InviteInfo[]>([]);
-  const [orgName, setOrgName] = useState('');
-  const [dataLoading, setDataLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState<ActiveModal | null>(null);
-  const [coiRequest, setCOIRequest] = useState<COIRequest | null>(null);
-
-  // Fetch committed choices + invite statuses (post-lock only)
-  useEffect(() => {
-    if (!orgId || !responsibilitiesLocked) {
-      setDataLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    async function fetchData() {
-      setDataLoading(true);
-
-      const { data: orgData } = await supabase
-        .from('organizations')
-        .select('onboarding_team_invited, name')
-        .eq('id', orgId)
-        .maybeSingle();
-
-      if (cancelled) return;
-      setCommits((orgData?.onboarding_team_invited as CommitEntry[]) || []);
-      setOrgName((orgData?.name as string) || '');
-
-      const { data: invData } = await supabase
-        .from('user_invitations')
-        .select('email, full_name, status, role')
-        .eq('organization_id', orgId);
-
-      if (cancelled) return;
-      setInvites((invData || []).map(i => ({
-        email: i.email,
-        full_name: i.full_name || null,
-        status: i.status as 'pending' | 'accepted' | 'expired',
-        role: i.role,
-      })));
-
-      setDataLoading(false);
-    }
-
-    fetchData();
-    return () => { cancelled = true; };
-  }, [orgId, responsibilitiesLocked]);
-
-  const handleAction = useCallback((requirement: PillarRequirement, type: 'upload' | 'identify_vendor' | 'request' | 'invite') => {
-    if (type === 'request') return; // COI requests come from IdentifyVendorModal
-    setActiveModal({ type, requirement });
-  }, []);
-
-  const handleModalClose = useCallback(() => {
-    setActiveModal(null);
-  }, []);
-
-  const handleModalComplete = useCallback(() => {
-    refreshState();
-  }, [refreshState]);
-
-  const handleConfirm = useCallback(async (requirementCode: string) => {
-    await confirmItem(requirementCode);
-    toast.success('Confirmed');
-    refreshState();
-  }, [confirmItem, refreshState]);
-
-  const handleResume = useCallback(async (requirementCode: string) => {
-    await unskipItem(requirementCode);
-    await unconfirmItem(requirementCode);
-    refreshState();
-  }, [unskipItem, unconfirmItem, refreshState]);
-
-  const handleResendInvite = useCallback(async (_requirementCode: string) => {
-    toast.info('Invite was already sent. The team member can use the original link.');
-  }, []);
-
-  const handleRequestCOI = useCallback((vendorId: string, vendorEmail: string, vendorName: string) => {
-    if (activeModal?.requirement) {
-      setCOIRequest({ vendorId, vendorEmail, vendorName, requirement: activeModal.requirement });
-    }
-  }, [activeModal]);
-
-  const handleCOIComplete = useCallback(() => {
-    setCOIRequest(null);
-    refreshState();
-  }, [refreshState]);
 
   // --- Loading ---
   if (reqLoading) {
@@ -174,85 +62,23 @@ export function WorkTab({ responsibilitiesLocked, onGoToResponsibilities }: Work
   }
 
   // --- Post-lock loading ---
-  if (stateLoading || dataLoading) {
+  if (stateLoading) {
     return <div className="flex items-center justify-center py-12"><div className="w-5 h-5 border-2 border-[#1E2D4D]/30 border-t-[#1E2D4D] rounded-full animate-spin" /></div>;
   }
 
-  // --- Post-lock: interactive work surface ---
-  return (
-    <div className="flex-1 min-h-0 overflow-y-auto">
-      <PillarWorkCard
-        pillar="food_safety"
-        requirements={fsReqs}
-        pillarState={foodSafety.items}
-        commits={commits}
-        invites={invites}
-        skippedItems={skippedItems}
-        onAction={handleAction}
-        onConfirm={handleConfirm}
-        onResume={handleResume}
-        onResendInvite={handleResendInvite}
-        hideOwnerControls={viewMode === 'invitee'}
-        evidenceSummaries={evidenceSummaries}
-      />
-      <PillarWorkCard
-        pillar="fire_safety"
-        requirements={firReqs}
-        pillarState={fireSafety.items}
-        commits={commits}
-        invites={invites}
-        skippedItems={skippedItems}
-        onAction={handleAction}
-        onConfirm={handleConfirm}
-        onResume={handleResume}
-        onResendInvite={handleResendInvite}
-        hideOwnerControls={viewMode === 'invitee'}
-        evidenceSummaries={evidenceSummaries}
-      />
+  // --- Post-lock: ChecklistView document checklist ---
+  const allPillarItems = [...foodSafety.items, ...fireSafety.items];
 
-      {activeModal?.type === 'upload' && (
-        <UploadDocumentModal
-          isOpen
-          onClose={handleModalClose}
-          requirement={activeModal.requirement}
-          organizationId={orgId!}
-          onComplete={handleModalComplete}
-        />
-      )}
-      {activeModal?.type === 'identify_vendor' && (
-        <IdentifyVendorModal
-          isOpen
-          onClose={handleModalClose}
-          requirement={activeModal.requirement}
-          organizationId={orgId!}
-          onComplete={handleModalComplete}
-          onRequestCOI={handleRequestCOI}
-        />
-      )}
-      {activeModal?.type === 'invite' && (
-        <InviteRoleModal
-          isOpen
-          onClose={handleModalClose}
-          requirement={activeModal.requirement}
-          organizationId={orgId!}
-          onComplete={handleModalComplete}
-        />
-      )}
-      {coiRequest && (
-        <RequestDocumentModal
-          isOpen
-          onClose={() => setCOIRequest(null)}
-          vendorId={coiRequest.vendorId}
-          vendorEmail={coiRequest.vendorEmail}
-          vendorName={coiRequest.vendorName}
-          requirementCode={coiRequest.requirement.requirement_code}
-          requirementLabel={coiRequest.requirement.label}
-          organizationId={orgId!}
-          organizationName={orgName}
-          onComplete={handleCOIComplete}
-        />
-      )}
-    </div>
+  return (
+    <ChecklistView
+      requirements={requirements}
+      pillarItems={allPillarItems}
+      skippedItems={skippedItems}
+      organizationId={orgId!}
+      onSkip={skipItem}
+      onUnskip={unskipItem}
+      onRefresh={refreshState}
+    />
   );
 }
 

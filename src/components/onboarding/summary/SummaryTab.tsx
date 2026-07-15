@@ -75,13 +75,14 @@ function useSummaryDetail(orgId: string | undefined) {
       // 2. Compliance documents (for upload + haccp done detail)
       const { data: docs } = await supabase
         .from('compliance_documents')
-        .select('category, created_at, expiry_date')
-        .eq('organization_id', orgId);
+        .select('type, created_at, expiry_date')
+        .eq('organization_id', orgId)
+        .order('created_at', { ascending: false });
       if (cancelled) return;
       const docMap: Record<string, DocDetail> = {};
       for (const d of (docs || [])) {
-        if (d.category && !docMap[d.category]) {
-          docMap[d.category] = { createdAt: d.created_at, expiryDate: d.expiry_date };
+        if (d.type && !docMap[d.type]) {
+          docMap[d.type] = { createdAt: d.created_at, expiryDate: d.expiry_date };
         }
       }
       setDocDetail(docMap);
