@@ -41,6 +41,15 @@ const RED   = '#9E3B32';
 const GOLD  = '#A08C5A';
 const GOLD_TEXT = '#8A6412';
 
+interface LocationSnapshot {
+  org_created_at?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+}
+
 interface Invite {
   organization_id: string;
   organization_name: string | null;
@@ -50,6 +59,7 @@ interface Invite {
   phone: string | null;
   status: string;
   expires_at: string;
+  location_snapshot: LocationSnapshot | null;
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -79,7 +89,7 @@ export function ClientJoin() {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
       const { data, error } = await supabase
         .from('evidly_client_invites')
-        .select('organization_id, organization_name, business_name, contact_name, email, phone, status, expires_at')
+        .select('organization_id, organization_name, business_name, contact_name, email, phone, status, expires_at, location_snapshot')
         .eq('token', token)
         .maybeSingle();
       if (error || !data) { setLoadError('This invite link is invalid.'); setLoading(false); return; }
@@ -433,10 +443,14 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                       <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Business name</div>
                       <div className="text-sm font-semibold" style={{ color: NAVY }}>{orgLabel}</div>
                     </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Cleaning Pros Plus customer since</div>
-                      <div className="text-sm font-semibold" style={{ color: NAVY }}>March 2023</div>
-                    </div>
+                    {invite!.location_snapshot?.org_created_at && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Account created</div>
+                        <div className="text-sm font-semibold" style={{ color: NAVY }}>
+                          {new Date(invite!.location_snapshot.org_created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -457,24 +471,32 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                   </div>
                 </div>
 
-                {/* Location */}
-                <div>
-                  <div className="text-[10px] uppercase font-semibold mb-2 pb-1 border-b" style={{ color: GOLD_TEXT, letterSpacing: '0.15em', borderColor: LINE }}>Location</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Address</div>
-                      <div className="text-sm font-semibold" style={{ color: NAVY }}>1420 Kettner Blvd</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>City · State · ZIP</div>
-                      <div className="text-sm font-semibold" style={{ color: NAVY }}>San Diego, California 92101</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>County</div>
-                      <div className="text-sm font-semibold" style={{ color: NAVY }}>San Diego County</div>
+                {/* Location — only shown if snapshot has address data */}
+                {invite!.location_snapshot?.address && (
+                  <div>
+                    <div className="text-[10px] uppercase font-semibold mb-2 pb-1 border-b" style={{ color: GOLD_TEXT, letterSpacing: '0.15em', borderColor: LINE }}>Location</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>Address</div>
+                        <div className="text-sm font-semibold" style={{ color: NAVY }}>{invite!.location_snapshot.address}</div>
+                      </div>
+                      {(invite!.location_snapshot.city || invite!.location_snapshot.state || invite!.location_snapshot.zip) && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>City · State · ZIP</div>
+                          <div className="text-sm font-semibold" style={{ color: NAVY }}>
+                            {[invite!.location_snapshot.city, invite!.location_snapshot.state, invite!.location_snapshot.zip].filter(Boolean).join(', ')}
+                          </div>
+                        </div>
+                      )}
+                      {invite!.location_snapshot.county && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: MUTED }}>County</div>
+                          <div className="text-sm font-semibold" style={{ color: NAVY }}>{invite!.location_snapshot.county}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="mt-4 pt-3 border-t text-[11px]" style={{ borderColor: LINE, color: MUTED }}>
                   Something not right? <a href={`mailto:arthur@getevidly.com?subject=${encodeURIComponent(orgLabel + ' account correction')}`} className="font-semibold underline" style={{ color: NAVY }}>Message Arthur</a> — he set this up personally.

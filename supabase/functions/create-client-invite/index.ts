@@ -93,6 +93,37 @@ Deno.serve(async (req: Request) => {
 
     const token = crypto.randomUUID();
 
+    // Snapshot org created_at + primary location address for the /join page
+    let locationSnapshot: Record<string, unknown> | null = null;
+    try {
+      const { data: orgRow } = await supabase
+        .from("organizations")
+        .select("created_at")
+        .eq("id", organization_id)
+        .maybeSingle();
+
+      const { data: locRow } = await supabase
+        .from("locations")
+        .select("address, city, state, zip, county")
+        .eq("organization_id", organization_id)
+        .limit(1)
+        .maybeSingle();
+
+      if (orgRow || locRow) {
+        locationSnapshot = {
+          ...(orgRow?.created_at ? { org_created_at: orgRow.created_at } : {}),
+          ...(locRow?.address ? { address: locRow.address } : {}),
+          ...(locRow?.city ? { city: locRow.city } : {}),
+          ...(locRow?.state ? { state: locRow.state } : {}),
+          ...(locRow?.zip ? { zip: locRow.zip } : {}),
+          ...(locRow?.county ? { county: locRow.county } : {}),
+        };
+        if (Object.keys(locationSnapshot).length === 0) locationSnapshot = null;
+      }
+    } catch {
+      // Non-fatal — invite still works without snapshot
+    }
+
     const { data: created, error: insErr } = await supabase
       .from("evidly_client_invites")
       .insert({
@@ -103,6 +134,7 @@ Deno.serve(async (req: Request) => {
         message: message || null,
         client_role: client_role || "owner_operator",
         token, status: "pending", invited_by: user.id,
+        location_snapshot: locationSnapshot,
       })
       .select("id")
       .single();
