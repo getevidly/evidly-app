@@ -11,6 +11,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { logger } from "../_shared/logger.ts";
 import { logEvent } from "../_shared/events.ts";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import {
   buildCanonicalReportJson,
   buildSealHashInput,
@@ -18,6 +19,7 @@ import {
   sha256,
 } from "../_shared/seal-canonicalization.ts";
 import { shapeFindings, buildCoverageDetail } from "../_shared/pl-report-shaping.ts";
+import { stampJourneyStage } from "../_shared/journeyStamp.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -91,7 +93,7 @@ Deno.serve(async (req: Request) => {
     // ── Resolve the authorizing org (insured) from the intake ───────
     const { data: intakeCheck, error: intakeErr } = await supabase
       .from("policy_lens_intakes")
-      .select("organization_id, broker_party_id, source, business_name")
+      .select("organization_id, broker_party_id, source, business_name, contact_email, contact_name, contact_phone, state, county")
       .eq("id", intake_id)
       .single();
 
@@ -274,6 +276,9 @@ Deno.serve(async (req: Request) => {
         content_hash: contentHash,
         finding_count: render.length,
       });
+
+      // Journey stage: policies_read (fire-and-forget, never blocks release)
+      await stampJourneyStage(supabase, grantedByOrgId, "policies_read");
     } catch (sealCatch) {
       // ABORT: no grant, no release flip. Release is atomic with sealing.
       logger.error("[pl-release-report] Compose/seal FAILED — aborting release", sealCatch);
@@ -347,6 +352,119 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // ── Insured path: account creation + reading-ready email ──────────
+    // §5: On the insured path, create an account (or link an existing one),
+    // then email the contact so they can see their reading.
+    // NEVER abort the release on failure — the report is already sealed.
+    let notificationError: string | null = null;
+
+    if (!effectiveRecipient && intakeCheck.contact_email) {
+      const contactEmail = intakeCheck.contact_email.toLowerCase().trim();
+      const contactName = intakeCheck.contact_name || "there";
+      const contactPhone = intakeCheck.contact_phone || null;
+      const businessName = intakeCheck.business_name;
+      const appUrl = Deno.env.get("PL_PUBLIC_BASE") || "https://app.getevidly.com";
+
+      try {
+        // ── 5b. Does this email already have an account? ──────────
+        let isExistingUser = false;
+        let existingOrgId: string | null = null;
+
+        const { data: authList } = await supabase.auth.admin.listUsers({ perPage: 1000, page: 1 });
+        const existingUser = (authList?.users ?? []).find(
+          (u: any) => u.email?.toLowerCase() === contactEmail,
+        );
+
+        if (existingUser) {
+          isExistingUser = true;
+          const { data: existingProfile } = await supabase
+            .from("user_profiles")
+            .select("organization_id")
+            .eq("id", existingUser.id)
+            .maybeSingle();
+
+          existingOrgId = existingProfile?.organization_id || null;
+
+          // Link intake to their existing org immediately
+          if (existingOrgId) {
+            await supabase
+              .from("policy_lens_intakes")
+              .update({ organization_id: existingOrgId })
+              .eq("id", intake_id);
+          }
+        }
+
+        // ── 5c / 5d. Create account (new) or send login email (existing) ──
+        let ctaUrl: string;
+        let ctaText: string;
+
+        if (isExistingUser) {
+          ctaUrl = `${appUrl}/login`;
+          ctaText = "See my reading";
+        } else {
+          // Mint invite — creates the auth user with metadata that
+          // EmailConfirmed.tsx → provisionNewUser() reads to build the org.
+          const { data: linkData, error: inviteErr } = await supabase.auth.admin.generateLink({
+            type: "invite",
+            email: contactEmail,
+            options: {
+              data: {
+                full_name: contactName !== "there" ? contactName : "",
+                phone: contactPhone || "",
+                org_name: businessName,
+                state: intakeCheck.state ?? "",
+                jurisdiction: intakeCheck.county ?? null,
+                kitchen_type: null,
+                pl_intake_id: intake_id,
+              },
+              redirectTo: `${appUrl}/email-confirmed`,
+            },
+          });
+
+          if (inviteErr || !linkData?.properties?.action_link) {
+            throw new Error(
+              `Invite generation failed: ${inviteErr?.message ?? "no action_link returned"}`,
+            );
+          }
+
+          ctaUrl = linkData.properties.action_link;
+          ctaText = "See my reading";
+        }
+
+        // ── 5d. Send the email ──────────────────────────────────────
+        const emailResult = await sendEmail({
+          to: contactEmail,
+          subject: "Your Policy Lens reading is ready",
+          replyTo: "founders@getevidly.com",
+          html: buildEmailHtml({
+            recipientName: contactName,
+            bodyHtml: `
+              <p><strong>Your Policy Lens reading is ready.</strong></p>
+              <p>Policy Lens read your insurance policy and identified the provisions that govern your kitchen — what your coverage requires of you, and where your record can't yet answer it.</p>
+              <p>Your reading is waiting in your EvidLY account.</p>`,
+            ctaText,
+            ctaUrl,
+            footerNote:
+              "A person on our team checked every line of it before it went out.<br><br><em>Policy Lens reads the policy. Your agent evaluates the coverage — it identifies and flags, it never advises.</em><br><br>— Arthur Haggerty<br>Founder, EvidLY<br>(855) 384-3591 · founders@getevidly.com",
+          }),
+        });
+
+        if (!emailResult) {
+          notificationError = "Email send failed via Resend";
+          logger.error("[pl-release-report] Reading-ready email failed", { intake_id, contactEmail });
+        } else {
+          logger.info("[pl-release-report] Reading-ready email sent", {
+            intake_id,
+            to: contactEmail,
+            existing_user: isExistingUser,
+          });
+        }
+      } catch (notifErr) {
+        notificationError = notifErr instanceof Error ? notifErr.message : String(notifErr);
+        logger.error("[pl-release-report] Insured notification failed — release intact", notifErr);
+      }
+    }
+
     // ── Log event and return ─────────────────────────────────
     const eventMeta: Record<string, unknown> = {
       run_id,
@@ -379,6 +497,7 @@ Deno.serve(async (req: Request) => {
         grant: grant ?? null,
         run: runUpdate,
         raw_token: rawToken,
+        ...(notificationError ? { notification_error: notificationError } : {}),
       },
       200,
       headers,

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Building2, MapPin, Users, Mail, Send, ShieldAlert } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
@@ -27,10 +27,301 @@ const DEFAULT_OUTLET_NAMES = [
   'Sushi Bar', 'Pizza Station', 'Grab & Go',
 ];
 
+// ─── Journey stage definitions ─────────────────────────────────────
+const STAGES = [
+  { key: 'invited', label: 'Invited', short: '1', manual: false },
+  { key: 'record_viewed', label: 'Record viewed', short: '2', manual: false },
+  { key: 'demo_scheduled', label: 'Demo scheduled', short: '3', manual: false },
+  { key: 'demo_completed', label: 'Demo completed', short: '4', manual: true },
+  { key: 'policies_uploaded', label: 'Policies uploaded', short: '5', manual: false },
+  { key: 'policies_read', label: 'Policies read', short: '6', manual: false },
+  { key: 'cc_on_file', label: 'CC on file', short: '7', manual: false },
+  { key: 'loa_signed', label: 'LOA signed', short: '8', manual: false },
+  { key: 'account_configured', label: 'Account configured', short: '9', manual: false },
+  { key: 'training_completed', label: 'Training complete', short: '10', manual: true },
+] as const;
+
+const ADVANCE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`;
+const QUEUE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/onboarding-queue`;
+
+interface QueueAccount {
+  org_id: string;
+  org_name: string;
+  current_stage: string;
+  invited_at: string | null;
+  record_viewed_at: string | null;
+  demo_scheduled_at: string | null;
+  demo_completed_at: string | null;
+  policies_uploaded_at: string | null;
+  policies_read_at: string | null;
+  cc_on_file_at: string | null;
+  loa_signed_at: string | null;
+  account_configured_at: string | null;
+  training_completed_at: string | null;
+  first_charge_at: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  invite_status: string | null;
+}
+
+// ─── Onboarding Queue Component ────────────────────────────────────
+function OnboardingQueue() {
+  const [accounts, setAccounts] = useState<QueueAccount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [markingId, setMarkingId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ orgId: string; ok: boolean; text: string } | null>(null);
+
+  const loadQueue = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(QUEUE_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const out = await res.json();
+      if (!res.ok) { setError(out.error || 'Failed to load queue'); setLoading(false); return; }
+      setAccounts(out.accounts || []);
+    } catch {
+      setError('Failed to load onboarding queue');
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadQueue(); }, [loadQueue]);
+
+  async function handleMark(orgId: string, stage: string) {
+    setMarkingId(`${orgId}:${stage}`);
+    setFeedback(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(ADVANCE_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ org_id: orgId, stage }),
+      });
+      const out = await res.json();
+      if (!res.ok) {
+        setFeedback({ orgId, ok: false, text: out.error || 'Failed to mark stage' });
+      } else {
+        const label = STAGES.find(s => s.key === stage)?.label || stage;
+        setFeedback({ orgId, ok: true, text: `${label} marked` });
+        loadQueue();
+      }
+    } catch {
+      setFeedback({ orgId, ok: false, text: 'Request failed' });
+    }
+    setMarkingId(null);
+  }
+
+  // Determine pip color for a given account and stage
+  function pipState(acct: QueueAccount, stageKey: string, stageIdx: number): 'done' | 'action' | 'waiting' {
+    const tsKey = `${stageKey}_at` as keyof QueueAccount;
+    if (acct[tsKey]) return 'done';
+
+    // Find the first unstamped stage index for this account
+    const firstUnstamped = STAGES.findIndex(s => {
+      const k = `${s.key}_at` as keyof QueueAccount;
+      return !acct[k];
+    });
+
+    // If this stage IS the first unstamped AND it's manual → action needed
+    if (stageIdx === firstUnstamped) {
+      const stageDef = STAGES[stageIdx];
+      if (stageDef.manual) return 'action';
+    }
+
+    return 'waiting';
+  }
+
+  const PIP_COLORS = {
+    done: { bg: '#D1E7DD', border: '#0F6E56', text: '#0F6E56' },     // sage
+    action: { bg: '#FAEEDA', border: '#854F0B', text: '#854F0B' },   // amber
+    waiting: { bg: '#F1F1EF', border: '#C4C4C0', text: '#8A8A86' },  // rail
+  };
+
+  if (loading) {
+    return <div className="text-center py-12 text-sm text-[#1E2D4D]/60">Loading onboarding queue...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        {error}
+        <button onClick={loadQueue} className="ml-3 underline text-sm">Retry</button>
+      </div>
+    );
+  }
+
+  if (accounts.length === 0) {
+    return <div className="text-center py-12 text-sm text-[#1E2D4D]/60">No accounts in the journey pipeline yet.</div>;
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-bold text-[#1E2D4D]">Onboarding Queue</h2>
+          <p className="text-sm text-[#1E2D4D]/60">{accounts.length} account{accounts.length !== 1 ? 's' : ''} in pipeline</p>
+        </div>
+        <button
+          onClick={loadQueue}
+          className="text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] flex items-center gap-1"
+        >
+          <RefreshCw size={14} /> Refresh
+        </button>
+      </div>
+
+      {/* Stage header row */}
+      <div className="hidden lg:grid lg:grid-cols-[220px_1fr] gap-3 mb-2 px-1">
+        <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wide">Account</div>
+        <div className="grid grid-cols-10 gap-1">
+          {STAGES.map(s => (
+            <div key={s.key} className="text-[10px] text-center text-[#1E2D4D]/40 leading-tight">
+              {s.short}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Account rows */}
+      <div className="flex flex-col gap-2">
+        {accounts.map(acct => {
+          const nextUnstamped = STAGES.findIndex(s => {
+            const k = `${s.key}_at` as keyof QueueAccount;
+            return !acct[k];
+          });
+          const nextStage = nextUnstamped >= 0 ? STAGES[nextUnstamped] : null;
+          const canMarkDemo = nextStage?.key === 'demo_completed';
+          const canMarkTraining = nextStage?.key === 'training_completed';
+          const isMarking = markingId?.startsWith(acct.org_id);
+          const acctFeedback = feedback?.orgId === acct.org_id ? feedback : null;
+
+          return (
+            <div
+              key={acct.org_id}
+              className="border border-[#1E2D4D]/8 rounded-lg px-4 py-3"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3 items-center">
+                {/* Account info */}
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[#1E2D4D] truncate">{acct.org_name}</p>
+                  {acct.contact_name && (
+                    <p className="text-xs text-[#1E2D4D]/50 truncate">
+                      {acct.contact_name}{acct.contact_email ? ` · ${acct.contact_email}` : ''}
+                    </p>
+                  )}
+                </div>
+
+                {/* 10 pips */}
+                <div className="grid grid-cols-10 gap-1">
+                  {STAGES.map((s, idx) => {
+                    const state = pipState(acct, s.key, idx);
+                    const colors = PIP_COLORS[state];
+                    const tsKey = `${s.key}_at` as keyof QueueAccount;
+                    const ts = acct[tsKey];
+                    const title = ts
+                      ? `${s.label}: ${new Date(ts as string).toLocaleDateString()}`
+                      : `${s.label}: pending`;
+
+                    return (
+                      <div
+                        key={s.key}
+                        title={title}
+                        className="flex items-center justify-center h-7 rounded text-[10px] font-bold cursor-default transition-colors"
+                        style={{
+                          background: colors.bg,
+                          border: `1.5px solid ${colors.border}`,
+                          color: colors.text,
+                        }}
+                      >
+                        {state === 'done' ? (
+                          <CheckCircle2 size={12} />
+                        ) : state === 'action' ? (
+                          <AlertCircle size={12} />
+                        ) : (
+                          s.short
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Action row — manual stage buttons + billing anchor */}
+              {(canMarkDemo || canMarkTraining || acct.first_charge_at) && (
+                <div className="mt-2 pt-2 border-t border-[#1E2D4D]/5 flex items-center gap-3 flex-wrap">
+                  {canMarkDemo && (
+                    <button
+                      onClick={() => handleMark(acct.org_id, 'demo_completed')}
+                      disabled={!!isMarking}
+                      className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
+                      style={{ background: '#FAEEDA', color: '#854F0B', border: '1px solid #E8D5A8' }}
+                    >
+                      <CheckCircle2 size={12} />
+                      {isMarking ? 'Marking...' : 'Mark demo completed'}
+                    </button>
+                  )}
+                  {canMarkTraining && (
+                    <button
+                      onClick={() => handleMark(acct.org_id, 'training_completed')}
+                      disabled={!!isMarking}
+                      className="text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
+                      style={{ background: '#FAEEDA', color: '#854F0B', border: '1px solid #E8D5A8' }}
+                    >
+                      <CheckCircle2 size={12} />
+                      {isMarking ? 'Marking...' : 'Mark training complete (billing anchor)'}
+                    </button>
+                  )}
+                  {acct.first_charge_at && (
+                    <span className="text-xs text-[#0F6E56] flex items-center gap-1">
+                      <Clock size={12} />
+                      First charge: {new Date(acct.first_charge_at).toLocaleDateString()}
+                    </span>
+                  )}
+                  {acct.training_completed_at && !acct.first_charge_at && (
+                    <span className="text-xs text-[#1E2D4D]/50 flex items-center gap-1">
+                      <Clock size={12} />
+                      Training done {new Date(acct.training_completed_at).toLocaleDateString()} — charge date pending
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Feedback for this account */}
+              {acctFeedback && (
+                <div
+                  className="mt-2 text-xs px-3 py-1.5 rounded"
+                  style={{
+                    background: acctFeedback.ok ? '#E1F5EE' : '#FCEBEB',
+                    color: acctFeedback.ok ? '#0F6E56' : '#A32D2D',
+                  }}
+                >
+                  {acctFeedback.text}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main page ─────────────────────────────────────────────────────
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
-  const [mode, setMode] = useState<'invite' | 'manual'>('invite');
+  const [mode, setMode] = useState<'invite' | 'manual' | 'queue'>('queue');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -108,8 +399,6 @@ export function AdminClientOnboarding() {
         }
       }
 
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-
       const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
 
       // Isolated client — signUp on the shared singleton would replace the
@@ -173,11 +462,13 @@ export function AdminClientOnboarding() {
   return (
     <>
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex gap-2 mb-6">
+          <button onClick={() => setMode('queue')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'queue' ? '#1E2D4D' : 'transparent', color: mode === 'queue' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Onboarding queue</button>
           <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite a client</button>
           <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Provision manually</button>
         </div>
+        {mode === 'queue' && <OnboardingQueue />}
         {mode === 'invite' && <ClientInviteForm />}
         {mode === 'manual' && (
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">

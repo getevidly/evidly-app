@@ -552,6 +552,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
       const instanceId = `gt_${Date.now()}`;
       const { data: session, error: sessErr } = await supabase.from('demo_sessions').insert({
         account_name: companyName.trim(),
+        organization_id: selectedOrg?.id || null,
         county: county || null,
         user_email: email || null,
         prospect_name: contactName || null,
@@ -603,6 +604,18 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
         level: 'INFO', category: 'guided_tour',
         message: `Guided tour launched: ${companyName} (${county || 'N/A'}) — ${contactName || 'N/A'} [${PLANS[plan].label}, ${locations.length} loc, ${formatCents(estimatedMRR)}/mo]`,
       });
+
+      // Journey stage: demo_scheduled (fire-and-forget)
+      if (selectedOrg?.id) {
+        supabase.auth.getSession().then(({ data: { session: s } }) => {
+          if (!s?.access_token) return;
+          fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
+            body: JSON.stringify({ org_id: selectedOrg.id, stage: 'demo_scheduled' }),
+          }).catch(() => {});
+        });
+      }
 
       toast.success('Tour launched successfully');
       onLaunch();

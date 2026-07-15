@@ -4,6 +4,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail } from "../_shared/email.ts";
 import { buildClientInviteEmail } from "../_shared/invites.ts";
 import { logger } from "../_shared/logger.ts";
+import { stampJourneyStage } from "../_shared/journeyStamp.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -110,6 +111,9 @@ Deno.serve(async (req: Request) => {
       logger.error("[create-client-invite] insert failed", insErr);
       return json({ error: "Could not create invite" }, 500, headers);
     }
+
+    // Journey stage: invited (shared helper — idempotent, never moves backwards)
+    await stampJourneyStage(supabase, organization_id, 'invited');
 
     const { subject, html } = buildClientInviteEmail({
       recipientName: contact_name,

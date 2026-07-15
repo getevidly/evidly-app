@@ -175,6 +175,7 @@ export function DocumentsPage() {
     setUploadTypeHint(undefined);
     if (!orgId) return;
 
+    let hasPolicyUpload = false;
     for (const cf of files) {
       try {
         const category = pillarToCategory(cf.overrides.pillar);
@@ -195,9 +196,27 @@ export function DocumentsPage() {
           notes: cf.overrides.notes || null,
           mime_type: cf.file.type || null,
         });
+
+        // Journey stage: policies_uploaded — only for insurance/policy docs
+        const docType = cf.overrides.documentType || '';
+        if (docType.startsWith('insurance_') || docType === 'vendor_coi') {
+          hasPolicyUpload = true;
+        }
       } catch {
         toast.error(`Failed to upload ${cf.file.name}`);
       }
+    }
+
+    // Fire journey stamp once if any policy doc was uploaded
+    if (hasPolicyUpload && orgId) {
+      supabase.auth.getSession().then(({ data: { session: s } }) => {
+        if (!s?.access_token) return;
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
+          body: JSON.stringify({ org_id: orgId, stage: 'policies_uploaded' }),
+        }).catch(() => {});
+      });
     }
 
     toast.success(`${files.length} document${files.length > 1 ? 's' : ''} uploaded`);

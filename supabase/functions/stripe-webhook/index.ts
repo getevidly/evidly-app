@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { stampJourneyStage } from "../_shared/journeyStamp.ts";
 
 // Map Stripe price IDs to human-readable plan names
 function getPlanName(priceId: string): string {
@@ -124,6 +125,21 @@ Deno.serve(async (req: Request) => {
         );
 
         console.log(`Subscription created for user ${userId}: ${planName}`);
+
+        // Journey stage: cc_on_file — resolve org via user_profiles
+        try {
+          const { data: ccProfile } = await supabase
+            .from("user_profiles")
+            .select("organization_id")
+            .eq("id", userId)
+            .maybeSingle();
+          if (ccProfile?.organization_id) {
+            await stampJourneyStage(supabase, ccProfile.organization_id, "cc_on_file");
+          }
+        } catch (e) {
+          console.error("cc_on_file stamp failed:", e);
+        }
+
         break;
       }
 

@@ -125,11 +125,26 @@ export async function checkOnboardingConditions(orgId: string): Promise<boolean>
 export async function evaluateOnboardingComplete(orgId: string): Promise<boolean> {
   const complete = await checkOnboardingConditions(orgId);
   if (complete) {
-    await supabase
+    // The eq('onboarding_completed', false) ensures this only writes once.
+    // .select('id') returns the row only if the update actually matched.
+    const { data: updated } = await supabase
       .from('organizations')
       .update({ onboarding_completed: true })
       .eq('id', orgId)
-      .eq('onboarding_completed', false);
+      .eq('onboarding_completed', false)
+      .select('id');
+
+    // Only stamp journey if the flag actually flipped (row was returned)
+    if (updated && updated.length > 0) {
+      supabase.auth.getSession().then(({ data: { session: s } }) => {
+        if (!s?.access_token) return;
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
+          body: JSON.stringify({ org_id: orgId, stage: 'account_configured' }),
+        }).catch(() => {});
+      });
+    }
   }
   return complete;
 }
