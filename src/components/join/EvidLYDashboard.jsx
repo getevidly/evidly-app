@@ -354,7 +354,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             <div style={s('display:flex;flex-wrap:wrap;margin-top:26px;max-width:660px;border:1px solid #E7DFCE;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(28,42,58,.03),0 16px 34px -30px rgba(28,42,58,.55);')}>
               <div style={s('flex:1 1 240px;background:#F1ECE0;padding:15px 18px;')}>
                 <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6E675A;")}>The old way</div>
-                <div style={s('font-size:14px;color:#646D7A;text-decoration:line-through;margin-top:6px;')}>Binders, spreadsheets and sticky notes nobody looked at until the inspector did.</div>
+                <div style={s('font-size:14px;color:#9E3B32;text-decoration:line-through;margin-top:6px;')}>Binders, spreadsheets and sticky notes nobody looked at until the inspector did.</div>
               </div>
               <div style={s('flex:1 1 240px;background:#EAF1E8;padding:15px 18px;border-left:1px solid #DBE3D6;')}>
                 <div style={s('display:flex;align-items:center;gap:7px;')}>

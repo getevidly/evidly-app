@@ -14,7 +14,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Flame, Utensils, CheckCircle2,
+  Flame, Utensils, CheckCircle2, Zap,
   Eye, ArrowRight, Send, Lock, Shield, Key,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -57,6 +57,7 @@ interface Invite {
   contact_name: string;
   email: string;
   phone: string | null;
+  message: string | null;
   status: string;
   expires_at: string;
   location_snapshot: LocationSnapshot | null;
@@ -89,7 +90,7 @@ export function ClientJoin() {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
       const { data, error } = await supabase
         .from('evidly_client_invites')
-        .select('organization_id, organization_name, business_name, contact_name, email, phone, status, expires_at, location_snapshot')
+        .select('organization_id, organization_name, business_name, contact_name, email, phone, message, status, expires_at, location_snapshot')
         .eq('token', token)
         .maybeSingle();
       if (error || !data) { setLoadError('This invite link is invalid.'); setLoading(false); return; }
@@ -189,6 +190,16 @@ export function ClientJoin() {
   return (
     <div style={{ backgroundColor: CREAM, minHeight: '100vh', fontFamily: SANS }} className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
+        {invite?.message && (
+          <div className="mb-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-1.5" style={{ color: GOLD_TEXT }}>
+              A note to this kitchen
+            </div>
+            <div className="text-sm border px-4 py-3" style={{ borderColor: LINE, fontFamily: SANS, color: NAVY, backgroundColor: '#fff' }}>
+              {invite.message}
+            </div>
+          </div>
+        )}
         <div className="bg-white shadow-2xl" style={{ borderRadius: 4 }}>
 
           {/* ============ TOP HEADER — TABS IN HEADER ============ */}
@@ -253,7 +264,7 @@ export function ClientJoin() {
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
-                    <Eye size={14} style={{ color: GOLD_TEXT }} />
+                    <Zap size={15} style={{ color: '#D8A93A' }} fill="#D8A93A" />
                   </div>
                   <div>
                     <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Intelligence</div>
@@ -262,7 +273,7 @@ export function ClientJoin() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
-                    <Flame size={14} style={{ color: GOLD_TEXT }} />
+                    <Flame size={15} style={{ color: '#E8763A' }} fill="#E8763A" />
                   </div>
                   <div>
                     <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Fire Safety</div>
@@ -271,7 +282,7 @@ export function ClientJoin() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
-                    <Utensils size={14} style={{ color: GOLD_TEXT }} />
+                    <Utensils size={15} style={{ color: '#5B8AAD' }} />
                   </div>
                   <div>
                     <div className="text-sm font-bold" style={{ fontFamily: SERIF }}>Food Safety</div>
