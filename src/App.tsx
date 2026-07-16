@@ -34,6 +34,7 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then(m => ({ 
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const EmailConfirmed = lazy(() => import('./pages/EmailConfirmed').then(m => ({ default: m.EmailConfirmed })));
 const DemoWizard = lazy(() => import('./pages/DemoWizard').then(m => ({ default: m.DemoWizard })));
+const DemoDashboardPublic = lazy(() => import('./pages/DemoDashboard').then(m => ({ default: m.DemoDashboard })));
 const SetupFoodSafety = lazy(() => import('./pages/SetupFoodSafety').then(m => ({ default: m.SetupFoodSafety })));
 const SetupFoodSafetyEntry = lazy(() => import('./pages/SetupFoodSafetyEntry').then(m => ({ default: m.SetupFoodSafetyEntry })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -204,6 +205,7 @@ const FeatureBaselineTracker = lazy(() => import('./pages/admin/FeatureBaselineT
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const PolicyLensQueue = lazy(() => import('./pages/admin/PolicyLensQueue'));
 const LeaseQueue = lazy(() => import('./pages/admin/LeaseQueue'));
+const VendorMatching = lazy(() => import('./pages/admin/VendorMatching'));
 const PolicyLensReleased = lazy(() => import('./pages/admin/PolicyLensReleased'));
 const PolicyLensMessages = lazy(() => import('./pages/admin/PolicyLensMessages'));
 const AdvisorBriefings = lazy(() => import('./pages/admin/AdvisorBriefings'));
@@ -606,7 +608,8 @@ function AppRoutes() {
         <Route path="/forgot-password" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><ForgotPassword /></Suspense></PublicRoute>} />
         <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
         <Route path="/email-confirmed" element={<Suspense fallback={<PageSkeleton />}><EmailConfirmed /></Suspense>} />
-        <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoWizard /></Suspense>} />
+        <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoDashboardPublic /></Suspense>} />
+        <Route path="/demo-wizard" element={<Suspense fallback={<PageSkeleton />}><DemoWizard /></Suspense>} />
         <Route path="/demo/request" element={<Suspense fallback={<PageSkeleton />}><DemoRequest /></Suspense>} />
         <Route path="/demo/schedule/:sessionId" element={<Suspense fallback={<PageSkeleton />}><DemoSchedule /></Suspense>} />
         <Route path="/auth/callback" element={<Suspense fallback={<PageSkeleton />}><AuthCallback /></Suspense>} />
@@ -855,6 +858,7 @@ function AppRoutes() {
           <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
           <Route path="/admin/policy-lens" element={<PolicyLensQueue />} />
           <Route path="/admin/lease-queue" element={<LeaseQueue />} />
+          <Route path="/admin/ops/vendor-matching" element={<VendorMatching />} />
           <Route path="/admin/policy-lens/released" element={<PolicyLensReleased />} />
           <Route path="/admin/policy-lens/messages" element={<PolicyLensMessages />} />
           <Route path="/admin/policy-lens/:intakeId" element={<ExtractionDetail />} />
