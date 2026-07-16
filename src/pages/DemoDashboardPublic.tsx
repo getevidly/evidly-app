@@ -612,3 +612,5 @@ export function DemoDashboardPublic() {
     </div>
   );
 }
+
+export default DemoDashboardPublic;
