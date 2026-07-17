@@ -168,13 +168,13 @@ export function buildClientInviteEmail(
   <!-- DASHBOARD : cycling GIF + secondary link opening the demo in a NEW TAB -->
   <tr><td style="background:#F7F1E6;padding:20px 0 8px;">
     <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Your dashboard · all four locations</div>
-    <a href="https://app.getevidly.com/dashboard-demo.html" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+    <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
       <img src="https://app.getevidly.com/dashboard.gif" width="600" alt="Your EvidLY dashboard — cycling through all four locations" style="display:block;width:100%;max-width:600px;height:auto;border:0;"/>
     </a>
     <div style="text-align:center;padding:16px 40px 2px;">
       <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
         <td align="center" style="background:#FFFFFF;border:1.5px solid #1C2A3A;">
-          <a href="https://app.getevidly.com/dashboard-demo.html" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:'Instrument Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#1C2A3A;">Open the full dashboard demo&nbsp;&#8599;</a>
+          <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:'Instrument Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#1C2A3A;">Open the full dashboard demo&nbsp;&#8599;</a>
         </td></tr></table>
     </div>
     <div style="font-family:'Instrument Sans',Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab — your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:600;">View your records</span> below.</div></td></tr>

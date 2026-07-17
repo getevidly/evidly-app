@@ -61,6 +61,27 @@ const CSS = `
 .ev-soft:hover { background: #FBF7EF !important; }
 .ev-close:hover { background: #EFE8DA !important; }
 .ev-card:hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgba(28,42,58,.04), 0 30px 55px -30px rgba(28,42,58,.6); }
+.ev-share-btn:hover { background: rgba(255,255,255,0.1) !important; }
+.ev-share-item:hover { background: #F7F4ED !important; }
+.ev-cta:hover { background: #2A3A4E !important; }
+@media (max-width: 768px) {
+  .ev-nav { padding: 0 16px !important; }
+  .ev-content { padding: 24px 16px 60px !important; max-width: 100% !important; }
+  .ev-hero { grid-template-columns: 1fr !important; gap: 24px !important; text-align: center; }
+  .ev-hero-ring { order: -1; margin: 0 auto; }
+  .ev-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .ev-pillar-grid { grid-template-columns: 1fr !important; }
+  .ev-sensor-grid { grid-template-columns: 1fr !important; }
+  .ev-tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ev-tabs-inner { white-space: nowrap; }
+  .ev-alert-card { flex-direction: column !important; }
+  .ev-h1 { font-size: 42px !important; }
+  .ev-section-head { flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; }
+}
+@media (max-width: 480px) {
+  .ev-stats-grid { grid-template-columns: 1fr !important; }
+  .ev-h1 { font-size: 32px !important; }
+}
 `;
 
 /* --------------------------------------------------------------- data ----- */
@@ -212,6 +233,8 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const [pse, setPse]               = useState(PSE_CONDITIONS);
   const [assignOpen, setAssignOpen] = useState(false);
   const [assignedTo, setAssignedTo] = useState(null);
+  const [shareOpen, setShareOpen]   = useState(false);
+  const [copied, setCopied]         = useState(false);
   const [disp, setDisp] = useState({ score: 0, days: 0, checks: 0, records: 0, logs: 0 });
   const timer = useRef(null);
   const dispRef = useRef(disp);
@@ -312,7 +335,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
       {!embedded && <div style={s('height:6px;background:#CFE3D7;')} />}
 
       {!embedded && (
-      <nav style={s('background:#fff;border-bottom:1px solid #EEE7D9;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;')}>
+      <nav className="ev-nav" style={s('background:#fff;border-bottom:1px solid #EEE7D9;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;')}>
         <div style={s('display:flex;align-items:center;gap:10px;')}>
           <span style={s('width:24px;height:24px;border-radius:7px;background:#1C2A3A;display:inline-flex;align-items:center;justify-content:center;color:#CFE3D7;font-size:12px;')}>{'\u25C6'}</span>
           <span style={s("font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;")}><span style={s('color:#A08C5A;')}>E</span><span style={s('color:#1C2A3A;')}>vid</span><span style={s('color:#A08C5A;')}>LY</span></span>
@@ -323,19 +346,51 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             <span style={{ ...s('width:7px;height:7px;border-radius:50%;background:#547A62;'), animation: pulse ? 'evPulse 2.4s infinite' : 'none' }} />
             <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#3E5E4B;")}>LIVE</span>
           </span>
+          <div style={s('position:relative;')}>
+            <button className="ev-share-btn" onClick={() => setShareOpen(!shareOpen)}
+              style={s("display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid #E4DBC8;border-radius:8px;background:transparent;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#6E675A;")}>
+              {'\u2197'} SHARE
+            </button>
+            {shareOpen && (
+              <div style={s('position:absolute;top:calc(100% + 8px);right:0;z-index:50;min-width:220px;background:#fff;border:1px solid #EEE7D9;border-radius:12px;box-shadow:0 18px 40px -18px rgba(28,42,58,.6);overflow:hidden;')}>
+                <button className="ev-share-item" onClick={() => {
+                  navigator.clipboard.writeText(window.location.href).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  });
+                }} style={s("width:100%;text-align:left;background:none;border:none;padding:13px 16px;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:#1C2A3A;display:flex;align-items:center;gap:10px;")}>
+                  <span style={s('font-size:15px;')}>{copied ? '\u2713' : '\ud83d\udccb'}</span>
+                  {copied ? 'Copied!' : 'Copy link'}
+                </button>
+                <button className="ev-share-item" onClick={() => {
+                  const subject = encodeURIComponent('See what EvidLY looks like \u2014 Pacific Restaurant Group');
+                  const body = encodeURIComponent(
+                    'I wanted to share this EvidLY dashboard preview with you.\n\n' +
+                    'Open this link to see what it looks like:\n' + window.location.href + '\n\n' +
+                    'It tracks fire safety, food safety, and compliance \u2014 all in one place.'
+                  );
+                  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+                  setShareOpen(false);
+                }} style={s("width:100%;text-align:left;background:none;border:none;border-top:1px solid #F0EADC;padding:13px 16px;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:#1C2A3A;display:flex;align-items:center;gap:10px;")}>
+                  <span style={s('font-size:15px;')}>{'\u2709\ufe0f'}</span>
+                  Email this demo
+                </button>
+              </div>
+            )}
+          </div>
           <span style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:#6E675A;")}>Owner view</span>
           <span style={s('width:30px;height:30px;border-radius:50%;background:#E3ECE1;color:#3E5E4B;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;')}>AR</span>
         </div>
       </nav>
       )}
 
-      <div style={s(embedded
+      <div className={embedded ? '' : 'ev-content'} style={s(embedded
         ? 'padding:22px 22px 30px;display:flex;flex-direction:column;gap:24px;'
         : 'max-width:1180px;margin:0 auto;padding:34px 40px 90px;display:flex;flex-direction:column;gap:30px;animation:evRise .6s ease-out both;')}>
 
         {!embedded && (
-          <div style={s('display:flex;gap:12px;')}>
-            <div style={s('display:flex;gap:4px;background:#EFE7D7;border:1px solid #E4DBC8;border-radius:999px;padding:4px;')}>
+          <div className="ev-tabs-wrap" style={s('display:flex;gap:12px;')}>
+            <div className="ev-tabs-inner" style={s('display:flex;gap:4px;background:#EFE7D7;border:1px solid #E4DBC8;border-radius:999px;padding:4px;')}>
               {locTabs.map((l) => (
                 <button key={l.id} className="ev-tab" onClick={l.onClick} style={s(l.style)}>{l.label}</button>
               ))}
@@ -344,10 +399,10 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         )}
 
         {/* --------------------------------------------------------- hero */}
-        <div style={s('display:grid;grid-template-columns:1fr auto;gap:52px;align-items:center;')}>
+        <div className="ev-hero" style={s('display:grid;grid-template-columns:1fr auto;gap:52px;align-items:center;')}>
           <div>
             <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>{todayLabel}</div>
-            <h1 style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>You're covered.</h1>
+            <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>You're covered.</h1>
             <p style={s("font-family:'Spectral',serif;font-weight:300;font-size:21px;line-height:1.45;color:#4A5566;max-width:560px;margin:16px 0 0;")}>
               EvidLY is tracking <span style={s('color:#1C2A3A;font-weight:500;')}>{k.total} requirements</span>. {heroTail}
             </p>
@@ -366,7 +421,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             </div>
           </div>
 
-          <div style={s('display:flex;flex-direction:column;align-items:center;gap:14px;')}>
+          <div className="ev-hero-ring" style={s('display:flex;flex-direction:column;align-items:center;gap:14px;')}>
             <div style={s('position:relative;width:224px;height:224px;')}>
               <div style={s('position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from -90deg, #BEB49C 0deg 0.7deg, transparent 0.7deg 6deg);-webkit-mask:radial-gradient(circle at center, transparent 0 100px, #000 100px 109px, transparent 110px);mask:radial-gradient(circle at center, transparent 0 100px, #000 100px 109px, transparent 110px);')} />
               <div style={{ ...s('position:absolute;inset:24px;border-radius:50%;box-shadow:0 22px 48px -28px rgba(84,122,98,.75);'), background: ringBg }}>
@@ -563,7 +618,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         {/* ----------------------------------------------------- stat grid */}
         <div style={s('position:relative;')}>
           <div style={s('border:1px solid #EEE7D9;border-radius:16px;overflow:hidden;background:#EFE8DA;box-shadow:0 1px 2px rgba(28,42,58,.03),0 18px 40px -36px rgba(28,42,58,.5);')}>
-            <div style={{ ...s('display:grid;gap:1px;'), gridTemplateColumns: gridCols }}>
+            <div className="ev-stats-grid" style={{ ...s('display:grid;gap:1px;'), gridTemplateColumns: gridCols }}>
               {stats.map((st, i) => (
                 <div key={i} style={s('background:#fff;padding:24px 26px;')}>
                   <div style={s("font-family:'Spectral',serif;font-weight:500;font-size:42px;color:#1C2A3A;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;")}>{st.big}</div>
@@ -588,7 +643,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>One thing to look at</div>
 
           {openN > 0 && (
-            <div style={{ ...s('display:flex;background:#FCFAF4;border:1px solid #E9E0CC;border-radius:14px;overflow:hidden;'), borderLeft: `3px solid ${alertT.fill}` }}>
+            <div className="ev-alert-card" style={{ ...s('display:flex;background:#FCFAF4;border:1px solid #E9E0CC;border-radius:14px;overflow:hidden;'), borderLeft: `3px solid ${alertT.fill}` }}>
               <div style={s('padding:24px 26px;flex:1;')}>
                 <div style={s('display:flex;align-items:center;gap:9px;flex-wrap:wrap;')}>
                   <span style={{ ...s('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;'), background: alertT.tint, color: alertT.text }}>{String(alertTone).toUpperCase()}</span>
@@ -655,11 +710,11 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
 
         {/* -------------------------------------------------- what's monitored */}
         <div style={s('display:flex;flex-direction:column;gap:16px;')}>
-          <div style={s('display:flex;justify-content:space-between;align-items:baseline;')}>
+          <div className="ev-section-head" style={s('display:flex;justify-content:space-between;align-items:baseline;')}>
             <h2 style={s("font-family:'Spectral',serif;font-weight:600;font-size:27px;color:#1C2A3A;margin:0;")}>What's monitored</h2>
             <span style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#646D7A;")}>{programScope}</span>
           </div>
-          <div style={s('display:grid;grid-template-columns:1fr 1fr;gap:22px;')}>
+          <div className="ev-pillar-grid" style={s('display:grid;grid-template-columns:1fr 1fr;gap:22px;')}>
 
             <div className="ev-card" style={s('background:#fff;border:1px solid #EEE7D9;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(28,42,58,.03),0 18px 40px -36px rgba(28,42,58,.5);transition:transform .18s ease,box-shadow .18s ease;')}>
               <div style={s('display:flex;justify-content:space-between;align-items:flex-start;')}>
@@ -736,7 +791,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
 
         {/* ---------------------------------------------------- what's upcoming */}
         <div style={s('display:flex;flex-direction:column;gap:6px;')}>
-          <div style={s('display:flex;justify-content:space-between;align-items:flex-end;gap:16px;')}>
+          <div className="ev-section-head" style={s('display:flex;justify-content:space-between;align-items:flex-end;gap:16px;')}>
             <div>
               <h2 style={s("font-family:'Spectral',serif;font-weight:600;font-size:27px;color:#1C2A3A;margin:0;")}>What's upcoming</h2>
               <p style={s('font-size:13px;color:#5F6875;margin:6px 0 0;')}>Predicted from your inspection cycles, vendor schedules and permit dates.</p>
@@ -796,7 +851,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
 
         {/* --------------------------------------------------- what's measured */}
         <div style={s('display:flex;flex-direction:column;gap:16px;')}>
-          <div style={s('display:flex;justify-content:space-between;align-items:flex-end;gap:16px;')}>
+          <div className="ev-section-head" style={s('display:flex;justify-content:space-between;align-items:flex-end;gap:16px;')}>
             <div>
               <h2 style={s("font-family:'Spectral',serif;font-weight:600;font-size:27px;color:#1C2A3A;margin:0;")}>What's measured</h2>
               <p style={s('font-size:13px;color:#5F6875;margin:6px 0 0;')}>Live from connected temperature sensors {'\u2014'} kitchens without sensors log manually.</p>
@@ -805,7 +860,7 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           </div>
 
           {hasSensors && (
-            <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:16px;')}>
+            <div className="ev-sensor-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:16px;')}>
               {equipment.map((e) => (
                 <div key={e.name} style={s('background:#fff;border:1px solid #EEE7D9;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:15px;')}>
                   <div style={s('display:flex;justify-content:space-between;align-items:flex-start;')}>
@@ -843,6 +898,19 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             </div>
           )}
         </div>
+
+        {/* ----------------------------------------------------------- CTA */}
+        {!embedded && (
+          <div style={s('text-align:center;margin-top:10px;')}>
+            <a className="ev-cta" href="/onboarding"
+              style={s("display:inline-flex;align-items:center;gap:10px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:12px;padding:16px 36px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .16s ease;")}>
+              Check your records {'\u2192'}
+            </a>
+            <div style={s("margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.04em;")}>
+              Free to view {'\u00b7'} no card required
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

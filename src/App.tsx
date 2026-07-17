@@ -34,7 +34,7 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then(m => ({ 
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const EmailConfirmed = lazy(() => import('./pages/EmailConfirmed').then(m => ({ default: m.EmailConfirmed })));
 const DemoWizard = lazy(() => import('./pages/DemoWizard').then(m => ({ default: m.DemoWizard })));
-const DemoDashboardPublic = lazy(() => import('./pages/DemoDashboardPublic').then(m => ({ default: m.DemoDashboardPublic })));
+const DemoPage = lazy(() => import('./components/join/EvidLYDashboard').then(m => ({ default: m.EvidLYDashboard })));
 const SetupFoodSafety = lazy(() => import('./pages/SetupFoodSafety').then(m => ({ default: m.SetupFoodSafety })));
 const SetupFoodSafetyEntry = lazy(() => import('./pages/SetupFoodSafetyEntry').then(m => ({ default: m.SetupFoodSafetyEntry })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -608,7 +608,7 @@ function AppRoutes() {
         <Route path="/forgot-password" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><ForgotPassword /></Suspense></PublicRoute>} />
         <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
         <Route path="/email-confirmed" element={<Suspense fallback={<PageSkeleton />}><EmailConfirmed /></Suspense>} />
-        <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoDashboardPublic /></Suspense>} />
+        <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoPage /></Suspense>} />
         <Route path="/demo-wizard" element={<Suspense fallback={<PageSkeleton />}><DemoWizard /></Suspense>} />
         <Route path="/demo/request" element={<Suspense fallback={<PageSkeleton />}><DemoRequest /></Suspense>} />
         <Route path="/demo/schedule/:sessionId" element={<Suspense fallback={<PageSkeleton />}><DemoSchedule /></Suspense>} />
