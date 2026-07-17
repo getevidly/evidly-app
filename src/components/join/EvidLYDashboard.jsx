@@ -166,57 +166,82 @@ const PSE_CONDITIONS = [
   { id: 'sprk',  name: 'Fire sprinkler',           current: false },
 ];
 
-const riskData = (loc) => {
+const riskData = (loc, pseProven, hoodProven) => {
   const n = loc === 'all' ? 3 : 1;
   const money = (v) => '$' + v.toLocaleString('en-US');
   const rng = (l, h) => money(l * n) + '\u2013' + money(h * n);
-  const food = {
-    label: 'Food safety', typ: rng(900, 3500),
-    lines: [
-      { label: 'Foodborne illness', ctx: 'logs \u00b7 HACCP', range: rng(400, 1800) },
-      { label: 'Shutdown & reinspection', ctx: 'health dept', range: rng(300, 900) },
-      { label: 'Reputation recovery', ctx: '', range: rng(200, 800) },
-    ],
-    worst: '$250K\u2013$2M+', worstDesc: 'A severe outbreak, with a lawsuit.',
-    covers: 'Covers: receiving, holding & cooling logs \u00b7 checklists \u00b7 HACCP',
-  };
+  const k = (v) => (v >= 1000 ? '$' + (v / 1000).toFixed(v % 1000 === 0 ? 0 : 1) + 'k' : '$' + v);
+  const krng = (l, h) => k(l * n) + '\u2013' + k(h * n);
+  const kn = loc === 'all' ? 'Pacific Restaurant Group' : K[loc].name;
+
+  /* ---- FIRE: scales with unproven safeguards (all 4 count) ----
+     Anchored so 1 unproven (default 3/4) = baseline $600\u2013$2,600/loc.
+     Each additional unproven adds ~35% fire risk.                       */
+  const fireUnproven = 4 - pseProven;
+  const fireScale = Math.max(0.4, 1 + (fireUnproven - 1) * 0.35);
+  const fireLo = Math.round(600 * fireScale);
+  const fireHi = Math.round(2600 * fireScale);
+
   const fire = {
-    label: 'Fire safety', typ: rng(600, 2600),
+    label: 'Fire safety', typ: rng(fireLo, fireHi),
     lines: [
-      { label: 'Fire damage & equipment', ctx: 'NFPA 96 \u00b7 17A \u00b7 25 \u00b7 72', range: rng(300, 1200) },
-      { label: 'Shutdown & rebuild', ctx: '', range: rng(200, 900) },
-      { label: 'Reputation recovery', ctx: '', range: rng(100, 500) },
+      { label: 'Fire damage & equipment', ctx: 'NFPA 96 \u00b7 17A \u00b7 25 \u00b7 72', range: rng(Math.round(300 * fireScale), Math.round(1200 * fireScale)) },
+      { label: 'Shutdown & rebuild', ctx: '', range: rng(Math.round(200 * fireScale), Math.round(900 * fireScale)) },
+      { label: 'Reputation recovery', ctx: '', range: rng(Math.round(100 * fireScale), Math.round(500 * fireScale)) },
     ],
     worst: '$150K\u2013$500K+', worstDesc: "A fire your insurance won't cover.",
     covers: 'Covers: hood cleaning \u00b7 suppression, alarm & sprinkler checks',
   };
-  const kn = loc === 'all' ? 'Pacific Restaurant Group' : K[loc].name;
-
-  const k = (v) => (v >= 1000 ? '$' + (v / 1000).toFixed(v % 1000 === 0 ? 0 : 1) + 'k' : '$' + v);
-  const krng = (l, h) => k(l * n) + '\u2013' + k(h * n);
-
-  food.annual  = krng(900, 3500);
-  food.live    = krng(450, 1800) + ' live \u00b7 2 overdue';
-  food.reduced = '\u2193' + krng(450, 1700) + ' reduced by your work';
-  food.ceilingLabel = 'An outbreak';
-  food.ceiling = '$250k\u2013$2m+';
-
-  fire.annual  = krng(600, 2600);
-  fire.live    = krng(200, 900) + ' live \u00b7 1 overdue';
-  fire.reduced = '\u2193' + krng(400, 1700) + ' reduced by your work';
+  fire.annual       = krng(fireLo, fireHi);
+  fire.live         = krng(Math.round(fireLo * 0.333), Math.round(fireHi * 0.346)) + ' live \u00b7 ' + fireUnproven + ' overdue';
+  fire.reduced      = '\u2193' + krng(Math.round(fireLo * 0.667), Math.round(fireHi * 0.654)) + ' reduced by your work';
   fire.ceilingLabel = "A fire your insurance won't cover";
-  fire.ceiling = '$150k\u2013$500k+';
+  fire.ceiling      = '$150k\u2013$500k+';
+
+  /* ---- FOOD: base + hood contamination (CalCode cross-pillar) ----
+     Hood unproven adds $400\u2013$1,500/loc + a breakdown line.
+     The other three safeguards are fire-only and never touch food.
+     Food CEILING never moves (records are a defense, not coverage).  */
+  const foodLo = 900 + (hoodProven ? 0 : 400);
+  const foodHi = 3500 + (hoodProven ? 0 : 1500);
+  const foodOverdue = hoodProven ? 2 : 3;
+
+  const foodLines = [
+    { label: 'Foodborne illness', ctx: 'logs \u00b7 HACCP', range: rng(400, 1800) },
+    { label: 'Shutdown & reinspection', ctx: 'health dept', range: rng(300, 900) },
+    { label: 'Reputation recovery', ctx: '', range: rng(200, 800) },
+  ];
+  if (!hoodProven) {
+    foodLines.push({ label: 'Hood grease contamination', ctx: 'CalCode \u00b7 grease into food', range: rng(400, 1500) });
+  }
+
+  const food = {
+    label: 'Food safety', typ: rng(foodLo, foodHi),
+    lines: foodLines,
+    worst: '$250K\u2013$2M+', worstDesc: 'A severe outbreak, with a lawsuit.',
+    covers: 'Covers: receiving, holding & cooling logs \u00b7 checklists \u00b7 HACCP',
+  };
+  food.annual       = krng(foodLo, foodHi);
+  food.live         = krng(Math.round(foodLo * 0.5), Math.round(foodHi * 0.514)) + ' live \u00b7 ' + foodOverdue + ' overdue';
+  food.reduced      = '\u2193' + krng(Math.round(foodLo * 0.5), Math.round(foodHi * 0.486)) + ' reduced by your work';
+  food.ceilingLabel = 'An outbreak';
+  food.ceiling      = '$250k\u2013$2m+';
+
+  /* ---- TOTALS ---- */
+  const totalLo = foodLo + fireLo;
+  const totalHi = foodHi + fireHi;
+  const foodPctVal = Math.round(((foodLo + foodHi) / 2) / ((totalLo + totalHi) / 2) * 100);
 
   return {
     pillars: [food, fire],
     food, fire,
-    tileFood: food.typ + '/yr', tileFire: fire.typ + '/yr', tileTotal: rng(1500, 6100) + '/yr',
-    totalCompact: krng(1500, 6100),
-    totalTyp: rng(1500, 6100),
-    equation: `Food safety (${rng(900, 3500)}) + fire safety (${rng(600, 2600)})`,
+    tileFood: food.typ + '/yr', tileFire: fire.typ + '/yr', tileTotal: rng(totalLo, totalHi) + '/yr',
+    totalCompact: krng(totalLo, totalHi),
+    totalTyp: rng(totalLo, totalHi),
+    equation: `Food safety (${rng(foodLo, foodHi)}) + fire safety (${rng(fireLo, fireHi)})`,
     typeChip: 'Casual dining \u00b7 ' + kn,
     segment: 'Casual dining',
-    foodPct: '57%', firePct: '43%',
+    foodPct: foodPctVal + '%', firePct: (100 - foodPctVal) + '%',
   };
 };
 
@@ -312,11 +337,12 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const hasSensors   = k.sensors > 0;
   const sensorLabel  = k.sensors > 0 ? `${k.sensors} SENSOR${k.sensors === 1 ? '' : 'S'} \u00b7 LIVE` : 'MANUAL LOGGING';
   const programScope = loc === 'all' ? '2 PROGRAMS \u00b7 3 KITCHENS' : '2 PROGRAMS \u00b7 ' + k.name.toUpperCase();
-  const risk         = riskData(loc);
   const pseTotal     = pse.length;
   const pseProven    = pse.filter((c) => c.current).length;
   const pseUnproven  = pseTotal - pseProven;
   const gateOpen     = pseProven === pseTotal;
+  const hoodProven   = pse.find((c) => c.id === 'kec')?.current ?? true;
+  const risk         = riskData(loc, pseProven, hoodProven);
   const togglePse    = (id) => setPse((prev) => prev.map((c) => (c.id === id ? { ...c, current: !c.current } : c)));
   const alertT       = String(alertTone).toLowerCase() === 'warning' ? TONE.red : TONE.amber;
 
