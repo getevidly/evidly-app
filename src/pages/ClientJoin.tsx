@@ -133,7 +133,7 @@ export function ClientJoin() {
       const { error: signInErr } = await signIn(invite.email, password);
       if (signInErr) { toast.success('Account created. Please sign in.'); navigate('/login'); return; }
       toast.success('Welcome to EvidLY!');
-      navigate('/dashboard');
+      navigate('/onboarding');
     } catch {
       toast.error('Something went wrong. Please try again.');
       setSubmitting(false);
@@ -602,10 +602,10 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 disabled={!canSubmit}
                 className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2"
                 style={{ backgroundColor: canSubmit ? NAVY : `${NAVY}40`, color: 'white', cursor: canSubmit ? 'pointer' : 'not-allowed' }}>
-                {submitting ? 'Opening your account…' : <>View My Records <ArrowRight size={15} /></>}
+                {submitting ? 'Setting up your account…' : <>Set up your account <ArrowRight size={15} /></>}
               </button>
               <div className="text-center text-[11px] mt-2" style={{ color: MUTED }}>
-                {'\u2192'} Your Cleaning Pros Plus hood cleaning record
+                {'\u2192'} Starts with your hood cleaning certificate
               </div>
 
             </div>
