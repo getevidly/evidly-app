@@ -64,13 +64,13 @@ interface Invite {
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
-export function ClientJoin() {
+export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { signIn } = useAuth();
 
   /* ── State ─────────────────────────────────────────────────── */
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!previewOnly);
   const [invite, setInvite] = useState<Invite | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -86,6 +86,7 @@ export function ClientJoin() {
 
   /* ── Fetch invite ──────────────────────────────────────────── */
   useEffect(() => {
+    if (previewOnly) return;
     (async () => {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
       const { data, error } = await supabase
@@ -100,7 +101,7 @@ export function ClientJoin() {
       setInvite(data as Invite);
       setLoading(false);
     })();
-  }, [token]);
+  }, [token, previewOnly]);
 
   /* ── Password validation ───────────────────────────────────── */
   const rules = {
@@ -155,7 +156,7 @@ export function ClientJoin() {
   }
 
   /* ── Derived ───────────────────────────────────────────────── */
-  const orgLabel = invite?.organization_name || invite?.business_name || 'your kitchen';
+  const orgLabel = previewOnly ? 'Pacific Restaurant Group' : (invite?.organization_name || invite?.business_name || 'your kitchen');
 
   /* ── Loading ───────────────────────────────────────────────── */
   if (loading) {
@@ -190,7 +191,7 @@ export function ClientJoin() {
   return (
     <div style={{ backgroundColor: CREAM, minHeight: '100vh', fontFamily: SANS }} className="py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        {invite?.message && (
+        {!previewOnly && invite?.message && (
           <div className="mb-4">
             <div className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-1.5" style={{ color: GOLD_TEXT }}>
               A note to this kitchen
@@ -310,7 +311,7 @@ export function ClientJoin() {
             {/* ============ RIGHT PANEL ============ */}
             <div className="lg:col-span-8 p-8">
               {/* Inline Share panel */}
-              {showShare && (
+              {showShare && !previewOnly && (
                 <div className="mb-6 border p-5" style={{ borderColor: LINE, borderLeftWidth: 3, borderLeftColor: GOLD, backgroundColor: '#FBF9F2' }}>
                   <div className="flex items-start justify-between mb-3 gap-3">
                     <div>
@@ -401,6 +402,42 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 </div>
               )}
 
+              {/* Share panel — preview-only mode (simplified) */}
+              {showShare && previewOnly && (
+                <div className="mb-6 border p-5" style={{ borderColor: LINE, borderLeftWidth: 3, borderLeftColor: GOLD, backgroundColor: '#FBF9F2' }}>
+                  <div className="flex items-start justify-between mb-3 gap-3">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-widest font-bold mb-0.5" style={{ color: GOLD_TEXT }}>Share this preview</div>
+                      <h3 className="text-lg font-bold" style={{ color: NAVY, fontFamily: SERIF }}>Send to a kitchen decision maker or facility manager</h3>
+                      <p className="text-xs mt-1" style={{ color: MUTED }}>They'll see the same preview you're looking at now.</p>
+                    </div>
+                    <button onClick={() => setShowShare(false)}
+                      className="text-[10px] uppercase tracking-widest font-semibold flex-shrink-0" style={{ color: MUTED }}>
+                      {'\u2715'} Close
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        const subject = encodeURIComponent('See what EvidLY looks like — Pacific Restaurant Group');
+                        const body = encodeURIComponent(
+                          'I wanted to share this EvidLY dashboard preview with you.\n\n' +
+                          'Open this link to see what it looks like:\n' + window.location.href + '\n\n' +
+                          'It tracks fire safety, food safety, and compliance \u2014 all in one place.'
+                        );
+                        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                      }}
+                      className="text-sm px-4 py-2 font-semibold inline-flex items-center gap-2"
+                      style={{ backgroundColor: NAVY, color: 'white' }}>
+                      <Send size={13} /> Send via email
+                    </button>
+                    <button onClick={() => setShowShare(false)} className="text-sm font-semibold" style={{ color: MUTED }}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Mobile-only: expand button */}
               {!showPreviewOnMobile && (
                 <button onClick={() => setShowPreviewOnMobile(true)}
@@ -426,6 +463,7 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 </div>
               </div>
 
+              {!previewOnly && (<>
               {/* View Account section */}
               <div className="mb-5">
                 <div className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-1" style={{ color: GOLD_TEXT }}>
@@ -602,11 +640,12 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 disabled={!canSubmit}
                 className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2"
                 style={{ backgroundColor: canSubmit ? NAVY : `${NAVY}40`, color: 'white', cursor: canSubmit ? 'pointer' : 'not-allowed' }}>
-                {submitting ? 'Setting up your account…' : <>Set up your account <ArrowRight size={15} /></>}
+                {submitting ? 'Viewing records…' : <>View My Records <ArrowRight size={15} /></>}
               </button>
               <div className="text-center text-[11px] mt-2" style={{ color: MUTED }}>
-                {'\u2192'} Starts with your hood cleaning certificate
+                {'\u2192'} Your Cleaning Pros Plus hood cleaning record
               </div>
+              </>)}
 
             </div>
           </div>
