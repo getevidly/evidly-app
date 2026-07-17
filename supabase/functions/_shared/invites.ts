@@ -116,17 +116,17 @@ export function buildClientInviteEmail(
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
-  <!-- NAVY HEADER -->
-  <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td valign="middle"><img src="https://app.getevidly.com/wordmark.png" alt="EvidLY" width="120" style="display:block;border:0;height:auto;"/></td>
-      <td align="right" valign="middle" style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;color:rgba(255,255,255,0.55);text-transform:uppercase;">A Cleaning Pros Plus Company</td>
+  <!-- NAVY HEADER : wordmark + company as a LEFT LOCKUP -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:18px 40px;">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      <td valign="middle" style="padding-right:16px;"><img src="https://app.getevidly.com/wordmark.png" alt="EvidLY" width="152" style="display:block;border:0;height:auto;"/></td>
+      <td valign="middle" style="padding-left:16px;border-left:1px solid rgba(255,255,255,0.20);font-family:'Courier New',monospace;font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.62);text-transform:uppercase;">A Cleaning Pros Plus Company</td>
     </tr></table></td></tr>
   ${noteBlock}
   <!-- NAVY : intro + three pillars -->
   <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 28px;">
-    <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">Everything's ready for<br>${businessName}</h1>
-    <p style="margin:14px 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A9B2BE;">You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY, alongside everything else your kitchen needs to prove compliance.</p>
+    <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">The Hood Cleaning Certificate<br>is ready for ${businessName}</h1>
+    <p style="margin:14px 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A9B2BE;">You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY, see what other documents are required to maintain compliance and protect your livelihood.</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td width="46" valign="top" style="padding-bottom:18px;"><img src="https://app.getevidly.com/icon-intelligence.png" alt="" width="34" height="34" style="display:block;border:0;"/></td>
@@ -152,7 +152,7 @@ export function buildClientInviteEmail(
       <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Reduce</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">the cost</div></td>
       <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Prove</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">on demand</div></td>
     </tr></table></td></tr>
-  <!-- DASHBOARD SNIPPET : cycling GIF + secondary link opening the preview in a NEW TAB -->
+  <!-- DASHBOARD SNIPPET -->
   <tr><td style="background:#F7F1E6;padding:20px 0 8px;">
     <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Your dashboard &middot; all four locations</div>
     <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
@@ -164,13 +164,13 @@ export function buildClientInviteEmail(
           <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Preview the full dashboard &#8599;</a>
         </td></tr></table>
     </div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:bold;">Set up your account</span> below.</div></td></tr>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:bold;">View My Records</span> below.</div></td></tr>
   <!-- CTA -->
   <tr><td class="p40" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;">
-    <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, your account is ready to set up.</div>
-    <p style="margin:8px 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:1.6;color:#5F6875;">Set a password and finish setup &mdash; it starts with your Cleaning Pros Plus hood cleaning certificate, already on file.</p>
+    <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, your records are ready to view.</div>
+    <p style="margin:8px 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:1.6;color:#5F6875;">Set a password to open them &mdash; starting with your Cleaning Pros Plus hood cleaning certificate, already on file.</p>
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">Set up your account &#8594;</a></td>
+      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">View My Records &#8594;</a></td>
     </tr></table>
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;margin-top:12px;">Or paste this into your browser: ${inviteLink}</div></td></tr>
   <!-- FOOTER -->

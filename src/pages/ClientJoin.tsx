@@ -256,10 +256,10 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
             {/* ============ LEFT NAVY RAIL ============ */}
             <div className="lg:col-span-4 p-8" style={{ backgroundColor: NAVY, color: 'white' }}>
               <h1 className="text-2xl mb-3 leading-tight" style={{ fontFamily: SERIF, fontWeight: 600 }}>
-                Everything's ready for<br />{orgLabel}
+                The Hood Cleaning Certificate<br />is ready for {orgLabel}
               </h1>
               <p className="text-sm text-white/70 mb-8 leading-relaxed">
-                You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY — alongside everything else your kitchen needs to prove compliance.
+                You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY — see what other documents are required to maintain compliance and protect your livelihood.
               </p>
 
               <div className="space-y-4 mb-8">
