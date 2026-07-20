@@ -97,9 +97,12 @@ Deno.serve(async (req: Request) => {
     if (accErr) throw new Error("access insert failed: " + accErr.message);
 
     // ── 5. Mark accepted ────────────────────────────────────
-    await supabase.from("evidly_client_invites")
+    const { error: markErr } = await supabase.from("evidly_client_invites")
       .update({ status: "accepted", accepted_at: new Date().toISOString() })
       .eq("id", invite.id);
+    if (markErr) {
+      logger.error("[accept-client-invite] status update failed", markErr);
+    }
 
     return json({
       success: true,

@@ -14,9 +14,9 @@ const ROLES = [
   { v: 'kitchen_manager', l: 'Kitchen manager' },
 ];
 
-interface Org { id: string; name: string; state: string | null; city: string | null; }
+interface Org { id: string; name: string; state: string | null; city: string | null; primary_contact_name: string | null; primary_contact_email: string | null; }
 interface Invite {
-  id: string; organization_name: string | null; contact_name: string; email: string;
+  id: string; organization_id: string | null; organization_name: string | null; contact_name: string; email: string;
   status: string; client_role: string; reminder_count: number; created_at: string;
 }
 
@@ -37,7 +37,7 @@ export function ClientInviteForm() {
     (async () => {
       const { data } = await supabase
         .from('organizations')
-        .select('id, name, state, is_system')
+        .select('id, name, state, is_system, primary_contact_name, primary_contact_email')
         .order('created_at', { ascending: false });
       if (data) {
         setOrgs((data as (Org & { is_system?: boolean })[])
@@ -49,10 +49,34 @@ export function ClientInviteForm() {
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
       .from('evidly_client_invites')
-      .select('id, organization_name, contact_name, email, status, client_role, reminder_count, created_at')
+      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
-    if (data) setInvites(data as Invite[]);
+    if (!data) return;
+
+    // Reconcile: pending invites whose org already has a client user profile
+    // are actually accepted (the status update may have failed silently).
+    const pendingOrgIds = [...new Set(
+      data.filter(i => i.status === 'pending' && i.organization_id)
+          .map(i => i.organization_id as string),
+    )];
+    let acceptedOrgIds = new Set<string>();
+    if (pendingOrgIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('user_profiles')
+        .select('organization_id')
+        .in('organization_id', pendingOrgIds)
+        .is('evidly_staff_role', null);
+      if (profiles) {
+        acceptedOrgIds = new Set(profiles.map(p => p.organization_id as string));
+      }
+    }
+
+    setInvites(data.map(inv => ({
+      ...inv,
+      status: inv.status === 'pending' && inv.organization_id && acceptedOrgIds.has(inv.organization_id)
+        ? 'accepted' : inv.status,
+    })) as Invite[]);
   }, []);
   useEffect(() => { loadInvites(); }, [loadInvites]);
 
@@ -137,7 +161,15 @@ export function ClientInviteForm() {
       )}
 
       <label className="block text-sm text-[#1E2D4D]/70 mb-1">Organization *</label>
-      <select value={orgId} onChange={e => setOrgId(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2 mb-1">
+      <select value={orgId} onChange={e => {
+        const id = e.target.value;
+        setOrgId(id);
+        const org = orgs.find(o => o.id === id);
+        if (org) {
+          if (org.primary_contact_name) setContactName(org.primary_contact_name);
+          if (org.primary_contact_email) setEmail(org.primary_contact_email);
+        }
+      }} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2 mb-1">
         <option value="">Select the client's organization…</option>
         {orgs.map(o => <option key={o.id} value={o.id}>{o.name}{o.state ? ` · ${o.state}` : ''}</option>)}
       </select>
