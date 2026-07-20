@@ -104,6 +104,15 @@ Deno.serve(async (req: Request) => {
       logger.error("[accept-client-invite] status update failed", markErr);
     }
 
+    // ── 6. Write-back contact to org (if empty) ───────────
+    await supabase.from("organizations")
+      .update({
+        primary_contact_name: invite.contact_name,
+        primary_contact_email: invite.email,
+      })
+      .eq("id", invite.organization_id)
+      .is("primary_contact_name", null);
+
     return json({
       success: true,
       organization_id: invite.organization_id,

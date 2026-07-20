@@ -90,6 +90,53 @@ export function ClientInviteForm() {
     };
   }
 
+  async function handleOrgSelect(id: string) {
+    setOrgId(id);
+    if (!id) return;
+
+    // Source 1: client profile (non-staff) for this org → email via RPC
+    const { data: profiles } = await supabase
+      .from('user_profiles')
+      .select('id, full_name')
+      .eq('organization_id', id)
+      .is('evidly_staff_role', null)
+      .order('created_at', { ascending: true })
+      .limit(1);
+
+    if (profiles && profiles.length > 0) {
+      const p = profiles[0];
+      if (p.full_name) setContactName(p.full_name);
+      const { data: emails } = await supabase.rpc('admin_get_user_emails', {
+        p_user_ids: [p.id],
+      });
+      if (emails && emails.length > 0 && emails[0].email) {
+        setEmail(emails[0].email);
+      }
+      return;
+    }
+
+    // Source 2: most recent invite for this org
+    const { data: inviteRows } = await supabase
+      .from('evidly_client_invites')
+      .select('contact_name, email')
+      .eq('organization_id', id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (inviteRows && inviteRows.length > 0) {
+      if (inviteRows[0].contact_name) setContactName(inviteRows[0].contact_name);
+      if (inviteRows[0].email) setEmail(inviteRows[0].email);
+      return;
+    }
+
+    // Source 3: org's primary contact columns (backfilled or manually set)
+    const org = orgs.find(o => o.id === id);
+    if (org) {
+      if (org.primary_contact_name) setContactName(org.primary_contact_name);
+      if (org.primary_contact_email) setEmail(org.primary_contact_email);
+    }
+  }
+
   async function handleSend() {
     if (!orgId) { setFeedback({ ok: false, text: 'Select an organization.' }); return; }
     if (!contactName.trim() || !email.trim()) {
@@ -161,15 +208,7 @@ export function ClientInviteForm() {
       )}
 
       <label className="block text-sm text-[#1E2D4D]/70 mb-1">Organization *</label>
-      <select value={orgId} onChange={e => {
-        const id = e.target.value;
-        setOrgId(id);
-        const org = orgs.find(o => o.id === id);
-        if (org) {
-          if (org.primary_contact_name) setContactName(org.primary_contact_name);
-          if (org.primary_contact_email) setEmail(org.primary_contact_email);
-        }
-      }} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2 mb-1">
+      <select value={orgId} onChange={e => handleOrgSelect(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2 mb-1">
         <option value="">Select the client's organization…</option>
         {orgs.map(o => <option key={o.id} value={o.id}>{o.name}{o.state ? ` · ${o.state}` : ''}</option>)}
       </select>
