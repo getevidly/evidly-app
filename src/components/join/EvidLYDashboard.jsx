@@ -246,7 +246,7 @@ const riskData = (loc, pseProven, hoodProven) => {
 };
 
 /* ================================================================ component */
-export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
+function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                           loc: locProp, onLocChange, embedded = false }) {
   const [locSelf, setLocSelf]       = useState('all');
   const loc    = locProp ?? locSelf;
@@ -942,3 +942,6 @@ export function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
     </div>
   );
 }
+
+export { EvidLYDashboard };
+export default EvidLYDashboard;
