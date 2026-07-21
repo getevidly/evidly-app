@@ -176,6 +176,7 @@ export function DocumentsPage() {
     if (!orgId) return;
 
     let hasPolicyUpload = false;
+    const uploadedDocIds: string[] = [];
     for (const cf of files) {
       try {
         const category = pillarToCategory(cf.overrides.pillar);
@@ -185,7 +186,7 @@ export function DocumentsPage() {
           contentType: cf.file.type || undefined,
         });
 
-        await supabase.from('compliance_documents').insert({
+        const { data: inserted } = await supabase.from('compliance_documents').insert({
           organization_id: orgId,
           category,
           type: cf.overrides.documentType || null,
@@ -195,7 +196,8 @@ export function DocumentsPage() {
           expiry_date: cf.overrides.expiryDate || null,
           notes: cf.overrides.notes || null,
           mime_type: cf.file.type || null,
-        });
+        }).select('id');
+        if (inserted?.[0]?.id) uploadedDocIds.push(inserted[0].id);
 
         // Journey stage: policies_uploaded — only for insurance/policy docs
         const docType = cf.overrides.documentType || '';
@@ -215,6 +217,18 @@ export function DocumentsPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
           body: JSON.stringify({ org_id: orgId, stage: 'policies_uploaded' }),
+        }).catch(() => {});
+      });
+    }
+
+    // Notify other org members about the upload (fire-and-forget)
+    if (uploadedDocIds.length > 0) {
+      supabase.auth.getSession().then(({ data: { session: s } }) => {
+        if (!s?.access_token) return;
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-document-upload`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.access_token}` },
+          body: JSON.stringify({ document_ids: uploadedDocIds }),
         }).catch(() => {});
       });
     }

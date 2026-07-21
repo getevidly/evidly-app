@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createOrgNotification } from "../_shared/notify.ts";
+import { enqueueUploadNotification, triggerDelayedFlush } from "../_shared/uploadEmailQueue.ts";
 
 let corsHeaders = getCorsHeaders(null);
 
@@ -69,7 +70,7 @@ Deno.serve(async (req: Request) => {
     // Fetch linked compliance_document
     const { data: doc } = await supabase
       .from("compliance_documents")
-      .select("id, type, name, category, vendor_id")
+      .select("id, type, name, category, vendor_id, service_type_code")
       .eq("id", request.document_id)
       .single();
 
@@ -225,7 +226,7 @@ Deno.serve(async (req: Request) => {
           category: "documents",
           title: `${vendorName} uploaded ${doc?.type || "a document"}`,
           body: `${vendorName} uploaded ${doc?.type || "a document"} via secure link. Review the document.`,
-          actionUrl: "/documents",
+          actionUrl: `/documents?doc=${request.document_id}`,
           actionLabel: "View Documents",
           priority: "medium",
           severity: "info",
@@ -237,57 +238,18 @@ Deno.serve(async (req: Request) => {
         console.error("[UPLOAD] In-app notification failed — non-critical");
       }
 
-      // ── 5. Email notification (fire-and-forget) ─────────────
+      // ── 4b + 5. Enqueue email notification (batched) ───────
       try {
-        const notifyUrl = `${supabaseUrl}/functions/v1/vendor-document-notify`;
-
-        const { data: recipients } = await supabase
-          .from("user_profiles")
-          .select("id, email, full_name, role")
-          .eq("organization_id", request.organization_id)
-          .in("role", ["compliance_manager", "owner_operator"])
-          .not("email", "is", null);
-
-        const recipientList =
-          recipients && recipients.length > 0
-            ? recipients.map((r: any) => ({
-                email: r.email,
-                name: r.full_name || "Team",
-              }))
-            : [
-                {
-                  email: "team@getevidly.com",
-                  name: org?.name || "Team",
-                },
-              ];
-
-        const controller = new AbortController();
-        setTimeout(() => controller.abort(), 8000);
-
-        await Promise.allSettled(
-          recipientList.map((recipient: { email: string; name: string }) =>
-            fetch(notifyUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${supabaseKey}`,
-              },
-              body: JSON.stringify({
-                recipientEmail: recipient.email,
-                recipientName: recipient.name,
-                notificationType: "new_upload",
-                vendorName,
-                documentType: doc?.type || "Document",
-                documentTitle: doc?.name || doc?.type || "Document",
-                status: "Pending Review",
-                actionUrl: "https://app.getevidly.com/documents",
-              }),
-              signal: controller.signal,
-            })
-          )
-        );
+        await enqueueUploadNotification(supabase, [{
+          organization_id: request.organization_id,
+          document_id: request.document_id,
+          uploaded_by_type: "vendor",
+          uploaded_by_name: vendorName,
+          uploaded_by_user_id: null,
+        }]);
+        triggerDelayedFlush(supabaseUrl, supabaseKey, request.organization_id);
       } catch {
-        console.error("[UPLOAD] Email notification failed — non-critical");
+        console.error("[UPLOAD] Email enqueue failed — non-critical");
       }
 
       // ── 6. Extract service fields (background, vendor_service only) ──

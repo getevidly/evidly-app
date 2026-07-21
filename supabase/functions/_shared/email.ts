@@ -24,35 +24,52 @@ export async function sendEmail(params: SendEmailParams): Promise<{ id: string }
     return null;
   }
 
-  try {
-    const body: Record<string, unknown> = {
-      from: FROM_ADDRESS,
-      to: [params.to],
-      subject: params.subject,
-      html: params.html,
-    };
-    if (params.replyTo) body.reply_to = params.replyTo;
+  const body: Record<string, unknown> = {
+    from: FROM_ADDRESS,
+    to: [params.to],
+    subject: params.subject,
+    html: params.html,
+  };
+  if (params.replyTo) body.reply_to = params.replyTo;
 
-    const res = await fetch(RESEND_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+  const MAX_ATTEMPTS = 2;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(RESEND_API_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      logger.error(`[EMAIL] Resend error ${res.status}`, params.to, data);
-      return null;
+      const data = await res.json();
+
+      if (res.ok) {
+        logger.info("[EMAIL] Sent", params.to, params.subject, data.id);
+        return data;
+      }
+
+      // 4xx — non-retryable client error
+      if (res.status < 500) {
+        logger.error(`[EMAIL] Resend ${res.status} (non-retryable)`, params.to, data);
+        return null;
+      }
+
+      // 5xx — retryable server error
+      logger.warn(`[EMAIL] Resend ${res.status} — attempt ${attempt}/${MAX_ATTEMPTS}`, params.to);
+    } catch (err) {
+      logger.warn(`[EMAIL] Network error — attempt ${attempt}/${MAX_ATTEMPTS}`, params.to, err);
     }
-    logger.info("[EMAIL] Sent", params.to, params.subject, data.id);
-    return data;
-  } catch (err) {
-    logger.error("[EMAIL] Failed to send", params.to, err);
-    return null;
+
+    if (attempt < MAX_ATTEMPTS) {
+      await new Promise((r) => setTimeout(r, 1000 * attempt));
+    }
   }
+
+  logger.error("[EMAIL] All retries exhausted", params.to, params.subject);
+  return null;
 }
 
 // ── Branded HTML email builder ──────────────────────────────────
