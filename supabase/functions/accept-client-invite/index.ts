@@ -20,6 +20,7 @@ Deno.serve(async (req: Request) => {
   );
 
   let authUserId: string | null = null;
+  let isClaimPath = false; // true when activating a pre-provisioned user
 
   try {
     const body = await req.json();
@@ -54,47 +55,130 @@ Deno.serve(async (req: Request) => {
       return json({ error: "This invite has expired" }, 410, headers);
     }
 
-    // Guard: email already registered
-    const { data: existing } = await supabase
-      .from("user_profiles").select("id").eq("email", invite.email).maybeSingle();
-    if (existing) {
-      return json({ error: "An account already exists for this email — please sign in." }, 409, headers);
-    }
-
-    // ── 2. Create auth user (email pre-verified via invite) ──
-    const { data: created, error: userErr } = await supabase.auth.admin.createUser({
-      email: invite.email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: invite.contact_name },
-    });
-    if (userErr || !created?.user) {
-      logger.error("[accept-client-invite] createUser failed", userErr);
-      return json({ error: "Could not create account" }, 500, headers);
-    }
-    authUserId = created.user.id;
-
-    // ── 3. Profile (linked to the EXISTING org) ─────────────
-    const { error: profErr } = await supabase
+    // ── 2. Check for pre-provisioned (invited) user ─────────
+    const { data: existingProfile } = await supabase
       .from("user_profiles")
-      .insert({
-        id: authUserId,
-        full_name: invite.contact_name,
-        phone: invite.phone || null,
-        organization_id: invite.organization_id,
-        role: invite.client_role || "owner_operator",
-      });
-    if (profErr) throw new Error("profile insert failed: " + profErr.message);
+      .select("id, status, organization_id")
+      .eq("email", invite.email)
+      .maybeSingle();
 
-    // ── 4. Access grant to the EXISTING org ─────────────────
-    const { error: accErr } = await supabase
-      .from("user_location_access")
-      .insert({
-        user_id: authUserId,
-        organization_id: invite.organization_id,
-        role: invite.client_role || "owner_operator",
+    if (existingProfile) {
+      if (
+        existingProfile.status === "invited" &&
+        existingProfile.organization_id === invite.organization_id
+      ) {
+        // ── CLAIM PATH: activate the pre-provisioned user ───
+        isClaimPath = true;
+        authUserId = existingProfile.id;
+
+        // Set password on existing auth user
+        const { error: updateErr } = await supabase.auth.admin.updateUserById(
+          authUserId,
+          { password, email_confirm: true },
+        );
+        if (updateErr) {
+          logger.error("[accept-client-invite] updateUser failed", updateErr);
+          return json({ error: "Could not set password" }, 500, headers);
+        }
+
+        // Activate profile
+        const { error: profErr } = await supabase
+          .from("user_profiles")
+          .update({
+            status: "active",
+            full_name: invite.contact_name,
+            phone: invite.phone || null,
+            role: invite.client_role || "owner_operator",
+          })
+          .eq("id", authUserId);
+        if (profErr) throw new Error("profile update failed: " + profErr.message);
+
+        // Ensure per-location access rows exist (idempotent)
+        const { data: orgLocs } = await supabase
+          .from("locations")
+          .select("id")
+          .eq("organization_id", invite.organization_id);
+
+        if (orgLocs && orgLocs.length > 0) {
+          for (const loc of orgLocs) {
+            await supabase
+              .from("user_location_access")
+              .upsert(
+                {
+                  user_id: authUserId,
+                  organization_id: invite.organization_id,
+                  location_id: loc.id,
+                  role: invite.client_role || "owner_operator",
+                },
+                { onConflict: "user_id,organization_id,location_id" },
+              );
+          }
+        }
+      } else {
+        // Active / suspended / locked user, or different org
+        return json(
+          { error: "An account already exists for this email — please sign in." },
+          409,
+          headers,
+        );
+      }
+    } else {
+      // ── FRESH PATH: no existing profile — create from scratch ──
+      const { data: created, error: userErr } = await supabase.auth.admin.createUser({
+        email: invite.email,
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: invite.contact_name },
       });
-    if (accErr) throw new Error("access insert failed: " + accErr.message);
+      if (userErr || !created?.user) {
+        logger.error("[accept-client-invite] createUser failed", userErr);
+        return json({ error: "Could not create account" }, 500, headers);
+      }
+      authUserId = created.user.id;
+
+      // Profile with status='active'
+      const { error: profErr } = await supabase
+        .from("user_profiles")
+        .insert({
+          id: authUserId,
+          full_name: invite.contact_name,
+          email: invite.email,
+          phone: invite.phone || null,
+          organization_id: invite.organization_id,
+          role: invite.client_role || "owner_operator",
+          status: "active",
+        });
+      if (profErr) throw new Error("profile insert failed: " + profErr.message);
+
+      // Per-location access grants
+      const { data: orgLocs } = await supabase
+        .from("locations")
+        .select("id")
+        .eq("organization_id", invite.organization_id);
+
+      if (orgLocs && orgLocs.length > 0) {
+        const accessRows = orgLocs.map((loc: { id: string }) => ({
+          user_id: authUserId!,
+          organization_id: invite.organization_id,
+          location_id: loc.id,
+          role: invite.client_role || "owner_operator",
+        }));
+        const { error: accErr } = await supabase
+          .from("user_location_access")
+          .insert(accessRows);
+        if (accErr) throw new Error("access insert failed: " + accErr.message);
+      } else {
+        // Fallback: org-wide access (no location_id)
+        const { error: accErr } = await supabase
+          .from("user_location_access")
+          .insert({
+            user_id: authUserId,
+            organization_id: invite.organization_id,
+            role: invite.client_role || "owner_operator",
+          });
+        if (accErr) throw new Error("access insert failed: " + accErr.message);
+      }
+    }
 
     // ── 5. Mark accepted ────────────────────────────────────
     const { error: markErr } = await supabase.from("evidly_client_invites")
@@ -122,9 +206,18 @@ Deno.serve(async (req: Request) => {
   } catch (err) {
     logger.error("[accept-client-invite] chain failed — rolling back", err);
     if (authUserId) {
-      await supabase.from("user_location_access").delete().eq("user_id", authUserId).catch(() => {});
-      await supabase.from("user_profiles").delete().eq("id", authUserId).catch(() => {});
-      await supabase.auth.admin.deleteUser(authUserId).catch(() => {});
+      if (isClaimPath) {
+        // Revert provisioned user back to invited — don't delete
+        await supabase.from("user_profiles")
+          .update({ status: "invited" })
+          .eq("id", authUserId)
+          .catch(() => {});
+      } else {
+        // Fresh path — full rollback
+        await supabase.from("user_location_access").delete().eq("user_id", authUserId).catch(() => {});
+        await supabase.from("user_profiles").delete().eq("id", authUserId).catch(() => {});
+        await supabase.auth.admin.deleteUser(authUserId).catch(() => {});
+      }
     }
     return json({ error: "Could not complete signup — please try again." }, 500, headers);
   }

@@ -144,6 +144,70 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Could not create invite" }, 500, headers);
     }
 
+    // ── Provision auth user + profile (idempotent) ──────────────
+    // Shadow auth user with no password — can't log in until claim.
+    // Appears in AdminUsers as status='invited'.
+    let provisionedUserId: string | null = null;
+
+    try {
+      const { data: authResult, error: provAuthErr } =
+        await supabase.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { full_name: contact_name },
+        });
+
+      if (provAuthErr) {
+        // 422 = email already registered → skip provisioning silently
+        if (!(provAuthErr.status === 422 || provAuthErr.message?.includes("already"))) {
+          logger.error("[create-client-invite] auth provision failed", provAuthErr);
+        }
+      } else if (authResult?.user) {
+        provisionedUserId = authResult.user.id;
+
+        // INSERT user_profiles with status='invited'
+        const { error: profErr } = await supabase
+          .from("user_profiles")
+          .insert({
+            id: provisionedUserId,
+            full_name: contact_name,
+            email,
+            phone: phone || null,
+            organization_id,
+            role: client_role || "owner_operator",
+            status: "invited",
+          });
+
+        if (profErr) {
+          logger.error("[create-client-invite] profile provision failed", profErr);
+          await supabase.auth.admin.deleteUser(provisionedUserId);
+          provisionedUserId = null;
+        }
+      }
+
+      // Grant user_location_access for EACH org location
+      if (provisionedUserId) {
+        const { data: orgLocs } = await supabase
+          .from("locations")
+          .select("id")
+          .eq("organization_id", organization_id);
+
+        if (orgLocs && orgLocs.length > 0) {
+          await supabase.from("user_location_access").insert(
+            orgLocs.map((loc: { id: string }) => ({
+              user_id: provisionedUserId!,
+              organization_id,
+              location_id: loc.id,
+              role: client_role || "owner_operator",
+            })),
+          );
+        }
+      }
+    } catch (provErr) {
+      logger.error("[create-client-invite] provision block failed", provErr);
+      // Non-fatal: invite still works — user gets provisioned on claim
+    }
+
     // Journey stage: invited (shared helper — idempotent, never moves backwards)
     await stampJourneyStage(supabase, organization_id, 'invited');
 

@@ -34,13 +34,16 @@ const ROLE_LABELS: Record<string, string> = {
   kitchen_staff: 'Kitchen Staff',
 };
 
-const STATUS_FILTERS = ['All', 'Active', 'Suspended', 'Locked'];
+const STATUS_FILTERS = ['All', 'Active', 'Invited', 'Suspended', 'Locked'];
+
+const CREATE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client-invite`;
 
 interface UserRow {
   id: string;
   full_name: string;
   email?: string;
   role: string;
+  status: string;
   is_suspended: boolean;
   suspended_at: string | null;
   suspend_reason: string | null;
@@ -50,6 +53,10 @@ interface UserRow {
   last_login_ip: string | null;
   created_at: string;
   organization_id: string | null;
+  // Invite fields (populated for status='invited' users)
+  invite_id?: string;
+  last_reminded_at?: string | null;
+  reminder_count?: number;
 }
 
 export default function AdminUsers() {
@@ -73,6 +80,8 @@ export default function AdminUsers() {
   const [actionRole, setActionRole] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Reminder state
+  const [remindingId, setRemindingId] = useState<string | null>(null);
 
   // AUDIT-FIX-06 / A-2: More-menu state
   const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
@@ -83,7 +92,7 @@ export default function AdminUsers() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('user_profiles')
-        .select('id, full_name, role, is_suspended, suspended_at, suspended_by, suspend_reason, failed_login_count, locked_until, last_login_at, created_at, organization_id')
+        .select('id, full_name, role, status, is_suspended, suspended_at, suspended_by, suspend_reason, failed_login_count, locked_until, last_login_at, created_at, organization_id')
         .is('evidly_staff_role', null)
         .order('created_at', { ascending: false });
 
@@ -98,6 +107,36 @@ export default function AdminUsers() {
         if (emailRows) {
           const emailMap = new Map((emailRows as { user_id: string; email: string }[]).map(r => [r.user_id, r.email]));
           profiles.forEach(p => { p.email = emailMap.get(p.id) ?? undefined; });
+        }
+      }
+
+      // For invited users, load their invite data (invite_id, last_reminded_at, reminder_count)
+      const invitedEmails = profiles
+        .filter(p => p.status === 'invited' && p.email)
+        .map(p => p.email as string);
+
+      if (invitedEmails.length > 0) {
+        const { data: inviteRows } = await supabase
+          .from('evidly_client_invites')
+          .select('id, email, last_reminded_at, reminder_count')
+          .in('email', invitedEmails)
+          .eq('status', 'pending');
+
+        if (inviteRows) {
+          const inviteMap = new Map(
+            (inviteRows as { id: string; email: string; last_reminded_at: string | null; reminder_count: number }[])
+              .map(r => [r.email, r]),
+          );
+          profiles.forEach(p => {
+            if (p.status === 'invited' && p.email) {
+              const inv = inviteMap.get(p.email);
+              if (inv) {
+                p.invite_id = inv.id;
+                p.last_reminded_at = inv.last_reminded_at;
+                p.reminder_count = inv.reminder_count;
+              }
+            }
+          });
         }
       }
 
@@ -118,7 +157,8 @@ export default function AdminUsers() {
       if (!u.full_name.toLowerCase().includes(q) && !(u.email || '').toLowerCase().includes(q)) return false;
     }
     if (roleFilter !== 'All' && u.role !== roleFilter) return false;
-    if (statusFilter === 'Active' && (u.is_suspended || (u.locked_until && new Date(u.locked_until) > new Date()))) return false;
+    if (statusFilter === 'Active' && (u.status === 'invited' || u.is_suspended || (u.locked_until && new Date(u.locked_until) > new Date()))) return false;
+    if (statusFilter === 'Invited' && u.status !== 'invited') return false;
     if (statusFilter === 'Suspended' && !u.is_suspended) return false;
     if (statusFilter === 'Locked' && !(u.locked_until && new Date(u.locked_until) > new Date())) return false;
     return true;
@@ -126,7 +166,8 @@ export default function AdminUsers() {
 
   // ── Stats ──
   const totalUsers = users.length;
-  const activeUsers = users.filter(u => !u.is_suspended && !(u.locked_until && new Date(u.locked_until) > new Date())).length;
+  const invitedUsers = users.filter(u => u.status === 'invited').length;
+  const activeUsers = users.filter(u => u.status !== 'invited' && !u.is_suspended && !(u.locked_until && new Date(u.locked_until) > new Date())).length;
   const suspendedUsers = users.filter(u => u.is_suspended).length;
   const lockedUsers = users.filter(u => u.locked_until && new Date(u.locked_until) > new Date()).length;
 
@@ -159,6 +200,45 @@ export default function AdminUsers() {
     if (auditErr) console.error('[AdminUsers] audit log failed:', auditErr.message);
   };
 
+  // ── Send Reminder ──
+  const isRemindDisabled = (u: UserRow) => {
+    if (remindingId === u.id) return true;
+    if (!u.invite_id) return true;
+    if (u.last_reminded_at) {
+      const diff = Date.now() - new Date(u.last_reminded_at).getTime();
+      if (diff < 5 * 60 * 1000) return true; // 5 min cooldown
+    }
+    return false;
+  };
+
+  const handleRemind = async (u: UserRow) => {
+    if (!u.invite_id) { toast.error('No pending invite found'); return; }
+    setRemindingId(u.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(CREATE_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ invite_id: u.invite_id, sender_name: 'Arthur' }),
+      });
+      const out = await res.json();
+      if (!res.ok) {
+        toast.error(out.error || 'Reminder failed');
+      } else {
+        toast.success(`Reminder sent to ${u.email}`);
+        await logAuditEvent('admin.invite_reminder_sent', u.id, null, { email: u.email });
+        await loadUsers();
+      }
+    } catch {
+      toast.error('Reminder failed');
+    }
+    setRemindingId(null);
+  };
+
   const executeAction = async () => {
     if (!actionUser) return;
     setActionLoading(true);
@@ -168,6 +248,7 @@ export default function AdminUsers() {
         case 'suspend': {
           const { error } = await supabase.from('user_profiles').update({
             is_suspended: true,
+            status: 'suspended',
             suspended_at: new Date().toISOString(),
             suspended_by: user?.id,
             suspend_reason: actionReason || 'Admin action',
@@ -181,6 +262,7 @@ export default function AdminUsers() {
         case 'unsuspend': {
           const { error } = await supabase.from('user_profiles').update({
             is_suspended: false,
+            status: 'active',
             suspended_at: null,
             suspended_by: null,
             suspend_reason: null,
@@ -204,6 +286,7 @@ export default function AdminUsers() {
           const { error } = await supabase.from('user_profiles').update({
             failed_login_count: 0,
             locked_until: null,
+            status: 'active',
           }).eq('id', actionUser.id);
           if (error) { toast.error(`Unlock failed: ${error.message}`); break; }
           await logAuditEvent('admin.user_unlocked', actionUser.id,
@@ -241,8 +324,9 @@ export default function AdminUsers() {
 
   // ── Helpers ──
   const getStatus = (u: UserRow) => {
-    if (u.is_suspended) return { label: 'Suspended', twText: 'text-red-600', twBg: 'bg-red-50' };
-    if (u.locked_until && new Date(u.locked_until) > new Date()) return { label: 'Locked', twText: 'text-amber-500', twBg: 'bg-amber-50' };
+    if (u.status === 'invited') return { label: 'Invited', twText: 'text-blue-600', twBg: 'bg-blue-50' };
+    if (u.is_suspended || u.status === 'suspended') return { label: 'Suspended', twText: 'text-red-600', twBg: 'bg-red-50' };
+    if ((u.locked_until && new Date(u.locked_until) > new Date()) || u.status === 'locked') return { label: 'Locked', twText: 'text-amber-500', twBg: 'bg-amber-50' };
     return { label: 'Active', twText: 'text-emerald-500', twBg: 'bg-emerald-50' };
   };
 
@@ -282,9 +366,10 @@ export default function AdminUsers() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <KpiTile label="Total Users" value={totalUsers} />
         <KpiTile label="Active" value={activeUsers} />
+        <KpiTile label="Invited" value={invitedUsers} valueColor={invitedUsers > 0 ? '#2563EB' : undefined} />
         <KpiTile label="Suspended" value={suspendedUsers} valueColor={suspendedUsers > 0 ? '#DC2626' : undefined} />
         <KpiTile label="Locked" value={lockedUsers} valueColor={lockedUsers > 0 ? '#F59E0B' : undefined} />
       </div>
@@ -352,7 +437,7 @@ export default function AdminUsers() {
                   <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${status.twBg} ${status.twText}`}>
                     {status.label}
                   </span>
-                  {u.failed_login_count > 0 && !u.is_suspended && (
+                  {u.failed_login_count > 0 && !u.is_suspended && u.status !== 'invited' && (
                     <div className="text-[10px] text-amber-500 mt-0.5">
                       {u.failed_login_count} failed login{u.failed_login_count !== 1 ? 's' : ''}
                     </div>
@@ -361,46 +446,72 @@ export default function AdminUsers() {
 
                 {/* Last Login */}
                 <div>
-                  <div className="text-slate_ui text-xs">{relativeTime(u.last_login_at)}</div>
-                  {u.last_login_ip && (
-                    <div className="text-[10px] text-gray-400 font-mono">{u.last_login_ip}</div>
+                  {u.status === 'invited' ? (
+                    <div className="text-slate_ui text-xs">Not yet</div>
+                  ) : (
+                    <>
+                      <div className="text-slate_ui text-xs">{relativeTime(u.last_login_at)}</div>
+                      {u.last_login_ip && (
+                        <div className="text-[10px] text-gray-400 font-mono">{u.last_login_ip}</div>
+                      )}
+                    </>
                   )}
                 </div>
 
                 {/* Actions */}
-                <div className="text-right flex gap-1 justify-end flex-wrap">
-                  {u.is_suspended ? (
-                    <Button onClick={() => openAction(u, 'unsuspend')} variant="ghost" size="sm" className="bg-emerald-50 text-emerald-500">Unsuspend</Button>
+                <div className="text-right flex gap-1 justify-end flex-wrap items-center">
+                  {u.status === 'invited' ? (
+                    <>
+                      <Button
+                        onClick={() => handleRemind(u)}
+                        disabled={isRemindDisabled(u)}
+                        variant="ghost" size="sm"
+                        className="bg-blue-50 text-blue-600"
+                      >
+                        {remindingId === u.id ? 'Sending...' : 'Send Reminder'}
+                      </Button>
+                      {u.last_reminded_at && (
+                        <span className="text-[10px] text-gray-400">
+                          Last: {relativeTime(u.last_reminded_at)}
+                        </span>
+                      )}
+                    </>
                   ) : (
-                    <Button onClick={() => openAction(u, 'suspend')} variant="ghost" size="sm" className="bg-red-50 text-red-600">Suspend</Button>
-                  )}
-                  <Button onClick={() => openAction(u, 'change_role')} variant="ghost" size="sm" className="bg-[#F0F4F8] text-navy">Role</Button>
-                  {u.locked_until && new Date(u.locked_until) > new Date() && (
-                    <Button onClick={() => openAction(u, 'unlock')} variant="ghost" size="sm" className="bg-amber-50 text-amber-500">Unlock</Button>
-                  )}
-                  <div className="relative">
-                    <Button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} variant="ghost" size="sm" className="px-2 py-1.5 bg-[#F0F4F8] text-slate_ui">
-                      ···
-                    </Button>
-                    {moreMenuId === u.id && (
-                      <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-border_ui-warm rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[180px] overflow-hidden">
-                        <Button
-                          onClick={() => { setMoreMenuId(null); openAction(u, 'reset_password'); }}
-                          variant="ghost" size="sm"
-                          className="block w-full px-3.5 py-2.5 text-navy text-left rounded-none justify-start hover:bg-[#F0F4F8]"
-                        >
-                          Reset Password
+                    <>
+                      {u.is_suspended ? (
+                        <Button onClick={() => openAction(u, 'unsuspend')} variant="ghost" size="sm" className="bg-emerald-50 text-emerald-500">Unsuspend</Button>
+                      ) : (
+                        <Button onClick={() => openAction(u, 'suspend')} variant="ghost" size="sm" className="bg-red-50 text-red-600">Suspend</Button>
+                      )}
+                      <Button onClick={() => openAction(u, 'change_role')} variant="ghost" size="sm" className="bg-[#F0F4F8] text-navy">Role</Button>
+                      {u.locked_until && new Date(u.locked_until) > new Date() && (
+                        <Button onClick={() => openAction(u, 'unlock')} variant="ghost" size="sm" className="bg-amber-50 text-amber-500">Unlock</Button>
+                      )}
+                      <div className="relative">
+                        <Button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} variant="ghost" size="sm" className="px-2 py-1.5 bg-[#F0F4F8] text-slate_ui">
+                          ···
                         </Button>
-                        <Button
-                          onClick={() => { setMoreMenuId(null); openAction(u, 'revoke_sessions'); }}
-                          variant="ghost" size="sm"
-                          className="block w-full px-3.5 py-2.5 text-red-600 text-left rounded-none justify-start hover:bg-red-50"
-                        >
-                          Revoke Sessions
-                        </Button>
+                        {moreMenuId === u.id && (
+                          <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-border_ui-warm rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.12)] min-w-[180px] overflow-hidden">
+                            <Button
+                              onClick={() => { setMoreMenuId(null); openAction(u, 'reset_password'); }}
+                              variant="ghost" size="sm"
+                              className="block w-full px-3.5 py-2.5 text-navy text-left rounded-none justify-start hover:bg-[#F0F4F8]"
+                            >
+                              Reset Password
+                            </Button>
+                            <Button
+                              onClick={() => { setMoreMenuId(null); openAction(u, 'revoke_sessions'); }}
+                              variant="ghost" size="sm"
+                              className="block w-full px-3.5 py-2.5 text-red-600 text-left rounded-none justify-start hover:bg-red-50"
+                            >
+                              Revoke Sessions
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             );
