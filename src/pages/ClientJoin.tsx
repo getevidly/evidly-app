@@ -306,6 +306,24 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
                   <div className="text-[10px] text-white/60">on demand</div>
                 </div>
               </div>
+
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <h3 className="text-lg mb-2 leading-snug" style={{ fontFamily: SERIF, fontWeight: 600, color: 'white' }}>
+                  See the gaps. Let's close them.
+                </h3>
+                <a
+                  href="https://calendly.com/founders-getevidly/founders"
+                  target="_blank"
+                  rel="noopener"
+                  className="w-full text-sm py-3 font-semibold inline-flex items-center justify-center gap-2 mt-2"
+                  style={{ backgroundColor: '#E8763A', color: 'white', borderRadius: 9, border: 'none', textDecoration: 'none' }}
+                >
+                  Schedule a meeting with Arthur →
+                </a>
+                <div className="text-[11px] text-white/50 mt-2 text-center leading-relaxed">
+                  Arthur Haggerty · IKECA-certified · NFPA 96 expert witness.
+                </div>
+              </div>
             </div>
 
             {/* ============ RIGHT PANEL ============ */}
@@ -460,6 +478,25 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 )}
                 <div style={{ border: `1px solid ${LINE}`, background: '#F7F1E6' }}>
                   <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} />
+                </div>
+              </div>
+
+              {/* ============ CLOSING CTA — Schedule a meeting ============ */}
+              <div className="mb-8 p-6" style={{ backgroundColor: NAVY, borderRadius: 4 }}>
+                <h3 className="text-xl mb-2 leading-snug" style={{ fontFamily: SERIF, fontWeight: 600, color: 'white' }}>
+                  See the gaps. Let's close them.
+                </h3>
+                <a
+                  href="https://calendly.com/founders-getevidly/founders"
+                  target="_blank"
+                  rel="noopener"
+                  className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2 mt-3"
+                  style={{ backgroundColor: '#E8763A', color: 'white', borderRadius: 9, border: 'none', textDecoration: 'none' }}
+                >
+                  Schedule a meeting with Arthur →
+                </a>
+                <div className="text-[11px] mt-2 text-center leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  Arthur Haggerty · IKECA-certified · NFPA 96 expert witness.
                 </div>
               </div>
 
