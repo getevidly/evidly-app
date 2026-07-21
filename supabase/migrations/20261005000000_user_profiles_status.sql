@@ -1,5 +1,5 @@
 -- user_profiles.status — canonical user state column
--- Replaces ad-hoc reads of is_suspended / locked_until for display.
+-- Replaces ad-hoc reads of is_suspended for display.
 -- Backfills existing rows; new profiles default to 'active'.
 
 -- A. status column
@@ -24,12 +24,6 @@ END $$;
 -- B. Backfill from existing flags
 UPDATE user_profiles SET status = 'suspended'
   WHERE is_suspended = true AND status = 'active';
-
-UPDATE user_profiles SET status = 'locked'
-  WHERE locked_until IS NOT NULL
-    AND locked_until > now()
-    AND is_suspended IS NOT true
-    AND status = 'active';
 
 -- C. Track email column (already exists at runtime, IF NOT EXISTS is safe)
 ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS email text;
