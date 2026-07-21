@@ -255,6 +255,11 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* ============ LEFT NAVY RAIL ============ */}
             <div className="lg:col-span-4 p-8" style={{ backgroundColor: NAVY, color: 'white' }}>
+              {!previewOnly && invite?.location_snapshot?.city && (
+                <div className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3" style={{ color: GOLD }}>
+                  Prepared for {orgLabel} · {[invite.location_snapshot.city, invite.location_snapshot.state].filter(Boolean).join(', ')}
+                </div>
+              )}
               <h1 className="text-2xl mb-3 leading-tight" style={{ fontFamily: SERIF, fontWeight: 600 }}>
                 The Hood Cleaning Certificate<br />is ready for {orgLabel}
               </h1>

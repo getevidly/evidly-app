@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock } from 'lucide-react';
+import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock, Phone, Plus, Trash2 } from 'lucide-react';
 import { TONE, SURFACE, TEXT, LINE, FONT } from '../design/tokens';
-import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
 import { JurisdictionSelect } from '../components/jurisdiction/JurisdictionSelect';
+import { US_STATES } from '../types/rfp';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -44,6 +44,7 @@ const STAGES = [
 
 const ADVANCE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`;
 const QUEUE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/onboarding-queue`;
+const CREATE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client-invite`;
 
 interface QueueAccount {
   org_id: string;
@@ -64,6 +65,22 @@ interface QueueAccount {
   contact_email: string | null;
   invite_status: string | null;
 }
+
+interface LocationEntry {
+  id: string;
+  name: string;
+  street: string;
+  suite: string;
+  city: string;
+  state: string;
+  zip: string;
+  jurisdictionId: string;
+}
+
+const newLocationEntry = (): LocationEntry => ({
+  id: crypto.randomUUID(),
+  name: '', street: '', suite: '', city: '', state: '', zip: '', jurisdictionId: '',
+});
 
 // ─── Onboarding Queue Component ────────────────────────────────────
 function OnboardingQueue() {
@@ -398,27 +415,32 @@ export function AdminClientOnboarding() {
   const [orgName, setOrgName] = useState('');
   const [industryType, setIndustryType] = useState('Restaurant');
   const [industrySubtype, setIndustrySubtype] = useState('restaurant-full');
+  const [businessPhone, setBusinessPhone] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
-  const [ownerPhone, setOwnerPhone] = useState('');
-  const [locationCount, setLocationCount] = useState(1);
+  const [ownerMobile, setOwnerMobile] = useState('');
 
   // Tribal casino fields
   const [selectedTribe, setSelectedTribe] = useState('');
-  const [outletCount, setOutletCount] = useState(5);
 
-  // Jurisdiction — one selection for all outlets in this onboarding
-  const [jurisdictionId, setJurisdictionId] = useState('');
+  // Per-location entries — at least one required
+  const [locations, setLocations] = useState<LocationEntry[]>([newLocationEntry()]);
 
   const isTribal = industryType === 'tribal_casino';
 
-  // When tribal casino selected, default subtype
   useEffect(() => {
-    if (isTribal) {
-      setIndustrySubtype('tribal-casino');
-      setLocationCount(1); // 1 property, multiple outlets
-    }
+    if (isTribal) setIndustrySubtype('tribal-casino');
   }, [isTribal]);
+
+  function updateLocation(id: string, field: keyof LocationEntry, value: string) {
+    setLocations(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l));
+  }
+  function addLocation() {
+    setLocations(prev => [...prev, newLocationEntry()]);
+  }
+  function removeLocation(id: string) {
+    setLocations(prev => prev.length > 1 ? prev.filter(l => l.id !== id) : prev);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -426,100 +448,101 @@ export function AdminClientOnboarding() {
     setSuccess('');
     setLoading(true);
 
+    // ── Validate per-location fields ──
+    if (locations.length === 0) { setError('At least one location is required.'); setLoading(false); return; }
+    for (let i = 0; i < locations.length; i++) {
+      const loc = locations[i];
+      const tag = locations.length > 1 ? ` (Location ${i + 1})` : '';
+      if (!loc.street.trim()) { setError(`Street address is required${tag}.`); setLoading(false); return; }
+      if (!loc.city.trim()) { setError(`City is required${tag}.`); setLoading(false); return; }
+      if (!loc.state) { setError(`State is required${tag}.`); setLoading(false); return; }
+      if (!loc.zip.trim() || !/^\d{5}(-\d{4})?$/.test(loc.zip.trim())) {
+        setError(`Valid ZIP code required (XXXXX or XXXXX-XXXX)${tag}.`); setLoading(false); return;
+      }
+      if (!loc.jurisdictionId) { setError(`Jurisdiction is required${tag}.`); setLoading(false); return; }
+    }
+    if (businessPhone && !/^[\d()\-+\s.]{7,}$/.test(businessPhone)) {
+      setError('Invalid business phone format.'); setLoading(false); return;
+    }
+    if (ownerMobile && !/^[\d()\-+\s.]{7,}$/.test(ownerMobile)) {
+      setError('Invalid mobile number format.'); setLoading(false); return;
+    }
+
     // Demo mode: simulate success without writing to database
     if (isDemoMode) {
-      setSuccess(`Client organization created successfully! An account claim email will be sent to ${ownerEmail}.`);
+      setSuccess(`Client organization created! An invite will be sent to ${ownerEmail}.`);
       setTimeout(() => {
-        setOrgName(''); setOwnerName(''); setOwnerEmail(''); setOwnerPhone(''); setLocationCount(1); setSuccess('');
+        setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
+        setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
       }, 5000);
       setLoading(false);
       return;
     }
 
     try {
-      const orgInsert: Record<string, any> = {
-        name: orgName,
-        industry_type: industryType,
-        industry_subtype: industrySubtype,
-        planned_location_count: isTribal ? outletCount : locationCount,
-        primary_contact_name: ownerName,
-        primary_contact_email: ownerEmail,
-        primary_contact_phone: ownerPhone || null,
-        plan_tier: 'founder',
-      };
-
+      // 1. Create organization
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')
-        .insert(orgInsert)
+        .insert({
+          name: orgName,
+          industry_type: industryType,
+          industry_subtype: industrySubtype,
+          planned_location_count: locations.length,
+          primary_contact_name: ownerName,
+          primary_contact_email: ownerEmail,
+          primary_contact_phone: ownerMobile || null,
+          main_phone: businessPhone || null,
+          plan_tier: 'founder',
+        })
         .select()
         .single();
 
       if (orgError) throw orgError;
 
-      // Create outlet locations for tribal casinos
-      if (isTribal && outletCount > 0) {
-        for (let i = 0; i < outletCount; i++) {
-          await createLocation({
-            organization_id: orgData.id,
-            name: DEFAULT_OUTLET_NAMES[i] || `Outlet ${i + 1}`,
-            jurisdiction_id: jurisdictionId,
-            status: 'active',
-          });
-        }
+      // 2. Create one location row per entry — each with its own address + jurisdiction
+      for (let i = 0; i < locations.length; i++) {
+        const loc = locations[i];
+        const address = loc.suite.trim()
+          ? `${loc.street.trim()}, ${loc.suite.trim()}`
+          : loc.street.trim();
+        await createLocation({
+          organization_id: orgData.id,
+          name: loc.name.trim() || `Location ${i + 1}`,
+          address,
+          city: loc.city.trim(),
+          state: loc.state,
+          zip: loc.zip.trim(),
+          jurisdiction_id: loc.jurisdictionId,
+          status: 'active',
+        });
       }
 
-      const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
-
-      // Isolated client — signUp on the shared singleton would replace the
-      // admin's session.  This throwaway client never persists tokens.
-      const isolatedClient = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
-        { auth: { persistSession: false, autoRefreshToken: false } },
-      );
-
-      const { data: authData, error: authError } = await isolatedClient.auth.signUp({
-        email: ownerEmail,
-        password: tempPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/email-confirmed`,
-          data: {
-            full_name: ownerName,
-            skip_trigger_org: true,
-            user_type: isTribal ? 'tribal_casino' : 'restaurant',
-          }
-        }
+      // 3. Send invite — builds location_snapshot for /join gate, sends claim email
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(CREATE_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          organization_id: orgData.id,
+          organization_name: orgName,
+          contact_name: ownerName,
+          email: ownerEmail,
+          phone: ownerMobile || null,
+          client_role: 'owner_operator',
+          sender_name: 'Arthur',
+        }),
       });
+      const inviteOut = await res.json();
+      if (!res.ok) throw new Error(inviteOut.error || 'Failed to send invite');
 
-      if (authError) throw authError;
-
-      if (authData.user) {
-        await supabase.from('user_profiles').insert({
-          id: authData.user.id,
-          full_name: ownerName,
-          phone: ownerPhone,
-          organization_id: orgData.id,
-          role: 'owner_operator',
-        });
-
-        await supabase.from('user_location_access').insert({
-          user_id: authData.user.id,
-          organization_id: orgData.id,
-          role: 'owner_operator',
-        });
-      }
-
-      setSuccess(`Client organization created successfully! An account claim email will be sent to ${ownerEmail}.`);
+      setSuccess(`Client organization created! An invite has been sent to ${ownerEmail}.`);
       setTimeout(() => {
-        setOrgName('');
-        setOwnerName('');
-        setOwnerEmail('');
-        setOwnerPhone('');
-        setLocationCount(1);
-        setSelectedTribe('');
-        setOutletCount(5);
-        setJurisdictionId('');
-        setSuccess('');
+        setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
+        setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
       }, 5000);
     } catch (err: any) {
       setError(err.message || 'Failed to create client organization');
@@ -646,63 +669,117 @@ export function AdminClientOnboarding() {
                 )}
               </div>
 
-              {isTribal ? (
-                <div>
-                  <label htmlFor="outletCount" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                    <MapPin className="inline w-4 h-4 mr-1" />
-                    Food Outlets per Property
-                  </label>
-                  <input
-                    id="outletCount"
-                    type="number"
-                    min="1"
-                    max="15"
-                    required
-                    value={outletCount}
-                    onChange={(e) => setOutletCount(parseInt(e.target.value) || 5)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  />
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">
-                    Typical casino properties have 5-15 food outlets (buffet, steakhouse, cafe, etc.)
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <label htmlFor="locationCount" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                    <MapPin className="inline w-4 h-4 mr-1" />
-                    Number of Locations
-                  </label>
-                  <input
-                    id="locationCount"
-                    type="number"
-                    min="1"
-                    required
-                    value={locationCount}
-                    onChange={(e) => setLocationCount(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  />
-                </div>
-              )}
+              <div>
+                <label htmlFor="businessPhone" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                  <Phone className="inline w-4 h-4 mr-1" />
+                  Business Phone
+                </label>
+                <input
+                  id="businessPhone"
+                  type="tel"
+                  value={businessPhone}
+                  onChange={(e) => setBusinessPhone(e.target.value)}
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  placeholder="(555) 123-4567"
+                />
+              </div>
             </div>
 
-            {/* Governing Jurisdiction — applies to all locations in this onboarding */}
+            {/* ── Locations (repeatable, at least 1 required) ── */}
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#A08C5A]" />
-                Governing Jurisdiction
+                Locations
+                <span className="text-xs font-normal text-[#1E2D4D]/50 ml-1">At least 1 required</span>
               </h3>
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                  Jurisdiction *
-                </label>
-                <JurisdictionSelect
-                  value={jurisdictionId || null}
-                  onChange={(id) => setJurisdictionId(id || '')}
-                />
-                <p className="text-xs text-[#1E2D4D]/50 mt-1">
-                  All locations for this organization will be assigned to the selected jurisdiction.
-                </p>
-              </div>
+
+              {locations.map((loc, idx) => (
+                <div key={loc.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-[#1E2D4D]/60 uppercase tracking-wide">
+                      Location {idx + 1}
+                    </span>
+                    {locations.length > 1 && (
+                      <button type="button" onClick={() => removeLocation(loc.id)}
+                        className="text-red-400 hover:text-red-600 transition-colors" title="Remove location">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                      Location Name <span className="text-[#1E2D4D]/40 font-normal">(optional)</span>
+                    </label>
+                    <input type="text" value={loc.name}
+                      onChange={(e) => updateLocation(loc.id, 'name', e.target.value)}
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      placeholder={isTribal ? 'Main Buffet' : 'Downtown Location'} />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Street Address *</label>
+                      <input type="text" required value={loc.street}
+                        onChange={(e) => updateLocation(loc.id, 'street', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        placeholder="123 Main Street" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Suite/Unit</label>
+                      <input type="text" value={loc.suite}
+                        onChange={(e) => updateLocation(loc.id, 'suite', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        placeholder="Suite 200" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">City *</label>
+                      <input type="text" required value={loc.city}
+                        onChange={(e) => updateLocation(loc.id, 'city', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        placeholder="Fresno" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">State *</label>
+                      <select required value={loc.state}
+                        onChange={(e) => updateLocation(loc.id, 'state', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                        <option value="">Select...</option>
+                        {Object.entries(US_STATES).map(([abbr, name]) => (
+                          <option key={abbr} value={abbr}>{name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">ZIP *</label>
+                      <input type="text" required value={loc.zip}
+                        onChange={(e) => updateLocation(loc.id, 'zip', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        placeholder="93650" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Jurisdiction *</label>
+                    <JurisdictionSelect
+                      value={loc.jurisdictionId || null}
+                      onChange={(id) => updateLocation(loc.id, 'jurisdictionId', id || '')}
+                    />
+                    <p className="text-xs text-[#1E2D4D]/50 mt-1">
+                      Requirements resolve against this location's county. Locations may be in different counties.
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              <button type="button" onClick={addLocation}
+                className="w-full py-2.5 border-2 border-dashed border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/60 hover:border-[#A08C5A] hover:text-[#A08C5A] transition-colors flex items-center justify-center gap-2">
+                <Plus className="w-4 h-4" />
+                Add Location
+              </button>
             </div>
 
             {/* Tribal advisory mode info */}
@@ -724,6 +801,7 @@ export function AdminClientOnboarding() {
               </div>
             )}
 
+            {/* ── Primary Contact / Owner ── */}
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#A08C5A]" />
@@ -745,40 +823,42 @@ export function AdminClientOnboarding() {
                 />
               </div>
 
-              <div>
-                <label htmlFor="ownerEmail" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                  <Mail className="inline w-4 h-4 mr-1" />
-                  Email Address
-                </label>
-                <input
-                  id="ownerEmail"
-                  type="email"
-                  required
-                  value={ownerEmail}
-                  onChange={(e) => setOwnerEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="ownerPhone" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                  Phone Number
-                </label>
-                <input
-                  id="ownerPhone"
-                  type="tel"
-                  value={ownerPhone}
-                  onChange={(e) => setOwnerPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                  placeholder="(555) 123-4567"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="ownerEmail" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                    <Mail className="inline w-4 h-4 mr-1" />
+                    Email Address
+                  </label>
+                  <input
+                    id="ownerEmail"
+                    type="email"
+                    required
+                    value={ownerEmail}
+                    onChange={(e) => setOwnerEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="ownerMobile" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                    <Phone className="inline w-4 h-4 mr-1" />
+                    Mobile Number
+                  </label>
+                  <input
+                    id="ownerMobile"
+                    type="tel"
+                    value={ownerMobile}
+                    onChange={(e) => setOwnerMobile(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="(555) 987-6543"
+                  />
+                </div>
               </div>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
               <p className="text-sm text-blue-800">
-                <strong>Note:</strong> The client will receive an email with instructions to claim their account and set their password. The organization will be pre-configured with industry-specific templates.
+                <strong>Note:</strong> The client will receive an invite email to claim their account via a secure link. The organization will be pre-configured with industry-specific templates.
               </p>
             </div>
 
@@ -792,7 +872,7 @@ export function AdminClientOnboarding() {
               </button>
               <button
                 type="submit"
-                disabled={loading || !jurisdictionId}
+                disabled={loading || locations.some(l => !l.jurisdictionId)}
                 className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
