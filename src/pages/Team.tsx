@@ -374,6 +374,7 @@ export function Team() {
               inviteUrl,
               role: invitation.role,
               inviterName: user.user_metadata?.full_name || user.email,
+              invite_id: invitation.id,
             }
           });
 
@@ -626,6 +627,7 @@ export function Team() {
                           <span>{invitation.email}{invitation.phone ? ` • ${invitation.phone}` : ''} • </span>
                         )}
                         {ROLE_LABELS[invitation.role] || invitation.role}
+                        <span> • Sent {new Date(invitation.created_at).toLocaleDateString()}</span>
                         {!isExpired && (
                           <span> • Expires {new Date(invitation.expires_at).toLocaleDateString()}</span>
                         )}

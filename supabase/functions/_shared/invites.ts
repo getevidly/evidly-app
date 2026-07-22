@@ -112,7 +112,7 @@ export function buildClientInviteEmail(
 <style>body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
 @media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}</style>
 </head><body style="margin:0;padding:0;background:#F7F1E6;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your Cleaning Pros Plus records are loaded in EvidLY. Set a password to open your account.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your NFPA 96 cert is sealed in EvidLY. See the fire-side records a binder can't prove.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
@@ -125,23 +125,23 @@ export function buildClientInviteEmail(
   ${noteBlock}
   <!-- NAVY : intro + three pillars -->
   <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 28px;">
-    <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">The Hood Cleaning Certificate<br>is ready for ${businessName}</h1>
-    <p style="margin:14px 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A9B2BE;">You already trust Cleaning Pros Plus with hood cleaning. Those records now live in EvidLY, see what other documents are required to maintain compliance and protect your livelihood.</p>
+    <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">Your NFPA 96 cert is filed, ${businessName}.<br>Here&rsquo;s the part that isn&rsquo;t.</h1>
+    <p style="margin:14px 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A9B2BE;">You trust Cleaning Pros Plus with your hood cleaning &mdash; that NFPA 96 certificate is now sealed in EvidLY. I&rsquo;m also the expert witness in commercial-kitchen fire cases, and the kitchens that lose a claim usually weren&rsquo;t negligent &mdash; their paperwork just couldn&rsquo;t prove it. Binder or software, the fire side is the half that&rsquo;s hardest to prove when it counts.</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
     <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><img src="https://app.getevidly.com/icon-intelligence.png" alt="" width="34" height="34" style="display:block;border:0;"/></td>
+      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#2A3A4E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F50D;</div></td>
       <td valign="top" style="padding-bottom:18px;padding-left:6px;">
         <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Intelligence</div>
         <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Real-time alerts, predictive reminders, automated escalation, regulation cross-referencing, and sealed proof on demand</div>
       </td></tr>
     <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><img src="https://app.getevidly.com/icon-fire.png" alt="" width="34" height="34" style="display:block;border:0;"/></td>
+      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#7A3D1E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F525;</div></td>
       <td valign="top" style="padding-bottom:18px;padding-left:6px;">
         <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Fire Safety</div>
         <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Hood cleaning (NFPA 96), fire suppression (17A), sprinklers (25), alarms (72), extinguisher tags (10), and employee fire safety training</div>
       </td></tr>
     <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><img src="https://app.getevidly.com/icon-food.png" alt="" width="34" height="34" style="display:block;border:0;"/></td>
+      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#1E3A5E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F374;</div></td>
       <td valign="top" style="padding-bottom:18px;padding-left:6px;">
         <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Food Safety</div>
         <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Employee Food Handler Cards, Certified Food Protection Manager certifications, daily temperature logs, HACCP, receiving inspections, pest control</div>
@@ -154,7 +154,7 @@ export function buildClientInviteEmail(
     </tr></table></td></tr>
   <!-- DASHBOARD SNIPPET -->
   <tr><td style="background:#F7F1E6;padding:20px 0 8px;">
-    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Your dashboard &middot; all four locations</div>
+    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Your dashboard &middot; food &amp; fire, in one place</div>
     <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
       <img src="https://app.getevidly.com/dashboard.gif" width="600" alt="Your EvidLY dashboard, cycling through all four locations" style="display:block;width:100%;max-width:600px;height:auto;border:0;"/>
     </a>
@@ -164,13 +164,13 @@ export function buildClientInviteEmail(
           <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Preview the full dashboard &#8599;</a>
         </td></tr></table>
     </div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:bold;">View My Records</span> below.</div></td></tr>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:bold;">See what's on file</span> below.</div></td></tr>
   <!-- CTA -->
   <tr><td class="p40" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;">
-    <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, your records are ready to view.</div>
-    <p style="margin:8px 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:1.6;color:#5F6875;">Set a password to open them &mdash; starting with your Cleaning Pros Plus hood cleaning certificate, already on file.</p>
+    <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, a binder shows you tried. EvidLY is evidence.</div>
+    <p style="margin:8px 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:1.6;color:#5F6875;">Set a password to open your account &mdash; starting with the NFPA 96 cert Cleaning Pros Plus already sealed for you. From there, EvidLY identifies what your county and fire authority expect next, and flags what&rsquo;s missing.</p>
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">View My Records &#8594;</a></td>
+      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">See what&rsquo;s on file &#8594;</a></td>
     </tr></table>
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;margin-top:12px;">Or paste this into your browser: ${inviteLink}</div></td></tr>
   <!-- FOOTER -->

@@ -37,6 +37,7 @@ const ROLE_LABELS: Record<string, string> = {
 const STATUS_FILTERS = ['All', 'Active', 'Invited', 'Suspended', 'Locked'];
 
 const CREATE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client-invite`;
+const TEAM_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-team-invite`;
 
 interface UserRow {
   id: string;
@@ -57,6 +58,9 @@ interface UserRow {
   invite_id?: string;
   last_reminded_at?: string | null;
   reminder_count?: number;
+  invite_source?: 'client' | 'team'; // which table the invite came from
+  team_invite_token?: string; // token for team invite resend
+  team_invite_url?: string; // full URL for team invite resend
 }
 
 export default function AdminUsers() {
@@ -110,34 +114,55 @@ export default function AdminUsers() {
         }
       }
 
-      // For invited users, load their invite data (invite_id, last_reminded_at, reminder_count)
+      // For invited users, load invite data from BOTH tables (P3)
+      // user_profiles.status='invited' is authoritative (set by send-team-invite upsert)
       const invitedEmails = profiles
         .filter(p => p.status === 'invited' && p.email)
         .map(p => p.email as string);
 
       if (invitedEmails.length > 0) {
-        const { data: inviteRows } = await supabase
+        // 1. Check evidly_client_invites (client/owner invites)
+        const { data: clientInvRows } = await supabase
           .from('evidly_client_invites')
           .select('id, email, last_reminded_at, reminder_count')
           .in('email', invitedEmails)
           .eq('status', 'pending');
 
-        if (inviteRows) {
-          const inviteMap = new Map(
-            (inviteRows as { id: string; email: string; last_reminded_at: string | null; reminder_count: number }[])
-              .map(r => [r.email, r]),
-          );
-          profiles.forEach(p => {
-            if (p.status === 'invited' && p.email) {
-              const inv = inviteMap.get(p.email);
-              if (inv) {
-                p.invite_id = inv.id;
-                p.last_reminded_at = inv.last_reminded_at;
-                p.reminder_count = inv.reminder_count;
-              }
+        const clientInvMap = new Map(
+          (clientInvRows || []).map((r: { id: string; email: string; last_reminded_at: string | null; reminder_count: number }) => [r.email, r]),
+        );
+
+        // 2. Check user_invitations (team invites)
+        const { data: teamInvRows } = await supabase
+          .from('user_invitations')
+          .select('id, email, token, created_at')
+          .in('email', invitedEmails)
+          .eq('status', 'pending');
+
+        const teamInvMap = new Map(
+          (teamInvRows || []).map((r: { id: string; email: string; token: string; created_at: string }) => [r.email, r]),
+        );
+
+        // 3. Merge — prefer client invite if both exist (owner-seed takes precedence)
+        profiles.forEach(p => {
+          if (p.status === 'invited' && p.email) {
+            const clientInv = clientInvMap.get(p.email);
+            const teamInv = teamInvMap.get(p.email);
+
+            if (clientInv) {
+              p.invite_id = clientInv.id;
+              p.last_reminded_at = clientInv.last_reminded_at;
+              p.reminder_count = clientInv.reminder_count;
+              p.invite_source = 'client';
+            } else if (teamInv) {
+              p.invite_id = teamInv.id;
+              p.last_reminded_at = null; // user_invitations doesn't track this
+              p.reminder_count = 0;
+              p.invite_source = 'team';
+              p.team_invite_token = teamInv.token;
             }
-          });
-        }
+          }
+        });
       }
 
       setUsers(profiles);
@@ -201,10 +226,17 @@ export default function AdminUsers() {
   };
 
   // ── Send Reminder ──
+  // Track recent team-invite sends in local state (no last_reminded_at column)
+  const [teamRemindedAt, setTeamRemindedAt] = useState<Record<string, number>>({});
+
   const isRemindDisabled = (u: UserRow) => {
     if (remindingId === u.id) return true;
     if (!u.invite_id) return true;
-    if (u.last_reminded_at) {
+    if (u.invite_source === 'team') {
+      // Team invites: use local cooldown tracker
+      const lastSent = teamRemindedAt[u.id];
+      if (lastSent && Date.now() - lastSent < 5 * 60 * 1000) return true;
+    } else if (u.last_reminded_at) {
       const diff = Date.now() - new Date(u.last_reminded_at).getTime();
       if (diff < 5 * 60 * 1000) return true; // 5 min cooldown
     }
@@ -216,22 +248,53 @@ export default function AdminUsers() {
     setRemindingId(u.id);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(CREATE_FN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ invite_id: u.invite_id, sender_name: 'Arthur' }),
-      });
-      const out = await res.json();
-      if (!res.ok) {
-        toast.error(out.error || 'Reminder failed');
+
+      if (u.invite_source === 'team') {
+        // Team invite → resend via send-team-invite
+        const inviteUrl = `${window.location.origin}/invite/${u.team_invite_token}`;
+        const res = await fetch(TEAM_FN, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({
+            email: u.email,
+            inviteUrl,
+            role: u.role,
+            inviterName: 'Arthur',
+            invite_id: u.invite_id,
+          }),
+        });
+        const out = await res.json();
+        if (!res.ok) {
+          toast.error(out.error || 'Reminder failed');
+        } else {
+          toast.success(`Reminder sent to ${u.email}`);
+          setTeamRemindedAt(prev => ({ ...prev, [u.id]: Date.now() }));
+          await logAuditEvent('admin.invite_reminder_sent', u.id, null, { email: u.email, source: 'team' });
+          await loadUsers();
+        }
       } else {
-        toast.success(`Reminder sent to ${u.email}`);
-        await logAuditEvent('admin.invite_reminder_sent', u.id, null, { email: u.email });
-        await loadUsers();
+        // Client invite → resend via create-client-invite remind path
+        const res = await fetch(CREATE_FN, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ invite_id: u.invite_id, sender_name: 'Arthur' }),
+        });
+        const out = await res.json();
+        if (!res.ok) {
+          toast.error(out.error || 'Reminder failed');
+        } else {
+          toast.success(`Reminder sent to ${u.email}`);
+          await logAuditEvent('admin.invite_reminder_sent', u.id, null, { email: u.email, source: 'client' });
+          await loadUsers();
+        }
       }
     } catch {
       toast.error('Reminder failed');

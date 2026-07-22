@@ -112,6 +112,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
       for (const addr of emails) {
         try {
+          // Clean up expired invites to prevent duplicate rows
+          await supabase
+            .from('user_invitations')
+            .delete()
+            .eq('organization_id', organizationId)
+            .eq('email', addr)
+            .eq('status', 'expired');
+
           const { data: invitation, error: inviteError } = await supabase
             .from('user_invitations')
             .insert({
@@ -141,6 +149,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               inviteUrl,
               role,
               inviterName: user.user_metadata?.full_name || user.email,
+              invite_id: invitation.id,
             }
           });
 
@@ -211,6 +220,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      // Clean up expired invites for this email to prevent duplicate rows
+      await supabase
+        .from('user_invitations')
+        .delete()
+        .eq('organization_id', organizationId)
+        .eq('email', email.toLowerCase().trim())
+        .eq('status', 'expired');
+
       // Duplicate detection: check for existing pending invitation with same email
       const { data: existing } = await supabase
         .from('user_invitations')
@@ -257,6 +274,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
           inviteUrl,
           role,
           inviterName: user.user_metadata?.full_name || user.email,
+          invite_id: invitation.id,
         }
       });
 
