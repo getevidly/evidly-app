@@ -81,15 +81,16 @@ const CSS = `
 @media (max-width: 480px) {
   .ev-stats-grid { grid-template-columns: 1fr !important; }
   .ev-h1 { font-size: 32px !important; }
+  .ev-hero-ring { flex-direction: column !important; align-items: center !important; }
 }
 `;
 
 /* --------------------------------------------------------------- data ----- */
 const K = {
-  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   checks: 2830, records: 256, logs: 1126, sensors: 3, total: 63 },
-  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 96,  checks: 1240, records: 96,  logs: 742,  sensors: 2, total: 21 },
-  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 214, checks: 980,  records: 88,  logs: 384,  sensors: 1, total: 21 },
-  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 71,  checks: 610,  records: 72,  logs: 0,    sensors: 0, total: 21 },
+  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0, checks: 0, records: 3, logs: 0, sensors: 0, total: 51, fireTotal: 15, fireCurrent: 3, foodTotal: 36, foodCurrent: 0 },
+  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
+  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
+  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
 };
 
 /* ---- COLOR SYSTEM -------------------------------------------------------
@@ -122,12 +123,12 @@ const ALL_EQ = [
 });
 
 const PROOF = [
-  { title: 'Hood suppression inspection', meta: 'Filed Mar 3 · Vista Grill · valid 12 months',
-    detail: 'Semi-annual inspection by ACME Fire Protection. Certificate #FS-2291 is on file. EvidLY will remind you 60 days before the September 3 renewal.', doc: 'FS-2291.pdf' },
-  { title: 'Cold-holding temperature logs', meta: '30 days complete · all kitchens',
-    detail: '742 automated readings this month, 100% within the 33–40°F safe range. One tap hands a health inspector the complete record.', doc: 'ColdHold-Jul.pdf' },
-  { title: 'Food handler certifications', meta: '8 of 8 staff current',
-    detail: 'Every handler is certified through 2026. EvidLY tracks each renewal and warns you before any card lapses.', doc: 'Handlers-2026.pdf' },
+  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 Vista Grill \u00b7 valid 12 months',
+    detail: 'Hood cleaning certificate is on file for Vista Grill. EvidLY will remind you 60 days before renewal.', doc: 'Hood-VG.pdf' },
+  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 Harbor House \u00b7 valid 12 months',
+    detail: 'Hood cleaning certificate is on file for Harbor House. EvidLY will remind you 60 days before renewal.', doc: 'Hood-HH.pdf' },
+  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 The Anchor Room \u00b7 valid 12 months',
+    detail: 'Hood cleaning certificate is on file for The Anchor Room. EvidLY will remind you 60 days before renewal.', doc: 'Hood-AR.pdf' },
 ];
 
 const UPCOMING = [
@@ -157,12 +158,13 @@ export const LOC_TABS = [
 
 const FIRE_TIP = 'California Fire Code requirements — hood suppression (NFPA 17A), extinguishers (NFPA 10), sprinklers (NFPA 25), alarms (NFPA 72) and hood cleaning (NFPA 96). EvidLY tracks every inspection and due date.';
 const FOOD_TIP = 'California Retail Food Code requirements — receiving, the temperature and logging lifecycle, sanitation and handler certifications. EvidLY flags any gap the moment it appears.';
-const RING_TIP = 'Inspection-ready = requirements with current, on-file evidence ÷ all requirements tracked. The open receiving-log gap is the only item without evidence right now.';
+const FIRE_RING_TIP = 'Fire coverage = fire-safety requirements with current, on-file evidence \u00f7 all fire requirements tracked. Hood cleaning certificates are the first step.';
+const FOOD_RING_TIP = 'Food coverage = food-safety requirements with current, on-file evidence \u00f7 all food requirements tracked. No food-safety documentation is on file yet.';
 
 const PSE_CONDITIONS = [
   { id: 'kec',   name: 'Kitchen exhaust cleaning', current: true  },
-  { id: 'sup',   name: 'Fire suppression',         current: true  },
-  { id: 'alarm', name: 'Fire alarm',               current: true  },
+  { id: 'sup',   name: 'Fire suppression',         current: false },
+  { id: 'alarm', name: 'Fire alarm',               current: false },
   { id: 'sprk',  name: 'Fire sprinkler',           current: false },
 ];
 
@@ -251,47 +253,44 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const [locSelf, setLocSelf]       = useState('all');
   const loc    = locProp ?? locSelf;
   const setLoc = onLocChange ?? setLocSelf;
-  const [ack, setAck]               = useState(false);
   const [open, setOpen]             = useState(null);
   const [tip, setTip]               = useState(null);
   const [riskOpen, setRiskOpen]     = useState(false);
   const [pse, setPse]               = useState(PSE_CONDITIONS);
-  const [assignOpen, setAssignOpen] = useState(false);
-  const [assignedTo, setAssignedTo] = useState(null);
   const [shareOpen, setShareOpen]   = useState(false);
   const [copied, setCopied]         = useState(false);
-  const [disp, setDisp] = useState({ score: 0, days: 0, checks: 0, records: 0, logs: 0 });
+  const [disp, setDisp] = useState({ fireScore: 0, foodScore: 0, days: 0, checks: 0, records: 0, logs: 0 });
   const timer = useRef(null);
   const dispRef = useRef(disp);
   dispRef.current = disp;
 
-  const k       = K[loc];
-  const hasGap  = loc === 'all' || loc === 'losangeles';
-  const openN   = hasGap && !ack ? 1 : 0;
-  const covered = k.total - openN;
-  const score   = Math.round((covered / k.total) * 100);
+  const k         = K[loc];
+  const fireScore = k.fireTotal > 0 ? Math.round((k.fireCurrent / k.fireTotal) * 100) : 0;
+  const foodScore = k.foodTotal > 0 ? Math.round((k.foodCurrent / k.foodTotal) * 100) : 0;
+  const remaining = k.total - (k.fireCurrent + k.foodCurrent);
 
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current);
     const from = { ...dispRef.current };
-    const to = { score, days: k.days, checks: k.checks, records: k.records, logs: k.logs };
+    const to = { fireScore, foodScore, days: k.days, checks: k.checks, records: k.records, logs: k.logs };
     const start = Date.now(), dur = 700;
     const tick = () => {
       const t = Math.min(1, (Date.now() - start) / dur);
       const e = 1 - Math.pow(1 - t, 3);
       setDisp({
-        score:   Math.round(from.score   + (to.score   - from.score)   * e),
-        days:    Math.round(from.days    + (to.days    - from.days)    * e),
-        checks:  Math.round(from.checks  + (to.checks  - from.checks)  * e),
-        records: Math.round(from.records + (to.records - from.records) * e),
-        logs:    Math.round(from.logs    + (to.logs    - from.logs)    * e),
+        fireScore: Math.round(from.fireScore + (to.fireScore - from.fireScore) * e),
+        foodScore: Math.round(from.foodScore + (to.foodScore - from.foodScore) * e),
+        days:      Math.round(from.days      + (to.days      - from.days)      * e),
+        checks:    Math.round(from.checks    + (to.checks    - from.checks)    * e),
+        records:   Math.round(from.records   + (to.records   - from.records)   * e),
+        logs:      Math.round(from.logs      + (to.logs      - from.logs)      * e),
       });
       if (t < 1) timer.current = setTimeout(tick, 16); else timer.current = null;
     };
     tick();
     return () => { if (timer.current) clearTimeout(timer.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loc, ack]);
+  }, [loc]);
 
   const todayLabel = 'Today \u00b7 ' + new Date().toLocaleDateString('en-US',
     { weekday: 'long', month: 'long', day: 'numeric' });
@@ -324,14 +323,29 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const statLefts = statsRaw.map((_, i) => (((i + 0.5) / nStats) * 100).toFixed(2) + '%');
   const statTipOpen = typeof tip === 'number' && !!stats[tip];
 
-  const heroTail = openN > 0
-    ? 'A receiving-log gap at Vista Grill needs your attention today \u2014 everything else is handled.'
-    : 'Everything is handled \u2014 nothing needs your attention today.';
-  const ringBg = `conic-gradient(from -90deg, #547A62 0 ${disp.score}%, #E7E0D2 ${disp.score}% 100%)`;
+  const heroTail = `${remaining} still need documentation.`;
+  const fireRingBg = `conic-gradient(from -90deg, ${RUST} 0 ${disp.fireScore}%, #E7E0D2 ${disp.fireScore}% 100%)`;
+  const foodRingBg = `conic-gradient(from -90deg, ${BLUE} 0 ${disp.foodScore}%, #E7E0D2 ${disp.foodScore}% 100%)`;
 
-  const food = openN > 0
-    ? { status: '1 needs your attention', pillBg: '#F7EDD3', pillFg: '#8A6412', dot: '#D8A93A', bar: '#D8A93A', width: '92%',  current: '11 of 12 requirements current', next: 'Next: receiving log \u00b7 today',      nextColor: '#9A7B33' }
-    : { status: 'On track',    pillBg: '#E3ECE1', pillFg: '#3E5E4B', dot: '#547A62', bar: '#7FA98B', width: '100%', current: '12 of 12 requirements current', next: null, nextColor: '#5F6875' };
+  const foodDone = k.foodCurrent === k.foodTotal;
+  const food = {
+    status: foodDone ? 'On track' : `${k.foodTotal - k.foodCurrent} to document`,
+    pillBg: foodDone ? '#E3ECE1' : '#F7EDD3', pillFg: foodDone ? '#3E5E4B' : '#8A6412',
+    dot: foodDone ? '#547A62' : '#D8A93A', bar: foodDone ? '#7FA98B' : '#D8A93A',
+    width: `${k.foodTotal > 0 ? Math.round((k.foodCurrent / k.foodTotal) * 100) : 0}%`,
+    current: `${k.foodCurrent} of ${k.foodTotal} requirements documented`,
+    next: null, nextColor: '#5F6875',
+  };
+
+  const fireDone = k.fireCurrent === k.fireTotal;
+  const fireObj = {
+    status: fireDone ? 'On track' : `${k.fireTotal - k.fireCurrent} to document`,
+    pillBg: fireDone ? '#E3ECE1' : '#F7EDD3', pillFg: fireDone ? '#3E5E4B' : '#8A6412',
+    dot: fireDone ? '#547A62' : '#D8A93A', bar: fireDone ? '#7FA98B' : '#D8A93A',
+    width: `${k.fireTotal > 0 ? Math.round((k.fireCurrent / k.fireTotal) * 100) : 0}%`,
+    current: `${k.fireCurrent} of ${k.fireTotal} requirements documented`,
+    next: null, nextColor: '#5F6875',
+  };
 
   const equipment    = loc === 'all' ? ALL_EQ : ALL_EQ.filter((e) => e.loc === loc);
   const hasSensors   = k.sensors > 0;
@@ -344,8 +358,6 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const hoodProven   = pse.find((c) => c.id === 'kec')?.current ?? true;
   const risk         = riskData(loc, pseProven, hoodProven);
   const togglePse    = (id) => setPse((prev) => prev.map((c) => (c.id === id ? { ...c, current: !c.current } : c)));
-  const alertT       = String(alertTone).toLowerCase() === 'warning' ? TONE.red : TONE.amber;
-
   const upcoming      = loc === 'all' ? UPCOMING : UPCOMING.filter((u) => u.loc === loc);
   const upcomingScope = `${upcoming.length} IN THE NEXT 60 DAYS`;
   const nextFire      = upcoming.find((u) => u.p === 'fire');
@@ -428,7 +440,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         <div className="ev-hero" style={s('display:grid;grid-template-columns:1fr auto;gap:52px;align-items:center;')}>
           <div>
             <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>{todayLabel}</div>
-            <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>You're covered.</h1>
+            <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>Your hood cleaning is on file.</h1>
             <p style={s("font-family:'Spectral',serif;font-weight:300;font-size:21px;line-height:1.45;color:#4A5566;max-width:560px;margin:16px 0 0;")}>
               EvidLY is tracking <span style={s('color:#1C2A3A;font-weight:500;')}>{k.total} requirements</span>. {heroTail}
             </p>
@@ -447,27 +459,54 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             </div>
           </div>
 
-          <div className="ev-hero-ring" style={s('display:flex;flex-direction:column;align-items:center;gap:14px;')}>
-            <div style={s('position:relative;width:224px;height:224px;')}>
-              <div style={s('position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from -90deg, #BEB49C 0deg 0.7deg, transparent 0.7deg 6deg);-webkit-mask:radial-gradient(circle at center, transparent 0 100px, #000 100px 109px, transparent 110px);mask:radial-gradient(circle at center, transparent 0 100px, #000 100px 109px, transparent 110px);')} />
-              <div style={{ ...s('position:absolute;inset:24px;border-radius:50%;box-shadow:0 22px 48px -28px rgba(84,122,98,.75);'), background: ringBg }}>
-                <div style={s('position:absolute;inset:19px;background:#F7F1E6;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;')}>
-                  <div style={s("font-family:'Spectral',serif;font-weight:500;color:#1C2A3A;line-height:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:2px;")}>
-                    <span style={s('font-size:52px;')}>{disp.score}</span>
-                    <span style={s('font-size:24px;')}>%</span>
-                  </div>
-                  <div style={s('position:relative;display:inline-flex;align-items:center;gap:4px;margin-top:6px;white-space:nowrap;max-width:118px;')}
-                       onMouseEnter={() => setTip('ring')} onMouseLeave={offTip}>
-                    <span style={s("font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#3E5E4B;")}>inspection-ready</span>
-                    <span style={s("width:13px;height:13px;border-radius:50%;border:1px solid #B9C7BC;color:#3E5E4B;font-size:8px;display:inline-flex;align-items:center;justify-content:center;cursor:help;font-family:'IBM Plex Mono',monospace;flex-shrink:0;")}>i</span>
-                    {tip === 'ring' && (
-                      <div style={s('position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);z-index:30;width:250px;background:#1C2A3A;color:#EDE7DA;font-size:12px;font-weight:400;line-height:1.55;padding:13px 15px;border-radius:10px;box-shadow:0 18px 40px -18px rgba(28,42,58,.7);text-align:left;text-transform:none;letter-spacing:normal;')}>{RING_TIP}</div>
-                    )}
+          <div className="ev-hero-ring" style={s('display:flex;gap:24px;align-items:flex-start;')}>
+            {/* FIRE ring */}
+            <div style={s('display:flex;flex-direction:column;align-items:center;gap:10px;')}>
+              <div style={s('position:relative;width:170px;height:170px;')}>
+                <div style={s('position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from -90deg, #BEB49C 0deg 0.7deg, transparent 0.7deg 6deg);-webkit-mask:radial-gradient(circle at center, transparent 0 76px, #000 76px 83px, transparent 84px);mask:radial-gradient(circle at center, transparent 0 76px, #000 76px 83px, transparent 84px);')} />
+                <div style={{ ...s('position:absolute;inset:18px;border-radius:50%;box-shadow:0 18px 40px -24px rgba(178,106,67,.6);'), background: fireRingBg }}>
+                  <div style={s('position:absolute;inset:15px;background:#F7F1E6;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;')}>
+                    <div style={s("font-family:'Spectral',serif;font-weight:500;color:#1C2A3A;line-height:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:1px;")}>
+                      <span style={s('font-size:38px;')}>{disp.fireScore}</span>
+                      <span style={s('font-size:18px;')}>%</span>
+                    </div>
+                    <div style={s('position:relative;display:inline-flex;align-items:center;gap:3px;margin-top:4px;white-space:nowrap;')}
+                         onMouseEnter={() => setTip('fireRing')} onMouseLeave={offTip}>
+                      <span style={s("font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8A4A28;")}>fire</span>
+                      <span style={s("width:12px;height:12px;border-radius:50%;border:1px solid #D4B9A3;color:#8A4A28;font-size:7px;display:inline-flex;align-items:center;justify-content:center;cursor:help;font-family:'IBM Plex Mono',monospace;flex-shrink:0;")}>i</span>
+                      {tip === 'fireRing' && (
+                        <div style={s('position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);z-index:30;width:240px;background:#1C2A3A;color:#EDE7DA;font-size:12px;font-weight:400;line-height:1.55;padding:13px 15px;border-radius:10px;box-shadow:0 18px 40px -18px rgba(28,42,58,.7);text-align:left;text-transform:none;letter-spacing:normal;')}>{FIRE_RING_TIP}</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
+              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{k.fireCurrent} of {k.fireTotal} covered</div>
             </div>
-            <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{covered} of {k.total} covered</div>
+
+            {/* FOOD ring */}
+            <div style={s('display:flex;flex-direction:column;align-items:center;gap:10px;')}>
+              <div style={s('position:relative;width:170px;height:170px;')}>
+                <div style={s('position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from -90deg, #BEB49C 0deg 0.7deg, transparent 0.7deg 6deg);-webkit-mask:radial-gradient(circle at center, transparent 0 76px, #000 76px 83px, transparent 84px);mask:radial-gradient(circle at center, transparent 0 76px, #000 76px 83px, transparent 84px);')} />
+                <div style={{ ...s('position:absolute;inset:18px;border-radius:50%;box-shadow:0 18px 40px -24px rgba(62,107,138,.6);'), background: foodRingBg }}>
+                  <div style={s('position:absolute;inset:15px;background:#F7F1E6;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;')}>
+                    <div style={s("font-family:'Spectral',serif;font-weight:500;color:#1C2A3A;line-height:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:1px;")}>
+                      <span style={s('font-size:38px;')}>{disp.foodScore}</span>
+                      <span style={s('font-size:18px;')}>%</span>
+                    </div>
+                    <div style={s('position:relative;display:inline-flex;align-items:center;gap:3px;margin-top:4px;white-space:nowrap;')}
+                         onMouseEnter={() => setTip('foodRing')} onMouseLeave={offTip}>
+                      <span style={s("font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#2C5570;")}>food</span>
+                      <span style={s("width:12px;height:12px;border-radius:50%;border:1px solid #A3C0D4;color:#2C5570;font-size:7px;display:inline-flex;align-items:center;justify-content:center;cursor:help;font-family:'IBM Plex Mono',monospace;flex-shrink:0;")}>i</span>
+                      {tip === 'foodRing' && (
+                        <div style={s('position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);z-index:30;width:240px;background:#1C2A3A;color:#EDE7DA;font-size:12px;font-weight:400;line-height:1.55;padding:13px 15px;border-radius:10px;box-shadow:0 18px 40px -18px rgba(28,42,58,.7);text-align:left;text-transform:none;letter-spacing:normal;')}>{FOOD_RING_TIP}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{k.foodCurrent} of {k.foodTotal} covered</div>
+            </div>
           </div>
         </div>
 
@@ -664,74 +703,31 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           )}
         </div>
 
-        {/* ------------------------------------------- one thing to look at */}
+        {/* ------------------------------------------- where to start */}
         <div style={s('display:flex;flex-direction:column;gap:14px;')}>
-          <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>One thing to look at</div>
+          <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>Where to start</div>
 
-          {openN > 0 && (
-            <div className="ev-alert-card" style={{ ...s('display:flex;background:#FCFAF4;border:1px solid #E9E0CC;border-radius:14px;overflow:hidden;'), borderLeft: `3px solid ${alertT.fill}` }}>
-              <div style={s('padding:24px 26px;flex:1;')}>
-                <div style={s('display:flex;align-items:center;gap:9px;flex-wrap:wrap;')}>
-                  <span style={{ ...s('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;'), background: alertT.tint, color: alertT.text }}>{String(alertTone).toUpperCase()}</span>
-                  <span style={{ ...s('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;'), background: PILLAR.food.tint, color: PILLAR.food.text }}>FOOD SAFETY</span>
-                  <span style={{ ...s("font-family:'IBM Plex Mono',monospace;font-size:11px;"), color: alertT.text }}>2 days open {'\u00b7'} Vista Grill</span>
-                </div>
-                <h3 style={s("font-family:'Spectral',serif;font-weight:600;font-size:23px;color:#1C2A3A;margin:14px 0 0;")}>Receiving log gap</h3>
-                <p style={s('font-size:14.5px;line-height:1.6;color:#4A5566;margin:9px 0 0;max-width:560px;')}>
-                  A receiving log hasn't been recorded at Vista Grill since Thursday. EvidLY flagged it and routed it to you. Log today's delivery to close it {'\u2014'} or hand it to a team member.
-                </p>
+          <div style={s('background:#FCFAF4;border:1px solid #E9E0CC;border-radius:14px;padding:24px 26px;')}>
+            <div style={s('display:flex;align-items:center;gap:9px;flex-wrap:wrap;')}>
+              <span style={s('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;background:#F7EDD3;color:#8A6412;')}>GET STARTED</span>
+            </div>
+            <h3 style={s("font-family:'Spectral',serif;font-weight:600;font-size:23px;color:#1C2A3A;margin:14px 0 0;")}>{remaining} requirements still need documentation</h3>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#4A5566;margin:9px 0 0;max-width:560px;')}>
+              Your hood cleaning certificates are on file {'\u2014'} that{'\u2019'}s a great start. EvidLY is tracking the remaining fire-safety and food-safety requirements across your kitchens. Upload documentation as you have it, and watch your coverage grow.
+            </p>
+            <div style={s('display:flex;gap:16px;margin-top:18px;')}>
+              <div style={s('flex:1;background:#F4E5DA;border-radius:10px;padding:14px 16px;')}>
+                <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8A4A28;")}>Fire safety</div>
+                <div style={s("font-family:'Spectral',serif;font-size:22px;font-weight:500;color:#1C2A3A;margin-top:6px;")}>{k.fireTotal - k.fireCurrent} remaining</div>
+                <div style={s('font-size:12px;color:#5F6875;margin-top:3px;')}>{k.fireCurrent} of {k.fireTotal} documented</div>
               </div>
-              <div style={s('padding:24px 26px;display:flex;flex-direction:column;gap:10px;justify-content:center;border-left:1px solid #EFE8DA;background:#FBF6EC;')}>
-                <button className="ev-dark" onClick={() => setAck(true)} style={s("background:#1C2A3A;color:#F5EFE4;border:none;border-radius:9px;padding:12px 18px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;")}>Acknowledge as owner {'\u2192'}</button>
-                <div>
-                  {!assignedTo && (
-                    <>
-                      <button className="ev-soft" onClick={() => setAssignOpen(!assignOpen)} style={s("width:100%;background:#fff;color:#4A5566;border:1px solid #E4DBC8;border-radius:9px;padding:12px 18px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:8px;")}>
-                        Assign to a team member <span style={s('font-size:10px;color:#646D7A;')}>{'\u25BE'}</span>
-                      </button>
-                      {assignOpen && (
-                        <div style={s('margin-top:8px;background:#fff;border:1px solid #E4DBC8;border-radius:11px;box-shadow:0 16px 34px -22px rgba(28,42,58,.5);overflow:hidden;')}>
-                          {TEAM.map((m) => (
-                            <button key={m.name} className="ev-soft" onClick={() => { setAssignedTo(m.name); setAssignOpen(false); }}
-                              style={s("width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;font-family:'Instrument Sans',sans-serif;display:flex;flex-direction:column;gap:1px;")}>
-                              <span style={s('font-size:13px;font-weight:600;color:#1C2A3A;')}>{m.name}</span>
-                              <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#646D7A;")}>{m.role}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {assignedTo && (
-                    <div style={s('display:flex;align-items:center;gap:8px;background:#EEF3EC;border:1px solid #D3E1CE;border-radius:9px;padding:11px 14px;')}>
-                      <span style={s('width:18px;height:18px;border-radius:50%;background:#547A62;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;')}>{'\u2713'}</span>
-                      <span style={s('font-size:12.5px;color:#2C4636;')}>Routed to <span style={s('font-weight:600;')}>{assignedTo}</span></span>
-                    </div>
-                  )}
-                </div>
+              <div style={s('flex:1;background:#E2ECF2;border-radius:10px;padding:14px 16px;')}>
+                <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#2C5570;")}>Food safety</div>
+                <div style={s("font-family:'Spectral',serif;font-size:22px;font-weight:500;color:#1C2A3A;margin-top:6px;")}>{k.foodTotal - k.foodCurrent} remaining</div>
+                <div style={s('font-size:12px;color:#5F6875;margin-top:3px;')}>{k.foodCurrent} of {k.foodTotal} documented</div>
               </div>
             </div>
-          )}
-
-          {hasGap && ack && (
-            <div style={s('display:flex;align-items:center;gap:16px;background:#EEF3EC;border:1px solid #D3E1CE;border-radius:14px;padding:22px 26px;')}>
-              <span style={s('width:34px;height:34px;border-radius:50%;background:#547A62;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;')}>{'\u2713'}</span>
-              <div>
-                <div style={s('font-size:15px;font-weight:600;color:#2C4636;')}>Handled by you {'\u00b7'} just now</div>
-                <div style={s('font-size:13.5px;color:#4E6553;margin-top:2px;')}>EvidLY logged your acknowledgement to Vista Grill's record and closed the alert. Inspection-ready is back to 100%.</div>
-              </div>
-            </div>
-          )}
-
-          {!hasGap && (
-            <div style={s('display:flex;align-items:center;gap:16px;background:#EEF3EC;border:1px solid #D3E1CE;border-radius:14px;padding:22px 26px;')}>
-              <span style={s('width:34px;height:34px;border-radius:50%;background:#547A62;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;')}>{'\u2713'}</span>
-              <div>
-                <div style={s('font-size:15px;font-weight:600;color:#2C4636;')}>Nothing needs your attention at {k.name}</div>
-                <div style={s('font-size:13.5px;color:#4E6553;margin-top:2px;')}>Every requirement is current and its evidence is on file. EvidLY will alert you the moment that changes.</div>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* -------------------------------------------------- what's monitored */}
@@ -759,8 +755,8 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                     <div style={s('font-size:12px;color:#5F6875;margin-top:1px;')}>California Fire Code</div>
                   </div>
                 </div>
-                <span style={s('display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;background:#E3ECE1;color:#3E5E4B;padding:5px 11px;border-radius:999px;')}>
-                  <span style={s('width:6px;height:6px;border-radius:50%;background:#547A62;')} />On track
+                <span style={{ ...s('display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;'), background: fireObj.pillBg, color: fireObj.pillFg }}>
+                  <span style={{ ...s('width:6px;height:6px;border-radius:50%;'), background: fireObj.dot }} />{fireObj.status}
                 </span>
               </div>
               <div style={s('display:flex;flex-wrap:wrap;gap:6px;')}>
@@ -769,10 +765,10 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                 ))}
               </div>
               <div style={s('height:6px;border-radius:999px;background:#F0EADC;overflow:hidden;')}>
-                <div style={s('height:100%;width:100%;background:#7FA98B;')} />
+                <div style={{ ...s('height:100%;'), width: fireObj.width, background: fireObj.bar }} />
               </div>
               <div style={s('display:flex;justify-content:space-between;font-size:12.5px;color:#5F6875;')}>
-                <span style={s('color:#4A5566;font-weight:500;')}>9 of 9 requirements current</span>
+                <span style={s('color:#4A5566;font-weight:500;')}>{fireObj.current}</span>
                 <span>{nextFire ? `Next: ${nextFire.title.toLowerCase()} \u00b7 ${nextFire.days} days` : 'Nothing due'}</span>
               </div>
             </div>
