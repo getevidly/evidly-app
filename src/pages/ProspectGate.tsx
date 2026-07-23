@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
+const GATE_STATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gate-record-state`;
 
 /* ── Design tokens (from mock CSS vars) ──────────────────────── */
 const NAVY = '#1E2D4D';
@@ -110,53 +111,61 @@ interface RecordItem {
   viewable?: boolean;   // has a View link
   pillarTag?: string;   // e.g. "Fire · NFPA 96"
   pillarTagClass?: 'fire' | 'food';
+  fileKeys?: string[];  // keys to match against filed map from edge fn
 }
 
-const FIRE_ITEMS: RecordItem[] = [
-  { name: 'Hood', code: 'NFPA 96', why: 'Met \u2014 Cleaning Pros Plus service record on file', whyLink: '#', status: 'on_file', viewable: true },
-  { name: 'Suppression', code: 'NFPA 17A', status: 'required' },
-  { name: 'Sprinklers', code: 'NFPA 25', status: 'required' },
-  { name: 'Alarms', code: 'NFPA 72', status: 'required' },
-  { name: 'Extinguishers', code: 'NFPA 10', status: 'required' },
+/* ── Requirement templates ─────────────────────────────────────
+   fileKeys map each item to one or more keys returned by gate-record-state.
+   Keys checked: document type codes (KEC, PHP, PEST …),
+   service_type_code, safeguard:<type>, or compound cat:<category>:<type>.
+   If ANY key matches → status becomes 'on_file'.
+   Default status is the baseline when no record exists.              */
+
+const FIRE_DEFAULTS: RecordItem[] = [
+  { name: 'Hood', code: 'NFPA 96', status: 'required', fileKeys: ['KEC', 'safeguard:hood_cleaning'] },
+  { name: 'Suppression', code: 'NFPA 17A', status: 'required', fileKeys: ['FS', 'safeguard:fire_suppression'] },
+  { name: 'Sprinklers', code: 'NFPA 25', status: 'required', fileKeys: ['SP', 'safeguard:sprinklers'] },
+  { name: 'Alarms', code: 'NFPA 72', status: 'required', fileKeys: ['FA', 'safeguard:fire_alarm'] },
+  { name: 'Extinguishers', code: 'NFPA 10', status: 'required', fileKeys: ['safeguard:fire_extinguisher'] },
 ];
 
-const FOOD_ITEMS: RecordItem[] = [
-  { name: 'Pest Control', status: 'required' },
-  { name: 'Grease Trap', status: 'if_applicable' },
-  { name: 'Backflow Prevention', status: 'if_applicable' },
-  { name: 'Receiving Logs', status: 'required' },
-  { name: 'Hot Holding', status: 'required' },
-  { name: 'Cold Holding', status: 'required' },
-  { name: 'Cooldown', status: 'required' },
-  { name: 'Reheating', status: 'required' },
-  { name: 'Warewash & Sanitizer Logs', status: 'required' },
-  { name: 'Health Permit', status: 'required' },
-  { name: 'CFPM', status: 'required' },
-  { name: 'Handler Cards', status: 'required' },
-  { name: 'HACCP Plan', status: 'if_applicable' },
-  { name: 'Allergen Management', status: 'required' },
+const FOOD_DEFAULTS: RecordItem[] = [
+  { name: 'Pest Control', status: 'required', fileKeys: ['PEST'] },
+  { name: 'Grease Trap', status: 'if_applicable', fileKeys: ['GTSR'] },
+  { name: 'Backflow Prevention', status: 'if_applicable', fileKeys: ['BFT'] },
+  { name: 'Receiving Logs', status: 'required', fileKeys: ['RECL'] },
+  { name: 'Hot Holding', status: 'required', fileKeys: ['TLHH'] },
+  { name: 'Cold Holding', status: 'required', fileKeys: ['TLCH'] },
+  { name: 'Cooldown', status: 'required', fileKeys: ['TPHC'] },
+  { name: 'Reheating', status: 'required', fileKeys: ['TPHC_RHT'] },
+  { name: 'Warewash & Sanitizer Logs', status: 'required', fileKeys: ['SANL'] },
+  { name: 'Health Permit', status: 'required', fileKeys: ['PHP'] },
+  { name: 'CFPM', status: 'required', fileKeys: ['CFPM'] },
+  { name: 'Handler Cards', status: 'required', fileKeys: ['CFH'] },
+  { name: 'HACCP Plan', status: 'if_applicable', fileKeys: ['HACCP'] },
+  { name: 'Allergen Management', status: 'required', fileKeys: ['ALRG'] },
 ];
 
-const BIZ_ITEMS: RecordItem[] = [
-  { name: 'General Liability Insurance', status: 'required' },
-  { name: 'Food Contamination Insurance', why: 'Spoilage & food-borne illness coverage', status: 'required' },
-  { name: 'Lease Agreement', status: 'if_applicable' },
-  { name: 'Business License', status: 'required' },
-  { name: "Seller's Permit", status: 'required' },
-  { name: 'W-9', status: 'required' },
-  { name: 'Certificate of Occupancy', status: 'required' },
-  { name: 'Liquor License', status: 'if_applicable' },
+const BIZ_DEFAULTS: RecordItem[] = [
+  { name: 'General Liability Insurance', status: 'required', fileKeys: ['GLI'] },
+  { name: 'Food Contamination Insurance', why: 'Spoilage & food-borne illness coverage', status: 'required', fileKeys: ['FCI'] },
+  { name: 'Lease Agreement', status: 'if_applicable', fileKeys: ['LEASE'] },
+  { name: 'Business License', status: 'required', fileKeys: ['BIZLIC'] },
+  { name: "Seller's Permit", status: 'required', fileKeys: ['SELLER'] },
+  { name: 'W-9', status: 'required', fileKeys: ['W9'] },
+  { name: 'Certificate of Occupancy', status: 'required', fileKeys: ['COO'] },
+  { name: 'Liquor License', status: 'if_applicable', fileKeys: ['LIQ'] },
 ];
 
-const SVC_ITEMS: RecordItem[] = [
-  { name: 'Hood Cleaning Certificate', pillarTag: 'Fire \u00b7 NFPA 96', pillarTagClass: 'fire', why: 'Cleaning Pros Plus', status: 'on_file', viewable: true },
-  { name: 'Fire Suppression Service Report', pillarTag: 'Fire \u00b7 NFPA 17A', pillarTagClass: 'fire', status: 'required' },
-  { name: 'Sprinkler Inspection Report', pillarTag: 'Fire \u00b7 NFPA 25', pillarTagClass: 'fire', status: 'required' },
-  { name: 'Fire Alarm Functional Test', pillarTag: 'Fire \u00b7 NFPA 72', pillarTagClass: 'fire', status: 'required' },
-  { name: 'Extinguisher Service Tag', pillarTag: 'Fire \u00b7 NFPA 10', pillarTagClass: 'fire', status: 'required' },
-  { name: 'Pest Control Service Report', pillarTag: 'Food', pillarTagClass: 'food', status: 'required' },
-  { name: 'Grease Trap Pumping Manifest', pillarTag: 'Food', pillarTagClass: 'food', status: 'if_applicable' },
-  { name: 'Backflow Test Report', pillarTag: 'Food', pillarTagClass: 'food', status: 'if_applicable' },
+const SVC_DEFAULTS: RecordItem[] = [
+  { name: 'Hood Cleaning Certificate', pillarTag: 'Fire \u00b7 NFPA 96', pillarTagClass: 'fire', status: 'required', fileKeys: ['KEC', 'safeguard:hood_cleaning'] },
+  { name: 'Fire Suppression Service Report', pillarTag: 'Fire \u00b7 NFPA 17A', pillarTagClass: 'fire', status: 'required', fileKeys: ['FS', 'safeguard:fire_suppression'] },
+  { name: 'Sprinkler Inspection Report', pillarTag: 'Fire \u00b7 NFPA 25', pillarTagClass: 'fire', status: 'required', fileKeys: ['SP', 'safeguard:sprinklers'] },
+  { name: 'Fire Alarm Functional Test', pillarTag: 'Fire \u00b7 NFPA 72', pillarTagClass: 'fire', status: 'required', fileKeys: ['FA', 'safeguard:fire_alarm'] },
+  { name: 'Extinguisher Service Tag', pillarTag: 'Fire \u00b7 NFPA 10', pillarTagClass: 'fire', status: 'required', fileKeys: ['safeguard:fire_extinguisher'] },
+  { name: 'Pest Control Service Report', pillarTag: 'Food', pillarTagClass: 'food', status: 'required', fileKeys: ['PEST'] },
+  { name: 'Grease Trap Pumping Manifest', pillarTag: 'Food', pillarTagClass: 'food', status: 'if_applicable', fileKeys: ['GTSR'] },
+  { name: 'Backflow Test Report', pillarTag: 'Food', pillarTagClass: 'food', status: 'if_applicable', fileKeys: ['BFT'] },
 ];
 
 interface VendorCard {
@@ -379,6 +388,28 @@ const ChaseIcon = () => (
 
 const CALENDLY = 'https://calendly.com/founders-getevidly/founders';
 
+/* ── Apply filed records to a defaults template ────────────────
+   Clones the template. For each item with fileKeys, if ANY key
+   exists in the filed map, status → 'on_file' + attach vendor/date.
+   Items without a match keep their default status.                 */
+function applyFiled(
+  defaults: RecordItem[],
+  filed: Record<string, { on_file: boolean; date?: string; vendor?: string }>,
+): RecordItem[] {
+  return defaults.map((item) => {
+    if (!item.fileKeys) return { ...item };
+    const match = item.fileKeys.find((k) => filed[k]?.on_file);
+    if (!match) return { ...item };
+    const rec = filed[match];
+    return {
+      ...item,
+      status: item.status === 'if_applicable' ? 'if_applicable' as const : 'on_file' as const,
+      viewable: true,
+      why: rec.vendor ? `Met \u2014 ${rec.vendor} service record on file` : 'On file',
+    };
+  });
+}
+
 /* ═══════════════════════════════════════════════════════════════ */
 export function ProspectGate() {
   const { token } = useParams<{ token: string }>();
@@ -387,10 +418,17 @@ export function ProspectGate() {
   const [orgName, setOrgName] = useState('your kitchen');
   const viewedRef = useRef(false);
 
-  /* ── Fetch invite to resolve org name ──────────────────────── */
+  // Live record state — starts as defaults, updated by edge fn response
+  const [fireItems, setFireItems] = useState<RecordItem[]>(FIRE_DEFAULTS);
+  const [foodItems, setFoodItems] = useState<RecordItem[]>(FOOD_DEFAULTS);
+  const [bizItems, setBizItems] = useState<RecordItem[]>(BIZ_DEFAULTS);
+  const [svcItems, setSvcItems] = useState<RecordItem[]>(SVC_DEFAULTS);
+
+  /* ── Fetch invite + record state ─────────────────────────────── */
   useEffect(() => {
     if (!token) { setError('Missing invite link.'); setLoading(false); return; }
     (async () => {
+      // 1. Resolve invite (anon read on evidly_client_invites)
       const { data, error: err } = await supabase
         .from('evidly_client_invites')
         .select('organization_name, business_name, status, expires_at')
@@ -398,8 +436,35 @@ export function ProspectGate() {
         .maybeSingle();
       if (err || !data) { setError('This invite link is invalid.'); setLoading(false); return; }
       setOrgName(data.organization_name || data.business_name || 'your kitchen');
+
+      // 2. Fetch record state from edge function (service_role, scoped to org)
+      try {
+        const res = await fetch(GATE_STATE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ token }),
+        });
+        if (res.ok) {
+          const { filed } = await res.json();
+          if (filed && typeof filed === 'object') {
+            setFireItems(applyFiled(FIRE_DEFAULTS, filed));
+            setFoodItems(applyFiled(FOOD_DEFAULTS, filed));
+            setBizItems(applyFiled(BIZ_DEFAULTS, filed));
+            setSvcItems(applyFiled(SVC_DEFAULTS, filed));
+          }
+        }
+        // On fetch failure: items stay as defaults (graceful fallback)
+      } catch {
+        // Graceful fallback — render requirement list with defaults
+      }
+
       setLoading(false);
-      // Stamp viewed_at on first page load (best-effort, non-blocking)
+
+      // 3. Stamp viewed_at on first page load (best-effort, non-blocking)
       if (!viewedRef.current) {
         viewedRef.current = true;
         fetch(VIEWED_URL, {
@@ -411,16 +476,16 @@ export function ProspectGate() {
     })();
   }, [token]);
 
-  /* ── Derived counts ────────────────────────────────────────── */
-  const fireOnFile = countOnFile(FIRE_ITEMS);
-  const fireTotal = countRequired(FIRE_ITEMS);
-  const foodOnFile = countOnFile(FOOD_ITEMS);
-  const foodTotal = countRequired(FOOD_ITEMS);
-  const bizOnFile = countOnFile(BIZ_ITEMS);
-  const bizTotal = countRequired(BIZ_ITEMS);
-  const svcOnFile = countOnFile(SVC_ITEMS);
-  const svcTotal = countRequired(SVC_ITEMS);
-  const vendOnFile = 0; // day-one: no vendor biz docs filed
+  /* ── Derived counts (from live state) ────────────────────────── */
+  const fireOnFile = countOnFile(fireItems);
+  const fireTotal = countRequired(fireItems);
+  const foodOnFile = countOnFile(foodItems);
+  const foodTotal = countRequired(foodItems);
+  const bizOnFile = countOnFile(bizItems);
+  const bizTotal = countRequired(bizItems);
+  const svcOnFile = countOnFile(svcItems);
+  const svcTotal = countRequired(svcItems);
+  const vendOnFile = 0; // vendor biz docs not yet wired
 
   const totalOnFile = fireOnFile + foodOnFile + bizOnFile + svcOnFile;
   const totalRequired = fireTotal + foodTotal + bizTotal + svcTotal;
@@ -479,7 +544,9 @@ export function ProspectGate() {
             See the gaps.<br />Let&rsquo;s close them.
           </h2>
           <p style={{ marginTop: 14, fontSize: '14.5px', color: '#c3ccde', maxWidth: '31ch' }}>
-            Your <b style={{ color: '#fff', fontWeight: 600 }}>hood cleaning certificate</b> is on file. Here&rsquo;s everything else a covered kitchen carries.
+            {totalOnFile > 0
+              ? <>Your <b style={{ color: '#fff', fontWeight: 600 }}>{totalOnFile === 1 ? 'hood cleaning certificate' : `${totalOnFile} records`}</b> {totalOnFile === 1 ? 'is' : 'are'} on file. Here&rsquo;s everything else a covered kitchen carries.</>
+              : <>Here&rsquo;s everything a covered kitchen carries &mdash; and what&rsquo;s on file today.</>}
           </p>
 
           <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', gap: 0, borderTop: `1px solid ${NAVY_LINE}` }}>
@@ -508,23 +575,45 @@ export function ProspectGate() {
         <main style={{ padding: '40px 46px 56px', background: CREAM }} className="gate-main">
 
           {/* ===== FEATURED HOOD-CERT CARD (top, above hero) ===== */}
-          <div style={{ background: SAGE_BG, border: `1px solid ${SAGE_LINE}`, borderRadius: 14, padding: '18px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ width: 40, height: 40, borderRadius: 10, background: NAVY, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
-              <ShieldIcon />
-            </span>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '10.5px', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' as const, color: SAGE, marginBottom: 2 }}>
-                ON FILE &middot; FIRE SAFETY &middot; HOOD NFPA 96
+          {(() => {
+            const hood = fireItems.find(i => i.fileKeys?.includes('KEC'));
+            const hoodOnFile = hood?.status === 'on_file';
+            const hoodVendor = hood?.why?.replace(/^Met \u2014 /, '').replace(/ service record on file$/, '') || 'Cleaning Pros Plus';
+            return hoodOnFile ? (
+              <div style={{ background: SAGE_BG, border: `1px solid ${SAGE_LINE}`, borderRadius: 14, padding: '18px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
+                <span style={{ width: 40, height: 40, borderRadius: 10, background: NAVY, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                  <ShieldIcon />
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '10.5px', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' as const, color: SAGE, marginBottom: 2 }}>
+                    ON FILE &middot; FIRE SAFETY &middot; HOOD NFPA 96
+                  </div>
+                  <div style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '15.5px', color: NAVY }}>Hood Cleaning Certificate</div>
+                  <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
+                    {hoodVendor} &middot; filed &amp; time-stamped (write-once) &mdash; your {totalOnFile === 1 ? 'one sealed record so far' : 'sealed record'}.
+                  </div>
+                </div>
+                <span style={{ fontSize: '12.5px', fontWeight: 600, color: SLATE, display: 'inline-flex', alignItems: 'center', gap: 5, flex: 'none' }}>
+                  <EyeIcon /> View
+                </span>
               </div>
-              <div style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '15.5px', color: NAVY }}>Hood Cleaning Certificate</div>
-              <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
-                Cleaning Pros Plus &middot; filed &amp; time-stamped (write-once) &mdash; your one sealed record so far.
+            ) : (
+              <div style={{ background: '#FFF8F0', border: '1px solid #E8D5C4', borderRadius: 14, padding: '18px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
+                <span style={{ width: 40, height: 40, borderRadius: 10, background: NAVY, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                  <ShieldIcon />
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '10.5px', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' as const, color: EMBER, marginBottom: 2 }}>
+                    REQUIRED &middot; FIRE SAFETY &middot; HOOD NFPA 96
+                  </div>
+                  <div style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '15.5px', color: NAVY }}>Hood Cleaning Certificate</div>
+                  <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
+                    No hood cleaning certificate on file yet.
+                  </div>
+                </div>
               </div>
-            </div>
-            <a href="#" onClick={e => e.preventDefault()} style={{ fontSize: '12.5px', fontWeight: 600, color: SLATE, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 5, flex: 'none' }}>
-              <EyeIcon /> View
-            </a>
-          </div>
+            );
+          })()}
 
           {/* ===== EXPOSURE HERO ===== */}
           <section style={{ background: '#fff', border: `1px solid ${HAIR}`, borderRadius: 16, padding: '28px 30px', margin: '2px 0 0' }}>
@@ -591,15 +680,15 @@ export function ProspectGate() {
           </section>
 
           {/* ===== FIRE SAFETY ===== */}
-          <RecordGroup title="Fire Safety" meta="NFPA 96 fire line \u2014 the liability spine" items={FIRE_ITEMS} groupClass="fire" icon={<FireIcon />}
+          <RecordGroup title="Fire Safety" meta="NFPA 96 fire line \u2014 the liability spine" items={fireItems} groupClass="fire" icon={<FireIcon />}
             countLabel={`<b>${fireOnFile}</b> / ${fireTotal} on file`} defaultOpen={true} />
 
           {/* ===== FOOD SAFETY ===== */}
-          <RecordGroup title="Food Safety" meta="County health \u2014 keeps you open" items={FOOD_ITEMS} groupClass="food" icon={<FoodIcon />}
+          <RecordGroup title="Food Safety" meta="County health \u2014 keeps you open" items={foodItems} groupClass="food" icon={<FoodIcon />}
             countLabel={`<b>${foodOnFile}</b> / ${foodTotal} on file`} defaultOpen={true} />
 
           {/* ===== BUSINESS RECORDS ===== */}
-          <RecordGroup title="Business Records" meta="The kitchen\u2019s own paperwork" items={BIZ_ITEMS} groupClass="biz" icon={<BizIcon />}
+          <RecordGroup title="Business Records" meta="The kitchen\u2019s own paperwork" items={bizItems} groupClass="biz" icon={<BizIcon />}
             countLabel={`<b>${bizOnFile}</b> / ${bizTotal} on file`} defaultOpen={true} />
 
           {/* ===== VENDOR BUSINESS RECORDS ===== */}
@@ -633,7 +722,7 @@ export function ProspectGate() {
 
           {/* ===== VENDOR SERVICE RECORDS ===== */}
           <RecordGroup title="Vendor Service Records" meta="Proof each vendor did the work \u2014 the records that get read after a fire"
-            items={SVC_ITEMS} groupClass="svc" icon={<SvcIcon />}
+            items={svcItems} groupClass="svc" icon={<SvcIcon />}
             countLabel={`<b>${svcOnFile}</b> / ${svcTotal} on file`} defaultOpen={true} />
 
           {/* ===== WE DO THE WORK — HANDOFF ===== */}
