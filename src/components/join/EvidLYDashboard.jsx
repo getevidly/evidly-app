@@ -64,6 +64,7 @@ const CSS = `
 .ev-share-btn:hover { background: rgba(255,255,255,0.1) !important; }
 .ev-share-item:hover { background: #F7F4ED !important; }
 .ev-cta:hover { background: #2A3A4E !important; }
+.ev-preview-ctl:hover { background: #F7F4ED !important; }
 @media (max-width: 768px) {
   .ev-nav { padding: 0 16px !important; }
   .ev-content { padding: 24px 16px 60px !important; max-width: 100% !important; }
@@ -86,15 +87,15 @@ const CSS = `
 `;
 
 /* --------------------------------------------------------------- data ----- */
-/* Sample data — mature, imperfect (~87 % fire / ~76 % food).
+/* Sample data — mature, imperfect (~80 % fire / ~76 % food).
    ADDITIVITY: every group total must equal the sum of the three kitchens.
    lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336
-   food 9+8+8=25 of 11×3=33 · fire 5+4+4=13 of 5×3=15 · total 16×3=48. */
+   fire 5+4+3=12 of 5×3=15 · food 10+8+7=25 of 11×3=33 · total 15+12+10=37 of 48. */
 const K = {
-  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 48, fireTotal: 15, fireCurrent: 13, foodTotal: 33, foodCurrent: 25 },
-  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 16, fireTotal: 5,  fireCurrent: 5,  foodTotal: 11, foodCurrent: 9 },
+  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 48, fireTotal: 15, fireCurrent: 12, foodTotal: 33, foodCurrent: 25 },
+  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 16, fireTotal: 5,  fireCurrent: 5,  foodTotal: 11, foodCurrent: 10 },
   sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 4,  foodTotal: 11, foodCurrent: 8 },
-  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 4,  foodTotal: 11, foodCurrent: 8 },
+  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 3,  foodTotal: 11, foodCurrent: 7 },
 };
 
 /* ---- COLOR SYSTEM -------------------------------------------------------
@@ -600,11 +601,15 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         </div>
 
         {/* ---- EXPLORE · preview control, collapsed by default ---- */}
-        <div style={s('background:#fff;border:1px dashed #D8CDB4;border-radius:14px;overflow:hidden;')}>
+        <div style={s(`background:#fff;border:1px dashed #D8CDB4;border-left:3px solid #3E6B8A;border-radius:14px;overflow:hidden;${!exploreOpen ? 'transition:background .15s ease;' : ''}`)}>
           <button onClick={() => setExploreOpen(!exploreOpen)}
+            className="ev-preview-ctl"
             style={s("width:100%;text-align:left;background:none;border:none;padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Instrument Sans',sans-serif;")}>
-            <span style={s('font-size:13px;color:#1C2A3A;')}>Toggle any requirement to see how it moves your risk</span>
-            <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E675A;white-space:nowrap;")}>preview control {'\u00b7'} not in the live dashboard</span>
+            <span style={s('font-size:13.5px;font-weight:600;color:#1C2A3A;')}>Toggle any requirement to see how it moves your risk</span>
+            <span style={s('display:flex;align-items:center;gap:10px;')}>
+              <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E675A;white-space:nowrap;")}>preview control {'\u00b7'} not in the live dashboard</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 16, height: 16, color: '#3E6B8A', transition: 'transform .2s ease', transform: exploreOpen ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}><path d="m6 9 6 6 6-6" /></svg>
+            </span>
           </button>
           {exploreOpen && (
             <div style={s('padding:0 20px 16px;')}>
