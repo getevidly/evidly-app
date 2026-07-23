@@ -17,7 +17,7 @@ const ROLES = [
 interface Org { id: string; name: string; state: string | null; city: string | null; primary_contact_name: string | null; primary_contact_email: string | null; }
 interface Invite {
   id: string; organization_id: string | null; organization_name: string | null; contact_name: string; email: string;
-  status: string; client_role: string; reminder_count: number; created_at: string;
+  status: string; client_role: string; reminder_count: number; created_at: string; accepted_at: string | null;
 }
 
 export function ClientInviteForm() {
@@ -49,34 +49,11 @@ export function ClientInviteForm() {
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
       .from('evidly_client_invites')
-      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at')
+      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at, accepted_at')
       .order('created_at', { ascending: false })
       .limit(50);
     if (!data) return;
-
-    // Reconcile: pending invites whose org already has a client user profile
-    // are actually accepted (the status update may have failed silently).
-    const pendingOrgIds = [...new Set(
-      data.filter(i => i.status === 'pending' && i.organization_id)
-          .map(i => i.organization_id as string),
-    )];
-    let acceptedOrgIds = new Set<string>();
-    if (pendingOrgIds.length > 0) {
-      const { data: profiles } = await supabase
-        .from('user_profiles')
-        .select('organization_id')
-        .in('organization_id', pendingOrgIds)
-        .is('evidly_staff_role', null);
-      if (profiles) {
-        acceptedOrgIds = new Set(profiles.map(p => p.organization_id as string));
-      }
-    }
-
-    setInvites(data.map(inv => ({
-      ...inv,
-      status: inv.status === 'pending' && inv.organization_id && acceptedOrgIds.has(inv.organization_id)
-        ? 'accepted' : inv.status,
-    })) as Invite[]);
+    setInvites(data as Invite[]);
   }, []);
   useEffect(() => { loadInvites(); }, [loadInvites]);
 
@@ -184,14 +161,14 @@ export function ClientInviteForm() {
   }
 
   const badge = (status: string) => {
-    const map: Record<string, { bg: string; fg: string }> = {
-      pending: { bg: '#FAEEDA', fg: '#854F0B' },
-      accepted: { bg: '#E1F5EE', fg: '#0F6E56' },
-      expired: { bg: '#F1EFE8', fg: '#5F5E5A' },
-      revoked: { bg: '#FCEBEB', fg: '#A32D2D' },
+    const map: Record<string, { bg: string; fg: string; label: string }> = {
+      pending:  { bg: '#E0EDFA', fg: '#1A5296', label: 'Invited' },
+      accepted: { bg: '#E1F5EE', fg: '#0F6E56', label: 'Accepted' },
+      expired:  { bg: '#F1EFE8', fg: '#5F5E5A', label: 'Expired' },
+      revoked:  { bg: '#FCEBEB', fg: '#A32D2D', label: 'Revoked' },
     };
     const c = map[status] || map.expired;
-    return <span style={{ background: c.bg, color: c.fg, fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 20 }}>{status}</span>;
+    return <span style={{ background: c.bg, color: c.fg, fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 20 }}>{c.label}</span>;
   };
 
   return (
@@ -251,6 +228,10 @@ export function ClientInviteForm() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.organization_name || inv.contact_name}</p>
                   <p className="text-xs text-[#1E2D4D]/60 truncate">{inv.email} · {inv.client_role.replace(/_/g, ' ')}{inv.reminder_count > 0 ? ` · reminded ${inv.reminder_count}×` : ''}</p>
+                  <p className="text-[11px] text-[#1E2D4D]/45 mt-0.5">
+                    Sent {new Date(inv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {inv.accepted_at && <> · Accepted {new Date(inv.accepted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</>}
+                  </p>
                 </div>
                 <div className="flex items-center gap-3 flex-none">
                   {badge(inv.status)}

@@ -119,7 +119,7 @@ export function buildClientInviteEmail(
   <!-- NAVY HEADER : wordmark + company as a LEFT LOCKUP -->
   <tr><td class="p40" style="background:#1C2A3A;padding:18px 40px;">
     <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td valign="middle" style="padding-right:16px;"><img src="https://app.getevidly.com/wordmark.png" alt="EvidLY" width="152" style="display:block;border:0;height:auto;"/></td>
+      <td valign="middle" style="padding-right:16px;"><span style="font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:26px;letter-spacing:-0.02em;line-height:1;"><span style="color:#CB5E38;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#CB5E38;">LY</span></span></td>
       <td valign="middle" style="padding-left:16px;border-left:1px solid rgba(255,255,255,0.20);font-family:'Courier New',monospace;font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.62);text-transform:uppercase;">A Cleaning Pros Plus Company</td>
     </tr></table></td></tr>
   ${noteBlock}
@@ -152,19 +152,41 @@ export function buildClientInviteEmail(
       <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Reduce</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">the cost</div></td>
       <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Prove</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">on demand</div></td>
     </tr></table></td></tr>
-  <!-- DASHBOARD SNIPPET -->
-  <tr><td style="background:#F7F1E6;padding:20px 0 8px;">
-    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Your dashboard &middot; food &amp; fire, in one place</div>
-    <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-      <img src="https://app.getevidly.com/dashboard.gif" width="600" alt="Your EvidLY dashboard, cycling through all four locations" style="display:block;width:100%;max-width:600px;height:auto;border:0;"/>
-    </a>
-    <div style="text-align:center;padding:16px 40px 2px;">
+  <!-- DASHBOARD SNIPPET — HTML/CSS, no hosted image -->
+  <tr><td class="p40" style="background:#F7F1E6;padding:24px 40px;">
+    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;margin-bottom:14px;">Your hood cleaning is on file &middot; here&rsquo;s the rest</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #EEE7D9;">
+      <!-- Fire row -->
+      <tr><td style="padding:14px 18px;border-bottom:1px solid #EEE7D9;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#B24A2E;"></div></td>
+          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Fire Safety</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1C2A3A;">1</b> of <b style="color:#1C2A3A;">5</b> on file</td>
+        </tr></table>
+        <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
+          <div style="width:20%;height:8px;border-radius:99px;background:#B24A2E;"></div>
+        </div>
+      </td></tr>
+      <!-- Food row -->
+      <tr><td style="padding:14px 18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#3E6B8A;"></div></td>
+          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Food Safety</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1C2A3A;">0</b> of <b style="color:#1C2A3A;">12</b> on file</td>
+        </tr></table>
+        <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
+          <div style="width:0%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
+        </div>
+      </td></tr>
+    </table>
+    <div style="text-align:center;padding:14px 0 0;">
       <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
         <td align="center" style="background:#FFFFFF;border:1.5px solid #1C2A3A;">
           <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Preview the full dashboard &#8599;</a>
         </td></tr></table>
     </div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 40px 14px;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you're ready, use <span style="color:#1C2A3A;font-weight:bold;">See what's on file</span> below.</div></td></tr>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 0 0;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you&rsquo;re ready, use <span style="color:#1C2A3A;font-weight:bold;">See what&rsquo;s on file</span> below.</div>
+  </td></tr>
   <!-- CTA -->
   <tr><td class="p40" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;">
     <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, a binder shows you tried. EvidLY is evidence.</div>

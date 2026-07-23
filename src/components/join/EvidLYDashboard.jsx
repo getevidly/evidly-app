@@ -923,7 +923,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         </div>
 
         {/* ----------------------------------------------------------- CTA */}
-        {!embedded && (
+        {(!embedded || gateToken) && (
           <div style={s('text-align:center;margin-top:10px;')}>
             <a className="ev-cta" href={gateToken ? `/gate/${gateToken}` : '/onboarding'}
               style={s("display:inline-flex;align-items:center;gap:10px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:12px;padding:16px 36px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .16s ease;")}>
