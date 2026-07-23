@@ -86,14 +86,15 @@ const CSS = `
 `;
 
 /* --------------------------------------------------------------- data ----- */
-/* Sample data — mature, imperfect (~87 % fire / ~78 % food).
+/* Sample data — mature, imperfect (~87 % fire / ~76 % food).
    ADDITIVITY: every group total must equal the sum of the three kitchens.
-   lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336.    */
+   lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336
+   food 9+8+8=25 of 11×3=33 · fire 5+4+4=13 of 5×3=15 · total 16×3=48. */
 const K = {
-  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 51, fireTotal: 15, fireCurrent: 13, foodTotal: 36, foodCurrent: 28 },
-  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 17, fireTotal: 5,  fireCurrent: 5,  foodTotal: 12, foodCurrent: 10 },
-  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0,  total: 17, fireTotal: 5,  fireCurrent: 4,  foodTotal: 12, foodCurrent: 9 },
-  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 17, fireTotal: 5,  fireCurrent: 4,  foodTotal: 12, foodCurrent: 9 },
+  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 48, fireTotal: 15, fireCurrent: 13, foodTotal: 33, foodCurrent: 25 },
+  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 16, fireTotal: 5,  fireCurrent: 5,  foodTotal: 11, foodCurrent: 9 },
+  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 4,  foodTotal: 11, foodCurrent: 8 },
+  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 4,  foodTotal: 11, foodCurrent: 8 },
 };
 
 /* ---- COLOR SYSTEM -------------------------------------------------------
@@ -176,8 +177,8 @@ const PSE_CONDITIONS = [
   { id: 'fhc',   name: 'Food Handler Cards',       group: 'food',  current: true  },
   { id: 'fpm',   name: 'Food Protection Manager',  group: 'food',  current: true  },
   { id: 'pest',  name: 'Pest Control',             group: 'food',  current: true  },
-  { id: 'haccp', name: 'HACCP Plan',               group: 'food',  current: false },
   { id: 'allrg', name: 'Allergen Management',      group: 'food',  current: false },
+  { id: 'wash',  name: 'Warewash & Sanitizer',     group: 'food',  current: false },
   // TEMPERATURE LOGS (5)
   { id: 't_recv', name: 'Receiving',               group: 'temp',  current: true  },
   { id: 't_cold', name: 'Cold Holding',            group: 'temp',  current: true  },
@@ -187,7 +188,7 @@ const PSE_CONDITIONS = [
   // IF APPLICABLE (3)
   { id: 'grease', name: 'Grease Trap',             group: 'appl',  current: true  },
   { id: 'bflow',  name: 'Backflow Prevention',     group: 'appl',  current: false },
-  { id: 'liq',    name: 'Liquor License',          group: 'appl',  current: true  },
+  { id: 'haccp', name: 'HACCP Plan',               group: 'appl',  current: false },
 ];
 
 const riskData = (loc, pseProven, hoodProven) => {

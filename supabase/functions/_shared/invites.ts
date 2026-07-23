@@ -164,7 +164,7 @@ export function buildClientInviteEmail(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
     <div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.3;color:#1E2D4D;">One record is on file. Here&rsquo;s what it sits alongside.</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
-    <!-- Day-one hardcoded counts: Fire 1/5, Food 0/12.
+    <!-- Day-one hardcoded counts: Fire 1/5, Food 0/11.
          This email is sent at org creation when only the hood-cleaning
          certificate exists. These values must be replaced with real
          data if this template is ever re-used for established clients. -->
@@ -183,7 +183,7 @@ export function buildClientInviteEmail(
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#3E6B8A;"></div></td>
           <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1E2D4D;">Food Safety</td>
-          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">0</b> of <b style="color:#1E2D4D;">12</b> on file</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">0</b> of <b style="color:#1E2D4D;">11</b> on file</td>
         </tr></table>
         <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
           <div style="width:2%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
