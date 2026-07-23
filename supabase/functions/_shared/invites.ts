@@ -76,8 +76,8 @@ export function buildAgentInviteEmail(
  * referral builders above. personalMessage is optional admin-entered copy.
  *
  * Uses its OWN branded HTML template (not buildEmailHtml) so the invite
- * email matches the EvidLY design language: navy header, three pillars,
- * dashboard GIF, and a clear CTA.
+ * email matches the EvidLY design language: navy header with wordmark,
+ * personal note, hero copy, state-block progress bars, and a single CTA.
  */
 interface ClientInviteParams {
   recipientName: string;
@@ -92,107 +92,129 @@ export function buildClientInviteEmail(
   params: ClientInviteParams,
 ): { subject: string; html: string } {
   const { recipientName, businessName, inviteLink } = params;
-  const firstName = recipientName.split(" ")[0];
 
-  const subject = `Your EvidLY account is ready, ${firstName}`;
+  const subject = "Your hood cleaning is documented \u2014 could you prove the rest?";
 
-  // Note block: include only when personalMessage is non-null
+  // Preheader: note's first line so the personal sentence shows in inbox.
+  // Fallback: hero line 1.
+  const preheaderText = params.personalMessage
+    ? params.personalMessage.split("\n")[0].substring(0, 150)
+    : `${businessName}, your hood cleaning is documented.`;
+
+  // Note block: renders only when personalMessage is non-empty.
+  // When empty the entire cream band collapses — nothing renders.
   const noteBlock = params.personalMessage
-    ? `<!-- NOTE_BLOCK_START --><tr><td class="p40" style="background:#FBF9F2;padding:18px 40px;border-bottom:1px solid #EEE7D9;border-left:3px solid #A08C5A;">
-    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;margin-bottom:6px;">A note from Arthur</div>
-    <div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;font-style:italic;line-height:1.55;color:#3A4453;">${params.personalMessage}</div></td></tr><!-- NOTE_BLOCK_END -->`
+    ? `<!-- NOTE --><tr><td class="p40" style="background:#F4EFE3;padding:20px 40px;border-left:3px solid #B24A2E;">
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:15.5px;font-style:italic;line-height:1.55;color:#3A4453;">${params.personalMessage}</div>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a8270;margin-top:8px;">&mdash; Arthur</div></td></tr>`
     : "";
 
   // Unsubscribe — simple mailto fallback (no dedicated unsub endpoint yet)
-  const unsubUrl = `mailto:founders@getevidly.com?subject=Unsubscribe&body=Please%20remove%20${encodeURIComponent(params.recipientName)}`;
+  const unsubUrl = `mailto:founders@getevidly.com?subject=Unsubscribe&body=Please%20remove%20${encodeURIComponent(recipientName)}`;
 
   const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="x-apple-disable-message-reformatting">
-<title>Your EvidLY account is ready, ${firstName}</title>
+<title>Your hood cleaning is documented</title>
 <style>body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
 @media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}</style>
 </head><body style="margin:0;padding:0;background:#F7F1E6;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your NFPA 96 cert is sealed in EvidLY. See the fire-side records a binder can't prove.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheaderText}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
-  <!-- NAVY HEADER : wordmark + company as a LEFT LOCKUP -->
-  <tr><td class="p40" style="background:#1C2A3A;padding:18px 40px;">
-    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td valign="middle" style="padding-right:16px;"><span style="font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:26px;letter-spacing:-0.02em;line-height:1;"><span style="color:#CB5E38;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#CB5E38;">LY</span></span></td>
-      <td valign="middle" style="padding-left:16px;border-left:1px solid rgba(255,255,255,0.20);font-family:'Courier New',monospace;font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.62);text-transform:uppercase;">A Cleaning Pros Plus Company</td>
-    </tr></table></td></tr>
+
+  <!-- 1. HEADER — navy, wordmark only, 3 px ember rule beneath -->
+  <tr><td class="p40" style="background:#1E2D4D;padding:28px 32px;">
+    <span style="font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:27px;letter-spacing:-0.02em;line-height:1;"><span style="color:#CB5E38;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#CB5E38;">LY</span></span>
+  </td></tr>
+  <tr><td style="background:#B24A2E;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+  <!-- 2. NOTE FROM ARTHUR — collapses when personalMessage is empty -->
   ${noteBlock}
-  <!-- NAVY : intro + three pillars -->
-  <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 28px;">
-    <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">Your NFPA 96 cert is filed, ${businessName}.<br>Here&rsquo;s the part that isn&rsquo;t.</h1>
-    <p style="margin:14px 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#A9B2BE;">You trust Cleaning Pros Plus with your hood cleaning &mdash; that NFPA 96 certificate is now sealed in EvidLY. I&rsquo;m also the expert witness in commercial-kitchen fire cases, and the kitchens that lose a claim usually weren&rsquo;t negligent &mdash; their paperwork just couldn&rsquo;t prove it. Binder or software, the fire side is the half that&rsquo;s hardest to prove when it counts.</p>
+
+  <!-- 3. HERO — navy -->
+  <tr><td class="p40" style="background:#1E2D4D;padding:36px 40px 32px;">
+    <!-- Hero headlines — spacer row between lines, not a br -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#2A3A4E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F50D;</div></td>
-      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
-        <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Intelligence</div>
-        <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Real-time alerts, predictive reminders, automated escalation, regulation cross-referencing, and sealed proof on demand</div>
-      </td></tr>
-    <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#7A3D1E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F525;</div></td>
-      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
-        <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Fire Safety</div>
-        <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Hood cleaning (NFPA 96), fire suppression (17A), sprinklers (25), alarms (72), extinguisher tags (10), and employee fire safety training</div>
-      </td></tr>
-    <tr>
-      <td width="46" valign="top" style="padding-bottom:18px;"><div style="width:34px;height:34px;border-radius:8px;background:#1E3A5E;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1;">&#x1F374;</div></td>
-      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
-        <div style="font-family:Georgia,serif;font-weight:bold;font-size:15px;color:#FFFFFF;">Food Safety</div>
-        <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Employee Food Handler Cards, Certified Food Protection Manager certifications, daily temperature logs, HACCP, receiving inspections, pest control</div>
-      </td></tr>
+      <tr><td style="font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#FFFFFF;">${businessName}, your hood cleaning is documented.</td></tr>
+      <tr><td style="height:14px;font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="font-family:Georgia,'Times New Roman',serif;font-weight:bold;font-size:27px;line-height:1.15;color:#E6B9A4;">Could you prove the rest today?</td></tr>
     </table>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.12);"><tr>
-      <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Predict</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">what's expiring</div></td>
-      <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Reduce</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">the cost</div></td>
-      <td width="33%" valign="top" style="padding-top:18px;"><div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#CBB37D;">Prove</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#A9B2BE;margin-top:2px;">on demand</div></td>
-    </tr></table></td></tr>
-  <!-- DASHBOARD SNIPPET — HTML/CSS, no hosted image -->
-  <tr><td class="p40" style="background:#F7F1E6;padding:24px 40px;">
-    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;margin-bottom:14px;">Your hood cleaning is on file &middot; here&rsquo;s the rest</div>
+    <!-- Spacer before body copy -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:22px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <!-- Paragraph 1 -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.72;color:#BCC7D6;">You already trust Cleaning Pros Plus with your hood cleaning. Every visit, we leave a dated certificate&nbsp;&mdash; what we cleaned, what we found, what we couldn&rsquo;t reach. That&rsquo;s now the first record in your account.</td></tr>
+      <tr><td style="height:16px;font-size:0;line-height:0;">&nbsp;</td></tr>
+    </table>
+    <!-- Paragraph 2 — middle sentence highlighted -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.72;color:#BCC7D6;">That certificate is what an inspector or an insurance adjuster asks for. <span style="color:#E6B9A4;">Not the invoice, and not your word that someone came.</span> Suppression, alarms, sprinklers, extinguishers, food handler cards, temperature logs&nbsp;&mdash; each one has a document like it.</td></tr>
+      <tr><td style="height:16px;font-size:0;line-height:0;">&nbsp;</td></tr>
+    </table>
+    <!-- Paragraph 3 — "NFPA 96 expert witness" bolded white -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.72;color:#BCC7D6;">I&rsquo;ve served as an <strong style="color:#FFFFFF;">NFPA 96 expert witness</strong> in commercial-kitchen fire litigation&nbsp;&mdash; reviewing what those documents could and couldn&rsquo;t prove.</td></tr>
+    </table>
+  </td></tr>
+
+  <!-- 4. STATE BLOCK — cream -->
+  <tr><td class="p40" style="background:#F4EFE3;padding:28px 40px;">
+    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8270;">WHAT&rsquo;S IN YOUR ACCOUNT SO FAR</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.3;color:#1E2D4D;">One record is on file. Here&rsquo;s what it sits alongside.</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <!-- Day-one hardcoded counts: Fire 1/5, Food 0/12.
+         This email is sent at org creation when only the hood-cleaning
+         certificate exists. These values must be replaced with real
+         data if this template is ever re-used for established clients. -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #EEE7D9;">
-      <!-- Fire row -->
       <tr><td style="padding:14px 18px;border-bottom:1px solid #EEE7D9;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#B24A2E;"></div></td>
-          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Fire Safety</td>
-          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1C2A3A;">1</b> of <b style="color:#1C2A3A;">5</b> on file</td>
+          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1E2D4D;">Fire Safety</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">1</b> of <b style="color:#1E2D4D;">5</b> on file</td>
         </tr></table>
         <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
           <div style="width:20%;height:8px;border-radius:99px;background:#B24A2E;"></div>
         </div>
       </td></tr>
-      <!-- Food row -->
       <tr><td style="padding:14px 18px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#3E6B8A;"></div></td>
-          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Food Safety</td>
-          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1C2A3A;">0</b> of <b style="color:#1C2A3A;">12</b> on file</td>
+          <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1E2D4D;">Food Safety</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">0</b> of <b style="color:#1E2D4D;">12</b> on file</td>
         </tr></table>
         <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
-          <div style="width:0%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
+          <div style="width:2%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
         </div>
       </td></tr>
     </table>
-    <div style="text-align:center;padding:14px 0 0;">
-      <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
-        <td align="center" style="background:#1C2A3A;">
-          <a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">Preview the Dashboard &middot; See What&rsquo;s On File &#8594;</a>
-        </td></tr></table>
-    </div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 0 0;line-height:1.5;">Your dashboard preview and full compliance checklist, ready to view.</div>
   </td></tr>
-  <!-- FOOTER -->
-  <tr><td class="p40" style="background:#FBF9F2;padding:22px 40px;border-top:1px solid #EEE7D9;">
-    <div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#8A6412;">Predict the failure, reduce the cost.</div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#5F6875;margin-top:8px;line-height:1.6;">founders@getevidly.com&nbsp;&middot;&nbsp;(855) 384-3591 ext. 1&nbsp;&middot;&nbsp;<a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></div>
-    <div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">A Cleaning Pros Plus company</div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;color:#9A9384;margin-top:10px;"><a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div></td></tr>
+
+  <!-- 5. CTA — ember button -->
+  <tr><td class="p40" style="background:#F4EFE3;padding:0 40px 28px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr>
+      <td align="center" style="background:#B24A2E;border-radius:6px;">
+        <a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Preview the Dashboard &middot; See What&rsquo;s On File&nbsp;&#8594;</a>
+      </td></tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#8B94A0;text-align:center;">View-only. No account, no password.</div>
+  </td></tr>
+
+  <!-- 6. FOOTER — cream -->
+  <tr><td class="p40" style="background:#F4EFE3;padding:22px 40px;border-top:1px solid #DDD6C8;">
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">founders@getevidly.com</div>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">(855) 384-3591</div>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;"><a href="https://getevidly.com" style="color:#6E675A;text-decoration:none;">getevidly.com</a></div>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">{{BUSINESS_ADDRESS}}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:14px;border-bottom:1px solid #DDD6C8;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:12px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#9a927f;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC company</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+    <div><a href="${unsubUrl}" style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#9a927f;text-decoration:underline;">Unsubscribe</a></div>
+  </td></tr>
+
 </table></td></tr></table></body></html>`;
 
   return { subject, html };

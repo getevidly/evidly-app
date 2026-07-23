@@ -86,11 +86,14 @@ const CSS = `
 `;
 
 /* --------------------------------------------------------------- data ----- */
+/* Sample data — mature, imperfect (~87 % fire / ~78 % food).
+   ADDITIVITY: every group total must equal the sum of the three kitchens.
+   lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336.    */
 const K = {
-  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0, checks: 0, records: 3, logs: 0, sensors: 0, total: 51, fireTotal: 15, fireCurrent: 3, foodTotal: 36, foodCurrent: 0 },
-  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
-  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
-  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 0, checks: 0, records: 1, logs: 0, sensors: 0, total: 17, fireTotal: 5,  fireCurrent: 1, foodTotal: 12, foodCurrent: 0 },
+  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 51, fireTotal: 15, fireCurrent: 13, foodTotal: 36, foodCurrent: 28 },
+  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 17, fireTotal: 5,  fireCurrent: 5,  foodTotal: 12, foodCurrent: 10 },
+  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0,  total: 17, fireTotal: 5,  fireCurrent: 4,  foodTotal: 12, foodCurrent: 9 },
+  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 17, fireTotal: 5,  fireCurrent: 4,  foodTotal: 12, foodCurrent: 9 },
 };
 
 /* ---- COLOR SYSTEM -------------------------------------------------------
@@ -110,7 +113,7 @@ const PILLAR = {
 const ALL_EQ = [
   { name: 'Walk-in Cooler',   loc: 'losangeles', locName: 'Vista Grill', temp: '38°F', lo: 33, hi: 40, val: 38 },
   { name: 'Reach-in Freezer', loc: 'losangeles', locName: 'Vista Grill', temp: '2°F',  lo: 0,  hi: 10, val: 2  },
-  { name: 'Prep Cooler',      loc: 'sandiego', locName: 'Harbor House',  temp: '40°F', lo: 33, hi: 41, val: 40 },
+  { name: 'Prep Cooler',      loc: 'losangeles', locName: 'Vista Grill', temp: '36°F', lo: 33, hi: 41, val: 36 },
 ].map((e) => {
   const span = e.hi - e.lo;
   const out  = e.val < e.lo || e.val > e.hi;
@@ -123,22 +126,22 @@ const ALL_EQ = [
 });
 
 const PROOF = [
-  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 Vista Grill \u00b7 valid 12 months',
-    detail: 'Hood cleaning certificate is on file for Vista Grill. EvidLY will remind you 60 days before renewal.', doc: 'Hood-VG.pdf' },
-  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 Harbor House \u00b7 valid 12 months',
-    detail: 'Hood cleaning certificate is on file for Harbor House. EvidLY will remind you 60 days before renewal.', doc: 'Hood-HH.pdf' },
-  { title: 'Hood cleaning certificate', meta: 'Filed \u00b7 The Anchor Room \u00b7 valid 12 months',
-    detail: 'Hood cleaning certificate is on file for The Anchor Room. EvidLY will remind you 60 days before renewal.', doc: 'Hood-AR.pdf' },
+  { title: 'Hood Cleaning Certificate', meta: 'Filed \u00b7 Vista Grill \u00b7 valid 12 months',
+    detail: 'Hood Cleaning Certificate is on file for Vista Grill. EvidLY will remind you 60 days before renewal.', doc: 'Hood-VG.pdf' },
+  { title: 'Hood Cleaning Certificate', meta: 'Filed \u00b7 Harbor House \u00b7 valid 12 months',
+    detail: 'Hood Cleaning Certificate is on file for Harbor House. EvidLY will remind you 60 days before renewal.', doc: 'Hood-HH.pdf' },
+  { title: 'Hood Cleaning Certificate', meta: 'Filed \u00b7 The Anchor Room \u00b7 valid 12 months',
+    detail: 'Hood Cleaning Certificate is on file for The Anchor Room. EvidLY will remind you 60 days before renewal.', doc: 'Hood-AR.pdf' },
 ];
 
 const UPCOMING = [
-  { pillar: 'Fire safety', loc: 'losangeles', title: 'Health Department permit renewal',        days: 12, meta: 'Los Angeles County · $412',  status: 'renew now',    p: 'food' },
-  { pillar: 'Food safety', loc: 'sandiego',   title: 'Pest control service',                    days: 18, meta: 'Ecolab',                      status: 'schedule now', p: 'food' },
-  { pillar: 'Fire safety', loc: 'sandiego',   title: 'Fire extinguisher tag renewal',           days: 21, meta: 'Kidde',                       status: 'scheduled',    p: 'fire' },
-  { pillar: 'Fire safety', loc: 'longbeach',  title: 'Hood cleaning',                           days: 27, meta: 'Cleaning Pros Plus',          status: 'scheduled',    p: 'fire' },
-  { pillar: 'Fire safety', loc: 'losangeles', title: 'Hood cleaning',                           days: 32, meta: 'Cleaning Pros Plus',          status: 'schedule now', p: 'fire' },
-  { pillar: 'Food safety', loc: 'longbeach',  title: 'Certified Food Protection Manager cert',  days: 34, meta: 'Emma Rodriguez',              status: 'in progress',  p: 'food' },
-  { pillar: 'Fire safety', loc: 'losangeles', title: 'Semi-annual suppression inspection',      days: 45, meta: 'Fire Systems Co',             status: 'schedule now', p: 'fire' },
+  { pillar: 'Food safety', loc: 'losangeles', title: 'Health Department Permit Renewal',              days: 12, meta: 'Los Angeles County',   status: 'renew now',    p: 'food' },
+  { pillar: 'Food safety', loc: 'sandiego',   title: 'Pest Control Service',                          days: 18, meta: 'Ecolab',                status: 'schedule now', p: 'food' },
+  { pillar: 'Fire safety', loc: 'sandiego',   title: 'Fire Extinguisher Tag Renewal',                 days: 21, meta: 'Kidde',                 status: 'scheduled',    p: 'fire' },
+  { pillar: 'Fire safety', loc: 'longbeach',  title: 'Kitchen Exhaust Cleaning',                      days: 27, meta: 'Cleaning Pros Plus',    status: 'scheduled',    p: 'fire' },
+  { pillar: 'Fire safety', loc: 'losangeles', title: 'Kitchen Exhaust Cleaning',                      days: 32, meta: 'Cleaning Pros Plus',    status: 'schedule now', p: 'fire' },
+  { pillar: 'Food safety', loc: 'longbeach',  title: 'Certified Food Protection Manager Certification', days: 34, meta: 'Emma Rodriguez',      status: 'in progress',  p: 'food' },
+  { pillar: 'Fire safety', loc: 'losangeles', title: 'Semi-Annual Suppression Inspection',            days: 45, meta: 'Fire Systems Co',       status: 'schedule now', p: 'fire' },
 ].map((u) => ({ ...u,
   pillar:  u.p === 'fire' ? 'Fire safety' : 'Food safety',
   action:  /now|assign|renew|submit|start/i.test(u.status),
@@ -162,10 +165,29 @@ const FIRE_RING_TIP = 'Fire coverage = fire-safety requirements with current, on
 const FOOD_RING_TIP = 'Food coverage = food-safety requirements with current, on-file evidence \u00f7 all food requirements tracked. No food-safety documentation is on file yet.';
 
 const PSE_CONDITIONS = [
-  { id: 'kec',   name: 'Kitchen exhaust cleaning', current: true  },
-  { id: 'sup',   name: 'Fire suppression',         current: false },
-  { id: 'alarm', name: 'Fire alarm',               current: false },
-  { id: 'sprk',  name: 'Fire sprinkler',           current: false },
+  // FIRE SAFEGUARDS (5)
+  { id: 'kec',   name: 'Kitchen Exhaust Cleaning', group: 'fire',  current: true  },
+  { id: 'sup',   name: 'Fire Suppression',         group: 'fire',  current: true  },
+  { id: 'sprk',  name: 'Fire Sprinkler',           group: 'fire',  current: true  },
+  { id: 'alarm', name: 'Fire Alarm',               group: 'fire',  current: true  },
+  { id: 'ext',   name: 'Fire Extinguisher',        group: 'fire',  current: false },
+  // FOOD SAFETY (6)
+  { id: 'hp',    name: 'Health Permit',             group: 'food',  current: true  },
+  { id: 'fhc',   name: 'Food Handler Cards',       group: 'food',  current: true  },
+  { id: 'fpm',   name: 'Food Protection Manager',  group: 'food',  current: true  },
+  { id: 'pest',  name: 'Pest Control',             group: 'food',  current: true  },
+  { id: 'haccp', name: 'HACCP Plan',               group: 'food',  current: false },
+  { id: 'allrg', name: 'Allergen Management',      group: 'food',  current: false },
+  // TEMPERATURE LOGS (5)
+  { id: 't_recv', name: 'Receiving',               group: 'temp',  current: true  },
+  { id: 't_cold', name: 'Cold Holding',            group: 'temp',  current: true  },
+  { id: 't_hot',  name: 'Hot Holding',             group: 'temp',  current: true  },
+  { id: 't_cool', name: 'Cooldown',                group: 'temp',  current: false },
+  { id: 't_rht',  name: 'Re-Heating',              group: 'temp',  current: true  },
+  // IF APPLICABLE (3)
+  { id: 'grease', name: 'Grease Trap',             group: 'appl',  current: true  },
+  { id: 'bflow',  name: 'Backflow Prevention',     group: 'appl',  current: false },
+  { id: 'liq',    name: 'Liquor License',          group: 'appl',  current: true  },
 ];
 
 const riskData = (loc, pseProven, hoodProven) => {
@@ -176,10 +198,10 @@ const riskData = (loc, pseProven, hoodProven) => {
   const krng = (l, h) => k(l * n) + '\u2013' + k(h * n);
   const kn = loc === 'all' ? 'Pacific Restaurant Group' : K[loc].name;
 
-  /* ---- FIRE: scales with unproven safeguards (all 4 count) ----
-     Anchored so 1 unproven (default 3/4) = baseline $600\u2013$2,600/loc.
+  /* ---- FIRE: scales with unproven safeguards (all 5 count) ----
+     Anchored so 1 unproven (default 4/5) = baseline $600\u2013$2,600/loc.
      Each additional unproven adds ~35% fire risk.                       */
-  const fireUnproven = 4 - pseProven;
+  const fireUnproven = 5 - pseProven;
   const fireScale = Math.max(0.4, 1 + (fireUnproven - 1) * 0.35);
   const fireLo = Math.round(600 * fireScale);
   const fireHi = Math.round(2600 * fireScale);
@@ -257,10 +279,11 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const [open, setOpen]             = useState(null);
   const [tip, setTip]               = useState(null);
   const [riskOpen, setRiskOpen]     = useState(false);
+  const [exploreOpen, setExploreOpen] = useState(false);
   const [pse, setPse]               = useState(PSE_CONDITIONS);
   const [shareOpen, setShareOpen]   = useState(false);
   const [copied, setCopied]         = useState(false);
-  const [disp, setDisp] = useState({ fireScore: 0, foodScore: 0, days: 0, checks: 0, records: 0, logs: 0 });
+  const [disp, setDisp] = useState({ fireScore: 0, foodScore: 0, days: 0, lapses: 0, records: 0, logs: 0 });
   const timer = useRef(null);
   const dispRef = useRef(disp);
   dispRef.current = disp;
@@ -273,7 +296,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current);
     const from = { ...dispRef.current };
-    const to = { fireScore, foodScore, days: k.days, checks: k.checks, records: k.records, logs: k.logs };
+    const to = { fireScore, foodScore, days: k.days, lapses: k.lapses, records: k.records, logs: k.logs };
     const start = Date.now(), dur = 700;
     const tick = () => {
       const t = Math.min(1, (Date.now() - start) / dur);
@@ -282,7 +305,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         fireScore: Math.round(from.fireScore + (to.fireScore - from.fireScore) * e),
         foodScore: Math.round(from.foodScore + (to.foodScore - from.foodScore) * e),
         days:      Math.round(from.days      + (to.days      - from.days)      * e),
-        checks:    Math.round(from.checks    + (to.checks    - from.checks)    * e),
+        lapses:    Math.round(from.lapses    + (to.lapses    - from.lapses)    * e),
         records:   Math.round(from.records   + (to.records   - from.records)   * e),
         logs:      Math.round(from.logs      + (to.logs      - from.logs)      * e),
       });
@@ -307,13 +330,13 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
     });
 
   const base = [
-    { big: fmt(disp.checks),  label: 'compliance checks', sub: 'this week \u00b7 automatic',
-      tipText: 'Automated compliance checks EvidLY ran across your kitchens this week \u2014 every requirement, continuously.' },
+    { big: fmt(disp.lapses),  label: 'lapses caught', sub: 'before they expired \u00b7 this year',
+      tipText: 'Lapses EvidLY caught before they became compliance gaps \u2014 expiring certifications, overdue inspections, missed renewals.' },
     { big: fmt(disp.records), label: 'records on file', sub: 'signed, dated, ready',
       tipText: 'Signed inspections, logs and certificates on file and ready to hand an inspector at any moment.' },
-    { big: k.sensors > 0 ? fmt(disp.logs) : '0', label: 'temp logs captured',
-      sub: k.sensors > 0 ? 'from sensors \u00b7 this week' : 'no sensors \u00b7 manual only',
-      tipText: 'Temperature readings captured automatically from connected sensors \u2014 the backbone of your cold-holding evidence.' },
+    { big: fmt(disp.logs), label: 'temp logs captured',
+      sub: 'sensors + manual \u00b7 this week',
+      tipText: 'Temperature readings captured from connected sensors and manual entries \u2014 the backbone of your cold-holding evidence.' },
   ];
   const daysStat = { big: fmt(disp.days), label: 'days covered', sub: 'zero missed requirements',
     tipText: 'Consecutive days this kitchen has gone with zero missed requirements \u2014 EvidLY tracks each kitchen\u2019s streak separately, so it is shown per kitchen, not across all.' };
@@ -324,13 +347,13 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const statLefts = statsRaw.map((_, i) => (((i + 0.5) / nStats) * 100).toFixed(2) + '%');
   const statTipOpen = typeof tip === 'number' && !!stats[tip];
 
-  const heroTail = `${remaining} still need documentation.`;
+  const heroTail = `${k.fireCurrent + k.foodCurrent} of ${k.total} on file.`;
   const fireRingBg = `conic-gradient(from -90deg, ${RUST} 0 ${disp.fireScore}%, #E7E0D2 ${disp.fireScore}% 100%)`;
   const foodRingBg = `conic-gradient(from -90deg, ${BLUE} 0 ${disp.foodScore}%, #E7E0D2 ${disp.foodScore}% 100%)`;
 
   const foodDone = k.foodCurrent === k.foodTotal;
   const food = {
-    status: foodDone ? 'On track' : `${k.foodTotal - k.foodCurrent} to document`,
+    status: foodDone ? 'All current' : `${k.foodTotal - k.foodCurrent} remaining`,
     pillBg: foodDone ? '#E3ECE1' : '#F7EDD3', pillFg: foodDone ? '#3E5E4B' : '#8A6412',
     dot: foodDone ? '#547A62' : '#D8A93A', bar: foodDone ? '#7FA98B' : '#D8A93A',
     width: `${k.foodTotal > 0 ? Math.round((k.foodCurrent / k.foodTotal) * 100) : 0}%`,
@@ -340,7 +363,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
 
   const fireDone = k.fireCurrent === k.fireTotal;
   const fireObj = {
-    status: fireDone ? 'On track' : `${k.fireTotal - k.fireCurrent} to document`,
+    status: fireDone ? 'All current' : `${k.fireTotal - k.fireCurrent} remaining`,
     pillBg: fireDone ? '#E3ECE1' : '#F7EDD3', pillFg: fireDone ? '#3E5E4B' : '#8A6412',
     dot: fireDone ? '#547A62' : '#D8A93A', bar: fireDone ? '#7FA98B' : '#D8A93A',
     width: `${k.fireTotal > 0 ? Math.round((k.fireCurrent / k.fireTotal) * 100) : 0}%`,
@@ -357,7 +380,8 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const pseUnproven  = pseTotal - pseProven;
   const gateOpen     = pseProven === pseTotal;
   const hoodProven   = pse.find((c) => c.id === 'kec')?.current ?? true;
-  const risk         = riskData(loc, pseProven, hoodProven);
+  const fireProven   = pse.filter((c) => c.group === 'fire' && c.current).length;
+  const risk         = riskData(loc, fireProven, hoodProven);
   const togglePse    = (id) => setPse((prev) => prev.map((c) => (c.id === id ? { ...c, current: !c.current } : c)));
   const upcoming      = loc === 'all' ? UPCOMING : UPCOMING.filter((u) => u.loc === loc);
   const upcomingScope = `${upcoming.length} IN THE NEXT 60 DAYS`;
@@ -441,29 +465,10 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         <div className="ev-hero" style={s('display:grid;grid-template-columns:1fr auto;gap:52px;align-items:center;')}>
           <div>
             <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>{todayLabel}</div>
-            <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>Your hood cleaning is on file.</h1>
+            <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>Everything in one place.</h1>
             <p style={s("font-family:'Spectral',serif;font-weight:300;font-size:21px;line-height:1.45;color:#4A5566;max-width:560px;margin:16px 0 0;")}>
               EvidLY is tracking <span style={s('color:#1C2A3A;font-weight:500;')}>{k.total} requirements</span>. {heroTail}
             </p>
-            <div style={s('display:flex;flex-wrap:wrap;margin-top:26px;max-width:660px;border:1px solid #E7DFCE;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(28,42,58,.03),0 16px 34px -30px rgba(28,42,58,.55);')}>
-              <div style={s('flex:1 1 240px;background:#F1ECE0;padding:15px 18px;')}>
-                <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6E675A;")}>The old way</div>
-                <div style={s('font-size:14px;color:#9E3B32;text-decoration:line-through;margin-top:6px;')}>Binders, spreadsheets and sticky notes nobody looked at until the inspector did.</div>
-              </div>
-              <div style={s('flex:1 1 240px;background:#EAF1E8;padding:15px 18px;border-left:1px solid #DBE3D6;')}>
-                <div style={s('display:flex;align-items:center;gap:7px;')}>
-                  <span style={s('width:15px;height:15px;border-radius:50%;background:#547A62;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:9px;')}>{'\u2713'}</span>
-                  <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#4E7059;")}>With EvidLY</span>
-                </div>
-                <div style={s('font-size:14px;color:#1C2A3A;font-weight:600;margin-top:6px;')}>Every requirement watched, every record on file.</div>
-              </div>
-            </div>
-            {gateToken && (
-              <a href={`/gate/${gateToken}`}
-                style={s("display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:10px;padding:14px 28px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;")}>
-                See what{'\u2019'}s on file {'\u2192'}
-              </a>
-            )}
           </div>
 
           <div className="ev-hero-ring" style={s('display:flex;gap:24px;align-items:flex-start;')}>
@@ -593,22 +598,37 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           <button className="ev-breakdown" onClick={() => setRiskOpen(true)} style={s("margin-top:12px;background:none;border:none;padding:0;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;color:#1C2A3A;cursor:pointer;")}>See the breakdown {'\u2192'}</button>
         </div>
 
-        {/* ---- PREVIEW CONTROL · demo toggle ---- */}
-        <div style={s('background:#fff;border:1px dashed #D8CDB4;border-radius:14px;padding:16px 20px;')}>
-          <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6E675A;")}>Preview control {'\u00b7'} not in the live dashboard</div>
-          <div style={s('font-size:12.5px;color:#1C2A3A;margin:6px 0 12px;line-height:1.5;')}>
-            Toggle a safeguard to watch the gate. Any single unproven condition holds the full ceiling {'\u2014'} proving three of four earns nothing.
-          </div>
-          {pse.map((c) => (
-            <label key={c.id} style={s('display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:13px;color:#1C2A3A;')}>
-              <input type="checkbox" checked={c.current} onChange={() => togglePse(c.id)}
-                     style={{ width: 15, height: 15, accentColor: '#1C2A3A', cursor: 'pointer' }} />
-              <span>{c.name}</span>
-              <span style={{ ...s('margin-left:auto;font-size:11px;'), color: c.current ? TONE.sage.text : TONE.red.text }}>
-                {c.current ? 'current record' : 'no current record'}
-              </span>
-            </label>
-          ))}
+        {/* ---- EXPLORE · preview control, collapsed by default ---- */}
+        <div style={s('background:#fff;border:1px dashed #D8CDB4;border-radius:14px;overflow:hidden;')}>
+          <button onClick={() => setExploreOpen(!exploreOpen)}
+            style={s("width:100%;text-align:left;background:none;border:none;padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Instrument Sans',sans-serif;")}>
+            <span style={s('font-size:13px;color:#1C2A3A;')}>Toggle any requirement to see how it moves your risk</span>
+            <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E675A;white-space:nowrap;"))}>preview control {'\u00b7'} not in the live dashboard</span>
+          </button>
+          {exploreOpen && (
+            <div style={s('padding:0 20px 16px;')}>
+              {[
+                { key: 'fire', label: 'Fire Safeguards', color: '#8A4A28' },
+                { key: 'food', label: 'Food Safety',     color: '#2C5570' },
+                { key: 'temp', label: 'Temperature Logs', color: '#6E675A' },
+                { key: 'appl', label: 'If Applicable',   color: '#6E675A' },
+              ].map((g) => (
+                <div key={g.key} style={s(`margin-bottom:${g.key === 'appl' ? '0' : '14'}px;`)}>
+                  <div style={s(`font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:${g.color};margin-bottom:6px;${g.key !== 'fire' ? 'margin-top:4px;' : ''}`)}>{g.label}</div>
+                  {pse.filter((c) => c.group === g.key).map((c) => (
+                    <label key={c.id} style={{ ...s('display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:13px;color:#1C2A3A;'), paddingLeft: g.key === 'temp' ? 16 : 0 }}>
+                      <input type="checkbox" checked={c.current} onChange={() => togglePse(c.id)}
+                             style={{ width: 15, height: 15, accentColor: '#1C2A3A', cursor: 'pointer' }} />
+                      <span>{c.name}</span>
+                      <span style={{ ...s('margin-left:auto;font-size:11px;'), color: c.current ? TONE.sage.text : TONE.red.text }}>
+                        {c.current ? 'current record' : 'no current record'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* --------------------------------------------------- risk drawer */}
@@ -710,32 +730,19 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           )}
         </div>
 
-        {/* ------------------------------------------- where to start */}
-        <div style={s('display:flex;flex-direction:column;gap:14px;')}>
-          <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>Where to start</div>
-
-          <div style={s('background:#FCFAF4;border:1px solid #E9E0CC;border-radius:14px;padding:24px 26px;')}>
-            <div style={s('display:flex;align-items:center;gap:9px;flex-wrap:wrap;')}>
-              <span style={s('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;background:#F7EDD3;color:#8A6412;')}>GET STARTED</span>
-            </div>
-            <h3 style={s("font-family:'Spectral',serif;font-weight:600;font-size:23px;color:#1C2A3A;margin:14px 0 0;")}>{remaining} requirements still need documentation</h3>
-            <p style={s('font-size:14.5px;line-height:1.6;color:#4A5566;margin:9px 0 0;max-width:560px;')}>
-              Your hood cleaning certificates are on file {'\u2014'} that{'\u2019'}s a great start. EvidLY is tracking the remaining fire-safety and food-safety requirements across your kitchens. Upload documentation as you have it, and watch your coverage grow.
-            </p>
-            <div style={s('display:flex;gap:16px;margin-top:18px;')}>
-              <div style={s('flex:1;background:#F4E5DA;border-radius:10px;padding:14px 16px;')}>
-                <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8A4A28;")}>Fire safety</div>
-                <div style={s("font-family:'Spectral',serif;font-size:22px;font-weight:500;color:#1C2A3A;margin-top:6px;")}>{k.fireTotal - k.fireCurrent} remaining</div>
-                <div style={s('font-size:12px;color:#5F6875;margin-top:3px;')}>{k.fireCurrent} of {k.fireTotal} documented</div>
-              </div>
-              <div style={s('flex:1;background:#E2ECF2;border-radius:10px;padding:14px 16px;')}>
-                <div style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#2C5570;")}>Food safety</div>
-                <div style={s("font-family:'Spectral',serif;font-size:22px;font-weight:500;color:#1C2A3A;margin-top:6px;")}>{k.foodTotal - k.foodCurrent} remaining</div>
-                <div style={s('font-size:12px;color:#5F6875;margin-top:3px;')}>{k.foodCurrent} of {k.foodTotal} documented</div>
-              </div>
+        {/* ---- SLIM GATE BAR ---- */}
+        {gateToken && (
+          <div style={s('background:#1C2A3A;border-radius:14px;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;')}>
+            <span style={s("font-family:'Spectral',serif;font-size:16px;font-weight:500;color:#EDE7DA;")}>This is the sample. Your record is ready to view.</span>
+            <div style={s('display:flex;align-items:center;gap:14px;')}>
+              <a href={`/gate/${gateToken}`}
+                style={s("display:inline-flex;align-items:center;gap:8px;background:#B24A2E;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;")}>
+                See what{'\u2019'}s on file {'\u2192'}
+              </a>
+              <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,0.5);white-space:nowrap;")}>View-only {'\u00b7'} no account</span>
             </div>
           </div>
-        </div>
+        )}
 
         {/* -------------------------------------------------- what's monitored */}
         <div style={s('display:flex;flex-direction:column;gap:16px;')}>
@@ -919,11 +926,17 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           )}
 
           {!hasSensors && (
-            <div style={s('background:#fff;border:1px dashed #DDD2BB;border-radius:16px;padding:46px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;')}>
-              <span style={s('width:46px;height:46px;border-radius:12px;background:#F3EAD6;display:inline-flex;align-items:center;justify-content:center;font-size:20px;')}>{'\ud83c\udf21\ufe0f'}</span>
-              <div style={s("font-family:'Spectral',serif;font-size:21px;font-weight:600;color:#1C2A3A;")}>No sensors at {k.name} yet</div>
-              <div style={s('font-size:14px;color:#5F6875;max-width:440px;line-height:1.55;')}>Staff are logging temperatures manually. Connect sensors to watch them live here and auto-build your cold-holding evidence.</div>
-              <button className="ev-dark" style={s("margin-top:8px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:9px;padding:11px 18px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;")}>Connect sensors {'\u2192'}</button>
+            <div style={s('background:#fff;border:1px solid #EEE7D9;border-radius:16px;padding:32px 28px;display:flex;flex-direction:column;gap:14px;')}>
+              <div style={s('display:flex;align-items:center;gap:12px;')}>
+                <span style={s('width:40px;height:40px;border-radius:10px;background:#E3ECE1;display:inline-flex;align-items:center;justify-content:center;font-size:18px;')}>{'\ud83c\udf21\ufe0f'}</span>
+                <div>
+                  <div style={s("font-family:'Spectral',serif;font-size:18px;font-weight:600;color:#1C2A3A;")}>Manual Logging</div>
+                  <div style={s('font-size:12.5px;color:#5F6875;margin-top:2px;')}>Staff log temperatures manually {'\u2014'} same record, same proof.</div>
+                </div>
+              </div>
+              <div style={s('font-size:13.5px;color:#4A5566;line-height:1.6;')}>
+                Receiving, cold holding, hot holding, cooldown, and re-heating {'\u2014'} every reading is timestamped and stored, whether it comes from a sensor or a staff entry. The evidence is identical.
+              </div>
             </div>
           )}
         </div>
@@ -933,7 +946,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           <div style={s('text-align:center;margin-top:10px;')}>
             <a className="ev-cta" href={gateToken ? `/gate/${gateToken}` : '/onboarding'}
               style={s("display:inline-flex;align-items:center;gap:10px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:12px;padding:16px 36px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .16s ease;")}>
-              Check your records {'\u2192'}
+              See what{'\u2019'}s on file {'\u2192'}
             </a>
             <div style={s("margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.04em;")}>
               Free to view {'\u00b7'} no card required
