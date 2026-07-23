@@ -377,10 +377,10 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const programScope = loc === 'all' ? '2 PROGRAMS \u00b7 3 KITCHENS' : '2 PROGRAMS \u00b7 ' + k.name.toUpperCase();
   const pseTotal     = pse.length;
   const pseProven    = pse.filter((c) => c.current).length;
-  const pseUnproven  = pseTotal - pseProven;
-  const gateOpen     = pseProven === pseTotal;
   const hoodProven   = pse.find((c) => c.id === 'kec')?.current ?? true;
   const fireProven   = pse.filter((c) => c.group === 'fire' && c.current).length;
+  const fireUnproven = 5 - fireProven;
+  const gateOpen     = fireProven === 5;
   const risk         = riskData(loc, fireProven, hoodProven);
   const togglePse    = (id) => setPse((prev) => prev.map((c) => (c.id === id ? { ...c, current: !c.current } : c)));
   const upcoming      = loc === 'all' ? UPCOMING : UPCOMING.filter((u) => u.loc === loc);
@@ -527,7 +527,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           <div style={s('display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;')}>
             <span style={s("font-family:'Spectral',serif;font-size:19px;font-weight:600;color:#1C2A3A;")}>What's at risk</span>
             <span style={{ ...s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;"), color: gateOpen ? TONE.sage.text : '#6E675A' }}>
-              {gateOpen ? `ALL ${pseTotal} CONDITIONS CURRENT` : `${pseProven} OF ${pseTotal} CONDITIONS CURRENT`}
+              {gateOpen ? 'ALL 5 FIRE SAFEGUARDS CURRENT' : `${fireProven} OF 5 FIRE SAFEGUARDS CURRENT`}
             </span>
           </div>
           <div style={s('font-size:12px;color:#6E675A;margin-top:4px;')}>{risk.segment} {'\u00b7'} based on your restaurant type</div>
@@ -577,16 +577,16 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             <div style={{ ...s('margin-top:6px;font-size:12px;line-height:1.5;'), color: gateOpen ? TONE.sage.text : TONE.red.text }}>
               {gateOpen
                 ? 'Every safeguard your policy names has a current, sealed record. This ground for denial is closed.'
-                : `${pseUnproven === 1 ? "One safeguard your policy names doesn't have a current record" : `${pseUnproven} safeguards your policy names don't have a current record`} \u2014 so this stands in full. Three of four earns nothing.`}
+                : `${fireUnproven === 1 ? "One safeguard your policy names doesn't have a current record" : `${fireUnproven} safeguards your policy names don't have a current record`} \u2014 so this stands in full. Four of five earns nothing.`}
             </div>
 
             <div style={{ ...s('margin-top:12px;padding-top:12px;display:flex;justify-content:space-between;align-items:baseline;'),
-                          borderTop: `1px solid ${gateOpen ? '#BDD3C1' : '#E5B9B2'}` }}>
-              <span style={{ ...s('font-size:13px;'), color: gateOpen ? TONE.sage.text : TONE.red.text }}>{risk.food.ceilingLabel}</span>
-              <span style={{ ...s('font-size:15px;font-weight:600;'), color: gateOpen ? TONE.sage.text : TONE.red.text }}>{risk.food.ceiling}</span>
+                          borderTop: '1px solid #E5B9B2' }}>
+              <span style={{ ...s('font-size:13px;'), color: TONE.red.text }}>{risk.food.ceilingLabel}</span>
+              <span style={{ ...s('font-size:15px;font-weight:600;'), color: TONE.red.text }}>{risk.food.ceiling}</span>
             </div>
-            <div style={{ ...s('margin-top:6px;font-size:12px;line-height:1.5;'), color: gateOpen ? TONE.sage.text : TONE.red.text }}>
-              Your records are your defense here. They don't take this off the table.
+            <div style={{ ...s('margin-top:6px;font-size:12px;line-height:1.5;'), color: TONE.red.text }}>
+              Your records are your defense here. They don{'\u2019'}t take this off the table.
             </div>
           </div>
 
@@ -603,7 +603,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
           <button onClick={() => setExploreOpen(!exploreOpen)}
             style={s("width:100%;text-align:left;background:none;border:none;padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Instrument Sans',sans-serif;")}>
             <span style={s('font-size:13px;color:#1C2A3A;')}>Toggle any requirement to see how it moves your risk</span>
-            <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E675A;white-space:nowrap;"))}>preview control {'\u00b7'} not in the live dashboard</span>
+            <span style={s("font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E675A;white-space:nowrap;")}>preview control {'\u00b7'} not in the live dashboard</span>
           </button>
           {exploreOpen && (
             <div style={s('padding:0 20px 16px;')}>
