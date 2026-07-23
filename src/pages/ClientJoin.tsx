@@ -689,6 +689,21 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
               <div className="text-center text-[11px] mt-2" style={{ color: MUTED }}>
                 {'\u2192'} Your Cleaning Pros Plus hood cleaning record
               </div>
+
+              {/* Claim CTA — activates the account */}
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className="w-full text-sm py-2.5 mt-4 font-semibold inline-flex items-center justify-center gap-2 border"
+                style={{
+                  backgroundColor: canSubmit ? '#fff' : '#fff',
+                  color: canSubmit ? NAVY : MUTED,
+                  borderColor: canSubmit ? NAVY : LINE,
+                  cursor: canSubmit ? 'pointer' : 'not-allowed',
+                  opacity: canSubmit ? 1 : 0.55,
+                }}>
+                {submitting ? 'Setting up\u2026' : <>Set up my account <ArrowRight size={13} /></>}
+              </button>
               </>)}
 
             </div>
