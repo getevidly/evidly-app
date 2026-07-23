@@ -27,6 +27,7 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/k2c': 'Growth',
   '/admin/scoretable': 'Growth',
   '/admin/support': 'Operations',
+  '/admin/ops/vendor-matching': 'Operations',
   '/admin/remote-connect': 'Operations',
   '/admin/users': 'Users',
   '/admin/staff': 'Users',

@@ -58,6 +58,20 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // ── Authoritative NFPA citation from registry (CA only) ──────────
+    // pl_standards_registry is a California registry. For non-CA states
+    // we emit the bare standard ("NFPA 96") with NO edition — a missing
+    // edition is safe; a wrong edition is a cross-examination question.
+    const { data: hoodRow } = await supabase
+      .from("pl_standards_registry")
+      .select("standard, edition")
+      .eq("topic", "hood_cleaning")
+      .single();
+    const caCitation = hoodRow
+      ? `${hoodRow.standard} (${hoodRow.edition})`
+      : "NFPA 96";
+    const bareCitation = "NFPA 96";
+
     const jobStart = Date.now();
     const isTimedOut = () => Date.now() - jobStart > MAX_RUNTIME_MS;
 
@@ -188,7 +202,7 @@ Deno.serve(async (req: Request) => {
       const { data: overdueServices } = await supabase
         .from("vendor_service_records")
         .select(
-          "id, organization_id, service_type, service_due_date, nfpa_frequency, locations(name), vendors(name)",
+          "id, organization_id, service_type, service_due_date, nfpa_frequency, locations(name, state), vendors(name)",
         )
         .in("status", ["upcoming", "overdue"])
         .lt("service_due_date", todayStr)
@@ -200,16 +214,22 @@ Deno.serve(async (req: Request) => {
 
           const locationName =
             (record as any).locations?.name || "Unknown Location";
+          const locState: string | undefined =
+            (record as any).locations?.state ?? undefined;
           const vendorName =
             (record as any).vendors?.name || "Unknown Vendor";
           const dueDate = new Date(record.service_due_date + "T00:00:00Z");
           const daysOverdue = Math.floor(
             (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
           );
+
+          // Resolve citation: registry edition for CA, bare standard otherwise
+          const hoodCitation = locState === "CA" ? caCitation : bareCitation;
+
           const frequency =
             NFPA_FREQUENCIES[record.nfpa_frequency] ||
             record.nfpa_frequency ||
-            "Per NFPA 96-2024";
+            `Per ${hoodCitation}`;
 
           const { data: orgUsers } = await supabase
             .from("user_profiles")
@@ -229,7 +249,7 @@ Deno.serve(async (req: Request) => {
                   <div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:16px;margin:16px 0;">
                     <p style="margin:0 0 4px;color:#991b1b;"><strong>Last service:</strong> ${fmtDate(record.service_due_date)}</p>
                     <p style="margin:0 0 4px;color:#991b1b;"><strong>Due date:</strong> ${fmtDate(record.service_due_date)} (${daysOverdue} days ago)</p>
-                    <p style="margin:0;color:#991b1b;"><strong>NFPA 96-2024 Table 12.4 frequency:</strong> ${esc(frequency)}</p>
+                    <p style="margin:0;color:#991b1b;"><strong>${hoodCitation} Table 12.4 frequency:</strong> ${esc(frequency)}</p>
                   </div>
                   <p>Overdue fire safety services may represent potential subrogation exposure. Consult your carrier for guidance.</p>
                 `,

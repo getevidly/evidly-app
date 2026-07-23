@@ -55,6 +55,14 @@ CREATE TABLE IF NOT EXISTS drift_alert_log (
   detected_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Reconcile: prod drift_alert_log may have been created by an earlier migration
+-- with different column names. Add columns the trigger function needs (additive).
+ALTER TABLE drift_alert_log ADD COLUMN IF NOT EXISTS config_changed TEXT;
+ALTER TABLE drift_alert_log ADD COLUMN IF NOT EXISTS old_hash TEXT;
+ALTER TABLE drift_alert_log ADD COLUMN IF NOT EXISTS new_hash TEXT;
+ALTER TABLE drift_alert_log ADD COLUMN IF NOT EXISTS changed_by TEXT;
+ALTER TABLE drift_alert_log ADD COLUMN IF NOT EXISTS detected_at TIMESTAMPTZ DEFAULT now();
+
 CREATE INDEX IF NOT EXISTS idx_drift_alerts_jurisdiction
   ON drift_alert_log(jurisdiction_id);
 CREATE INDEX IF NOT EXISTS idx_drift_alerts_detected
@@ -134,35 +142,47 @@ COMMENT ON TABLE support_tickets IS
 -- Auto-increment ticket number sequence
 CREATE SEQUENCE IF NOT EXISTS ticket_number_seq START 1000;
 
--- Function to generate ticket numbers
-CREATE OR REPLACE FUNCTION generate_ticket_number()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.ticket_number := 'TKT-' || LPAD(nextval('ticket_number_seq')::text, 6, '0');
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Ticket number generation — skip if function already exists with incompatible signature
+DO $$ BEGIN
+  CREATE OR REPLACE FUNCTION generate_ticket_number()
+  RETURNS TRIGGER AS $fn$
+  BEGIN
+    NEW.ticket_number := 'TKT-' || LPAD(nextval('ticket_number_seq')::text, 6, '0');
+    RETURN NEW;
+  END;
+  $fn$ LANGUAGE plpgsql;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
 DROP TRIGGER IF EXISTS trg_ticket_number ON support_tickets;
-CREATE TRIGGER trg_ticket_number
-  BEFORE INSERT ON support_tickets
-  FOR EACH ROW
-  EXECUTE FUNCTION generate_ticket_number();
+DO $$ BEGIN
+  CREATE TRIGGER trg_ticket_number
+    BEFORE INSERT ON support_tickets
+    FOR EACH ROW
+    EXECUTE FUNCTION generate_ticket_number();
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
--- Auto-update updated_at
-CREATE OR REPLACE FUNCTION update_ticket_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at := now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Auto-update updated_at — skip if function already exists with incompatible signature
+DO $$ BEGIN
+  CREATE OR REPLACE FUNCTION update_ticket_timestamp()
+  RETURNS TRIGGER AS $fn$
+  BEGIN
+    NEW.updated_at := now();
+    RETURN NEW;
+  END;
+  $fn$ LANGUAGE plpgsql;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
 DROP TRIGGER IF EXISTS trg_ticket_updated ON support_tickets;
-CREATE TRIGGER trg_ticket_updated
-  BEFORE UPDATE ON support_tickets
-  FOR EACH ROW
-  EXECUTE FUNCTION update_ticket_timestamp();
+DO $$ BEGIN
+  CREATE TRIGGER trg_ticket_updated
+    BEFORE UPDATE ON support_tickets
+    FOR EACH ROW
+    EXECUTE FUNCTION update_ticket_timestamp();
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
 
 -- ── TABLE 4: drift_monitor_executions ──────────────────────

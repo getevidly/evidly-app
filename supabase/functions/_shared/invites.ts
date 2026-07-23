@@ -181,20 +181,12 @@ export function buildClientInviteEmail(
     </table>
     <div style="text-align:center;padding:14px 0 0;">
       <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
-        <td align="center" style="background:#FFFFFF;border:1.5px solid #1C2A3A;">
-          <a href="https://app.getevidly.com/demo" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1C2A3A;">Preview the full dashboard &#8599;</a>
+        <td align="center" style="background:#1C2A3A;">
+          <a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">Preview the Dashboard &middot; See What&rsquo;s On File &#8594;</a>
         </td></tr></table>
     </div>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 0 0;line-height:1.5;">Opens in a new tab &mdash; your invite stays open here. When you&rsquo;re ready, use <span style="color:#1C2A3A;font-weight:bold;">See what&rsquo;s on file</span> below.</div>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;text-align:center;padding:8px 0 0;line-height:1.5;">Your dashboard preview and full compliance checklist, ready to view.</div>
   </td></tr>
-  <!-- CTA -->
-  <tr><td class="p40" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;">
-    <div style="font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#1C2A3A;">${firstName}, a binder shows you tried. EvidLY is evidence.</div>
-    <p style="margin:8px 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:1.6;color:#5F6875;">Set a password to open your account &mdash; starting with the NFPA 96 cert Cleaning Pros Plus already sealed for you. From there, EvidLY identifies what your county and fire authority expect next, and flags what&rsquo;s missing.</p>
-    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;">See what&rsquo;s on file &#8594;</a></td>
-    </tr></table>
-    <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B94A0;margin-top:12px;">Or paste this into your browser: ${inviteLink}</div></td></tr>
   <!-- FOOTER -->
   <tr><td class="p40" style="background:#FBF9F2;padding:22px 40px;border-top:1px solid #EEE7D9;">
     <div style="font-family:Georgia,serif;font-weight:bold;font-size:13px;color:#8A6412;">Predict the failure, reduce the cost.</div>

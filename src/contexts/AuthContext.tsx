@@ -142,14 +142,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const [{ data: org }, { data: locations }] = await Promise.all([
-          supabase.from('organizations').select('name, subscription_tier').eq('id', orgId).maybeSingle(),
+          supabase.from('organizations').select('name, plan_tier').eq('id', orgId).maybeSingle(),
           supabase.from('locations').select('name, jurisdiction_id, county').eq('organization_id', orgId),
         ]);
 
         syncOrgToIntelligence({
           orgId,
           orgName: org?.name || '',
-          subscriptionTier: org?.subscription_tier || 'founder',
+          subscriptionTier: org?.plan_tier || 'founder',
           jurisdictionIds: (locations || []).map((l: any) => l.jurisdiction_id).filter(Boolean),
           locationCounties: (locations || []).map((l: any) => l.county).filter(Boolean),
           locationNames: (locations || []).map((l: any) => l.name),

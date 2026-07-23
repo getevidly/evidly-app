@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { getInviteStatus } from '../../lib/inviteStatus';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
@@ -61,6 +62,7 @@ interface UserRow {
   invite_source?: 'client' | 'team'; // which table the invite came from
   team_invite_token?: string; // token for team invite resend
   team_invite_url?: string; // full URL for team invite resend
+  invite_viewed_at?: string | null;
 }
 
 export default function AdminUsers() {
@@ -124,23 +126,23 @@ export default function AdminUsers() {
         // 1. Check evidly_client_invites (client/owner invites)
         const { data: clientInvRows } = await supabase
           .from('evidly_client_invites')
-          .select('id, email, last_reminded_at, reminder_count')
+          .select('id, email, last_reminded_at, reminder_count, viewed_at')
           .in('email', invitedEmails)
           .eq('status', 'pending');
 
         const clientInvMap = new Map(
-          (clientInvRows || []).map((r: { id: string; email: string; last_reminded_at: string | null; reminder_count: number }) => [r.email, r]),
+          (clientInvRows || []).map((r: { id: string; email: string; last_reminded_at: string | null; reminder_count: number; viewed_at: string | null }) => [r.email, r]),
         );
 
         // 2. Check user_invitations (team invites)
         const { data: teamInvRows } = await supabase
           .from('user_invitations')
-          .select('id, email, token, created_at')
+          .select('id, email, token, created_at, viewed_at')
           .in('email', invitedEmails)
           .eq('status', 'pending');
 
         const teamInvMap = new Map(
-          (teamInvRows || []).map((r: { id: string; email: string; token: string; created_at: string }) => [r.email, r]),
+          (teamInvRows || []).map((r: { id: string; email: string; token: string; created_at: string; viewed_at: string | null }) => [r.email, r]),
         );
 
         // 3. Merge — prefer client invite if both exist (owner-seed takes precedence)
@@ -154,12 +156,14 @@ export default function AdminUsers() {
               p.last_reminded_at = clientInv.last_reminded_at;
               p.reminder_count = clientInv.reminder_count;
               p.invite_source = 'client';
+              p.invite_viewed_at = clientInv.viewed_at;
             } else if (teamInv) {
               p.invite_id = teamInv.id;
               p.last_reminded_at = null; // user_invitations doesn't track this
               p.reminder_count = 0;
               p.invite_source = 'team';
               p.team_invite_token = teamInv.token;
+              p.invite_viewed_at = teamInv.viewed_at;
             }
           }
         });
@@ -387,7 +391,10 @@ export default function AdminUsers() {
 
   // ── Helpers ──
   const getStatus = (u: UserRow) => {
-    if (u.status === 'invited') return { label: 'Invited', twText: 'text-blue-600', twBg: 'bg-blue-50' };
+    if (u.status === 'invited') {
+      const inv = getInviteStatus('pending', u.invite_viewed_at);
+      return { label: inv.label, twText: inv.twText, twBg: inv.twBg };
+    }
     if (u.is_suspended || u.status === 'suspended') return { label: 'Suspended', twText: 'text-red-600', twBg: 'bg-red-50' };
     if ((u.locked_until && new Date(u.locked_until) > new Date()) || u.status === 'locked') return { label: 'Locked', twText: 'text-amber-500', twBg: 'bg-amber-50' };
     return { label: 'Active', twText: 'text-emerald-500', twBg: 'bg-emerald-50' };

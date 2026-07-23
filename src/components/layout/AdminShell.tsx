@@ -78,6 +78,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Configure',           path: '/admin/configure',          perm: 'canConfigure' },
       { label: 'Support Tickets',     path: '/admin/support',            perm: 'canSupportTickets' },
       { label: 'Billing',             path: '/admin/billing',            perm: 'canBilling' },
+      { label: 'Vendor Matching',    path: '/admin/ops/vendor-matching' },
     ],
   },
   {

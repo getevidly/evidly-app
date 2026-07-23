@@ -60,9 +60,9 @@ Deno.serve(async (req: Request) => {
         "policies_uploaded_at, policies_read_at, cc_on_file_at, loa_signed_at, " +
         "account_configured_at, training_completed_at, " +
         "demo_completed_by, training_completed_by, " +
-        "first_charge_at, created_at",
+        "first_charge_at",
       )
-      .order("created_at", { ascending: false });
+      .order("invited_at", { ascending: false, nullsFirst: false });
 
     if (jErr) {
       console.error("[onboarding-queue] journey select failed", jErr.message);

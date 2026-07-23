@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Send, RefreshCw } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { getInviteStatus, fmtDate } from '../lib/inviteStatus';
 
 const NAVY = '#1E2D4D';
 const CREATE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client-invite`;
@@ -17,7 +18,7 @@ const ROLES = [
 interface Org { id: string; name: string; state: string | null; city: string | null; primary_contact_name: string | null; primary_contact_email: string | null; }
 interface Invite {
   id: string; organization_id: string | null; organization_name: string | null; contact_name: string; email: string;
-  status: string; client_role: string; reminder_count: number; created_at: string; accepted_at: string | null;
+  status: string; client_role: string; reminder_count: number; created_at: string; accepted_at: string | null; viewed_at: string | null;
 }
 
 export function ClientInviteForm() {
@@ -49,7 +50,7 @@ export function ClientInviteForm() {
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
       .from('evidly_client_invites')
-      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at, accepted_at')
+      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at, accepted_at, viewed_at')
       .order('created_at', { ascending: false })
       .limit(50);
     if (!data) return;
@@ -160,14 +161,8 @@ export function ClientInviteForm() {
     setRemindingId(null);
   }
 
-  const badge = (status: string) => {
-    const map: Record<string, { bg: string; fg: string; label: string }> = {
-      pending:  { bg: '#E0EDFA', fg: '#1A5296', label: 'Invited' },
-      accepted: { bg: '#E1F5EE', fg: '#0F6E56', label: 'Accepted' },
-      expired:  { bg: '#F1EFE8', fg: '#5F5E5A', label: 'Expired' },
-      revoked:  { bg: '#FCEBEB', fg: '#A32D2D', label: 'Revoked' },
-    };
-    const c = map[status] || map.expired;
+  const badge = (status: string, viewedAt?: string | null) => {
+    const c = getInviteStatus(status, viewedAt);
     return <span style={{ background: c.bg, color: c.fg, fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 20 }}>{c.label}</span>;
   };
 
@@ -229,12 +224,13 @@ export function ClientInviteForm() {
                   <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.organization_name || inv.contact_name}</p>
                   <p className="text-xs text-[#1E2D4D]/60 truncate">{inv.email} · {inv.client_role.replace(/_/g, ' ')}{inv.reminder_count > 0 ? ` · reminded ${inv.reminder_count}×` : ''}</p>
                   <p className="text-[11px] text-[#1E2D4D]/45 mt-0.5">
-                    Sent {new Date(inv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    {inv.accepted_at && <> · Accepted {new Date(inv.accepted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</>}
+                    Sent {fmtDate(inv.created_at)}
+                    {inv.viewed_at && <> · Viewed {fmtDate(inv.viewed_at)}</>}
+                    {inv.accepted_at && <> · Accepted {fmtDate(inv.accepted_at)}</>}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 flex-none">
-                  {badge(inv.status)}
+                  {badge(inv.status, inv.viewed_at)}
                   {inv.status === 'pending' && (
                     <button onClick={() => handleRemind(inv.id)} disabled={remindingId === inv.id} className="text-xs flex items-center gap-1" style={{ color: NAVY }}>
                       <RefreshCw size={12} />{remindingId === inv.id ? '…' : 'Remind'}

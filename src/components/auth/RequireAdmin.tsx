@@ -6,7 +6,7 @@
  * Unauthenticated users → redirect to /login.
  * Logs unauthorized attempts to platform_audit_log.
  */
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
@@ -18,6 +18,7 @@ export function RequireAdmin() {
   const { user, isAdmin, loading } = useAuth();
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
+  const location = useLocation();
   const { logEvent } = useAuditLog();
   const loggedRef = useRef(false);
 
@@ -38,7 +39,7 @@ export function RequireAdmin() {
   if (loading) return null;
 
   // Not authenticated → login
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
 
   // Demo mode → allow through (admin pages have useDemoGuard for write protection)
   if (isDemoMode) return <Outlet />;

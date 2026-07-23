@@ -69,21 +69,6 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
     }
   }, [location.pathname, isDemoMode]);
 
-  // Load Zendesk Web Widget (hidden launcher — opened programmatically from Help page)
-  useEffect(() => {
-    if (document.getElementById('ze-snippet')) return;
-    const script = document.createElement('script');
-    script.id = 'ze-snippet';
-    script.src = 'https://static.zdassets.com/ekr/snippet.js?key=REPLACE_WITH_ZENDESK_KEY';
-    script.async = true;
-    script.onload = () => {
-      if (typeof window.zE === 'function') {
-        window.zE('messenger', 'hide');
-        window.zE('messenger:set', 'locale', 'en');
-      }
-    };
-    document.head.appendChild(script);
-  }, []);
 
   return (
     <div className="h-screen flex flex-col" style={{ background: 'var(--bg-main)', paddingTop: isEmulating ? '44px' : undefined }}>

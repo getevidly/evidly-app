@@ -58,8 +58,33 @@ Deno.serve(async (req) => {
     .eq("organization_id", orgId);
   if (inErr) return json({ error: "failed to resolve intakes" }, 500);
   const intakeIds = (intakes ?? []).map((i: any) => i.id);
+
+  // ── Self-heal: claim orphan intakes from the public funnel ──────────
+  // A prospect intake has organization_id = null until linked. The user proved
+  // control of this email by confirming their account (the invite was sent to
+  // the intake's contact_email), so an exact match is a safe claim.
   if (intakeIds.length === 0) {
-    return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
+    const userEmail = userData.user.email?.toLowerCase();
+    if (userEmail) {
+      const { data: orphans } = await admin
+        .from("policy_lens_intakes")
+        .select("id")
+        .is("organization_id", null)
+        .ilike("contact_email", userEmail);
+
+      if (orphans && orphans.length > 0) {
+        const ids = orphans.map((o: any) => o.id);
+        await admin
+          .from("policy_lens_intakes")
+          .update({ organization_id: orgId })
+          .in("id", ids);
+        intakeIds.push(...ids);
+      }
+    }
+
+    if (intakeIds.length === 0) {
+      return json({ ok: true, status: "no_policy", findings: [], coverage_detail: null }, 200);
+    }
   }
 
   // Runs link to intakes directly via intake_id. Documents are optional (extract runs off

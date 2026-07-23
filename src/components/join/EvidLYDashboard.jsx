@@ -458,6 +458,12 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                 <div style={s('font-size:14px;color:#1C2A3A;font-weight:600;margin-top:6px;')}>Every requirement watched, every record on file.</div>
               </div>
             </div>
+            {gateToken && (
+              <a href={`/gate/${gateToken}`}
+                style={s("display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:#1C2A3A;color:#F5EFE4;border:none;border-radius:10px;padding:14px 28px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;")}>
+                See what{'\u2019'}s on file {'\u2192'}
+              </a>
+            )}
           </div>
 
           <div className="ev-hero-ring" style={s('display:flex;gap:24px;align-items:flex-start;')}>

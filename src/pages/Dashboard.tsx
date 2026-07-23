@@ -6,11 +6,9 @@ import { WelcomeModal } from '../components/WelcomeModal';
 import { PushOptInBanner } from '../components/PushOptInBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { DashboardSplash } from '../components/dashboard/DashboardSplash';
-import { DashboardComposition } from '../components/dashboard/DashboardComposition';
-import { DashboardWelcome } from '../components/dashboard/DashboardWelcome';
+import { DashboardView } from '../components/dashboard/DashboardView';
 import { DashboardLocationProvider } from '../contexts/DashboardLocationContext';
 import { PortfolioDataProvider } from '../contexts/PortfolioDataContext';
-import { LocationSwitcher } from '../components/dashboard/LocationSwitcher';
 
 export function Dashboard() {
   const { user, profile } = useAuth();
@@ -49,9 +47,7 @@ export function Dashboard() {
           )}
           <SignalAlertBanner />
           {!showWelcome && <PushOptInBanner />}
-          <DashboardWelcome />
-          <LocationSwitcher />
-          <DashboardComposition />
+          <DashboardView />
         </div>
       </PortfolioDataProvider>
     </DashboardLocationProvider>

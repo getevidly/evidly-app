@@ -126,12 +126,13 @@ Deno.serve(async (req: Request) => {
       try {
         await sendEmail({
           to: userEmail,
-          subject: "Your documents are in — Policy Lens review underway",
+          subject: "Your policy is in — Policy Lens is reading it",
           html: buildEmailHtml({
             recipientName: userName,
             bodyHtml: `
-              <p>Your documents are uploaded and your Policy Lens review is underway. Our team is reading your policy now — identifying the provisions that govern your kitchen, and flagging anything missing or overdue.</p>
-              <p>We'll send your results when the review is complete. Need to add anything in the meantime? Just reply.</p>
+              <p>Your policy is uploaded and Policy Lens is reading it now — identifying the provisions that govern your kitchen, and flagging anything missing or overdue.</p>
+              <p>We'll send your results when the reading is complete. Need to add anything in the meantime? Just reply.</p>
+              <p><em>Policy Lens reads the policy. Your agent evaluates the coverage — it identifies and flags, it never advises.</em></p>
               <p>— Arthur Haggerty, Founder &amp; CEO<br>EvidLY</p>`,
           }),
         });

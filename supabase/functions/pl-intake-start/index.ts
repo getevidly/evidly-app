@@ -340,6 +340,9 @@ Deno.serve(async (req: Request) => {
       contact_name: body.contact_name || null,
       contact_email: body.contact_email || null,
       contact_phone: body.contact_phone || null,
+      street_address: body.street_address || null,
+      city: body.city || null,
+      state: body.state || null,
       zip: body.zip || null,
       county: body.county || null,
       agent_name: body.agent_name || null,
@@ -430,13 +433,13 @@ Deno.serve(async (req: Request) => {
 
         const clientEmailResult = await sendEmail({
           to: body.client_email,
-          subject: "Authorization required — EvidLY Policy Review",
+          subject: "Authorization required — EvidLY Policy Lens",
           html: buildEmailHtml({
             recipientName: body.client_name,
             bodyHtml: `
               <p>Your insurance agent <strong>${body.agent_name}</strong> from
               <strong>${body.agency_name}</strong> has requested authorization
-              to review your commercial property insurance policy through EvidLY.</p>
+              for EvidLY to read your commercial property insurance policy.</p>
               <p>Please review the authorization details and sign electronically
               by clicking the button below.</p>`,
             ctaText: "Review & Sign Authorization",

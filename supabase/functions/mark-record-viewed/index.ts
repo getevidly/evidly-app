@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     // Resolve the invite. Only a live invite counts as a view.
     const { data: invite, error: inviteErr } = await db
       .from('evidly_client_invites')
-      .select('organization_id, status')
+      .select('organization_id, status, viewed_at')
       .eq('token', token)
       .maybeSingle();
 
@@ -47,6 +47,14 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ ok: true, skipped: invite.status }), {
         headers: { ...cors, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Stamp viewed_at on the invite itself (first view wins).
+    if (!invite.viewed_at) {
+      await db.from('evidly_client_invites')
+        .update({ viewed_at: new Date().toISOString() })
+        .eq('token', token)
+        .is('viewed_at', null);
     }
 
     const orgId = invite.organization_id;
@@ -68,10 +76,10 @@ Deno.serve(async (req) => {
     const now = new Date().toISOString();
 
     if (!stage) {
-      // No journey row yet — the invite was sent before journey_stages existed.
+      // No journey row yet — create one. invited_at stays null:
+      // we don't know when the invite was sent, so we don't invent it.
       await db.from('journey_stages').insert({
         org_id: orgId,
-        invited_at: now,
         record_viewed_at: now,
         current_stage: 'record_viewed',
       });

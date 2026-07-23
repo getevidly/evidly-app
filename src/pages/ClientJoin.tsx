@@ -101,6 +101,15 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
       if (new Date(data.expires_at) < new Date()) { setLoadError('This invite has expired.'); setLoading(false); return; }
       setInvite(data as Invite);
       setLoading(false);
+      // Stamp viewed_at on first page load (best-effort, non-blocking)
+      if (!viewedRef.current) {
+        viewedRef.current = true;
+        fetch(VIEWED_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+          body: JSON.stringify({ token }),
+        }).catch(() => {});
+      }
     })();
   }, [token, previewOnly]);
 

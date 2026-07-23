@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
+import { getInviteStatus } from '../lib/inviteStatus';
 import { TeamInviteModal } from '../components/TeamInviteModal';
 import { Modal } from '../components/ui/Modal';
 import { format } from 'date-fns';
@@ -585,9 +586,10 @@ export function Team() {
             <div className="space-y-3">
               {invitations.map((invitation) => {
                 const isExpired = invitation.status === 'expired' || new Date(invitation.expires_at) < new Date();
-                const statusBadge = isExpired
-                  ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#1E2D4D]/5 text-[#1E2D4D]/70">Expired</span>
-                  : <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>;
+                const invStatus = isExpired
+                  ? getInviteStatus('expired')
+                  : getInviteStatus(invitation.status, invitation.viewed_at);
+                const statusBadge = <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${invStatus.twBg} ${invStatus.twText}`}>{invStatus.label}</span>;
                 return (
                 <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-xl">
                   <div className="flex items-center gap-3 flex-1">

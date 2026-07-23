@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -23,6 +23,7 @@ export function Login() {
   const [mounted, setMounted] = useState(false);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { branding } = useBranding();
 
@@ -30,16 +31,22 @@ export function Login() {
 
   useEffect(() => {
     if (user) {
-      const userType = user.user_metadata?.user_type;
-      if (userType === 'vendor') {
-        navigate('/vendor/dashboard', { replace: true });
-      } else if (user.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
-        navigate('/admin', { replace: true });
+      const from = (location.state as any)?.from;
+      const safeDest = typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : null;
+      if (safeDest) {
+        navigate(safeDest, { replace: true });
       } else {
-        navigate('/dashboard', { replace: true });
+        const userType = user.user_metadata?.user_type;
+        if (userType === 'vendor') {
+          navigate('/vendor/dashboard', { replace: true });
+        } else if (user.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate, location.state]);
 
   const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const captchaEnabled = false;
@@ -67,12 +74,16 @@ export function Login() {
       const { data: { user } } = await supabase.auth.getUser();
       const userType = user?.user_metadata?.user_type;
 
-      // Determine intended destination
-      let destination = '/dashboard';
-      if (userType === 'vendor') {
-        destination = '/vendor/dashboard';
-      } else if (user?.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
-        destination = '/admin';
+      // Determine intended destination — honor saved path from auth redirect
+      const from = (location.state as any)?.from;
+      const safeDest = typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : null;
+      let destination = safeDest || '/dashboard';
+      if (!safeDest) {
+        if (userType === 'vendor') {
+          destination = '/vendor/dashboard';
+        } else if (user?.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
+          destination = '/admin';
+        }
       }
 
       // Check for enrolled MFA factors — redirect to challenge if present

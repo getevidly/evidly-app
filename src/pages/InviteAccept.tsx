@@ -6,6 +6,8 @@ import { useDemo } from '../contexts/DemoContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { toast } from 'sonner';
 
+const ACCEPT_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/accept-team-invite`;
+
 export function InviteAccept() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
@@ -33,27 +35,37 @@ export function InviteAccept() {
       return;
     }
 
-    const { data, error: fetchError } = await supabase
-      .from('user_invitations')
-      .select('*, organizations(name)')
-      .eq('token', token)
-      .eq('status', 'pending')
-      .single();
+    try {
+      // Validate token server-side (service role) — avoids RLS issues for anon users
+      const res = await fetch(ACCEPT_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ token }),
+      });
 
-    if (fetchError || !data) {
+      const data = await res.json();
+
+      if (!res.ok || !data.valid) {
+        setError(data.error || 'This invitation is invalid or has expired');
+        setLoading(false);
+        return;
+      }
+
+      setInvitation({
+        email: data.email,
+        full_name: data.full_name,
+        role: data.role,
+        organization_name: data.organization_name,
+      });
+      if (data.full_name) setFullName(data.full_name);
+      setLoading(false);
+    } catch {
       setError('This invitation is invalid or has expired');
       setLoading(false);
-      return;
     }
-
-    if (new Date(data.expires_at) < new Date()) {
-      setError('This invitation has expired');
-      setLoading(false);
-      return;
-    }
-
-    setInvitation(data);
-    setLoading(false);
   };
 
   const passwordRequirements = {
@@ -97,99 +109,39 @@ export function InviteAccept() {
     }
 
     try {
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: invitation.email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            user_type: 'restaurant',
-          }
-        }
+      const res = await fetch(ACCEPT_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ token, password, full_name: fullName }),
       });
 
-      if (signUpError) {
-        setError(signUpError.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to accept invitation');
         setSubmitting(false);
         recaptchaRef.current?.reset();
         setCaptchaToken(null);
         return;
       }
 
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            id: authData.user.id,
-            full_name: fullName,
-            organization_id: invitation.organization_id,
-            role: invitation.role.toLowerCase(),
-          });
+      // Sign in with the newly-activated credentials
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: invitation.email,
+        password,
+      });
 
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-        }
-
-        const { error: accessError } = await supabase
-          .from('user_location_access')
-          .insert({
-            user_id: authData.user.id,
-            organization_id: invitation.organization_id,
-            role: invitation.role.toLowerCase(),
-          });
-
-        if (accessError) {
-          console.error('Error creating access:', accessError);
-        }
-
-        await supabase
-          .from('user_invitations')
-          .update({
-            status: 'accepted',
-            accepted_at: new Date().toISOString(),
-          })
-          .eq('id', invitation.id);
-
-        // Backfill onboarding_team_invited with this user's assignment
-        try {
-          const { data: orgData } = await supabase
-            .from('organizations')
-            .select('onboarding_team_invited')
-            .eq('id', invitation.organization_id)
-            .maybeSingle();
-
-          if (orgData?.onboarding_team_invited) {
-            const entries = orgData.onboarding_team_invited as Array<Record<string, unknown>>;
-            let changed = false;
-            const updated = entries.map(entry => {
-              if (
-                entry.choice === 'invite' &&
-                entry.invite_role === invitation.role.toLowerCase() &&
-                !entry.assigned_to_user_id
-              ) {
-                changed = true;
-                return {
-                  ...entry,
-                  assigned_to_user_id: authData.user!.id,
-                  assigned_to_name: fullName,
-                };
-              }
-              return entry;
-            });
-
-            if (changed) {
-              await supabase
-                .from('organizations')
-                .update({ onboarding_team_invited: updated })
-                .eq('id', invitation.organization_id);
-            }
-          }
-        } catch (backfillErr) {
-          console.error('Onboarding assignment backfill error:', backfillErr);
-        }
-
-        navigate('/onboarding');
+      if (signInErr) {
+        // Account was created successfully but auto-sign-in failed — redirect to login
+        toast.success('Account created — please sign in.');
+        navigate('/login');
+        return;
       }
+
+      navigate('/onboarding');
     } catch (err: any) {
       setError(err.message || 'Failed to accept invitation');
       setSubmitting(false);
@@ -241,7 +193,7 @@ export function InviteAccept() {
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Join Your Team</h2>
             <p className="text-[#1E2D4D]/70 mt-2">
-              You've been invited to join <span className="font-semibold">{invitation?.organizations?.name}</span> as a <span className="font-semibold">{invitation?.role}</span>
+              You've been invited to join <span className="font-semibold">{invitation?.organization_name}</span> as a <span className="font-semibold">{invitation?.role}</span>
             </p>
           </div>
 

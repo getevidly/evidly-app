@@ -130,16 +130,47 @@ Deno.serve(async (req: Request) => {
         email_confirm: true,
         user_metadata: { full_name: invite.contact_name },
       });
-      if (userErr || !created?.user) {
-        logger.error("[accept-client-invite] createUser failed", userErr);
+
+      if (userErr) {
+        const is422 =
+          userErr.status === 422 ||
+          String(userErr.message ?? "").includes("already been registered") ||
+          String(userErr.message ?? "").includes("already registered");
+
+        if (is422) {
+          // ── ADOPT PATH: auth user exists but no claimable profile ──
+          const { data: existingUid, error: lookupErr } = await supabase.rpc(
+            "auth_uid_by_email",
+            { p_email: invite.email },
+          );
+          if (lookupErr || !existingUid) {
+            logger.error("[accept-client-invite] adopt lookup failed", lookupErr);
+            return json({ error: "Could not create account" }, 500, headers);
+          }
+          authUserId = existingUid;
+
+          const { error: adoptErr } = await supabase.auth.admin.updateUserById(
+            authUserId,
+            { password, email_confirm: true, user_metadata: { full_name: invite.contact_name } },
+          );
+          if (adoptErr) {
+            logger.error("[accept-client-invite] adopt updateUser failed", adoptErr);
+            return json({ error: "Could not set password" }, 500, headers);
+          }
+        } else {
+          logger.error("[accept-client-invite] createUser failed", userErr);
+          return json({ error: "Could not create account" }, 500, headers);
+        }
+      } else if (created?.user) {
+        authUserId = created.user.id;
+      } else {
         return json({ error: "Could not create account" }, 500, headers);
       }
-      authUserId = created.user.id;
 
-      // Profile with status='active'
+      // Profile with status='active' — upsert handles adopt path
       const { error: profErr } = await supabase
         .from("user_profiles")
-        .insert({
+        .upsert({
           id: authUserId,
           full_name: invite.contact_name,
           email: invite.email,
@@ -147,36 +178,41 @@ Deno.serve(async (req: Request) => {
           organization_id: invite.organization_id,
           role: invite.client_role || "owner_operator",
           status: "active",
-        });
-      if (profErr) throw new Error("profile insert failed: " + profErr.message);
+        }, { onConflict: "id" });
+      if (profErr) throw new Error("profile upsert failed: " + profErr.message);
 
-      // Per-location access grants
+      // Per-location access grants — upsert handles adopt path
       const { data: orgLocs } = await supabase
         .from("locations")
         .select("id")
         .eq("organization_id", invite.organization_id);
 
       if (orgLocs && orgLocs.length > 0) {
-        const accessRows = orgLocs.map((loc: { id: string }) => ({
-          user_id: authUserId!,
-          organization_id: invite.organization_id,
-          location_id: loc.id,
-          role: invite.client_role || "owner_operator",
-        }));
-        const { error: accErr } = await supabase
-          .from("user_location_access")
-          .insert(accessRows);
-        if (accErr) throw new Error("access insert failed: " + accErr.message);
+        for (const loc of orgLocs) {
+          await supabase
+            .from("user_location_access")
+            .upsert(
+              {
+                user_id: authUserId!,
+                organization_id: invite.organization_id,
+                location_id: loc.id,
+                role: invite.client_role || "owner_operator",
+              },
+              { onConflict: "user_id,organization_id,location_id" },
+            );
+        }
       } else {
         // Fallback: org-wide access (no location_id)
-        const { error: accErr } = await supabase
+        await supabase
           .from("user_location_access")
-          .insert({
-            user_id: authUserId,
-            organization_id: invite.organization_id,
-            role: invite.client_role || "owner_operator",
-          });
-        if (accErr) throw new Error("access insert failed: " + accErr.message);
+          .upsert(
+            {
+              user_id: authUserId!,
+              organization_id: invite.organization_id,
+              role: invite.client_role || "owner_operator",
+            },
+            { onConflict: "user_id,organization_id,location_id" },
+          );
       }
     }
 

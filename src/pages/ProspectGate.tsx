@@ -11,9 +11,11 @@
  *   handoff → founder offer → closing CTA.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+
+const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
 
 /* ── Design tokens (from mock CSS vars) ──────────────────────── */
 const NAVY = '#1E2D4D';
@@ -383,6 +385,7 @@ export function ProspectGate() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orgName, setOrgName] = useState('your kitchen');
+  const viewedRef = useRef(false);
 
   /* ── Fetch invite to resolve org name ──────────────────────── */
   useEffect(() => {
@@ -396,6 +399,15 @@ export function ProspectGate() {
       if (err || !data) { setError('This invite link is invalid.'); setLoading(false); return; }
       setOrgName(data.organization_name || data.business_name || 'your kitchen');
       setLoading(false);
+      // Stamp viewed_at on first page load (best-effort, non-blocking)
+      if (!viewedRef.current) {
+        viewedRef.current = true;
+        fetch(VIEWED_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+          body: JSON.stringify({ token }),
+        }).catch(() => {});
+      }
     })();
   }, [token]);
 
