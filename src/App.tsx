@@ -251,6 +251,7 @@ const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ defau
 const ServiceThreadListPage = lazy(() => import('./pages/vendors/ServiceThreadListPage'));
 const ServiceThreadDetailPage = lazy(() => import('./pages/vendors/ServiceThreadDetailPage'));
 const VendorScheduleResponse = lazy(() => import('./pages/VendorScheduleResponse').then(m => ({ default: m.VendorScheduleResponse })));
+const ProspectGate = lazy(() => import('./pages/ProspectGate'));
 
 const VendorConnectApply = lazy(() => import('./pages/VendorConnectApply').then(m => ({ default: m.VendorConnectApply })));
 const VendorPartnerDashboard = lazy(() => import('./pages/VendorPartnerDashboard').then(m => ({ default: m.VendorPartnerDashboard })));
@@ -360,7 +361,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
   }
 
   // AUDIT-FIX-05 / A-1: Suspended user redirect
@@ -476,7 +477,7 @@ function ProtectedLayout() {
       );
     }
     if (!user) {
-      return <Navigate to="/login" replace />;
+      return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
     }
     // Wait for profile to load before rendering layout — prevents isAdmin flicker
     // that causes admin routes to briefly render inside user Layout then re-mount
@@ -604,6 +605,7 @@ function AppRoutes() {
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />
         <Route path="/join/:token" element={<ClientJoin />} />
+        <Route path="/gate/:token" element={<Suspense fallback={<PageSkeleton />}><ProspectGate /></Suspense>} />
         <Route path="/invite/:token" element={<Suspense fallback={<PageSkeleton />}><InviteAccept /></Suspense>} />
         <Route path="/forgot-password" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><ForgotPassword /></Suspense></PublicRoute>} />
         <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />

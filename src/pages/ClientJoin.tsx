@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Flame, Utensils, CheckCircle2, Zap,
   Eye, ArrowRight, Send, Lock, Shield, Key,
@@ -67,6 +67,7 @@ interface Invite {
 export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn } = useAuth();
 
   /* ── State ─────────────────────────────────────────────────── */
@@ -131,10 +132,12 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
       });
       const out = await res.json();
       if (!res.ok) { toast.error(out.error || 'Could not complete signup.'); setSubmitting(false); return; }
+      const returnTo = searchParams.get('returnTo');
+      const safeReturn = typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : null;
       const { error: signInErr } = await signIn(invite.email, password);
-      if (signInErr) { toast.success('Account created. Please sign in.'); navigate('/login'); return; }
+      if (signInErr) { toast.success('Account created. Please sign in.'); navigate('/login', safeReturn ? { state: { from: safeReturn } } : undefined); return; }
       toast.success('Welcome to EvidLY!');
-      navigate('/onboarding');
+      navigate(safeReturn || '/onboarding');
     } catch {
       toast.error('Something went wrong. Please try again.');
       setSubmitting(false);
@@ -323,7 +326,7 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
                   className="w-full text-sm py-3 font-semibold inline-flex items-center justify-center gap-2 mt-2"
                   style={{ backgroundColor: '#E8763A', color: 'white', borderRadius: 9, border: 'none', textDecoration: 'none' }}
                 >
-                  Schedule a meeting with Arthur →
+                  Schedule a Meeting →
                 </a>
                 <div className="text-[11px] text-white/50 mt-2 text-center leading-relaxed">
                   Arthur Haggerty · IKECA-certified · NFPA 96 expert witness.
@@ -482,7 +485,7 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                   </div>
                 )}
                 <div style={{ border: `1px solid ${LINE}`, background: '#F7F1E6' }}>
-                  <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} />
+                  <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} gateToken={token} />
                 </div>
               </div>
 
@@ -498,7 +501,7 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                   className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2 mt-3"
                   style={{ backgroundColor: '#E8763A', color: 'white', borderRadius: 9, border: 'none', textDecoration: 'none' }}
                 >
-                  Schedule a meeting with Arthur →
+                  Schedule a Meeting →
                 </a>
                 <div className="text-[11px] mt-2 text-center leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
                   Arthur Haggerty · IKECA-certified · NFPA 96 expert witness.
@@ -676,13 +679,12 @@ Reach EvidLY: founders@getevidly.com · (855) 384-3591 ext. 1`} />
                 </div>
               </div>
 
-              {/* Primary CTA */}
+              {/* Primary CTA — view-only gate, no signup */}
               <button
-                onClick={handleSubmit}
-                disabled={!canSubmit}
+                onClick={() => navigate(`/gate/${token}`)}
                 className="w-full text-base py-3 font-semibold inline-flex items-center justify-center gap-2"
-                style={{ backgroundColor: canSubmit ? NAVY : `${NAVY}40`, color: 'white', cursor: canSubmit ? 'pointer' : 'not-allowed' }}>
-                {submitting ? 'Viewing records…' : <>View My Records <ArrowRight size={15} /></>}
+                style={{ backgroundColor: NAVY, color: 'white', cursor: 'pointer' }}>
+                View My Records <ArrowRight size={15} />
               </button>
               <div className="text-center text-[11px] mt-2" style={{ color: MUTED }}>
                 {'\u2192'} Your Cleaning Pros Plus hood cleaning record
