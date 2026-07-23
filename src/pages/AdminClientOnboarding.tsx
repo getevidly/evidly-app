@@ -407,7 +407,7 @@ function OnboardingQueue() {
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
-  const [mode, setMode] = useState<'invite' | 'manual' | 'queue'>('queue');
+  const [mode, setMode] = useState<'invite' | 'manual' | 'queue'>('invite');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -556,9 +556,9 @@ export function AdminClientOnboarding() {
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-5xl mx-auto">
         <div className="flex gap-2 mb-6">
-          <button onClick={() => setMode('queue')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'queue' ? '#1E2D4D' : 'transparent', color: mode === 'queue' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Onboarding queue</button>
           <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite a client</button>
           <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Provision manually</button>
+          <button onClick={() => setMode('queue')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'queue' ? '#1E2D4D' : 'transparent', color: mode === 'queue' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Onboarding queue</button>
         </div>
         {mode === 'queue' && <OnboardingQueue />}
         {mode === 'invite' && <ClientInviteForm />}
