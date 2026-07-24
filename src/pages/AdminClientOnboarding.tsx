@@ -32,7 +32,7 @@ const DEFAULT_OUTLET_NAMES = [
 const STAGES = [
   { key: 'invited', label: 'Invited', short: '1', manual: false },
   { key: 'record_viewed', label: 'Record viewed', short: '2', manual: false },
-  { key: 'demo_scheduled', label: 'Demo scheduled', short: '3', manual: false },
+  { key: 'demo_scheduled', label: 'Demo scheduled', short: '3', manual: true },
   { key: 'demo_completed', label: 'Demo completed', short: '4', manual: true },
   { key: 'policies_uploaded', label: 'Policies uploaded', short: '5', manual: false },
   { key: 'policies_read', label: 'Policies read', short: '6', manual: false },
@@ -240,6 +240,7 @@ function OnboardingQueue() {
               return !acct[k];
             });
             const nextStage = nextUnstamped >= 0 ? STAGES[nextUnstamped] : null;
+            const canMarkDemoScheduled = nextStage?.key === 'demo_scheduled';
             const canMarkDemo = nextStage?.key === 'demo_completed';
             const canMarkTraining = nextStage?.key === 'training_completed';
             const isMarking = markingId?.startsWith(acct.org_id);
@@ -307,6 +308,19 @@ function OnboardingQueue() {
 
                 {/* Row 3: action buttons */}
                 <div className="mt-3 flex items-center gap-3 flex-wrap">
+                  {canMarkDemoScheduled && (
+                    <button
+                      onClick={() => handleMark(acct.org_id, 'demo_scheduled')}
+                      disabled={!!isMarking}
+                      className="text-xs font-medium px-3 py-1.5 rounded flex flex-col items-center gap-0.5 transition-colors"
+                      style={{ background: TONE.amber.tint, color: TONE.amber.text, border: `1px solid ${LINE.soft}` }}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <CheckCircle2 size={12} />
+                        {isMarking ? 'Marking...' : 'Mark demo scheduled'}
+                      </span>
+                    </button>
+                  )}
                   {canMarkDemo && (
                     <button
                       onClick={() => handleMark(acct.org_id, 'demo_completed')}
@@ -336,7 +350,7 @@ function OnboardingQueue() {
                       </span>
                     </button>
                   )}
-                  {!canMarkDemo && !canMarkTraining && sentence.doneCount < STAGES.length && (
+                  {!canMarkDemoScheduled && !canMarkDemo && !canMarkTraining && sentence.doneCount < STAGES.length && (
                     <span className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded" style={{
                       fontFamily: FONT.mono, fontSize: 10, color: TEXT.meta, background: SURFACE.raised,
                       textTransform: 'uppercase', letterSpacing: '0.04em',

@@ -45,16 +45,6 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Unauthorized" }, 401, headers);
     }
 
-    // Staff gate — same pattern as create-client-invite
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("evidly_staff_role")
-      .eq("id", user.id)
-      .single();
-    if (!profile?.evidly_staff_role) {
-      return json({ error: "Forbidden — staff only" }, 403, headers);
-    }
-
     const body = await req.json();
     const { org_id, stage } = body as { org_id?: string; stage?: string };
 
@@ -66,7 +56,22 @@ Deno.serve(async (req: Request) => {
       return json({ error: `Invalid stage: ${stage}` }, 400, headers);
     }
 
-    // Pass the staff user's UUID as actorId — stampJourneyStage writes it
+    // Staff gate — manual stages (with _by attribution) require staff role.
+    // Auto stages allow any authenticated user (client completing onboarding,
+    // uploading a policy doc, etc.).
+    const STAFF_ONLY_STAGES = ["demo_completed", "training_completed"];
+    if (STAFF_ONLY_STAGES.includes(stage)) {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("evidly_staff_role")
+        .eq("id", user.id)
+        .single();
+      if (!profile?.evidly_staff_role) {
+        return json({ error: "Forbidden — staff only" }, 403, headers);
+      }
+    }
+
+    // Pass the caller's UUID as actorId — stampJourneyStage writes it
     // to the _by column for manual stages.
     await stampJourneyStage(supabase, org_id, stage, user.id);
 
