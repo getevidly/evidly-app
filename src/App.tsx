@@ -189,6 +189,21 @@ const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns')
 const MarketingAccounts = lazy(() => import('./pages/admin/marketing/MarketingAccounts'));
 const MarketingNetwork = lazy(() => import('./pages/admin/marketing/MarketingNetwork'));
 const MarketingMethods = lazy(() => import('./pages/admin/marketing/MarketingMethods'));
+const MarketingOverview = lazy(() => import('./pages/admin/marketing/MarketingOverview'));
+const MarketingOutboundCalls = lazy(() => import('./pages/admin/marketing/MarketingOutboundCalls'));
+const MarketingInPerson = lazy(() => import('./pages/admin/marketing/MarketingInPerson'));
+const MarketingChannels = lazy(() => import('./pages/admin/marketing/MarketingChannels'));
+const MarketingSurvey = lazy(() => import('./pages/admin/marketing/MarketingSurvey'));
+const MarketingContentSchedule = lazy(() => import('./pages/admin/marketing/MarketingContentSchedule'));
+const MarketingFounderWindow = lazy(() => import('./pages/admin/marketing/MarketingFounderWindow'));
+const MarketingFunnel = lazy(() => import('./pages/admin/marketing/MarketingFunnel'));
+const MarketingSegments = lazy(() => import('./pages/admin/marketing/MarketingSegments'));
+const MarketingEmailSequence = lazy(() => import('./pages/admin/marketing/MarketingEmailSequence'));
+const MarketingPRPAttribution = lazy(() => import('./pages/admin/marketing/MarketingPRPAttribution'));
+const MarketingSEO = lazy(() => import('./pages/admin/marketing/MarketingSEO'));
+const MarketingSERP = lazy(() => import('./pages/admin/marketing/MarketingSERP'));
+const MarketingGoogleAds = lazy(() => import('./pages/admin/marketing/MarketingGoogleAds'));
+const MarketingForecastVsActual = lazy(() => import('./pages/admin/marketing/MarketingForecastVsActual'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
 const SupportTickets = lazy(() => import('./pages/admin/SupportTickets'));
@@ -831,8 +846,23 @@ function AppRoutes() {
           <Route path="/admin/evidly-vault" element={<EvidlyVault />} />
           <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} />
           <Route path="/admin/event-log" element={<EventLog />} />
+          <Route path="/admin/marketing/overview" element={<SalesGuard><MarketingOverview /></SalesGuard>} />
+          <Route path="/admin/marketing/outbound-calls" element={<SalesGuard><MarketingOutboundCalls /></SalesGuard>} />
+          <Route path="/admin/marketing/in-person" element={<SalesGuard><MarketingInPerson /></SalesGuard>} />
           <Route path="/admin/marketing/accounts" element={<SalesGuard><MarketingAccounts /></SalesGuard>} />
           <Route path="/admin/marketing/network" element={<SalesGuard><MarketingNetwork /></SalesGuard>} />
+          <Route path="/admin/marketing/channels" element={<SalesGuard><MarketingChannels /></SalesGuard>} />
+          <Route path="/admin/marketing/survey" element={<SalesGuard><MarketingSurvey /></SalesGuard>} />
+          <Route path="/admin/marketing/content-schedule" element={<SalesGuard><MarketingContentSchedule /></SalesGuard>} />
+          <Route path="/admin/marketing/founder-window" element={<SalesGuard><MarketingFounderWindow /></SalesGuard>} />
+          <Route path="/admin/marketing/funnel" element={<SalesGuard><MarketingFunnel /></SalesGuard>} />
+          <Route path="/admin/marketing/segments" element={<SalesGuard><MarketingSegments /></SalesGuard>} />
+          <Route path="/admin/marketing/email-sequence" element={<SalesGuard><MarketingEmailSequence /></SalesGuard>} />
+          <Route path="/admin/marketing/prp-attribution" element={<SalesGuard><MarketingPRPAttribution /></SalesGuard>} />
+          <Route path="/admin/marketing/seo" element={<SalesGuard><MarketingSEO /></SalesGuard>} />
+          <Route path="/admin/marketing/serp" element={<SalesGuard><MarketingSERP /></SalesGuard>} />
+          <Route path="/admin/marketing/google-ads" element={<SalesGuard><MarketingGoogleAds /></SalesGuard>} />
+          <Route path="/admin/marketing/forecast" element={<SalesGuard><MarketingForecastVsActual /></SalesGuard>} />
           <Route path="/admin/marketing/methods" element={<SalesGuard><MarketingMethods /></SalesGuard>} />
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
           <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />

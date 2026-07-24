@@ -1,35 +1,11 @@
 /**
- * MarketingMethods — Prospecting Methods
+ * MarketingMethods — redirect stub.
  *
- * Route: /admin/marketing/methods
- * Access: salesOnly (SalesGuard)
+ * Methods was folded into Channels (same concept).
+ * This redirect keeps any bookmarks working.
  */
-import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
+import { Navigate } from 'react-router-dom';
 
 export default function MarketingMethods() {
-  return (
-    <div>
-      <AdminBreadcrumb
-        items={[
-          { label: 'Admin', path: '/admin' },
-          { label: 'Marketing', path: '/admin/marketing/accounts' },
-          { label: 'Methods' },
-        ]}
-      />
-      <h1
-        style={{
-          fontFamily: 'Syne, sans-serif',
-          fontSize: 24,
-          fontWeight: 700,
-          color: '#0B1628',
-          marginBottom: 8,
-        }}
-      >
-        Prospecting Methods
-      </h1>
-      <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: '#6B7280' }}>
-        Coming in build.
-      </p>
-    </div>
-  );
+  return <Navigate to="/admin/marketing/channels" replace />;
 }

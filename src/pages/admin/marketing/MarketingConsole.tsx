@@ -1,15 +1,22 @@
 /**
- * MarketingConsole — Prospecting console shell with Accounts | Network tabs
+ * MarketingConsole — 17-tab marketing dashboard shell.
  *
- * Route wrappers:
- *   /admin/marketing/accounts  -> defaultTab="accounts"
- *   /admin/marketing/network   -> defaultTab="network"
+ * Route wrappers (one per tab) live alongside this file and pass
+ * defaultTab to deep-link each route to its tab.
  *
  * Access: salesOnly (SalesGuard)
  */
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
+import { MARKETING_TABS, tabRoute, type MarketingTabId } from './marketingTabConfig';
+import { EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, DISPLAY, BODY, MARKETING_FONTS_HREF } from './marketingTokens';
+import { PlaceholderTab } from './marketingPrimitives';
+import {
+  LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
+  Calendar, Flame, GitBranch, Users, Mail, Target,
+  Search, TrendingUp, Megaphone, FileBarChart,
+} from 'lucide-react';
 import { KpiTile } from '../../../components/admin/KpiTile';
 import { Modal } from '../../../components/ui/Modal';
 import {
@@ -34,7 +41,7 @@ import { toast } from 'sonner';
 // ── Constants ────────────────────────────────────────────────────
 
 interface MarketingConsoleProps {
-  defaultTab: 'accounts' | 'network';
+  defaultTab: MarketingTabId;
 }
 
 const JURISDICTION_NAMES = Object.keys(JURISDICTIONS);
@@ -77,7 +84,7 @@ const EMPTY_MEMBER_FORM: AddInfluencerInput = {
 
 export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<'accounts' | 'network'>(defaultTab);
+  const [tab, setTab] = useState<MarketingTabId>(defaultTab);
   const data = useMarketingData();
   const { accounts, influencers, types, loading, error } = data;
 
@@ -87,10 +94,13 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
   const [savingAccount, setSavingAccount] = useState(false);
 
   // Tab switching (deep-linked to route)
-  const switchTab = (t: 'accounts' | 'network') => {
+  const switchTab = (t: MarketingTabId) => {
     setTab(t);
-    navigate(t === 'accounts' ? '/admin/marketing/accounts' : '/admin/marketing/network', { replace: true });
+    navigate(tabRoute(t), { replace: true });
   };
+
+  // Resolve active tab label for breadcrumb
+  const activeLabel = MARKETING_TABS.find(t => t.id === tab)?.label ?? tab;
 
   // ── Derived stats ──────────────────────────────────────────────
 
@@ -164,28 +174,39 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
 
   return (
     <div className="space-y-6">
-      <AdminBreadcrumb crumbs={[{ label: 'Marketing' }, { label: tab === 'accounts' ? 'Accounts' : 'Network' }]} />
+      {/* Google Fonts for Fraunces + Plus Jakarta Sans */}
+      <link rel="stylesheet" href={MARKETING_FONTS_HREF} />
+
+      <AdminBreadcrumb crumbs={[{ label: 'Marketing' }, { label: activeLabel }]} />
 
       <div>
-        <h1 className="text-[22px] font-extrabold text-navy font-logo">Prospecting</h1>
-        <p className="text-[13px] text-gray-400 mt-0.5">
-          Manage prospecting accounts, network, and outreach
+        <div className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: EV_EMBER, fontFamily: BODY }}>
+          52-week campaign · Jul 2026 — Jun 2027
+        </div>
+        <h1 className="text-[26px] mt-1" style={{ color: EV_NAVY, fontFamily: DISPLAY, fontWeight: 600, letterSpacing: '-0.02em' }}>
+          Marketing
+        </h1>
+        <p className="text-[13px] mt-0.5 font-medium" style={{ color: EV_MUTED, fontFamily: BODY }}>
+          Predict what's upcoming · Reduce the lapse · Prove it's done — across 14 channels.
         </p>
       </div>
 
-      {/* Tab switch */}
-      <div className="flex gap-0 border-b border-border_ui-warm">
-        {(['accounts', 'network'] as const).map(t => (
+      {/* Tab bar — scrolls horizontally */}
+      <div className="flex items-center gap-0 border-b overflow-x-auto" style={{ borderColor: EV_LINE }}>
+        {MARKETING_TABS.map(({ id, label, Icon }) => (
           <button
-            key={t}
-            onClick={() => switchTab(t)}
-            className={`px-5 py-2.5 text-[13px] font-semibold border-b-2 transition-colors cursor-pointer bg-transparent border-x-0 border-t-0 ${
-              tab === t
-                ? 'text-navy border-gold font-bold'
-                : 'text-gray-400 border-transparent hover:text-navy'
-            }`}
+            key={id}
+            onClick={() => switchTab(id)}
+            className="inline-flex items-center gap-2 px-4 py-3 text-sm transition relative whitespace-nowrap cursor-pointer bg-transparent border-x-0 border-t-0"
+            style={{
+              color: tab === id ? EV_NAVY : EV_MUTED,
+              fontWeight: tab === id ? 700 : 500,
+              fontFamily: BODY,
+              borderBottom: tab === id ? `3px solid ${EV_EMBER}` : '3px solid transparent',
+              marginBottom: '-1px',
+            }}
           >
-            {t === 'accounts' ? 'Accounts' : 'Network'}
+            <Icon size={14} style={{ color: tab === id ? EV_EMBER : EV_MUTED }} /> {label}
           </button>
         ))}
       </div>
@@ -200,7 +221,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
           error={error}
           onAdd={() => setShowAddAccount(true)}
         />
-      ) : (
+      ) : tab === 'network' ? (
         <NetworkTab
           accounts={accounts}
           influencers={influencers}
@@ -210,7 +231,24 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
           addType={data.addType}
           addInfluencer={data.addInfluencer}
         />
-      )}
+      ) : null}
+
+      {/* Placeholder tabs — shell only, data wiring in later phases */}
+      {tab === 'overview'  && <PlaceholderTab title="Overview" note="KPI strip, funnel with PRP mix, forecast vs actual, segment performance, and active alerts." Icon={LayoutDashboard} />}
+      {tab === 'calls'     && <PlaceholderTab title="Outbound Calls" note="Daily calling surface — call queue sorted by ICP, outcome tracking, and cost per demo." Icon={Radio} />}
+      {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
+      {tab === 'channels'  && <PlaceholderTab title="Channels" note="Channel performance cards across 14 channels and 7 categories, with editable actuals." Icon={Layers} />}
+      {tab === 'survey'    && <PlaceholderTab title="Survey" note="Market research responses — cold funnel, pain correlation, segment breakdown." Icon={ClipboardList} />}
+      {tab === 'schedule'  && <PlaceholderTab title="Content Schedule" note="Month calendar with add-post form and an extensible channel list." Icon={Calendar} />}
+      {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
+      {tab === 'funnel'    && <PlaceholderTab title="Funnel" note="Stage-by-stage from first touch to claimed seat, with PRP attribution per transition." Icon={GitBranch} />}
+      {tab === 'segments'  && <PlaceholderTab title="Segments" note="Every metric re-cut by kitchen segment and by buyer type — owner/operator vs institutional." Icon={Users} />}
+      {tab === 'sequence'  && <PlaceholderTab title="Email Sequence" note="52-week PRP drip heatmap by open rate, two tracks, with the Predict / Reduce / Prove band strip." Icon={Mail} />}
+      {tab === 'prp'       && <PlaceholderTab title="PRP Attribution" note="Predict / Reduce / Prove touch mix and seat conversion by layer." Icon={Target} />}
+      {tab === 'seo'       && <PlaceholderTab title="SEO" note="Organic impressions, clicks, average position, and queries — connect Search Console to fill." Icon={Search} />}
+      {tab === 'serp'      && <PlaceholderTab title="SERP" note="Rankings, share of voice and content gaps across the 169-county programmatic footprint." Icon={TrendingUp} />}
+      {tab === 'ads'       && <PlaceholderTab title="Google Ads" note="Spend, clicks, CPC and cost per demo by campaign — connect Google Ads to fill." Icon={Megaphone} />}
+      {tab === 'forecast'  && <PlaceholderTab title="Forecast vs Actual" note="Per-week actuals against the seeded campaign forecast." Icon={FileBarChart} />}
 
       {/* ── Add-account modal ──────────────────────────────────────── */}
       <Modal isOpen={showAddAccount} onClose={() => setShowAddAccount(false)} size="lg">
