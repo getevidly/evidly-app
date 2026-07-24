@@ -12,6 +12,7 @@ import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
 import { MARKETING_TABS, tabRoute, type MarketingTabId } from './marketingTabConfig';
 import { EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, DISPLAY, BODY, MARKETING_FONTS_HREF } from './marketingTokens';
 import { PlaceholderTab } from './marketingPrimitives';
+import ChannelsTab from './ChannelsTab';
 import {
   LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail, Target,
@@ -237,7 +238,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'overview'  && <PlaceholderTab title="Overview" note="KPI strip, funnel with PRP mix, forecast vs actual, segment performance, and active alerts." Icon={LayoutDashboard} />}
       {tab === 'calls'     && <PlaceholderTab title="Outbound Calls" note="Daily calling surface — call queue sorted by ICP, outcome tracking, and cost per demo." Icon={Radio} />}
       {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
-      {tab === 'channels'  && <PlaceholderTab title="Channels" note="Channel performance cards across 14 channels and 7 categories, with editable actuals." Icon={Layers} />}
+      {tab === 'channels'  && <ChannelsTab />}
       {tab === 'survey'    && <PlaceholderTab title="Survey" note="Market research responses — cold funnel, pain correlation, segment breakdown." Icon={ClipboardList} />}
       {tab === 'schedule'  && <PlaceholderTab title="Content Schedule" note="Month calendar with add-post form and an extensible channel list." Icon={Calendar} />}
       {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
