@@ -346,7 +346,7 @@ function OnboardingQueue() {
                         {isMarking ? 'Marking...' : 'Mark training complete'}
                       </span>
                       <span style={{ fontFamily: FONT.mono, fontSize: 9, color: TEXT.meta, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        Sets first charge · +45 days
+                        Access starts · charge +45 days
                       </span>
                     </button>
                   )}

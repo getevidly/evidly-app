@@ -75,6 +75,39 @@ Deno.serve(async (req: Request) => {
     // to the _by column for manual stages.
     await stampJourneyStage(supabase, org_id, stage, user.id);
 
+    // ── Billing anchor: training_completed triggers access + charge dates ──
+    // access_starts_at = now (the "go live" moment).
+    // first_charge_at  = access_starts_at + 45 days.
+    // Both guarded with .is(col, null) — first write wins, idempotent.
+    if (stage === "training_completed") {
+      const now = new Date().toISOString();
+
+      await supabase
+        .from("journey_stages")
+        .update({ access_starts_at: now })
+        .eq("org_id", org_id)
+        .is("access_starts_at", null);
+
+      // Read the (possibly pre-existing) access_starts_at to compute charge date
+      const { data: journey } = await supabase
+        .from("journey_stages")
+        .select("access_starts_at")
+        .eq("org_id", org_id)
+        .single();
+
+      if (journey?.access_starts_at) {
+        const chargeDate = new Date(
+          new Date(journey.access_starts_at).getTime() + 45 * 86400000,
+        ).toISOString();
+
+        await supabase
+          .from("journey_stages")
+          .update({ first_charge_at: chargeDate })
+          .eq("org_id", org_id)
+          .is("first_charge_at", null);
+      }
+    }
+
     return json({ ok: true }, 200, headers);
   } catch (err) {
     // stampJourneyStage throws for manual-stage errors (already stamped,
