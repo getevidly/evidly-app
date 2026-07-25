@@ -63,6 +63,7 @@ interface UserRow {
   team_invite_token?: string; // token for team invite resend
   team_invite_url?: string; // full URL for team invite resend
   invite_viewed_at?: string | null;
+  invite_db_status?: string;
 }
 
 export default function AdminUsers() {
@@ -126,12 +127,12 @@ export default function AdminUsers() {
         // 1. Check evidly_client_invites (client/owner invites)
         const { data: clientInvRows } = await supabase
           .from('evidly_client_invites')
-          .select('id, email, last_reminded_at, reminder_count, viewed_at')
+          .select('id, email, last_reminded_at, reminder_count, viewed_at, status')
           .in('email', invitedEmails)
-          .eq('status', 'pending');
+          .in('status', ['pending', 'draft']);
 
         const clientInvMap = new Map(
-          (clientInvRows || []).map((r: { id: string; email: string; last_reminded_at: string | null; reminder_count: number; viewed_at: string | null }) => [r.email, r]),
+          (clientInvRows || []).map((r: { id: string; email: string; last_reminded_at: string | null; reminder_count: number; viewed_at: string | null; status: string }) => [r.email, r]),
         );
 
         // 2. Check user_invitations (team invites)
@@ -157,6 +158,7 @@ export default function AdminUsers() {
               p.reminder_count = clientInv.reminder_count;
               p.invite_source = 'client';
               p.invite_viewed_at = clientInv.viewed_at;
+              p.invite_db_status = clientInv.status;
             } else if (teamInv) {
               p.invite_id = teamInv.id;
               p.last_reminded_at = null; // user_invitations doesn't track this
@@ -306,6 +308,34 @@ export default function AdminUsers() {
     setRemindingId(null);
   };
 
+  const handleSendDraft = async (u: UserRow) => {
+    if (!u.invite_id) { toast.error('No draft invite found'); return; }
+    setRemindingId(u.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(CREATE_FN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ action: 'send', invite_ids: [u.invite_id], sender_name: 'Arthur' }),
+      });
+      const out = await res.json();
+      if (!res.ok || !out.success) {
+        toast.error(out.results?.[0]?.error || out.error || 'Send failed');
+      } else {
+        toast.success(`Invite sent to ${u.email}`);
+        await logAuditEvent('admin.invite_sent', u.id, null, { email: u.email });
+        await loadUsers();
+      }
+    } catch {
+      toast.error('Send failed');
+    }
+    setRemindingId(null);
+  };
+
   const executeAction = async () => {
     if (!actionUser) return;
     setActionLoading(true);
@@ -392,7 +422,7 @@ export default function AdminUsers() {
   // ── Helpers ──
   const getStatus = (u: UserRow) => {
     if (u.status === 'invited') {
-      const inv = getInviteStatus('pending', u.invite_viewed_at);
+      const inv = getInviteStatus(u.invite_db_status || 'pending', u.invite_viewed_at);
       return { label: inv.label, twText: inv.twText, twBg: inv.twBg };
     }
     if (u.is_suspended || u.status === 'suspended') return { label: 'Suspended', twText: 'text-red-600', twBg: 'bg-red-50' };
@@ -532,18 +562,31 @@ export default function AdminUsers() {
                 <div className="text-right flex gap-1 justify-end flex-wrap items-center">
                   {u.status === 'invited' ? (
                     <>
-                      <Button
-                        onClick={() => handleRemind(u)}
-                        disabled={isRemindDisabled(u)}
-                        variant="ghost" size="sm"
-                        className="bg-blue-50 text-blue-600"
-                      >
-                        {remindingId === u.id ? 'Sending...' : 'Send Reminder'}
-                      </Button>
-                      {u.last_reminded_at && (
-                        <span className="text-[10px] text-gray-400">
-                          Last: {relativeTime(u.last_reminded_at)}
-                        </span>
+                      {u.invite_db_status === 'draft' ? (
+                        <Button
+                          onClick={() => handleSendDraft(u)}
+                          disabled={remindingId === u.id}
+                          variant="ghost" size="sm"
+                          className="bg-emerald-50 text-emerald-600"
+                        >
+                          {remindingId === u.id ? 'Sending...' : 'Send Invite'}
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => handleRemind(u)}
+                            disabled={isRemindDisabled(u)}
+                            variant="ghost" size="sm"
+                            className="bg-blue-50 text-blue-600"
+                          >
+                            {remindingId === u.id ? 'Sending...' : 'Send Reminder'}
+                          </Button>
+                          {u.last_reminded_at && (
+                            <span className="text-[10px] text-gray-400">
+                              Last: {relativeTime(u.last_reminded_at)}
+                            </span>
+                          )}
+                        </>
                       )}
                     </>
                   ) : (

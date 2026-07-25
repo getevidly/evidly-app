@@ -19,6 +19,7 @@ interface Org { id: string; name: string; state: string | null; city: string | n
 interface Invite {
   id: string; organization_id: string | null; organization_name: string | null; contact_name: string; email: string;
   status: string; client_role: string; reminder_count: number; created_at: string; accepted_at: string | null; viewed_at: string | null;
+  sent_at: string | null;
 }
 
 export function ClientInviteForm() {
@@ -30,6 +31,9 @@ export function ClientInviteForm() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+  const [sendNow, setSendNow] = useState(true);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [batchSending, setBatchSending] = useState(false);
 
   const [invites, setInvites] = useState<Invite[]>([]);
   const [remindingId, setRemindingId] = useState<string | null>(null);
@@ -50,7 +54,7 @@ export function ClientInviteForm() {
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
       .from('evidly_client_invites')
-      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at, accepted_at, viewed_at')
+      .select('id, organization_id, organization_name, contact_name, email, status, client_role, reminder_count, created_at, accepted_at, viewed_at, sent_at')
       .order('created_at', { ascending: false })
       .limit(50);
     if (!data) return;
@@ -134,11 +138,12 @@ export function ClientInviteForm() {
           client_role: role,
           message: message || null,
           sender_name: 'Arthur',
+          skip_send: !sendNow,
         }),
       });
       const out = await res.json();
       if (!res.ok) { setFeedback({ ok: false, text: out.error || 'Could not send invite.' }); setSending(false); return; }
-      setFeedback({ ok: true, text: `Invite sent to ${email}.` });
+      setFeedback({ ok: true, text: sendNow ? `Invite sent to ${email}.` : `Account provisioned for ${email}. Invite not sent yet.` });
       setContactName(''); setEmail(''); setRole('owner_operator'); setMessage(''); setOrgId('');
       loadInvites();
     } catch {
@@ -159,6 +164,55 @@ export function ClientInviteForm() {
       else { setFeedback({ ok: true, text: 'Reminder sent.' }); loadInvites(); }
     } catch { setFeedback({ ok: false, text: 'Reminder failed.' }); }
     setRemindingId(null);
+  }
+
+  async function handleSendDraft(inviteId: string) {
+    setRemindingId(inviteId);
+    try {
+      const res = await fetch(CREATE_FN, {
+        method: 'POST', headers: await authedHeaders(),
+        body: JSON.stringify({ action: 'send', invite_ids: [inviteId], sender_name: 'Arthur' }),
+      });
+      const out = await res.json();
+      if (!res.ok || !out.success) {
+        const errMsg = out.results?.[0]?.error || out.error || 'Send failed.';
+        setFeedback({ ok: false, text: errMsg });
+      } else {
+        setFeedback({ ok: true, text: 'Invite sent.' });
+        loadInvites();
+      }
+    } catch { setFeedback({ ok: false, text: 'Send failed.' }); }
+    setRemindingId(null);
+  }
+
+  async function handleBatchSend() {
+    if (selectedIds.size === 0) return;
+    setBatchSending(true); setFeedback(null);
+    try {
+      const res = await fetch(CREATE_FN, {
+        method: 'POST', headers: await authedHeaders(),
+        body: JSON.stringify({ action: 'send', invite_ids: [...selectedIds], sender_name: 'Arthur' }),
+      });
+      const out = await res.json();
+      const sentCount = (out.results || []).filter((r: { ok: boolean }) => r.ok).length;
+      const failCount = (out.results || []).filter((r: { ok: boolean }) => !r.ok).length;
+      if (failCount > 0) {
+        setFeedback({ ok: false, text: `${sentCount} sent, ${failCount} failed.` });
+      } else {
+        setFeedback({ ok: true, text: `${sentCount} invite${sentCount !== 1 ? 's' : ''} sent.` });
+      }
+      setSelectedIds(new Set());
+      loadInvites();
+    } catch { setFeedback({ ok: false, text: 'Batch send failed.' }); }
+    setBatchSending(false);
+  }
+
+  function toggleSelect(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   const badge = (status: string, viewedAt?: string | null) => {
@@ -210,27 +264,60 @@ export function ClientInviteForm() {
         <textarea value={message} onChange={e => setMessage(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2" rows={2} placeholder="A short note from you" />
       </div>
 
+      <label className="flex items-center gap-2 mb-4 text-sm text-[#1E2D4D] cursor-pointer select-none">
+        <input type="checkbox" checked={sendNow} onChange={e => setSendNow(e.target.checked)} className="rounded border-[#1E2D4D]/30 text-[#1E2D4D] focus:ring-[#1E2D4D]" />
+        Send invite email now
+      </label>
+
       <button onClick={handleSend} disabled={sending} className="w-full text-white font-medium rounded py-3 flex items-center justify-center gap-2" style={{ background: NAVY, opacity: sending ? 0.5 : 1 }}>
-        <Send size={16} />{sending ? 'Sending…' : 'Send invite'}
+        <Send size={16} />{sending ? 'Sending…' : sendNow ? 'Send invite' : 'Provision account'}
       </button>
 
       {invites.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Sent invites</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-[#1E2D4D]">Invites</h3>
+            {selectedIds.size > 0 && (
+              <button
+                onClick={handleBatchSend}
+                disabled={batchSending}
+                className="text-xs font-semibold text-white px-3 py-1.5 rounded flex items-center gap-1"
+                style={{ background: NAVY, opacity: batchSending ? 0.5 : 1 }}
+              >
+                <Send size={12} />{batchSending ? 'Sending…' : `Send ${selectedIds.size} selected`}
+              </button>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             {invites.map(inv => (
               <div key={inv.id} className="border border-[#1E2D4D]/10 rounded-lg px-4 py-3 flex items-center justify-between">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.organization_name || inv.contact_name}</p>
-                  <p className="text-xs text-[#1E2D4D]/60 truncate">{inv.email} · {inv.client_role.replace(/_/g, ' ')}{inv.reminder_count > 0 ? ` · reminded ${inv.reminder_count}×` : ''}</p>
-                  <p className="text-[11px] text-[#1E2D4D]/45 mt-0.5">
-                    Sent {fmtDate(inv.created_at)}
-                    {inv.viewed_at && <> · Viewed {fmtDate(inv.viewed_at)}</>}
-                    {inv.accepted_at && <> · Accepted {fmtDate(inv.accepted_at)}</>}
-                  </p>
+                <div className="flex items-center gap-3 min-w-0">
+                  {inv.status === 'draft' && (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(inv.id)}
+                      onChange={() => toggleSelect(inv.id)}
+                      className="rounded border-[#1E2D4D]/30 text-[#1E2D4D] focus:ring-[#1E2D4D] flex-none"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[#1E2D4D] truncate">{inv.organization_name || inv.contact_name}</p>
+                    <p className="text-xs text-[#1E2D4D]/60 truncate">{inv.email} · {inv.client_role.replace(/_/g, ' ')}{inv.reminder_count > 0 ? ` · reminded ${inv.reminder_count}×` : ''}</p>
+                    <p className="text-[11px] text-[#1E2D4D]/45 mt-0.5">
+                      Created {fmtDate(inv.created_at)}
+                      {inv.sent_at && <> · Sent {fmtDate(inv.sent_at)}</>}
+                      {inv.viewed_at && <> · Viewed {fmtDate(inv.viewed_at)}</>}
+                      {inv.accepted_at && <> · Accepted {fmtDate(inv.accepted_at)}</>}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 flex-none">
                   {badge(inv.status, inv.viewed_at)}
+                  {inv.status === 'draft' && (
+                    <button onClick={() => handleSendDraft(inv.id)} disabled={remindingId === inv.id} className="text-xs font-semibold flex items-center gap-1" style={{ color: NAVY }}>
+                      <Send size={12} />{remindingId === inv.id ? '…' : 'Send'}
+                    </button>
+                  )}
                   {inv.status === 'pending' && (
                     <button onClick={() => handleRemind(inv.id)} disabled={remindingId === inv.id} className="text-xs flex items-center gap-1" style={{ color: NAVY }}>
                       <RefreshCw size={12} />{remindingId === inv.id ? '…' : 'Remind'}

@@ -33,6 +33,10 @@ export function getInviteStatus(
   if (status === 'revoked') {
     return { label: 'Revoked', bg: '#FCEBEB', fg: '#A32D2D', twBg: 'bg-red-50', twText: 'text-red-600' };
   }
+  // draft — provisioned but not yet sent
+  if (status === 'draft') {
+    return { label: 'Not sent', bg: '#F5F0E8', fg: '#8B7355', twBg: 'bg-stone-100', twText: 'text-stone-600' };
+  }
   // pending — check if viewed
   if (viewedAt) {
     return { label: 'Viewed', bg: '#FEF3C7', fg: '#92400E', twBg: 'bg-amber-100', twText: 'text-amber-800' };

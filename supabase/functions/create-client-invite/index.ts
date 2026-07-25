@@ -46,10 +46,62 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json();
     const {
+      action, skip_send,
       invite_id, organization_id, organization_name, contact_name, email, phone, message, sender_name, client_role,
     } = body;
 
     const appBase = Deno.env.get("APP_PUBLIC_BASE") || "https://app.getevidly.com";
+
+    // ═══ SEND PATH (draft → pending, send email, stamp journey) ═══
+    if (action === 'send') {
+      const ids: string[] = body.invite_ids || (body.invite_id ? [body.invite_id] : []);
+      if (ids.length === 0) return json({ error: 'invite_ids required' }, 400, headers);
+      if (ids.length > 50) return json({ error: 'Batch limit is 50' }, 400, headers);
+
+      const results: { id: string; ok: boolean; error?: string }[] = [];
+
+      for (const id of ids) {
+        const { data: inv, error: invErr } = await supabase
+          .from('evidly_client_invites')
+          .select('id, organization_id, organization_name, contact_name, email, token, message, status, sent_at')
+          .eq('id', id)
+          .single();
+
+        if (invErr || !inv) { results.push({ id, ok: false, error: 'Invite not found' }); continue; }
+        if (inv.sent_at)    { results.push({ id, ok: false, error: 'Already sent' }); continue; }
+        if (inv.status !== 'draft') {
+          results.push({ id, ok: false, error: `Cannot send a ${inv.status} invite` });
+          continue;
+        }
+
+        const { subject, html } = buildClientInviteEmail({
+          recipientName: inv.contact_name,
+          senderName: sender_name || undefined,
+          businessName: inv.organization_name || 'your kitchen',
+          inviteLink: `${appBase}/join/${inv.token}`,
+          personalMessage: inv.message || undefined,
+        });
+
+        const emailResult = await sendEmail({ to: inv.email, subject, html });
+        if (!emailResult) { results.push({ id, ok: false, error: 'Email delivery failed' }); continue; }
+
+        const now = new Date();
+        await supabase.from('evidly_client_invites').update({
+          status: 'pending',
+          sent_at: now.toISOString(),
+          expires_at: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        }).eq('id', id);
+
+        if (inv.organization_id) {
+          await stampJourneyStage(supabase, inv.organization_id, 'invited');
+        }
+
+        results.push({ id, ok: true });
+      }
+
+      const allOk = results.every(r => r.ok);
+      return json({ success: allOk, results }, allOk ? 200 : 207, headers);
+    }
 
     // ═══ REMIND PATH ═══
     if (invite_id) {
@@ -124,18 +176,22 @@ Deno.serve(async (req: Request) => {
       // Non-fatal — invite still works without snapshot
     }
 
+    const insertRow: Record<string, unknown> = {
+      organization_id,
+      organization_name: organization_name || null,
+      contact_name, email,
+      phone: phone || null,
+      message: message || null,
+      client_role: client_role || "owner_operator",
+      token, status: skip_send ? "draft" : "pending",
+      invited_by: user.id,
+      location_snapshot: locationSnapshot,
+    };
+    if (skip_send) insertRow.expires_at = null;
+
     const { data: created, error: insErr } = await supabase
       .from("evidly_client_invites")
-      .insert({
-        organization_id,
-        organization_name: organization_name || null,
-        contact_name, email,
-        phone: phone || null,
-        message: message || null,
-        client_role: client_role || "owner_operator",
-        token, status: "pending", invited_by: user.id,
-        location_snapshot: locationSnapshot,
-      })
+      .insert(insertRow)
       .select("id")
       .single();
 
@@ -158,8 +214,53 @@ Deno.serve(async (req: Request) => {
         });
 
       if (provAuthErr) {
-        // 422 = email already registered → skip provisioning silently
-        if (!(provAuthErr.status === 422 || provAuthErr.message?.includes("already"))) {
+        const is422 =
+          provAuthErr.status === 422 ||
+          String(provAuthErr.message ?? "").includes("already registered");
+
+        if (is422) {
+          // ── ADOPT PATH: auth user exists — resolve id, upsert profile + access ──
+          const { data: existingUid, error: lookupErr } = await supabase.rpc(
+            "auth_uid_by_email",
+            { p_email: email },
+          );
+
+          if (lookupErr || !existingUid) {
+            logger.error("[create-client-invite] adopt lookup failed", lookupErr);
+          } else {
+            // Guard: if profile exists under a DIFFERENT org, do not clobber it
+            const { data: existingProfile } = await supabase
+              .from("user_profiles")
+              .select("organization_id")
+              .eq("id", existingUid)
+              .maybeSingle();
+
+            if (existingProfile && existingProfile.organization_id !== organization_id) {
+              logger.warn(
+                `[create-client-invite] profile ${existingUid} belongs to org ${existingProfile.organization_id}, not ${organization_id} — skipping profile upsert`,
+              );
+            } else {
+              provisionedUserId = existingUid;
+
+              const { error: profErr } = await supabase
+                .from("user_profiles")
+                .upsert({
+                  id: existingUid,
+                  full_name: contact_name,
+                  email,
+                  phone: phone || null,
+                  organization_id,
+                  role: client_role || "owner_operator",
+                  status: "invited",
+                }, { onConflict: "id" });
+
+              if (profErr) {
+                logger.error("[create-client-invite] adopt profile upsert failed", profErr);
+                provisionedUserId = null;
+              }
+            }
+          }
+        } else {
           logger.error("[create-client-invite] auth provision failed", provAuthErr);
         }
       } else if (authResult?.user) {
@@ -185,7 +286,7 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      // Grant user_location_access for EACH org location
+      // Grant user_location_access for EACH org location (upsert — safe on repeat invites)
       if (provisionedUserId) {
         const { data: orgLocs } = await supabase
           .from("locations")
@@ -193,19 +294,25 @@ Deno.serve(async (req: Request) => {
           .eq("organization_id", organization_id);
 
         if (orgLocs && orgLocs.length > 0) {
-          await supabase.from("user_location_access").insert(
+          await supabase.from("user_location_access").upsert(
             orgLocs.map((loc: { id: string }) => ({
               user_id: provisionedUserId!,
               organization_id,
               location_id: loc.id,
               role: client_role || "owner_operator",
             })),
+            { onConflict: "user_id,organization_id,location_id" },
           );
         }
       }
     } catch (provErr) {
       logger.error("[create-client-invite] provision block failed", provErr);
       // Non-fatal: invite still works — user gets provisioned on claim
+    }
+
+    // ── skip_send: provision only, no email, no journey stamp ──
+    if (skip_send) {
+      return json({ success: true, invite_id: created.id, sent: false }, 200, headers);
     }
 
     // Journey stage: invited (shared helper — idempotent, never moves backwards)
@@ -222,11 +329,19 @@ Deno.serve(async (req: Request) => {
     const sent = await sendEmail({ to: email, subject, html });
 
     if (!sent) {
-      await supabase.from("evidly_client_invites").delete().eq("id", created.id);
-      return json({ error: "We couldn't send the invite — check the email and try again." }, 502, headers);
+      // Downgrade to draft — preserve provisioned invite + auth user
+      await supabase.from("evidly_client_invites").update({
+        status: "draft", expires_at: null,
+      }).eq("id", created.id);
+      return json({ error: "We couldn't send the invite — check the email and try again.", invite_id: created.id, sent: false }, 502, headers);
     }
 
-    return json({ success: true, invite_id: created.id }, 200, headers);
+    // Stamp sent_at
+    await supabase.from("evidly_client_invites").update({
+      sent_at: new Date().toISOString(),
+    }).eq("id", created.id);
+
+    return json({ success: true, invite_id: created.id, sent: true }, 200, headers);
   } catch (err) {
     logger.error("[create-client-invite] Unhandled error", err);
     return json({ error: "Internal server error" }, 500, headers);
