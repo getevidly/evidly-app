@@ -251,6 +251,7 @@ const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').th
 const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
+const MarketResearchSurvey = lazy(() => import('./pages/public/MarketResearchSurvey'));
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
@@ -639,6 +640,7 @@ function AppRoutes() {
         <Route path="/vendor/schedule/:token" element={<Suspense fallback={<PageSkeleton />}><VendorScheduleResponse /></Suspense>} />
         <Route path="/vendor-connect/apply" element={<Suspense fallback={<PageSkeleton />}><VendorConnectApply /></Suspense>} />
         <Route path="/support/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
+        <Route path="/survey" element={<Suspense fallback={<PageSkeleton />}><MarketResearchSurvey /></Suspense>} />
 
         {/* City landing pages */}
         <Route path="/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><CityPage /></Suspense>} />
