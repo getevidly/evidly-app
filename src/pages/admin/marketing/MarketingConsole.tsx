@@ -13,6 +13,7 @@ import { MARKETING_TABS, tabRoute, type MarketingTabId } from './marketingTabCon
 import { EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, DISPLAY, BODY, MARKETING_FONTS_HREF } from './marketingTokens';
 import { PlaceholderTab } from './marketingPrimitives';
 import ChannelsTab from './ChannelsTab';
+import SurveyTab from './SurveyTab';
 import {
   LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail, Target,
@@ -239,7 +240,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'calls'     && <PlaceholderTab title="Outbound Calls" note="Daily calling surface — call queue sorted by ICP, outcome tracking, and cost per demo." Icon={Radio} />}
       {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
       {tab === 'channels'  && <ChannelsTab />}
-      {tab === 'survey'    && <PlaceholderTab title="Survey" note="Market research responses — cold funnel, pain correlation, segment breakdown." Icon={ClipboardList} />}
+      {tab === 'survey'    && <SurveyTab />}
       {tab === 'schedule'  && <PlaceholderTab title="Content Schedule" note="Month calendar with add-post form and an extensible channel list." Icon={Calendar} />}
       {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
       {tab === 'funnel'    && <PlaceholderTab title="Funnel" note="Stage-by-stage from first touch to claimed seat, with PRP attribution per transition." Icon={GitBranch} />}
