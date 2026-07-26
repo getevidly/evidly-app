@@ -1708,7 +1708,8 @@ export default function IntelligenceAdmin() {
                         {/* 1. Approve & Publish */}
                         {(() => {
                           const vs = verificationStatuses[sig.id];
-                          const blocked = vs?.publish_blocked ?? true;
+                          // Unblocked when no verification process started (admin review IS the gate)
+                          const blocked = vs ? vs.publish_blocked : false;
                           return (
                             <Button variant="primary" size="sm" onClick={() => publishSignal(sig)} disabled={publishing === sig.id || blocked}
                               className={blocked ? '!bg-gray-200 !text-gray-400' : '!bg-emerald-600'}>

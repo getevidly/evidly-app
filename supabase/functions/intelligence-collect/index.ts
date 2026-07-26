@@ -929,7 +929,7 @@ Deno.serve(async (req: Request) => {
       const recentCutoff = new Date(startTime).toISOString();
       const { data: recentSignals } = await supabase
         .from("intelligence_signals")
-        .select("id, signal_type, risk_revenue, risk_liability, risk_cost, risk_operational")
+        .select("id, signal_type, revenue_risk_level, liability_risk_level, cost_risk_level, operational_risk_level")
         .gte("created_at", recentCutoff);
 
       if (recentSignals && recentSignals.length > 0) {
@@ -939,14 +939,14 @@ Deno.serve(async (req: Request) => {
         for (const sig of recentSignals) {
           const riskScores: Record<string, number> = { critical: 100, high: 75, moderate: 50, low: 25, none: 0 };
           const maxRisk = Math.max(
-            riskScores[sig.risk_revenue || "none"] ?? 0,
-            riskScores[sig.risk_liability || "none"] ?? 0,
-            riskScores[sig.risk_cost || "none"] ?? 0,
-            riskScores[sig.risk_operational || "none"] ?? 0,
+            riskScores[sig.revenue_risk_level || "none"] ?? 0,
+            riskScores[sig.liability_risk_level || "none"] ?? 0,
+            riskScores[sig.cost_risk_level || "none"] ?? 0,
+            riskScores[sig.operational_risk_level || "none"] ?? 0,
           );
 
-          const hasCriticalRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "critical");
-          const hasHighRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "high");
+          const hasCriticalRisk = [sig.revenue_risk_level, sig.liability_risk_level, sig.cost_risk_level, sig.operational_risk_level].some(r => r === "critical");
+          const hasHighRisk = [sig.revenue_risk_level, sig.liability_risk_level, sig.cost_risk_level, sig.operational_risk_level].some(r => r === "high");
           const holdTypes = new Set(["enforcement_action", "outbreak", "legislation"]);
 
           let tier: string;
