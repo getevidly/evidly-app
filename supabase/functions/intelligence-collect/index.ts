@@ -317,13 +317,25 @@ async function fetchWebContent(source: IntelligenceSource): Promise<{ items: any
   if (!res.ok) throw new Error(`${source.name} HTTP ${res.status}`);
   const html = await res.text();
   const text = stripHtml(html).slice(0, 4000);
-  const today = new Date().toISOString().slice(0, 10);
+
+  // Stable dedupe key: SHA-256 hash of page content (never includes crawl date).
+  // Same page content on consecutive days → same hash → deduped.
+  // Genuinely new content (new recall posted) → different hash → new signal.
+  const hashBytes = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(text.slice(0, 2000)),
+  );
+  const contentHash = [...new Uint8Array(hashBytes)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 16);
+
   return {
     items: [{
       title: `${source.name} — Daily Intelligence Scan`,
       description: text.slice(0, 500),
       content: text,
-      source_url: `web:${source.id}:${today}`,
+      source_url: `web:${source.id}:${contentHash}`,
     }],
     raw: { url: source.url, textLength: text.length },
   };
@@ -771,30 +783,70 @@ Deno.serve(async (req: Request) => {
       critical: 95, high: 75, medium: 50, low: 25, informational: 10,
     };
 
-    // Map to actual DB columns (admin_console_complete schema):
-    //   source_name, category, signal_type, title, content_summary, original_url, counties_affected
-    // Schema-align batch ADD columns (ai_*, scope, status, etc.) are NOT in the live DB
-    // because the migration failed silently when a duplicate column was encountered.
-    const rows = analysisResults.map(({ fi, insight, severity }) => ({
-      original_url: fi.item.source_url,
-      source_name: insight.source_name || fi.source.name,
-      signal_type: mapSourceType(insight.category || fi.source.category),
-      category: insight.category || fi.source.category,
-      title: (insight.title || fi.item.title || "").slice(0, 200),
-      content_summary: (insight.summary || "").slice(0, 2000),
-      counties_affected: insight.affected_counties || [],
-    }));
+    // ── INTELLIGENCE REBUILD STEP 1: Query source scoping from DB ────
+    // Fetch scope + jurisdiction_id for all sources involved in this batch
+    const uniqueSourceIds = [...new Set(analysisResults.map(r => r.fi.source.id))];
+    const { data: sourceScopingData } = await supabase
+      .from("intelligence_sources")
+      .select("source_key, scope, jurisdiction_id, county")
+      .in("source_key", uniqueSourceIds);
 
-    const { error: batchErr } = await supabase.from("intelligence_signals").insert(rows);
+    const sourceScopingMap = new Map<string, { scope: string | null; jurisdiction_id: string | null; county: string | null }>();
+    (sourceScopingData || []).forEach((s: any) => {
+      sourceScopingMap.set(s.source_key, {
+        scope: s.scope || null,
+        jurisdiction_id: s.jurisdiction_id || null,
+        county: s.county || null,
+      });
+    });
+
+    // Map to actual DB columns + new scoping columns
+    // INTELLIGENCE REBUILD: Now sets scope from source (jurisdiction_id removed until migration applied)
+    const rows = analysisResults.map(({ fi, insight, severity }) => {
+      const sourceScoping = sourceScopingMap.get(fi.source.id) || { scope: null, jurisdiction_id: null, county: null };
+
+      // For jurisdiction-scoped signals: auto-set affected_counties from source
+      let countiesAffected = insight.affected_counties || [];
+      if (sourceScoping.scope === 'county' && sourceScoping.county && countiesAffected.length === 0) {
+        countiesAffected = [sourceScoping.county.toLowerCase()];
+      }
+
+      return {
+        original_url: fi.item.source_url,
+        source_name: insight.source_name || fi.source.name,
+        source_key: fi.source.id, // Map source ID to source_key column
+        signal_type: mapSourceType(insight.category || fi.source.category),
+        category: insight.category || fi.source.category,
+        title: (insight.title || fi.item.title || "").slice(0, 200),
+        content_summary: (insight.summary || "").slice(0, 2000),
+        counties_affected: countiesAffected,
+        // INTELLIGENCE REBUILD: Set scope from source
+        scope: sourceScoping.scope || insight.scope || 'national', // Fallback to national if unknown
+        // jurisdiction_id removed until migration 20260726000000 is applied to PROD
+      };
+    });
+
+    const { error: batchErr, data: insertedData } = await supabase
+      .from("intelligence_signals")
+      .insert(rows)
+      .select(); // Returns inserted rows to verify success
 
     if (batchErr) {
-      console.warn(`[intelligence-collect] Batch insert failed (${batchErr.message}), falling back to individual inserts`);
+      console.error(`[intelligence-collect] Batch insert ERROR: ${batchErr.message}`);
+      errors.push(`BATCH INSERT FAILED: ${batchErr.message}`);
 
       // Fallback: insert one-by-one so partial success is possible
       for (let i = 0; i < rows.length; i++) {
-        const { error: singleErr } = await supabase.from("intelligence_signals").insert(rows[i]);
+        const { error: singleErr, data: singleData } = await supabase
+          .from("intelligence_signals")
+          .insert(rows[i])
+          .select();
         if (singleErr) {
+          console.error(`[intelligence-collect] ${analysisResults[i].fi.source.id} insert error:`, singleErr.message);
           errors.push(`${analysisResults[i].fi.source.id}: DB insert failed — ${singleErr.message}`);
+        } else if (!singleData || singleData.length === 0) {
+          console.error(`[intelligence-collect] ${analysisResults[i].fi.source.id} silent insert failure (0 rows returned)`);
+          errors.push(`${analysisResults[i].fi.source.id}: Silent insert failure — 0 rows inserted despite no error`);
         } else {
           sourceResults[analysisResults[i].fi.source.id].new++;
           newInsights.push({
@@ -804,8 +856,45 @@ Deno.serve(async (req: Request) => {
           });
         }
       }
+    } else if (!insertedData || insertedData.length === 0) {
+      console.error(`[intelligence-collect] Batch insert SILENT FAILURE: returned success but 0 rows inserted (expected ${rows.length})`);
+      errors.push(`BATCH INSERT SILENT FAILURE: Attempted ${rows.length} rows, inserted 0. Likely schema mismatch or RLS block.`);
+
+      // Fallback to individual inserts to get specific error messages
+      for (let i = 0; i < rows.length; i++) {
+        const { error: singleErr, data: singleData } = await supabase
+          .from("intelligence_signals")
+          .insert(rows[i])
+          .select();
+        if (singleErr) {
+          console.error(`[intelligence-collect] ${analysisResults[i].fi.source.id} insert error:`, singleErr.message);
+          errors.push(`${analysisResults[i].fi.source.id}: DB insert failed — ${singleErr.message}`);
+        } else if (!singleData || singleData.length === 0) {
+          console.error(`[intelligence-collect] ${analysisResults[i].fi.source.id} silent insert failure (0 rows returned)`);
+          errors.push(`${analysisResults[i].fi.source.id}: Silent insert failure — 0 rows inserted despite no error`);
+        } else {
+          sourceResults[analysisResults[i].fi.source.id].new++;
+          newInsights.push({
+            title: rows[i].title.slice(0, 120),
+            severity: analysisResults[i].severity,
+            source: analysisResults[i].fi.source.name,
+          });
+        }
+      }
+    } else if (insertedData.length !== rows.length) {
+      console.warn(`[intelligence-collect] Partial batch insert: ${insertedData.length}/${rows.length} rows inserted`);
+      // Record the successful inserts
+      for (let i = 0; i < Math.min(insertedData.length, rows.length); i++) {
+        sourceResults[analysisResults[i].fi.source.id].new++;
+        newInsights.push({
+          title: rows[i].title.slice(0, 120),
+          severity: analysisResults[i].severity,
+          source: analysisResults[i].fi.source.name,
+        });
+      }
     } else {
-      // Batch succeeded — record all
+      // Batch truly succeeded — record all
+      console.log(`[intelligence-collect] Batch insert SUCCESS: ${insertedData.length} rows inserted`);
       for (let i = 0; i < rows.length; i++) {
         sourceResults[analysisResults[i].fi.source.id].new++;
         newInsights.push({
@@ -905,17 +994,20 @@ Deno.serve(async (req: Request) => {
     const crawlRows = INTELLIGENCE_SOURCES.map((source) => {
       const sr = sourceResults[source.id] || { fetched: 0, new: 0, skipped: 0 };
       const hasError = !!sr.error;
+      const hasInsertFailure = errors.some(e => e.includes(source.id) && (e.includes('DB insert failed') || e.includes('Silent insert failure')));
+      const insertError = hasInsertFailure ? errors.find(e => e.includes(source.id)) : null;
+
       return {
         source_id: source.id,
         source_name: source.name,
         started_at: new Date(startTime).toISOString(),
         completed_at: new Date().toISOString(),
-        status: hasError ? "failed" : sr.fetched > 0 ? "success" : "partial",
+        status: hasError || hasInsertFailure ? "failed" : sr.fetched > 0 ? "success" : "partial",
         events_found: sr.fetched,
         events_new: sr.new,
         events_duplicate: sr.skipped,
         duration_ms,
-        error_message: sr.error || null,
+        error_message: sr.error || insertError || null,
         metadata: { pillar: source.pillar, category: source.category, type: source.type },
       };
     });
