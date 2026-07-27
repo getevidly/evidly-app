@@ -46,15 +46,15 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
   { id: "openfda_adverse_events", name: "openFDA Food Adverse Events", url: "https://api.fda.gov/food/event.json",
     params: { limit: 5, sort: "date_started:desc" },
     type: "json_api", category: "outbreak_alert", defaultSeverity: "high", defaultScope: "national", pillar: ["food_safety"] },
-  { id: "usda_fsis_recalls", name: "USDA FSIS Meat & Poultry Recalls", url: "https://www.fsis.usda.gov/fsis/api/recall/v/1",
-    type: "json_api", category: "recall_alert", defaultSeverity: "critical", defaultScope: "national", pillar: ["food_safety"],
+  { id: "usda_fsis_recalls", name: "USDA FSIS Meat & Poultry Recalls", url: "https://www.fsis.usda.gov/recalls",
+    type: "web_page", category: "recall_alert", defaultSeverity: "critical", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "Focus on USDA FSIS meat, poultry, and egg product recalls. Identify products commonly used in California commercial kitchens." },
   { id: "cdc_foodborne", name: "CDC Foodborne Illness Outbreak Reports",
     url: "https://tools.cdc.gov/api/v2/resources/media?topic=food+safety&language=english&max=5&sort=-datepublished",
     type: "json_api", category: "outbreak_alert", defaultSeverity: "high", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "Focus on foodborne illness outbreaks. Identify pathogen, food vehicle, and prevention measures for commercial kitchens." },
   { id: "cdph_outbreaks", name: "California Dept of Public Health Outbreak Investigations",
-    url: "https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/Outbreaks.aspx",
+    url: "https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/FoodborneDiseasesandOutbreaks.aspx",
     type: "web_page", category: "outbreak_alert", defaultSeverity: "high", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "California-specific outbreak investigations. Focus on outbreaks affecting food service operations." },
   { id: "cdfa_recalls", name: "California Dept of Food & Agriculture Recalls", url: "https://www.cdfa.ca.gov/ahfss/",
@@ -65,20 +65,17 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     type: "web_page", category: "enforcement_surge", defaultSeverity: "medium", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "CalCode enforcement actions and updates. Focus on common violations in commercial kitchens." },
   // ══════ FACILITY SAFETY (5 sources) ══════
-  { id: "ca_fire_marshal", name: "California State Fire Marshal Bulletins", url: "https://osfm.fire.ca.gov/divisions/fire-engineering-and-investigations/",
+  { id: "ca_fire_marshal", name: "California State Fire Marshal Bulletins", url: "https://osfm.fire.ca.gov/resources/information-bulletins",
     type: "web_page", category: "nfpa_update", defaultSeverity: "high", defaultScope: "regional", pillar: ["facility_safety"],
     promptContext: "CA State Fire Marshal bulletins on commercial kitchen facility safety, hood/duct systems, NFPA 96 compliance, and suppression systems." },
   { id: "nfpa_updates", name: "NFPA Alerts & Code Updates", url: "https://www.nfpa.org/news-blogs-and-articles/nfpa-journal",
     type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "NFPA code updates. Focus on NFPA 96 (commercial kitchen hoods/ducts), NFPA 17A (wet chemical suppression), NFPA 1 (Fire Code)." },
-  { id: "calfire_incidents", name: "Cal Fire Incidents Affecting Commercial Structures", url: "https://www.fire.ca.gov/incidents",
-    type: "web_page", category: "seasonal_risk", defaultSeverity: "medium", defaultScope: "regional", pillar: ["facility_safety"],
+  { id: "calfire_incidents", name: "Cal Fire Incidents Affecting Commercial Structures", url: "https://incidents.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false",
+    type: "json_api", category: "seasonal_risk", defaultSeverity: "medium", defaultScope: "regional", pillar: ["facility_safety"],
     promptContext: "Cal Fire incidents affecting commercial buildings and restaurants. Identify facility safety lessons for kitchen operators." },
-  { id: "local_fire_citations", name: "Local Fire Dept Inspection Citations — Fresno, Merced, Stanislaus, Sacramento, LA",
-    url: "https://data.ca.gov/dataset/fire-incidents",
-    type: "web_page", category: "inspection_trend", defaultSeverity: "medium", defaultScope: "local", pillar: ["facility_safety"],
-    promptContext: "Fire inspection citations in Fresno, Merced, Stanislaus, Sacramento, and Los Angeles counties. Focus on commercial kitchen violations." },
-  { id: "ikeca_bulletins", name: "IKECA Bulletins & Standards Updates", url: "https://www.ikeca.org/page/News",
+  // local_fire_citations REMOVED — data.ca.gov/dataset/fire-incidents permanently deleted, no replacement dataset exists
+  { id: "ikeca_bulletins", name: "IKECA Bulletins & Standards Updates", url: "https://www.ikeca.org/news/default.asp",
     type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "IKECA kitchen exhaust cleaning standards and bulletins. Focus on cleaning frequency, documentation, and compliance." },
   // ══════ REGULATORY & LEGISLATIVE (7 sources) ══════
@@ -99,7 +96,7 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
   { id: "ca_dir_wage", name: "CA DIR Wage Violations in Food Service", url: "https://www.dir.ca.gov/dlse/dlse-bofe.html",
     type: "web_page", category: "enforcement_surge", defaultSeverity: "medium", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "California wage and hour violations in food service. Focus on compliance requirements and penalty trends." },
-  { id: "nsf_alerts", name: "NSF International Food Safety Alerts", url: "https://www.nsf.org/consumer-resources/food-safety",
+  { id: "nsf_alerts", name: "NSF International Food Safety Alerts", url: "https://www.nsf.org/consumer-resources/food-nutrition",
     type: "web_page", category: "recall_alert", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "NSF International food safety alerts and equipment certification updates for commercial kitchen equipment." },
   { id: "servsafe_updates", name: "ServSafe & Food Handler Certification Updates", url: "https://www.servsafe.com/",
@@ -131,7 +128,7 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     url: "https://www.ashrae.org/about/news",
     type: "web_page", category: "nfpa_update", defaultSeverity: "low", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "ASHRAE ventilation/exhaust bulletins. Focus on commercial kitchen hood systems, make-up air, NFPA 96 compliance." },
-  { id: "nafem_alerts", name: "Food Equipment Manufacturers Association Product Alerts", url: "https://www.nafem.org/all-news/",
+  { id: "nafem_alerts", name: "Food Equipment Manufacturers Association Product Alerts", url: "https://nafem.org/news/",
     type: "web_page", category: "recall_alert", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety", "facility_safety"],
     promptContext: "NAFEM product alerts. Focus on food equipment recalls, safety updates, and technology changes for commercial kitchens." },
   // ══════ REGULATORY UPDATES (8 sources) — feed Regulatory Updates page ══════
@@ -305,9 +302,12 @@ async function fetchOpenFDAAdverseEvents(
 // ── Shared Fetch Headers ──────────────────────────────────────
 
 const FETCH_HEADERS = {
-  "User-Agent": "EvidLY-Intelligence/1.0 (compliance-monitoring; contact@getevidly.com)",
-  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7",
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
 };
+
+const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
 
 function stripHtml(html: string): string {
   return html
@@ -323,11 +323,32 @@ function stripHtml(html: string): string {
 
 // ── Web Page Fetcher (generic) ────────────────────────────────
 
+async function fetchViaFirecrawl(url: string): Promise<string> {
+  if (!FIRECRAWL_API_KEY) throw new Error("FIRECRAWL_API_KEY not configured");
+  const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${FIRECRAWL_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
+    signal: AbortSignal.timeout(20_000),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(`Firecrawl error: ${data.error || res.status}`);
+  return (data.data?.markdown || data.data?.content || "").slice(0, 4000);
+}
+
 async function fetchWebContent(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
-  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(8_000) });
-  if (!res.ok) throw new Error(`${source.name} HTTP ${res.status}`);
-  const html = await res.text();
-  const text = stripHtml(html).slice(0, 4000);
+  let text: string;
+  try {
+    const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(8_000) });
+    if (res.status === 403 || res.status === 401) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`${source.name} HTTP ${res.status}`);
+    const html = await res.text();
+    text = stripHtml(html).slice(0, 4000);
+  } catch (directErr) {
+    // Fallback to Firecrawl for bot-blocked or TLS-broken sites
+    console.log(`[intelligence-collect] ${source.id}: direct fetch failed (${directErr}), trying Firecrawl`);
+    text = await fetchViaFirecrawl(source.url);
+  }
 
   // Stable dedupe key: SHA-256 hash of page content (never includes crawl date).
   // Same page content on consecutive days → same hash → deduped.
@@ -444,6 +465,46 @@ async function fetchFederalRegister(source: IntelligenceSource): Promise<{ items
   return { items, raw: data };
 }
 
+// ── Cal Fire Incidents JSON API Fetcher ──────────────────────
+
+async function fetchCalFireIncidents(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
+  const res = await fetch("https://incidents.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false", {
+    headers: { ...FETCH_HEADERS, "Accept": "application/json" },
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!res.ok) throw new Error(`Cal Fire API HTTP ${res.status}`);
+  const data = await res.json();
+  const incidents = (Array.isArray(data) ? data : []).slice(0, 5);
+  const items = incidents.map((inc: any) => ({
+    title: `${inc.Name || "Incident"} — ${inc.County || "CA"} County (${inc.AcresBurned ?? 0} acres, ${inc.PercentContained ?? 0}% contained)`,
+    description: `Location: ${inc.Location || "Unknown"}. Admin Unit: ${inc.AdminUnit || ""}. Type: ${inc.Type || "Wildfire"}.`,
+    county: inc.County || "",
+    acresBurned: inc.AcresBurned || 0,
+    percentContained: inc.PercentContained || 0,
+    startedDate: inc.Started || "",
+    source_url: `calfire:${inc.UniqueId || inc.Name || ""}`,
+  }));
+  return { items, raw: data };
+}
+
+// ── FSIS Recall Fetcher (via Firecrawl — Akamai-blocked) ────
+
+async function fetchFsisRecalls(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
+  // FSIS entire domain is behind Akamai WAF — use Firecrawl to get recall page content
+  const text = await fetchViaFirecrawl("https://www.fsis.usda.gov/recalls");
+  const hashBytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text.slice(0, 2000)));
+  const contentHash = [...new Uint8Array(hashBytes)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+  return {
+    items: [{
+      title: `${source.name} — Daily Intelligence Scan`,
+      description: text.slice(0, 500),
+      content: text,
+      source_url: `web:${source.id}:${contentHash}`,
+    }],
+    raw: { url: source.url, textLength: text.length, via: "firecrawl" },
+  };
+}
+
 // ── Source Dispatcher ─────────────────────────────────────────
 
 async function fetchSource(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
@@ -464,8 +525,12 @@ async function fetchSource(source: IntelligenceSource): Promise<{ items: any[]; 
     case "federal_register_food":
     case "federal_register_proposed":
       return fetchFederalRegister(source);
+    case "calfire_incidents":
+      return fetchCalFireIncidents(source);
+    case "usda_fsis_recalls":
+      return fetchFsisRecalls(source);
   }
-  // Generic fetcher by type
+  // Generic fetcher by type — fetchWebContent auto-falls back to Firecrawl on 403/TLS errors
   if (source.type === "web_page") return fetchWebContent(source);
   // Fallback for json_api without a specific fetcher — use generic web fetch
   if (source.type === "json_api") return fetchWebContent({ ...source, type: "web_page" });
@@ -665,7 +730,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const startTime = Date.now();
-  const TIMEOUT_MS = 50_000; // 50s safety (Edge Function limit ~60s)
+  const TIMEOUT_MS = 240_000; // 240s safety (Edge Function wall-clock limit 300s)
   const isTimedOut = () => Date.now() - startTime > TIMEOUT_MS;
 
   const errors: string[] = [];
