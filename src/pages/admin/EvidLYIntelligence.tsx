@@ -396,6 +396,7 @@ export default function EvidLYIntelligence() {
   const [loading, setLoading] = useState(true);
   const [crawlRunning, setCrawlRunning] = useState(false);
   const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
+  const [publishFeedback, setPublishFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   // Filters
   const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '', pillar: '' });
@@ -696,61 +697,74 @@ export default function EvidLYIntelligence() {
   const submitAdvisory = async () => {
     const sig = publishModal.signal;
     if (!sig) return;
-    const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
-    // 1. Update signal with risk + opportunity dimensions + targeting + published status
-    await supabase.from('intelligence_signals').update({
-      revenue_risk_level: pubForm.revenueRisk,
-      liability_risk_level: pubForm.liabilityRisk,
-      cost_risk_level: pubForm.costRisk,
-      operational_risk_level: pubForm.operationalRisk,
-      revenue_risk_note: pubForm.revenueNote || null,
-      liability_risk_note: pubForm.liabilityNote || null,
-      cost_risk_note: pubForm.costNote || null,
-      operational_risk_note: pubForm.operationalNote || null,
-      opp_revenue: pubForm.oppRevenue,
-      opp_liability: pubForm.oppLiability,
-      opp_cost: pubForm.oppCost,
-      opp_operational: pubForm.oppOperational,
-      opp_revenue_note: pubForm.oppRevenueNote || null,
-      opp_liability_note: pubForm.oppLiabilityNote || null,
-      opp_cost_note: pubForm.oppCostNote || null,
-      opp_operational_note: pubForm.oppOperationalNote || null,
-      target_industries: pubForm.allIndustries ? [] : pubForm.targetIndustries,
-      target_all_industries: pubForm.allIndustries,
-      target_counties: targetCountiesArr,
-      signal_scope: pubForm.signalScope,
-      recommended_action: pubForm.recommendedAction || null,
-      action_deadline: pubForm.actionDeadline || null,
-      is_published: true,
-      published_at: new Date().toISOString(),
-      published_by: user?.email,
-    }).eq('id', sig.id);
-    // 2. Also insert into client_advisories for backwards compat
-    const primaryDim = [
-      { key: 'liability', val: pubForm.liabilityRisk },
-      { key: 'revenue', val: pubForm.revenueRisk },
-      { key: 'cost', val: pubForm.costRisk },
-      { key: 'operational', val: pubForm.operationalRisk },
-    ].sort((a, b) => {
-      const order = ['critical', 'high', 'moderate', 'low', 'none'];
-      return order.indexOf(a.val) - order.indexOf(b.val);
-    })[0];
-    const { data: advisory } = await supabase.from('client_advisories').insert({
-      signal_id: sig.id,
-      title: pubForm.title,
-      summary: pubForm.summary,
-      dimension: primaryDim.key,
-      risk_level: primaryDim.val === 'moderate' ? 'medium' : primaryDim.val,
-      advisory_type: primaryDim.val === 'critical' ? 'action_required' : 'risk',
-      published_by: user?.email,
-    }).select('id').single();
-    await updateSignalStatus(sig.id, 'published');
-    setPublishModal({ open: false, signal: null });
-    // 3. Deliver to affected clients
-    if (advisory?.id) {
-      await deliverToClients('advisory', advisory.id, pubForm.title);
-    } else {
-      // Advisory published — no delivery endpoint matched
+    setPublishFeedback(null);
+    try {
+      const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
+      // 1. Update signal with risk + opportunity dimensions + targeting + published status
+      const { data: updatedRow, error: updateErr } = await supabase.from('intelligence_signals').update({
+        revenue_risk_level: pubForm.revenueRisk,
+        liability_risk_level: pubForm.liabilityRisk,
+        cost_risk_level: pubForm.costRisk,
+        operational_risk_level: pubForm.operationalRisk,
+        revenue_risk_note: pubForm.revenueNote || null,
+        liability_risk_note: pubForm.liabilityNote || null,
+        cost_risk_note: pubForm.costNote || null,
+        operational_risk_note: pubForm.operationalNote || null,
+        opp_revenue: pubForm.oppRevenue,
+        opp_liability: pubForm.oppLiability,
+        opp_cost: pubForm.oppCost,
+        opp_operational: pubForm.oppOperational,
+        opp_revenue_note: pubForm.oppRevenueNote || null,
+        opp_liability_note: pubForm.oppLiabilityNote || null,
+        opp_cost_note: pubForm.oppCostNote || null,
+        opp_operational_note: pubForm.oppOperationalNote || null,
+        target_industries: pubForm.allIndustries ? [] : pubForm.targetIndustries,
+        target_all_industries: pubForm.allIndustries,
+        target_counties: targetCountiesArr,
+        signal_scope: pubForm.signalScope,
+        recommended_action: pubForm.recommendedAction || null,
+        action_deadline: pubForm.actionDeadline || null,
+        is_published: true,
+        published_at: new Date().toISOString(),
+        published_by: user?.email,
+      }).eq('id', sig.id).select('id').single();
+      if (updateErr) {
+        setPublishFeedback({ type: 'error', msg: `Publish failed: ${updateErr.message}` });
+        return;
+      }
+      if (!updatedRow) {
+        setPublishFeedback({ type: 'error', msg: 'Publish failed: update returned no rows (RLS or missing signal).' });
+        return;
+      }
+      // 2. Also insert into client_advisories for backwards compat
+      const primaryDim = [
+        { key: 'liability', val: pubForm.liabilityRisk },
+        { key: 'revenue', val: pubForm.revenueRisk },
+        { key: 'cost', val: pubForm.costRisk },
+        { key: 'operational', val: pubForm.operationalRisk },
+      ].sort((a, b) => {
+        const order = ['critical', 'high', 'moderate', 'low', 'none'];
+        return order.indexOf(a.val) - order.indexOf(b.val);
+      })[0];
+      const { data: advisory } = await supabase.from('client_advisories').insert({
+        signal_id: sig.id,
+        title: pubForm.title,
+        summary: pubForm.summary,
+        dimension: primaryDim.key,
+        risk_level: primaryDim.val === 'moderate' ? 'medium' : primaryDim.val,
+        advisory_type: primaryDim.val === 'critical' ? 'action_required' : 'risk',
+        published_by: user?.email,
+      }).select('id').single();
+      await updateSignalStatus(sig.id, 'published');
+      setPublishModal({ open: false, signal: null });
+      setPublishFeedback({ type: 'success', msg: `Signal "${sig.title}" published successfully.` });
+      await loadAll();
+      // 3. Deliver to affected clients
+      if (advisory?.id) {
+        await deliverToClients('advisory', advisory.id, pubForm.title);
+      }
+    } catch (err: any) {
+      setPublishFeedback({ type: 'error', msg: `Publish error: ${err.message || 'Unknown error'}` });
     }
   };
 
@@ -776,6 +790,11 @@ export default function EvidLYIntelligence() {
           </div>
         </div>
         <div className="flex gap-2 items-center">
+          {publishFeedback && (
+            <span className={`text-[11px] font-semibold ${publishFeedback.type === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
+              {publishFeedback.msg}
+            </span>
+          )}
           {crawlFeedback && (
             <span className={`text-[11px] font-semibold ${crawlFeedback.type === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
               {crawlFeedback.msg}
