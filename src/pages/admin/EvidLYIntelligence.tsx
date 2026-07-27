@@ -22,7 +22,7 @@ import { Modal } from '../../components/ui/Modal';
 // TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400
 // BORDER=#E5E0D8 → border-border_ui
 
-type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
+type Tab = 'overview' | 'signals' | 'sources' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
 
 interface Source {
   id: string;
@@ -243,140 +243,6 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
   </div>
 );
 
-// Admin reference architecture — displays when no live correlations. Real data takes precedence in future state.
-const SAMPLE_CORRELATIONS = [
-  {
-    id: 'corr-001',
-    pillar: 'Revenue',
-    pillarColor: '#C2410C',
-    title: 'Repeat Violation → Revenue Loss',
-    description: 'Locations with 2+ repeat critical violations in 12 months show an average 18% revenue decline within 6 months of public posting.',
-    signalCount: 14,
-    impactRange: '$45,000 – $180,000',
-    confidence: 87,
-    sources: ['Health Dept Public Records', 'Yelp Signal Feed', 'CDPH Violation Index'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-002',
-    pillar: 'Revenue',
-    pillarColor: '#C2410C',
-    title: 'Grade Downgrade → Foot Traffic Drop',
-    description: 'Letter grade downgrades (A→B or B→C) correlate with a 12–22% foot traffic reduction within 30 days based on mobile location data.',
-    signalCount: 9,
-    impactRange: '$28,000 – $95,000',
-    confidence: 79,
-    sources: ['LA County Grade Data', 'Mobile Analytics Signal'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-003',
-    pillar: 'Liability',
-    pillarColor: '#991B1B',
-    title: 'Open Violation at Reinspection → Closure Risk',
-    description: 'Locations entering reinspection with 3+ open critical violations have a 43% probability of temporary closure order.',
-    signalCount: 22,
-    impactRange: '$85,000 – $400,000',
-    confidence: 91,
-    sources: ['CDPH Reinspection Records', 'Mariposa County EHD', 'Stanislaus County EHD'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-004',
-    pillar: 'Liability',
-    pillarColor: '#991B1B',
-    title: 'Hood Cleaning Overdue → Insurance Claim Trigger',
-    description: 'NFPA 96-2021 Table 12.4 overdue intervals (>30 days past schedule) correlate with 2.8× higher fire suppression claim frequency.',
-    signalCount: 17,
-    impactRange: '$120,000 – $650,000',
-    confidence: 84,
-    sources: ['IKECA Service Records', 'OSFM Fire Reports', 'Insurance Carrier Claims Data'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-005',
-    pillar: 'Cost',
-    pillarColor: '#1E2D4D',
-    title: 'Vendor COI Lapse → Emergency Service Premium',
-    description: 'Locations using vendors with expired COI are 3.1× more likely to incur emergency service charges averaging $4,200 per incident.',
-    signalCount: 11,
-    impactRange: '$12,000 – $68,000',
-    confidence: 76,
-    sources: ['Vendor Document Records', 'Service Invoice Data'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-006',
-    pillar: 'Cost',
-    pillarColor: '#1E2D4D',
-    title: 'Temperature Log Gap → Food Loss Exposure',
-    description: 'Missing temperature logs for 3+ consecutive days correlate with $1,800 avg food inventory loss and $3,200 corrective action costs.',
-    signalCount: 8,
-    impactRange: '$5,000 – $42,000',
-    confidence: 72,
-    sources: ['Temperature Sensor Data', 'EvidLY Checklist Records'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-007',
-    pillar: 'Operational',
-    pillarColor: '#166534',
-    title: 'CFPM Cert Expiry → Inspection Score Decline',
-    description: 'Locations where the CFPM certification lapses show a 14-point average inspection score decline within 90 days.',
-    signalCount: 19,
-    impactRange: '$22,000 – $110,000',
-    confidence: 88,
-    sources: ['CA Environmental Health Data', 'Training Records Module'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-008',
-    pillar: 'Operational',
-    pillarColor: '#166534',
-    title: 'Self-Inspection Gap → Failed Surprise Inspection',
-    description: 'Locations missing self-inspection checklists for 2+ weeks are 2.4× more likely to fail unannounced health inspections.',
-    signalCount: 13,
-    impactRange: '$18,000 – $75,000',
-    confidence: 81,
-    sources: ['EvidLY Self-Inspection Logs', 'County Inspection Records'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-009',
-    pillar: 'Workforce',
-    pillarColor: '#6B21A8',
-    title: 'High Turnover → Training Gap → Violation Cluster',
-    description: 'Locations with >60% annual staff turnover show a 3.7× violation cluster rate within 120 days of turnover spike.',
-    signalCount: 16,
-    impactRange: '$35,000 – $160,000',
-    confidence: 83,
-    sources: ['HR Turnover Signal', 'Training Completion Records', 'County Inspection Data'],
-    status: 'active' as const,
-  },
-  {
-    id: 'corr-010',
-    pillar: 'Workforce',
-    pillarColor: '#6B21A8',
-    title: 'Food Handler Cert Gap → Critical Violation',
-    description: 'Locations where >25% of food handlers have lapsed certifications show a 2.1× rate of critical food safety violations on next inspection.',
-    signalCount: 12,
-    impactRange: '$14,000 – $85,000',
-    confidence: 78,
-    sources: ['Training Records Module', 'CDPH Inspection Index'],
-    status: 'active' as const,
-  },
-];
-
-const CORR_PILLARS = ['Revenue', 'Liability', 'Cost', 'Operational', 'Workforce'];
-const CORR_PILLAR_COLORS: Record<string, string> = {
-  Revenue: '#C2410C',
-  Liability: '#991B1B',
-  Cost: '#1E2D4D',
-  Operational: '#166534',
-  Workforce: '#6B21A8',
-};
-const REPORT_FORMATS = ['Executive Summary', 'Formal Document', 'PDF/Print Ready', 'Risk Register'];
-
 export default function EvidLYIntelligence() {
   useDemoGuard();
   const { user } = useAuth();
@@ -387,7 +253,6 @@ export default function EvidLYIntelligence() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [routingMode, setRoutingMode] = useState<'supervised' | 'autonomous'>('supervised');
   const [routingModeLoading, setRoutingModeLoading] = useState(false);
-  // jieUpdates state removed — merged into jurisdictionUpdates
   const [correlations, setCorrelations] = useState<Correlation[]>([]);
   const [jurisdictionUpdates, setJurisdictionUpdates] = useState<JurisdictionIntelUpdate[]>([]);
   const [allJurisdictions, setAllJurisdictions] = useState<{ id: string; county: string; jurisdiction_key: string }[]>([]);
@@ -398,6 +263,10 @@ export default function EvidLYIntelligence() {
   const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [publishFeedback, setPublishFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
+  // Accurate server-side counts (not capped by .limit())
+  const [signalCounts, setSignalCounts] = useState({ total: 0, published: 0, critical: 0 });
+  const [crawlStats, setCrawlStats] = useState<{ succeeded: number; total: number; lastRun: string | null }>({ succeeded: 0, total: 0, lastRun: null });
+
   // Filters
   const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '', pillar: '' });
   const [srcCatFilter, setSrcCatFilter] = useState('');
@@ -406,9 +275,6 @@ export default function EvidLYIntelligence() {
   const [jurFilter, setJurFilter] = useState<'' | 'active' | 'quiet' | 'methodology'>('');
   const [jurSort, setJurSort] = useState<'signals' | 'name' | 'recent'>('signals');
   const [expandedRegVerification, setExpandedRegVerification] = useState<string | null>(null);
-  const [corrPillarFilter, setCorrPillarFilter] = useState<string>('All');
-  const [corrReportFormat, setCorrReportFormat] = useState<string>('Executive Summary');
-  const [corrExpanded, setCorrExpanded] = useState<string | null>(null);
 
   // Publish Advisory modal
   const [publishModal, setPublishModal] = useState<{ open: boolean; signal: Signal | null }>({ open: false, signal: null });
@@ -441,22 +307,45 @@ export default function EvidLYIntelligence() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [sourcesRes, signalsRes, corrRes, jiuRes, regRes, rfpRes, jurRes] = await Promise.all([
+      const [sourcesRes, signalsRes, jiuRes, regRes, rfpRes, jurRes,
+             countTotalRes, countPubRes, countCritRes, crawlLogRes] = await Promise.all([
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
-        supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name)').order('created_at', { ascending: false }).limit(100),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('rfp_listings').select('id, title, entity_name, state, relevance_tier, deadline, estimated_value_min, estimated_value_max, status, created_at, ai_relevance_summary').order('created_at', { ascending: false }).limit(100),
         supabase.from('jurisdictions').select('id, county, jurisdiction_key').order('county'),
+        // Accurate server-side counts (not capped by .limit())
+        supabase.from('intelligence_signals').select('*', { count: 'exact', head: true }),
+        supabase.from('intelligence_signals').select('*', { count: 'exact', head: true }).eq('is_published', true),
+        supabase.from('intelligence_signals').select('*', { count: 'exact', head: true }).or('revenue_risk_level.eq.critical,liability_risk_level.eq.critical'),
+        // Most recent crawl run results
+        supabase.from('crawl_execution_log').select('source_id, status, started_at').order('started_at', { ascending: false }).limit(50),
       ]);
       if (sourcesRes.data) setSources(sourcesRes.data);
       if (signalsRes.data) setSignals(signalsRes.data);
-      if (corrRes.data) setCorrelations(corrRes.data);
       if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
       if (regRes.data) setRegulatoryChanges(regRes.data);
       if (rfpRes.data) setRfpListings(rfpRes.data);
       if (jurRes.data) setAllJurisdictions(jurRes.data);
+
+      // Signal counts from head queries
+      setSignalCounts({
+        total: countTotalRes.count ?? 0,
+        published: countPubRes.count ?? 0,
+        critical: countCritRes.count ?? 0,
+      });
+
+      // Crawl stats from most recent run
+      if (crawlLogRes.data && crawlLogRes.data.length > 0) {
+        const lastRun = crawlLogRes.data[0].started_at;
+        const runRows = crawlLogRes.data.filter(r => r.started_at === lastRun);
+        setCrawlStats({
+          total: runRows.length,
+          succeeded: runRows.filter(r => r.status === 'success').length,
+          lastRun,
+        });
+      }
     } catch {
       // Queries may fail in demo mode — empty states will show
     }
@@ -562,21 +451,10 @@ export default function EvidLYIntelligence() {
     return () => { cancelled = true; };
   }, [publishModal.open, pubForm.allIndustries, pubForm.targetIndustries, pubForm.targetCounties, pubForm.signalScope, user]);
 
-  // Derived stats
-  const totalSources = sources.length;
-  const activeSources = sources.filter(s => s.status === 'live').length;
-  const brokenSources = sources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
-  const totalSignals = signals.length;
-  const pendingSignals = signals.filter(s => !s.published_at).length;
-  const publishedSignals = signals.filter(s => !!s.published_at).length;
-  const criticalSignals = signals.filter(s => s.revenue_risk_level === 'critical' || s.liability_risk_level === 'critical').length;
-  const totalCorrelations = correlations.length;
+  // Derived stats — accurate counts from server-side head queries
   const regulatoryCount = regulatoryChanges.length;
   const rfpCount = rfpListings.length;
   const pendingReview = signals.filter(s => s.routing_tier === 'hold').length;
-  const autoRouted = signals.filter(s => s.routing_tier === 'auto').length;
-  const notifyRouted = signals.filter(s => s.routing_tier === 'notify').length;
-  const holdRouted = signals.filter(s => s.routing_tier === 'hold').length;
 
   // Filtered signals
   const filteredSignals = signals.filter(s => {
@@ -786,7 +664,9 @@ export default function EvidLYIntelligence() {
             </span>
           </div>
           <div className="text-[13px] text-gray-400">
-            {totalSources} sources crawled · Every signal correlated to clients, jurisdictions, and industries
+            {crawlStats.lastRun
+              ? `${crawlStats.succeeded} of ${crawlStats.total} sources succeeded · ${signalCounts.total} signals collected`
+              : `${sources.length} sources configured`}
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -812,14 +692,13 @@ export default function EvidLYIntelligence() {
       </div>
 
       {/* KPI Bar */}
-      <div className="grid grid-cols-6 gap-3 items-stretch">
+      <div className="grid grid-cols-5 gap-3 items-stretch">
         {[
-          { label: 'Total Signals', value: signals.length, color: 'text-navy' },
-          { label: 'Pending Review', value: pendingReview, color: 'text-orange-700' },
-          { label: 'Critical', value: criticalSignals, color: 'text-red-800' },
-          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? 'text-green-800' : 'text-red-800' },
-          { label: 'Sources', value: totalSources, color: 'text-navy' },
-          { label: 'Correlations', value: correlations.length, color: 'text-green-800' },
+          { label: 'Total Signals', value: signalCounts.total, color: 'text-navy' },
+          { label: 'Pending Review', value: signalCounts.total - signalCounts.published, color: 'text-orange-700' },
+          { label: 'Critical', value: signalCounts.critical, color: 'text-red-800' },
+          { label: 'Published', value: signalCounts.published, color: signalCounts.published > 0 ? 'text-green-800' : 'text-red-800' },
+          { label: 'Sources OK', value: crawlStats.succeeded, sub: `of ${crawlStats.total}`, color: 'text-navy' },
         ].map(k => (
           <div key={k.label} className="bg-white border border-gray-200 rounded-lg py-4 px-5 text-center flex flex-col items-center justify-center">
             <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
@@ -828,6 +707,9 @@ export default function EvidLYIntelligence() {
             <div className={`text-[28px] font-extrabold leading-none ${k.color}`}>
               {loading ? '—' : k.value}
             </div>
+            {'sub' in k && k.sub && (
+              <div className="text-[10px] text-gray-400 mt-1">{k.sub}</div>
+            )}
           </div>
         ))}
       </div>
@@ -836,10 +718,9 @@ export default function EvidLYIntelligence() {
       <div className="flex border-b-2 border-border_ui overflow-x-auto scrollbar-none">
         {([
           { key: 'overview' as Tab, label: 'Overview', count: null },
-          { key: 'signals' as Tab, label: 'Signals', count: signals.length },
-          { key: 'sources' as Tab, label: 'Sources', count: totalSources },
-          { key: 'correlations' as Tab, label: 'Correlations', count: correlations.length },
-          { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: allJurisdictions.length || 62 },
+          { key: 'signals' as Tab, label: 'Signals', count: signalCounts.total },
+          { key: 'sources' as Tab, label: 'Sources', count: sources.length },
+          { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: allJurisdictions.length },
           { key: 'regulatory_updates' as Tab, label: 'Regulatory', count: regulatoryChanges.length },
           { key: 'predictions' as Tab, label: 'Predictions', count: null },
         ]).map(t => {
@@ -865,14 +746,11 @@ export default function EvidLYIntelligence() {
         {/* KPI Cards */}
         <div className="grid grid-cols-5 gap-3 items-stretch mb-5">
           {([
-            { label: 'Total Sources', value: totalSources, color: 'text-navy' },
-            { label: 'Active Sources', value: activeSources, color: 'text-green-800' },
-            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? 'text-red-800' : 'text-navy' },
-            { label: 'Total Signals', value: totalSignals, color: 'text-navy' },
-            { label: 'Pending Signals', value: pendingSignals, color: 'text-orange-700' },
-            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? 'text-green-800' : 'text-red-800' },
-            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? 'text-red-800' : 'text-navy' },
-            { label: 'Correlations', value: totalCorrelations, color: 'text-green-800' },
+            { label: 'Sources Succeeded', value: crawlStats.succeeded, color: 'text-green-800' },
+            { label: 'Sources Failed', value: crawlStats.total - crawlStats.succeeded, color: (crawlStats.total - crawlStats.succeeded) > 0 ? 'text-red-800' : 'text-navy' },
+            { label: 'Total Signals', value: signalCounts.total, color: 'text-navy' },
+            { label: 'Published', value: signalCounts.published, color: signalCounts.published > 0 ? 'text-green-800' : 'text-red-800' },
+            { label: 'Critical', value: signalCounts.critical, color: signalCounts.critical > 0 ? 'text-red-800' : 'text-navy' },
             { label: 'Regulatory', value: regulatoryCount, color: 'text-navy' },
             { label: 'RFP Listings', value: rfpCount, color: 'text-navy' },
           ] as const).map(card => (
@@ -887,9 +765,9 @@ export default function EvidLYIntelligence() {
           ))}
         </div>
 
-        {pendingSignals > 0 && (
+        {signalCounts.total - signalCounts.published > 0 && (
           <div className="py-2.5 px-4 mb-5 rounded-lg bg-amber-50 border border-amber-400 text-[13px] font-medium text-amber-800">
-            {pendingSignals} signal{pendingSignals !== 1 ? 's' : ''} pending review — users see empty Business Intelligence.
+            {signalCounts.total - signalCounts.published} signal{signalCounts.total - signalCounts.published !== 1 ? 's' : ''} unpublished — users see empty Business Intelligence.
           </div>
         )}
 
@@ -925,9 +803,9 @@ export default function EvidLYIntelligence() {
           <div className="bg-white border border-border_ui rounded-[10px] p-5">
             <div className="text-[13px] font-bold text-navy mb-4">
               Recent Signals
-              {criticalSignals > 0 && (
+              {signalCounts.critical > 0 && (
                 <span className="ml-2 text-[10px] bg-red-50 text-red-600 py-[2px] px-[7px] rounded-[10px] font-bold">
-                  {criticalSignals} CRITICAL
+                  {signalCounts.critical} CRITICAL
                 </span>
               )}
             </div>
@@ -1287,165 +1165,6 @@ export default function EvidLYIntelligence() {
             )}
           </div>
         </>
-      )}
-
-      {/* JIE tab removed — merged into Jurisdiction Updates tab */}
-
-      {/* ────────── TAB: CORRELATIONS ────────── */}
-      {activeTab === 'correlations' && (
-        <div className="py-6">
-
-          {/* Header row */}
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <div className="text-[13px] text-gray-500">
-                Signals grouped by risk dimension. A signal appears in every dimension where it has an assigned risk level.
-              </div>
-              {correlations.length === 0 && (
-                <div className="mt-2 inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-md py-1 px-2.5 text-[11px] text-amber-800 font-semibold">
-                  ⚠ Showing reference architecture — no live correlations yet. Assign risk levels in Signal Approval Queue to populate with real data.
-                </div>
-              )}
-            </div>
-            <div className="text-xs text-gray-400 shrink-0">
-              {(isDemoMode ? SAMPLE_CORRELATIONS : []).length} correlations · {CORR_PILLARS.length} pillars
-            </div>
-          </div>
-
-          {/* Pillar filter pills */}
-          <div className="flex gap-2 mb-5 flex-wrap">
-            {['All', ...CORR_PILLARS].map(p => (
-              <Button
-                key={p}
-                onClick={() => setCorrPillarFilter(p)}
-                variant="ghost" size="sm"
-                className="py-[5px] px-3.5 rounded-full border"
-                style={{
-                  borderColor: corrPillarFilter === p
-                    ? (p === 'All' ? '#A08C5A' : CORR_PILLAR_COLORS[p])
-                    : '#E5E7EB',
-                  background: corrPillarFilter === p
-                    ? (p === 'All' ? '#A08C5A' : CORR_PILLAR_COLORS[p])
-                    : '#fff',
-                  color: corrPillarFilter === p ? '#fff' : '#374151',
-                  fontWeight: corrPillarFilter === p ? 700 : 400,
-                }}
-              >
-                {p}
-              </Button>
-            ))}
-          </div>
-
-          {/* Report Format selector */}
-          <div className="bg-white border border-border_ui rounded-lg py-4 px-5 mb-6">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">
-              Export Report Format
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {REPORT_FORMATS.map(fmt => (
-                <Button
-                  key={fmt}
-                  onClick={() => setCorrReportFormat(fmt)}
-                  variant={corrReportFormat === fmt ? 'primary' : 'secondary'}
-                  size="sm"
-                  className={corrReportFormat === fmt ? '' : 'border-gray-200 bg-gray-50 text-gray-700 font-normal'}
-                >
-                  {fmt}
-                </Button>
-              ))}
-            </div>
-            <div className="mt-2.5 text-[11px] text-gray-400">
-              {corrReportFormat === 'Executive Summary' && 'One-page narrative summary for C-suite. Key risks, dollar exposure, and 3 priority recommendations.'}
-              {corrReportFormat === 'Formal Document' && 'Full structured report with methodology, pillar analysis, and regulatory citations. Suitable for board or legal review.'}
-              {corrReportFormat === 'PDF/Print Ready' && 'Print-optimized layout with EvidLY letterhead, table of contents, and signature block. Exports as PDF.'}
-              {corrReportFormat === 'Risk Register' && 'Tabular format: Risk ID, Pillar, Description, Dollar Impact, Owner, Due Date, Status. Imports into risk management tools.'}
-            </div>
-            <Button
-              variant="gold" size="sm" className="mt-3"
-              onClick={() => alert(`Export as ${corrReportFormat} — wire to export function when ready`)}
-            >
-              Export {corrReportFormat}
-            </Button>
-          </div>
-
-          {/* Empty state for production (no sample data) */}
-          {!isDemoMode && correlations.length === 0 && (
-            <div className="bg-gray-50 border border-gray-200 rounded-[10px] py-8 px-6 text-center mb-5">
-              <div className="text-sm font-semibold text-navy mb-1.5">No correlation data available</div>
-              <div className="text-xs text-slate_ui leading-relaxed">
-                Correlations appear as intelligence signals are published and analyzed.
-              </div>
-            </div>
-          )}
-
-          {/* Correlations grouped by pillar */}
-          {CORR_PILLARS.filter(p => corrPillarFilter === 'All' || corrPillarFilter === p).map(pillar => {
-            const items = (isDemoMode ? SAMPLE_CORRELATIONS : []).filter(c => c.pillar === pillar);
-            if (items.length === 0) return null;
-            const color = CORR_PILLAR_COLORS[pillar];
-            return (
-              <div key={pillar} className="mb-7">
-                {/* Pillar header */}
-                <div className="flex items-center gap-2.5 mb-3 pb-2"
-                  style={{ borderBottom: `2px solid ${color}22` }}>
-                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
-                  <span className="text-[15px] font-extrabold text-navy">{pillar}</span>
-                  <span className="text-xs text-gray-400">{items.length} signal{items.length !== 1 ? 's' : ''}</span>
-                </div>
-
-                {/* Correlation cards */}
-                <div className="flex flex-col gap-2.5">
-                  {items.map(corr => (
-                    <div
-                      key={corr.id}
-                      className="bg-white border border-border_ui rounded-lg py-3.5 px-4 cursor-pointer"
-                      style={{ borderLeft: `3px solid ${color}` }}
-                      onClick={() => setCorrExpanded(corrExpanded === corr.id ? null : corr.id)}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <div className="text-[13px] font-bold text-navy mb-1">
-                            {corr.title}
-                          </div>
-                          <div className="text-xs text-gray-500 leading-normal">
-                            {corr.description}
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-[13px] font-extrabold text-gold">{corr.impactRange}</div>
-                          <div className="text-[10px] text-gray-400 mt-0.5">impact range</div>
-                        </div>
-                      </div>
-
-                      {corrExpanded === corr.id && (
-                        <div className="mt-3.5 pt-3.5 border-t border-gray-100">
-                          <div className="grid grid-cols-3 gap-3 mb-3">
-                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
-                              <div className="text-xl font-extrabold text-navy">{corr.signalCount}</div>
-                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Signals</div>
-                            </div>
-                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
-                              <div className="text-xl font-extrabold" style={{ color }}>{corr.confidence}%</div>
-                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Confidence</div>
-                            </div>
-                            <div className="text-center py-2.5 px-3 bg-gray-50 rounded-md">
-                              <div className="text-[11px] font-bold text-green-800">ACTIVE</div>
-                              <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Status</div>
-                            </div>
-                          </div>
-                          <div className="text-[11px] text-gray-500">
-                            <span className="font-bold text-gray-700">Sources: </span>
-                            {corr.sources.join(' · ')}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
       )}
 
       {/* ────────── TAB: JURISDICTION UPDATES ────────── */}

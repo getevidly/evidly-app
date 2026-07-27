@@ -755,6 +755,15 @@ Deno.serve(async (req: Request) => {
         errors.push(`${fi.source.id}: ${claudeErr || "Claude returned null"} — "${(fi.item.title || "").slice(0, 60)}"`);
         return null;
       }
+      // Reject parse-failure artifacts: Claude sometimes produces titles indicating
+      // it couldn't extract meaningful data. These are not real signals.
+      const title = (insight.title || "").toLowerCase();
+      if (title.startsWith("unable to") || title.includes("insufficient data") || title.includes("no relevant") || title.includes("could not parse")) {
+        sourceResults[fi.source.id].skipped++;
+        errors.push(`${fi.source.id}: parse-failure artifact skipped — "${(insight.title || "").slice(0, 80)}"`);
+        console.warn(`[intelligence-collect] Skipped parse-failure artifact: "${insight.title}"`);
+        return null;
+      }
       return { fi, insight, severity: insight.severity || fi.source.defaultSeverity };
     });
 
