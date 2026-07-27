@@ -905,7 +905,7 @@ Deno.serve(async (req: Request) => {
         title: (insight.title || fi.item.title || "").slice(0, 200),
         content_summary: (insight.summary || "").slice(0, 2000),
         counties_affected: countiesAffected,
-        scope: sourceScoping.scope || insight.scope || 'national',
+        scope: sourceScoping.scope || fi.source.defaultScope || insight.scope || 'national',
         // AI enrichment — maps Claude response → DB columns
         ai_summary: (insight.summary || "").slice(0, 2000),
         ai_urgency: severityToUrgency[severity] || severity || "medium",
