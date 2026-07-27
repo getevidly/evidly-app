@@ -209,6 +209,13 @@ Return a JSON object with these exact fields:
   "summary": "string — 2-3 sentence executive summary of what happened and why it matters",
   "category": "recall_alert|outbreak_alert|enforcement_surge|regulatory_change|regulatory_updates|inspection_trend|nfpa_update|seasonal_risk",
   "severity": "critical|high|medium|low|info",
+  "revenue_risk": "critical|high|moderate|low|none — risk to operator revenue streams",
+  "liability_risk": "critical|high|moderate|low|none — legal or regulatory liability exposure",
+  "cost_risk": "critical|high|moderate|low|none — unexpected cost or financial burden",
+  "operational_risk": "critical|high|moderate|low|none — disruption to daily kitchen operations",
+  "impact_score": number 0-100 — overall impact severity for a mid-size CA commercial kitchen,
+  "confidence": number 0-100 — your confidence in this analysis given the source data quality,
+  "action_deadline": "YYYY-MM-DD or null — date by which operators must act, only if the source states a specific deadline",
   "scope": "local|regional|national",
   "affected_counties": ["array of California county names in lowercase, e.g. 'fresno', 'los_angeles'"],
   "full_analysis": "string — 3-5 paragraphs of detailed analysis for operators",
@@ -786,10 +793,10 @@ Deno.serve(async (req: Request) => {
   if (analysisResults.length > 0) {
     const severityToUrgency: Record<string, string> = {
       critical: "critical", high: "high", medium: "medium", low: "low",
-      informational: "informational",
+      informational: "informational", info: "low",
     };
     const severityToScore: Record<string, number> = {
-      critical: 95, high: 75, medium: 50, low: 25, informational: 10,
+      critical: 95, high: 75, medium: 50, low: 25, informational: 10, info: 10,
     };
 
     // ── INTELLIGENCE REBUILD STEP 1: Query source scoping from DB ────
@@ -829,9 +836,25 @@ Deno.serve(async (req: Request) => {
         title: (insight.title || fi.item.title || "").slice(0, 200),
         content_summary: (insight.summary || "").slice(0, 2000),
         counties_affected: countiesAffected,
-        // INTELLIGENCE REBUILD: Set scope from source
-        scope: sourceScoping.scope || insight.scope || 'national', // Fallback to national if unknown
-        // jurisdiction_id removed until migration 20260726000000 is applied to PROD
+        scope: sourceScoping.scope || insight.scope || 'national',
+        // AI enrichment — maps Claude response → DB columns
+        ai_summary: (insight.summary || "").slice(0, 2000),
+        ai_urgency: severityToUrgency[severity] || severity || "medium",
+        ai_impact_score: typeof insight.impact_score === "number"
+          ? Math.min(100, Math.max(0, Math.round(insight.impact_score)))
+          : (severityToScore[severity] ?? 50),
+        ai_confidence: typeof insight.confidence === "number"
+          ? Math.min(100, Math.max(0, Math.round(insight.confidence)))
+          : 50,
+        severity_score: severityToScore[severity] ?? 50,
+        // Risk dimensions — column names match PROD schema (reconciliation migration)
+        revenue_risk_level: insight.revenue_risk || "none",
+        liability_risk_level: insight.liability_risk || "none",
+        cost_risk_level: insight.cost_risk || "none",
+        operational_risk_level: insight.operational_risk || "none",
+        // Action deadline — only when source states a specific date
+        action_deadline: insight.action_deadline || null,
+        status: "analyzed",
       };
     });
 
