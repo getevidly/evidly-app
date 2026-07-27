@@ -74,7 +74,7 @@ const ALL_PERMS: EvidlyPerms = {
 };
 
 export function useEvidlyPermissions(): EvidlyPerms {
-  const { user, isEvidlyAdmin } = useAuth();
+  const { user, isEvidlyAdmin, isAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
   const [perms, setPerms] = useState<EvidlyPerms>(DEFAULT_PERMS);
@@ -86,8 +86,9 @@ export function useEvidlyPermissions(): EvidlyPerms {
       return;
     }
 
-    if (!user || !isEvidlyAdmin) {
-      // Non-admin users get no staff perms
+    if (!user || !isAdmin) {
+      // Non-admin users get no staff perms.
+      // isAdmin = isEvidlyAdmin (email @getevidly.com) OR role === 'platform_admin'
       setPerms({ ...DEFAULT_PERMS, loading: false });
       return;
     }
@@ -143,15 +144,16 @@ export function useEvidlyPermissions(): EvidlyPerms {
         isSales: role === 'sales',
         // Sales/marketing: super_admin, sales role, or platform_admin without explicit role
         canSeeSalesMarketing: role === 'super_admin' || role === 'sales' || (isPlatformAdmin && !role),
-        canBilling: data.perm_billing ?? false,
-        canSecurity: data.perm_security ?? false,
-        canEmulate: data.perm_emulate ?? false,
-        canConfigure: data.perm_configure ?? false,
-        canSupportTickets: data.perm_support_tickets ?? false,
-        canCrawlManage: data.perm_crawl_manage ?? false,
-        canRemoteConnect: data.perm_remote_connect ?? false,
-        canIntelligence: data.perm_intelligence ?? false,
-        canStaffManage: data.perm_staff_manage ?? false,
+        // platform_admin gets all granular perms regardless of perm_* column values
+        canBilling: isPlatformAdmin || (data.perm_billing ?? false),
+        canSecurity: isPlatformAdmin || (data.perm_security ?? false),
+        canEmulate: isPlatformAdmin || (data.perm_emulate ?? false),
+        canConfigure: isPlatformAdmin || (data.perm_configure ?? false),
+        canSupportTickets: isPlatformAdmin || (data.perm_support_tickets ?? false),
+        canCrawlManage: isPlatformAdmin || (data.perm_crawl_manage ?? false),
+        canRemoteConnect: isPlatformAdmin || (data.perm_remote_connect ?? false),
+        canIntelligence: isPlatformAdmin || (data.perm_intelligence ?? false),
+        canStaffManage: isPlatformAdmin || (data.perm_staff_manage ?? false),
         loading: false,
       });
     }
@@ -159,7 +161,7 @@ export function useEvidlyPermissions(): EvidlyPerms {
     load();
 
     return () => { cancelled = true; };
-  }, [user?.id, isEvidlyAdmin, isDemoMode, userRole]);
+  }, [user?.id, isAdmin, isDemoMode, userRole]);
 
   return perms;
 }
