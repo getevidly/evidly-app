@@ -439,6 +439,7 @@ export function AdminClientOnboarding() {
 
   // Per-location entries — at least one required
   const [locations, setLocations] = useState<LocationEntry[]>([newLocationEntry()]);
+  const [sendNow, setSendNow] = useState(true);
 
   const isTribal = industryType === 'tribal_casino';
 
@@ -548,12 +549,16 @@ export function AdminClientOnboarding() {
           phone: ownerMobile || null,
           client_role: 'owner_operator',
           sender_name: 'Arthur',
+          skip_send: !sendNow,
         }),
       });
       const inviteOut = await res.json();
       if (!res.ok) throw new Error(inviteOut.error || 'Failed to send invite');
 
-      setSuccess(`Client organization created! An invite has been sent to ${ownerEmail}.`);
+      setSuccess(sendNow
+        ? `Client organization created! An invite has been sent to ${ownerEmail}.`
+        : `Client organization created! Account provisioned for ${ownerEmail}. Invite not sent yet.`
+      );
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
         setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
@@ -870,9 +875,17 @@ export function AdminClientOnboarding() {
               </div>
             </div>
 
+            <label className="flex items-center gap-2 mb-4 text-sm text-[#1E2D4D] cursor-pointer select-none">
+              <input type="checkbox" checked={sendNow} onChange={e => setSendNow(e.target.checked)} className="rounded border-[#1E2D4D]/30 text-[#1E2D4D] focus:ring-[#1E2D4D]" />
+              Send invite email now
+            </label>
+
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
               <p className="text-sm text-blue-800">
-                <strong>Note:</strong> The client will receive an invite email to claim their account via a secure link. The organization will be pre-configured with industry-specific templates.
+                <strong>Note:</strong> {sendNow
+                  ? 'The client will receive an invite email to claim their account via a secure link.'
+                  : 'The account will be provisioned but no email will be sent. You can send the invite later from the Invites tab.'}
+                {' '}The organization will be pre-configured with industry-specific templates.
               </p>
             </div>
 
@@ -894,7 +907,7 @@ export function AdminClientOnboarding() {
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    Create Client & Send Invitation
+                    {sendNow ? 'Create Client & Send Invitation' : 'Create Client & Provision Account'}
                   </>
                 )}
               </button>
