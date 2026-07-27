@@ -624,7 +624,7 @@ export default function EvidLYIntelligence() {
         const order = ['critical', 'high', 'moderate', 'low', 'none'];
         return order.indexOf(a.val) - order.indexOf(b.val);
       })[0];
-      const { data: advisory } = await supabase.from('client_advisories').insert({
+      const { data: advisory, error: advisoryErr } = await supabase.from('client_advisories').insert({
         signal_id: sig.id,
         title: pubForm.title,
         summary: pubForm.summary,
@@ -633,9 +633,16 @@ export default function EvidLYIntelligence() {
         advisory_type: primaryDim.val === 'critical' ? 'action_required' : 'risk',
         published_by: user?.email,
       }).select('id').single();
+      if (advisoryErr) {
+        await updateSignalStatus(sig.id, 'published');
+        setPublishModal({ open: false, signal: null });
+        setPublishFeedback({ type: 'error', msg: `Signal marked published but advisory insert failed (delivery skipped): ${advisoryErr.message}` });
+        await loadAll();
+        return;
+      }
       await updateSignalStatus(sig.id, 'published');
       setPublishModal({ open: false, signal: null });
-      setPublishFeedback({ type: 'success', msg: `Signal "${sig.title}" published successfully.` });
+      setPublishFeedback({ type: 'success', msg: `Signal "${sig.title}" published and delivered.` });
       await loadAll();
       // 3. Deliver to affected clients
       if (advisory?.id) {
