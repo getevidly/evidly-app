@@ -22,9 +22,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
 // ── Config ──────────────────────────────────────────────────────
-const BATCH_SIZE = 25;          // rows per DB fetch
+const BATCH_SIZE = 10;          // rows per DB fetch (small to beat 150s idle timeout)
 const CLAUDE_CONCURRENCY = 5;   // parallel Claude calls per batch
-const FUNCTION_TIMEOUT = 280_000; // 280s safety margin (edge fn limit = 300s)
+const MAX_ROWS_PER_INVOKE = 50; // cap per invocation — finish well within idle timeout
+const FUNCTION_TIMEOUT = 130_000; // 130s safety margin (idle timeout = 150s)
 
 const SYSTEM_PROMPT = `You are a compliance intelligence analyst specializing in California \
 commercial kitchen regulations. You transform raw regulatory alerts, recalls, and enforcement \
@@ -67,7 +68,9 @@ Return a JSON object with these exact fields:
   "impact_score": number 0-100 — overall impact severity for a mid-size CA commercial kitchen,
   "confidence": number 0-100 — your confidence in this analysis given the source data quality,
   "action_deadline": "YYYY-MM-DD or null — date by which operators must act, only if the text states a specific deadline"
-}`;
+}
+
+Output ONLY the raw JSON object. No markdown, no code fences, no explanation.`;
 }
 
 // ── Claude call ─────────────────────────────────────────────────
@@ -84,7 +87,7 @@ async function callClaude(
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 1000,
+      max_tokens: 2000,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: prompt }],
     }),
@@ -101,15 +104,42 @@ async function callClaude(
     .map((b: any) => b.text)
     .join("") || "";
 
-  try {
-    return { result: JSON.parse(text) };
-  } catch {
-    const m = text.match(/\{[\s\S]*\}/);
-    if (m) {
-      try { return { result: JSON.parse(m[0]) }; } catch { /* fall through */ }
-    }
-    return { result: null, error: `JSON parse failed: ${text.slice(0, 200)}` };
+  // Strip markdown code fences (Claude sometimes wraps despite instructions)
+  const cleaned = text.replace(/^```(?:json)?\s*\n?/g, "").replace(/\n?```\s*$/g, "").trim();
+
+  // Extract JSON: first '{' to last '}', strip trailing commas
+  function extractJson(s: string): any | null {
+    // Try direct parse first
+    try { return JSON.parse(s); } catch { /* continue */ }
+    // Extract from first { to last }
+    const first = s.indexOf("{");
+    const last = s.lastIndexOf("}");
+    if (first === -1 || last <= first) return null;
+    let json = s.substring(first, last + 1);
+    json = json.replace(/,\s*\}/g, "}");
+    try { return JSON.parse(json); } catch { /* continue */ }
+
+    // Fallback: Claude added extra nested fields that got truncated.
+    // Extract our 8 fields individually via regex from the partial JSON.
+    const str = (v: string | undefined) => v || null;
+    const num = (v: string | undefined) => v ? parseInt(v, 10) : null;
+    const severity = json.match(/"severity"\s*:\s*"([^"]+)"/)?.[1];
+    if (!severity) return null; // need at least severity
+    return {
+      severity: str(severity),
+      revenue_risk: str(json.match(/"revenue_risk"\s*:\s*"([^"]+)"/)?.[1]),
+      liability_risk: str(json.match(/"liability_risk"\s*:\s*"([^"]+)"/)?.[1]),
+      cost_risk: str(json.match(/"cost_risk"\s*:\s*"([^"]+)"/)?.[1]),
+      operational_risk: str(json.match(/"operational_risk"\s*:\s*"([^"]+)"/)?.[1]),
+      impact_score: num(json.match(/"impact_score"\s*:\s*(\d+)/)?.[1]),
+      confidence: num(json.match(/"confidence"\s*:\s*(\d+)/)?.[1]),
+      action_deadline: json.match(/"action_deadline"\s*:\s*"(\d{4}-\d{2}-\d{2})"/)?.[1] || null,
+    };
   }
+
+  const parsed = extractJson(cleaned);
+  if (parsed) return { result: parsed };
+  return { result: null, error: `JSON parse failed: ${cleaned.slice(0, 300)}` };
 }
 
 // ── Concurrency limiter ─────────────────────────────────────────
@@ -219,8 +249,8 @@ Deno.serve(async (req: Request) => {
   const failures: string[] = [];
   const tierCounts: Record<string, number> = { auto: 0, notify: 0, hold: 0 };
 
-  // Process in batches until no more unenriched rows or timeout
-  while (!isTimedOut()) {
+  // Process in batches until no more unenriched rows, row cap, or timeout
+  while (!isTimedOut() && totalProcessed < MAX_ROWS_PER_INVOKE) {
     // Fetch next batch of unenriched rows
     const { data: batch, error: fetchErr } = await supabase
       .from("intelligence_signals")
@@ -242,6 +272,8 @@ Deno.serve(async (req: Request) => {
     }
 
     console.log(`[backfill] Processing batch of ${batch.length} rows (total so far: ${totalProcessed})`);
+
+    let batchUpdated = 0;
 
     // Call Claude for each row in parallel (limited concurrency)
     const tasks = batch.map((row) => async () => {
@@ -320,25 +352,36 @@ Deno.serve(async (req: Request) => {
         failures.push(`Row ${row.id}: UPDATE failed — ${updateErr.message}`);
       } else {
         totalUpdated++;
+        batchUpdated++;
         tierCounts[routing.tier] = (tierCounts[routing.tier] || 0) + 1;
       }
     }
 
-    console.log(`[backfill] Batch done: ${totalUpdated} updated, ${totalFailed} failed, ${Date.now() - startTime}ms elapsed`);
+    console.log(`[backfill] Batch done: ${batchUpdated}/${batch.length} updated this batch, ${totalUpdated} total, ${Date.now() - startTime}ms elapsed`);
+
+    // If an entire batch fails, the same rows will be re-fetched forever — break
+    if (batchUpdated === 0) {
+      console.warn("[backfill] Entire batch failed — stopping to avoid infinite retry loop.");
+      failures.push("Stopped: entire batch failed (would re-fetch same rows).");
+      break;
+    }
   }
 
   const timedOut = isTimedOut();
+  const hitCap = totalProcessed >= MAX_ROWS_PER_INVOKE;
   const summary = {
-    status: timedOut ? "partial" : "complete",
+    status: (timedOut || hitCap) ? "partial" : "complete",
     rows_processed: totalProcessed,
     rows_updated: totalUpdated,
     rows_failed: totalFailed,
     routing_tiers: tierCounts,
     duration_ms: Date.now() - startTime,
-    failures: failures.slice(0, 20), // cap log at 20 entries
+    failures: failures.slice(0, 20),
     note: timedOut
-      ? "Timed out — re-invoke to continue. Resumable via ai_urgency IS NULL filter."
-      : "All unenriched rows processed.",
+      ? "Timed out — re-invoke to continue."
+      : hitCap
+        ? `Hit ${MAX_ROWS_PER_INVOKE}-row cap — re-invoke to continue.`
+        : "All unenriched rows processed.",
   };
 
   console.log(`[backfill] DONE: ${JSON.stringify(summary)}`);
