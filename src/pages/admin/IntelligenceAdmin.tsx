@@ -767,7 +767,7 @@ export default function IntelligenceAdmin() {
 
   const publishSignal = async (sig: QueueSignal) => {
     setPublishing(sig.id);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('intelligence_signals')
       .update({
         revenue_risk_level: getRiskLevel(sig, 'revenue'),
@@ -783,9 +783,14 @@ export default function IntelligenceAdmin() {
         delivery_status: 'pending',
         delivery_attempt_count: 0,
       })
-      .eq('id', sig.id);
+      .eq('id', sig.id)
+      .select('id');
     if (error) {
       console.error(`Failed to publish: ${error.message}`);
+      toast.error(`Publish failed: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      console.error('Publish returned 0 rows — update was blocked (RLS or session issue)');
+      toast.error('Publish failed: update blocked. Try signing out and back in.');
     } else {
       await logReviewAction(sig.id, 'approve');
       setSignals(prev => prev.filter(s => s.id !== sig.id));
@@ -810,7 +815,7 @@ export default function IntelligenceAdmin() {
   // SIGNAL-VALIDATION-01: Publish for subset
   const publishForSubset = async (sig: QueueSignal, orgIds: string[]) => {
     setPublishing(sig.id);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('intelligence_signals')
       .update({
         revenue_risk_level: getRiskLevel(sig, 'revenue'),
@@ -826,8 +831,15 @@ export default function IntelligenceAdmin() {
         delivery_attempt_count: 0,
         target_org_ids: orgIds,
       })
-      .eq('id', sig.id);
-    if (!error) {
+      .eq('id', sig.id)
+      .select('id');
+    if (error) {
+      console.error(`Failed to publish subset: ${error.message}`);
+      toast.error(`Publish failed: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      console.error('Publish subset returned 0 rows — update was blocked (RLS or session issue)');
+      toast.error('Publish failed: update blocked. Try signing out and back in.');
+    } else {
       await logReviewAction(sig.id, 'approve_subset', null, { target_org_ids: orgIds });
       setSignals(prev => prev.filter(s => s.id !== sig.id));
       setRiskEdits(prev => { const next = { ...prev }; delete next[sig.id]; return next; });
