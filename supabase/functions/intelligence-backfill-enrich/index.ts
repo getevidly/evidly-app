@@ -61,14 +61,20 @@ Summary: ${row.content_summary}
 Return a JSON object with these exact fields:
 {
   "severity": "critical|high|medium|low|info",
-  "revenue_risk": "critical|high|moderate|low|none — risk to operator revenue streams",
-  "liability_risk": "critical|high|moderate|low|none — legal or regulatory liability exposure",
-  "cost_risk": "critical|high|moderate|low|none — unexpected cost or financial burden",
-  "operational_risk": "critical|high|moderate|low|none — disruption to daily kitchen operations",
+  "revenue_risk": "critical|high|moderate|low|none — critical: mandatory closure or recall with confirmed CA distribution; high: voluntary recall or service disruption >1 week; moderate: menu changes or supplier switch needed; low: monitoring only; none: no revenue impact",
+  "liability_risk": "critical|high|moderate|low|none — critical: active enforcement action targeting CA kitchens OR confirmed outbreak with a traced source in CA (not hypothetical litigation risk); high: new regulation with penalties or class-action risk; moderate: updated compliance requirement or inspection focus area; low: informational, no enforcement; none: no liability exposure. Weather and seasonal advisories are capped at moderate.",
+  "cost_risk": "critical|high|moderate|low|none — critical: immediate mandatory equipment replacement or retrofit >$10K; high: required upgrades $2K-$10K within 30 days; moderate: process changes or training costs <$2K; low: minimal direct cost; none: no cost impact",
+  "operational_risk": "critical|high|moderate|low|none — critical: forced shutdown or mandatory immediate operational change; high: workflow changes required within 7 days; moderate: process adjustments within 30 days; low: no operational impact; none: not applicable",
   "impact_score": number 0-100 — overall impact severity for a mid-size CA commercial kitchen,
   "confidence": number 0-100 — your confidence in this analysis given the source data quality,
   "action_deadline": "YYYY-MM-DD or null — date by which operators must act, only if the text states a specific deadline"
 }
+
+CALIBRATION RULES:
+- "critical" on ANY dimension requires California-specific impact. A national recall with no confirmed CA distribution is HIGH, not critical.
+- Reserve "critical" for signals demanding action within days. Most signals should be moderate or low. If you are assigning critical to more than 1 in 20 signals, your threshold is wrong.
+- Weather/seasonal advisories are capped at MODERATE for liability_risk.
+- liability_risk critical = active enforcement targeting CA kitchens OR confirmed outbreak with traced CA source. "Operators could face litigation if..." is NOT critical.
 
 Output ONLY the raw JSON object. No markdown, no code fences, no explanation.`;
 }
@@ -251,14 +257,36 @@ Deno.serve(async (req: Request) => {
 
   // Process in batches until no more unenriched rows, row cap, or timeout
   while (!isTimedOut() && totalProcessed < MAX_ROWS_PER_INVOKE) {
-    // Fetch next batch of unenriched rows
-    const { data: batch, error: fetchErr } = await supabase
+    // Fetch next batch of rows needing enrichment/recalibration.
+    // Mode 1 (initial): ai_urgency IS NULL — row was never enriched.
+    // Mode 2 (recalibrate): ai_urgency IS NOT NULL but routing_reason does
+    //   not start with '[recalibrated]' — row needs recalibration.
+    // Checks mode 1 first; if none remain, falls through to mode 2.
+    let query = supabase
       .from("intelligence_signals")
       .select("id, title, content_summary, category, source_name, signal_type")
-      .is("ai_urgency", null)
       .not("content_summary", "is", null)
       .order("created_at", { ascending: true })
       .limit(BATCH_SIZE);
+
+    // Try unenriched first (ai_urgency IS NULL)
+    const { data: unenriched } = await query.is("ai_urgency", null);
+    let useRecalibrate = false;
+    if (!unenriched || unenriched.length === 0) {
+      // All enriched — switch to recalibration mode
+      query = supabase
+        .from("intelligence_signals")
+        .select("id, title, content_summary, category, source_name, signal_type")
+        .not("content_summary", "is", null)
+        .not("routing_reason", "like", "[recalibrated]%")
+        .order("created_at", { ascending: true })
+        .limit(BATCH_SIZE);
+      useRecalibrate = true;
+    }
+
+    const { data: batch, error: fetchErr } = useRecalibrate
+      ? await query
+      : { data: unenriched, error: null };
 
     if (fetchErr) {
       return new Response(JSON.stringify({ error: `DB fetch failed: ${fetchErr.message}` }), {
@@ -343,7 +371,7 @@ Deno.serve(async (req: Request) => {
           routing_tier: routing.tier,
           severity_score: routing.severityScore,
           review_deadline: routing.reviewDeadline,
-          routing_reason: `[backfill] ${routing.reason}`,
+          routing_reason: `[${useRecalibrate ? "recalibrated" : "backfill"}] ${routing.reason}`,
         })
         .eq("id", row.id);
 

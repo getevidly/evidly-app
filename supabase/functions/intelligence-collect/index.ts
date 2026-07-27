@@ -209,13 +209,19 @@ Return a JSON object with these exact fields:
   "summary": "string — 2-3 sentence executive summary of what happened and why it matters",
   "category": "recall_alert|outbreak_alert|enforcement_surge|regulatory_change|regulatory_updates|inspection_trend|nfpa_update|seasonal_risk",
   "severity": "critical|high|medium|low|info",
-  "revenue_risk": "critical|high|moderate|low|none — risk to operator revenue streams",
-  "liability_risk": "critical|high|moderate|low|none — legal or regulatory liability exposure",
-  "cost_risk": "critical|high|moderate|low|none — unexpected cost or financial burden",
-  "operational_risk": "critical|high|moderate|low|none — disruption to daily kitchen operations",
+  "revenue_risk": "critical|high|moderate|low|none — critical: mandatory closure or recall with confirmed CA distribution; high: voluntary recall or service disruption >1 week; moderate: menu changes or supplier switch needed; low: monitoring only; none: no revenue impact",
+  "liability_risk": "critical|high|moderate|low|none — critical: active enforcement action targeting CA kitchens OR confirmed outbreak with a traced source in CA (not hypothetical litigation risk); high: new regulation with penalties or class-action risk; moderate: updated compliance requirement or inspection focus area; low: informational, no enforcement; none: no liability exposure. Weather and seasonal advisories are capped at moderate — recurring conditions are not regulatory exposure.",
+  "cost_risk": "critical|high|moderate|low|none — critical: immediate mandatory equipment replacement or retrofit >$10K; high: required upgrades $2K-$10K within 30 days; moderate: process changes or training costs <$2K; low: minimal direct cost; none: no cost impact",
+  "operational_risk": "critical|high|moderate|low|none — critical: forced shutdown or mandatory immediate operational change; high: workflow changes required within 7 days; moderate: process adjustments within 30 days; low: no operational impact; none: not applicable",
   "impact_score": number 0-100 — overall impact severity for a mid-size CA commercial kitchen,
   "confidence": number 0-100 — your confidence in this analysis given the source data quality,
   "action_deadline": "YYYY-MM-DD or null — date by which operators must act, only if the source states a specific deadline",
+
+CALIBRATION RULES — read carefully:
+- "critical" on ANY dimension requires California-specific impact or direct CA applicability. A national recall with no confirmed CA distribution is HIGH, not critical.
+- Reserve "critical" for signals demanding operator action within days. Most signals should be moderate or low. If you are assigning critical to more than 1 in 20 signals, your threshold is wrong.
+- Weather advisories, seasonal risk alerts, and heat warnings are capped at MODERATE for liability_risk — they are recurring conditions, not regulatory exposure.
+- liability_risk critical means an active enforcement action targeting CA kitchens, or a confirmed outbreak with a traced CA source. "Operators could face litigation if..." is NOT critical — that is moderate at most.
   "scope": "local|regional|national",
   "affected_counties": ["array of California county names in lowercase, e.g. 'fresno', 'los_angeles'"],
   "full_analysis": "string — 3-5 paragraphs of detailed analysis for operators",
@@ -931,7 +937,7 @@ Deno.serve(async (req: Request) => {
         sourceResults[analysisResults[i].fi.source.id].new++;
         newInsights.push({
           title: rows[i].title.slice(0, 120),
-          severity: rows[i].severity,
+          severity: analysisResults[i].severity,
           source: analysisResults[i].fi.source.name,
         });
       }
