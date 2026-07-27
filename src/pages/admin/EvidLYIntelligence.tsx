@@ -648,6 +648,19 @@ export default function EvidLYIntelligence() {
       if (advisory?.id) {
         await deliverToClients('advisory', advisory.id, pubForm.title);
       }
+      // 4. Compute correlations (non-blocking — log errors, don't fail publish)
+      try {
+        const { data: corrData, error: corrErr } = await supabase.functions.invoke('correlate-signal', {
+          body: { signal_id: sig.id },
+        });
+        if (corrErr) {
+          console.error('[EvidLYIntelligence] Correlation failed:', corrErr);
+        } else if (corrData?.correlations_created > 0) {
+          console.log(`[EvidLYIntelligence] ${corrData.correlations_created} correlations created`, corrData.matches);
+        }
+      } catch (corrCatchErr) {
+        console.error('[EvidLYIntelligence] Correlation call failed:', corrCatchErr);
+      }
     } catch (err: any) {
       setPublishFeedback({ type: 'error', msg: `Publish error: ${err.message || 'Unknown error'}` });
     }
