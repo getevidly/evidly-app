@@ -14,7 +14,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 // ── Category → Requirement code mapping ──────────────────────
 // Maps signal categories to service_type_definition codes.
-// "regulatory_updates" and "regulatory_change" are too broad to map.
+// Deliberately unmapped: food_handler, legislative, info (informational only).
 const CATEGORY_TO_REQUIREMENTS: Record<string, string[]> = {
   nfpa_update:          ["KEC", "FS", "FA", "FPM", "GFX", "RGC", "SP", "FE"],
   fire_safety:          ["KEC", "FS", "FA", "FPM", "GFX", "RGC", "SP", "FE"],
@@ -24,6 +24,10 @@ const CATEGORY_TO_REQUIREMENTS: Record<string, string[]> = {
   outbreak_alert:       ["GT", "REFR", "PC"],
   adverse_event_alert:  ["GT", "REFR"],
   seasonal_risk:        ["KEC", "HVAC", "REFR"],
+  food_code_update:     ["GT", "REFR", "PC"],
+  grease_trap:          ["GT"],
+  hood_cleaning:        ["KEC", "GFX", "FPM", "RGC"],
+  ventilation:          ["KEC", "FPM"],
 };
 
 // Human-readable names for requirement codes

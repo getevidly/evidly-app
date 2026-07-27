@@ -60,6 +60,7 @@ Summary: ${row.content_summary}
 
 Return a JSON object with these exact fields:
 {
+  "category": "recall_alert|outbreak_alert|enforcement_surge|nfpa_update|fire_safety|food_code_update|food_handler|grease_trap|hood_cleaning|ventilation|seasonal_risk|legislative|info",
   "severity": "critical|high|medium|low|info",
   "revenue_risk": "critical|high|moderate|low|none — critical: mandatory closure or recall with confirmed CA distribution; high: voluntary recall or service disruption >1 week; moderate: menu changes or supplier switch needed; low: monitoring only; none: no revenue impact",
   "liability_risk": "critical|high|moderate|low|none — critical: active enforcement action targeting CA kitchens OR confirmed outbreak with a traced source in CA (not hypothetical litigation risk); high: new regulation with penalties or class-action risk; moderate: updated compliance requirement or inspection focus area; low: informational, no enforcement; none: no liability exposure. Weather and seasonal advisories are capped at moderate.",
@@ -69,6 +70,22 @@ Return a JSON object with these exact fields:
   "confidence": number 0-100 — your confidence in this analysis given the source data quality,
   "action_deadline": "YYYY-MM-DD or null — date by which operators must act, only if the text states a specific deadline"
 }
+
+CATEGORY ASSIGNMENT RULES:
+- nfpa_update: NFPA 96, NFPA 72, fire code adoptions, Title 24 Part 9
+- fire_safety: fire suppression systems, sprinklers, extinguishers, building code fire safety
+- food_code_update: FDA Food Code, CalCode, Health & Safety Code food sections
+- food_handler: ServSafe, food handler certification, training mandate changes
+- grease_trap: FOG compliance, grease trap/interceptor, water board sewer discharge
+- hood_cleaning: IKECA standards, kitchen exhaust cleaning, hood/duct compliance
+- ventilation: ASHRAE standards, kitchen ventilation, IAQ, makeup air
+- recall_alert: FDA/CPSC product recall with confirmed or potential CA distribution
+- outbreak_alert: CDC/CDPH foodborne outbreak with traced or suspected CA source
+- enforcement_surge: Cal/OSHA, county health inspection campaigns, enforcement actions
+- seasonal_risk: heat advisories, wildfire smoke, drought water restriction, pest season
+- legislative: pending bills, rulemaking calendars, legislative session tracking
+- info: insufficient data, system maintenance, market data, no actionable intelligence
+- Never use a generic "regulatory" category — always pick the most specific match above.
 
 CALIBRATION RULES:
 - "critical" on ANY dimension requires California-specific impact. A national recall with no confirmed CA distribution is HIGH, not critical.
@@ -257,10 +274,10 @@ Deno.serve(async (req: Request) => {
 
   // Process in batches until no more unenriched rows, row cap, or timeout
   while (!isTimedOut() && totalProcessed < MAX_ROWS_PER_INVOKE) {
-    // Fetch next batch of rows needing enrichment/recalibration.
+    // Fetch next batch of rows needing enrichment/recategorization.
     // Mode 1 (initial): ai_urgency IS NULL — row was never enriched.
-    // Mode 2 (recalibrate): ai_urgency IS NOT NULL but routing_reason does
-    //   not start with '[recalibrated]' — row needs recalibration.
+    // Mode 2 (recategorize): ai_urgency IS NOT NULL but routing_reason does
+    //   not start with '[recategorized]' — row needs re-categorization.
     // Checks mode 1 first; if none remain, falls through to mode 2.
     let query = supabase
       .from("intelligence_signals")
@@ -273,12 +290,12 @@ Deno.serve(async (req: Request) => {
     const { data: unenriched } = await query.is("ai_urgency", null);
     let useRecalibrate = false;
     if (!unenriched || unenriched.length === 0) {
-      // All enriched — switch to recalibration mode
+      // All enriched — switch to recategorization mode
       query = supabase
         .from("intelligence_signals")
         .select("id, title, content_summary, category, source_name, signal_type")
         .not("content_summary", "is", null)
-        .not("routing_reason", "like", "[recalibrated]%")
+        .not("routing_reason", "like", "[recategorized]%")
         .order("created_at", { ascending: true })
         .limit(BATCH_SIZE);
       useRecalibrate = true;
@@ -332,8 +349,10 @@ Deno.serve(async (req: Request) => {
 
       const severity = result.severity || "medium";
 
-      // Build enrichment update
+      // Build enrichment update (includes re-categorization)
+      const newCategory = result.category || row.category;
       const enrichment = {
+        category: newCategory,
         ai_summary: (row.content_summary || "").slice(0, 2000),
         ai_urgency: severityToUrgency[severity] || severity || "medium",
         ai_impact_score: typeof result.impact_score === "number"
@@ -371,7 +390,7 @@ Deno.serve(async (req: Request) => {
           routing_tier: routing.tier,
           severity_score: routing.severityScore,
           review_deadline: routing.reviewDeadline,
-          routing_reason: `[${useRecalibrate ? "recalibrated" : "backfill"}] ${routing.reason}`,
+          routing_reason: `[${useRecalibrate ? "recategorized" : "backfill"}] ${routing.reason}`,
         })
         .eq("id", row.id);
 

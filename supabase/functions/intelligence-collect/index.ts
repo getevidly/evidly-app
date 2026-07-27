@@ -202,7 +202,24 @@ Return a JSON object with these exact fields:
 {
   "title": "string — clear, specific, newsworthy headline (max 100 chars)",
   "summary": "string — 2-3 sentence executive summary of what happened and why it matters",
-  "category": "recall_alert|outbreak_alert|enforcement_surge|regulatory_change|regulatory_updates|inspection_trend|nfpa_update|seasonal_risk",
+  "category": "recall_alert|outbreak_alert|enforcement_surge|nfpa_update|fire_safety|food_code_update|food_handler|grease_trap|hood_cleaning|ventilation|seasonal_risk|legislative|info",
+
+CATEGORY ASSIGNMENT RULES:
+- nfpa_update: NFPA 96, NFPA 72, fire code adoptions, Title 24 Part 9
+- fire_safety: fire suppression systems, sprinklers, extinguishers, building code fire safety
+- food_code_update: FDA Food Code, CalCode, Health & Safety Code food sections
+- food_handler: ServSafe, food handler certification, training mandate changes
+- grease_trap: FOG compliance, grease trap/interceptor, water board sewer discharge
+- hood_cleaning: IKECA standards, kitchen exhaust cleaning, hood/duct compliance
+- ventilation: ASHRAE standards, kitchen ventilation, IAQ, makeup air
+- recall_alert: FDA/CPSC product recall with confirmed or potential CA distribution
+- outbreak_alert: CDC/CDPH foodborne outbreak with traced or suspected CA source
+- enforcement_surge: Cal/OSHA, county health inspection campaigns, enforcement actions
+- seasonal_risk: heat advisories, wildfire smoke, drought water restriction, pest season
+- legislative: pending bills, rulemaking calendars, legislative session tracking
+- info: insufficient data, system maintenance, market data, no actionable intelligence
+- Never use a generic "regulatory" category — always pick the most specific match above.
+
   "severity": "critical|high|medium|low|info",
   "revenue_risk": "critical|high|moderate|low|none — critical: mandatory closure or recall with confirmed CA distribution; high: voluntary recall or service disruption >1 week; moderate: menu changes or supplier switch needed; low: monitoring only; none: no revenue impact",
   "liability_risk": "critical|high|moderate|low|none — critical: active enforcement action targeting CA kitchens OR confirmed outbreak with a traced source in CA (not hypothetical litigation risk); high: new regulation with penalties or class-action risk; moderate: updated compliance requirement or inspection focus area; low: informational, no enforcement; none: no liability exposure. Weather and seasonal advisories are capped at moderate — recurring conditions are not regulatory exposure.",
@@ -639,6 +656,14 @@ function mapSourceType(category: string): string {
     regulatory_updates: "regulatory_change",
     inspection_trend: "inspection_result",
     nfpa_update: "fire_safety_update",
+    fire_safety: "fire_safety_update",
+    food_code_update: "regulatory_change",
+    food_handler: "regulatory_change",
+    grease_trap: "regulatory_change",
+    hood_cleaning: "regulatory_change",
+    ventilation: "regulatory_change",
+    legislative: "legislative_update",
+    info: "regulatory_change",
     seasonal_risk: "weather_alert",
   };
   return map[category] || "regulatory_change";
