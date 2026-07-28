@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 export interface PillarRequirement {
   id: string;
   state_code: string;
-  pillar: 'food_safety' | 'fire_safety';
+  pillar: 'food_safety' | 'fire_safety' | 'business_records' | 'vendor_business';
   requirement_code: string;
   label: string;
   description: string | null;
@@ -13,6 +13,10 @@ export interface PillarRequirement {
   action_type: 'upload' | 'route_out' | 'confirm' | 'invite' | 'identify_vendor';
   typical_role: string;
   sort_order: number;
+  is_conditional?: boolean;
+  conditional_reason?: string | null;
+  scope?: string;
+  counts_toward_total?: boolean;
 }
 
 interface UsePillarRequirementsReturn {
@@ -25,7 +29,7 @@ interface UsePillarRequirementsReturn {
 }
 
 /**
- * Fetches onboarding_pillar_requirements for the org's state.
+ * Fetches pillar_requirements for the org's state.
  * Derives state from the org's first location.state column.
  * Returns empty arrays for states with no seeded requirements.
  */
@@ -72,7 +76,7 @@ export function usePillarRequirements(): UsePillarRequirementsReturn {
 
       // Step 2: Fetch requirements for this state
       const { data, error: reqErr } = await supabase
-        .from('onboarding_pillar_requirements')
+        .from('pillar_requirements')
         .select('*')
         .eq('state_code', state)
         .order('pillar')

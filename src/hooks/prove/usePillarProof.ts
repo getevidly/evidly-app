@@ -1,7 +1,7 @@
 /**
  * usePillarProof — per-pillar proof-of-work count for the dashboard.
  *
- * Reads the canonical requirements catalog (onboarding_pillar_requirements, keyed
+ * Reads the canonical requirements catalog (pillar_requirements, keyed
  * by state_code) and checks real evidence tables for each requirement. Returns
  * completedCount / totalCount per pillar — same definition as the old path but
  * with ZERO dependency on the onboarding flow, its hooks, or its lifecycle state.
@@ -69,7 +69,7 @@ export function usePillarProof(): UsePillarProofReturn {
 
       // 2. Fetch canonical requirements catalog for this state
       const { data: reqs } = await supabase
-        .from('onboarding_pillar_requirements')
+        .from('pillar_requirements')
         .select('requirement_code, pillar, action_type, typical_role')
         .eq('state_code', state)
         .order('pillar')
@@ -120,7 +120,8 @@ export function usePillarProof(): UsePillarProofReturn {
             break;
           }
           case 'route_out': {
-            if (req.requirement_code === 'temperature_logs') {
+            if (req.requirement_code.startsWith('temp_')) {
+              // Itemized temperature rows — check temperature_logs table
               let hasTempLogs = false;
               if (locIds.length > 0) {
                 const { count } = await supabase
@@ -140,7 +141,14 @@ export function usePillarProof(): UsePillarProofReturn {
               if (cancelled) return;
               map[req.requirement_code] = (count ?? 0) > 0;
             } else {
-              map[req.requirement_code] = false;
+              // warewash_sanitizer and any future route_out — check compliance_documents
+              const { count } = await supabase
+                .from('compliance_documents')
+                .select('id', { count: 'exact', head: true })
+                .eq('organization_id', orgId)
+                .eq('category', req.requirement_code);
+              if (cancelled) return;
+              map[req.requirement_code] = (count ?? 0) > 0;
             }
             break;
           }
