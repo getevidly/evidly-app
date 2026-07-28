@@ -20,7 +20,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
-import { provisionClientUser } from "../_shared/provisionClientUser.ts";
 import {
   canonicalTimestamp,
   buildCanonicalServiceJson,
@@ -1019,41 +1018,7 @@ async function handleDocumentEvent(
         updated_at: new Date().toISOString(),
       }, { onConflict: "organization_id,location_id,service_type_code" });
 
-    // ── 10b. Provision user if org has none and payload carries email ──
-    const { data: existingUsers } = await supabase
-      .from("user_profiles")
-      .select("id")
-      .eq("organization_id", orgId)
-      .limit(1);
-
-    if (!existingUsers || existingUsers.length === 0) {
-      if (client_email) {
-        const contactName = data.contact_name || client_name || "Kitchen Manager";
-        const provision = await provisionClientUser({
-          supabase,
-          email: client_email,
-          contactName,
-          organizationId: orgId,
-          phone: client_phone || null,
-        });
-
-        if (provision.userId) {
-          console.log(
-            `[hoodops-webhook] Provisioned user for org ${orgId} (adopted=${provision.adopted})`,
-          );
-        } else {
-          console.warn(
-            `[hoodops-webhook] Failed to provision user for org ${orgId} — notification will reach nobody`,
-          );
-        }
-      } else {
-        console.warn(
-          `[hoodops-webhook] Org ${orgId} has no users and payload lacks client_email — cannot provision, notification will reach nobody`,
-        );
-      }
-    }
-
-    // ── 11. Notify client ────────────────────────────────────────
+    // ── 11. Notify client (in-app only — no email, no user provisioning) ──
     const notifyResult = await createOrgNotification({
       supabase,
       organizationId: orgId,
