@@ -4,6 +4,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail } from "../_shared/email.ts";
 import { buildClientInviteEmail } from "../_shared/invites.ts";
 import { logger } from "../_shared/logger.ts";
+import { provisionClientUser } from "../_shared/provisionClientUser.ts";
 import { stampJourneyStage } from "../_shared/journeyStamp.ts";
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
@@ -206,105 +207,15 @@ Deno.serve(async (req: Request) => {
     let provisionedUserId: string | null = null;
 
     try {
-      const { data: authResult, error: provAuthErr } =
-        await supabase.auth.admin.createUser({
-          email,
-          email_confirm: true,
-          user_metadata: { full_name: contact_name },
-        });
-
-      if (provAuthErr) {
-        const is422 =
-          provAuthErr.status === 422 ||
-          String(provAuthErr.message ?? "").includes("already registered");
-
-        if (is422) {
-          // ── ADOPT PATH: auth user exists — resolve id, upsert profile + access ──
-          const { data: existingUid, error: lookupErr } = await supabase.rpc(
-            "auth_uid_by_email",
-            { p_email: email },
-          );
-
-          if (lookupErr || !existingUid) {
-            logger.error("[create-client-invite] adopt lookup failed", lookupErr);
-          } else {
-            // Guard: if profile exists under a DIFFERENT org, do not clobber it
-            const { data: existingProfile } = await supabase
-              .from("user_profiles")
-              .select("organization_id")
-              .eq("id", existingUid)
-              .maybeSingle();
-
-            if (existingProfile && existingProfile.organization_id !== organization_id) {
-              logger.warn(
-                `[create-client-invite] profile ${existingUid} belongs to org ${existingProfile.organization_id}, not ${organization_id} — skipping profile upsert`,
-              );
-            } else {
-              provisionedUserId = existingUid;
-
-              const { error: profErr } = await supabase
-                .from("user_profiles")
-                .upsert({
-                  id: existingUid,
-                  full_name: contact_name,
-                  email,
-                  phone: phone || null,
-                  organization_id,
-                  role: client_role || "owner_operator",
-                  status: "invited",
-                }, { onConflict: "id" });
-
-              if (profErr) {
-                logger.error("[create-client-invite] adopt profile upsert failed", profErr);
-                provisionedUserId = null;
-              }
-            }
-          }
-        } else {
-          logger.error("[create-client-invite] auth provision failed", provAuthErr);
-        }
-      } else if (authResult?.user) {
-        provisionedUserId = authResult.user.id;
-
-        // INSERT user_profiles with status='invited'
-        const { error: profErr } = await supabase
-          .from("user_profiles")
-          .insert({
-            id: provisionedUserId,
-            full_name: contact_name,
-            email,
-            phone: phone || null,
-            organization_id,
-            role: client_role || "owner_operator",
-            status: "invited",
-          });
-
-        if (profErr) {
-          logger.error("[create-client-invite] profile provision failed", profErr);
-          await supabase.auth.admin.deleteUser(provisionedUserId);
-          provisionedUserId = null;
-        }
-      }
-
-      // Grant user_location_access for EACH org location (upsert — safe on repeat invites)
-      if (provisionedUserId) {
-        const { data: orgLocs } = await supabase
-          .from("locations")
-          .select("id")
-          .eq("organization_id", organization_id);
-
-        if (orgLocs && orgLocs.length > 0) {
-          await supabase.from("user_location_access").upsert(
-            orgLocs.map((loc: { id: string }) => ({
-              user_id: provisionedUserId!,
-              organization_id,
-              location_id: loc.id,
-              role: client_role || "owner_operator",
-            })),
-            { onConflict: "user_id,organization_id,location_id" },
-          );
-        }
-      }
+      const { userId } = await provisionClientUser({
+        supabase,
+        email,
+        contactName: contact_name,
+        organizationId: organization_id,
+        phone: phone || null,
+        role: client_role || "owner_operator",
+      });
+      provisionedUserId = userId;
     } catch (provErr) {
       logger.error("[create-client-invite] provision block failed", provErr);
       // Non-fatal: invite still works — user gets provisioned on claim

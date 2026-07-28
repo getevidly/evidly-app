@@ -20,6 +20,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
+import { provisionClientUser } from "../_shared/provisionClientUser.ts";
 import {
   canonicalTimestamp,
   buildCanonicalServiceJson,
@@ -641,27 +642,44 @@ async function handleDocumentEvent(
 
       if (extOrg) {
         orgId = extOrg.id;
-      } else {
-        // Auto-create
-        const { data: newOrg, error: orgErr } = await supabase
-          .from("organizations")
-          .insert({
-            name: client_name || `HoodOps Client ${hoodops_client_id}`,
-            industry_type: "Restaurant",
-            external_source: "hoodops",
-            external_id: hoodops_client_id,
-            primary_contact_phone: client_phone || null,
-            primary_contact_email: client_email || null,
-          })
-          .select("id")
-          .single();
-
-        if (orgErr || !newOrg) {
-          await logDocAudit(false, orgErr?.message || "Org creation failed");
-          return jsonResp({ error: "Failed to create organization", detail: orgErr?.message }, 500);
-        }
-        orgId = newOrg.id;
       }
+    }
+
+    // Fallback: adopt existing unlinked org by primary_contact_email
+    if (!orgId && client_email) {
+      const { data: emailOrg } = await supabase
+        .from("organizations").select("id")
+        .ilike("primary_contact_email", client_email.trim())
+        .is("external_source", null)
+        .limit(1)
+        .maybeSingle();
+
+      if (emailOrg) {
+        orgId = emailOrg.id;
+        console.log(`[hoodops-webhook] Adopted existing org ${orgId} via primary_contact_email match`);
+      }
+    }
+
+    if (!orgId) {
+      // Auto-create — no existing org matched
+      const { data: newOrg, error: orgErr } = await supabase
+        .from("organizations")
+        .insert({
+          name: client_name || `HoodOps Client ${hoodops_client_id}`,
+          industry_type: "Restaurant",
+          external_source: "hoodops",
+          external_id: hoodops_client_id,
+          primary_contact_phone: client_phone || null,
+          primary_contact_email: client_email || null,
+        })
+        .select("id")
+        .single();
+
+      if (orgErr || !newOrg) {
+        await logDocAudit(false, orgErr?.message || "Org creation failed");
+        return jsonResp({ error: "Failed to create organization", detail: orgErr?.message }, 500);
+      }
+      orgId = newOrg.id;
     }
 
     // Backfill external identity if org existed but lacked it
@@ -691,29 +709,47 @@ async function handleDocumentEvent(
 
       if (extLoc) {
         locId = extLoc.id;
-      } else {
-        const { data: newLoc, error: locErr } = await supabase
-          .from("locations")
-          .insert({
-            organization_id: orgId,
-            name: location_name || "Main Kitchen",
-            address: location_address || null,
-            city: location_city || null,
-            state: location_state || "CA",
-            zip: location_zip || null,
-            external_source: "hoodops",
-            external_id: hoodops_location_id,
-            status: "active",
-          })
-          .select("id")
-          .single();
-
-        if (locErr || !newLoc) {
-          await logDocAudit(false, locErr?.message || "Location creation failed");
-          return jsonResp({ error: "Failed to create location", detail: locErr?.message }, 500);
-        }
-        locId = newLoc.id;
       }
+    }
+
+    // Fallback: adopt existing unlinked location by address within the resolved org
+    if (!locId && location_address) {
+      const { data: addrLoc } = await supabase
+        .from("locations").select("id")
+        .eq("organization_id", orgId)
+        .ilike("address", location_address.trim())
+        .is("external_source", null)
+        .limit(1)
+        .maybeSingle();
+
+      if (addrLoc) {
+        locId = addrLoc.id;
+        console.log(`[hoodops-webhook] Adopted existing location ${locId} via address match within org ${orgId}`);
+      }
+    }
+
+    if (!locId) {
+      const { data: newLoc, error: locErr } = await supabase
+        .from("locations")
+        .insert({
+          organization_id: orgId,
+          name: location_name || "Main Kitchen",
+          address: location_address || null,
+          city: location_city || null,
+          state: location_state || "CA",
+          zip: location_zip || null,
+          external_source: "hoodops",
+          external_id: hoodops_location_id,
+          status: "active",
+        })
+        .select("id")
+        .single();
+
+      if (locErr || !newLoc) {
+        await logDocAudit(false, locErr?.message || "Location creation failed");
+        return jsonResp({ error: "Failed to create location", detail: locErr?.message }, 500);
+      }
+      locId = newLoc.id;
     }
 
     // Backfill external identity on location if missing
@@ -983,8 +1019,42 @@ async function handleDocumentEvent(
         updated_at: new Date().toISOString(),
       }, { onConflict: "organization_id,location_id,service_type_code" });
 
+    // ── 10b. Provision user if org has none and payload carries email ──
+    const { data: existingUsers } = await supabase
+      .from("user_profiles")
+      .select("id")
+      .eq("organization_id", orgId)
+      .limit(1);
+
+    if (!existingUsers || existingUsers.length === 0) {
+      if (client_email) {
+        const contactName = data.contact_name || client_name || "Kitchen Manager";
+        const provision = await provisionClientUser({
+          supabase,
+          email: client_email,
+          contactName,
+          organizationId: orgId,
+          phone: client_phone || null,
+        });
+
+        if (provision.userId) {
+          console.log(
+            `[hoodops-webhook] Provisioned user for org ${orgId} (adopted=${provision.adopted})`,
+          );
+        } else {
+          console.warn(
+            `[hoodops-webhook] Failed to provision user for org ${orgId} — notification will reach nobody`,
+          );
+        }
+      } else {
+        console.warn(
+          `[hoodops-webhook] Org ${orgId} has no users and payload lacks client_email — cannot provision, notification will reach nobody`,
+        );
+      }
+    }
+
     // ── 11. Notify client ────────────────────────────────────────
-    await createOrgNotification({
+    const notifyResult = await createOrgNotification({
       supabase,
       organizationId: orgId,
       type: "document_received",
@@ -998,7 +1068,14 @@ async function handleDocumentEvent(
       sourceType: "compliance_document",
       sourceId: compDoc.id,
       roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
-    }).catch(() => {});
+    }).catch((err: any) => {
+      console.error(`[hoodops-webhook] Notification failed for org ${orgId}:`, err?.message || err);
+      return { count: 0, emailCount: 0 };
+    });
+
+    if (notifyResult.count === 0) {
+      console.warn(`[hoodops-webhook] Notification resolved to zero recipients for org ${orgId}`);
+    }
 
     await logDocAudit(true);
 
