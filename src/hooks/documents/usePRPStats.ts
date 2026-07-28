@@ -1,10 +1,10 @@
 /**
  * usePRPStats — computes Predict / Prove card values.
- * Uses static COMMON_REQUIRED_RECORDS for the "required not on file" count.
+ * Uses pillar_requirements catalog for the "required not on file" count.
  */
 import { useMemo } from 'react';
 import type { EnrichedDocument } from './useDocumentsByTab';
-import { COMMON_REQUIRED_RECORDS } from '../../data/commonRequiredRecords';
+import type { CatalogRequirement } from '../useLocationRequirements';
 
 export interface PRPStats {
   predict: {
@@ -20,13 +20,17 @@ export interface PRPStats {
 export function usePRPStats(
   documents: EnrichedDocument[],
   prpEnabled: boolean,
+  catalog?: CatalogRequirement[],
 ): PRPStats {
   return useMemo(() => {
     const expiringIn30Days = documents.filter(d => d.status === 'expiring').length;
 
     let requiredNotOnFile: number | null = null;
 
-    if (prpEnabled) {
+    if (prpEnabled && catalog) {
+      // Only count catalog rows where counts_toward_total = true
+      const countingReqs = catalog.filter(r => r.counts_toward_total);
+
       // Build set of document types currently on file (any non-archived status)
       const uploadedTypes = new Set(
         documents
@@ -34,10 +38,10 @@ export function usePRPStats(
           .map(d => (d.type || '').toLowerCase()),
       );
 
-      // Count required records whose id is not represented in uploaded types
+      // Count required records whose requirement_code is not represented
       let missing = 0;
-      for (const rec of COMMON_REQUIRED_RECORDS) {
-        if (!uploadedTypes.has(rec.id.toLowerCase())) {
+      for (const req of countingReqs) {
+        if (!uploadedTypes.has(req.requirement_code.toLowerCase())) {
           missing++;
         }
       }
@@ -51,5 +55,5 @@ export function usePRPStats(
       predict: { expiringIn30Days, requiredNotOnFile, total },
       prove: { currentCount },
     };
-  }, [documents, prpEnabled]);
+  }, [documents, prpEnabled, catalog]);
 }

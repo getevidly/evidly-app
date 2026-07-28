@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { FileText, Upload, Send } from 'lucide-react';
 import type { DocumentTabId } from './DocumentsTabs';
-import {
-  TAB_TO_SUBTAB,
-  getRecordsForTab,
-  type RequiredRecord,
-} from '../../data/commonRequiredRecords';
+import type { CatalogRequirement } from '../../hooks/useLocationRequirements';
+import { PILLAR_TO_TAB } from '../../hooks/useLocationRequirements';
 
 interface EmptyTabContentProps {
   activeTab: DocumentTabId;
   onUpload: (typeHint?: string) => void;
   onAddVendorDoc: () => void;
   prpEnabled?: boolean;
+  catalog?: CatalogRequirement[];
 }
 
 const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta: string; icon: 'upload' | 'send' }> = {
@@ -34,25 +32,26 @@ const TAB_EMPTY: Record<DocumentTabId, { message: string; subtitle?: string; cta
   },
 };
 
-type SubTabKey = RequiredRecord['tab'];
+type SubTabKey = 'kitchen' | 'service' | 'business';
 
-const SUB_TABS: { key: SubTabKey; label: string; count: number }[] = [
-  { key: 'kitchen_employee', label: 'Kitchen & Employee', count: getRecordsForTab('kitchen_employee').length },
-  { key: 'vendor_service', label: 'Vendor Service Records', count: getRecordsForTab('vendor_service').length },
-  { key: 'vendor_business', label: 'Vendor Business Info', count: getRecordsForTab('vendor_business').length },
-];
-
-export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnabled }: EmptyTabContentProps) {
+export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnabled, catalog }: EmptyTabContentProps) {
   const { message, subtitle, cta, icon } = TAB_EMPTY[activeTab];
   const handler = activeTab === 'kitchen' ? () => onUpload() : onAddVendorDoc;
 
-  // Default sub-tab matches the main tab the user is currently viewing
-  const defaultSubTab = TAB_TO_SUBTAB[activeTab] || 'kitchen_employee';
-  const [activeSubTab, setActiveSubTab] = useState<SubTabKey>(defaultSubTab);
+  const [activeSubTab, setActiveSubTab] = useState<SubTabKey>(activeTab);
 
   // Smart empty state (behind PRP flag)
-  if (prpEnabled) {
-    const records = getRecordsForTab(activeSubTab);
+  if (prpEnabled && catalog) {
+    // Filter catalog to counting requirements for this sub-tab
+    const countingReqs = catalog.filter(
+      r => r.counts_toward_total && PILLAR_TO_TAB[r.pillar] === activeSubTab
+    );
+
+    const subTabs: { key: SubTabKey; label: string; count: number }[] = [
+      { key: 'kitchen', label: 'Kitchen & Employee', count: catalog.filter(r => r.counts_toward_total && PILLAR_TO_TAB[r.pillar] === 'kitchen').length },
+      { key: 'service', label: 'Vendor Service Records', count: catalog.filter(r => r.counts_toward_total && PILLAR_TO_TAB[r.pillar] === 'service').length },
+      { key: 'business', label: 'Vendor Business Info', count: catalog.filter(r => r.counts_toward_total && PILLAR_TO_TAB[r.pillar] === 'business').length },
+    ];
 
     return (
       <div className="py-8 flex flex-col items-center text-center">
@@ -105,7 +104,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnable
             border: '1px solid #E2DDD4',
           }}
         >
-          {SUB_TABS.map((st) => {
+          {subTabs.map((st) => {
             const active = activeSubTab === st.key;
             return (
               <button
@@ -130,11 +129,11 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnable
           className="grid gap-3 w-full mb-6"
           style={{ maxWidth: '900px', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}
         >
-          {records.map((rec) => (
+          {countingReqs.map((req) => (
             <button
-              key={rec.id}
+              key={req.requirement_code}
               type="button"
-              onClick={() => onUpload(rec.id)}
+              onClick={() => onUpload(req.requirement_code)}
               className="bg-white text-left p-4 transition-all cursor-pointer group"
               style={{
                 borderRadius: '8px',
@@ -159,7 +158,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnable
                   letterSpacing: '0.04em',
                 }}
               >
-                {rec.regulatory_basis}
+                {req.citation || req.pillar}
               </div>
 
               {/* Card title */}
@@ -167,7 +166,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnable
                 className="mb-1"
                 style={{ color: '#1E2D4D', fontWeight: 700, fontSize: '14px' }}
               >
-                {rec.display_name}
+                {req.label}
               </div>
 
               {/* Card body */}
@@ -175,7 +174,7 @@ export function EmptyTabContent({ activeTab, onUpload, onAddVendorDoc, prpEnable
                 className="mb-3"
                 style={{ color: '#8A93A6', fontSize: '12px' }}
               >
-                {rec.short_description}
+                {req.description}
               </p>
 
               {/* Footer link */}

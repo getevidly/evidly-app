@@ -10,6 +10,7 @@ import { useVendorBusinessIntelligence } from '../hooks/documents/useVendorBusin
 import { useVendorServiceIntelligence } from '../hooks/documents/useVendorServiceIntelligence';
 import { useKitchenEmployeeIntelligence } from '../hooks/documents/useKitchenEmployeeIntelligence';
 import { useFeatureFlag } from '../hooks/useFeatureFlag';
+import { useLocationRequirements } from '../hooks/useLocationRequirements';
 import { usePRPStats } from '../hooks/documents/usePRPStats';
 import { useRequiredDocsCounts } from '../hooks/documents/useRequiredDocsCounts';
 import { pillarToCategory } from '../lib/documents/pillarToCategory';
@@ -45,11 +46,14 @@ export function DocumentsPage() {
   // Feature flag: PRP layout
   const { enabled: prpEnabled } = useFeatureFlag('documents_prp_layout_v1');
 
-  // PRP stats — uses static COMMON_REQUIRED_RECORDS
-  const prpStats = usePRPStats(documents, prpEnabled);
+  // Canonical requirements catalog (shared hook)
+  const { catalog } = useLocationRequirements();
 
-  // Required-docs counts per tab (static data, for tab indicator tags)
-  const requiredCounts = useRequiredDocsCounts(prpEnabled, documents);
+  // PRP stats — uses pillar_requirements catalog
+  const prpStats = usePRPStats(documents, prpEnabled, catalog);
+
+  // Required-docs counts per tab (catalog-driven, for tab indicator tags)
+  const requiredCounts = useRequiredDocsCounts(prpEnabled, documents, catalog);
 
   // Intelligence hooks
   const businessIntel = useVendorBusinessIntelligence(orgId);
@@ -259,6 +263,7 @@ export function DocumentsPage() {
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
             prpEnabled={prpEnabled}
+            catalog={catalog}
           />
         );
       }
@@ -282,6 +287,7 @@ export function DocumentsPage() {
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
             prpEnabled={prpEnabled}
+            catalog={catalog}
           />
         );
       }
@@ -307,6 +313,7 @@ export function DocumentsPage() {
             onUpload={openUploadModal}
             onAddVendorDoc={() => setShowAddVendorDoc(true)}
             prpEnabled={prpEnabled}
+            catalog={catalog}
           />
         );
       }

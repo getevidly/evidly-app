@@ -1,12 +1,13 @@
 /**
  * useRequiredDocsCounts — computes required-doc counts per tab from
- * COMMON_REQUIRED_RECORDS static data, then cross-references with uploaded
+ * the pillar_requirements catalog, then cross-references with uploaded
  * documents to produce tab-level indicators.
  */
 import { useMemo } from 'react';
 import type { EnrichedDocument } from './useDocumentsByTab';
 import type { DocumentTabId, RequiredCountEntry } from '../../components/documents/DocumentsTabs';
-import { COMMON_REQUIRED_RECORDS, TAB_TO_SUBTAB } from '../../data/commonRequiredRecords';
+import type { CatalogRequirement } from '../useLocationRequirements';
+import { PILLAR_TO_TAB } from '../useLocationRequirements';
 
 const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
   kitchen:  ['kitchen', 'employee'],
@@ -17,9 +18,10 @@ const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
 export function useRequiredDocsCounts(
   prpEnabled: boolean,
   documents: EnrichedDocument[],
+  catalog?: CatalogRequirement[],
 ): Record<DocumentTabId, RequiredCountEntry | null> | undefined {
   return useMemo(() => {
-    if (!prpEnabled) return undefined;
+    if (!prpEnabled || !catalog) return undefined;
 
     const tabIds: DocumentTabId[] = ['kitchen', 'service', 'business'];
     const result: Record<DocumentTabId, RequiredCountEntry> = {
@@ -28,9 +30,12 @@ export function useRequiredDocsCounts(
       business: { required: 0, uploaded: 0 },
     };
 
+    // Only count catalog rows where counts_toward_total = true
+    const countingReqs = catalog.filter(r => r.counts_toward_total);
+
     for (const tabId of tabIds) {
-      const subTabKey = TAB_TO_SUBTAB[tabId];
-      const requiredForTab = COMMON_REQUIRED_RECORDS.filter((r) => r.tab === subTabKey);
+      // Map catalog pillar → tab
+      const requiredForTab = countingReqs.filter(r => PILLAR_TO_TAB[r.pillar] === tabId);
       result[tabId].required = requiredForTab.length;
 
       // Build set of uploaded doc type keys for this tab
@@ -46,8 +51,8 @@ export function useRequiredDocsCounts(
 
       // Count how many required record types have at least one uploaded doc
       let onFile = 0;
-      for (const rec of requiredForTab) {
-        if (uploadedTypes.has(rec.id.toLowerCase())) {
+      for (const req of requiredForTab) {
+        if (uploadedTypes.has(req.requirement_code.toLowerCase())) {
           onFile++;
         }
       }
@@ -55,5 +60,5 @@ export function useRequiredDocsCounts(
     }
 
     return result;
-  }, [prpEnabled, documents]);
+  }, [prpEnabled, documents, catalog]);
 }
