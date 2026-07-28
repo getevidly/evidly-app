@@ -87,16 +87,20 @@ const CSS = `
 `;
 
 /* --------------------------------------------------------------- data ----- */
-/* Sample data — mature, imperfect (~80 % fire / ~76 % food).
-   ADDITIVITY: every group total must equal the sum of the three kitchens.
-   lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336
-   fire 5+4+3=12 of 5×3=15 · food 10+8+7=25 of 11×3=33 · total 15+12+10=37 of 48. */
+/* Sample data — fireCurrent/foodCurrent/total are DERIVED from PSE state.
+   K holds only display-only values: name, city, days, lapses, records, logs, sensors.
+   ADDITIVITY: lapses 14+11+9=34 · records 34+29+25=88 · logs 742+384+210=1 336. */
 const K = {
-  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3,  total: 48, fireTotal: 15, fireCurrent: 12, foodTotal: 33, foodCurrent: 25 },
-  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3,  total: 16, fireTotal: 5,  fireCurrent: 5,  foodTotal: 11, foodCurrent: 10 },
-  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 4,  foodTotal: 11, foodCurrent: 8 },
-  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0,  total: 16, fireTotal: 5,  fireCurrent: 3,  foodTotal: 11, foodCurrent: 7 },
+  all:        { name: 'Pacific Restaurant Group', city: null,          days: 0,   lapses: 34, records: 88,  logs: 1336, sensors: 3 },
+  losangeles: { name: 'Vista Grill',              city: 'Los Angeles', days: 127, lapses: 14, records: 34,  logs: 742,  sensors: 3 },
+  sandiego:   { name: 'Harbor House',             city: 'San Diego',   days: 84,  lapses: 11, records: 29,  logs: 384,  sensors: 0 },
+  longbeach:  { name: 'The Anchor Room',          city: 'Long Beach',  days: 62,  lapses: 9,  records: 25,  logs: 210,  sensors: 0 },
 };
+/* Fixed totals per kitchen (denominators never change with toggles) */
+const FIRE_TOTAL = 5;   // 5 fire items per kitchen
+const FOOD_TOTAL = 11;  // 6 food + 5 temp per kitchen
+const PER_KITCHEN_TOTAL = FIRE_TOTAL + FOOD_TOTAL; // 16
+const KITCHEN_IDS = ['losangeles', 'sandiego', 'longbeach'];
 
 /* ---- COLOR SYSTEM -------------------------------------------------------
    STATE owns color. PILLAR owns category. They never borrow from each other.
@@ -166,31 +170,60 @@ const FOOD_TIP = 'California Retail Food Code requirements — receiving, the te
 const FIRE_RING_TIP = 'Fire coverage = fire-safety requirements with current, on-file evidence \u00f7 all fire requirements tracked. Hood cleaning certificates are the first step.';
 const FOOD_RING_TIP = 'Food coverage = food-safety requirements with current, on-file evidence \u00f7 all food requirements tracked. No food-safety documentation is on file yet.';
 
-const PSE_CONDITIONS = [
+/* ── PSE requirement catalog (19 items) ──────────────────────────
+   The catalog defines the items. Per-kitchen current/off state is
+   set in PSE_KITCHEN_DEFAULTS below so each kitchen's profile
+   matches its K data exactly. "If Applicable" items (group:'appl')
+   are NEVER counted in fire or food denominators.                   */
+const PSE_CATALOG = [
   // FIRE SAFEGUARDS (5)
-  { id: 'kec',   name: 'Kitchen Exhaust Cleaning', group: 'fire',  current: true  },
-  { id: 'sup',   name: 'Fire Suppression',         group: 'fire',  current: true  },
-  { id: 'sprk',  name: 'Fire Sprinkler',           group: 'fire',  current: true  },
-  { id: 'alarm', name: 'Fire Alarm',               group: 'fire',  current: true  },
-  { id: 'ext',   name: 'Fire Extinguisher',        group: 'fire',  current: false },
+  { id: 'kec',    name: 'Kitchen Exhaust Cleaning', group: 'fire' },
+  { id: 'sup',    name: 'Fire Suppression',         group: 'fire' },
+  { id: 'sprk',   name: 'Fire Sprinkler',           group: 'fire' },
+  { id: 'alarm',  name: 'Fire Alarm',               group: 'fire' },
+  { id: 'ext',    name: 'Fire Extinguisher',        group: 'fire' },
   // FOOD SAFETY (6)
-  { id: 'hp',    name: 'Health Permit',             group: 'food',  current: true  },
-  { id: 'fhc',   name: 'Food Handler Cards',       group: 'food',  current: true  },
-  { id: 'fpm',   name: 'Food Protection Manager',  group: 'food',  current: true  },
-  { id: 'pest',  name: 'Pest Control',             group: 'food',  current: true  },
-  { id: 'allrg', name: 'Allergen Management',      group: 'food',  current: false },
-  { id: 'wash',  name: 'Warewash & Sanitizer',     group: 'food',  current: false },
+  { id: 'hp',     name: 'Health Permit',             group: 'food' },
+  { id: 'fhc',    name: 'Food Handler Cards',       group: 'food' },
+  { id: 'fpm',    name: 'Food Protection Manager',  group: 'food' },
+  { id: 'pest',   name: 'Pest Control',             group: 'food' },
+  { id: 'allrg',  name: 'Allergen Management',      group: 'food' },
+  { id: 'wash',   name: 'Warewash & Sanitizer',     group: 'food' },
   // TEMPERATURE LOGS (5)
-  { id: 't_recv', name: 'Receiving',               group: 'temp',  current: true  },
-  { id: 't_cold', name: 'Cold Holding',            group: 'temp',  current: true  },
-  { id: 't_hot',  name: 'Hot Holding',             group: 'temp',  current: true  },
-  { id: 't_cool', name: 'Cooldown',                group: 'temp',  current: false },
-  { id: 't_rht',  name: 'Re-Heating',              group: 'temp',  current: true  },
-  // IF APPLICABLE (3)
-  { id: 'grease', name: 'Grease Trap',             group: 'appl',  current: true  },
-  { id: 'bflow',  name: 'Backflow Prevention',     group: 'appl',  current: false },
-  { id: 'haccp', name: 'HACCP Plan',               group: 'appl',  current: false },
+  { id: 't_recv', name: 'Receiving',               group: 'temp' },
+  { id: 't_cold', name: 'Cold Holding',            group: 'temp' },
+  { id: 't_hot',  name: 'Hot Holding',             group: 'temp' },
+  { id: 't_cool', name: 'Cooldown',                group: 'temp' },
+  { id: 't_rht',  name: 'Re-Heating',              group: 'temp' },
+  // IF APPLICABLE (3) — never counted in denominators
+  { id: 'grease', name: 'Grease Trap',             group: 'appl' },
+  { id: 'bflow',  name: 'Backflow Prevention',     group: 'appl' },
+  { id: 'haccp',  name: 'HACCP Plan',              group: 'appl' },
 ];
+
+/* Per-kitchen defaults: which items are OFF for each kitchen.
+   Vista Grill (LA):   fire 5/5 · food 10/11 → 1 food off  (wash)
+   Harbor House (SD):  fire 4/5 · food  8/11 → 1 fire off (ext), 3 food off (allrg, wash, t_cool counted as food via temp)
+   Anchor Room (LB):   fire 3/5 · food  7/11 → 2 fire off (ext, alarm), 4 food off
+   "food" for counting = food(6) + temp(5) = 11 required.
+   Items marked OFF below are the ones without a current record.     */
+const PSE_OFF = {
+  losangeles: new Set(['wash']),
+  sandiego:   new Set(['ext', 'allrg', 'wash', 't_cool']),
+  longbeach:  new Set(['ext', 'alarm', 'allrg', 'wash', 't_cool', 't_rht']),
+};
+
+function buildKitchenPse(kitchenId) {
+  const off = PSE_OFF[kitchenId] || new Set();
+  return PSE_CATALOG.map((c) => ({ ...c, current: !off.has(c.id) }));
+}
+
+/* Count helpers — fire = group 'fire', food = group 'food' + 'temp'.
+   'appl' items are NEVER counted.                                    */
+function pseFire(items)       { return items.filter((c) => c.group === 'fire'); }
+function pseFood(items)       { return items.filter((c) => c.group === 'food' || c.group === 'temp'); }
+function pseFireCurrent(items) { return pseFire(items).filter((c) => c.current).length; }
+function pseFoodCurrent(items) { return pseFood(items).filter((c) => c.current).length; }
 
 const riskData = (loc, pseProven, hoodProven) => {
   const n = loc === 'all' ? 3 : 1;
@@ -282,7 +315,12 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const [tip, setTip]               = useState(null);
   const [riskOpen, setRiskOpen]     = useState(false);
   const [exploreOpen, setExploreOpen] = useState(false);
-  const [pse, setPse]               = useState(PSE_CONDITIONS);
+  /* Per-kitchen PSE state — the SINGLE source of truth for fire/food counts */
+  const [kitchenPse, setKitchenPse] = useState(() => ({
+    losangeles: buildKitchenPse('losangeles'),
+    sandiego:   buildKitchenPse('sandiego'),
+    longbeach:  buildKitchenPse('longbeach'),
+  }));
   const [shareOpen, setShareOpen]   = useState(false);
   const [copied, setCopied]         = useState(false);
   const [disp, setDisp] = useState({ fireScore: 0, foodScore: 0, days: 0, lapses: 0, records: 0, logs: 0 });
@@ -290,10 +328,35 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const dispRef = useRef(disp);
   dispRef.current = disp;
 
-  const k         = K[loc];
-  const fireScore = k.fireTotal > 0 ? Math.round((k.fireCurrent / k.fireTotal) * 100) : 0;
-  const foodScore = k.foodTotal > 0 ? Math.round((k.foodCurrent / k.foodTotal) * 100) : 0;
-  const remaining = k.total - (k.fireCurrent + k.foodCurrent);
+  const k = K[loc];
+
+  /* ── Derive counts from PSE state ────────────────────────────── */
+  const pse = loc === 'all'
+    ? PSE_CATALOG.map((c) => ({
+        ...c,
+        current: KITCHEN_IDS.every((kid) =>
+          kitchenPse[kid].find((kc) => kc.id === c.id)?.current),
+      }))
+    : kitchenPse[loc] || buildKitchenPse('losangeles');
+
+  let fireCurrent, foodCurrent, fireTotal, foodTotal, total;
+  if (loc === 'all') {
+    fireCurrent = KITCHEN_IDS.reduce((s, kid) => s + pseFireCurrent(kitchenPse[kid]), 0);
+    foodCurrent = KITCHEN_IDS.reduce((s, kid) => s + pseFoodCurrent(kitchenPse[kid]), 0);
+    fireTotal = FIRE_TOTAL * 3;
+    foodTotal = FOOD_TOTAL * 3;
+    total = PER_KITCHEN_TOTAL * 3;
+  } else {
+    fireCurrent = pseFireCurrent(pse);
+    foodCurrent = pseFoodCurrent(pse);
+    fireTotal = FIRE_TOTAL;
+    foodTotal = FOOD_TOTAL;
+    total = PER_KITCHEN_TOTAL;
+  }
+
+  const fireScore = fireTotal > 0 ? Math.round((fireCurrent / fireTotal) * 100) : 0;
+  const foodScore = foodTotal > 0 ? Math.round((foodCurrent / foodTotal) * 100) : 0;
+  const remaining = total - (fireCurrent + foodCurrent);
 
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current);
@@ -316,7 +379,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
     tick();
     return () => { if (timer.current) clearTimeout(timer.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loc]);
+  }, [loc, fireCurrent, foodCurrent]);
 
   const todayLabel = 'Today \u00b7 ' + new Date().toLocaleDateString('en-US',
     { weekday: 'long', month: 'long', day: 'numeric' });
@@ -349,27 +412,27 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const statLefts = statsRaw.map((_, i) => (((i + 0.5) / nStats) * 100).toFixed(2) + '%');
   const statTipOpen = typeof tip === 'number' && !!stats[tip];
 
-  const heroTail = `${k.fireCurrent + k.foodCurrent} of ${k.total} on file.`;
+  const heroTail = `${fireCurrent + foodCurrent} of ${total} on file.`;
   const fireRingBg = `conic-gradient(from -90deg, ${RUST} 0 ${disp.fireScore}%, #E7E0D2 ${disp.fireScore}% 100%)`;
   const foodRingBg = `conic-gradient(from -90deg, ${BLUE} 0 ${disp.foodScore}%, #E7E0D2 ${disp.foodScore}% 100%)`;
 
-  const foodDone = k.foodCurrent === k.foodTotal;
+  const foodDone = foodCurrent === foodTotal;
   const food = {
-    status: foodDone ? 'All current' : `${k.foodTotal - k.foodCurrent} remaining`,
+    status: foodDone ? 'All current' : `${foodTotal - foodCurrent} remaining`,
     pillBg: foodDone ? '#E3ECE1' : '#F7EDD3', pillFg: foodDone ? '#3E5E4B' : '#8A6412',
     dot: foodDone ? '#547A62' : '#D8A93A', bar: foodDone ? '#7FA98B' : '#D8A93A',
-    width: `${k.foodTotal > 0 ? Math.round((k.foodCurrent / k.foodTotal) * 100) : 0}%`,
-    current: `${k.foodCurrent} of ${k.foodTotal} requirements documented`,
+    width: `${foodTotal > 0 ? Math.round((foodCurrent / foodTotal) * 100) : 0}%`,
+    current: `${foodCurrent} of ${foodTotal} requirements documented`,
     next: null, nextColor: '#5F6875',
   };
 
-  const fireDone = k.fireCurrent === k.fireTotal;
+  const fireDone = fireCurrent === fireTotal;
   const fireObj = {
-    status: fireDone ? 'All current' : `${k.fireTotal - k.fireCurrent} remaining`,
+    status: fireDone ? 'All current' : `${fireTotal - fireCurrent} remaining`,
     pillBg: fireDone ? '#E3ECE1' : '#F7EDD3', pillFg: fireDone ? '#3E5E4B' : '#8A6412',
     dot: fireDone ? '#547A62' : '#D8A93A', bar: fireDone ? '#7FA98B' : '#D8A93A',
-    width: `${k.fireTotal > 0 ? Math.round((k.fireCurrent / k.fireTotal) * 100) : 0}%`,
-    current: `${k.fireCurrent} of ${k.fireTotal} requirements documented`,
+    width: `${fireTotal > 0 ? Math.round((fireCurrent / fireTotal) * 100) : 0}%`,
+    current: `${fireCurrent} of ${fireTotal} requirements documented`,
     next: null, nextColor: '#5F6875',
   };
 
@@ -380,11 +443,31 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
   const pseTotal     = pse.length;
   const pseProven    = pse.filter((c) => c.current).length;
   const hoodProven   = pse.find((c) => c.id === 'kec')?.current ?? true;
-  const fireProven   = pse.filter((c) => c.group === 'fire' && c.current).length;
-  const fireUnproven = 5 - fireProven;
-  const gateOpen     = fireProven === 5;
-  const risk         = riskData(loc, fireProven, hoodProven);
-  const togglePse    = (id) => setPse((prev) => prev.map((c) => (c.id === id ? { ...c, current: !c.current } : c)));
+  const fireProven   = loc === 'all' ? fireCurrent : pseFireCurrent(pse);
+  const fireUnproven = (loc === 'all' ? FIRE_TOTAL * 3 : FIRE_TOTAL) - fireProven;
+  const gateOpen     = loc === 'all'
+    ? KITCHEN_IDS.every((kid) => pseFireCurrent(kitchenPse[kid]) === FIRE_TOTAL)
+    : fireProven === FIRE_TOTAL;
+  const risk         = riskData(loc, loc === 'all' ? Math.round(fireProven / 3) : fireProven, hoodProven);
+  const togglePse    = (id) => {
+    if (loc === 'all') {
+      // Group toggle: apply to all three kitchens
+      setKitchenPse((prev) => {
+        const newVal = !prev.losangeles.find((c) => c.id === id)?.current;
+        const result = {};
+        for (const kid of KITCHEN_IDS) {
+          result[kid] = prev[kid].map((c) => c.id === id ? { ...c, current: newVal } : c);
+        }
+        return result;
+      });
+    } else {
+      // Single-kitchen toggle
+      setKitchenPse((prev) => ({
+        ...prev,
+        [loc]: prev[loc].map((c) => c.id === id ? { ...c, current: !c.current } : c),
+      }));
+    }
+  };
   const upcoming      = loc === 'all' ? UPCOMING : UPCOMING.filter((u) => u.loc === loc);
   const upcomingScope = `${upcoming.length} IN THE NEXT 60 DAYS`;
   const nextFire      = upcoming.find((u) => u.p === 'fire');
@@ -469,7 +552,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
             <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A6412;")}>{todayLabel}</div>
             <h1 className="ev-h1" style={s("font-family:'Spectral',serif;font-weight:600;font-size:66px;line-height:1;color:#1C2A3A;margin:16px 0 0;letter-spacing:-.02em;")}>Everything in one place.</h1>
             <p style={s("font-family:'Spectral',serif;font-weight:300;font-size:21px;line-height:1.45;color:#4A5566;max-width:560px;margin:16px 0 0;")}>
-              EvidLY is tracking <span style={s('color:#1C2A3A;font-weight:500;')}>{k.total} requirements</span>. {heroTail}
+              EvidLY is tracking <span style={s('color:#1C2A3A;font-weight:500;')}>{total} requirements</span>. {heroTail}
             </p>
           </div>
 
@@ -495,7 +578,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                   </div>
                 </div>
               </div>
-              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{k.fireCurrent} of {k.fireTotal} covered</div>
+              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{fireCurrent} of {fireTotal} covered</div>
             </div>
 
             {/* FOOD ring */}
@@ -519,7 +602,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
                   </div>
                 </div>
               </div>
-              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{k.foodCurrent} of {k.foodTotal} covered</div>
+              <div style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E675A;letter-spacing:.03em;")}>{foodCurrent} of {foodTotal} covered</div>
             </div>
           </div>
         </div>
