@@ -43,6 +43,19 @@ const FREQUENCY_DAYS: Record<string, number> = {
   annual: 365,
 };
 
+/** Constant-time string comparison to prevent timing side-channels. */
+function timingSafeEqual(a: string, b: string): boolean {
+  const encoder = new TextEncoder();
+  const bufA = encoder.encode(a);
+  const bufB = encoder.encode(b);
+  if (bufA.byteLength !== bufB.byteLength) return false;
+  let result = 0;
+  for (let i = 0; i < bufA.byteLength; i++) {
+    result |= bufA[i] ^ bufB[i];
+  }
+  return result === 0;
+}
+
 function calculateNextDue(serviceDate: string, frequency: string): string {
   const days = FREQUENCY_DAYS[frequency] || 90;
   const d = new Date(serviceDate);
@@ -58,10 +71,17 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // Verify shared secret
+  // Verify shared secret — fail CLOSED: reject if env var is missing
   const secret = Deno.env.get("HOODOPS_WEBHOOK_SECRET");
+  if (!secret) {
+    console.error("[hoodops-webhook] HOODOPS_WEBHOOK_SECRET is not configured — rejecting request");
+    return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   const authHeader = req.headers.get("x-webhook-secret");
-  if (secret && authHeader !== secret) {
+  if (!authHeader || !timingSafeEqual(secret, authHeader)) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
