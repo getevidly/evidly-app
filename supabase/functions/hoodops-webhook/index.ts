@@ -728,19 +728,72 @@ async function handleDocumentEvent(
     }
 
     if (!locId) {
+      // Derive jurisdiction from city → county lookup
+      const locCity = (location_city || "").trim();
+      const locState = location_state || "CA";
+      let derivedJurisdictionId: string | null = null;
+
+      if (locCity && locState) {
+        // Try city-level jurisdiction first, fall back to county-level
+        const { data: cityJ } = await supabase
+          .from("jurisdictions")
+          .select("id")
+          .eq("state", locState)
+          .ilike("city", locCity)
+          .limit(1)
+          .maybeSingle();
+
+        if (cityJ) {
+          derivedJurisdictionId = cityJ.id;
+        } else {
+          // County-level: look up county from city name pattern in jurisdictions
+          const { data: countyJ } = await supabase
+            .from("jurisdictions")
+            .select("id, county")
+            .eq("state", locState)
+            .is("city", null)
+            .order("county");
+
+          // Zip-prefix county mapping for known CA regions
+          const zipCountyMap: Record<string, string> = {
+            "936": "Fresno", "937": "Fresno",
+            "933": "Kern",
+            "953": "Merced", "954": "Merced",
+            "952": "Stanislaus",
+            "951": "Madera",
+            "934": "San Luis Obispo",
+            "935": "Tulare",
+          };
+          const zip3 = (location_zip || "").substring(0, 3);
+          const countyFromZip = zipCountyMap[zip3];
+
+          if (countyFromZip && countyJ) {
+            const match = countyJ.find((j: { county: string }) =>
+              j.county?.toLowerCase() === countyFromZip.toLowerCase()
+            );
+            if (match) derivedJurisdictionId = match.id;
+          }
+        }
+      }
+
+      const insertPayload: Record<string, unknown> = {
+        organization_id: orgId,
+        name: location_name || "Main Kitchen",
+        address: location_address || null,
+        city: location_city || null,
+        state: locState,
+        zip: location_zip || null,
+        external_source: "hoodops",
+        external_id: hoodops_location_id,
+        status: "active",
+      };
+      if (derivedJurisdictionId) {
+        insertPayload.jurisdiction_id = derivedJurisdictionId;
+      }
+
       const { data: newLoc, error: locErr } = await supabase
         .from("locations")
-        .insert({
-          organization_id: orgId,
-          name: location_name || "Main Kitchen",
-          address: location_address || null,
-          city: location_city || null,
-          state: location_state || "CA",
-          zip: location_zip || null,
-          external_source: "hoodops",
-          external_id: hoodops_location_id,
-          status: "active",
-        })
+        .insert(insertPayload)
         .select("id")
         .single();
 
@@ -749,6 +802,14 @@ async function handleDocumentEvent(
         return jsonResp({ error: "Failed to create location", detail: locErr?.message }, 500);
       }
       locId = newLoc.id;
+
+      // Seed location_jurisdictions rows if jurisdiction was derived
+      if (derivedJurisdictionId) {
+        await supabase.from("location_jurisdictions").insert([
+          { location_id: locId, jurisdiction_id: derivedJurisdictionId, jurisdiction_layer: "food_safety", auto_detected: true },
+          { location_id: locId, jurisdiction_id: derivedJurisdictionId, jurisdiction_layer: "fire_safety", auto_detected: true },
+        ]);
+      }
     }
 
     // Backfill external identity on location if missing

@@ -86,8 +86,10 @@ export function buildLocationPayload(input: CreateLocationInput): Record<string,
 }
 
 /**
- * Insert a single location into the locations table.
- * Returns the created row. Throws on validation or Supabase error.
+ * Insert a single location into the locations table, then seed two
+ * location_jurisdictions rows (food_safety + fire_safety) so the
+ * jurisdiction link is queryable by layer from day one.
+ * Returns the created location row. Throws on validation or Supabase error.
  */
 export async function createLocation(input: CreateLocationInput) {
   const payload = buildLocationPayload(input);
@@ -100,6 +102,24 @@ export async function createLocation(input: CreateLocationInput) {
 
   if (error) {
     throw new Error(error.message);
+  }
+
+  // Seed both jurisdiction layers — same jurisdiction row carries
+  // agency_name (food) and fire_ahj_name (fire) for CA counties.
+  const layers = ['food_safety', 'fire_safety'] as const;
+  const ljRows = layers.map((layer) => ({
+    location_id: data.id,
+    jurisdiction_id: input.jurisdiction_id,
+    jurisdiction_layer: layer,
+    auto_detected: false,
+  }));
+
+  const { error: ljErr } = await supabase
+    .from('location_jurisdictions')
+    .insert(ljRows);
+
+  if (ljErr) {
+    console.error('[createLocation] location_jurisdictions insert failed:', ljErr.message);
   }
 
   return data;
