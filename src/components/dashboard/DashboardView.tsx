@@ -32,6 +32,8 @@ const RED = '#A04040';
 const AMBER = '#B08A2E';
 const RUST = '#B85D22';
 const INK = '#0F1828';
+const EMBER = '#B24A2E';
+const SLATE = '#3E6B8A';
 
 // ─── StatusPill ──────────────────────────────────────────────────
 type PillStatus = 'clear' | 'action' | 'urgent' | 'empty';
@@ -422,6 +424,34 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
   return `Escalating in ${minutesLeft} min`;
 }
 
+// ─── Proof Ring (donut chart) ────────────────────────────────────
+function ProofRing({ proven, total, color }: { proven: number; total: number; color: string }) {
+  const pct = total > 0 ? Math.round((proven / total) * 100) : 0;
+  const r = 18;
+  const stroke = 3.5;
+  const size = (r + stroke) * 2;
+  const c = 2 * Math.PI * r;
+  const offset = c - (pct / 100) * c;
+
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} className="block">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={LINE} strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
+          style={{ fontSize: 12, fontWeight: 700, fill: NAVY, fontFamily: 'Fraunces, serif' }}>
+          {pct}%
+        </text>
+      </svg>
+      <div className="text-[10px] mt-1 whitespace-nowrap" style={{ color: MUTED }}>
+        {proven} of {total} on file
+      </div>
+    </div>
+  );
+}
+
 // ─── Pillar Card ─────────────────────────────────────────────────
 function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNeeded, proof }: {
   pillar: 'fire_safety' | 'food_safety';
@@ -446,7 +476,10 @@ function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNee
             <div className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: MUTED }}>{framework}</div>
           </div>
         </div>
-        <StatusPill status={status} />
+        <div className="flex items-center gap-4">
+          <ProofRing proven={proof.filed} total={proof.total} color={pillar === 'fire_safety' ? EMBER : SLATE} />
+          <StatusPill status={status} />
+        </div>
       </div>
 
       {/* Three columns */}
