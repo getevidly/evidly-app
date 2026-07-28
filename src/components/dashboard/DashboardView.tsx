@@ -427,21 +427,26 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
 // ─── Proof Ring (donut chart) ────────────────────────────────────
 function ProofRing({ proven, total, color }: { proven: number; total: number; color: string }) {
   const pct = total > 0 ? Math.round((proven / total) * 100) : 0;
-  const r = 18;
-  const stroke = 3.5;
+  const r = 20;
+  const stroke = 4;
   const size = (r + stroke) * 2;
   const c = 2 * Math.PI * r;
   const offset = c - (pct / 100) * c;
 
   return (
-    <div className="flex flex-col items-center">
-      <svg width={size} height={size} className="block">
+    <div className="flex flex-col items-center" style={{ minWidth: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
+        xmlns="http://www.w3.org/2000/svg" role="img"
+        aria-label={`${pct}% proven — ${proven} of ${total} on file`}
+        style={{ display: 'block', overflow: 'visible' }}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={LINE} strokeWidth={stroke} />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
-          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        {pct > 0 && (
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+            strokeDasharray={`${c}`} strokeDashoffset={`${offset}`} strokeLinecap="round"
+            transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        )}
         <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
-          style={{ fontSize: 12, fontWeight: 700, fill: NAVY, fontFamily: 'Fraunces, serif' }}>
+          fill={NAVY} fontSize="13" fontWeight="700" fontFamily="Montserrat, sans-serif">
           {pct}%
         </text>
       </svg>
