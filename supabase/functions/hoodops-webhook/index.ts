@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 // hoodops-webhook — HOODOPS-SERVICES-01 + AUDIT-FIX-07 / H-3, H-4
 //                   + RESCHEDULE-EVIDLY-01
+//                   + DOCUMENT-BRIDGE-01
 //
 // Receives webhook events from HoodOps platform:
 //   - service.completed → upsert vendor_service_records + upsert schedule
@@ -8,6 +9,8 @@
 //   - reschedule.confirmed → confirm pending reschedule + update schedule
 //   - reschedule.declined  → decline pending reschedule
 //   - reschedule.updated   → vendor proposes alternative date
+//   - document.report      → fetch PDF, create compliance_documents, seal
+//   - document.cert        → same, chained from report via supersedes_id
 //
 // H-3: Idempotency via event_id (deterministic if not provided by HoodOps)
 // H-4: All calls logged to platform_audit_log
@@ -17,6 +20,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
+import {
+  canonicalTimestamp,
+  buildCanonicalServiceJson,
+  buildSealHashInput,
+  sha256,
+} from "../_shared/seal-canonicalization.ts";
 
 // Maps HoodOps service_type_code → PSE safeguard_type
 const SERVICE_CODE_TO_SAFEGUARD: Record<string, string> = {
@@ -80,6 +89,11 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ error: "Missing event or data" }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
+  }
+
+  // ── DOCUMENT-BRIDGE-01: Document events route to dedicated handler ──
+  if (event === "document.report" || event === "document.cert") {
+    return await handleDocumentEvent(supabase, body, event);
   }
 
   const {
@@ -467,3 +481,492 @@ Deno.serve(async (req: Request) => {
     );
   }
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DOCUMENT-BRIDGE-01 — Handle document.report and document.cert events
+//
+// Flow: sync gate → find-or-create org → find-or-create location →
+//       dedup check → fetch PDF → upload to storage → create compliance_documents →
+//       seal vendor_service_records → update schedule → return IDs
+//
+// Seal path: DIRECT INLINE — same SHA-256 algorithm as seal-service-record but
+// without JWT auth (webhook uses shared secret). sealed_by = platform_admin UUID.
+//
+// Idempotency: compliance_documents UNIQUE(external_source, external_id).
+// Replaying the same event returns 200 with idempotent=true.
+//
+// Cert chaining: document.cert finds the report's sealed vendor_service_records
+// row via compliance_documents.bridged_service_id, uses its content_hash as
+// predecessor hash, and sets supersedes_id to create a cryptographic chain.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function jsonResp(body: Record<string, unknown>, status: number): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+async function handleDocumentEvent(
+  supabase: ReturnType<typeof createClient>,
+  body: { event: string; data: Record<string, any> },
+  event: string,
+): Promise<Response> {
+  const { data } = body;
+
+  const {
+    evidly_operator_id,
+    evidly_location_id,
+    hoodops_client_id,
+    hoodops_location_id,
+    sync_enabled,
+    client_name,
+    client_phone,
+    client_email,
+    location_name,
+    location_address,
+    location_city,
+    location_state,
+    location_zip,
+    service_type_code,
+    service_date,
+    next_service_due,
+    vendor_name,
+    technician_name,
+    cert_number,
+    document_url,
+    hoodops_document_id,
+    report_document_id,
+    frequency,
+  } = data;
+
+  // ── 1. Sync gate ─────────────────────────────────────────────
+  if (sync_enabled === false) {
+    return jsonResp({
+      received: true,
+      processed: false,
+      reason: "sync_disabled",
+    }, 200);
+  }
+
+  // ── 2. Validate required fields ──────────────────────────────
+  if (!hoodops_client_id || !hoodops_location_id || !service_date || !document_url || !hoodops_document_id) {
+    return jsonResp({
+      error: "Missing required fields: hoodops_client_id, hoodops_location_id, service_date, document_url, hoodops_document_id",
+    }, 400);
+  }
+
+  const effectiveServiceCode = service_type_code || "KEC";
+
+  // Document-specific audit logger (org resolved later)
+  let resolvedOrgId: string | null = null;
+  const logDocAudit = async (success: boolean, errorMessage?: string) => {
+    await supabase.rpc("log_audit_event", {
+      p_action: `edge_fn.hoodops_webhook.${event}`,
+      p_organization_id: resolvedOrgId,
+      p_resource_type: "compliance_document",
+      p_resource_id: hoodops_document_id,
+      p_success: success,
+      p_error_message: errorMessage || null,
+      p_metadata: { event, hoodops_client_id, hoodops_location_id, service_type_code: effectiveServiceCode },
+    }).catch((e: any) => console.error("[hoodops-webhook] Audit log failed:", e.message));
+  };
+
+  try {
+    // ── 3. Find-or-create organization ───────────────────────────
+    let orgId: string | null = evidly_operator_id || null;
+
+    if (orgId) {
+      // Verify it exists
+      const { data: org } = await supabase
+        .from("organizations").select("id").eq("id", orgId).maybeSingle();
+      if (!org) orgId = null; // fall through to lookup
+    }
+
+    if (!orgId) {
+      // Lookup by external identity
+      const { data: extOrg } = await supabase
+        .from("organizations").select("id")
+        .eq("external_source", "hoodops")
+        .eq("external_id", hoodops_client_id)
+        .maybeSingle();
+
+      if (extOrg) {
+        orgId = extOrg.id;
+      } else {
+        // Auto-create
+        const { data: newOrg, error: orgErr } = await supabase
+          .from("organizations")
+          .insert({
+            name: client_name || `HoodOps Client ${hoodops_client_id}`,
+            industry_type: "Restaurant",
+            external_source: "hoodops",
+            external_id: hoodops_client_id,
+            primary_contact_phone: client_phone || null,
+            primary_contact_email: client_email || null,
+          })
+          .select("id")
+          .single();
+
+        if (orgErr || !newOrg) {
+          await logDocAudit(false, orgErr?.message || "Org creation failed");
+          return jsonResp({ error: "Failed to create organization", detail: orgErr?.message }, 500);
+        }
+        orgId = newOrg.id;
+      }
+    }
+
+    // Backfill external identity if org existed but lacked it
+    await supabase
+      .from("organizations")
+      .update({ external_source: "hoodops", external_id: hoodops_client_id })
+      .eq("id", orgId)
+      .is("external_source", null);
+
+    resolvedOrgId = orgId;
+
+    // ── 4. Find-or-create location ───────────────────────────────
+    let locId: string | null = evidly_location_id || null;
+
+    if (locId) {
+      const { data: loc } = await supabase
+        .from("locations").select("id").eq("id", locId).maybeSingle();
+      if (!loc) locId = null;
+    }
+
+    if (!locId) {
+      const { data: extLoc } = await supabase
+        .from("locations").select("id")
+        .eq("external_source", "hoodops")
+        .eq("external_id", hoodops_location_id)
+        .maybeSingle();
+
+      if (extLoc) {
+        locId = extLoc.id;
+      } else {
+        const { data: newLoc, error: locErr } = await supabase
+          .from("locations")
+          .insert({
+            organization_id: orgId,
+            name: location_name || "Main Kitchen",
+            address: location_address || null,
+            city: location_city || null,
+            state: location_state || "CA",
+            zip: location_zip || null,
+            external_source: "hoodops",
+            external_id: hoodops_location_id,
+            status: "active",
+          })
+          .select("id")
+          .single();
+
+        if (locErr || !newLoc) {
+          await logDocAudit(false, locErr?.message || "Location creation failed");
+          return jsonResp({ error: "Failed to create location", detail: locErr?.message }, 500);
+        }
+        locId = newLoc.id;
+      }
+    }
+
+    // Backfill external identity on location if missing
+    await supabase
+      .from("locations")
+      .update({ external_source: "hoodops", external_id: hoodops_location_id })
+      .eq("id", locId)
+      .is("external_source", null);
+
+    // ── 4b. Find-or-create vendor ────────────────────────────────
+    //    Normalized lookup (trim + case-insensitive) so "Cleaning Pros Plus"
+    //    and "CLEANING PROS PLUS" resolve to the same row.
+    //    MUST happen before step 8 (compliance_documents) and step 9 (seal)
+    //    because vendor_id is part of the seal's canonical JSON — resolving
+    //    it after sealing would break the hash, and the immutability trigger
+    //    blocks updates on sealed records.
+    let vendorId: string | null = null;
+    const rawVendorName = (vendor_name || "").trim();
+
+    if (rawVendorName) {
+      const { data: existingVendor } = await supabase
+        .from("vendors")
+        .select("id")
+        .eq("organization_id", orgId)
+        .ilike("company_name", rawVendorName)
+        .maybeSingle();
+
+      if (existingVendor) {
+        vendorId = existingVendor.id;
+      } else {
+        const { data: newVendor, error: vendorErr } = await supabase
+          .from("vendors")
+          .insert({
+            organization_id: orgId,
+            company_name: rawVendorName,
+            category: "hood_cleaning",
+            status: "active",
+          })
+          .select("id")
+          .single();
+
+        if (vendorErr || !newVendor) {
+          console.error("[hoodops-webhook] Vendor creation failed:", vendorErr?.message);
+          // Non-fatal: proceed without vendor_id — seal still valid, just no FK join
+        } else {
+          vendorId = newVendor.id;
+        }
+      }
+    }
+
+    // ── 5. Idempotency check ─────────────────────────────────────
+    const externalDocId = `${event}:${hoodops_document_id}`;
+    const { data: existingDoc } = await supabase
+      .from("compliance_documents").select("id")
+      .eq("external_source", "hoodops")
+      .eq("external_id", externalDocId)
+      .maybeSingle();
+
+    if (existingDoc) {
+      return jsonResp({
+        ok: true,
+        event,
+        idempotent: true,
+        organization_id: orgId,
+        location_id: locId,
+        document_id: existingDoc.id,
+      }, 200);
+    }
+
+    // ── 6. Fetch PDF from HoodOps ────────────────────────────────
+    let pdfBytes: ArrayBuffer;
+    try {
+      const pdfRes = await fetch(document_url, {
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!pdfRes.ok) {
+        await logDocAudit(false, `PDF fetch failed: HTTP ${pdfRes.status}`);
+        return jsonResp({ error: "Failed to fetch document", http_status: pdfRes.status }, 502);
+      }
+      pdfBytes = await pdfRes.arrayBuffer();
+    } catch (fetchErr: any) {
+      await logDocAudit(false, `PDF fetch error: ${fetchErr.message}`);
+      return jsonResp({ error: "Document fetch failed", detail: fetchErr.message }, 502);
+    }
+
+    // ── 7. Upload to Supabase storage ────────────────────────────
+    const storageBucket = "documents";
+    const storagePath = `hoodops/${orgId}/${externalDocId}.pdf`;
+    const { error: uploadErr } = await supabase.storage
+      .from(storageBucket)
+      .upload(storagePath, new Uint8Array(pdfBytes), {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+
+    if (uploadErr) {
+      await logDocAudit(false, `Storage upload failed: ${uploadErr.message}`);
+      return jsonResp({ error: "Failed to upload document", detail: uploadErr.message }, 500);
+    }
+
+    // ── 8. Create compliance_documents row ────────────────────────
+    const docLabel = event === "document.cert" ? "Certificate" : "Report";
+    const effectiveCertNumber = cert_number || "NONE";
+
+    const { data: compDoc, error: docErr } = await supabase
+      .from("compliance_documents")
+      .insert({
+        organization_id: orgId,
+        location_id: locId,
+        category: "service",
+        type: "KEC",
+        name: `Hood Cleaning ${docLabel} — ${service_date}`,
+        status: "current",
+        service_type_code: effectiveServiceCode,
+        storage_path: `${storageBucket}/${storagePath}`,
+        mime_type: "application/pdf",
+        file_size_bytes: pdfBytes.byteLength,
+        issued_date: service_date,
+        expiry_date: next_service_due || null,
+        vendor_id: vendorId,
+        import_source: "api",
+        import_source_metadata: { source: "hoodops_webhook", hoodops_document_id, event, document_url },
+        external_source: "hoodops",
+        external_id: externalDocId,
+      })
+      .select("id")
+      .single();
+
+    if (docErr || !compDoc) {
+      await logDocAudit(false, docErr?.message || "Document creation failed");
+      return jsonResp({ error: "Failed to create document", detail: docErr?.message }, 500);
+    }
+
+    // ── 9. Seal — direct inline (same algorithm as seal-service-record) ──
+    const safeguardType = SERVICE_CODE_TO_SAFEGUARD[effectiveServiceCode] || "hood_cleaning";
+    const sealedAtCanonical = canonicalTimestamp(new Date());
+
+    // sealed_by = platform_admin (FK to auth.users required)
+    const { data: sysUser } = await supabase
+      .from("user_profiles").select("id")
+      .eq("role", "platform_admin")
+      .limit(1)
+      .maybeSingle();
+
+    if (!sysUser) {
+      await logDocAudit(false, "No platform_admin user found for seal");
+      return jsonResp({ error: "Cannot seal: no platform_admin user" }, 500);
+    }
+    const sealedBy = sysUser.id;
+
+    // Predecessor hash — cert chains from report
+    let predecessorHash = "";
+    let supersedesId: string | null = null;
+
+    if (event === "document.cert" && report_document_id) {
+      const reportExtId = `document.report:${report_document_id}`;
+      const { data: reportDoc } = await supabase
+        .from("compliance_documents").select("bridged_service_id")
+        .eq("external_source", "hoodops")
+        .eq("external_id", reportExtId)
+        .maybeSingle();
+
+      if (reportDoc?.bridged_service_id) {
+        const { data: reportSeal } = await supabase
+          .from("vendor_service_records").select("id, content_hash")
+          .eq("id", reportDoc.bridged_service_id)
+          .maybeSingle();
+
+        if (reportSeal?.content_hash) {
+          predecessorHash = reportSeal.content_hash;
+          supersedesId = reportSeal.id;
+        }
+      }
+    }
+
+    // Canonical JSON (9-field immutable key order)
+    const canonicalJson = buildCanonicalServiceJson({
+      location_id: locId,
+      safeguard_type: safeguardType,
+      service_type_code: effectiveServiceCode,
+      vendor_name: vendor_name || "HoodOps Partner",
+      vendor_id: vendorId,
+      technician_name: technician_name || null,
+      cert_number: effectiveCertNumber,
+      service_date,
+      organization_id: orgId,
+    });
+
+    // SHA-256 hash
+    const hashInput = buildSealHashInput(
+      pdfBytes,
+      canonicalJson,
+      sealedAtCanonical,
+      sealedBy,
+      predecessorHash,
+    );
+    const contentHash = await sha256(hashInput.buffer as ArrayBuffer);
+
+    // Retention lookup
+    const { data: retPolicy } = await supabase
+      .from("retention_policies").select("retention_years")
+      .eq("record_type", "fire_service_record")
+      .is("jurisdiction_id", null)
+      .maybeSingle();
+
+    const retentionYears = retPolicy?.retention_years ? Number(retPolicy.retention_years) : 3;
+    const clockDate = new Date(sealedAtCanonical);
+    const retentionUntil = new Date(clockDate);
+    retentionUntil.setFullYear(retentionUntil.getFullYear() + retentionYears);
+
+    // Next due date
+    const nextDueDate = next_service_due || calculateNextDue(service_date, frequency || "quarterly");
+
+    // INSERT sealed vendor_service_records (not upsert — immutable trigger blocks updates)
+    const { data: sealedRecord, error: sealErr } = await supabase
+      .from("vendor_service_records")
+      .insert({
+        organization_id: orgId,
+        location_id: locId,
+        safeguard_type: safeguardType,
+        service_type_code: effectiveServiceCode,
+        vendor_name: vendor_name || "HoodOps Partner",
+        vendor_id: vendorId,
+        technician_name: technician_name || null,
+        cert_number: effectiveCertNumber,
+        service_date,
+        certificate_url: `${storageBucket}:${storagePath}`,
+        next_due_date: nextDueDate,
+        source: "evidentiary_seal",
+        sealed_by: sealedBy,
+        sealed_at: sealedAtCanonical,
+        content_hash: contentHash,
+        lifecycle_state: "live",
+        retention_until: retentionUntil.toISOString(),
+        supersedes_id: supersedesId,
+        notes: `HoodOps ${docLabel} — sealed automatically on receipt`,
+        webhook_payload: body,
+      })
+      .select("id, content_hash, sealed_at")
+      .single();
+
+    if (sealErr || !sealedRecord) {
+      await logDocAudit(false, sealErr?.message || "Seal insert failed");
+      return jsonResp({ error: "Failed to seal record", detail: sealErr?.message }, 500);
+    }
+
+    // Link compliance_documents → sealed record
+    await supabase
+      .from("compliance_documents")
+      .update({
+        bridged_service_id: sealedRecord.id,
+        metadata: { seal_record_id: sealedRecord.id, sealed_at: sealedRecord.sealed_at },
+      })
+      .eq("id", compDoc.id);
+
+    // ── 10. Update service schedule ──────────────────────────────
+    await supabase
+      .from("location_service_schedules")
+      .upsert({
+        organization_id: orgId,
+        location_id: locId,
+        service_type_code: effectiveServiceCode,
+        vendor_name: vendor_name || "HoodOps Partner",
+        frequency: frequency || "quarterly",
+        last_service_date: service_date,
+        next_due_date: nextDueDate,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "organization_id,location_id,service_type_code" });
+
+    // ── 11. Notify client ────────────────────────────────────────
+    await createOrgNotification({
+      supabase,
+      organizationId: orgId,
+      type: "document_received",
+      category: "vendors",
+      title: `Hood Cleaning ${docLabel} received and sealed`,
+      body: `${vendor_name || "Vendor"} ${docLabel.toLowerCase()} for ${service_date} has been sealed with evidentiary hash.`,
+      actionUrl: "/services",
+      actionLabel: "View Record",
+      priority: "high",
+      severity: "info",
+      sourceType: "compliance_document",
+      sourceId: compDoc.id,
+      roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+    }).catch(() => {});
+
+    await logDocAudit(true);
+
+    return jsonResp({
+      ok: true,
+      event,
+      organization_id: orgId,
+      location_id: locId,
+      document_id: compDoc.id,
+      sealed_record_id: sealedRecord.id,
+      content_hash: sealedRecord.content_hash,
+      sealed_at: sealedRecord.sealed_at,
+    }, 201);
+  } catch (err: any) {
+    console.error(`[hoodops-webhook] ${event} error:`, err);
+    await logDocAudit(false, err.message || String(err));
+    return jsonResp({ error: "Internal error", detail: err.message }, 500);
+  }
+}

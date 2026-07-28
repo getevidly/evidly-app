@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
         expiry_date,
         issued_date,
         service_type_code,
-        vendor:vendors(name)
+        vendor:vendors(company_name)
       `)
       .eq('organization_id', orgId)
       .in('status', ['current', 'expiring']);
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
         safeguard_type,
         service_type_code,
         service_date,
-        vendor:vendors(name)
+        vendor:vendors(company_name)
       `)
       .eq('organization_id', orgId);
 
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
 
     // Map compliance_documents by type code
     for (const doc of docs ?? []) {
-      const vendorName = Array.isArray(doc.vendor) ? doc.vendor[0]?.name : doc.vendor?.name;
+      const vendorName = Array.isArray(doc.vendor) ? doc.vendor[0]?.company_name : doc.vendor?.company_name;
       // Mark by document type code (e.g. PHP, CFPM, PEST, etc.)
       mark(doc.type, doc.expiry_date || doc.issued_date, vendorName);
       // Also mark by service_type_code if bridged (e.g. KEC, FS, FA, SP)
@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
 
     // Map vendor_service_records by safeguard_type and service_type_code
     for (const rec of svcRecs ?? []) {
-      const vendorName = Array.isArray(rec.vendor) ? rec.vendor[0]?.name : rec.vendor?.name;
+      const vendorName = Array.isArray(rec.vendor) ? rec.vendor[0]?.company_name : rec.vendor?.company_name;
       if (rec.safeguard_type) mark(`safeguard:${rec.safeguard_type}`, rec.service_date, vendorName);
       if (rec.service_type_code) mark(rec.service_type_code, rec.service_date, vendorName);
     }
