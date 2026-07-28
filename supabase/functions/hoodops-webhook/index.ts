@@ -14,7 +14,7 @@
 //
 // H-3: Idempotency via event_id (deterministic if not provided by HoodOps)
 // H-4: All calls logged to platform_audit_log
-// No JWT verification — external webhook. Uses shared secret.
+// No JWT verification — external webhook. Uses HMAC-SHA256 signature.
 // ═══════════════════════════════════════════════════════════
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -56,6 +56,22 @@ function timingSafeEqual(a: string, b: string): boolean {
   return result === 0;
 }
 
+/** Compute HMAC-SHA256 and return lowercase hex digest. */
+async function hmacSha256Hex(secret: string, message: string): Promise<string> {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 function calculateNextDue(serviceDate: string, frequency: string): string {
   const days = FREQUENCY_DAYS[frequency] || 90;
   const d = new Date(serviceDate);
@@ -71,7 +87,7 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // Verify shared secret — fail CLOSED: reject if env var is missing
+  // Verify HMAC-SHA256 signature — fail CLOSED: reject if secret is missing
   const secret = Deno.env.get("HOODOPS_WEBHOOK_SECRET");
   if (!secret) {
     console.error("[hoodops-webhook] HOODOPS_WEBHOOK_SECRET is not configured — rejecting request");
@@ -80,8 +96,20 @@ Deno.serve(async (req: Request) => {
       headers: { "Content-Type": "application/json" },
     });
   }
-  const authHeader = req.headers.get("x-webhook-secret");
-  if (!authHeader || !timingSafeEqual(secret, authHeader)) {
+
+  // Read raw body BEFORE parsing — HMAC must match the exact bytes HoodOps signed
+  const rawBody = await req.text();
+
+  const signatureHeader = req.headers.get("x-hoodops-signature");
+  if (!signatureHeader) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const expectedSignature = await hmacSha256Hex(secret, rawBody);
+  if (!timingSafeEqual(expectedSignature, signatureHeader)) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -95,7 +123,7 @@ Deno.serve(async (req: Request) => {
 
   let body: any;
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,
