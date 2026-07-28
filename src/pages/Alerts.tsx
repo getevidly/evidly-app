@@ -1,867 +1,275 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
-import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { Bell, AlertCircle, AlertTriangle, CheckCircle2, Clock, MapPin, ArrowRight, Flame, Utensils } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Modal } from '../components/ui/Modal';
+import { PageEmptyState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
-import { useDemo } from '../contexts/DemoContext';
-import { useDemoGuard } from '../hooks/useDemoGuard';
-import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
-import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
-import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
-import { usePageTitle } from '../hooks/usePageTitle';
-import { colors, shadows, radius, typography } from '../lib/designSystem';
+import { useDriftCatches } from '../hooks/useDriftCatches';
+import { useDriftRouting } from '../hooks/useDriftRouting';
+import { getDriftLabel } from '../constants/driftTypeLabels';
+import { daysSince } from '../lib/daysSince';
+import { colors, typography } from '../lib/designSystem';
+import type { DriftCatchWithAcks } from '../hooks/useDriftCatches';
+import type { DriftRecipient } from '../hooks/useDriftRouting';
 
-interface Alert {
-  id: string;
-  alert_type: 'document_expiring' | 'missed_log' | 'vendor_overdue' | 'staff_certification' | 'checklist_incomplete' | 'haccp_failure' | 'predictive';
-  severity: 'high' | 'medium' | 'low';
-  title: string;
-  description: string;
-  recommended_action: string;
-  status: 'active' | 'resolved' | 'snoozed';
-  created_at: string;
-  assigned_to?: string;
-  days_until_due?: number;
-  snoozed_until?: string;
-  resolution_type?: string;
-  resolution_notes?: string;
-  resolved_by?: string;
-  resolved_at?: string;
-  location: string;
-  navigate_to?: string;
+// ─── Design tokens ────────────────────────────────────────────
+const NAVY = '#1E2D4D';
+const GOLD = '#A08C5A';
+const MUTED = '#6B7689';
+const LINE = '#E6E1D3';
+const GREEN = '#3F6B47';
+const RED = '#A04040';
+const AMBER = '#B08A2E';
+const RUST = '#B85D22';
+
+const ROLE_LABELS: Record<string, string> = {
+  owner_operator: 'Owner',
+  executive: 'Executive',
+  compliance_manager: 'Compliance',
+  facilities_manager: 'Facilities',
+  chef: 'Chef',
+  kitchen_manager: 'Manager',
+  platform_admin: 'Admin',
+};
+
+// ─── Route map: drift source → navigable page ────────────────
+function driftNavigateTo(drift: DriftCatchWithAcks): string {
+  if (drift.source_table === 'temperature_logs') return '/equipment';
+  if (drift.source_table === 'compliance_documents') return '/documents';
+  if (drift.source_table === 'equipment') return '/equipment';
+  if (drift.pillar === 'fire_safety') return '/documents?pillar=fire_safety';
+  return '/documents?pillar=food_safety';
 }
-
-const DEMO_ALERTS: Alert[] = [
-    {
-      id: '1',
-      alert_type: 'document_expiring',
-      severity: 'high',
-      title: 'Hood Cleaning Certificate expires in 7 days',
-      description: 'Your hood cleaning certificate from CleanVent Services is expiring soon. Operating without a valid certificate violates health code regulations.',
-      recommended_action: 'Contact CleanVent Services to schedule maintenance or upload new certificate if already completed.',
-      status: 'active',
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      assigned_to: 'Maria Garcia',
-      days_until_due: 7,
-      location: 'Location 2', // demo
-      navigate_to: '/documents',
-    },
-    {
-      id: '2',
-      alert_type: 'document_expiring',
-      severity: 'high',
-      title: 'Health Permit renewal due in 14 days',
-      description: 'Your health department operating permit is due for renewal. Failure to renew on time may result in fines or closure.',
-      recommended_action: 'Submit renewal application and payment to Fresno County Health Department.',
-      status: 'active',
-      created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      assigned_to: 'John Smith',
-      days_until_due: 14,
-      location: 'Location 1', // demo
-      navigate_to: '/documents',
-    },
-    {
-      id: '3',
-      alert_type: 'missed_log',
-      severity: 'high',
-      title: 'Temperature logs missing for 2 days',
-      description: 'No temperature logs were recorded on February 3rd and 4th for Walk-in Cooler #2. Complete temperature monitoring is required for health inspections.',
-      recommended_action: 'Add missing temperature logs or document reason for gap.',
-      status: 'active',
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      assigned_to: 'Sarah Lee',
-      location: 'Location 2', // demo
-      navigate_to: '/temp-logs',
-    },
-    {
-      id: '4',
-      alert_type: 'haccp_failure',
-      severity: 'high',
-      title: 'HACCP CCP Failure: Walk-in Cooler above 41°F',
-      description: 'Walk-in Cooler #2 recorded 44°F at 2:15 PM — exceeding the critical limit of 41°F. This is a Critical Control Point violation requiring immediate corrective action.',
-      recommended_action: 'Inspect cooler unit, check door seals, verify compressor operation. Move perishable items to backup cooler if temp cannot be corrected within 1 hour.',
-      status: 'active',
-      created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-      assigned_to: 'Maria Garcia',
-      location: 'Location 2', // demo
-      navigate_to: '/haccp',
-    },
-    {
-      id: '5',
-      alert_type: 'vendor_overdue',
-      severity: 'medium',
-      title: 'Fire Suppression Inspection Overdue',
-      description: 'Semi-annual fire suppression inspection was due January 15th. System is now overdue for required maintenance.',
-      recommended_action: 'Schedule inspection with SafeGuard Fire Systems immediately.',
-      status: 'active',
-      created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Location 1', // demo
-      navigate_to: '/vendors',
-    },
-    {
-      id: '6',
-      alert_type: 'staff_certification',
-      severity: 'medium',
-      title: 'Food Handler Certificate expiring in 21 days',
-      description: 'Food handler certification for employee Michael Torres expires on February 26, 2026.',
-      recommended_action: 'Register employee for food handler renewal course.',
-      status: 'active',
-      created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      days_until_due: 21,
-      location: 'Location 2', // demo
-      navigate_to: '/training',
-    },
-    {
-      id: '7',
-      alert_type: 'document_expiring',
-      severity: 'medium',
-      title: 'Certificate of Insurance expires in 10 days',
-      description: 'Fire Suppression Vendor Certificate of Insurance is expiring. Vendor compliance requires current insurance documentation.',
-      recommended_action: 'Request updated Certificate of Insurance from Fire Suppression Vendor.',
-      status: 'active',
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      days_until_due: 10,
-      location: 'Location 2', // demo
-      navigate_to: '/vendors',
-    },
-    {
-      id: '8',
-      alert_type: 'checklist_incomplete',
-      severity: 'medium',
-      title: 'Opening Checklist not completed today',
-      description: 'The opening checklist for February 5th has not been completed.',
-      recommended_action: 'Complete opening checklist or assign to opening manager.',
-      status: 'active',
-      created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-      location: 'Location 3', // demo
-      navigate_to: '/checklists',
-    },
-    {
-      id: '9',
-      alert_type: 'missed_log',
-      severity: 'medium',
-      title: '3 temperature logs missed this week',
-      description: 'Weekend temperature logs were not recorded for Saturday AM, Sunday AM, and Sunday PM shifts.',
-      recommended_action: 'Assign weekend temp log duties and set up shift reminders.',
-      status: 'active',
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Location 3', // demo
-      navigate_to: '/temp-logs',
-    },
-    {
-      id: '10',
-      alert_type: 'staff_certification',
-      severity: 'medium',
-      title: 'ServSafe Manager cert expiring in 36 days',
-      description: 'Sarah Chen\'s ServSafe Manager Certification expires on March 15, 2026. At least one certified manager is required per shift.',
-      recommended_action: 'Schedule ServSafe exam retake before expiration.',
-      status: 'active',
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      days_until_due: 36,
-      location: 'Location 1', // demo
-      navigate_to: '/training',
-    },
-    {
-      id: '11',
-      alert_type: 'predictive',
-      severity: 'low',
-      title: 'Predicted compliance score drop',
-      description: 'Based on recent patterns, your compliance score may drop below 90% next week if current issues are not addressed.',
-      recommended_action: 'Address pending alerts and complete all scheduled tasks.',
-      status: 'active',
-      created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-      location: 'All Locations',
-      navigate_to: '/dashboard',
-    },
-    {
-      id: '12',
-      alert_type: 'document_expiring',
-      severity: 'low',
-      title: 'Pest Control Service due in 30 days',
-      description: 'Monthly pest control service from Pest Control Pro is scheduled for March 5, 2026.',
-      recommended_action: 'Confirm appointment with Pest Control Pro.',
-      status: 'active',
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      days_until_due: 30,
-      location: 'Location 1', // demo
-      navigate_to: '/vendors',
-    },
-    {
-      id: '13',
-      alert_type: 'staff_certification',
-      severity: 'high',
-      title: 'No CFPM on staff at Location 2', // demo
-      description: 'Location 2 currently has no Certified Food Protection Manager on staff. California Health & Safety Code §113947.1 requires at least one CFPM per food establishment during all operating hours.', // demo
-      recommended_action: 'Enroll Maria Garcia or another manager in ServSafe Manager certification immediately.',
-      status: 'active',
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Location 2', // demo
-      navigate_to: '/training',
-    },
-    {
-      id: '14',
-      alert_type: 'staff_certification',
-      severity: 'high',
-      title: 'New hire food handler deadline in 12 days',
-      description: 'Tyler Brooks (hired Feb 5, 2026) must obtain a California Food Handler Card within 30 days of hire per SB 476. Deadline: March 7, 2026.',
-      recommended_action: 'Ensure employee completes food handler training course before deadline.',
-      status: 'active',
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      days_until_due: 12,
-      location: 'Location 1', // demo
-      navigate_to: '/training',
-    },
-    {
-      id: '15',
-      alert_type: 'staff_certification',
-      severity: 'medium',
-      title: 'Fire safety training overdue for 3 staff',
-      description: 'Annual fire extinguisher training (OSHA 29 CFR 1910.157 / NFPA 10) is overdue for David Park, Alex Thompson, and Lisa Wang. All kitchen and facilities staff require annual training.',
-      recommended_action: 'Schedule fire extinguisher training session for untrained staff.',
-      status: 'active',
-      created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'All Locations',
-      navigate_to: '/training',
-    },
-    {
-      id: '16',
-      alert_type: 'temperature',
-      severity: 'critical',
-      title: 'Walk-in cooler at Location 2 reading 47°F — IoT sensor alert', // demo
-      description: 'IoT sensor "SensorPush AP-01" detected walk-in cooler temperature at 47°F, exceeding the 41°F CalCode §113996 limit. Temperature has been out of range for 22 minutes. Immediate corrective action required.',
-      recommended_action: 'Check thermostat settings and door seal. Transfer perishable items to backup cooler if temperature does not drop within 30 minutes.',
-      status: 'active',
-      created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-      location: 'Location 2', // demo
-      navigate_to: '/iot-sensors',
-    },
-    {
-      id: '17',
-      alert_type: 'equipment',
-      severity: 'medium',
-      title: '3 equipment items at Location 3 have no QR labels',
-      description: 'Walk-in Cooler #2, Prep Fridge, and Hot Holding Unit at Location 3 do not have QR temperature labels. Staff cannot use QR scan workflow for quick temp logging on these units.',
-      recommended_action: 'Generate and print QR labels from Equipment Detail page for each unit.',
-      status: 'active',
-      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Location 3',
-      navigate_to: '/equipment',
-    },
-  ];
 
 export function Alerts() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { getAccessibleLocations } = useRole();
-  const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   usePageTitle('Alerts');
-  const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
-  const [pageError, setPageError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
-  const [locationFilter, setLocationFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [alerts, setAlerts] = useState<Alert[]>(() => {
-    try {
-      return isDemoMode ? DEMO_ALERTS : [];
-    } catch (err) {
-      setPageError(err instanceof Error ? err.message : 'Failed to load alerts data');
-      return [];
-    }
-  });
+  const { userRole } = useRole();
+  const roleLabel = ROLE_LABELS[userRole] || userRole;
 
-  const [showResolveModal, setShowResolveModal] = useState(false);
-  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-  const [resolutionType, setResolutionType] = useState('');
-  const [resolutionNotes, setResolutionNotes] = useState('');
-  const [openSnoozeDropdown, setOpenSnoozeDropdown] = useState<string | null>(null);
-  const [openReassignDropdown, setOpenReassignDropdown] = useState<string | null>(null);
-  const [customSnoozeDate, setCustomSnoozeDate] = useState('');
-  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
-  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+  // Real drift catches — same hook the dashboard uses
+  const { catches, loading, acknowledge } = useDriftCatches();
+  const routingMap = useDriftRouting(catches.map(c => c.id));
 
-  const teamMembers = [
-    { id: '1', name: 'Marcus Johnson', role: 'Manager' },
-    { id: '2', name: 'Sarah Chen', role: 'Manager' },
-    { id: '3', name: 'David Park', role: 'Staff' },
-    { id: '4', name: 'Emma Rodriguez', role: 'Staff' },
-    { id: '5', name: 'Alex Thompson', role: 'Staff' },
-  ];
+  // Filters
+  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'acknowledged' | 'resolved'>('all');
+  const [severityFilter, setSeverityFilter] = useState<'all' | 'urgent' | 'high' | 'medium' | 'low'>('all');
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'fire_safety' | 'food_safety'>('all');
 
-  const alertLocations = [...new Set(alerts.map(a => a.location))].filter(loc => alertAccessibleLocNames.includes(loc)).sort();
-  const alertTypes: { value: string; label: string }[] = [
-    { value: 'all', label: t('pages.calendar.allTypes') },
-    { value: 'document_expiring', label: 'Document Expiring' },
-    { value: 'missed_log', label: 'Missed Temperature Readings' },
-    { value: 'vendor_overdue', label: 'Vendor Overdue' },
-    { value: 'staff_certification', label: 'Staff Certification' },
-    { value: 'checklist_incomplete', label: 'Checklist Incomplete' },
-    { value: 'haccp_failure', label: 'HACCP Failure' },
-    { value: 'predictive', label: 'Predictive' },
-  ];
-
-  const getSeverityIcon = (severity: string) => {
-    switch (severity) {
-      case 'high':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'medium':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      default:
-        return <Info className="h-5 w-5 text-[#1E2D4D]" />;
-    }
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'high':
-        return 'border-l-red-500 bg-red-50';
-      case 'medium':
-        return 'border-l-yellow-500 bg-yellow-50';
-      default:
-        return 'border-l-blue-500 bg-blue-50';
-    }
-  };
-
-  const getSeverityLabel = (severity: string) => {
-    switch (severity) {
-      case 'high': return t('status.critical');
-      case 'medium': return t('status.warning');
-      default: return t('status.info');
-    }
-  };
-
-  const getAlertIcon = (type: string) => {
-    switch (type) {
-      case 'document_expiring':
-        return <FileText className="h-5 w-5" />;
-      case 'missed_log':
-        return <Thermometer className="h-5 w-5" />;
-      case 'staff_certification':
-        return <Users className="h-5 w-5" />;
-      case 'vendor_overdue':
-        return <Store className="h-5 w-5" />;
-      case 'haccp_failure':
-        return <ShieldAlert className="h-5 w-5" />;
-      default:
-        return <Bell className="h-5 w-5" />;
-    }
-  };
-
-  const handleResolveClick = (alert: Alert) => {
-    setSelectedAlert(alert);
-    setShowResolveModal(true);
-    setResolutionType('');
-    setResolutionNotes('');
-  };
-
-  const handleResolveSubmit = () => {
-    if (!resolutionNotes.trim() || !resolutionType) {
-      toast.warning('Please provide resolution type and action taken');
-      return;
-    }
-
-    guardAction('resolve', 'Alert Management', () => {
-      if (selectedAlert) {
-        setAlerts(alerts.map(a =>
-          a.id === selectedAlert.id
-            ? {
-                ...a,
-                status: 'resolved' as const,
-                resolution_type: resolutionType,
-                resolution_notes: resolutionNotes,
-                resolved_by: 'Current User',
-                resolved_at: new Date().toISOString(),
-              }
-            : a
-        ));
-        setShowResolveModal(false);
-        setSelectedAlert(null);
-      }
-    });
-  };
-
-  const handleSnooze = (alertId: string, days: number) => {
-    const snoozeDate = new Date();
-    snoozeDate.setDate(snoozeDate.getDate() + days);
-
-    setAlerts(alerts.map(a =>
-      a.id === alertId
-        ? { ...a, status: 'snoozed' as const, snoozed_until: snoozeDate.toISOString() }
-        : a
-    ));
-    setOpenSnoozeDropdown(null);
-  };
-
-  const handleCustomSnooze = (alertId: string) => {
-    if (!customSnoozeDate) return;
-
-    setAlerts(alerts.map(a =>
-      a.id === alertId
-        ? { ...a, status: 'snoozed' as const, snoozed_until: new Date(customSnoozeDate).toISOString() }
-        : a
-    ));
-    setOpenSnoozeDropdown(null);
-    setShowCustomDatePicker(false);
-    setCustomSnoozeDate('');
-  };
-
-  const handleReassign = (alertId: string, memberName: string) => {
-    guardAction('reassign', 'Alert Management', () => {
-      setAlerts(alerts.map(a =>
-        a.id === alertId ? { ...a, assigned_to: memberName } : a
-      ));
-      setOpenReassignDropdown(null);
-      toast.success(`Reassigned to ${memberName}`);
-    });
-  };
-
-  const handleDismiss = (alertId: string) => {
-    setAlerts(alerts.filter(a => a.id !== alertId));
-  };
-
-  const filteredAlerts = alerts.filter(a => {
-    // Role-based location access filter
-    if (!alertAccessibleLocNames.includes(a.location)) return false;
-
-    // Status filter
-    if (filter === 'all' && a.status !== 'active') return false;
-    if (filter === 'urgent' && !(a.status === 'active' && a.severity === 'high')) return false;
-    if (filter === 'upcoming' && !(a.status === 'active' && a.days_until_due && a.days_until_due > 7)) return false;
-    if (filter === 'resolved' && a.status !== 'resolved') return false;
-    if (filter === 'snoozed' && a.status !== 'snoozed') return false;
-
-    // Severity filter
-    if (severityFilter !== 'all' && a.severity !== severityFilter) return false;
-
-    // Location filter
-    if (locationFilter !== 'all' && a.location !== locationFilter) return false;
-
-    // Type filter
-    if (typeFilter !== 'all' && a.alert_type !== typeFilter) return false;
-
+  const filtered = catches.filter(c => {
+    if (statusFilter === 'open' && (c.status !== 'open' || c.userHasAcked)) return false;
+    if (statusFilter === 'acknowledged' && !c.userHasAcked) return false;
+    if (statusFilter === 'resolved' && c.status !== 'resolved') return false;
+    if (severityFilter !== 'all' && c.severity !== severityFilter) return false;
+    if (pillarFilter !== 'all' && c.pillar !== pillarFilter) return false;
     return true;
   });
 
-  const urgentCount = alerts.filter(a => a.status === 'active' && a.severity === 'high').length;
-  const activeCount = alerts.filter(a => a.status === 'active').length;
-
-  if (pageError) {
-    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setAlerts(isDemoMode ? DEMO_ALERTS : []); }} />;
-  }
+  const openCount = catches.filter(c => c.status === 'open' && !c.userHasAcked).length;
+  const urgentCount = catches.filter(c => c.severity === 'urgent' || c.severity === 'high').length;
 
   return (
     <>
-      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.alerts.title') }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: 'Alerts' }]} />
       <div className="space-y-6">
-        <div style={{ background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark} 100%)`, borderRadius: radius.xl, boxShadow: shadows.md }} className="p-4 sm:p-6 text-white">
+        {/* Header */}
+        <div style={{ background: `linear-gradient(135deg, ${colors.navy} 0%, ${colors.navyDark || NAVY} 100%)` }}
+          className="p-4 sm:p-6 text-white rounded-xl">
           <div className="flex items-center space-x-3 mb-2">
-            <Bell className="h-8 w-8" style={{ color: colors.gold }} />
-            <h2 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em' }}>{t('pages.alerts.complianceAlerts')}</h2>
+            <Bell className="h-8 w-8" style={{ color: GOLD }} />
+            <h2 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em' }}>
+              Alerts
+            </h2>
           </div>
-          <p className="text-white/45">{t('pages.alerts.subtitle')}</p>
+          <p className="text-white/45">
+            Real drift catches from EvidLY monitoring. Acknowledging here clears the alert on the dashboard.
+          </p>
           <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Bell className="h-4 w-4" style={{ color: colors.gold }} />
-                <span className="text-sm text-white/45 font-medium">{t('pages.alerts.activeAlerts')}</span>
+                <Bell className="h-4 w-4" style={{ color: GOLD }} />
+                <span className="text-sm text-white/45 font-medium">Open</span>
               </div>
-              <div className="text-xl sm:text-3xl font-bold tracking-tight text-white text-center">{activeCount}</div>
+              <div className="text-xl sm:text-3xl font-bold tracking-tight text-white text-center">{openCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
-                <span className="text-sm text-white/45 font-medium">{t('pages.alerts.critical')}</span>
+                <span className="text-sm text-white/45 font-medium">Critical</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-400 text-center">{urgentCount}</div>
             </div>
           </div>
         </div>
 
-        {/* Status Filter Buttons */}
+        {/* Filter bar */}
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
-            }`}
-          >
-            {t('pages.alerts.all')} ({activeCount})
-          </button>
-          <button
-            onClick={() => setFilter('urgent')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
-            }`}
-          >
-            {t('pages.alerts.critical')} ({urgentCount})
-          </button>
-          <button
-            onClick={() => setFilter('upcoming')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
-            }`}
-          >
-            {t('pages.alerts.upcoming')}
-          </button>
-          <button
-            onClick={() => setFilter('snoozed')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
-            }`}
-          >
-            {t('pages.alerts.snoozed')}
-          </button>
-          <button
-            onClick={() => setFilter('resolved')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
-            }`}
-          >
-            {t('pages.alerts.resolved')}
-          </button>
+          {(['all', 'open', 'acknowledged', 'resolved'] as const).map(f => (
+            <button key={f} onClick={() => setStatusFilter(f)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === f ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
+              }`}>
+              {f === 'all' ? `All (${catches.length})` : f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
         </div>
 
-        {/* Advanced Filters */}
+        {/* Advanced filters */}
         <div className="flex flex-wrap gap-3">
-          <select
-            value={severityFilter}
-            onChange={(e) => setSeverityFilter(e.target.value as any)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          >
-            <option value="all">{t('pages.alerts.allSeverities')}</option>
-            <option value="high">{t('status.critical')}</option>
-            <option value="medium">{t('status.warning')}</option>
-            <option value="low">{t('status.info')}</option>
+          <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value as typeof severityFilter)}
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <option value="all">All severities</option>
+            <option value="urgent">Urgent</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
           </select>
-          <select
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          >
-            <option value="all">{t('pages.alerts.allLocations')}</option>
-            {alertLocations.map(loc => (
-              <option key={loc} value={loc}>{loc}</option>
-            ))}
+          <select value={pillarFilter} onChange={e => setPillarFilter(e.target.value as typeof pillarFilter)}
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <option value="all">All pillars</option>
+            <option value="fire_safety">Fire Safety</option>
+            <option value="food_safety">Food Safety</option>
           </select>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-          >
-            {alertTypes.map(t => (
-              <option key={t.value} value={t.value}>{t.label}</option>
-            ))}
-          </select>
-          {(severityFilter !== 'all' || locationFilter !== 'all' || typeFilter !== 'all') && (
-            <button
-              onClick={() => { setSeverityFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }}
-              className="px-3 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] underline"
-            >
-              {t('pages.alerts.clearFilters')}
+          {(severityFilter !== 'all' || pillarFilter !== 'all') && (
+            <button onClick={() => { setSeverityFilter('all'); setPillarFilter('all'); }}
+              className="px-3 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] underline">
+              Clear filters
             </button>
           )}
         </div>
 
-        <div className="space-y-4">
-          {filteredAlerts.length === 0 ? (
+        {/* Alert list */}
+        <div className="space-y-3">
+          {loading && <div className="text-sm py-8 text-center" style={{ color: MUTED }}>Loading alerts...</div>}
+          {!loading && filtered.length === 0 && (
             <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
               <PageEmptyState
                 icon={<CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />}
-                title={filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
-                description="Try adjusting your filters to see more alerts."
+                title="No alerts match your filters"
+                description="Adjust your filters or check back later."
               />
             </div>
-          ) : (
-            filteredAlerts.map((alertItem) => (
-              <div
-                key={alertItem.id}
-                className={`bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 ${getSeverityColor(alertItem.severity)}`}
-              >
-                <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
-                  <div className="flex items-start space-x-3 flex-1 min-w-0">
-                    <div className={`p-2 rounded-lg ${
-                      alertItem.severity === 'high' ? 'bg-red-100' :
-                      alertItem.severity === 'medium' ? 'bg-yellow-100' : 'bg-blue-100'
-                    }`}>
-                      {getAlertIcon(alertItem.alert_type)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-1">
-                            {getSeverityIcon(alertItem.severity)}
-                            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{alertItem.title}</h3>
-                          </div>
-                          <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-[#1E2D4D]/50">
-                            <span>{format(new Date(alertItem.created_at), 'MMM d, h:mm a')}</span>
-                            <span className="flex items-center space-x-1">
-                              <MapPin className="h-3.5 w-3.5" />
-                              <span>{alertItem.location}</span>
-                            </span>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                              alertItem.severity === 'high' ? 'bg-red-50 text-red-700' :
-                              alertItem.severity === 'medium' ? 'bg-amber-50 text-amber-700' :
-                              'bg-blue-50 text-blue-700'
-                            }`}>
-                              {getSeverityLabel(alertItem.severity)}
-                            </span>
-                            {alertItem.days_until_due && (
-                              <span className="flex items-center space-x-1">
-                                <Clock className="h-4 w-4" />
-                                <span>{alertItem.days_until_due} {t('pages.alerts.daysRemaining')}</span>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handleDismiss(alertItem.id)}
-                          className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      </div>
-                      <p className="text-sm text-[#1E2D4D]/70 mb-3">{alertItem.description}</p>
-                      <div className="bg-white rounded-md p-3 border border-[#1E2D4D]/10 mb-3">
-                        <p className="text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.alerts.recommendedAction')}:</p>
-                        <p className="text-sm text-[#1E2D4D]/70">{alertItem.recommended_action}</p>
-                      </div>
-                      {alertItem.assigned_to && (
-                        <div className="flex items-center space-x-2 text-sm text-[#1E2D4D]/50">
-                          <Users className="h-4 w-4" />
-                          <span>{t('pages.alerts.assignedTo')}: <strong className="text-[#1E2D4D]/80">{alertItem.assigned_to}</strong></span>
-                        </div>
-                      )}
-                      {alertItem.status === 'snoozed' && alertItem.snoozed_until && (
-                        <div className="flex items-center space-x-2 text-sm text-purple-600 mt-2">
-                          <Clock className="h-4 w-4" />
-                          <span>{t('pages.alerts.snoozedUntil')} {format(new Date(alertItem.snoozed_until), 'MMM d, yyyy')}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                {alertItem.status !== 'resolved' && (
-                  <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
-                    <button
-                      onClick={() => handleResolveClick(alertItem)}
-                      className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
-                    >
-                      {t('pages.alerts.resolve')}
-                    </button>
-                    {alertItem.navigate_to && (
-                      <button
-                        onClick={() => navigate(alertItem.navigate_to!)}
-                        className="px-4 py-2 min-h-[44px] bg-[#A08C5A] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
-                      >
-                        <span>{t('pages.alerts.goTo')} {alertItem.navigate_to === '/documents' ? t('cards.documents') :
-                          alertItem.navigate_to === '/temp-logs' ? t('cards.temperatures') :
-                          alertItem.navigate_to === '/vendors' ? t('cards.vendors') :
-                          alertItem.navigate_to === '/haccp' ? 'HACCP' :
-                          alertItem.navigate_to === '/checklists' ? t('cards.checklists') :
-                          alertItem.navigate_to === '/team' ? t('nav.team') :
-                          t('nav.dashboard')}</span>
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    {alertItem.alert_type === 'haccp_failure' && alertItem.status === 'active' && (
-                      <button
-                        onClick={() => navigate('/haccp?tab=corrective&new=true&ccp=CCP-1')}
-                        className="px-4 py-2 min-h-[44px] bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-1"
-                      >
-                        <ShieldAlert className="h-4 w-4" />
-                        <span>{t('pages.alerts.createCorrectiveAction')}</span>
-                      </button>
-                    )}
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-[#1E2D4D]/5 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#1E2D4D]/10 transition-colors flex items-center space-x-1"
-                      >
-                        <span>{t('pages.alerts.snooze')}</span>
-                        <ChevronDown className="h-4 w-4" />
-                      </button>
-                      {openSnoozeDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-[#1E2D4D]/10 py-2 z-20 min-w-[150px]">
-                          <button
-                            onClick={() => handleSnooze(alertItem.id, 7)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-                          >
-                            {t('pages.alerts.snooze7Days')}
-                          </button>
-                          <button
-                            onClick={() => handleSnooze(alertItem.id, 30)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-                          >
-                            {t('pages.alerts.snooze30Days')}
-                          </button>
-                          <button
-                            onClick={() => setShowCustomDatePicker(true)}
-                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0] border-t"
-                          >
-                            {t('pages.alerts.customDate')}
-                          </button>
-                          {showCustomDatePicker && (
-                            <div className="px-4 py-2 border-t">
-                              <input
-                                type="date"
-                                value={customSnoozeDate}
-                                onChange={(e) => setCustomSnoozeDate(e.target.value)}
-                                className="w-full px-2 py-1 border rounded text-sm"
-                                min={new Date().toISOString().split('T')[0]}
-                              />
-                              <button
-                                onClick={() => handleCustomSnooze(alertItem.id)}
-                                className="w-full mt-2 px-2 py-1 bg-[#1E2D4D] text-white text-xs rounded hover:bg-[#162340]"
-                              >
-                                {t('pages.alerts.set')}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-[#1E2D4D]/5 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#1E2D4D]/10 transition-colors flex items-center space-x-1"
-                      >
-                        <span>{t('pages.alerts.reassign')}</span>
-                        <ChevronDown className="h-4 w-4" />
-                      </button>
-                      {openReassignDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-[#1E2D4D]/10 py-2 z-20 min-w-[200px]">
-                          {teamMembers.map((member) => (
-                            <button
-                              key={member.id}
-                              onClick={() => handleReassign(alertItem.id, member.name)}
-                              className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
-                            >
-                              <div className="font-medium">{member.name}</div>
-                              <div className="text-xs text-[#1E2D4D]/50">{member.role}</div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+          )}
+          {filtered.map(drift => (
+            <AlertRow
+              key={drift.id}
+              drift={drift}
+              recipients={routingMap[drift.id] || []}
+              onAcknowledge={acknowledge}
+              roleLabel={roleLabel}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── AlertRow ─────────────────────────────────────────────────
+function AlertRow({ drift, recipients, onAcknowledge, roleLabel }: {
+  drift: DriftCatchWithAcks;
+  recipients: DriftRecipient[];
+  onAcknowledge: (id: string) => void;
+  roleLabel: string;
+}) {
+  const isCritical = drift.severity === 'urgent' || drift.severity === 'high';
+  const pillarLabel = drift.pillar === 'fire_safety' ? 'Fire Safety' : 'Food Safety';
+  const PillarIcon = drift.pillar === 'fire_safety' ? Flame : Utensils;
+  const title = getDriftLabel(drift.drift_type, { form: 'noun' });
+  const description = getDriftLabel(drift.drift_type, { form: 'verb' });
+  const days = daysSince(drift.detected_at);
+  const navigateTo = driftNavigateTo(drift);
+
+  // Routing/ack status
+  const unacked = recipients.filter(r => !r.acknowledged_at);
+  const acked = recipients.filter(r => r.acknowledged_at);
+
+  return (
+    <div className="bg-white rounded-xl border-l-4 shadow-sm"
+      style={{
+        borderLeftColor: isCritical ? RED : AMBER,
+        borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1,
+        borderTopColor: LINE, borderRightColor: LINE, borderBottomColor: LINE,
+      }}>
+      <div className="p-4 sm:p-6">
+        {/* Top row: severity + pillar chips + title */}
+        <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <span className="text-[10px] uppercase tracking-widest px-2 py-1 font-bold rounded"
+                style={{
+                  backgroundColor: isCritical ? '#F7E9E9' : '#FDF6E9',
+                  color: isCritical ? RED : AMBER,
+                }}>
+                {isCritical ? 'critical' : 'warning'}
+              </span>
+              <span className="text-[10px] uppercase tracking-widest px-2 py-1 font-semibold rounded inline-flex items-center gap-1"
+                style={{
+                  backgroundColor: drift.pillar === 'fire_safety' ? '#FBEDDF' : '#EAEFF7',
+                  color: drift.pillar === 'fire_safety' ? RUST : NAVY,
+                }}>
+                <PillarIcon size={10} />
+                {pillarLabel}
+              </span>
+            </div>
+            <h3 className="text-lg font-semibold tracking-tight mb-1" style={{ color: NAVY }}>{title}</h3>
+            <p className="text-sm mb-2" style={{ color: MUTED }}>{description}</p>
+            <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-[11px]" style={{ color: MUTED }}>
+              <span className="flex items-center gap-1">
+                <Clock size={12} />
+                {days} day{days !== 1 ? 's' : ''} ago
+              </span>
+              <span className="flex items-center gap-1">
+                <MapPin size={12} />
+                {drift.location_name}
+              </span>
+              {drift.status === 'resolved' && (
+                <span className="flex items-center gap-1" style={{ color: GREEN }}>
+                  <CheckCircle2 size={12} /> Resolved
+                </span>
+              )}
+            </div>
+
+            {/* Routing/ack info */}
+            {(acked.length > 0 || unacked.length > 0) && (
+              <div className="mt-2 text-[11px]" style={{ color: MUTED }}>
+                {acked.length > 0 && (
+                  <span className="inline-flex items-center gap-1 mr-3">
+                    <CheckCircle2 size={11} style={{ color: GREEN }} />
+                    Acknowledged by {acked.map(a => a.full_name).join(', ')}
+                  </span>
+                )}
+                {unacked.length > 0 && (
+                  <span>Awaiting: {unacked.map(r => `${r.full_name} (${ROLE_LABELS[r.role] || r.role})`).join(', ')}</span>
                 )}
               </div>
-            ))
+            )}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 pt-3 border-t flex-wrap" style={{ borderColor: LINE }}>
+          <Link to={navigateTo}
+            className="px-4 py-2 text-sm font-medium rounded-lg inline-flex items-center gap-1.5 transition-colors"
+            style={{ backgroundColor: '#F4F1E6', color: NAVY }}>
+            Go to source <ArrowRight size={12} />
+          </Link>
+          {!drift.userHasAcked && drift.status !== 'resolved' && (
+            <button onClick={() => onAcknowledge(drift.id)}
+              className="px-4 py-2 text-sm font-medium rounded-lg inline-flex items-center gap-1.5 transition-colors text-white"
+              style={{ backgroundColor: NAVY }}>
+              Acknowledge as {roleLabel} <ArrowRight size={12} />
+            </button>
+          )}
+          {drift.userHasAcked && (
+            <span className="px-4 py-2 text-sm font-medium inline-flex items-center gap-1.5" style={{ color: GREEN }}>
+              <CheckCircle2 size={14} /> Acknowledged
+            </span>
           )}
         </div>
       </div>
-
-      {showUpgrade && (
-        <DemoUpgradePrompt
-          action={upgradeAction}
-          featureName={upgradeFeature}
-          onClose={() => setShowUpgrade(false)}
-        />
-      )}
-
-      {/* Resolve Modal */}
-      <Modal isOpen={!!(showResolveModal && selectedAlert)} onClose={() => setShowResolveModal(false)} size="lg">
-          <div className="p-4 sm:p-6">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">{t('pages.alerts.resolveAlert')}</h3>
-            <p className="text-[#1E2D4D]/70 mb-6">{selectedAlert.title}</p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-                  {t('pages.alerts.resolutionType')} <span className="text-red-600">*</span>
-                </label>
-                <select
-                  value={resolutionType}
-                  onChange={(e) => setResolutionType(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                >
-                  <option value="">{t('pages.alerts.selectResolutionType')}</option>
-                  <option value="fixed">{t('pages.alerts.fixed')}</option>
-                  <option value="scheduled">{t('pages.alerts.scheduled')}</option>
-                  <option value="not_applicable">{t('pages.alerts.notApplicable')}</option>
-                  <option value="escalated">{t('pages.alerts.escalated')}</option>
-                </select>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-[#1E2D4D]/80">
-                    {t('pages.alerts.actionTaken')} <span className="text-red-600">*</span>
-                  </label>
-                  <AIAssistButton
-                    fieldLabel="Action Taken"
-                    context={{ title: selectedAlert.title, severity: selectedAlert?.severity }}
-                    currentValue={resolutionNotes}
-                    onGenerated={(text) => { setResolutionNotes(text); setAiFields(prev => new Set(prev).add('resolutionNotes')); }}
-                  />
-                </div>
-                <textarea
-                  value={resolutionNotes}
-                  onChange={(e) => { setResolutionNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('resolutionNotes'); return n; }); }}
-                  rows={4}
-                  placeholder={t('pages.alerts.actionTakenPlaceholder')}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
-                />
-                {aiFields.has('resolutionNotes') && <AIGeneratedIndicator />}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-                  {t('pages.alerts.resolvedBy')}
-                </label>
-                <input
-                  type="text"
-                  value="Current User"
-                  disabled
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#FAF7F0]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-                  {t('pages.alerts.supportingDocument')}
-                </label>
-                <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-4 text-center hover:border-[#1E2D4D]/20 transition-colors cursor-pointer">
-                  <Upload className="h-8 w-8 text-[#1E2D4D]/30 mx-auto mb-2" />
-                  <p className="text-sm text-[#1E2D4D]/70">{t('pages.alerts.clickToUpload')}</p>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{t('pages.alerts.fileTypes')}</p>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-                  {t('pages.alerts.dateResolved')}
-                </label>
-                <input
-                  type="text"
-                  value={format(new Date(), 'MMM d, yyyy')}
-                  disabled
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#FAF7F0]"
-                />
-              </div>
-            </div>
-
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => setShowResolveModal(false)}
-                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={handleResolveSubmit}
-                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
-              >
-                {t('pages.alerts.submitResolution')}
-              </button>
-            </div>
-          </div>
-      </Modal>
-    </>
+    </div>
   );
 }

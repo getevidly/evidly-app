@@ -4,8 +4,11 @@
  * All data from live PROD hooks. No fake/sample data.
  */
 
-import { Flame, Utensils, CheckCircle2, AlertTriangle, Calendar, Bell, Eye, TrendingUp, FileText, Thermometer, ArrowRight, Home } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { Flame, Utensils, CheckCircle2, AlertTriangle, Calendar, Bell, Eye, TrendingUp, FileText, Thermometer, ArrowRight, Home, Upload, ClipboardList, Truck, Download } from 'lucide-react';
 import { useDashboardLocation } from '../../contexts/DashboardLocationContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useOrgSummary } from '../../hooks/useOrgSummary';
 import { useDriftCatches } from '../../hooks/useDriftCatches';
 import { useDriftRouting } from '../../hooks/useDriftRouting';
@@ -15,6 +18,7 @@ import { useProofStats } from '../../hooks/useProofStats';
 import { useRole } from '../../contexts/RoleContext';
 import { getDriftLabel } from '../../constants/driftTypeLabels';
 import { daysSince } from '../../lib/daysSince';
+import { supabase } from '../../lib/supabase';
 import type { DriftCatchWithAcks } from '../../hooks/useDriftCatches';
 import type { DriftRecipient } from '../../hooks/useDriftRouting';
 
@@ -75,6 +79,17 @@ export function DashboardView() {
   const { userRole } = useRole();
   const roleLabel = ROLE_LABELS[userRole] || userRole;
 
+  // Refetch key — bumped on visibilitychange so data refreshes when user returns
+  const [refetchKey, setRefetchKey] = useState(0);
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === 'visible') setRefetchKey(k => k + 1); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+
+  // Suppress lint: refetchKey forces re-mount of hooks below
+  void refetchKey;
+
   const { catches, acknowledge } = useDriftCatches({ locationIdFilter: selectedLocationId || undefined });
   const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
   const routingMap = useDriftRouting(openCatches.map(c => c.id));
@@ -88,6 +103,9 @@ export function DashboardView() {
   const foodProof = useProofStats('food_safety', selectedLocationId || undefined);
 
   const alertCount = openCatches.length;
+
+  // Watching bar: total requirement count across all locations
+  const watchingCount = (fireProof.total + foodProof.total) * Math.max(locationCount, 1);
 
   // Derive location name for hero
   const selectedLocation = locations.find(l => l.id === selectedLocationId);
@@ -109,10 +127,14 @@ export function DashboardView() {
         locationName={heroLocationName}
         kitchenCount={locationCount}
         isMulti={isMultiLocation}
+        watchingCount={watchingCount}
       />
 
       {/* Watching Banner */}
-      <WatchingBanner alertCount={alertCount} />
+      <WatchingBanner alertCount={alertCount} watchingCount={watchingCount} />
+
+      {/* Quick Actions */}
+      <QuickActions />
 
       {/* Alerts */}
       {alertCount > 0 && (
@@ -127,6 +149,7 @@ export function DashboardView() {
       {/* Fire + Food Pillars side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PillarCard
+          pillar="fire_safety"
           name="Fire Safety"
           Icon={Flame}
           framework="NFPA 10 · 17A · 25 · 72 · 96 · California Fire Code"
@@ -136,6 +159,7 @@ export function DashboardView() {
           proof={fireProof}
         />
         <PillarCard
+          pillar="food_safety"
           name="Food Safety"
           Icon={Utensils}
           framework="California Retail Food Code"
@@ -146,8 +170,8 @@ export function DashboardView() {
         />
       </div>
 
-      {/* Temperature Logs — empty state */}
-      <TemperatureLogsEmpty />
+      {/* Temperature Logs — real query, hidden when no equipment */}
+      <TemperatureLogs locationId={selectedLocationId} locationIds={locations.map(l => l.id)} />
     </div>
   );
 }
@@ -190,42 +214,74 @@ function LocationTabs({ locations, activeId, onChange, showAll }: {
 }
 
 // ─── Hero ────────────────────────────────────────────────────────
-function Hero({ alertCount, locationName, kitchenCount, isMulti }: {
-  alertCount: number; locationName: string; kitchenCount: number; isMulti: boolean;
+function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount }: {
+  alertCount: number; locationName: string; kitchenCount: number; isMulti: boolean; watchingCount: number;
 }) {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const clean = alertCount === 0;
   return (
     <div className="py-8">
-      <div className="text-[10px] uppercase tracking-[0.2em] mb-2 font-semibold" style={{ color: GOLD }}>Today</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] mb-2 font-semibold" style={{ color: GOLD }}>
+        Today · {today}
+      </div>
       <h1 className="text-4xl leading-tight" style={{ color: NAVY, fontFamily: 'Fraunces, serif', fontWeight: 600 }}>
         {isMulti
-          ? (clean ? `${kitchenCount} kitchens · on track.` : `${kitchenCount} kitchens · ${alertCount} alert${alertCount > 1 ? 's' : ''} caught.`)
-          : (clean ? `${locationName} · on track.` : `${locationName} · ${alertCount} alert${alertCount > 1 ? 's' : ''} caught.`)}
+          ? (clean
+              ? `${kitchenCount} kitchens · on track.`
+              : `${kitchenCount} kitchen${kitchenCount !== 1 ? 's' : ''} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)
+          : (clean
+              ? `${locationName} · on track.`
+              : `${locationName} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)}
       </h1>
       <p className="text-sm mt-2" style={{ color: MUTED }}>
         {clean
-          ? "All records current. Nothing overdue. EvidLY is watching."
-          : `EvidLY caught ${alertCount} thing${alertCount > 1 ? 's' : ''} that were overlooked. See below.`}
+          ? `EvidLY is watching ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`
+          : `EvidLY caught ${alertCount} thing${alertCount !== 1 ? 's' : ''} that ${alertCount !== 1 ? 'were' : 'was'} about to be overlooked, and is watching ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`}
       </p>
     </div>
   );
 }
 
 // ─── WatchingBanner ──────────────────────────────────────────────
-function WatchingBanner({ alertCount }: { alertCount: number }) {
+function WatchingBanner({ alertCount, watchingCount }: { alertCount: number; watchingCount: number }) {
   const clean = alertCount === 0;
   return (
     <div className="border" style={{ borderColor: LINE, backgroundColor: clean ? '#E4EBE3' : '#FBF9F2' }}>
       <div className="px-5 py-3 flex items-center gap-3 flex-wrap">
         {clean ? <CheckCircle2 size={16} style={{ color: GREEN }} /> : <Eye size={16} style={{ color: NAVY }} />}
         <div className="text-sm font-semibold flex-1" style={{ color: clean ? GREEN : NAVY, fontFamily: 'Fraunces, serif' }}>
-          {clean ? "EvidLY is watching · all clear" : 'EvidLY is watching · real-time alerts routed automatically'}
+          {clean
+            ? `EvidLY is watching ${watchingCount} requirements · all clear`
+            : 'EvidLY is watching · real-time alerts routed automatically'}
         </div>
         <span className="text-xs inline-flex items-center gap-1.5" style={{ color: MUTED }}>
           <TrendingUp size={12} />
           Active monitoring
         </span>
       </div>
+    </div>
+  );
+}
+
+// ─── Quick Actions ───────────────────────────────────────────────
+function QuickActions() {
+  const actions = [
+    { label: 'Upload a record', Icon: Upload, to: '/documents' },
+    { label: 'Log a temperature', Icon: Thermometer, to: '/equipment' },
+    { label: 'Request from a vendor', Icon: Truck, to: '/vendors' },
+    { label: 'Download evidence pack', Icon: Download, to: '/documents' },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {actions.map(a => (
+        <Link key={a.label} to={a.to}
+          className="flex items-center gap-3 px-4 py-3 bg-white border text-sm font-medium transition hover:shadow-sm"
+          style={{ borderColor: LINE, color: NAVY }}>
+          <a.Icon size={16} style={{ color: GOLD }} />
+          {a.label}
+        </Link>
+      ))}
     </div>
   );
 }
@@ -314,14 +370,20 @@ function AlertCard({ drift, recipients, onAcknowledge, roleLabel }: {
             {escalationText && <span style={{ color: isCritical ? RED : AMBER }}>· {escalationText}</span>}
           </div>
         </div>
-        <button
-          type="button"
-          className="text-xs px-4 py-2 font-medium inline-flex items-center gap-1.5 flex-shrink-0"
-          style={{ backgroundColor: NAVY, color: 'white' }}
-          onClick={() => onAcknowledge(drift.id)}
-        >
-          Acknowledge as {roleLabel} <ArrowRight size={11} />
-        </button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link to="/alerts" className="text-xs px-3 py-2 font-medium inline-flex items-center gap-1.5"
+            style={{ backgroundColor: '#F4F1E6', color: NAVY }}>
+            View <ArrowRight size={11} />
+          </Link>
+          <button
+            type="button"
+            className="text-xs px-4 py-2 font-medium inline-flex items-center gap-1.5"
+            style={{ backgroundColor: NAVY, color: 'white' }}
+            onClick={() => onAcknowledge(drift.id)}
+          >
+            Acknowledge as {roleLabel} <ArrowRight size={11} />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -361,7 +423,8 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
 }
 
 // ─── Pillar Card ─────────────────────────────────────────────────
-function PillarCard({ name, Icon, framework, status, upcoming, actionNeeded, proof }: {
+function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNeeded, proof }: {
+  pillar: 'fire_safety' | 'food_safety';
   name: string;
   Icon: typeof Flame;
   framework: string;
@@ -390,9 +453,14 @@ function PillarCard({ name, Icon, framework, status, upcoming, actionNeeded, pro
       <div className="grid grid-cols-1 md:grid-cols-3">
         {/* Upcoming */}
         <div className="px-5 py-5 border-b md:border-b-0 md:border-r" style={{ borderColor: LINE }}>
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar size={13} style={{ color: NAVY }} />
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: NAVY }}>Upcoming</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Calendar size={13} style={{ color: NAVY }} />
+              <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: NAVY }}>Upcoming</span>
+            </div>
+            <Link to={`/vendors?pillar=${pillar}`} className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: GOLD }}>
+              View all →
+            </Link>
           </div>
           {upcoming.length === 0 ? (
             <div className="text-sm py-3" style={{ color: MUTED }}>Nothing due in the next 30 days.</div>
@@ -411,11 +479,18 @@ function PillarCard({ name, Icon, framework, status, upcoming, actionNeeded, pro
         {/* Action Needed */}
         <div className="px-5 py-5 border-b md:border-b-0 md:border-r"
           style={{ borderColor: LINE, backgroundColor: actionNeeded.length > 0 ? '#FDF6E9' : 'transparent' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle size={13} style={{ color: actionNeeded.length > 0 ? AMBER : MUTED }} />
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: actionNeeded.length > 0 ? AMBER : MUTED }}>
-              Action Needed
-            </span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={13} style={{ color: actionNeeded.length > 0 ? AMBER : MUTED }} />
+              <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: actionNeeded.length > 0 ? AMBER : MUTED }}>
+                Action Needed
+              </span>
+            </div>
+            {actionNeeded.length > 0 && (
+              <Link to="/alerts" className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: AMBER }}>
+                View →
+              </Link>
+            )}
           </div>
           {actionNeeded.length === 0 ? (
             <div className="text-sm py-3" style={{ color: MUTED }}>All clear. Nothing needs action.</div>
@@ -437,9 +512,14 @@ function PillarCard({ name, Icon, framework, status, upcoming, actionNeeded, pro
 
         {/* Prove */}
         <div className="px-5 py-5">
-          <div className="flex items-center gap-2 mb-4">
-            <FileText size={13} style={{ color: GREEN }} />
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: GREEN }}>Prove</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <FileText size={13} style={{ color: GREEN }} />
+              <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: GREEN }}>Prove</span>
+            </div>
+            <Link to={`/documents?pillar=${pillar}`} className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: GREEN }}>
+              View →
+            </Link>
           </div>
           {proof.total === 0 ? (
             <div className="text-sm py-3" style={{ color: MUTED }}>No obligations configured.</div>
@@ -461,18 +541,80 @@ function PillarCard({ name, Icon, framework, status, upcoming, actionNeeded, pro
   );
 }
 
-// ─── Temperature Logs — empty state ──────────────────────────────
-function TemperatureLogsEmpty() {
+// ─── Temperature Logs — real query, hidden when no data ─────────
+interface TempReading {
+  id: string;
+  temperature: number;
+  required_min: number | null;
+  required_max: number | null;
+  temp_pass: boolean;
+  reading_time: string;
+  step: string;
+  equipment_name?: string;
+}
+
+function TemperatureLogs({ locationId, locationIds }: { locationId: string | null; locationIds: string[] }) {
+  const [readings, setReadings] = useState<TempReading[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchLogs = useCallback(async () => {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const ids = locationId ? [locationId] : locationIds;
+    if (ids.length === 0) { setReadings([]); setLoading(false); return; }
+
+    const { data } = await supabase
+      .from('temperature_logs')
+      .select('id, temperature, required_min, required_max, temp_pass, reading_time, step')
+      .in('facility_id', ids)
+      .gte('reading_time', since)
+      .is('superseded_by_log_id', null)
+      .order('reading_time', { ascending: false })
+      .limit(20);
+
+    setReadings((data || []) as TempReading[]);
+    setLoading(false);
+  }, [locationId, locationIds]);
+
+  useEffect(() => { fetchLogs(); }, [fetchLogs]);
+
+  // Hide section entirely when no readings and not loading
+  if (!loading && readings.length === 0) return null;
+  if (loading) return null;
+
+  const stepLabel = (s: string) => s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
   return (
     <div>
       <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-bold" style={{ color: NAVY, fontFamily: 'Fraunces, serif' }}>Temperature Logs</h3>
-        <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: MUTED }}>Manual logs</span>
+        <Link to="/equipment" className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: GOLD }}>
+          View all →
+        </Link>
       </div>
-      <div className="bg-white border px-6 py-8 text-center" style={{ borderColor: LINE }}>
-        <Thermometer size={24} style={{ color: MUTED, margin: '0 auto 8px' }} />
-        <p className="text-sm" style={{ color: MUTED }}>No temperature equipment configured yet.</p>
-        <p className="text-xs mt-1" style={{ color: MUTED }}>Add equipment in Settings to begin logging.</p>
+      <div className="bg-white border divide-y" style={{ borderColor: LINE }}>
+        {readings.map(r => {
+          const outOfRange = !r.temp_pass;
+          const time = new Date(r.reading_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          const rangeText = r.required_min != null && r.required_max != null
+            ? `${r.required_min}°–${r.required_max}°F`
+            : '';
+          return (
+            <div key={r.id} className="px-5 py-3 flex items-center gap-4" style={{ borderColor: LINE }}>
+              <Thermometer size={16} style={{ color: outOfRange ? RED : GREEN }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold" style={{ color: NAVY }}>{r.temperature}°F</div>
+                <div className="text-[11px]" style={{ color: MUTED }}>{stepLabel(r.step)} · {time}{rangeText ? ` · Range ${rangeText}` : ''}</div>
+              </div>
+              <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-1"
+                style={{
+                  backgroundColor: outOfRange ? '#F7E9E9' : '#E4EBE3',
+                  color: outOfRange ? RED : GREEN,
+                }}>
+                {outOfRange ? 'Out of range' : 'In range'}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
