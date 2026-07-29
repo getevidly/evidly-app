@@ -38,6 +38,8 @@ const RUST = '#B85D22';
 const INK = '#0F1828';
 const EMBER = '#B24A2E';
 const SLATE = '#3E6B8A';
+const INK_SECONDARY = '#4A5566';
+const HOVER_EASE = 'cubic-bezier(.34,1.4,.64,1)';
 
 // ─── StatusPill ──────────────────────────────────────────────────
 type PillStatus = 'clear' | 'action' | 'urgent' | 'empty';
@@ -308,34 +310,11 @@ function Hero({ alertCount, locationName, kitchenCount, isMulti, isAllLocations,
 
       {/* Right: proof rings */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-        <div className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: MUTED, fontFamily: FONT.mono }}>
-          Compliance Status
-        </div>
+        <ComplianceStatusHeading contextLine={contextLine} />
         <div style={{ display: 'flex', gap: 20 }}>
-          <div className="flex flex-col items-center gap-2">
-            <HeroRing proven={fireProof.filed} total={fireTotal} color={EMBER} label="Fire" />
-            <span className="text-xs font-semibold" style={{ color: EMBER, fontFamily: FONT.mono }}>Fire</span>
-            <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold" style={{
-              letterSpacing: '0.1em',
-              color: firePct === 100 ? GREEN : RED,
-            }}>
-              <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: firePct === 100 ? GREEN : RED }} />
-              {firePct === 100 ? 'Ready' : 'Not ready'}
-            </span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <HeroRing proven={foodProof.filed} total={foodTotal} color={SLATE} label="Food" />
-            <span className="text-xs font-semibold" style={{ color: SLATE, fontFamily: FONT.mono }}>Food</span>
-            <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold" style={{
-              letterSpacing: '0.1em',
-              color: foodPct === 100 ? GREEN : RED,
-            }}>
-              <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: foodPct === 100 ? GREEN : RED }} />
-              {foodPct === 100 ? 'Ready' : 'Not ready'}
-            </span>
-          </div>
+          <RingColumn proven={fireProof.filed} total={fireTotal} color={EMBER} label="Fire" pct={firePct} />
+          <RingColumn proven={foodProof.filed} total={foodTotal} color={SLATE} label="Food" pct={foodPct} />
         </div>
-        <div className="text-[11px]" style={{ color: MUTED, fontFamily: FONT.mono }}>{contextLine}</div>
       </div>
     </div>
   );
@@ -521,6 +500,67 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
   return `Escalating in ${minutesLeft} min`;
 }
 
+// ─── Compliance Status heading with tooltip ─────────────────────
+function ComplianceStatusHeading({ contextLine }: { contextLine: string }) {
+  const [showTip, setShowTip] = useState(false);
+  return (
+    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+      <span className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: MUTED, fontFamily: FONT.mono }}>
+        Compliance Status
+      </span>
+      <span
+        onMouseEnter={() => setShowTip(true)}
+        onMouseLeave={() => setShowTip(false)}
+        style={{
+          width: 14, height: 14, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 9, fontWeight: 700, color: MUTED, border: `1px solid ${LINE}`, cursor: 'help', fontFamily: FONT.mono,
+        }}>
+        ?
+      </span>
+      {showTip && (
+        <div style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          marginTop: 6, padding: '6px 10px', borderRadius: 4,
+          backgroundColor: '#1C2A3A', color: '#E0DDD4',
+          fontSize: 11, fontFamily: FONT.mono, whiteSpace: 'nowrap', zIndex: 10,
+          pointerEvents: 'none',
+        }}>
+          {contextLine}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Ring + label column (shared hover for letter-spacing) ──────
+function RingColumn({ proven, total, color, label, pct }: {
+  proven: number; total: number; color: string; label: string; pct: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const reduced = useRef(false);
+  useEffect(() => { reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }, []);
+
+  return (
+    <div className="flex flex-col items-center gap-2"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}>
+      <HeroRing proven={proven} total={total} color={color} label={label} />
+      <span className="text-xs font-semibold" style={{
+        color, fontFamily: FONT.mono,
+        letterSpacing: hovered && !reduced.current ? '0.2em' : '0.14em',
+        transition: reduced.current ? 'none' : `letter-spacing 300ms ${HOVER_EASE}`,
+      }}>{label}</span>
+      <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold" style={{
+        letterSpacing: '0.1em',
+        color: pct === 100 ? GREEN : RED,
+      }}>
+        <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: pct === 100 ? GREEN : RED }} />
+        {pct === 100 ? 'Ready' : 'Not ready'}
+      </span>
+    </div>
+  );
+}
+
 // ─── Hero Proof Ring (132px animated donut) ─────────────────────
 function cubicBezierEase(t: number): number {
   // Approximation of cubic-bezier(0.22, 1, 0.36, 1)
@@ -568,7 +608,9 @@ function HeroRing({ proven, total, color, label }: { proven: number; total: numb
   }, [targetPct]);
 
   const offset = c - (animPct / 100) * c;
+  const reduced = prefersReduced.current;
   const stroke = hovered ? 9 : baseStroke;
+  const hoverTransition = reduced ? 'none' : `all 300ms ${HOVER_EASE}`;
 
   return (
     <div
@@ -578,39 +620,39 @@ function HeroRing({ proven, total, color, label }: { proven: number; total: numb
         position: 'relative',
         width: size,
         height: size,
-        transform: hovered ? 'scale(1.045)' : 'scale(1)',
-        transition: 'transform 220ms ease',
+        transform: hovered && !reduced ? 'scale(1.045)' : 'scale(1)',
+        transition: hoverTransition,
         cursor: 'default',
       }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
         xmlns="http://www.w3.org/2000/svg" role="img"
         aria-label={`${label}: ${targetPct}% — ${proven} of ${total} on file`}
-        style={{ display: 'block' }}>
-        {/* Halo on hover */}
-        {hovered && (
-          <circle cx={size / 2} cy={size / 2} r={r + 12} fill="none"
-            stroke={color} strokeWidth={2} strokeOpacity={0.15}
-            style={{ filter: 'blur(6px)' }} />
-        )}
+        style={{ display: 'block', overflow: 'visible' }}>
+        {/* Halo — always rendered, opacity transitions */}
+        <circle cx={size / 2} cy={size / 2} r={r + 12} fill="none"
+          stroke={color} strokeWidth={16} strokeOpacity={hovered ? 1 : 0}
+          style={{ filter: 'blur(9px)', transition: hoverTransition }} />
         {/* Track */}
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={LINE}
-          strokeWidth={stroke} style={{ transition: 'stroke-width 220ms ease' }} />
+          strokeWidth={stroke} style={{ transition: hoverTransition }} />
         {/* Arc */}
         {animPct > 0 && (
           <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color}
             strokeWidth={stroke} strokeDasharray={`${c}`} strokeDashoffset={`${offset}`}
             strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            style={{ transition: 'stroke-width 220ms ease' }} />
+            style={{ transition: hoverTransition }} />
         )}
-        {/* Percentage text */}
-        <text x={size / 2} y={size / 2 - 8} textAnchor="middle" dominantBaseline="central"
+        {/* Percentage text — lifts 2px on hover */}
+        <text x={size / 2} y={hovered && !reduced ? size / 2 - 10 : size / 2 - 8}
+          textAnchor="middle" dominantBaseline="central"
           fill={hovered ? color : NAVY} fontSize="28" fontWeight="700" fontFamily={FONT.body}
-          style={{ transition: 'fill 220ms ease' }}>
+          style={{ transition: hoverTransition }}>
           {animPct}%
         </text>
-        {/* Fraction text */}
+        {/* Fraction text — brightens on hover */}
         <text x={size / 2} y={size / 2 + 14} textAnchor="middle" dominantBaseline="central"
-          fill={MUTED} fontSize="11" fontWeight="500" fontFamily={FONT.mono}>
+          fill={hovered ? INK_SECONDARY : MUTED} fontSize="11" fontWeight="500" fontFamily={FONT.mono}
+          style={{ transition: hoverTransition }}>
           {proven} / {total}
         </text>
       </svg>
