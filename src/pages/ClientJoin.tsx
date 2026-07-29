@@ -22,7 +22,7 @@ const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-recor
 const SHARE_URL  = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/share-join-preview`;
 
 /* Design-token aliases */
-const SERIF = "'Spectral', Georgia, serif";
+const DISPLAY = "'Instrument Sans', system-ui, -apple-system, sans-serif";
 const SANS  = "'Instrument Sans', system-ui, -apple-system, sans-serif";
 const MONO  = "'IBM Plex Mono', ui-monospace, monospace";
 const BRAND = "'Montserrat', sans-serif";
@@ -170,7 +170,7 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
         </div>
       )}
 
-      <h1 style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 22, lineHeight: 1.25, color: 'white', margin: '0 0 12px' }}>
+      <h1 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 17, lineHeight: 1.35, color: 'white', margin: '0 0 12px', letterSpacing: '-0.02em' }}>
         Your hood cleaning is documented.
       </h1>
       <p style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,0.65)', margin: '0 0 28px' }}>
@@ -182,7 +182,7 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.10)', paddingTop: 20, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 28 }}>
         {([['Predict', "what's upcoming"], ['Reduce', 'the lapse'], ['Prove', "it's done"]] as const).map(([t, sub]) => (
           <div key={t}>
-            <div style={{ fontFamily: SERIF, fontSize: 12, fontWeight: 600, color: GOLD_TEXT, marginBottom: 2 }}>{t}</div>
+            <div style={{ fontFamily: DISPLAY, fontSize: 13.5, fontWeight: 700, color: '#E6B9A4', marginBottom: 2 }}>{t}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.50)' }}>{sub}</div>
           </div>
         ))}
@@ -238,33 +238,27 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
         </div>
 
         {/* ── 2. LOCATION TABS + SHARE ── */}
-        <div style={{ borderBottom: `1px solid ${LINE}`, padding: '10px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' as const }}>
-          <div style={{ display: 'flex', gap: 2, overflowX: 'auto' as const, WebkitOverflowScrolling: 'touch' as any, scrollbarWidth: 'none' as const }}>
-            {LOC_TABS.map(([id, label]: [string, string]) => {
-              const active = previewLoc === id;
-              return (
-                <button key={id} onClick={() => setPreviewLoc(id)}
-                  style={{
-                    fontFamily: active ? SERIF : SANS, fontSize: 13, fontWeight: active ? 600 : 500,
-                    padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer',
-                    background: active ? NAVY : 'transparent', color: active ? '#F5EFE4' : MUTED,
-                    whiteSpace: 'nowrap' as const, transition: 'background .16s',
-                  }}>
-                  {label}
-                </button>
-              );
-            })}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="ev-ltabs" style={{ flex: 1 }}>
+            {LOC_TABS.map(([id, label]: [string, string]) => (
+              <button key={id} onClick={() => setPreviewLoc(id)}
+                className={`ev-ltab${previewLoc === id ? ' on' : ''}`}>
+                {label}
+              </button>
+            ))}
           </div>
-          <button onClick={() => { setShowShare(!showShare); setShareSent(false); }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px',
-              border: `1px solid ${showShare ? GOLD : LINE}`, borderRadius: 8,
-              background: showShare ? GOLD : 'transparent',
-              color: showShare ? 'white' : MUTED, cursor: 'pointer',
-              fontFamily: MONO, fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
-            }}>
-            <Send size={12} /> Share
-          </button>
+          <div style={{ padding: '0 22px', borderBottom: `1px solid ${LINE}`, display: 'flex', alignItems: 'center', alignSelf: 'stretch' }}>
+            <button onClick={() => { setShowShare(!showShare); setShareSent(false); }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px',
+                border: `1px solid ${showShare ? GOLD : LINE}`, borderRadius: 8,
+                background: showShare ? GOLD : 'transparent',
+                color: showShare ? 'white' : MUTED, cursor: 'pointer',
+                fontFamily: MONO, fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+              }}>
+              <Send size={12} /> Share
+            </button>
+          </div>
         </div>
 
         {/* ── 3. INLINE SHARE FORM ── */}
