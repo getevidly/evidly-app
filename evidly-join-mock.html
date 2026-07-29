@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EvidLY — /join prospect dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Spectral:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1C2A3A; --ink-2:#4A5566; --ink-3:#5F6875; --muted:#646D7A;
+    --stone:#6E675A; --stone-2:#A79E8B;
+    --gold:#8A6412; --gold-2:#D8A93A;
+    --ember:#B24A2E; --ember-soft:#E6B9A4; --slate:#3E6B8A;
+    --green:#3E5E4B; --green-bg:#E3ECE1; --green-2:#547A62;
+    --red:#9E3B32; --amber-bg:#F7EDD3;
+    --line:#E4DBC8; --line-2:#EEE7D9; --track:#F0EADC;
+    --paper:#FFFFFF; --cream:#F7F1E6; --canvas:#EFE8DA; --band:#F1ECE0;
+    --navy:#1C2A3A;
+    --display:'Instrument Sans',system-ui,sans-serif; --ui:'Instrument Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+    --r:10px; --shadow:0 1px 2px rgba(28,42,58,.03), 0 16px 34px -30px rgba(28,42,58,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--canvas);font-family:var(--ui);color:var(--ink);-webkit-font-smoothing:antialiased;
+    padding:24px 16px 70px}
+  .page{max-width:1220px;margin:0 auto}
+
+  .memo{border:1px solid #D8D2C6;background:#F4F1EA;border-radius:var(--r);padding:15px 18px;margin-bottom:20px}
+  .memo h2{margin:0 0 6px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .memo p{margin:0 0 5px;font-size:13px;line-height:1.6;color:var(--ink-3)}
+  .memo p:last-child{margin:0}
+  .memo b{color:#8F3A22}
+
+  .shell{display:grid;grid-template-columns:300px 1fr;background:var(--cream);border:1px solid #ded7c8;
+    border-radius:14px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(28,42,58,.5)}
+
+  /* ---------- RAIL (prospect only) ---------- */
+  .rail{background:var(--navy);padding:30px 26px;display:flex;flex-direction:column;gap:24px}
+  .wm{font-family:'Montserrat',var(--ui);font-weight:800;font-size:23px;letter-spacing:-.02em;line-height:1}
+  .em{color:var(--ember)} .wh{color:#fff}
+  .rail-eye{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#8FA6BE;margin-top:11px}
+  .rail-org{font-family:var(--display);font-size:19px;color:#fff;font-weight:700;line-height:1.25;margin-top:4px}
+  .rail-h{font-family:var(--display);font-size:17px;color:#fff;font-weight:700;line-height:1.35;margin:0}
+  .rail-p{font-size:13px;line-height:1.7;color:#AFBBCA;margin:9px 0 0}
+  .triplet{display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:18px}
+  .trip{flex:1}
+  .trip .t{font-family:var(--display);font-size:13.5px;color:var(--ember-soft);font-weight:700}
+  .trip .s{font-size:10.5px;color:#8FA6BE;margin-top:3px;line-height:1.45}
+  .rail-cta{display:block;background:var(--ember);color:#fff !important;text-decoration:none;text-align:center;
+    font-weight:600;font-size:14px;padding:13px 14px;border-radius:9px;transition:opacity .18s}
+  .rail-cta:hover{opacity:.9}
+  .rail-sub{font-size:11px;line-height:1.55;color:#8FA6BE;margin-top:10px;text-align:center}
+  .rail-foot{margin-top:auto;font-size:10px;color:#6d7d92;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);padding-top:16px}
+
+  /* ---------- CONTENT ---------- */
+  .content{background:var(--cream);min-width:0}
+
+  .sample{background:#F2E9D6;border-bottom:1px solid #e0d3b4;padding:13px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .sample .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--navy);color:#fff;padding:5px 10px;border-radius:5px}
+  .sample .txt{font-size:12.5px;color:#6b5f43;line-height:1.55;flex:1;min-width:200px}
+  .sample .txt b{color:#4a4130}
+
+  .ltabs{background:var(--paper);border-bottom:1px solid var(--line);padding:0 22px;display:flex;overflow-x:auto}
+  .ltab{position:relative;font-size:13.5px;font-weight:500;color:var(--muted);padding:16px 16px;white-space:nowrap;
+    display:flex;align-items:center;gap:8px;cursor:pointer;
+    transition:color .22s cubic-bezier(.4,0,.2,1), background-color .22s cubic-bezier(.4,0,.2,1)}
+  .ltab::after{content:'';position:absolute;left:50%;right:50%;bottom:0;height:2px;background:var(--gold-2);
+    border-radius:2px 2px 0 0;transition:left .28s cubic-bezier(.4,0,.2,1), right .28s cubic-bezier(.4,0,.2,1)}
+  .ltab:hover{color:var(--ink);background:#FBF8F1}
+  .ltab:hover::after{left:14px;right:14px;background:var(--line)}
+  .ltab.on{color:var(--ink);font-weight:600}
+  .ltab.on::after{left:0;right:0;background:var(--gold-2)}
+
+  .pad{padding:0 28px}
+
+  /* hero */
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:48px;padding:38px 0 34px}
+  .hero-l{min-width:0;flex:1}
+  .eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .h1{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.2;color:var(--ink);margin:13px 0 0;letter-spacing:-.028em}
+  .h1 .sep{color:var(--stone-2);font-weight:300;padding:0 3px}
+  .sub{font-family:var(--ui);font-size:15.5px;font-weight:400;line-height:1.6;color:var(--ink-2);margin:12px 0 0;max-width:60ch}
+  .sub b{font-weight:500;color:var(--ink)}
+
+  .rings-w{display:flex;flex-direction:column;align-items:center;gap:15px;flex:none}
+  .rings-h{position:relative;display:inline-flex;align-items:center;gap:6px;cursor:default;
+    font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+  .qmark{width:13px;height:13px;border-radius:50%;border:1px solid var(--stone-2);color:var(--stone-2);
+    font-size:9px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;line-height:1;
+    font-family:var(--ui);transition:border-color .2s,color .2s}
+  .rings-h:hover .qmark{border-color:var(--ink);color:var(--ink)}
+  .tip{position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%) translateY(-4px);
+    background:var(--ink);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:none;
+    padding:9px 12px;border-radius:7px;white-space:nowrap;pointer-events:none;opacity:0;
+    transition:opacity .18s ease,transform .18s ease;z-index:20;box-shadow:0 8px 22px -10px rgba(28,42,58,.55)}
+  .tip::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+    border:5px solid transparent;border-bottom-color:var(--ink)}
+  .rings-h:hover .tip{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .rings{display:flex;gap:28px}
+  .ring-w{display:flex;flex-direction:column;align-items:center;gap:11px;cursor:default}
+  .ring{position:relative;width:124px;height:124px;transition:transform .3s cubic-bezier(.34,1.4,.64,1)}
+  .ring svg{display:block;transform:rotate(-90deg);overflow:visible}
+  .ring .arc{transition:stroke-dashoffset 1.15s cubic-bezier(.22,1,.36,1) .15s, stroke-width .3s ease}
+  .ring .halo{opacity:0;transition:opacity .3s ease}
+  .ring-w:hover .ring{transform:scale(1.045)}
+  .ring-w:hover .arc{stroke-width:9}
+  .ring-w:hover .halo{opacity:1}
+  .ring .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .pct{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;
+    transition:transform .3s cubic-bezier(.34,1.4,.64,1)}
+  .ring-w:hover .pct{transform:translateY(-2px)}
+  .ring .of{font-family:var(--mono);font-size:11px;color:var(--stone);margin-top:6px;transition:color .25s ease}
+  .ring-w:hover .of{color:var(--ink-2)}
+  .ring-meta{display:flex;flex-direction:column;align-items:center;gap:7px}
+  .ring-name{font-family:var(--display);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .ring-state{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
+    padding:4px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;transition:background-color .3s,color .3s}
+  .ring-state .d{width:5px;height:5px;border-radius:50%;background:currentColor}
+  .ring-state.ready{background:var(--green-bg);color:var(--green)}
+  .ring-state.notready{background:#F6E3DF;color:var(--red)}
+
+  /* watching */
+  .watch{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);
+    border-radius:var(--r);padding:15px 20px;box-shadow:var(--shadow)}
+  .watch .t{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .watch .t span{font-weight:400;color:var(--muted)}
+  .watch .r{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--green-2);
+    display:flex;align-items:center;gap:7px;white-space:nowrap}
+
+  /* section head */
+  .sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:36px 0 14px}
+  .sh h2{font-family:var(--display);font-size:19px;font-weight:700;color:var(--ink);margin:0;letter-spacing:-.02em}
+  .sh .pill{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
+    background:var(--band);color:var(--gold);padding:5px 10px;border-radius:5px}
+  .sh .r{margin-left:auto;display:flex;align-items:center;gap:16px}
+  .sh .cnt{font-size:12.5px;color:var(--gold)} .sh .cnt b{font-weight:600}
+  .sh .auto{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone-2)}
+
+  /* alerts */
+  .alert{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--gold-2);
+    border-radius:0 var(--r) var(--r) 0;padding:17px 20px;display:flex;align-items:center;gap:16px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .alert.urgent{border-left-color:var(--red)}
+  .alert.clear{border-left-color:var(--stone-2)}
+  .alert-ic{width:34px;height:34px;border-radius:9px;background:var(--green-bg);color:var(--green);
+    display:flex;align-items:center;justify-content:center;flex:none}
+  .chips{display:flex;gap:7px;flex:none}
+  .chip{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
+    padding:5px 9px;border-radius:4px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+  .chip .d{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+  .chip.warn{background:var(--amber-bg);color:var(--gold)}
+  .chip.urg{background:#F6E3DF;color:var(--red)}
+  .chip.food{background:#E2ECF2;color:#2C5570}
+  .chip.fire{background:#F6E9E3;color:#8F3A22}
+  .chip.ok{background:var(--green-bg);color:var(--green)}
+  .chip.no{background:#F6E3DF;color:var(--red)}
+  .chip.na{background:var(--band);color:var(--stone-2)}
+  .alert-m{flex:1;min-width:0}
+  .alert-t{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35}
+  .alert-s{font-size:13px;color:var(--muted);margin-top:4px}
+
+  /* pillar cards */
+  .pillars{display:grid;grid-template-columns:1fr;gap:18px}
+  .pcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .pc-head{border-radius:var(--r) var(--r) 0 0}
+  .pc-cols{border-radius:0 0 var(--r) var(--r)}
+  .pc-head{padding:20px 26px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line-2)}
+  .pc-ic{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+  .pc-id{flex:1;min-width:0;display:flex;flex-direction:column}
+  .pc-n{font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);line-height:1.2;letter-spacing:-.02em}
+  .coderow{padding:12px 26px;border-bottom:1px solid var(--line-2);background:#FDFBF7}
+  .codes{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .code-sep{font-family:var(--mono);font-size:9.5px;color:var(--stone-2);letter-spacing:.09em;text-transform:uppercase;margin-left:2px}
+  .pc-c{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--stone-2);margin-top:8px}
+  .pc-pill{font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;white-space:nowrap;flex:none;display:flex;align-items:center;gap:7px}
+  .pc-pill.ok{background:var(--green-bg);color:var(--green)}
+  .pc-pill.act{background:var(--amber-bg);color:var(--gold)}
+  .pc-pill .d{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .pc-cols{display:grid;grid-template-columns:1fr 1fr 1fr}
+  .pcol{padding:20px 26px 22px;border-right:1px solid var(--line-2);display:flex;flex-direction:column;min-height:132px;position:relative}
+  .pcol:last-child{border-right:none}
+  .pcol.hot{background:#FDF8EE}
+  .pcol-k{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--stone);display:flex;align-items:center;gap:7px;margin-bottom:14px;position:relative;cursor:default}
+  .pcol-k .qmark{width:12px;height:12px;font-size:8px}
+  .pcol-tip{position:absolute;top:calc(100% + 8px);left:0;background:var(--ink);color:#fff;font-family:var(--ui);
+    font-size:11.5px;font-weight:400;letter-spacing:0;text-transform:none;line-height:1.55;padding:11px 13px;
+    border-radius:8px;width:250px;pointer-events:none;opacity:0;transform:translateY(-4px);z-index:30;
+    transition:opacity .18s ease,transform .18s ease;box-shadow:0 10px 26px -12px rgba(28,42,58,.6)}
+  .pcol-tip::before{content:'';position:absolute;bottom:100%;left:14px;border:5px solid transparent;border-bottom-color:var(--ink)}
+  .pcol:last-child .pcol-tip{left:auto;right:0}
+  .pcol:last-child .pcol-tip::before{left:auto;right:14px}
+  .pcol:nth-child(2) .pcol-tip{left:50%;transform:translateX(-50%) translateY(-4px)}
+  .pcol:nth-child(2) .pcol-k:hover .pcol-tip{transform:translateX(-50%) translateY(0)}
+  .pcol:nth-child(2) .pcol-tip::before{left:50%;margin-left:-5px}
+  .pcol-k:hover .pcol-tip{opacity:1;transform:translateY(0)}
+  .pcol.hot .pcol-k{color:var(--gold)}
+  .pcol-body{flex:1}
+  .pcol-v{font-size:14px;color:var(--ink-2);line-height:1.55}
+  .pcol-v.strong{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35}
+  .pcol-s{font-size:12.5px;color:var(--gold);margin-top:5px}
+  .pcol-n{font-family:var(--display);font-size:29px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em}
+  .pcol-n em{font-style:normal;font-size:15px;font-weight:400;color:var(--muted);font-family:var(--ui)}
+  .pcol-sub{font-size:12.5px;color:var(--muted);margin-top:7px}
+  .pcol-bar{height:4px;border-radius:99px;background:var(--track);margin-top:12px;overflow:hidden}
+  .pcol-bar i{display:block;height:100%;border-radius:99px}
+
+  /* record cards */
+  .recs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .rcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+  .rc-head{padding:20px 22px;display:flex;align-items:center;gap:15px;border-bottom:1px solid var(--line-2)}
+  .rc-id{flex:1;min-width:0;display:flex;flex-direction:column}
+  .rc-n{font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+  .rc-c{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--stone-2);margin-top:7px}
+  .rc-count{font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);flex:none;letter-spacing:-.02em}
+  .rc-count em{font-style:normal;font-size:14px;font-weight:400;color:var(--muted);font-family:var(--ui)}
+  .rlist{padding:6px 22px 18px}
+  .rrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+  .rrow:last-child{border-bottom:none}
+  .rdot{width:7px;height:7px;border-radius:50%;flex:none}
+  .rdot.no{background:var(--red)} .rdot.ok{background:var(--green-2)} .rdot.na{background:var(--line)}
+  .rname{flex:1;min-width:0;font-size:13.5px;color:var(--ink)}
+  .rtag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-2);flex:none}
+  .vnote{font-size:12.5px;line-height:1.6;color:var(--muted);padding:12px 0 4px}
+  .vgroup{padding:15px 22px;border-bottom:1px solid var(--line-2)}
+  .vgroup:last-child{border-bottom:none}
+  .vname{font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:9px}
+  .vmeta{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--stone-2);margin-left:auto}
+  .vdocs{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+
+  /* gate bar — prospect only */
+  .gobar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--navy);border-radius:12px;
+    padding:20px 24px;margin-top:24px;box-shadow:0 18px 40px -26px rgba(28,42,58,.7)}
+  .gobar-t{font-size:15px;color:#AFBBCA;flex:1;min-width:220px;line-height:1.5}
+  .gobar-t b{color:#fff;font-weight:600}
+  .gobar-c{background:var(--ember);color:#fff !important;text-decoration:none;font-weight:600;font-size:14.5px;
+    padding:13px 24px;border-radius:9px;white-space:nowrap;transition:opacity .18s}
+  .gobar-c:hover{opacity:.9}
+  .gobar-s{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8FA6BE;white-space:nowrap}
+
+  /* risk */
+  .risk{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ember);border-radius:var(--r);padding:20px 22px}
+  .risk-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .risk-h{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink-2)}
+  .risk-n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .risk-line{border-top:1px solid var(--line-2);padding:13px 0;margin-top:11px}
+  .risk-l1{display:flex;justify-content:space-between;align-items:baseline}
+  .risk-l1 span:first-child{font-size:14px;color:var(--ink-2)}
+  .risk-amt{font-family:var(--display);font-size:19px;font-weight:700;color:var(--ink)}
+  .yr{font-size:12px;color:var(--muted);font-weight:400}
+  .risk-l2{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:12.5px}
+  .risk-l2 .lo{color:#8E332B} .risk-l2 .hi{color:var(--green);text-align:right}
+  .risk-total{border-top:1px solid #D6CFC0;padding-top:13px;display:flex;justify-content:space-between;align-items:baseline}
+  .risk-total>span:first-child{font-size:14px;font-weight:600;color:var(--ink)}
+  .risk-tamt{font-family:var(--display);font-size:23px;font-weight:700;color:var(--ink)}
+  .ceil{margin-top:16px;border-radius:var(--r);padding:15px 17px;background:#F6E3DF;border:1px solid #E5B9B2}
+  .ceil-k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E332B;margin-bottom:11px}
+  .ceil-r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;color:#8E332B}
+  .ceil-r span:first-child{font-size:13.5px}
+  .ceil-a{font-size:16px;font-weight:700;white-space:nowrap}
+  .ceil-n{margin-top:7px;font-size:12.5px;line-height:1.55;color:#8E332B}
+  .risk-fine{margin-top:13px;font-size:11px;line-height:1.6;color:var(--muted)}
+
+  /* sensors */
+  .sens{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .sens-c{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+  .sens-cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold)}
+  .sens-row{display:flex;justify-content:space-between;align-items:flex-start;margin-top:9px}
+  .sens-nm{font-size:14px;font-weight:600;color:var(--ink)}
+  .sens-loc{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px}
+  .sens-v{font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);line-height:1}
+  .sens-b{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+  .sens-src{font-family:var(--mono);font-size:9.5px;color:var(--green-2);display:flex;align-items:center;gap:6px}
+  .sens-src .d{width:5px;height:5px;border-radius:50%;background:currentColor}
+  .sens-st{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--green-bg);color:var(--green)}
+
+  /* preview control — prospect only */
+  .pcc{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);
+    border-left:3px solid var(--slate);border-radius:var(--r);padding:15px 20px;cursor:pointer;flex-wrap:wrap;margin-top:26px;
+    box-shadow:var(--shadow);transition:background-color .18s}
+  .pcc:hover{background:#FBF8F1}
+  .pcc-t{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .pcc-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--stone-2)}
+  .pcc-c{margin-left:auto;color:var(--slate);font-size:13px;transition:transform .25s}
+  .pcc.open .pcc-c{transform:rotate(180deg)}
+  .pcw{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .pcw.open{max-height:1000px;margin-top:12px}
+  .pcbody{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--shadow)}
+  .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 34px}
+  .pc-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:12px 0 4px}
+  .pc-row{display:flex;align-items:center;gap:11px;padding:7px 0;font-size:13px}
+  .pc-row .box{width:15px;height:15px;border-radius:3px;border:1.5px solid #b9b1a0;flex:none;display:flex;
+    align-items:center;justify-content:center;font-size:10px;color:#fff}
+  .pc-row .box.on{background:var(--navy);border-color:var(--navy)}
+  .pc-row .st{margin-left:auto;font-size:11px}
+  .pc-row .st.on{color:var(--green-2);font-weight:600}
+  .pc-row .st.off{color:var(--stone-2)}
+  .pc-row.sub{padding-left:22px}
+
+  .tgl{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
+  .tgl button{background:none;border:none;padding:7px 13px;font-family:var(--mono);font-size:9.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--stone);cursor:pointer;transition:background-color .18s,color .18s}
+  .tgl button+button{border-left:1px solid var(--line)}
+  .tgl button.on{background:var(--navy);color:#fff}
+  .risk-count{font-family:var(--display);font-size:21px;font-weight:600;color:var(--ink)}
+
+  .ex-more{margin-top:12px;background:none;border:none;padding:0;font-family:var(--ui);font-size:13px;
+    font-weight:600;color:var(--ink);cursor:pointer}
+  .ex-more:hover{text-decoration:underline}
+  .explore{background:#fff;border:1px solid var(--line);border-top:2px solid var(--slate);
+    border-radius:14px;padding:18px 22px;margin-top:26px;box-shadow:var(--shadow)}
+  .ex-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;cursor:pointer;user-select:none}
+  .ex-chev{margin-left:auto;color:var(--slate);font-size:13px;transition:transform .25s cubic-bezier(.4,0,.2,1)}
+  .ex-head.open .ex-chev{transform:rotate(180deg)}
+  .ex-body{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1)}
+  .ex-body.open{max-height:1600px}
+  .ex-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#2C5570;font-weight:700}
+  .ex-n{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:#9AA7B0}
+  .ex-p{font-size:12.5px;color:var(--ink);margin:8px 0 12px;line-height:1.5}
+  .ex-grid{display:block}
+  .ex-h{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+    margin:16px 0 4px;padding-top:12px;border-top:1px solid var(--line-2)}
+  .ex-h:first-child{margin-top:4px;padding-top:0;border-top:none}
+  .ex-sub{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);
+    margin:12px 0 2px;padding-left:25px}
+  .ex-row{display:flex;align-items:center;gap:11px;padding:8px 0;cursor:pointer;font-size:13.5px;color:var(--ink);
+    border-bottom:1px solid #F5F0E6}
+  .ex-row:last-child{border-bottom:none}
+  .ex-row:hover{background:#FCFAF5}
+  .ex-row input{width:15px;height:15px;accent-color:#1C2A3A;cursor:pointer;flex:none}
+  .ex-nm{flex:1;min-width:0}
+  .ex-cond{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--stone-2);
+    background:var(--band);padding:3px 7px;border-radius:4px;margin-left:8px;white-space:nowrap}
+  .ex-st{flex:none;font-size:11.5px;white-space:nowrap;text-align:right;min-width:150px}
+  .ex-st.file{color:var(--green-2);font-weight:600}
+  .ex-st.act{color:#2C5570;font-weight:500;opacity:.75}
+  .ex-row:hover .ex-st.act{opacity:1}
+
+  .ann{margin-top:24px;border-left:3px solid var(--green-2);background:#EFF4EF;padding:16px 20px;font-size:13px;
+    line-height:1.7;color:#455049;border-radius:0 var(--r) var(--r) 0}
+  .ann b{color:#2f5a3f}
+  .ann ul{margin:9px 0 0;padding-left:20px}
+  .ann li{margin-bottom:8px}
+
+  @media (max-width:1040px){
+    .shell{grid-template-columns:1fr}
+    .hero{flex-direction:column;align-items:flex-start;gap:32px}
+    .pillars,.recs{grid-template-columns:1fr}
+    .sens{grid-template-columns:1fr}
+    .pc-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:600px){
+    body{padding:14px 10px 80px}
+    .h1{font-size:27px}
+    .pad,.sample,.ltabs{padding-left:18px;padding-right:18px}
+    .pc-cols{grid-template-columns:1fr}
+    .pcol{border-right:none;border-bottom:1px solid var(--line-2);min-height:0}
+    .pcol:last-child{border-bottom:none}
+    .gobar{flex-direction:column;align-items:stretch;text-align:center}
+    .risk-l2{flex-direction:column;gap:4px}
+    .risk-l2 .hi{text-align:left}
+    .rings{gap:18px}
+    .ring{width:104px;height:104px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="memo">
+    <h2>Mock · /join prospect dashboard</h2>
+    <p>The polished live dashboard — Compliance Status rings, per-standard NFPA chips, three-column pillar cards, business &amp; vendor records — wrapped in the prospect frame: navy rail, sample badge, gate CTA and the preview control.</p>
+    <p><b>Approved fonts throughout</b> — Spectral, Instrument Sans, IBM Plex Mono, Montserrat for the wordmark.</p>
+  </div>
+
+  <div class="shell">
+
+    <!-- ===== RAIL ===== -->
+    <div class="rail">
+      <div>
+        <div class="wm"><span class="em">E</span><span class="wh">vid</span><span class="em">LY</span></div>
+        <div class="rail-eye">Prepared for</div>
+        <div class="rail-org">{{ORG_NAME}}</div>
+      </div>
+
+      <div>
+        <p class="rail-h">Your hood cleaning is documented.</p>
+        <p class="rail-p">Every visit, Cleaning Pros Plus leaves a dated certificate. That's the first record in your account — this is what the rest of it looks like once it's all in one place.</p>
+      </div>
+
+      <div class="triplet">
+        <div class="trip"><div class="t">Predict</div><div class="s">what's upcoming</div></div>
+        <div class="trip"><div class="t">Reduce</div><div class="s">the lapse</div></div>
+        <div class="trip"><div class="t">Prove</div><div class="s">it's done</div></div>
+      </div>
+
+      <div>
+        <a class="rail-cta" href="#">See what's on file →</a>
+        <div class="rail-sub">Your record · view-only, no account</div>
+      </div>
+
+      <div class="rail-foot">EvidLY · Commercial Kitchen Risk Management<br>© 2026 · a Cleaning Pros Plus, LLC company</div>
+    </div>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="content">
+
+      <div class="sample">
+        <span class="badge">Sample dashboard</span>
+        <span class="txt">You're looking at <b>Pacific Restaurant Group</b> — a three-kitchen sample, so you can see EvidLY with a full year of records in it. <b>Your</b> account starts with your hood cleaning certificate.</span>
+      </div>
+
+      <div class="ltabs">
+        <span class="ltab on">Pacific Restaurant Group</span>
+        <span class="ltab">Vista Grill</span>
+        <span class="ltab">Harbor House</span>
+        <span class="ltab">The Anchor Room</span>
+      </div>
+
+      <div class="pad">
+
+        <!-- HERO -->
+        <div class="hero">
+          <div class="hero-l">
+            <div class="eyebrow">Today · Thursday, July 23</div>
+            <h1 class="h1" id="hero-h"></h1>
+            <p class="sub" id="hero-sub"></p>
+          </div>
+
+          <div class="rings-w">
+            <div class="rings-h">
+              Compliance Status
+              <span class="qmark">?</span>
+              <span class="tip" id="req-context">18 per kitchen × 3 kitchens · fire 15 + food 39</span>
+            </div>
+            <div class="rings">
+              <div class="ring-w" data-ring="fire">
+                <div class="ring">
+                  <svg width="124" height="124" viewBox="0 0 124 124">
+                    <circle class="halo" cx="62" cy="62" r="54" fill="none" stroke="#B24A2E" stroke-width="16" opacity="0" style="filter:blur(9px)"/>
+                    <circle cx="62" cy="62" r="54" fill="none" stroke="#E4DBC8" stroke-width="7"/>
+                    <circle class="arc" cx="62" cy="62" r="54" fill="none" stroke="#B24A2E" stroke-width="7"
+                            stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
+                  </svg>
+                  <div class="in"><span class="pct">0%</span><span class="of">0 of 15</span></div>
+                </div>
+                <div class="ring-meta">
+                  <span class="ring-name">Fire</span>
+                  <span class="ring-state notready"><span class="d"></span>Not ready</span>
+                </div>
+              </div>
+
+              <div class="ring-w" data-ring="food">
+                <div class="ring">
+                  <svg width="124" height="124" viewBox="0 0 124 124">
+                    <circle class="halo" cx="62" cy="62" r="54" fill="none" stroke="#3E6B8A" stroke-width="16" opacity="0" style="filter:blur(9px)"/>
+                    <circle cx="62" cy="62" r="54" fill="none" stroke="#E4DBC8" stroke-width="7"/>
+                    <circle class="arc" cx="62" cy="62" r="54" fill="none" stroke="#3E6B8A" stroke-width="7"
+                            stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
+                  </svg>
+                  <div class="in"><span class="pct">0%</span><span class="of">0 of 39</span></div>
+                </div>
+                <div class="ring-meta">
+                  <span class="ring-name">Food</span>
+                  <span class="ring-state notready"><span class="d"></span>Not ready</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WATCHING -->
+        <div class="watch">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#1C2A3A" stroke-width="1.7"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="t">EvidLY is watching <span>· real-time alerts routed automatically</span></span>
+          <span class="r">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            Active monitoring
+          </span>
+        </div>
+
+        <!-- ALERTS -->
+        <div class="sh">
+          <h2>Alerts</h2>
+          <span class="pill" id="caught-pill">EvidLY caught 2</span>
+          <span class="r">
+            <span class="cnt" id="alert-cnt" style="color:var(--muted)">None yet</span>
+            <span class="auto">Routed automatically</span>
+          </span>
+        </div>
+
+        <div class="alert clear">
+          <span class="alert-ic" style="background:var(--band);color:var(--stone)">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <span class="alert-m">
+            <span class="alert-t">No alerts yet</span>
+            <span class="alert-s">Alerts start once records are on file — EvidLY raises one the moment a requirement is about to lapse.</span>
+          </span>
+          <span class="chip na"><span class="d"></span>None yet</span>
+        </div>
+
+        <!-- PILLARS -->
+        <div class="sh"><h2>What's Monitored</h2></div>
+        <div class="pillars">
+
+          <div class="pcard">
+            <div class="pc-head">
+              <span class="pc-ic" style="background:#F6E9E3">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#B24A2E" stroke-width="1.7"><path d="M12 3s5 4.5 5 9a5 5 0 0 1-10 0c0-2 1-3.5 1-3.5S9 11 10 11c0-3 2-8 2-8z"/></svg>
+              </span>
+              <span class="pc-id">
+                <span class="pc-n">Fire Safety</span>
+                <span class="pc-c">California Fire Code</span>
+              </span>
+              <span class="pc-pill act"><span class="d"></span>Action Needed</span>
+            </div>
+            <div class="coderow">
+              <span class="codes">
+                  <span class="chip no" data-req="fire_extinguishers" title="Fire Extinguisher Service"><span class="d"></span>NFPA 10</span>
+                  <span class="chip no" data-req="fire_suppression" title="Fire Suppression Inspection"><span class="d"></span>17A</span>
+                  <span class="chip no" data-req="sprinkler_system" title="Sprinkler Inspection"><span class="d"></span>25</span>
+                  <span class="chip no" data-req="fire_alarm" title="Fire Alarm Monitoring"><span class="d"></span>72</span>
+                  <span class="chip no" data-req="hood_cleaning" title="Kitchen Exhaust Cleaning"><span class="d"></span>96</span>
+              </span>
+            </div>
+            <div class="pc-cols">
+              <div class="pcol">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+                  Upcoming
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">Read from each requirement's next due date — vendor service cadence, permit expiry, certification renewal. Anything falling inside the next 30 days appears here.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-v">Nothing due in the next 30 days.</div>
+                </div>
+              </div>
+              <div class="pcol hot">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+                  Action Needed
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">A requirement that is overdue, expired, or inside its warning window with no current record on file. These are what EvidLY routes an alert for.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-v">Nothing needs action.</div>
+                </div>
+              </div>
+              <div class="pcol">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                  Prove
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">Requirements with a current, sealed record on file, out of what this county requires for this kitchen. Conditional items are listed but never counted.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-n" id="prove-fire">0 <em>of 15 required</em></div>
+                  <div class="pcol-bar"><i id="bar-fire" style="width:0%;background:#B24A2E"></i></div>
+                  <div class="pcol-sub" id="pend-fire">15 pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pcard">
+            <div class="pc-head">
+              <span class="pc-ic" style="background:#E2ECF2">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#3E6B8A" stroke-width="1.7"><path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10"/><path d="M17 3c-1.5 2-2 4-2 6s1 2 2 2 2 0 2-2-.5-4-2-6zM17 11v10"/></svg>
+              </span>
+              <span class="pc-id">
+                <span class="pc-n">Food Safety</span>
+                <span class="pc-c">California Retail Food Code</span>
+              </span>
+              <span class="pc-pill act"><span class="d"></span>Action Needed</span>
+            </div>
+            <div class="pc-cols">
+              <div class="pcol">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+                  Upcoming
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">Read from each requirement's next due date — vendor service cadence, permit expiry, certification renewal. Anything falling inside the next 30 days appears here.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-v">Nothing due in the next 30 days.</div>
+                </div>
+              </div>
+              <div class="pcol hot">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+                  Action Needed
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">A requirement that is overdue, expired, or inside its warning window with no current record on file. These are what EvidLY routes an alert for.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-v">Nothing needs action.</div>
+                </div>
+              </div>
+              <div class="pcol">
+                <div class="pcol-k">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                  Prove
+                  <span class="qmark">?</span>
+                  <span class="pcol-tip">Requirements with a current, sealed record on file, out of what this county requires for this kitchen. Conditional items are listed but never counted.</span>
+                </div>
+                <div class="pcol-body">
+                  <div class="pcol-n" id="prove-food">0 <em>of 39 required</em></div>
+                  <div class="pcol-bar"><i id="bar-food" style="width:0%;background:#3E6B8A"></i></div>
+                  <div class="pcol-sub" id="pend-food">39 pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- GATE CTA — prospect only -->
+        <div class="gobar">
+          <span class="gobar-t">This is the sample. <b>Your record is ready to view.</b></span>
+          <a class="gobar-c" href="#">See what's on file →</a>
+          <span class="gobar-s">View-only · no account</span>
+        </div>
+
+        <!-- RISK -->
+        <div class="sh"><h2>What's at Risk</h2><span class="r">
+          <span class="auto">Casual dining</span>
+        </span></div>
+        <div class="risk">
+          <div class="risk-top">
+            <span class="risk-h">Based on your restaurant type</span>
+            <span class="risk-n">45 of 54 requirements proven</span>
+          </div>
+
+          <div class="risk-line">
+            <div class="risk-l1"><span>Fire safety</span><span class="risk-amt" id="rk-fire">$1.2k–$4.8k<span class="yr">/yr</span></span></div>
+            <div class="risk-l2"><span class="lo" id="rk-fire-lo"></span><span class="hi" id="rk-fire-hi"></span></div>
+          </div>
+
+          <div class="risk-line">
+            <div class="risk-l1"><span>Food Safety</span><span class="risk-amt" id="rk-food">$2.7k–$10.5k<span class="yr">/yr</span></span></div>
+            <div class="risk-l2"><span class="lo" id="rk-food-lo"></span><span class="hi" id="rk-food-hi"></span></div>
+          </div>
+
+          <div class="risk-total">
+            <span>Total at risk</span>
+            <span class="risk-tamt" id="rk-total">$3.9k–$15.3k<span class="yr">/yr</span></span>
+          </div>
+
+          <div class="ceil">
+            <div class="ceil-k">If things go wrong once</div>
+            <div class="ceil-r"><span id="ceil-lab">A fire your insurance won't cover</span><span class="ceil-a" id="ceil-amt">$150k–$500k+</span></div>
+            <div class="ceil-n" id="ceil-note"></div>
+          </div>
+
+          <div class="risk-fine" style="margin-bottom:0">Illustrative figures, conservative basis. "If things go wrong once" is a one-time ceiling — not a yearly cost. EvidLY reads and identifies what your policy requires. It does not determine coverage.</div>
+          <button class="ex-more">See the breakdown →</button>
+        </div>
+
+        <!-- MEASURED -->
+        <div class="sh"><h2>What's Measured</h2><span class="r"><span class="auto" id="sens-lab"></span></span></div>
+        <div class="sens" id="sens"></div>
+
+        <!-- BUSINESS + VENDOR RECORDS -->
+        <div class="sh"><h2>Business &amp; Vendor Records</h2></div>
+        <div class="recs">
+
+          <div class="rcard">
+            <div class="rc-head">
+              <span class="pc-ic" style="background:#F1ECE0">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#6E675A" stroke-width="1.7"><path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6"/></svg>
+              </span>
+              <span class="rc-id">
+                <span class="rc-n">Business Records</span>
+                <span class="rc-c">Per organization · not per kitchen</span>
+              </span>
+              <span class="rc-count">0 <em>of 6</em></span>
+            </div>
+            <div class="rlist">
+              <div class="rrow"><span class="rdot no"></span><span class="rname">General Liability Insurance</span></div>
+              <div class="rrow"><span class="rdot no"></span><span class="rname">Food Contamination / Spoilage Insurance</span></div>
+              <div class="rrow"><span class="rdot no"></span><span class="rname">Business License</span></div>
+              <div class="rrow"><span class="rdot no"></span><span class="rname">Seller's Permit</span></div>
+              <div class="rrow"><span class="rdot no"></span><span class="rname">W-9</span></div>
+              <div class="rrow"><span class="rdot no"></span><span class="rname">Certificate of Occupancy</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Lease Agreement</span><span class="rtag">Not applicable</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Liquor License</span><span class="rtag">Not applicable</span></div>
+            </div>
+          </div>
+
+          <div class="rcard">
+            <div class="rc-head">
+              <span class="pc-ic" style="background:#F1ECE0">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#6E675A" stroke-width="1.7"><path d="M1 3h13v13H1z"/><path d="M14 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="17.5" cy="18.5" r="2"/></svg>
+              </span>
+              <span class="rc-id">
+                <span class="rc-n">Vendor Records</span>
+                <span class="rc-c">5 required per vendor · 1 not applicable</span>
+              </span>
+              <span class="rc-count">0 <em>of 5</em></span>
+            </div>
+            <div class="rlist">
+              <div class="vnote">No vendors identified yet. Each vendor who works in your kitchen carries its own set — an uninsured or unlicensed vendor is your liability, not theirs.</div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">General Liability COI</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Workers Compensation COI</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Professional License</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Business License</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">W-9</span></div>
+              <div class="rrow"><span class="rdot na"></span><span class="rname">Commercial Auto Liability</span><span class="rtag">Not applicable</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- EXPLORE — what-if -->
+        <div class="explore">
+          <div class="ex-head" id="ex-toggle">
+            <span class="ex-k">Explore</span>
+            <span class="ex-n">what-if · doesn't change your account</span>
+            <span class="ex-chev">▾</span>
+          </div>
+          <div class="ex-body" id="ex-body">
+            <p class="ex-p">Turn on a requirement to see exactly how it moves your readiness and lowers your risk. Each one you turn on shows the real step to make it true — EvidLY walks you through every one.</p>
+            <div class="ex-grid" id="ex-grid"></div>
+          </div>
+        </div>
+
+        <div style="height:34px"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="ann">
+    <b>What this combines:</b>
+    <ul>
+      <li><b>From the polished live dashboard</b> — Compliance Status rings with the tooltip breakdown, per-standard NFPA chips, three-column pillar cards (Upcoming / Action Needed / Prove), business &amp; vendor record cards, approved fonts, ring and tab animation.</li>
+      <li><b>From the prospect page</b> — the navy rail with Predict · Reduce · Prove and the gate CTA, the sample badge bar, the slim gate bar mid-page, What's at risk with its illustrative-figures disclaimer, live sensors on one kitchen, and the collapsed preview control.</li>
+      <li><b>Left out deliberately</b> — quick actions and the alert action buttons. A prospect can't upload, acknowledge or schedule anything, so those would be dead controls.</li>
+      <li><b>Sample is mature but imperfect</b> — 45 of 54 proven, one fire and one food item open. A sample at 100% would suggest the product isn't needed.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var C = 2 * Math.PI * 54;
+
+  // real next step per requirement — what EvidLY walks you through
+  var ACTION = {
+    hood_cleaning:'Schedule cleaning', fire_suppression:'Request from vendor',
+    sprinkler_system:'Request from vendor', fire_alarm:'Request from vendor',
+    fire_extinguishers:'Request from vendor',
+    health_permit:'Upload permit', food_handler_cards:'Add staff cards',
+    food_manager_cert:'Add certificate', pest_control:'Request from vendor',
+    allergen_management:'Add policy', warewash_sanitizer:'Add test log',
+    person_in_charge:'Assign PIC', employee_health:'Add policy',
+    temp_receiving:'Start logging', temp_cold_holding:'Start logging',
+    temp_hot_holding:'Start logging', temp_cooldown:'Start logging',
+    temp_reheating:'Start logging',
+    grease_trap:'Request from vendor', backflow_prevention:'Request from vendor',
+    haccp_plan:'Add plan'
+  };
+
+  var CAT = [
+    {c:'hood_cleaning',n:'Kitchen exhaust cleaning',p:'fire'},
+    {c:'fire_suppression',n:'Fire suppression',p:'fire'},
+    {c:'fire_alarm',n:'Fire alarm',p:'fire'},
+    {c:'sprinkler_system',n:'Fire sprinkler',p:'fire'},
+    {c:'fire_extinguishers',n:'Fire extinguisher',p:'fire'},
+    {c:'pest_control',n:'Pest control',p:'food'},
+    {c:'grease_trap',n:'Grease trap service',p:'food',note:'not applicable'},
+    {c:'backflow_prevention',n:'Backflow prevention',p:'food',note:'not applicable'},
+    {c:'haccp_plan',n:'HACCP plan',p:'food',note:'not applicable'},
+    {c:'temp_receiving',n:'Receiving',p:'food',g:'Temperature Logs'},
+    {c:'temp_cold_holding',n:'Cold holding',p:'food',g:'Temperature Logs'},
+    {c:'temp_hot_holding',n:'Hot holding',p:'food',g:'Temperature Logs'},
+    {c:'temp_cooldown',n:'Cooldown',p:'food',g:'Temperature Logs'},
+    {c:'temp_reheating',n:'Re-heating',p:'food',g:'Temperature Logs'},
+    {c:'health_permit',n:'Health permit',p:'food'},
+    {c:'food_handler_cards',n:'Food handler cards',p:'food'},
+    {c:'food_manager_cert',n:'Food protection manager',p:'food'},
+    {c:'allergen_management',n:'Allergen management',p:'food'},
+    {c:'warewash_sanitizer',n:'Warewash & sanitizer',p:'food'},
+    {c:'person_in_charge',n:'Person in charge',p:'food'},
+    {c:'employee_health',n:'Employee health policy',p:'food'}
+  ];
+
+  // each kitchen carries its OWN record state and its OWN annual exposure
+  var KITCHENS = [
+    { key:'vista',  name:'Vista Grill',      onfile:['hood_cleaning'], base:{fire:[1400,5600], food:[3100,12000]}, caught:0,
+      temps:[ {cat:'Cold Holding', nm:'Walk-in Cooler', v:'38°', src:'Sensor', st:'In range'},
+              {cat:'Hot Holding',  nm:'Steam Table',    v:'151°', src:'Sensor', st:'In range'},
+              {cat:'Cold Holding', nm:'Prep Line Rail', v:'40°', src:'Staff entry', st:'In range'} ] },
+    { key:'harbor', name:'Harbor House',     onfile:['hood_cleaning'], base:{fire:[1100,4200], food:[2400,9200]}, caught:0,
+      temps:[ {cat:'Cold Holding', nm:'Walk-in Freezer', v:'2°',  src:'Staff entry', st:'In range'},
+              {cat:'Hot Holding',  nm:'Soup Well',       v:'147°', src:'Staff entry', st:'In range'},
+              {cat:'Cooldown',     nm:'Chicken Stock',   v:'68°',  src:'Staff entry', st:'Cooling'} ] },
+    { key:'anchor', name:'The Anchor Room',  onfile:['hood_cleaning'], base:{fire:[900,3400], food:[1900,7300]}, caught:0,
+      temps:[ {cat:'Cold Holding', nm:'Reach-in Cooler', v:'41°', src:'Staff entry', st:'In range'},
+              {cat:'Cooldown',     nm:'Braised Pork',    v:'71°', src:'Staff entry', st:'Cooling'},
+              {cat:'Re-Heating',   nm:'Marinara',        v:'168°', src:'Staff entry', st:'In range'} ] }
+  ];
+  var state = {};
+  KITCHENS.forEach(function(k){
+    state[k.key] = {};
+    CAT.forEach(function(r){ state[k.key][r.c] = k.onfile.indexOf(r.c) !== -1; });
+  });
+
+  var sel = 'all';                       // 'all' or a kitchen key
+  function active(){ return sel==='all' ? KITCHENS : KITCHENS.filter(function(k){return k.key===sel;}); }
+  var on = state[KITCHENS[0].key];       // rebound below to whichever kitchen is shown
+  function isCounted(r){ return !r.note; }
+
+  function counts(){
+    var f=0, fd=0, ks=active();
+    ks.forEach(function(k){
+      CAT.forEach(function(r){
+        if(!isCounted(r) || !state[k.key][r.c]) return;
+        if(r.p==='fire') f++; else fd++;
+      });
+    });
+    return { fire:[f, 5*ks.length], food:[fd, 13*ks.length] };
+  }
+
+  // exposure is the SUM of each active kitchen's own baseline, scaled by what's unproven there
+  function riskTotals(){
+    var out={fire:{lo:0,hi:0,liveLo:0,liveHi:0,open:0}, food:{lo:0,hi:0,liveLo:0,liveHi:0,open:0}};
+    active().forEach(function(k){
+      ['fire','food'].forEach(function(p){
+        var total = p==='fire'?5:13, proven=0;
+        CAT.forEach(function(r){
+          if(!isCounted(r)||r.p!==p) return;
+          if(state[k.key][r.c]) proven++;
+        });
+        var open=total-proven, frac=open/total;
+        out[p].lo+=k.base[p][0]; out[p].hi+=k.base[p][1];
+        out[p].liveLo+=k.base[p][0]*frac; out[p].liveHi+=k.base[p][1]*frac;
+        out[p].open+=open;
+      });
+    });
+    return out;
+  }
+
+  function setRing(w,filed,total){
+    var pct = total>0?filed/total:0;
+    var arc=w.querySelector('.arc'),pctEl=w.querySelector('.pct'),
+        ofEl=w.querySelector('.of'),st=w.querySelector('.ring-state');
+    arc.setAttribute('stroke-dasharray',C);
+    arc.style.strokeDashoffset=C; void arc.getBoundingClientRect();
+    arc.style.strokeDashoffset=C*(1-pct);
+    ofEl.textContent=filed+' of '+total;
+    var ready=total>0&&filed>=total;
+    st.classList.toggle('ready',ready); st.classList.toggle('notready',!ready);
+    st.innerHTML='<span class="d"></span>'+(ready?'Ready':'Not ready');
+    var target=Math.round(pct*100),start=performance.now();
+    (function tick(now){
+      var t=Math.min(1,((now||performance.now())-start)/1150);
+      pctEl.textContent=Math.round(target*(1-Math.pow(1-t,3)))+'%';
+      if(t<1) requestAnimationFrame(tick);
+    })(start);
+  }
+
+  function setPill(sel,green){
+    var p=document.querySelector(sel); if(!p) return;
+    p.classList.toggle('ok',green); p.classList.toggle('act',!green);
+    p.innerHTML='<span class="d"></span>'+(green?'On track':'Action Needed');
+  }
+
+  var WORD=['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+  function word(n){ return WORD[n] || n; }
+
+  function draw(){
+    var ks=active();
+    var v=counts();
+    document.querySelectorAll('.ring-w').forEach(function(w){
+      var d=v[w.dataset.ring]; setRing(w,d[0],d[1]);
+    });
+    var total=v.fire[1]+v.food[1], proven=v.fire[0]+v.food[0];
+    document.getElementById('req-context').textContent = sel==='all'
+      ? '18 per kitchen × '+word(ks.length)+' kitchens · fire '+v.fire[1]+' + food '+v.food[1]
+      : '18 at '+ks[0].name+' · fire '+v.fire[1]+' + food '+v.food[1];
+    document.getElementById('prove-fire').innerHTML=v.fire[0]+' <em>of '+v.fire[1]+' required</em>';
+    document.getElementById('prove-food').innerHTML=v.food[0]+' <em>of '+v.food[1]+' required</em>';
+    document.getElementById('pend-fire').textContent=(v.fire[1]-v.fire[0])+' pending';
+    document.getElementById('pend-food').textContent=(v.food[1]-v.food[0])+' pending';
+    document.getElementById('bar-fire').style.width=(v.fire[1]?v.fire[0]/v.fire[1]*100:0)+'%';
+    document.getElementById('bar-food').style.width=(v.food[1]?v.food[0]/v.food[1]*100:0)+'%';
+    var rn=document.querySelector('.risk-n'); if(rn) rn.textContent=proven+' of '+total+' requirements proven';
+
+    // headline states what is true NOW; the catches are history
+    var open = total - proven;
+    var kw = sel==='all' ? 'Pacific Restaurant Group' : ks[0].name;
+    document.getElementById('hero-h').innerHTML = open===0
+      ? kw+' <span class="sep">·</span> all '+total+' compliance records current.'
+      : kw+' <span class="sep">·</span> '+proven+' of '+total+' compliance records on file.';
+    var caught = ks.reduce(function(a,k){ return a + k.caught; }, 0);
+    var cp=document.getElementById('caught-pill');
+    if(cp){ cp.style.display = caught>0 ? '' : 'none'; cp.textContent='EvidLY caught '+caught+' about to lapse'; }
+    var where = sel==='all' ? ' across '+word(ks.length)+' kitchens.' : ' at '+ks[0].name+'.';
+    document.getElementById('hero-sub').innerHTML = open===0
+      ? 'Every requirement has a current record. EvidLY is tracking <b>'+total+'</b>'+where
+      : (caught>0
+          ? 'EvidLY caught <b>'+word(caught)+' requirements</b> that were about to lapse, and is tracking <b>'+total+'</b>'+where
+          : 'EvidLY is tracking <b>'+total+' requirements</b>'+where.replace(' across',' across').replace(/^ at/,' at'));
+    document.querySelectorAll('.chip[data-req]').forEach(function(c){
+      var isOn = active().every(function(k){ return state[k.key][c.dataset.req]; });
+      c.classList.toggle('ok',isOn); c.classList.toggle('no',!isOn);
+    });
+    setPill('.pillars .pcard:nth-child(1) .pc-pill', v.fire[0]===v.fire[1]);
+    setPill('.pillars .pcard:nth-child(2) .pc-pill', v.food[0]===v.food[1]);
+    drawRisk(v);
+    drawTemps(ks);
+  }
+
+  function drawTemps(ks){
+    var host=document.getElementById('sens'); if(!host) return;
+    host.innerHTML = ks.map(function(k){
+      return k.temps.map(function(t){
+        var sensor = t.src==='Sensor';
+        var warm = t.st!=='In range';
+        return '<div class="sens-c">'
+          + '<div class="sens-cat">'+t.cat+'</div>'
+          + '<div class="sens-row"><div><div class="sens-nm">'+t.nm+'</div>'
+          + '<div class="sens-loc">'+k.name+'</div></div><div class="sens-v">'+t.v+'</div></div>'
+          + '<div class="sens-b"><span class="sens-src"'+(sensor?'':' style="color:var(--slate)"')+'>'
+          + '<span class="d"></span>'+t.src+'</span>'
+          + '<span class="sens-st"'+(warm?' style="background:var(--amber-bg);color:var(--gold)"':'')+'>'+t.st+'</span></div>'
+          + '</div>';
+      }).join('');
+    }).join('');
+    var lab=document.getElementById('sens-lab');
+    if(lab) lab.textContent = ks.length>1
+      ? ks.length+' kitchens · sensors and staff entries, both logged in EvidLY'
+      : 'Sensors and staff entries · both logged in EvidLY';
+  }
+
+  function money(n){ return n>=1000 ? '$'+(n/1000).toFixed(1).replace(/\.0$/,'')+'k' : '$'+Math.round(n); }
+  function range(a,b){ return money(Math.round(a))+'–'+money(Math.round(b)); }
+
+  function drawRisk(v){
+    var R = riskTotals();
+    ['fire','food'].forEach(function(k){
+      var r=R[k];
+      document.getElementById('rk-'+k).innerHTML = range(r.lo,r.hi)+'<span class="yr">/yr</span>';
+      document.getElementById('rk-'+k+'-lo').textContent = r.open
+        ? range(r.liveLo,r.liveHi)+' still exposed · '+r.open+' not on file'
+        : '$0 exposed · all current';
+      var cutLo=r.lo-r.liveLo, cutHi=r.hi-r.liveHi;
+      document.getElementById('rk-'+k+'-hi').textContent = cutHi>0
+        ? '↓'+range(cutLo,cutHi)+' removed by your records' : '';
+    });
+    document.getElementById('rk-total').innerHTML =
+      range(R.fire.lo+R.food.lo, R.fire.hi+R.food.hi)+'<span class="yr">/yr</span>';
+
+    var fireOpen=R.fire.open, closed=fireOpen===0;
+    var ceil=document.querySelector('.ceil');
+    ceil.style.background = closed ? '#E3ECE1' : '#F6E3DF';
+    ceil.style.borderColor = closed ? '#BDD3C1' : '#E5B9B2';
+    ceil.querySelectorAll('.ceil-k,.ceil-r span,.ceil-a,.ceil-n').forEach(function(el){
+      el.style.color = closed ? '#3E5E4B' : '#8E332B';
+    });
+    ceil.querySelector('.ceil-r').style.display = closed ? 'none' : '';
+    ceil.querySelector('.ceil-k').textContent = closed ? 'Closed' : 'If things go wrong once';
+    ceil.querySelector('.ceil-n').style.marginTop = closed ? '0' : '7px';
+    var kn = sel==='all' ? 'across your kitchens' : 'at this kitchen';
+    document.getElementById('ceil-note').textContent = closed
+      ? 'Every safeguard your policy names has a current, sealed record. This ground for denial is closed.'
+      : (fireOpen===1 ? "One safeguard your policy names doesn't have a current record "+kn
+                      : fireOpen+" safeguards your policy names don't have a current record "+kn)
+        + ' — so this stands in full. '+v.fire[0]+' of '+v.fire[1]+' earns nothing.';
+  }
+
+  // build EXPLORE: per pillar — conditional, then Temperature Logs, then the rest
+  var grid=document.getElementById('ex-grid');
+  var col=document.createElement('div');
+  grid.appendChild(col);
+  [['fire','Fire Safeguards'],['food','Food Safety']].forEach(function(pair){
+    var pillar=pair[0];
+    var h=document.createElement('div'); h.className='ex-h'; h.textContent=pair[1]; col.appendChild(h);
+    var items=CAT.filter(function(r){return r.p===pillar;});
+    function addRow(r){
+      var row=document.createElement('label'); row.className='ex-row'; row.dataset.code=r.c;
+      row.innerHTML='<input type="checkbox"><span class="ex-nm">'+r.n+'</span>'
+        +(r.note?'<span class="ex-cond">'+r.note+'</span>':'')
+        +'<span class="ex-st"></span>';
+      row.querySelector('input').addEventListener('change',function(){
+        var v=this.checked;
+        if(sel==='all'){ KITCHENS.forEach(function(k){ state[k.key][r.c]=v; }); }
+        else { state[sel][r.c]=v; }
+        on = state[sel==='all' ? KITCHENS[0].key : sel];
+        paint(); draw();
+      });
+      col.appendChild(row);
+    }
+    // render in list order; the Temperature Logs heading appears where those rows start
+    var tempShown=false;
+    items.forEach(function(r){
+      if(r.g==='Temperature Logs' && !tempShown){
+        var t=document.createElement('div'); t.className='ex-sub'; t.textContent='Temperature Logs';
+        col.appendChild(t); tempShown=true;
+      }
+      addRow(r);
+    });
+  });
+
+  function paint(){
+    grid.querySelectorAll('.ex-row').forEach(function(row){
+      var code=row.dataset.code, isOn = active().every(function(k){ return state[k.key][code]; });
+      row.querySelector('input').checked=isOn;
+      var st=row.querySelector('.ex-st');
+      if(isOn){ st.className='ex-st file'; st.textContent='✓ on file'; }
+      else { st.className='ex-st act'; st.textContent=(ACTION[code]||'Add record')+' →'; }
+    });
+  }
+
+  document.querySelectorAll('.ltab').forEach(function(tab,i){
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('.ltab').forEach(function(t){t.classList.remove('on');});
+      tab.classList.add('on');
+      sel = (i===0) ? 'all' : KITCHENS[i-1].key;
+      on = state[sel==='all' ? KITCHENS[0].key : sel];
+      paint(); draw();
+    });
+  });
+
+  document.getElementById('ex-toggle').addEventListener('click',function(){
+    this.classList.toggle('open');
+    document.getElementById('ex-body').classList.toggle('open');
+  });
+
+  paint();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
