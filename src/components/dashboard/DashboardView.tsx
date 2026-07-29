@@ -145,7 +145,7 @@ export function DashboardView() {
       <WatchingBanner alertCount={alertCount} watchingCount={watchingCount} />
 
       {/* Quick Actions */}
-      <QuickActions fireProof={fireProof} foodProof={foodProof} kitchenCount={locationCount} />
+      <QuickActions />
 
       {/* Alerts */}
       {alertCount > 0 && (
@@ -363,42 +363,22 @@ function WatchingBanner({ alertCount, watchingCount }: { alertCount: number; wat
 }
 
 // ─── Quick Actions ───────────────────────────────────────────────
-function QuickActions({ fireProof, foodProof, kitchenCount }: {
-  fireProof: { filed: number; total: number };
-  foodProof: { filed: number; total: number };
-  kitchenCount: number;
-}) {
-  const nothingOnFile = fireProof.filed === 0 && foodProof.filed === 0;
-  const totalReqs = (fireProof.total + foodProof.total) * Math.max(kitchenCount, 1);
-
+function QuickActions() {
   const actions = [
-    { label: nothingOnFile ? 'Add your first record' : 'Upload a record', Icon: Upload, to: '/documents', primary: nothingOnFile },
-    { label: 'Log a temperature', Icon: Thermometer, to: '/equipment', primary: false },
-    { label: 'Request from a vendor', Icon: Truck, to: '/vendors', primary: false },
-    { label: 'Download evidence pack', Icon: Download, to: '/documents', primary: false, dimmed: nothingOnFile },
+    { label: 'Upload a record', Icon: Upload, to: '/documents' },
+    { label: 'Log a temperature', Icon: Thermometer, to: '/equipment' },
+    { label: 'Request from a vendor', Icon: Truck, to: '/vendors' },
+    { label: 'Download evidence pack', Icon: Download, to: '/documents' },
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {actions.map(a => (
         <Link key={a.label} to={a.to}
-          className="flex flex-col gap-1 px-4 py-3 border text-sm font-medium transition hover:shadow-sm"
-          style={{
-            borderColor: a.primary ? NAVY : LINE,
-            color: a.primary ? '#FFFFFF' : NAVY,
-            backgroundColor: a.primary ? NAVY : '#FFFFFF',
-            opacity: a.dimmed ? 0.4 : 1,
-            pointerEvents: a.dimmed ? 'none' : 'auto',
-          }}>
-          <div className="flex items-center gap-3">
-            <a.Icon size={16} style={{ color: a.primary ? GOLD : GOLD }} />
-            {a.label}
-          </div>
-          {a.primary && nothingOnFile && (
-            <span className="text-[11px] font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              {totalReqs} requirements waiting
-            </span>
-          )}
+          className="flex items-center gap-3 px-4 py-3 bg-white border text-sm font-medium transition hover:shadow-sm"
+          style={{ borderColor: LINE, color: NAVY }}>
+          <a.Icon size={16} style={{ color: GOLD }} />
+          {a.label}
         </Link>
       ))}
     </div>
