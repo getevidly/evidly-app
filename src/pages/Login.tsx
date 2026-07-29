@@ -8,11 +8,9 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useBranding } from '../contexts/BrandingContext';
 import { trackEvent } from '../utils/analytics';
-import { useCrispHide } from '../hooks/useCrisp';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 
 export function Login() {
-  useCrispHide();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

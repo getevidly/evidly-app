@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { trackEvent, trackConversion } from '../utils/analytics';
-import { useCrispHide } from '../hooks/useCrisp';
 import { FounderCounter } from '../components/FounderCounter';
 import { colors, shadows, radius, typography, transitions } from '../lib/designSystem';
 import {
@@ -49,7 +48,6 @@ const focusOut = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => 
 
 
 export function Signup() {
-  useCrispHide();
   const [fullName, setFullName] = useState('');
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState(searchParams.get('email') || '');

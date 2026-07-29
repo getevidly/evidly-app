@@ -782,14 +782,6 @@ body {
 
 /* ── Accessibility: Respect reduced motion ──────────── */
 
-/* ── Crisp Chat: push widget above mobile bottom nav ── */
-
-@media (max-width: 768px) {
-  #crisp-chatbox {
-    bottom: 80px !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -807,7 +799,6 @@ body {
   /* Hide non-content elements */
   nav, aside, footer,
   .sidebar, .topbar, .mobile-bar, .mobile-tab-bar,
-  #crisp-chatbox,
   [data-demo-banner], [data-quick-actions], [data-ai-chat], [data-topbar], [data-sidebar],
   [role="navigation"],
   button[aria-label="Open chat"],

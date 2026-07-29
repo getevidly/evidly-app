@@ -20,7 +20,6 @@ import QRAuthGuard from './components/auth/QRAuthGuard';
 import { RequireAdmin } from './components/auth/RequireAdmin';
 // import { OnboardingGuard } from './components/auth/OnboardingGuard';
 import { supabase } from './lib/supabase';
-import { useCrisp, useCrispIdentify } from './hooks/useCrisp';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const AdminLogin = lazy(() => import('./pages/AdminLogin').then(m => ({ default: m.AdminLogin })));
@@ -437,13 +436,6 @@ function ProtectedLayout() {
   const { isEmulating } = useEmulation();
   const location = useLocation();
 
-  useCrispIdentify({
-    email: user?.email,
-    name: profile?.full_name,
-    role: userRole,
-    orgId: profile?.organization_id,
-  });
-
   // Synchronous fallback: if DemoContext state hasn't propagated yet but
   // sessionStorage already has the demo flag, treat as demo mode to prevent
   // a race-condition redirect to /login during demo entry.
@@ -582,7 +574,6 @@ function ProtectedLayout() {
 
 function AppRoutes() {
   usePageTracking();
-  useCrisp();
 
   return (
     <>
