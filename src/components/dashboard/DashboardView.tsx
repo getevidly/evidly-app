@@ -130,6 +130,8 @@ export function DashboardView() {
         kitchenCount={locationCount}
         isMulti={isMultiLocation}
         watchingCount={watchingCount}
+        fireProof={fireProof}
+        foodProof={foodProof}
       />
 
       {/* Watching Banner */}
@@ -216,30 +218,49 @@ function LocationTabs({ locations, activeId, onChange, showAll }: {
 }
 
 // ─── Hero ────────────────────────────────────────────────────────
-function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount }: {
+function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount, fireProof, foodProof }: {
   alertCount: number; locationName: string; kitchenCount: number; isMulti: boolean; watchingCount: number;
+  fireProof: { filed: number; total: number };
+  foodProof: { filed: number; total: number };
 }) {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const clean = alertCount === 0;
   return (
-    <div className="py-8">
-      <div className="text-[10px] uppercase tracking-[0.2em] mb-2 font-semibold" style={{ color: GOLD }}>
-        Today · {today}
+    <div className="py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      {/* Left: headline + sub-line */}
+      <div className="flex-1 min-w-0">
+        <div className="text-[10px] uppercase tracking-[0.2em] mb-2 font-semibold" style={{ color: GOLD }}>
+          Today · {today}
+        </div>
+        <h1 className="text-4xl leading-tight" style={{ color: NAVY, fontFamily: 'Fraunces, serif', fontWeight: 600 }}>
+          {isMulti
+            ? (clean
+                ? `${kitchenCount} kitchens · on track.`
+                : `${kitchenCount} kitchen${kitchenCount !== 1 ? 's' : ''} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)
+            : (clean
+                ? `${locationName} · on track.`
+                : `${locationName} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)}
+        </h1>
+        <p className="text-sm mt-2" style={{ color: MUTED }}>
+          {clean
+            ? `EvidLY is tracking ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`
+            : `EvidLY caught ${alertCount} thing${alertCount !== 1 ? 's' : ''} that ${alertCount !== 1 ? 'were' : 'was'} about to be overlooked, and is tracking ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`}
+        </p>
       </div>
-      <h1 className="text-4xl leading-tight" style={{ color: NAVY, fontFamily: 'Fraunces, serif', fontWeight: 600 }}>
-        {isMulti
-          ? (clean
-              ? `${kitchenCount} kitchens · on track.`
-              : `${kitchenCount} kitchen${kitchenCount !== 1 ? 's' : ''} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)
-          : (clean
-              ? `${locationName} · on track.`
-              : `${locationName} · ${alertCount} lapse${alertCount !== 1 ? 's' : ''} caught.`)}
-      </h1>
-      <p className="text-sm mt-2" style={{ color: MUTED }}>
-        {clean
-          ? `EvidLY is watching ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`
-          : `EvidLY caught ${alertCount} thing${alertCount !== 1 ? 's' : ''} that ${alertCount !== 1 ? 'were' : 'was'} about to be overlooked, and is watching ${watchingCount} requirements across your kitchen${kitchenCount !== 1 ? 's' : ''}.`}
-      </p>
+
+      {/* Right: proof rings */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 13 }}>
+        <div style={{ display: 'flex', gap: 18 }}>
+          <div className="flex flex-col items-center gap-2">
+            <HeroRing proven={fireProof.filed} total={fireProof.total} color={EMBER} label="Fire-ready" />
+            <span className="text-xs font-semibold" style={{ color: EMBER }}>Fire-ready</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <HeroRing proven={foodProof.filed} total={foodProof.total} color={SLATE} label="Food-ready" />
+            <span className="text-xs font-semibold" style={{ color: SLATE }}>Food-ready</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -424,36 +445,36 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
   return `Escalating in ${minutesLeft} min`;
 }
 
-// ─── Proof Ring (donut chart) ────────────────────────────────────
-function ProofRing({ proven, total, color }: { proven: number; total: number; color: string }) {
-  console.log('[ProofRing] rendered:', { proven, total, color });
+// ─── Hero Proof Ring (144px donut) ───────────────────────────────
+function HeroRing({ proven, total, color, label }: { proven: number; total: number; color: string; label: string }) {
   const pct = total > 0 ? Math.round((proven / total) * 100) : 0;
-  const r = 20;
-  const stroke = 4;
-  const size = (r + stroke) * 2;
+  const size = 144;
+  const r = 56;
+  const stroke = 8;
   const c = 2 * Math.PI * r;
   const offset = c - (pct / 100) * c;
 
   return (
-    <div className="flex flex-col items-center" style={{ minWidth: size }}>
+    <div style={{ position: 'relative', width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
         xmlns="http://www.w3.org/2000/svg" role="img"
-        aria-label={`${pct}% proven — ${proven} of ${total} on file`}
-        style={{ display: 'block', overflow: 'visible' }}>
+        aria-label={`${label}: ${pct}% — ${proven} of ${total} on file`}
+        style={{ display: 'block' }}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={LINE} strokeWidth={stroke} />
         {pct > 0 && (
           <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
             strokeDasharray={`${c}`} strokeDashoffset={`${offset}`} strokeLinecap="round"
             transform={`rotate(-90 ${size / 2} ${size / 2})`} />
         )}
-        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
-          fill={NAVY} fontSize="13" fontWeight="700" fontFamily="Montserrat, sans-serif">
+        <text x={size / 2} y={size / 2 - 10} textAnchor="middle" dominantBaseline="central"
+          fill={NAVY} fontSize="28" fontWeight="700" fontFamily="Montserrat, sans-serif">
           {pct}%
         </text>
+        <text x={size / 2} y={size / 2 + 16} textAnchor="middle" dominantBaseline="central"
+          fill={MUTED} fontSize="12" fontWeight="500" fontFamily="Montserrat, sans-serif">
+          {proven} / {total}
+        </text>
       </svg>
-      <div className="text-[10px] mt-1 whitespace-nowrap" style={{ color: MUTED }}>
-        {proven} of {total} on file
-      </div>
     </div>
   );
 }
@@ -469,7 +490,6 @@ function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNee
   actionNeeded: { title: string; urgency?: string; detected_at?: string }[];
   proof: { filed: number; total: number; subtitle: string; loading: boolean };
 }) {
-  console.log('[PillarCard]', name, { proof, status, pillar });
   return (
     <div className="bg-white border" style={{ borderColor: LINE }}>
       {/* Header */}
@@ -483,10 +503,7 @@ function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNee
             <div className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: MUTED }}>{framework}</div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <ProofRing proven={proof.filed} total={proof.total} color={pillar === 'fire_safety' ? EMBER : SLATE} />
-          <StatusPill status={status} />
-        </div>
+        <StatusPill status={status} />
       </div>
 
       {/* Three columns */}
