@@ -200,8 +200,9 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
         </>
       )}
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: 28, paddingTop: 16, fontSize: 10, color: 'rgba(255,255,255,0.30)', lineHeight: 1.6 }}>
-        founders@getevidly.com · (855) 384-3591
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.10)', marginTop: 'auto', paddingTop: 16, fontSize: 10, color: 'rgba(255,255,255,0.30)', lineHeight: 1.6 }}>
+        EvidLY {'\u00b7'} Commercial Kitchen Risk Management<br />
+        {'\u00a9'} 2026 {'\u00b7'} a Cleaning Pros Plus, LLC company
       </div>
     </>
   );
