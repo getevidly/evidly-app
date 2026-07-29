@@ -426,6 +426,7 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
 
 // ─── Proof Ring (donut chart) ────────────────────────────────────
 function ProofRing({ proven, total, color }: { proven: number; total: number; color: string }) {
+  console.log('[ProofRing] rendered:', { proven, total, color });
   const pct = total > 0 ? Math.round((proven / total) * 100) : 0;
   const r = 20;
   const stroke = 4;
@@ -468,6 +469,7 @@ function PillarCard({ pillar, name, Icon, framework, status, upcoming, actionNee
   actionNeeded: { title: string; urgency?: string; detected_at?: string }[];
   proof: { filed: number; total: number; subtitle: string; loading: boolean };
 }) {
+  console.log('[PillarCard]', name, { proof, status, pillar });
   return (
     <div className="bg-white border" style={{ borderColor: LINE }}>
       {/* Header */}
