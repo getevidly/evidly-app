@@ -185,10 +185,22 @@ export function DashboardView() {
       </div>
 
       {/* Business + Vendor Records */}
-      {!businessProof.loading && businessProof.requirements.length > 0 && (
+      {!businessProof.loading && (businessProof.requirements.length > 0 || businessProof.error) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BusinessRecordsCard proof={businessProof} />
-          <VendorRecordsCard />
+          {businessProof.error ? (
+            <div className="bg-white border px-6 py-5 col-span-full" style={{ borderColor: LINE, borderLeftWidth: 4, borderLeftColor: RED }}>
+              <div className="flex items-center gap-2 mb-1">
+                <AlertTriangle size={14} style={{ color: RED }} />
+                <span className="text-sm font-semibold" style={{ color: NAVY }}>Business records failed to load</span>
+              </div>
+              <div className="text-[11px]" style={{ color: MUTED }}>{businessProof.error}</div>
+            </div>
+          ) : (
+            <>
+              <BusinessRecordsCard proof={businessProof} />
+              <VendorRecordsCard />
+            </>
+          )}
         </div>
       )}
 
