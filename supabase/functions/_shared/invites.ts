@@ -3,6 +3,7 @@
 // No platform/tool-as-product/score. Kitchen leaders, not operators.
 
 import { buildEmailHtml } from "./email.ts";
+import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 interface InviteEmailParams {
   senderName: string;
@@ -86,12 +87,32 @@ interface ClientInviteParams {
   businessName: string;
   inviteLink: string;
   personalMessage?: string;
+  supabase: SupabaseClient;
 }
 
-export function buildClientInviteEmail(
+export async function buildClientInviteEmail(
   params: ClientInviteParams,
-): { subject: string; html: string } {
-  const { recipientName, businessName, inviteLink } = params;
+): Promise<{ subject: string; html: string }> {
+  const { recipientName, businessName, inviteLink, supabase } = params;
+
+  // ── Day-one numerators: Fire 1 (hood-cleaning certificate), Food 0.
+  //    These are day-one values and must be replaced with real proof
+  //    counts if this email is ever re-sent to an established client. ──
+  const fireNumerator = 1;
+  const foodNumerator = 0;
+
+  // Derive denominators from the pillar_requirements catalog so adding
+  // a requirement to the catalog changes the email without a code edit.
+  const { data: reqs } = await supabase
+    .from('pillar_requirements')
+    .select('pillar')
+    .eq('state_code', 'CA')
+    .eq('counts_toward_total', true);
+
+  const fireDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'fire_safety').length || 5;
+  const foodDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'food_safety').length || 13;
+  const fireBarPct = Math.round((fireNumerator / fireDenom) * 100);
+  const foodBarPct = Math.max(2, Math.round((foodNumerator / foodDenom) * 100));
 
   const subject = "Your hood cleaning is documented \u2014 could you prove the rest?";
 
@@ -164,29 +185,31 @@ export function buildClientInviteEmail(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
     <div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.3;color:#1E2D4D;">One record is on file. Here&rsquo;s what it sits alongside.</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
-    <!-- Day-one hardcoded counts: Fire 1/5, Food 0/11.
-         This email is sent at org creation when only the hood-cleaning
-         certificate exists. These values must be replaced with real
-         data if this template is ever re-used for established clients. -->
+    <!-- Day-one state block. Numerators are day-one values (Fire 1 =
+         hood-cleaning cert, Food 0). Denominators are queried from
+         pillar_requirements at send time — no code edit needed when
+         a requirement is added to the catalog. If this email is ever
+         re-sent to an established client, replace the numerators with
+         real proof counts. -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #EEE7D9;">
       <tr><td style="padding:14px 18px;border-bottom:1px solid #EEE7D9;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#B24A2E;"></div></td>
           <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1E2D4D;">Fire Safety</td>
-          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">1</b> of <b style="color:#1E2D4D;">5</b> on file</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">${fireNumerator}</b> of <b style="color:#1E2D4D;">${fireDenom}</b> on file</td>
         </tr></table>
         <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
-          <div style="width:20%;height:8px;border-radius:99px;background:#B24A2E;"></div>
+          <div style="width:${fireBarPct}%;height:8px;border-radius:99px;background:#B24A2E;"></div>
         </div>
       </td></tr>
       <tr><td style="padding:14px 18px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td width="14" valign="middle"><div style="width:10px;height:10px;border-radius:50%;background:#3E6B8A;"></div></td>
           <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#1E2D4D;">Food Safety</td>
-          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">0</b> of <b style="color:#1E2D4D;">11</b> on file</td>
+          <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5F6875;"><b style="color:#1E2D4D;">${foodNumerator}</b> of <b style="color:#1E2D4D;">${foodDenom}</b> on file</td>
         </tr></table>
         <div style="margin-top:8px;height:8px;border-radius:99px;background:#EEE7D9;">
-          <div style="width:2%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
+          <div style="width:${foodBarPct}%;height:8px;border-radius:99px;background:#3E6B8A;"></div>
         </div>
       </td></tr>
     </table>

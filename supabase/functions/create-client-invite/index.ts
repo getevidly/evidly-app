@@ -75,12 +75,13 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
-        const { subject, html } = buildClientInviteEmail({
+        const { subject, html } = await buildClientInviteEmail({
           recipientName: inv.contact_name,
           senderName: sender_name || undefined,
           businessName: inv.organization_name || 'your kitchen',
           inviteLink: `${appBase}/join/${inv.token}`,
           personalMessage: inv.message || undefined,
+          supabase,
         });
 
         const emailResult = await sendEmail({ to: inv.email, subject, html });
@@ -117,12 +118,13 @@ Deno.serve(async (req: Request) => {
         return json({ error: `Cannot remind a ${inv.status} invite` }, 400, headers);
       }
 
-      const { subject, html } = buildClientInviteEmail({
+      const { subject, html } = await buildClientInviteEmail({
         recipientName: inv.contact_name,
         senderName: sender_name || undefined,
         businessName: inv.organization_name || 'your kitchen',
         inviteLink: `${appBase}/join/${inv.token}`,
         personalMessage: inv.message || undefined,
+        supabase,
       });
 
       const sent = await sendEmail({ to: inv.email, subject, html });
@@ -229,12 +231,13 @@ Deno.serve(async (req: Request) => {
     // Journey stage: invited (shared helper — idempotent, never moves backwards)
     await stampJourneyStage(supabase, organization_id, 'invited');
 
-    const { subject, html } = buildClientInviteEmail({
+    const { subject, html } = await buildClientInviteEmail({
       recipientName: contact_name,
       senderName: sender_name || undefined,
       businessName: organization_name || 'your kitchen',
       inviteLink: `${appBase}/join/${token}`,
       personalMessage: message || undefined,
+      supabase,
     });
 
     const sent = await sendEmail({ to: email, subject, html });
