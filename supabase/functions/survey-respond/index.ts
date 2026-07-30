@@ -81,7 +81,10 @@ async function writePipeline(
     if (resp.county) updates.county = resp.county;
     await sb.from('sales_pipeline').update(updates).eq('id', existing[0].id);
   } else {
+    // org_name is NOT NULL — derive from email domain
+    const orgName = email.split('@')[1]?.split('.')[0] || 'Unknown';
     await sb.from('sales_pipeline').insert({
+      org_name: orgName,
       contact_email: email,
       segment: pipelineSegment,
       location_count: locationCount,
