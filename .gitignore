@@ -73,4 +73,3 @@ verify_*.sql
 openapi_spec.json
 evidly-client-gate-mock.html
 dashboard*.gif
-sql/
