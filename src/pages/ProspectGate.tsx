@@ -325,7 +325,7 @@ function RecordGroup({ title, meta, items, groupClass, icon, defaultOpen = true,
                     )}
                     {item.pillarTag && item.why ? ' \u00b7 ' : ''}
                     {item.whyLink ? (
-                      <>Met \u2014 <a href="#" style={{ color: SLATE, fontWeight: 600, textDecoration: 'none' }} onClick={e => e.preventDefault()}>Cleaning Pros Plus</a> service record on file</>
+                      <>Met — <a href="#" style={{ color: SLATE, fontWeight: 600, textDecoration: 'none' }} onClick={e => e.preventDefault()}>Cleaning Pros Plus</a> service record on file</>
                     ) : (
                       !item.pillarTag ? item.why : item.why
                     )}
@@ -498,8 +498,11 @@ export function ProspectGate() {
   const vendOnFile = 0; // vendor biz docs not yet wired
   const vendTotal = catalogDenoms.vend;
 
-  const totalOnFile = fireOnFile + foodOnFile + bizOnFile + svcOnFile;
-  const totalRequired = fireTotal + foodTotal + bizTotal + svcTotal;
+  // Hero counts unique requirements only — fire + food + biz.
+  // Vendor Service Records share the same five fire systems, so including
+  // svcTotal would double-count. Vendor Business is per-vendor (no total).
+  const totalOnFile = fireOnFile + foodOnFile + bizOnFile;
+  const totalRequired = fireTotal + foodTotal + bizTotal;
   const totalGap = totalRequired - totalOnFile;
 
   /* ── Bar percentages ───────────────────────────────────────── */
@@ -691,19 +694,19 @@ export function ProspectGate() {
           </section>
 
           {/* ===== FIRE SAFETY ===== */}
-          <RecordGroup title="Fire Safety" meta="NFPA 96 fire line \u2014 the liability spine" items={fireItems} groupClass="fire" icon={<FireIcon />}
+          <RecordGroup title="Fire Safety" meta="NFPA 96 fire line — the liability spine" items={fireItems} groupClass="fire" icon={<FireIcon />}
             countLabel={`<b>${fireOnFile}</b> / ${fireTotal} on file`} defaultOpen={true} />
 
           {/* ===== FOOD SAFETY ===== */}
-          <RecordGroup title="Food Safety" meta="County health \u2014 keeps you open" items={foodItems} groupClass="food" icon={<FoodIcon />}
+          <RecordGroup title="Food Safety" meta="County health — keeps you open" items={foodItems} groupClass="food" icon={<FoodIcon />}
             countLabel={`<b>${foodOnFile}</b> / ${foodTotal} on file`} defaultOpen={true} />
 
           {/* ===== BUSINESS RECORDS ===== */}
-          <RecordGroup title="Business Records" meta="The kitchen\u2019s own paperwork" items={bizItems} groupClass="biz" icon={<BizIcon />}
+          <RecordGroup title="Business Records" meta="The kitchen's own paperwork" items={bizItems} groupClass="biz" icon={<BizIcon />}
             countLabel={`<b>${bizOnFile}</b> / ${bizTotal} on file`} defaultOpen={true} />
 
           {/* ===== VENDOR BUSINESS RECORDS ===== */}
-          <RecordGroup title="Vendor Business Records" meta="One COI, W-9 &amp; license set per vendor \u2014 a single company can cover several services"
+          <RecordGroup title="Vendor Business Records" meta="One COI, W-9 &amp; license set per vendor — a single company can cover several services"
             groupClass="vend" icon={<VendBizIcon />}
             countLabel={`<b>${vendOnFile}</b> on file &middot; ${vendTotal} per vendor`} defaultOpen={false}>
             <div style={{ padding: '14px 18px 6px 22px' }}>
@@ -732,7 +735,7 @@ export function ProspectGate() {
           </RecordGroup>
 
           {/* ===== VENDOR SERVICE RECORDS ===== */}
-          <RecordGroup title="Vendor Service Records" meta="Proof each vendor did the work \u2014 the records that get read after a fire"
+          <RecordGroup title="Vendor Service Records" meta="Proof each vendor did the work — the records that get read after a fire"
             items={svcItems} groupClass="svc" icon={<SvcIcon />}
             countLabel={`<b>${svcOnFile}</b> / ${svcTotal} on file`} defaultOpen={true} />
 
