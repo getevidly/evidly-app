@@ -121,7 +121,25 @@ Deno.serve(async (req) => {
       if (rec.service_type_code) mark(rec.service_type_code, rec.service_date, vendorName);
     }
 
-    return json({ ok: true, filed }, 200);
+    // ── 5. Derive pillar denominators from catalog ─────────────
+    const { data: reqs, error: reqErr } = await db
+      .from('pillar_requirements')
+      .select('pillar')
+      .eq('state_code', 'CA')
+      .eq('counts_toward_total', true);
+
+    if (reqErr) console.error('gate-record-state: pillar_requirements query failed:', reqErr);
+
+    const denominators = reqs && reqs.length > 0
+      ? {
+          fire: reqs.filter((r: { pillar: string }) => r.pillar === 'fire_safety').length,
+          food: reqs.filter((r: { pillar: string }) => r.pillar === 'food_safety').length,
+          biz: reqs.filter((r: { pillar: string }) => r.pillar === 'business_records').length,
+          vend: reqs.filter((r: { pillar: string }) => r.pillar === 'vendor_business').length,
+        }
+      : null;
+
+    return json({ ok: true, filed, denominators }, 200);
   } catch (e) {
     console.error('gate-record-state:', e);
     return json({ error: 'internal error' }, 500);

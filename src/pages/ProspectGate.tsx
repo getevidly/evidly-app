@@ -424,6 +424,9 @@ export function ProspectGate() {
   const [bizItems, setBizItems] = useState<RecordItem[]>(BIZ_DEFAULTS);
   const [svcItems, setSvcItems] = useState<RecordItem[]>(SVC_DEFAULTS);
 
+  // Catalog denominators — derived from pillar_requirements at load time
+  const [catalogDenoms, setCatalogDenoms] = useState({ fire: 5, food: 13, biz: 6, vend: 5 });
+
   /* ── Fetch invite + record state ─────────────────────────────── */
   useEffect(() => {
     if (!token) { setError('Missing invite link.'); setLoading(false); return; }
@@ -449,22 +452,29 @@ export function ProspectGate() {
           body: JSON.stringify({ token }),
         });
         if (res.ok) {
-          const { filed } = await res.json();
+          const { filed, denominators } = await res.json();
           if (filed && typeof filed === 'object') {
             setFireItems(applyFiled(FIRE_DEFAULTS, filed));
             setFoodItems(applyFiled(FOOD_DEFAULTS, filed));
             setBizItems(applyFiled(BIZ_DEFAULTS, filed));
             setSvcItems(applyFiled(SVC_DEFAULTS, filed));
           }
+          // Apply catalog-derived denominators from edge fn (service_role read)
+          if (denominators && denominators.fire) {
+            setCatalogDenoms(denominators);
+          } else {
+            console.warn('ProspectGate: pillar_requirements denominators missing from gate-record-state response — using fallback defaults');
+          }
+        } else {
+          console.warn('ProspectGate: gate-record-state returned', res.status, '— using fallback defaults for all counts');
         }
-        // On fetch failure: items stay as defaults (graceful fallback)
       } catch {
-        // Graceful fallback — render requirement list with defaults
+        console.warn('ProspectGate: gate-record-state fetch failed — using fallback defaults for all counts');
       }
 
       setLoading(false);
 
-      // 3. Stamp viewed_at on first page load (best-effort, non-blocking)
+      // 4. Stamp viewed_at on first page load (best-effort, non-blocking)
       if (!viewedRef.current) {
         viewedRef.current = true;
         fetch(VIEWED_URL, {
@@ -478,14 +488,15 @@ export function ProspectGate() {
 
   /* ── Derived counts (from live state) ────────────────────────── */
   const fireOnFile = countOnFile(fireItems);
-  const fireTotal = countRequired(fireItems);
+  const fireTotal = catalogDenoms.fire;
   const foodOnFile = countOnFile(foodItems);
-  const foodTotal = countRequired(foodItems);
+  const foodTotal = catalogDenoms.food;
   const bizOnFile = countOnFile(bizItems);
-  const bizTotal = countRequired(bizItems);
+  const bizTotal = catalogDenoms.biz;
   const svcOnFile = countOnFile(svcItems);
   const svcTotal = countRequired(svcItems);
   const vendOnFile = 0; // vendor biz docs not yet wired
+  const vendTotal = catalogDenoms.vend;
 
   const totalOnFile = fireOnFile + foodOnFile + bizOnFile + svcOnFile;
   const totalRequired = fireTotal + foodTotal + bizTotal + svcTotal;
@@ -521,7 +532,7 @@ export function ProspectGate() {
   /* ═══════════════════════════════════════════════════════════ */
   return (
     <div style={{ fontFamily: FONT_INTER, color: INK, background: CREAM, WebkitFontSmoothing: 'antialiased', lineHeight: 1.55, margin: 0 }}>
-      <h1 className="sr-only">{`EvidLY view-only gate for ${orgName}: ${totalOnFile === 1 ? 'one' : totalOnFile} record on file, with the full compliance checklist and a link to schedule a meeting with Arthur Haggerty.`}</h1>
+      <h1 className="sr-only">{`EvidLY view-only gate for ${orgName}: ${totalOnFile === 1 ? 'one' : totalOnFile} record on file, with the full compliance checklist and a link to meet with EvidLY.`}</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '392px 1fr', minHeight: '100vh', maxWidth: 1240, margin: '0 auto', boxShadow: `0 0 0 1px ${HAIR2}` }}
         className="gate-shell">
@@ -563,7 +574,7 @@ export function ProspectGate() {
             <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 12px' }}>See the gaps. Let&rsquo;s close them.</p>
             <a href={CALENDLY} target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-              Schedule a Meeting <span style={{ fontWeight: 700 }}>&rarr;</span>
+              Meet with EvidLY <span style={{ fontWeight: 700 }}>&rarr;</span>
             </a>
             <p style={{ margin: '12px 0 0', fontSize: '12.5px', color: '#a9b4cb' }}>
               <b style={{ color: '#dfe4f0', fontWeight: 600 }}>Arthur Haggerty</b> &middot; IKECA-certified &middot; NFPA 96 expert witness.
@@ -666,7 +677,7 @@ export function ProspectGate() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: '13.5px', color: INK, margin: '0 0 9px', flexWrap: 'wrap' as const }}>
                   <span style={{ width: 9, height: 9, borderRadius: '50%', flex: 'none', background: '#8a94a8' }} />
                   Vendor Business Records <span style={{ color: MUTED, fontWeight: 500, fontSize: '12.5px' }}>one set per vendor</span>
-                  <b style={{ marginLeft: 'auto', fontFamily: FONT_MONT, fontWeight: 700, fontSize: '13.5px', color: NAVY }}>{vendOnFile} on file</b>
+                  <b style={{ marginLeft: 'auto', fontFamily: FONT_MONT, fontWeight: 700, fontSize: '13.5px', color: NAVY }}>{vendOnFile} on file &middot; {vendTotal} per vendor</b>
                 </div>
                 <div style={{ height: 13, borderRadius: 999, background: '#ECE8DF', overflow: 'hidden' }}>
                   <span style={{ display: 'block', height: '100%', borderRadius: 999, background: '#8a94a8', width: `${vendPct}%`, transition: 'width .95s cubic-bezier(.22,1,.36,1)' }} />
@@ -694,7 +705,7 @@ export function ProspectGate() {
           {/* ===== VENDOR BUSINESS RECORDS ===== */}
           <RecordGroup title="Vendor Business Records" meta="One COI, W-9 &amp; license set per vendor \u2014 a single company can cover several services"
             groupClass="vend" icon={<VendBizIcon />}
-            countLabel={`<b>${vendOnFile}</b> on file`} defaultOpen={false}>
+            countLabel={`<b>${vendOnFile}</b> on file &middot; ${vendTotal} per vendor`} defaultOpen={false}>
             <div style={{ padding: '14px 18px 6px 22px' }}>
               {VENDOR_CARDS.map((v, vi) => (
                 <div key={vi} style={{ border: `1px solid ${HAIR}`, borderRadius: 11, padding: '13px 15px', marginBottom: 12, background: '#fff' }}>
@@ -804,7 +815,7 @@ export function ProspectGate() {
                 </div>
                 <a href={CALENDLY} target="_blank" rel="noopener"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-                  Schedule a Meeting <span style={{ fontWeight: 700 }}>&rarr;</span>
+                  Meet with EvidLY <span style={{ fontWeight: 700 }}>&rarr;</span>
                 </a>
               </div>
             </div>
