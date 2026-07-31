@@ -217,6 +217,7 @@ export default function KitchenSafetyStudy() {
 
   const [responseId] = useState(() => uuid());
   const startTime = useRef(Date.now());
+  const saveFailed = useRef(false);
   const [state, setState] = useState({});
   const [askers, setAskers] = useState({});
   const [askersAnswered, setAskersAnswered] = useState(false);
@@ -247,7 +248,9 @@ export default function KitchenSafetyStudy() {
       patch.source_method = 'tag';
       if (linkPlatform) patch.source_platform = linkPlatform;
     }
-    callEdge({ response_id: responseId, patch });
+    callEdge({ response_id: responseId, patch })
+      .then(r => { if (!r?.ok) saveFailed.current = true; })
+      .catch(() => { saveFailed.current = true; });
   }, [responseId, linkSource, linkPlatform]);
 
   /* ── Derived routing ────────────────────────────────────────── */
@@ -301,14 +304,11 @@ export default function KitchenSafetyStudy() {
     else if (!isRecordQ) patch[key] = value;
 
     // Record questions go to market_research_answers
-    if (isRecordQ) {
-      callEdge({
-        response_id: responseId,
-        patch: { answers: [{ question_id: key, value }] },
-      });
-    } else {
-      callEdge({ response_id: responseId, patch });
-    }
+    const p = isRecordQ
+      ? callEdge({ response_id: responseId, patch: { answers: [{ question_id: key, value }] } })
+      : callEdge({ response_id: responseId, patch });
+    p.then(r => { if (!r?.ok) saveFailed.current = true; })
+     .catch(() => { saveFailed.current = true; });
   }, [responseId, hasTag]);
 
   const saveAskers = useCallback((newAskers, isAnswered) => {
@@ -317,11 +317,13 @@ export default function KitchenSafetyStudy() {
     if (isAnswered) setMissing(prev => { const s = new Set(prev); s.delete('askers'); return s; });
     // Convert to array for storage
     const arr = ASKERS.filter((_, i) => newAskers[i]);
-    callEdge({ response_id: responseId, patch: { askers: arr } });
+    callEdge({ response_id: responseId, patch: { askers: arr } })
+      .then(r => { if (!r?.ok) saveFailed.current = true; })
+      .catch(() => { saveFailed.current = true; });
   }, [responseId]);
 
   /* ── Submit ─────────────────────────────────────────────────── */
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     const miss = required.filter(k => !answered(k));
     if (miss.length) {
       const s = new Set(miss);
@@ -335,6 +337,51 @@ export default function KitchenSafetyStudy() {
     }
     setWarn('');
     const dur = Math.round((Date.now() - startTime.current) / 1000);
+
+    // Show snapshot immediately — it renders from local state
+    setPhase('snap');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Reconcile if any per-answer save failed
+    if (saveFailed.current) {
+      const reconPatch = {
+        instrument_version: 'v1',
+        scope: state.scope,
+        county: state.county,
+        kitchen_type: state.type,
+        kitchen_count: state.count,
+        system: state.system,
+        record_owner: state.owner,
+        speed: state.speed,
+        askers: ASKERS.filter((_, i) => askers[i]),
+        duration_seconds: dur,
+      };
+      // Source — tag-based or self-reported
+      if (hasTag) {
+        reconPatch.source = linkSource;
+        reconPatch.source_method = 'tag';
+        if (linkPlatform) reconPatch.source_platform = linkPlatform;
+      } else if (state.source) {
+        reconPatch.source = state.source;
+        reconPatch.source_method = 'self_reported';
+      }
+      // All answered record questions
+      const allRecordQs = [...FIRE_QS, ...INS_QS, ...FOOD_QS, ...VBIZ_QS];
+      reconPatch.answers = allRecordQs
+        .filter(q => state[q.id] !== undefined)
+        .map(q => ({ question_id: q.id, value: state[q.id] }));
+
+      let reconOk = false;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const r = await callEdge({ response_id: responseId, patch: reconPatch });
+          if (r?.ok) { reconOk = true; break; }
+        } catch { /* retry */ }
+      }
+      if (!reconOk) return; // leave row incomplete — do not stamp completed
+    }
+
+    // Stamp completed
     callEdge({
       response_id: responseId,
       patch: {
@@ -343,12 +390,11 @@ export default function KitchenSafetyStudy() {
         duration_seconds: dur,
       },
     });
-    setPhase('snap');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [required, answered, responseId]);
+  }, [required, answered, responseId, state, askers, hasTag, linkSource, linkPlatform]);
 
   /* ── Send contact ───────────────────────────────────────────── */
-  const handleSend = useCallback(() => {
+  const [sending, setSending] = useState(false);
+  const handleSend = useCallback(async () => {
     const picked = Object.keys(choices).filter(k => choices[k]);
     if (!picked.length) {
       setSendNote('Tick at least one thing first, or you are done \u2014 your answers are already in.');
@@ -361,17 +407,32 @@ export default function KitchenSafetyStudy() {
       setSendErr(true);
       return;
     }
-    callEdge({
-      response_id: responseId,
-      contact: {
-        email: trimmed,
-        wants_findings: !!choices.c_find,
-        wants_county_report: !!choices.c_report,
-        wants_referral_link: !!choices.c_refer,
-        wants_meeting: !!choices.c_meet,
-      },
-    });
-    setDone(true);
+    setSending(true);
+    setSendErr(false);
+    setSendNote('Saving\u2026');
+    try {
+      const result = await callEdge({
+        response_id: responseId,
+        contact: {
+          email: trimmed,
+          wants_findings: !!choices.c_find,
+          wants_county_report: !!choices.c_report,
+          wants_referral_link: !!choices.c_refer,
+          wants_meeting: !!choices.c_meet,
+        },
+      });
+      if (result.ok) {
+        setDone(true);
+      } else {
+        setSendNote('That didn\u2019t go through \u2014 check your connection and try again.');
+        setSendErr(true);
+      }
+    } catch {
+      setSendNote('That didn\u2019t go through \u2014 check your connection and try again.');
+      setSendErr(true);
+    } finally {
+      setSending(false);
+    }
   }, [choices, email, responseId]);
 
   /* ── Snapshot data ──────────────────────────────────────────── */
@@ -753,8 +814,9 @@ export default function KitchenSafetyStudy() {
                           }} />
                       ))}
                     </div>
-                    <button type="button" onClick={handleSend} style={askBtnStyle}>
-                      Send it over
+                    <button type="button" onClick={handleSend} disabled={sending}
+                      style={{ ...askBtnStyle, opacity: sending ? 0.6 : 1, cursor: sending ? 'wait' : 'pointer' }}>
+                      {sending ? 'Saving\u2026' : 'Send it over'}
                     </button>
                     <div style={{ fontSize: 12.5, color: sendErr ? RED : STONE, marginTop: 9, textAlign: 'center' }}>
                       {sendNote}
