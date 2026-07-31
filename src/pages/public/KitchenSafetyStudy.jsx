@@ -177,7 +177,7 @@ const SOURCE_OPTS = [
 /* Record questions — each carries a short name for the gap list */
 const FIRE_QS = [
   { id: 'hood',   sh: 'Hood & duct cleaning',   t: 'Hood and duct cleaning \u2014 your most recent record.',            c: 'NFPA 96 Table 12.4', a: VENDOR },
-  { id: 'supp',   sh: 'Hood suppression',        t: 'Hood suppression service \u2014 dated inside the last six months.', c: 'NFPA 96 \u00A711.2.1', a: VENDOR },
+  { id: 'supp',   sh: 'Hood suppression',        t: 'Hood suppression service \u2014 dated inside the last six months.', c: 'NFPA 17A', a: VENDOR },
   { id: 'ext',    sh: 'Fire extinguishers',      t: 'Fire extinguisher service \u2014 your most recent record.',         c: 'NFPA 10',              a: VENDOR },
   { id: 'sprink', sh: 'Fire sprinklers',         t: 'Fire sprinkler inspection \u2014 your most recent record.',         c: 'NFPA 25',              a: VENDOR },
 ];
@@ -584,7 +584,7 @@ export default function KitchenSafetyStudy() {
                   <div style={{ marginTop: 13 }}>
                     <select value={state.county || ''} onChange={e => { if (e.target.value) saveAnswer('county', e.target.value); }}
                       style={selectStyle}>
-                      <option value="">Select a county\u2026</option>
+                      <option value="">Select a county…</option>
                       {counties.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
@@ -604,7 +604,7 @@ export default function KitchenSafetyStudy() {
 
               {/* ── Facility safety ───────────────────────────────────── */}
               {decided && wantFire && (
-                <Section title="Facility safety \u2014 the fire systems" note="4 questions">
+                <Section title="Facility safety — the fire systems" note="4 questions">
                   {FIRE_QS.map(q => (
                     <QCard key={q.id} id={q.id} num={qNumbers[q.id]} t={q.t} c={q.c}
                       missing={missing.has(q.id)}>
