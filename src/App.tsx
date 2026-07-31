@@ -250,7 +250,7 @@ const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').th
 const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
-const KitchenSafetyStudy = lazy(() => import('./pages/public/KitchenSafetyStudy'));
+
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
@@ -631,8 +631,7 @@ function AppRoutes() {
         <Route path="/vendor/schedule/:token" element={<Suspense fallback={<PageSkeleton />}><VendorScheduleResponse /></Suspense>} />
         <Route path="/vendor-connect/apply" element={<Suspense fallback={<PageSkeleton />}><VendorConnectApply /></Suspense>} />
         <Route path="/support/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
-        <Route path="/survey" element={<Navigate to="/study" replace />} />
-        <Route path="/study" element={<Suspense fallback={<PageSkeleton />}><KitchenSafetyStudy /></Suspense>} />
+        {/* /study and /survey redirect via vercel.json to getevidly.com/study */}
 
         {/* City landing pages */}
         <Route path="/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><CityPage /></Suspense>} />
