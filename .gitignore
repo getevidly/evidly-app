@@ -52,3 +52,25 @@ _introspect_*.sql
 _step*.json
 *_run_migration.json
 email-preview-sample.html
+
+# Scratch — temp scripts, audit reports, test harnesses, loose assets
+tmp_*
+C*Usersnewpa*
+AUDIT_*.txt
+*_AUDIT*.txt
+*_AUDIT*.md
+*_DIAGNOSIS.md
+*_REPORT.md
+*_COMPARISON.md
+*_CHECKLIST.md
+*_SUMMARY.md
+*_INSTRUCTIONS.md
+*_ROOT_CAUSE.md
+test-*.sh
+test-*.ps1
+manual-*.ps1
+verify_*.sql
+openapi_spec.json
+evidly-client-gate-mock.html
+dashboard*.gif
+sql/
