@@ -40,6 +40,7 @@ const TAGGED_LINKS = [
   { label: 'YouTube',        url: 'https://getevidly.com/study?from=youtube' },
   { label: 'Website',        url: 'https://getevidly.com/study?from=page' },
   { label: 'CRA email',      url: 'https://getevidly.com/study?from=cra' },
+  { label: 'Referral',       url: 'https://getevidly.com/study?from=referral' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -279,7 +280,7 @@ export default function SurveyTab() {
       <SegmentPanel title="By kitchen type" counts={stats.kitchenTypeCounts} total={stats.completed} />
 
       {/* ── By region ─────────────────────────────────────────── */}
-      <Panel title="By region" note="Census 2020 grouping · 58 counties in 11 regions">
+      <Panel title="By region" note="Census 2020 grouping · 58 counties in 10 regions">
         {stats.regionCounts.length > 0 ? (
           stats.regionCounts.map(s => (
             <BarRow key={s.label} label={s.label}

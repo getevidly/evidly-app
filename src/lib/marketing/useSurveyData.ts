@@ -51,18 +51,18 @@ export const VALUE_LABELS: Record<string, string> = {
 };
 
 // Census 2020 California regions — all 58 counties in exactly one of 10 regions
+// Source: https://census.ca.gov/2020regions/
 export const CA_REGIONS: Record<string, string[]> = {
-  'Bay Area':           ['Alameda', 'Contra Costa', 'Marin', 'Napa', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano', 'Sonoma'],
-  'Greater Sacramento': ['El Dorado', 'Placer', 'Sacramento', 'Sutter', 'Yolo', 'Yuba'],
-  'Northern San Joaquin Valley': ['Merced', 'San Joaquin', 'Stanislaus'],
-  'Southern San Joaquin Valley': ['Fresno', 'Kern', 'Kings', 'Madera', 'Tulare'],
-  'Southern California':['Los Angeles', 'Orange', 'Ventura'],
-  'Inland Empire':      ['Riverside', 'San Bernardino'],
-  'San Diego / Imperial': ['Imperial', 'San Diego'],
-  'Central Coast':      ['Monterey', 'San Benito', 'San Luis Obispo', 'Santa Barbara', 'Santa Cruz'],
-  'North State':        ['Butte', 'Colusa', 'Glenn', 'Lassen', 'Modoc', 'Plumas', 'Shasta', 'Siskiyou', 'Tehama', 'Trinity'],
-  'North Coast':        ['Del Norte', 'Humboldt', 'Lake', 'Mendocino'],
-  'Sierra / Eastern':   ['Alpine', 'Amador', 'Calaveras', 'Inyo', 'Mariposa', 'Mono', 'Nevada', 'Sierra', 'Tuolumne'],
+  'Superior California':          ['Butte', 'Colusa', 'El Dorado', 'Glenn', 'Lassen', 'Modoc', 'Nevada', 'Placer', 'Plumas', 'Sacramento', 'Shasta', 'Sierra', 'Siskiyou', 'Sutter', 'Tehama', 'Yolo', 'Yuba'],
+  'North Coast':                  ['Del Norte', 'Humboldt', 'Lake', 'Mendocino', 'Napa', 'Sonoma', 'Trinity'],
+  'San Francisco Bay Area':       ['Alameda', 'Contra Costa', 'Marin', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano'],
+  'Northern San Joaquin Valley':  ['Alpine', 'Amador', 'Calaveras', 'Madera', 'Mariposa', 'Merced', 'Mono', 'San Joaquin', 'Stanislaus', 'Tuolumne'],
+  'Central Coast':                ['Monterey', 'San Benito', 'San Luis Obispo', 'Santa Barbara', 'Santa Cruz', 'Ventura'],
+  'Southern San Joaquin Valley':  ['Fresno', 'Inyo', 'Kern', 'Kings', 'Tulare'],
+  'Inland Empire':                ['Riverside', 'San Bernardino'],
+  'Los Angeles County':           ['Los Angeles'],
+  'Orange County':                ['Orange'],
+  'San Diego\u2013Imperial':      ['Imperial', 'San Diego'],
 };
 
 // Reverse map: county → region
@@ -74,7 +74,8 @@ Object.entries(CA_REGIONS).forEach(([region, counties]) => {
 // Source labels
 export const SOURCE_LABELS: Record<string, string> = {
   call: 'Outbound call', show: 'Show floor QR', email: 'EvidLY email',
-  social: 'Social media', page: 'Website', cra: 'CRA email', other: 'Other',
+  social: 'Social media', page: 'Website', cra: 'CRA email',
+  referral: 'Referral', other: 'Other',
 };
 
 export const PLATFORM_LABELS: Record<string, string> = {

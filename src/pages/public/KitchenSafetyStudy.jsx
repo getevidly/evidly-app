@@ -8,6 +8,7 @@
  * Route: /study  (tagged: ?from=call|show|email|linkedin|facebook|instagram|youtube|page|cra)
  */
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { QUESTION_META } from '../../../supabase/functions/_shared/study-questions';
 
 /* ── Design tokens (from the approved mock — Instrument Sans, not Fraunces) */
 const INK     = '#1C2A3A';
@@ -177,20 +178,20 @@ const SOURCE_OPTS = [
 
 /* Record questions — each carries a short name for the gap list */
 const FIRE_QS = [
-  { id: 'hood',   sh: 'Hood & duct cleaning',   t: 'Hood and duct cleaning \u2014 your most recent record.',            c: 'NFPA 96 Table 12.4', a: VENDOR },
-  { id: 'supp',   sh: 'Hood suppression',        t: 'Hood suppression service \u2014 dated inside the last six months.', c: 'NFPA 17A', a: VENDOR },
-  { id: 'ext',    sh: 'Fire extinguishers',      t: 'Fire extinguisher service \u2014 your most recent record.',         c: 'NFPA 10',              a: VENDOR },
-  { id: 'sprink', sh: 'Fire sprinklers',         t: 'Fire sprinkler inspection \u2014 your most recent record.',         c: 'NFPA 25',              a: VENDOR },
+  { id: 'hood',   sh: 'Hood & duct cleaning',   t: 'Hood and duct cleaning \u2014 your most recent record.',            c: QUESTION_META.hood.citation, a: VENDOR },
+  { id: 'supp',   sh: 'Hood suppression',        t: 'Hood suppression service \u2014 dated inside the last six months.', c: QUESTION_META.supp.citation, a: VENDOR },
+  { id: 'ext',    sh: 'Fire extinguishers',      t: 'Fire extinguisher service \u2014 your most recent record.',         c: QUESTION_META.ext.citation,  a: VENDOR },
+  { id: 'sprink', sh: 'Fire sprinklers',         t: 'Fire sprinkler inspection \u2014 your most recent record.',         c: QUESTION_META.sprink.citation, a: VENDOR },
 ];
 const INS_QS = [
   { id: 'pse',  t: 'Does your property policy carry a Protective Safeguards Endorsement?', s: 'The clause that makes coverage conditional on maintaining named fire systems.', a: KNOW },
   { id: 'recs', t: 'If you had a fire tomorrow, could you produce signed service records across the whole policy period?', s: 'Not the last one \u2014 the run of them.', a: KNOW },
 ];
 const FOOD_QS = [
-  { id: 'cool',    sh: 'Cooling records',      t: 'Cooling records \u2014 135\u00B0F to 70\u00B0F within two hours, then to 41\u00B0F within six.', c: '\u00A7114002', a: LOG },
-  { id: 'hold',    sh: 'Holding temperatures',  t: 'Hot and cold holding records \u2014 through the day.',                                          c: '\u00A7113996 \u00B7 \u2265135\u00B0F and \u226441\u00B0F', a: LOG },
-  { id: 'sanit',   sh: 'Sanitization records',  t: 'Sanitization records \u2014 how often food-contact surfaces are sanitized.',                    c: '\u00A7114099, \u00A7114125', a: LOG },
-  { id: 'handler', sh: 'Food handler cards',    t: 'Food handler cards \u2014 current, for every food employee including 30-day hires.',            c: '\u00A7113948', a: STAFF },
+  { id: 'cool',    sh: 'Cooling records',      t: 'Cooling records \u2014 135\u00B0F to 70\u00B0F within two hours, then to 41\u00B0F within six.', c: QUESTION_META.cool.citation, a: LOG },
+  { id: 'hold',    sh: 'Holding temperatures',  t: 'Hot and cold holding records \u2014 through the day.',                                          c: QUESTION_META.hold.citation, a: LOG },
+  { id: 'sanit',   sh: 'Sanitization records',  t: 'Sanitization records \u2014 how often food-contact surfaces are sanitized.',                    c: QUESTION_META.sanit.citation, a: LOG },
+  { id: 'handler', sh: 'Food handler cards',    t: 'Food handler cards \u2014 current, for every food employee including 30-day hires.',            c: QUESTION_META.handler.citation, a: STAFF },
 ];
 const VBIZ_QS = [
   { id: 'vins', sh: 'Vendor insurance certificates', t: 'Insurance certificates \u2014 current, for every company that works in your kitchen.', s: 'Hood, fire systems, pest control, grease trap, backflow \u2014 all of them, not just the fire ones.', a: VENDOR },
